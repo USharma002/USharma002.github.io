@@ -11,7 +11,7 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
   [languages.en]
     languageName = "English"
     weight = 1
-    # title = "My Site" # Optional: Override global title for this language
+    # title = "Neural Notes" # Optional: Override global title for this language
     [[languages.en.menu.main]]
       name = "Home"
       url = "/"
@@ -24,6 +24,14 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
       name = "Tags"
       url = "/tags/"
       weight = 15
+    [[languages.en.menu.main]]
+      name = "Archive"
+      url = "/archives/"
+      weight = 15
+    [[languages.en.menu.main]]
+      name = "About"
+      url = "/about/"
+      weight = 20
 
 [params]
   defaultTheme = "auto" # Options: "light", "dark", "auto"
