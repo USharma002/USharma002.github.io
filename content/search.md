@@ -1,5 +1,5 @@
 ---
 title: "Search"
-placeholder: Search demo site with full text fuzzy search ...
+placeholder: If you changed url for this search, then you deserve this page ...
 layout: "search"
 ---

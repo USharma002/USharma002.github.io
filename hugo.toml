@@ -12,10 +12,10 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
     languageName = "English"
     weight = 1
     # title = "Neural Notes" # Optional: Override global title for this language
-    [[languages.en.menu.main]]
-      name = "Home"
-      url = "/"
-      weight = 1
+    #[[languages.en.menu.main]]
+    #  name = "Home"
+    #  url = "/"
+    #  weight = 1
     [[languages.en.menu.main]]
       name = "Posts"
       url = "/posts/" # Assuming you have a 'posts' section
@@ -40,16 +40,25 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = true
+  paginate = 20
+  ShowPageNums = true
+  separator = true
+
+  comments = true
 
   [params.homeInfoParams]
     Title = "Welcome! 👋"
     Content = "This is an archive of my online notes on Computer Vision, Computer Graphics and Deep Learning!"
-
-  # Add a few social icons if you like, otherwise remove this section
-  # [[params.socialIcons]]
-  #   name = "github"
-  #   url = "https://github.com/USharma002"
-
+  
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.3
+    minMatchCharLength = 2
+    keys = ["title", "permalink", "summary", "content"]
+  
 [outputs]
   home = ["HTML", "RSS", "JSON"] # JSON is good for search functionality in PaperMod
 
