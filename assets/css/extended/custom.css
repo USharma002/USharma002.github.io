@@ -19,3 +19,7 @@ iframe {
 .first-entry{
     min-height: 120px !important;
 }
+
+.main{
+    max-width: calc(var(--main-width) + var(--gap) * 5);
+}
