@@ -1,5 +1,5 @@
 baseURL = "https://example.com/" # Replace with your actual base URL
-title = "My PaperMod Site"
+title = "Neural Notes"
 theme = ["PaperMod"]
 
 enableRobotsTXT = true
@@ -21,13 +21,9 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
       url = "/posts/" # Assuming you have a 'posts' section
       weight = 5
     [[languages.en.menu.main]]
-      name = "About"
-      url = "/about/" # Create an 'about.md' in your content folder
-      weight = 10
-    # [[languages.en.menu.main]]
-    #   name = "Tags"
-    #   url = "/tags/"
-    #   weight = 15
+      name = "Tags"
+      url = "/tags/"
+      weight = 15
 
 [params]
   defaultTheme = "auto" # Options: "light", "dark", "auto"
@@ -39,15 +35,12 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
 
   [params.homeInfoParams]
     Title = "Welcome! 👋"
-    Content = "This is a minimal PaperMod site. Start exploring!"
+    Content = "This is a minimal test PaperMod site. Will upload about Computer Vision, Computer Graphics and Deep Learning!"
 
   # Add a few social icons if you like, otherwise remove this section
   # [[params.socialIcons]]
   #   name = "github"
-  #   url = "https://github.com/yourusername"
-  # [[params.socialIcons]]
-  #   name = "twitter"
-  #   url = "https://twitter.com/yourusername"
+  #   url = "https://github.com/USharma002"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"] # JSON is good for search functionality in PaperMod

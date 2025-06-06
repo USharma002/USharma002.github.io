@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Install / Update PaperMod | My PaperMod Site</title>
 <meta name="keywords" content="PaperMod, Docs">
 <meta name="description" content="Read aboout Install and Update instructions and sampled configuration templates">
 <meta name="author" content="Aditya Telange">
-<link rel="canonical" href="https://example.com/posts/papermod/papermod-installation/">
+<link rel="canonical" href="http://localhost:1313/posts/papermod/papermod-installation/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.402df69d910c9e59d7975ce917b0827809b79c4e2768bae3d49b5b14f77832bc.css" integrity="sha256-QC32nZEMnlnXl1zpF7CCeAm3nE4naLrj1JtbFPd4Mrw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://example.com/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://example.com/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://example.com/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://example.com/apple-touch-icon.png">
-<link rel="mask-icon" href="https://example.com/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://example.com/posts/papermod/papermod-installation/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/papermod/papermod-installation/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,84 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://example.com/posts/papermod/papermod-installation/">
-  <meta property="og:site_name" content="My PaperMod Site">
-  <meta property="og:title" content="Install / Update PaperMod">
-  <meta property="og:description" content="Read aboout Install and Update instructions and sampled configuration templates">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2021-01-20T00:00:00+00:00">
-    <meta property="article:modified_time" content="2021-01-20T00:00:00+00:00">
-    <meta property="article:tag" content="PaperMod">
-    <meta property="article:tag" content="Docs">
-    <meta property="og:image" content="https://example.com/images/papermod-cover.png">
-  <meta name="fediverse:creator" content="@adityatelange@mastodon.social">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://example.com/images/papermod-cover.png">
-<meta name="twitter:title" content="Install / Update PaperMod">
-<meta name="twitter:description" content="Read aboout Install and Update instructions and sampled configuration templates">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://example.com/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "PaperMod",
-      "item": "https://example.com/posts/papermod/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  3 ,
-      "name": "Install / Update PaperMod",
-      "item": "https://example.com/posts/papermod/papermod-installation/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Install / Update PaperMod",
-  "name": "Install \/ Update PaperMod",
-  "description": "Read aboout Install and Update instructions and sampled configuration templates",
-  "keywords": [
-    "PaperMod", "Docs"
-  ],
-  "articleBody": " We’ll be using yml/yaml format for all examples down below, it is recommend to use yaml over toml as it is easier to read. You can find any YML to TOML converters if needed. Getting Started 🚀 Follow Hugo Docs’s - Quick Start guide to install . (Make sure you install Hugo \u003e= v0.112.4)\nCreate a new site\nhugo new site MyFreshWebsite --format yaml # replace MyFreshWebsite with name of your website Note:\nOlder versions of Hugo may not support --format yaml Read more here about Hugo Docs’s - hugo new site command After you have created a new site, follow the below steps to add PaperMod\nInstalling/Updating PaperMod Themes reside in MyFreshWebsite/themes directory. PaperMod will be installed in MyFreshWebsite/themes/PaperMod Expand Method 1 - Git Clone\rINSTALL : Inside the folder of your Hugo site MyFreshWebsite, run:\ngit clone https://github.com/adityatelange/hugo-PaperMod themes/PaperMod --depth=1 You may use --branch v7.0 to end of above command if you want to stick to specific release.\nUPDATE: Inside the folder of your Hugo site MyFreshWebsite, run:\ncd themes/PaperMod git pull Expand Method 2 - Git Submodule (recomended)\rINSTALL : Inside the folder of your Hugo site MyFreshWebsite, run:\ngit submodule add --depth=1 https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod git submodule update --init --recursive # needed when you reclone your repo (submodules may not get cloned automatically) You may use --branch v7.0 to end of above command if you want to stick to specific release. Read more about git submodules here.\nUPDATE: Inside the folder of your Hugo site MyFreshWebsite, run:\ngit submodule update --remote --merge Expand Method 3 - Download an unzip\rDownload PaperMod source as Zip from Github Releases and extract in your themes directory at MyFreshWebsite/themes/PaperMod\nDirect Links:\nMaster Branch (Latest) v7.0 v6.0 v5.0 v4.0 v3.0 v2.0 v1.0 Expand Method 4 - Hugo module\rINSTALL :\nInstall Go programming language in your operating system.\nIntialize your own hugo mod\nhugo mod init YOUR_OWN_GIT_REPOSITORY Add PaperMod in your config.yml file 1 2 3 module: imports: - path: github.com/adityatelange/hugo-PaperMod UPDATE:\nhugo mod get -u Read more : Hugo Docs’s - HUGO MODULES\nFinally set theme as PaperMod in your site config In config.yml add:\n1 theme: [\"PaperMod\"] Next up - Customizing PaperMod to suit your preferences. Your site will be blank after you set up for the very first time. You may go through this website’s source code - PaperMod’s exampleSite’s source Scroll below this page where you will find more specific details about each section. Kindly go through all of the pages below to know how to configure PaperMod. Support 🫶 Star 🌟 PaperMod’s Github repository. Help spread the word about PaperMod by sharing it on social media and recommending it to your friends. 🗣️ You can also sponsor 🏅 on Github Sponsors / Ko-Fi. Videos featuring PaperMod You can go through few videos which are available on YouTube for getting to know the creator’s thoughts as well as the setup process.\n▶️ https://youtube.com/playlist?list=PLeiDFxcsdhUrzkK5Jg9IZyiTsIMvXxKZP\nQuick Links Papermod - Features Papermod - FAQs Papermod - Variables Papermod - Icons ChangeLog Sample config.yml Example Site Structure is present here: exampleSite\nUse appropriately\nbaseURL: \"https://examplesite.com/\" title: ExampleSite paginate: 5 theme: PaperMod enableRobotsTXT: true buildDrafts: false buildFuture: false buildExpired: false googleAnalytics: UA-123-45 minify: disableXML: true minifyOutput: true params: env: production # to enable google analytics, opengraph, twitter-cards and schema. title: ExampleSite description: \"ExampleSite description\" keywords: [Blog, Portfolio, PaperMod] author: Me # author: [\"Me\", \"You\"] # multiple authors images: [\"\"] DateFormat: \"January 2, 2006\" defaultTheme: auto # dark, light disableThemeToggle: false ShowReadingTime: true ShowShareButtons: true ShowPostNavLinks: true ShowBreadCrumbs: true ShowCodeCopyButtons: false ShowWordCount: true ShowRssButtonInSectionTermList: true UseHugoToc: true disableSpecial1stPost: false disableScrollToTop: false comments: false hidemeta: false hideSummary: false showtoc: false tocopen: false assets: # disableHLJS: true # to disable highlight.js # disableFingerprinting: true favicon: \"\" favicon16x16: \"\" favicon32x32: \"\" apple_touch_icon: \"\" safari_pinned_tab: \"\" label: text: \"Home\" icon: /apple-touch-icon.png iconHeight: 35 # profile-mode profileMode: enabled: false # needs to be explicitly set title: ExampleSite subtitle: \"This is subtitle\" imageUrl: \"\" imageWidth: 120 imageHeight: 120 imageTitle: my image buttons: - name: Posts url: posts - name: Tags url: tags # home-info mode homeInfoParams: Title: \"Hi there \\U0001F44B\" Content: Welcome to my blog socialIcons: - name: x url: \"https://x.com/\" - name: stackoverflow url: \"https://stackoverflow.com\" - name: github url: \"https://github.com/\" analytics: google: SiteVerificationTag: \"XYZabc\" bing: SiteVerificationTag: \"XYZabc\" yandex: SiteVerificationTag: \"XYZabc\" cover: hidden: true # hide everywhere but not in structured data hiddenInList: true # hide on list pages and home hiddenInSingle: true # hide on single page editPost: URL: \"https://github.com//content\" Text: \"Suggest Changes\" # edit text appendFilePath: true # to append file path to Edit link # for search # https://fusejs.io/api/options.html fuseOpts: isCaseSensitive: false shouldSort: true location: 0 distance: 1000 threshold: 0.4 minMatchCharLength: 0 limit: 10 # refer: https://www.fusejs.io/api/methods.html#search keys: [\"title\", \"permalink\", \"summary\", \"content\"] menu: main: - identifier: categories name: categories url: /categories/ weight: 10 - identifier: tags name: tags url: /tags/ weight: 20 - identifier: example name: example.org url: https://example.org weight: 30 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma pygmentsUseClasses: true markup: highlight: noClasses: false # anchorLineNos: true # codeFences: true # guessSyntax: true # lineNos: true # style: monokai Sample Page.md --- title: \"My 1st post\" date: 2020-09-15T11:30:03+00:00 # weight: 1 # aliases: [\"/first\"] tags: [\"first\"] author: \"Me\" # author: [\"Me\", \"You\"] # multiple authors showToc: true TocOpen: false draft: false hidemeta: false comments: false description: \"Desc Text.\" canonicalURL: \"https://canonical.url/to/page\" disableHLJS: true # to disable highlightjs disableShare: false disableHLJS: false hideSummary: false searchHidden: true ShowReadingTime: true ShowBreadCrumbs: true ShowPostNavLinks: true ShowWordCount: true ShowRssButtonInSectionTermList: true UseHugoToc: true cover: image: \"\" # image path/url alt: \"\" # alt text caption: \"\" # display caption under cover relative: false # when using page bundles set this to true hidden: true # only hide on current single page editPost: URL: \"https://github.com//content\" Text: \"Suggest Changes\" # edit text appendFilePath: true # to append file path to Edit link --- You can use it by creating archetypes/post.md\nhugo new --kind post ",
-  "wordCount" : "1000",
-  "inLanguage": "en",
-  "image":"https://example.com/images/papermod-cover.png","datePublished": "2021-01-20T00:00:00Z",
-  "dateModified": "2021-01-20T00:00:00Z",
-  "author":[{
-    "@type": "Person",
-    "name": "Aditya Telange"
-  }],
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://example.com/posts/papermod/papermod-installation/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "My PaperMod Site",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://example.com/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -150,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://example.com/" accesskey="h" title="My PaperMod Site (Alt + H)">My PaperMod Site</a>
+            <a href="http://localhost:1313/" accesskey="h" title="My PaperMod Site (Alt + H)">My PaperMod Site</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -176,17 +99,17 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://example.com/" title="Home">
+                <a href="http://localhost:1313/" title="Home">
                     <span>Home</span>
                 </a>
             </li>
             <li>
-                <a href="https://example.com/posts/" title="Posts">
+                <a href="http://localhost:1313/posts/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="https://example.com/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -197,7 +120,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://example.com/">Home</a>&nbsp;»&nbsp;<a href="https://example.com/posts/">Posts</a>&nbsp;»&nbsp;<a href="https://example.com/posts/papermod/">PaperMod</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/papermod/">PaperMod</a></div>
     <h1 class="post-title entry-hint-parent">
       Install / Update PaperMod
     </h1>
@@ -206,12 +129,7 @@
 </div>
   </header> 
 <figure class="entry-cover">
-            <img loading="eager"
-                srcset='https://example.com/images/papermod-cover_hu_5d372cec5739afc6.png 360w,https://example.com/images/papermod-cover_hu_7635064d3cd496e2.png 480w,https://example.com/images/papermod-cover_hu_f70eec620c0c4a5f.png 720w,https://example.com/images/papermod-cover_hu_60d477562c9e7700.png 1080w,https://example.com/images/papermod-cover.png 1200w'
-                src="https://example.com/images/papermod-cover.png"
-                sizes="(min-width: 768px) 720px, 100vw"
-                width="1200" height="628"
-                alt="">
+            <img loading="eager" src="http://localhost:1313/images/papermod-cover.png" alt="">
         
 </figure>
   <div class="post-content"><blockquote>
@@ -573,11 +491,11 @@ Read more about git submodules <a href="https://www.atlassian.com/git/tutorials/
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://example.com/tags/papermod/">PaperMod</a></li>
-      <li><a href="https://example.com/tags/docs/">Docs</a></li>
+      <li><a href="http://localhost:1313/tags/papermod/">PaperMod</a></li>
+      <li><a href="http://localhost:1313/tags/docs/">Docs</a></li>
     </ul>
 <nav class="paginav">
-  <a class="next" href="https://example.com/posts/papermod/papermod-features/">
+  <a class="next" href="http://localhost:1313/posts/papermod/papermod-features/">
     <span class="title">Next »</span>
     <br>
     <span>Features / Mods</span>
@@ -589,7 +507,7 @@ Read more about git submodules <a href="https://www.atlassian.com/git/tutorials/
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://example.com/">My PaperMod Site</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">My PaperMod Site</a></span> · 
 
     <span>
         Powered by

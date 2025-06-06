@@ -1,5 +1,16 @@
-+++
-date = '2025-06-06T20:10:11+05:30'
-draft = true
-title = 'My First Post'
-+++
+---
+author: ["Utkarsh Sharma"]
+title: "First Post"
+date: "2025-06-06"
+description: "First Blog"
+summary: "A testing for the first blog"
+tags: ["temporary"]
+categories: ["temporary"]
+series: ["Blog"]
+ShowToc: true
+TocOpen: true
+---
+
+### This is a test blog
+
+I will delete this and (hopefully) start uploading about what I study: Computer Vision, Computer graphics, ML/DL
