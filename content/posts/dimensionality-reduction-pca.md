@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Dimensionality Reduction using PCA"
-date: "2025-10-30"
+date: "2025-10-29"
 description: "Notes on PCA and high Dimensional PCA"
 summary: "Notes on the minimum reconstruction error interpretation of PCA and high dimensional PCA"
 tags: ["Dimensionality Reduction", "Machine Learning"]
