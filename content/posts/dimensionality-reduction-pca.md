@@ -377,7 +377,7 @@ class PCA:
         X_centered = X - self.mean
         
         # Compute covariance matrix
-        cov = (X_centered.T @ X_centered) / X_centered.shape
+        cov = (X_centered.T @ X_centered) / X_centered.shape[0]
         
         # SVD decomposition
         E, S, _ = np.linalg.svd(cov)
@@ -466,5 +466,5 @@ Notice how the principal component captures the direction of maximum variance.
 ---
 
 **Bottom line:**  
-PCA gives you the best linear low-dimensional representation of your data in the least-squares sense —  
+PCA gives you the best linear low-dimensional representation of your data in the least-squares sense -
 making it a fundamental tool for dimensionality reduction, visualization, and noise filtering in machine learning pipelines.

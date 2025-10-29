@@ -479,7 +479,7 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 </span></span><span class="line"><span class="cl">        <span class="n">X_centered</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
 </span></span><span class="line"><span class="cl">        
 </span></span><span class="line"><span class="cl">        <span class="c1"># Compute covariance matrix</span>
-</span></span><span class="line"><span class="cl">        <span class="n">cov</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_centered</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X_centered</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_centered</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cov</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_centered</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X_centered</span><span class="p">)</span> <span class="o">/</span> <span class="n">X_centered</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl">        
 </span></span><span class="line"><span class="cl">        <span class="c1"># SVD decomposition</span>
 </span></span><span class="line"><span class="cl">        <span class="n">E</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
@@ -549,7 +549,7 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 <p>Notice how the principal component captures the direction of maximum variance.</p>
 <hr>
 <p><strong>Bottom line:</strong><br>
-PCA gives you the best linear low-dimensional representation of your data in the least-squares sense —<br>
+PCA gives you the best linear low-dimensional representation of your data in the least-squares sense -
 making it a fundamental tool for dimensionality reduction, visualization, and noise filtering in machine learning pipelines.</p>
 
 
