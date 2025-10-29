@@ -360,6 +360,111 @@ where $U$ contains the **top-$K$ eigenvectors** of the covariance matrix $S$, or
 
 ---
 
+### Implementation
+
+Here's a minimal PCA implementation from scratch:
+
+```python
+import numpy as np
+
+class PCA:
+    def __init__(self, n_components):
+        self.K = n_components
+    
+    def fit(self, X):
+        # Center the data
+        self.mean = X.mean(0)
+        X_centered = X - self.mean
+        
+        # Compute covariance matrix
+        cov = (X_centered.T @ X_centered) / X_centered.shape
+        
+        # SVD decomposition
+        E, S, _ = np.linalg.svd(cov)
+        self.singular_values = S
+        
+        # Select top-K eigenvectors
+        self.U = E[:, :self.K]
+        
+        # Project data
+        alpha = X_centered @ self.U
+        return alpha
+    
+    def reconstruct(self, alpha):
+        # Reconstruct from reduced representation
+        X_hat = alpha @ self.U.T + self.mean
+        return X_hat
+```
+
+**Usage:**
+
+```python
+# Generate synthetic data
+from sklearn.datasets import make_classification
+
+X, y = make_classification(
+    n_samples=50, n_features=2, n_redundant=0,
+    n_informative=2, random_state=42, n_clusters_per_class=1
+)
+
+# Apply PCA
+pca = PCA(n_components=1)
+alpha = pca.fit(X)
+X_reconstructed = pca.reconstruct(alpha)
+
+# Check variance explained
+explained_ratio = pca.singular_values[:1].sum() / pca.singular_values.sum()
+print(f"Variance explained: {explained_ratio:.2%}")
+# Output: Variance explained: 77.00%
+```
+
+### Visualizing PCA
+
+Let's see how PCA works on above dataset:
+
+```python
+plt.scatter(X[:, 0], X[:, 1], c=y, edgecolor="k", cmap="coolwarm", s=40, linewidth=0.8)
+plt.savefig("pca_scatter_original.png", dpi=300)
+```
+
+![Original Data](../../images/pca/pca_scatter_original.png)
+*Original 2D data with two classes*
+
+After projecting onto the first principal component:
+```python
+plt.figure(figsize=(6, 6))
+plt.scatter(
+    X[:, 0], X[:, 1],
+    # c=y, # to visualize the classes
+    # cmap="coolwarm",
+    edgecolor="k", s=40, linewidth=0.8,
+    label="Original Data (X)"
+)
+plt.scatter(
+    X_hat[:, 0], X_hat[:, 1],
+    # c=y,   # to visualize the classes
+    # cmap="magma",
+    edgecolor="black", s=60, linewidth=1.5,
+    label="Reconstruction (X̂)"
+)
+plt.axline(pca.mean, pca.mean + pca.U.T[0], color="black", lw=2, label="Principal Axis")
+
+plt.legend()
+plt.title("PCA Reconstruction vs Original Data")
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.axis("equal")
+plt.savefig("pca_projection.png", dpi=300)
+
+```
+
+![PCA Projection](../../images/pca/pca_projection.png)
+*Data projected onto the first principal component (shown in black)*
+
+Notice how the principal component captures the direction of maximum variance.
+
+---
+
 **Bottom line:**  
 PCA gives you the best linear low-dimensional representation of your data in the least-squares sense —  
 making it a fundamental tool for dimensionality reduction, visualization, and noise filtering in machine learning pipelines.
