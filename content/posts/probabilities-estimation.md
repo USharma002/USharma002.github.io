@@ -137,7 +137,7 @@ $$
 \end{aligned}
 $$
 Some observation and properties:
-- THE MAP estimate is identical to MLE with extra $-\log p(\theta)$ when minimizing NLL.
+- THE MAP estimate is identical to MLE with extra $-\log p(\theta)$ when minimizing NLL. This term is independent of the data and penalizes if the parameters, θ deviate too much from what we believe is reasonable (as a regularizer)
 - MAP is a great estimator if an accurate prior beleif is available (and mathematically tractable).
 - If $n$ is small, MAP can be very wrong if prior beleif if wrong.
 
