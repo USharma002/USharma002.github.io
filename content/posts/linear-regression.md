@@ -61,19 +61,17 @@ We can use gradient descent to optimize but for this we have a closed form solut
 $$
 \begin{aligned}
 \theta_{\mathrm{ML}}
-&= \arg\max_{\theta} \; p(\mathcal{Y}\mid\mathcal{X},\theta) \\[4pt]
-&= \arg\max_{\theta} \; \prod_{i=1}^N p(y_i\mid x_i,\theta) 
-\qquad\text{(independent examples)}\\[6pt]
-&= \arg\max_{\theta} \; \sum_{i=1}^N \log p(y_i\mid x_i,\theta)
-\qquad\text{(log is monotonic)}\\[6pt]
-&= \arg\max_{\theta} \; \sum_{i=1}^N \log \mathcal{N}(y_i \mid x_i^\top\theta,\sigma^2)\\[6pt]
-&= \arg\max_{\theta} \; \sum_{i=1}^N \left[\log\!\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)
-+ \log\!\left(e^{-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2}}\right)\right] \\[6pt]
-&= \arg\max_{\theta} \; \sum_{i=1}^N \left[-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2} \right]
-\qquad\text{(constant term dropped)}\\[6pt]
-&= \arg\min_{\theta} \; \frac{1}{2\sigma^2}\sum_{i=1}^N (x_i^\top\theta - y_i)^2
+&= \arg\max_{\theta} p(\mathcal{Y}\mid\mathcal{X},\theta) \\[6pt]
+&= \arg\max_{\theta} \prod_{i=1}^N p(y_i\mid x_i,\theta) \qquad \text{(independent examples)} \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \log p(y_i\mid x_i,\theta) \qquad \text{(log is monotonic)} \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \log \mathcal{N}(y_i \mid x_i^\top\theta, \sigma^2) \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \left[ \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left(e^{-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2}}\right) \right] \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \left[ -\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2} \right] \qquad \text{(constant term dropped)} \\[6pt]
+&= \arg\min_{\theta} \frac{1}{2\sigma^2}\sum_{i=1}^N (x_i^\top\theta - y_i)^2
 \end{aligned}
 $$
+
+
 
 
 We can obtain a loss function as
@@ -125,8 +123,8 @@ $$
 \end{aligned}
 $$
 
-Assume Gaussian likelihood \(y_i \mid x_i,\theta \sim \mathcal{N}(x_i^\top \theta,\;\sigma^2)\)  
-and Gaussian prior \(\theta \sim \mathcal{N}(0,\;\tau^2 I)\). Then
+Assume Gaussian likelihood $y_i \mid x_i,\theta \sim \mathcal{N}(x_i^\top \theta,\;\sigma^2)$ 
+and Gaussian prior $\theta \sim \mathcal{N}(0,\;\tau^2 I)$. Then
 
 $$
 \begin{aligned}
@@ -164,18 +162,17 @@ Compute the gradient with respect to $ \theta $, we get:
 $$
 \begin{aligned}
 \frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} 
-&= \frac{1}{2\sigma^2}\frac{d}{d\theta}\!\left(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta\right) 
-+ \frac{1}{2\tau^2}\frac{d}{d\theta}(\theta^\top\theta) \\[6pt]
+&= \frac{1}{2\sigma^2}\frac{d}{d\theta}\left(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta\right) + \frac{1}{2\tau^2}\frac{d}{d\theta}(\theta^\top\theta) \\[6pt]
 &= \frac{1}{2\sigma^2}(-2X^\top y + 2X^\top X\theta) + \frac{1}{2\tau^2}(2\theta) \\[6pt]
 &= \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta
 \end{aligned}
 $$
 
-Set the gradient to zero:
 
+Set the gradient to zero:
 $$
 \begin{aligned}
-\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} &= 0 \\[4pt]
+\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} &= 0 \\[6pt]
 \Rightarrow\quad \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta &= 0 \\[6pt]
 \Rightarrow\quad X^\top X\theta - X^\top y + \frac{\sigma^2}{\tau^2}\theta &= 0 \\[6pt]
 \Rightarrow\quad (X^\top X + \tfrac{\sigma^2}{\tau^2} I)\theta = X^\top y

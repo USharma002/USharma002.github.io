@@ -209,25 +209,18 @@ $$p(\mathcal{Y}\mid\mathcal{X}, \theta) = p(y_1,\dots, y_n|x_1, \dots, x_n)$$$$p
 <p>To find the desired parameterss $\theta_{MLE}$ we can use maximum likelihood estimate. Intuitively, this means maximizing the predictive distribution of training data given the model parameters. We obtain the maximum likelihood parameters as:</p>
 $$\theta_{ML} = \arg\max_\theta p(\mathcal{Y}\mid\mathcal{X}, \theta)$$<p>It is easier to deal with the Negative Log Likelihood so we get the following optimization problem.</p>
 $$\theta_{ML} = \arg\min_\theta -\log p(\mathcal{Y}\mid\mathcal{X}, \theta)$$<p>We can use gradient descent to optimize but for this we have a closed form solution.</p>
-<p>$$
+$$
 \begin{aligned}
 \theta_{\mathrm{ML}}
-&amp;= \arg\max_{\theta} ; p(\mathcal{Y}\mid\mathcal{X},\theta) \[4pt]
-&amp;= \arg\max_{\theta} ; \prod_{i=1}^N p(y_i\mid x_i,\theta)
-\qquad\text{(independent examples)}\[6pt]
-&amp;= \arg\max_{\theta} ; \sum_{i=1}^N \log p(y_i\mid x_i,\theta)
-\qquad\text{(log is monotonic)}\[6pt]
-&amp;= \arg\max_{\theta} ; \sum_{i=1}^N \log \mathcal{N}(y_i \mid x_i^\top\theta,\sigma^2)\[6pt]
-&amp;= \arg\max_{\theta} ; \sum_{i=1}^N \left[\log!\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right)</p>
-<ul>
-<li>\log!\left(e^{-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2}}\right)\right] \[6pt]
-&amp;= \arg\max_{\theta} ; \sum_{i=1}^N \left[-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2} \right]
-\qquad\text{(constant term dropped)}\[6pt]
-&amp;= \arg\min_{\theta} ; \frac{1}{2\sigma^2}\sum_{i=1}^N (x_i^\top\theta - y_i)^2
+&= \arg\max_{\theta} p(\mathcal{Y}\mid\mathcal{X},\theta) \\[6pt]
+&= \arg\max_{\theta} \prod_{i=1}^N p(y_i\mid x_i,\theta) \qquad \text{(independent examples)} \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \log p(y_i\mid x_i,\theta) \qquad \text{(log is monotonic)} \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \log \mathcal{N}(y_i \mid x_i^\top\theta, \sigma^2) \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \left[ \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left(e^{-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2}}\right) \right] \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \left[ -\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2} \right] \qquad \text{(constant term dropped)} \\[6pt]
+&= \arg\min_{\theta} \frac{1}{2\sigma^2}\sum_{i=1}^N (x_i^\top\theta - y_i)^2
 \end{aligned}
-$$</li>
-</ul>
-<p>We can obtain a loss function as
+$$<p>We can obtain a loss function as
 </p>
 $$
 \mathcal{L}(\theta) = \tfrac{1}{2\sigma^2}\sum_{i=1}^{N}(x_i^\top\theta - y_i)^2
@@ -263,8 +256,8 @@ $$
 &= \arg\max_\theta \; \sum_{i=1}^N \log P(y_i \mid x_i, \theta) + \log P(\theta)
 \qquad\text{(take log)}.
 \end{aligned}
-$$<p>Assume Gaussian likelihood \(y_i \mid x_i,\theta \sim \mathcal{N}(x_i^\top \theta,\;\sigma^2)\)<br>
-and Gaussian prior \(\theta \sim \mathcal{N}(0,\;\tau^2 I)\). Then</p>
+$$<p>Assume Gaussian likelihood $y_i \mid x_i,\theta \sim \mathcal{N}(x_i^\top \theta,;\sigma^2)$
+and Gaussian prior $\theta \sim \mathcal{N}(0,;\tau^2 I)$. Then</p>
 $$
 \begin{aligned}
 \theta_{\text{MAP}}
@@ -289,21 +282,18 @@ $$
 &= \frac{1}{2\sigma^2}(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta) + \frac{1}{2\tau^2}\theta^\top\theta
 \end{aligned}
 $$<p>Compute the gradient with respect to $ \theta $, we get:</p>
-<p>$$
-\begin{aligned}
-\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta}
-&amp;= \frac{1}{2\sigma^2}\frac{d}{d\theta}!\left(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta\right)</p>
-<ul>
-<li>\frac{1}{2\tau^2}\frac{d}{d\theta}(\theta^\top\theta) \[6pt]
-&amp;= \frac{1}{2\sigma^2}(-2X^\top y + 2X^\top X\theta) + \frac{1}{2\tau^2}(2\theta) \[6pt]
-&amp;= \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta
-\end{aligned}
-$$</li>
-</ul>
-<p>Set the gradient to zero:</p>
 $$
 \begin{aligned}
-\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} &= 0 \\[4pt]
+\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} 
+&= \frac{1}{2\sigma^2}\frac{d}{d\theta}\left(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta\right) + \frac{1}{2\tau^2}\frac{d}{d\theta}(\theta^\top\theta) \\[6pt]
+&= \frac{1}{2\sigma^2}(-2X^\top y + 2X^\top X\theta) + \frac{1}{2\tau^2}(2\theta) \\[6pt]
+&= \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta
+\end{aligned}
+$$<p>Set the gradient to zero:
+</p>
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} &= 0 \\[6pt]
 \Rightarrow\quad \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta &= 0 \\[6pt]
 \Rightarrow\quad X^\top X\theta - X^\top y + \frac{\sigma^2}{\tau^2}\theta &= 0 \\[6pt]
 \Rightarrow\quad (X^\top X + \tfrac{\sigma^2}{\tau^2} I)\theta = X^\top y
