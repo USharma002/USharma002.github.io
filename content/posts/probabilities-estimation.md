@@ -203,3 +203,4 @@ A quantity that is  easier to compute is the posterios distribution on the laten
 
 $$p(z|\mathcal{D}, \theta) = \frac{p(\mathcal{D}|z, \theta)p(z)}{p(\mathcal{D}|\theta)}$$
 
+We've now set up the framework for latent-variable models. While the marginalization in latent-variable models is generally intractable, the Expectation-Maximization (EM) algorithm provides a principled way to perform MLE in this setting. We'll explore EM in detail with Gaussian Mixture Models in a future post

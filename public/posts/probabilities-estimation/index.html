@@ -160,7 +160,7 @@ window.MathJax = {
     <div class="post-description">
       Maximum Likelihood, MAP and Bayesian Inference for probability estimation
     </div>
-    <div class="post-meta"><span title='2025-10-30 00:00:00 +0000 UTC'>October 30, 2025</span>&nbsp;·&nbsp;7 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-10-30 00:00:00 +0000 UTC'>October 30, 2025</span>&nbsp;·&nbsp;8 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -298,7 +298,8 @@ $$p(\mathcal{D}|\theta) = \int p(\mathcal{D}|z, \theta)p(z)dz$$<p>Note that the 
 <p>One challenge we have in this latent-variable model is that likelihood $p(\mathcal{D}|\theta)$ requires marginalization of the latent variables. Except when we choose a conjugate prior $p(z)$, the marginalization is not analytically tractable and we need to resort to approximations.</p>
 <p>Similar to parameter posterios, we can compute a posterior on the latent variables according to</p>
 $$p(z|\mathcal{D}) = \frac{p(\mathcal{D}|z)p(z)}{p(\mathcal{D})},  p(\mathcal{D}|z) = \int p(\mathcal{D}|z, \theta)p(\theta)d\theta$$<p>A quantity that is  easier to compute is the posterios distribution on the latent variables, but conditioned on the model parameters, i.e.,</p>
-$$p(z|\mathcal{D}, \theta) = \frac{p(\mathcal{D}|z, \theta)p(z)}{p(\mathcal{D}|\theta)}$$
+$$p(z|\mathcal{D}, \theta) = \frac{p(\mathcal{D}|z, \theta)p(z)}{p(\mathcal{D}|\theta)}$$<p>We&rsquo;ve now set up the framework for latent-variable models. While the marginalization in latent-variable models is generally intractable, the Expectation-Maximization (EM) algorithm provides a principled way to perform MLE in this setting. We&rsquo;ll explore EM in detail with Gaussian Mixture Models in a future post</p>
+
 
   </div>
 
