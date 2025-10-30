@@ -65,7 +65,7 @@ $$\frac{n_H}{\theta} = \frac{n_T}{1-\theta}\Longrightarrow n_H - n_H\theta = n_T
 
 We can check that $\theta\in[0,1]$
 
-### Observations
+**Observations**
 - If $n$ is large and model/distribution is correct (i.e., hypotheses class $\mathcal{H}$ includes the true model), then MLE finds the **true** parameters.
 - MLE can overfit the data if $n$ is small but works well when $n$ is large (Asymptotic consistency).
 - If you do not have the correct model (and $n$ is small) then MLE can be terribly wrong!

@@ -12,7 +12,7 @@ TocOpen: true
 math: true
 ---
 
-### Principal Component Analysis
+## Principal Component Analysis
 
 The following are my notes on the PCA based on various resources. I will update the resouces later
 
@@ -203,7 +203,7 @@ So all three views — **maximum variance**, **minimum reconstruction error**, a
 
 ---
 
-### PCA for High-Dimensional Data
+## PCA for High-Dimensional Data
 
 When the data are **very high-dimensional** such that $D \gg N$ (common in computer vision, genomics),  
 computing the covariance matrix
@@ -360,7 +360,7 @@ where $U$ contains the **top-$K$ eigenvectors** of the covariance matrix $S$, or
 
 ---
 
-### Implementation
+## Implementation
 
 Here's a minimal PCA implementation from scratch:
 
