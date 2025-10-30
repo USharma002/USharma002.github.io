@@ -74,6 +74,14 @@ window.MathJax = {
 
 <script id="MathJax-script" async
   src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+
+window.MathJax = {
+  tex: {
+    macros: {
+      argmax: ["\\operatorname*{arg\\,max}", 0]
+    }
+  }
+};
 </script>
 
 </head>
@@ -180,6 +188,13 @@ window.MathJax = {
     <ul class="post-tags">
       <li><a href="http://localhost:1313/tags/temporary/">Temporary</a></li>
     </ul>
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/posts/dimensionality-reduction-pca/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Dimensionality Reduction using PCA</span>
+  </a>
+</nav>
 
   </footer>
 </article>
