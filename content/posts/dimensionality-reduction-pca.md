@@ -21,7 +21,7 @@ Imagine you have 10,000-dimensional vectors (like flattened MNIST images which w
 Can we compress these to, say, 50 dimensions while retaining 95% of the variation?  
 This is exactly what **PCA** does — it finds the most *"informative"* directions in the data.
 
-Suppose we have data points $x_1, x_2, ..., x_N \in \mathbb{R}^D$ and we want to reduce their dimension to $K$ such that $K < D$ while still preserving most of the "information" in the data.
+Suppose we have data points $x_1, x_2, \dots , x_N \in \mathbb{R}^D$ and we want to reduce their dimension to $K$ such that $K < D$ while still preserving most of the "information" in the data.
 
 **Note**: PCA assumes linear relationships. For non-linear manifolds like Swiss rolls, consider kernel PCA or autoencoders
 
@@ -38,7 +38,7 @@ $$
 \min_{\alpha_i, U} \sum_{i=1}^{N} \|x_i - \hat{x}_i\|^2
 $$
 
-where $\hat{x}_i = U \alpha_i$ and $U = [u_1, u_2, ..., u_K] \in \mathbb{R}^{D \times K}$  
+where $\hat{x}_i = U \alpha_i$ and $U = [u_1, u_2, \dots , u_K] \in \mathbb{R}^{D \times K}$  
 is the basis (each $u_j$ is a basis vector).
 
 So our objective becomes:
@@ -161,7 +161,7 @@ $$
 S = V \Lambda V^T
 $$
 
-where $\Lambda = \text{diag}(\lambda_1, \lambda_2, ..., \lambda_D)$ and $\lambda_1 \ge \lambda_2 \ge ... \ge \lambda_D$.
+where $\Lambda = \text{diag}(\lambda_1, \lambda_2, \dots , \lambda_D)$ and $\lambda_1 \ge \lambda_2 \ge \dots  \ge \lambda_D$.
 
 Substituting into the objective:
 
@@ -176,7 +176,7 @@ To maximize the above expression, we assign all weight to the largest eigenvalue
 i.e., choose $U$ as the top-$K$ eigenvectors of $S$:
 
 $$
-\boxed{U^* = [v_1, v_2, ..., v_K]}
+\boxed{U^* = [v_1, v_2, \dots , v_K]}
 $$
 
 **Why eigenvalues matter:**  
@@ -327,7 +327,7 @@ where:
 #### Choosing $K$
 
 **Scree plot:**  
-Plot eigenvalues $\lambda_1, \lambda_2, ..., \lambda_D$ in descending order.  
+Plot eigenvalues $\lambda_1, \lambda_2, \dots , \lambda_D$ in descending order.  
 Look for an "elbow" where the curve flattens — this suggests a good cutoff.
 
 **Cumulative variance:**  
@@ -360,7 +360,7 @@ where $U$ contains the **top-$K$ eigenvectors** of the covariance matrix $S$, or
 
 ---
 
-## Implementation
+##Implementation
 
 Here's a minimal PCA implementation from scratch:
 
