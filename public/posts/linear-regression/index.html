@@ -160,7 +160,7 @@ window.MathJax = {
     <div class="post-description">
       Linear Regression using MLE and MAP
     </div>
-    <div class="post-meta"><span title='2025-10-30 00:00:00 +0000 UTC'>October 30, 2025</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-10-30 00:00:00 +0000 UTC'>October 30, 2025</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -180,10 +180,13 @@ window.MathJax = {
                 <li>
                     <a href="#estimating-with-mle" aria-label="Estimating with MLE">Estimating with MLE</a></li>
                 <li>
-                    <a href="#estimating-with-map" aria-label="Estimating with MAP">Estimating with MAP</a>
+                    <a href="#estimating-with-map" aria-label="Estimating with MAP">Estimating with MAP</a></li></ul>
                 </li>
-            </ul>
-            </li>
+                <li>
+                    <a href="#summary" aria-label="Summary">Summary</a></li>
+                <li>
+                    <a href="#references" aria-label="References">References</a>
+                </li>
             </ul>
         </div>
     </details>
@@ -201,7 +204,7 @@ $$y = f(x) + \epsilon$$<p>where $\epsilon\sim \mathcal{N}(0, \sigma^2)$ is i.i.d
 $$p(y|x) = \mathcal{N}(y \mid f(x), \sigma^2)$$<p>In <strong>Linear Regression</strong>, we consider the special case that the model parameters $\theta$ appear linearly in our model (Note that it is &ldquo;linear in the parameters&rdquo;).</p>
 $$p(y \mid x) = \mathcal{N}\big(y \mid f(x), \sigma^2\big)$$<p>
 </p>
-$$\Longleftrightarrow \quad y = x^\top \theta + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2)$$<p>where $\theta\in\mathbb{R}^D$ are the parameters we seek. The class of function described by this function are straight lines that pass through the origin.</p>
+$$\Longleftrightarrow \quad y = x^\top \theta + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2)$$<p>where $\theta\in\mathbb{R}^D$ are the parameters we seek. The class of function described by this function are straight lines that pass through the origin. We can add a bias $b$ to the above equation to define an affine transformation instead of linear one to fix the issue or simply augment $x^0 = 1$ to features and $\theta_0=0$ in parameters to simulate that using above.</p>
 <h3 id="parameters-estimation">Parameters Estimation<a hidden class="anchor" aria-hidden="true" href="#parameters-estimation">#</a></h3>
 <p>Assuming we are given a <em>training set</em> $\mathcal{D} = \lbrace (x_1, y_1), &hellip;, (x_N, y_N) \rbrace$ consisting of $N$ inputs $x_n \in \mathbb{R}^D$ and corresponding observations/targets $y_n\in \mathbb{R}, n=1, &hellip;,N$. Note that $y_i$ and $y_j$ are conditionally independent given their respective inputs so the likelihood can we written as:</p>
 $$p(\mathcal{Y}\mid\mathcal{X}, \theta) = p(y_1,\dots, y_n|x_1, \dots, x_n)$$$$p(\mathcal{Y}\mid\mathcal{X}, \theta) = \prod_{n=1}^{N}p(y_n|x_n, \theta) = \prod_{n=1}^{N}\mathcal{N}(y_n\mid x_n^\top \theta, \sigma^2)$$<p>where we defined $\mathcal{X} = \lbrace x_1, \dots, x_N \rbrace$ and $\mathcal{Y} = \lbrace y_1, \dots, y_N \rbrace$ respectively. We can then use the parameter estimation to get an optimal estimate for parameters, $\theta^*$, for the linear regression model.</p>
@@ -313,7 +316,35 @@ $$$$
 (\tfrac{X^\top X}{N} + \lambda I)\theta = \tfrac{X^\top y}{N}
 \quad\Rightarrow\quad
 \boxed{\theta_{\text{MAP}} = (X^\top X + \lambda I)^{-1}X^\top y}
-$$
+$$<hr>
+<hr>
+<h2 id="summary">Summary<a hidden class="anchor" aria-hidden="true" href="#summary">#</a></h2>
+<ul>
+<li>
+<p><strong>Ordinary Least Squares (OLS)</strong></p>
+<ul>
+<li>Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2$</li>
+<li>Regularization: None</li>
+<li>Closed form: $\displaystyle w = (X X^\top)^{-1} X y^\top$</li>
+</ul>
+</li>
+<li>
+<p><strong>Ridge Regression</strong></p>
+<ul>
+<li>Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2 + \lambda|w|_2^2$</li>
+<li>Regularization: $L_2$</li>
+<li>Closed form: $\displaystyle w = (X X^\top + \lambda I)^{-1} X y^\top$</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ol>
+<li>Deisenroth, M. P., Faisal, A. A., &amp; Ong, C. S. (2020). <em>Mathematics for Machine Learning</em>. Cambridge University Press.</li>
+<li>Bishop, C. M. (2006). <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
+<li>Cornell University CS4780/5780: <em>Machine Learning for Intelligent Systems</em> Lecture Notes.</li>
+</ol>
+
 
   </div>
 
@@ -327,6 +358,11 @@ $$
     <span class="title">« Prev</span>
     <br>
     <span>Parameter Estimation: From MLE to Full Bayesian Inference</span>
+  </a>
+  <a class="next" href="http://localhost:1313/posts/transformer-model/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Vision Transformer (ViT)</span>
   </a>
 </nav>
 

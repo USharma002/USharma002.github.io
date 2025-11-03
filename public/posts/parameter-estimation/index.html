@@ -182,10 +182,11 @@ window.MathJax = {
                 <li>
                     <a href="#true-bayesian-approach" aria-label="&ldquo;True&rdquo; Bayesian Approach">&ldquo;True&rdquo; Bayesian Approach</a></li>
                 <li>
-                    <a href="#latent-variable-models" aria-label="Latent-Variable Models">Latent-Variable Models</a>
+                    <a href="#latent-variable-models" aria-label="Latent-Variable Models">Latent-Variable Models</a></li></ul>
                 </li>
-            </ul>
-            </li>
+                <li>
+                    <a href="#references" aria-label="References">References</a>
+                </li>
             </ul>
         </div>
     </details>
@@ -299,6 +300,13 @@ $$p(\mathcal{D}\mid \theta) = \int p(\mathcal{D}\mid z, \theta)p(z)dz$$<p>Note t
 <p>Similar to parameter posterios, we can compute a posterior on the latent variables according to</p>
 $$p(z\mid \mathcal{D}) = \frac{p(\mathcal{D}\mid z)p(z)}{p(\mathcal{D})},  p(\mathcal{D}\mid z) = \int p(\mathcal{D}\mid z, \theta)p(\theta)d\theta$$<p>A quantity that is  easier to compute is the posterios distribution on the latent variables, but conditioned on the model parameters, i.e.,</p>
 $$p(z\mid \mathcal{D}, \theta) = \frac{p(\mathcal{D}\mid z, \theta)p(z)}{p(\mathcal{D}\mid \theta)}$$<p>We&rsquo;ve now set up the framework for latent-variable models. While the marginalization in latent-variable models is generally intractable, the Expectation-Maximization (EM) algorithm provides a principled way to perform MLE in this setting. We&rsquo;ll explore EM in detail with Gaussian Mixture Models in a future post</p>
+<hr>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ol>
+<li>Deisenroth, M. P., Faisal, A. A., &amp; Ong, C. S. (2020). <em>Mathematics for Machine Learning</em>. Cambridge University Press.</li>
+<li>Bishop, C. M. (2006). <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
+<li>Cornell University CS4780/5780: <em>Machine Learning for Intelligent Systems</em> Lecture Notes.</li>
+</ol>
 
 
   </div>
