@@ -468,3 +468,10 @@ Notice how the principal component captures the direction of maximum variance.
 **Bottom line:**  
 PCA gives you the best linear low-dimensional representation of your data in the least-squares sense -
 making it a fundamental tool for dimensionality reduction, visualization, and noise filtering in machine learning pipelines.
+
+
+## References
+
+1. Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). *Mathematics for Machine Learning*. Cambridge University Press.
+2. Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.  
+3. Cornell University CS4780/5780: *Machine Learning for Intelligent Systems* Lecture Notes.  

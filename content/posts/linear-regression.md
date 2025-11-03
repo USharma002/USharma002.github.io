@@ -201,3 +201,27 @@ $$
 \quad\Rightarrow\quad
 \boxed{\theta_{\text{MAP}} = (X^\top X + \lambda I)^{-1}X^\top y}
 $$
+
+---
+
+---
+
+## Summary
+
+- **Ordinary Least Squares (OLS)**  
+  - Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2$  
+  - Regularization: None  
+  - Closed form: $\displaystyle w = (X X^\top)^{-1} X y^\top$
+
+- **Ridge Regression**  
+  - Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2 + \lambda\|w\|_2^2$  
+  - Regularization: $L_2$  
+  - Closed form: $\displaystyle w = (X X^\top + \lambda I)^{-1} X y^\top$
+
+---
+
+## References
+
+1. Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). *Mathematics for Machine Learning*. Cambridge University Press.
+2. Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.  
+3. Cornell University CS4780/5780: *Machine Learning for Intelligent Systems* Lecture Notes.  

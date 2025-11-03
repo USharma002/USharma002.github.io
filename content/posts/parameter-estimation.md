@@ -204,3 +204,10 @@ A quantity that is  easier to compute is the posterios distribution on the laten
 $$p(z\mid \mathcal{D}, \theta) = \frac{p(\mathcal{D}\mid z, \theta)p(z)}{p(\mathcal{D}\mid \theta)}$$
 
 We've now set up the framework for latent-variable models. While the marginalization in latent-variable models is generally intractable, the Expectation-Maximization (EM) algorithm provides a principled way to perform MLE in this setting. We'll explore EM in detail with Gaussian Mixture Models in a future post
+
+---
+## References
+
+1. Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). *Mathematics for Machine Learning*. Cambridge University Press.
+2. Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.  
+3. Cornell University CS4780/5780: *Machine Learning for Intelligent Systems* Lecture Notes.  
