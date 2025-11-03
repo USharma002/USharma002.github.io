@@ -34,7 +34,7 @@ In **Linear Regression**, we consider the special case that the model parameters
 $$p(y \mid x) = \mathcal{N}\big(y \mid f(x), \sigma^2\big)$$
 $$\Longleftrightarrow \quad y = x^\top \theta + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2)$$
 
-where $\theta\in\mathbb{R}^D$ are the parameters we seek. The class of function described by this function are straight lines that pass through the origin.
+where $\theta\in\mathbb{R}^D$ are the parameters we seek. The class of function described by this function are straight lines that pass through the origin. We can add a bias $b$ to the above equation to define an affine transformation instead of linear one to fix the issue or simply augment $x^0 = 1$ to features and $\theta_0=0$ in parameters to simulate that using above.
 
 ### Parameters Estimation
 
