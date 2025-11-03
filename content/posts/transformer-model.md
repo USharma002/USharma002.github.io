@@ -331,7 +331,7 @@ class FeedForwardLayer(nn.Module):
         return x
 ```
 
-### Encoder Block
+## Encoder Block
 
 TODO
 
@@ -362,3 +362,7 @@ class Encoder(nn.Module):
         
         return x
 ```
+
+# Vision Transformer (ViT)
+
+TODO
