@@ -197,6 +197,9 @@ $$
 
 If we do not scale down variance back to $\sim\sigma^2$, the softmax over the logits will already saturate to $1$ for one random element and $0$ for all others. The gradients through the softmax will be close to zero so that we can't learn the parameters appropriately. Note that the extra factor of $\sigma^2$, i.e., having $\sigma^4$ instead of $\sigma^2$, is usually not an issue, since we keep the original variance $\sigma^2$ close to $1$ anyways.
 
+
+The visualization of the Scaled Dot Product attention is given below. The **masking step is optional** makes the score $-\infty$ for top right of the attention matrix during training to stop the model from "cheating" by looking at the next token (future).
+
 <p align="center">
   <img src="../../images/transformer/attention_head_output.png"
        alt="Attention Head Output"
