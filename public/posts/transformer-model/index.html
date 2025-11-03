@@ -303,24 +303,24 @@ $$
 -\, q_1 \,-\\
 -\, q_2 \,-\\
 \vdots\\
--\, q_n \,-
+-\, q_T \,-
 \end{bmatrix}
 }_{Q}
 \;
 \underbrace{
 \begin{bmatrix}
 | & | & & |\\
-k_1 & k_2 & \cdots & k_m\\
+k_1 & k_2 & \cdots & k_T\\
 | & | & & |
 \end{bmatrix}^{\!T}
 }_{K^{\top}}
 \;=\;
 \underbrace{
 \begin{bmatrix}
-q_1^{\top}k_1 & q_1^{\top}k_2 & \cdots & q_1^{\top}k_m\\
-q_2^{\top}k_1 & q_2^{\top}k_2 & \cdots & q_2^{\top}k_m\\
+q_1^{\top}k_1 & q_1^{\top}k_2 & \cdots & q_1^{\top}k_T\\
+q_2^{\top}k_1 & q_2^{\top}k_2 & \cdots & q_2^{\top}k_T\\
 \vdots & \vdots & \ddots & \vdots\\
-q_n^{\top}k_1 & q_n^{\top}k_2 & \cdots & q_n^{\top}k_m
+q_T^{\top}k_1 & q_T^{\top}k_2 & \cdots & q_T^{\top}k_T
 \end{bmatrix}
 }_{QK^{\top}}
 $$<p align="center">
@@ -365,9 +365,10 @@ $$<p>If we do not scale down variance back to $\sim\sigma^2$, the softmax over t
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">d_k</span> <span class="o">=</span> <span class="n">d_k</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">d_v</span> <span class="o">=</span> <span class="n">d_k</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">Wq</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">Wk</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">Wv</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">Wv</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_v</span><span class="p">)</span> <span class="c1"># d_v = d_k for now</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="kc">None</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">attention</span> <span class="o">=</span> <span class="kc">None</span>
@@ -375,7 +376,7 @@ $$<p>If we do not scale down variance back to $\sim\sigma^2$, the softmax over t
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="n">Q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wq</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># (B, L, d_k)</span>
 </span></span><span class="line"><span class="cl">        <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wk</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># (B, L, d_k)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># (B, L, d_k)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># (B, L, d_v)</span>
 </span></span><span class="line"><span class="cl">        
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_k</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># (B, L, L)</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">attention</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> 
@@ -392,7 +393,7 @@ $$<p>We refer to this as Multi-Head Attention layer with the learnable parameter
 <ul>
 <li>$W^{Q}_{1\dots h}\in \mathbb{R}^{D \times d_k}$</li>
 <li>$W^{K}_{1\dots h}\in \mathbb{R}^{D \times d_k}$</li>
-<li>$W^{V}_{1\dots h}\in \mathbb{R}^{D \times d_k}$</li>
+<li>$W^{V}_{1\dots h}\in \mathbb{R}^{D \times d_v}$</li>
 </ul>
 <table align="center">
   <tr>

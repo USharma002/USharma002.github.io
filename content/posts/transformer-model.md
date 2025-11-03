@@ -143,24 +143,24 @@ $$
 -\, q_1 \,-\\
 -\, q_2 \,-\\
 \vdots\\
--\, q_n \,-
+-\, q_T \,-
 \end{bmatrix}
 }_{Q}
 \;
 \underbrace{
 \begin{bmatrix}
 | & | & & |\\
-k_1 & k_2 & \cdots & k_m\\
+k_1 & k_2 & \cdots & k_T\\
 | & | & & |
 \end{bmatrix}^{\!T}
 }_{K^{\top}}
 \;=\;
 \underbrace{
 \begin{bmatrix}
-q_1^{\top}k_1 & q_1^{\top}k_2 & \cdots & q_1^{\top}k_m\\
-q_2^{\top}k_1 & q_2^{\top}k_2 & \cdots & q_2^{\top}k_m\\
+q_1^{\top}k_1 & q_1^{\top}k_2 & \cdots & q_1^{\top}k_T\\
+q_2^{\top}k_1 & q_2^{\top}k_2 & \cdots & q_2^{\top}k_T\\
 \vdots & \vdots & \ddots & \vdots\\
-q_n^{\top}k_1 & q_n^{\top}k_2 & \cdots & q_n^{\top}k_m
+q_T^{\top}k_1 & q_T^{\top}k_2 & \cdots & q_T^{\top}k_T
 \end{bmatrix}
 }_{QK^{\top}}
 $$
@@ -222,9 +222,10 @@ class SelfAttentionBlock(nn.Module):
     def __init__(self, d_model, d_k):
         super().__init__()
         self.d_k = d_k
+        self.d_v = d_k
         self.Wq = nn.Linear(d_model, d_k)
         self.Wk = nn.Linear(d_model, d_k)
-        self.Wv = nn.Linear(d_model, d_k)
+        self.Wv = nn.Linear(d_model, d_v) # d_v = d_k for now
 
         self.scores = None
         self.attention = None
@@ -232,7 +233,7 @@ class SelfAttentionBlock(nn.Module):
     def forward(self, x):
         Q = self.Wq(x)  # (B, L, d_k)
         K = self.Wk(x)  # (B, L, d_k)
-        V = self.Wv(x)  # (B, L, d_k)
+        V = self.Wv(x)  # (B, L, d_v)
         
         self.scores = torch.matmul(Q, K.transpose(-2, -1)) / (self.d_k ** 0.5)  # (B, L, L)
         self.attention = torch.softmax(self.scores, dim=-1) 
@@ -257,7 +258,7 @@ $$
 We refer to this as Multi-Head Attention layer with the learnable parameters:
 - $W^{Q}_{1\dots h}\in \mathbb{R}^{D \times d_k}$
 - $W^{K}_{1\dots h}\in \mathbb{R}^{D \times d_k}$
-- $W^{V}_{1\dots h}\in \mathbb{R}^{D \times d_k}$
+- $W^{V}_{1\dots h}\in \mathbb{R}^{D \times d_v}$
 
 
 <table align="center">
