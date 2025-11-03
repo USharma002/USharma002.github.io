@@ -184,7 +184,7 @@ $$
 <p align="center">
   <img src="../../images/transformer/QKV.png"
        alt="Scaled dot-product attention computation flow with softmax and value multiplication"
-       width="65%">
+       width="100%">
   <!-- <br> -->
   <em>Scaled dot-product attention computation flow with softmax and value multiplication</em>
 </p>
@@ -203,7 +203,7 @@ The visualization of the Scaled Dot Product attention is given below. The **mask
 <p align="center">
   <img src="../../images/transformer/attention_head_output.png"
        alt="Attention Head Output"
-       width="90%">
+       width="100%">
   <!-- <br> -->
   <em>Attention Head Output</em>
 </p>
