@@ -287,10 +287,10 @@ One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduce
 
 <p align="center">
   <img src="../../images/transformer/layer_out.png"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
+       alt="Concatenating the output from all heads and then projecting it for FFN input"
        width="65%">
   <!-- <br> -->
-  <em>Final transformer layer output with layer normalization and feed-forward network</em>
+  <em>Concatenating the output from all heads and then projecting it for FFN input</em>
 </p>
 
 <br>

@@ -434,10 +434,10 @@ $$<p>We refer to this as Multi-Head Attention layer with the learnable parameter
 <p>One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it similar to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.</p>
 <p align="center">
   <img src="../../images/transformer/layer_out.png"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
+       alt="Concatenating the output from all heads and then projecting it for FFN input"
        width="65%">
   <!-- <br> -->
-  <em>Final transformer layer output with layer normalization and feed-forward network</em>
+  <em>Concatenating the output from all heads and then projecting it for FFN input</em>
 </p>
 <br>
 <p align="center">
