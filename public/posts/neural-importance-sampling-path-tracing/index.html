@@ -255,9 +255,9 @@ window.MathJax = {
 </div>
 
   <div class="post-content"><h1 id="introduction-to-rendering">Introduction to Rendering<a hidden class="anchor" aria-hidden="true" href="#introduction-to-rendering">#</a></h1>
-<p>THe goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.</p>
+<p>The goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.</p>
 <p>We mostly work with equations developed between the 16th and early 19th century that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as <strong>ray tracing</strong></p>
-<p>We are going to look at the <strong>Path Tracing</strong> algorithm. What are differences between Eay Tracing and Path Tracing? I got the following online:</p>
+<p>We are going to look at the <strong>Path Tracing</strong> algorithm. What are differences between Ray Tracing and Path Tracing? I got the following online:</p>
 <p>In Ray tracing, rays are cast from the camera into the scene. When they hit some geometry, lighting is calculated at that point by tracing additional rays towards light sources.</p>
 <p>In path tracing, rays are cast from light sources containing an amount of light energy. Upon hitting a surface, the surface properties absorb some of the energy and divide the rest in multiple rays, cast back into the scene. Rays that happen to hit the camera are recorded into pixels.</p>
 <p>So, path tracing tries to simulate how light behaves when it bounces around and is captured by a camera. Optical effects like depth of field, caustic, and indirect lighting, for example, don’t require any extra specialized algorithms, unlike raytracing.</p>
@@ -347,7 +347,7 @@ $$<p>Where:</p>
   <em>Path Tracing Overview</em>
 </p>
 <h2 id="monte-carlo-basics">Monte Carlo Basics<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-basics">#</a></h2>
-<p>Because Monte Carlo integration is based on randomization, we&rsquo;ll first dicuss some ideas from probability and statistics.</p>
+<p>Because Monte Carlo integration is based on randomization, we&rsquo;ll first discuss some ideas from probability and statistics.</p>
 <p>First we define a random variable.</p>
 <blockquote>
 <p><strong>Definition - Random Variable</strong></p>
@@ -358,7 +358,7 @@ $$<p>Each outcome $\omega \in \Omega$ is assigned a numerical value $X(\omega)$,
 <p>We also defined a Probability Mass Function. The probabilitues of events $\lbrace X=x_k \rbrace$ are formally shown by the <strong>probability mass function (PMF)</strong> of $X$.</p>
 <blockquote>
 <p><strong>Definition - Probability Mass Function</strong></p>
-<p>Let $X$ be a dscrete Random variable with range $R_X=\lbrace x_1, x_2, \dots \rbrace$ (finite or countably infinite). The function:</p>
+<p>Let $X$ be a discrete Random variable with range $R_X=\lbrace x_1, x_2, \dots \rbrace$ (finite or countably infinite). The function:</p>
 $$
 p_X(x_k) = P(X=x_k), \text{for k = }1, 2, \dots
 $$<p>is called the <em>probability</em> mass function (PMF) of $X$</p></blockquote>
@@ -376,7 +376,7 @@ $$
 P(X \in A) = \sum_{x \in A} p_X(x), \quad \forall A \subseteq \mathcal{R}_X
 \end{aligned}
 }
-$$<p>The PMF is one way to describe the distribution of a discrete random variable and cannot gbe defined over continuous variabels. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of random variable (discrete, continuous, and mixed).</p>
+$$<p>The PMF is one way to describe the distribution of a discrete random variable and cannot be defined over continuous variabels. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of random variable (discrete, continuous, and mixed).</p>
 <blockquote>
 <p><strong>Definition - Probability Mass Function</strong></p>
 <p>The cumulative distribution function (CDF) of random variable $X$ is defined as :</p>
@@ -583,13 +583,13 @@ $$
 }
 $$<p>This is why <strong>importance sampling is so powerful</strong>: by choosing $p(x)$ wisely, we can dramatically reduce the number of samples needed to achieve a target accuracy.</p>
 <h2 id="product-function-integral">Product Function Integral<a hidden class="anchor" aria-hidden="true" href="#product-function-integral">#</a></h2>
-<p>We are frequently face with integrals that are product of tow or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially comon in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.</p>
+<p>We are frequently face with integrals that are product of two or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially common in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.</p>
 <p>To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:</p>
 <p>Sample using $p_a$, which gives estimator:</p>
 $$
 \frac{f(X)}{p_a(x)} = cf_b(X)
 $$<p>
-where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the varianc eof $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.</p>
+where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.</p>
 <p>Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator.</p>
 <h2 id="multiple-importance-sampling-mis">Multiple Importance Sampling (MIS)<a hidden class="anchor" aria-hidden="true" href="#multiple-importance-sampling-mis">#</a></h2>
 <p>Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to-implement variance reduction technique</p>
@@ -631,7 +631,7 @@ $$
 $$<p>The estimator remains unbiased despite skipping samples.</p>
 <p>With these Monte Carlo foundations in place, let&rsquo;s examine how path tracing implements these concepts in practice.</p>
 <h2 id="path-tracing">Path Tracing<a hidden class="anchor" aria-hidden="true" href="#path-tracing">#</a></h2>
-<p><strong>Path Tracing</strong> is a rendering algorithm in computer graphics that simulates how light interacts with objects and participting media to generate realistic (physically plausible) images.This is conceptually a simple algorithm; it is based on following th path of a ray of light through a scene as it interacts with and bounces off obejcts in an environment.</p>
+<p><strong>Path Tracing</strong> is a rendering algorithm in computer graphics that simulates how light interacts with objects and participating media to generate realistic (physically plausible) images.This is conceptually a simple algorithm; it is based on following th path of a ray of light through a scene as it interacts with and bounces off objects in an environment.</p>
 <p>It is an unbiased estimate of the rendering equation:</p>
 $$
 L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} \boxed{f_r(x, \omega_i, \omega_o)\;}L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
@@ -678,7 +678,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
   <!-- <br> -->
   <em>Objects with BSDF for Diffuse, Specular and Glossy Material</em>
 </p>
-<p>Now that we know about the BxDF functions which define the material properties, we cna look at how the Path Tracing is done.</p>
+<p>Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.</p>
 <h3 id="path-tracing-algorithm-steps">Path Tracing Algorithm Steps<a hidden class="anchor" aria-hidden="true" href="#path-tracing-algorithm-steps">#</a></h3>
 <p>TODO</p>
 <ol>
@@ -742,7 +742,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
   <!-- <br> -->
   <em>Sample Next Ray using some PDF</em>
 </p>
-<p>Repeat the above process for all pixels (Parallely as this is embarrasingly parallel) for some amount of <strong>samples per pixel</strong> (for anti aliasing as well)</p>
+<p>Repeat the above process for all pixels (Parallely as this is embarrassingly parallel) for some amount of <strong>samples per pixel</strong> (for anti aliasing as well)</p>
 <p align="center">
   <img src="../../images/path_tracing/2spp.png"
        alt="Objects woth different BSDF"

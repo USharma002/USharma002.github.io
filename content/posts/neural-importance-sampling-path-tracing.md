@@ -15,11 +15,11 @@ math: true
 
 # Introduction to Rendering
 
-THe goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.
+The goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.
 
 We mostly work with equations developed between the 16th and early 19th century that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as **ray tracing** 
 
-We are going to look at the **Path Tracing** algorithm. What are differences between Eay Tracing and Path Tracing? I got the following online:
+We are going to look at the **Path Tracing** algorithm. What are differences between Ray Tracing and Path Tracing? I got the following online:
 
 
 In Ray tracing, rays are cast from the camera into the scene. When they hit some geometry, lighting is calculated at that point by tracing additional rays towards light sources.
@@ -123,7 +123,7 @@ Although there are many ways to write a ray tracer, all such systems simulate at
 
 ## Monte Carlo Basics
 
-Because Monte Carlo integration is based on randomization, we'll first dicuss some ideas from probability and statistics.
+Because Monte Carlo integration is based on randomization, we'll first discuss some ideas from probability and statistics.
 
 First we define a random variable.
 
@@ -141,7 +141,7 @@ We also defined a Probability Mass Function. The probabilitues of events $\lbrac
 
 > **Definition - Probability Mass Function**
 >
-> Let $X$ be a dscrete Random variable with range $R_X=\lbrace x_1, x_2, \dots \rbrace$ (finite or countably infinite). The function:
+> Let $X$ be a discrete Random variable with range $R_X=\lbrace x_1, x_2, \dots \rbrace$ (finite or countably infinite). The function:
 >
 > $$
 p_X(x_k) = P(X=x_k), \text{for k = }1, 2, \dots
@@ -169,7 +169,7 @@ $$
 
 
 
-The PMF is one way to describe the distribution of a discrete random variable and cannot gbe defined over continuous variabels. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of random variable (discrete, continuous, and mixed).
+The PMF is one way to describe the distribution of a discrete random variable and cannot be defined over continuous variabels. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of random variable (discrete, continuous, and mixed).
 
 > **Definition - Probability Mass Function**
 >
@@ -517,7 +517,7 @@ This is why **importance sampling is so powerful**: by choosing $p(x)$ wisely, w
 
 ## Product Function Integral
 
-We are frequently face with integrals that are product of tow or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially comon in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.
+We are frequently face with integrals that are product of two or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially common in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.
 
 To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:
 
@@ -526,7 +526,7 @@ Sample using $p_a$, which gives estimator:
 $$
 \frac{f(X)}{p_a(x)} = cf_b(X)
 $$
-where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the varianc eof $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.
+where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.
 
 Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator. 
 
@@ -591,7 +591,7 @@ With these Monte Carlo foundations in place, let's examine how path tracing impl
 
 ## Path Tracing
 
-**Path Tracing** is a rendering algorithm in computer graphics that simulates how light interacts with objects and participting media to generate realistic (physically plausible) images.This is conceptually a simple algorithm; it is based on following th path of a ray of light through a scene as it interacts with and bounces off obejcts in an environment. 
+**Path Tracing** is a rendering algorithm in computer graphics that simulates how light interacts with objects and participating media to generate realistic (physically plausible) images.This is conceptually a simple algorithm; it is based on following th path of a ray of light through a scene as it interacts with and bounces off objects in an environment. 
 
 It is an unbiased estimate of the rendering equation:
 
@@ -645,7 +645,7 @@ We usually distinguish three basic material types:
 </p>
 
 
-Now that we know about the BxDF functions which define the material properties, we cna look at how the Path Tracing is done.
+Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.
 
 ### Path Tracing Algorithm Steps
 
@@ -709,7 +709,7 @@ TODO
   <em>Sample Next Ray using some PDF</em>
 </p>
 
-Repeat the above process for all pixels (Parallely as this is embarrasingly parallel) for some amount of **samples per pixel** (for anti aliasing as well)
+Repeat the above process for all pixels (Parallely as this is embarrassingly parallel) for some amount of **samples per pixel** (for anti aliasing as well)
 
 <p align="center">
   <img src="../../images/path_tracing/2spp.png"
