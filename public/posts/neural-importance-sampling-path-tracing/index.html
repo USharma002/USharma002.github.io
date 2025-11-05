@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>A comprehensive look into the Neural Importance Sampling for Path Tracing | USharma Notes</title>
+<meta name="keywords" content="Generative Modelling, Computer Graphics, Ray Tracing">
+<meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
+<meta name="author" content="Utkarsh Sharma">
+<link rel="canonical" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.218cff27137dee9095236cea4eb7a9ad80317b92a0fd2c99bcc250afa6e74737.css" integrity="sha256-IYz/JxN97pCVI2zqTreprYAxe5Kg/SyZvMJQr6bnRzc=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+
+
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+
+window.MathJax = {
+  tex: {
+    macros: {
+      argmax: ["\\operatorname*{arg\\,max}", 0]
+    }
+  }
+};
+</script>
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      A comprehensive look into the Neural Importance Sampling for Path Tracing
+    </h1>
+    <div class="post-description">
+      Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
+    </div>
+    <div class="post-meta"><span title='2025-11-04 00:00:00 +0000 UTC'>November 4, 2025</span>&nbsp;·&nbsp;20 min&nbsp;·&nbsp;Utkarsh Sharma
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#introduction-to-rendering" aria-label="Introduction to Rendering">Introduction to Rendering</a><ul>
+                        
+                <li>
+                    <a href="#the-rendering-equation" aria-label="The Rendering Equation">The Rendering Equation</a><ul>
+                        
+                <li>
+                    <a href="#intuition" aria-label="Intuition">Intuition</a></li></ul>
+                </li>
+                <li>
+                    <a href="#assumptions" aria-label="Assumptions">Assumptions</a></li>
+                <li>
+                    <a href="#monte-carlo-basics" aria-label="Monte Carlo Basics">Monte Carlo Basics</a><ul>
+                        
+                <li>
+                    <a href="#properties--probability-mass-function-pmf" aria-label="Properties — Probability Mass Function (PMF)">Properties — Probability Mass Function (PMF)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#the-monte-carlo-estimator" aria-label="The Monte Carlo Estimator">The Monte Carlo Estimator</a><ul>
+                        
+                <li>
+                    <a href="#from-expectation-to-integration" aria-label="From Expectation to Integration">From Expectation to Integration</a></li>
+                <li>
+                    <a href="#properties-of-the-probability-density-function-px" aria-label="Properties of the Probability Density Function $p(x)$">Properties of the Probability Density Function $p(x)$</a></li>
+                <li>
+                    <a href="#definition---monte-carlo-estimator" aria-label="Definition - Monte Carlo Estimator">Definition - Monte Carlo Estimator</a></li>
+                <li>
+                    <a href="#derivation-of-properties" aria-label="Derivation of Properties">Derivation of Properties</a><ul>
+                        
+                <li>
+                    <a href="#property-1-unbiasedness" aria-label="Property 1: Unbiasedness">Property 1: Unbiasedness</a></li>
+                <li>
+                    <a href="#property-2-variance-derivation" aria-label="Property 2: Variance Derivation">Property 2: Variance Derivation</a></li>
+                <li>
+                    <a href="#property-3-convergence-rate-and-standard-error" aria-label="Property 3: Convergence Rate and Standard Error">Property 3: Convergence Rate and Standard Error</a></li></ul>
+                </li>
+                <li>
+                    <a href="#summary-properties-of-the-monte-carlo-estimator" aria-label="Summary: Properties of the Monte Carlo Estimator">Summary: Properties of the Monte Carlo Estimator</a></li>
+                <li>
+                    <a href="#optimal-importance-sampling" aria-label="Optimal Importance Sampling?">Optimal Importance Sampling?</a><ul>
+                        
+                <li>
+                    <a href="#variance-of-the-weighted-function" aria-label="Variance of the Weighted Function">Variance of the Weighted Function</a></li>
+                <li>
+                    <a href="#the-optimal-choice-px--fx" aria-label="The Optimal Choice: p(x) ∝ f(x)">The Optimal Choice: p(x) ∝ f(x)</a></li>
+                <li>
+                    <a href="#why-this-makes-intuitive-sense" aria-label="Why This Makes Intuitive Sense">Why This Makes Intuitive Sense</a></li>
+                <li>
+                    <a href="#practical-reality-the-catch" aria-label="Practical Reality: The Catch">Practical Reality: The Catch</a></li>
+                <li>
+                    <a href="#the-importance-sampling-principle" aria-label="The Importance Sampling Principle">The Importance Sampling Principle</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#product-function-integral" aria-label="Product Function Integral">Product Function Integral</a></li>
+                <li>
+                    <a href="#multiple-importance-sampling-mis" aria-label="Multiple Importance Sampling (MIS)">Multiple Importance Sampling (MIS)</a><ul>
+                        
+                <li>
+                    <a href="#russian-roulette" aria-label="Russian Roulette">Russian Roulette</a><ul>
+                        
+                <li>
+                    <a href="#unbiasedness" aria-label="Unbiasedness">Unbiasedness</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#path-tracing" aria-label="Path Tracing">Path Tracing</a><ul>
+                        
+                <li>
+                    <a href="#bxdf-functions" aria-label="BxDF Functions">BxDF Functions</a></li>
+                <li>
+                    <a href="#path-tracing-algorithm-steps" aria-label="Path Tracing Algorithm Steps">Path Tracing Algorithm Steps</a></li>
+                <li>
+                    <a href="#path-tracing-integrator-in-mitsuba" aria-label="Path Tracing Integrator in Mitsuba">Path Tracing Integrator in Mitsuba</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#a-look-at-the-neural-importance-sampling-techniques" aria-label="A look at the Neural Importance Sampling Techniques">A look at the Neural Importance Sampling Techniques</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="introduction-to-rendering">Introduction to Rendering<a hidden class="anchor" aria-hidden="true" href="#introduction-to-rendering">#</a></h1>
+<p>THe goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.</p>
+<p>We mostly work with equations developed between the 16th and early 19th century that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as <strong>ray tracing</strong></p>
+<p>We are going to look at the <strong>Path Tracing</strong> algorithm. What are differences between Eay Tracing and Path Tracing? I got the following online:</p>
+<p>In Ray tracing, rays are cast from the camera into the scene. When they hit some geometry, lighting is calculated at that point by tracing additional rays towards light sources.</p>
+<p>In path tracing, rays are cast from light sources containing an amount of light energy. Upon hitting a surface, the surface properties absorb some of the energy and divide the rest in multiple rays, cast back into the scene. Rays that happen to hit the camera are recorded into pixels.</p>
+<p>So, path tracing tries to simulate how light behaves when it bounces around and is captured by a camera. Optical effects like depth of field, caustic, and indirect lighting, for example, don’t require any extra specialized algorithms, unlike raytracing.</p>
+<p>On the other hand, path tracing needs a lot more rays to produce an image that raytracing, and since the rays “randomly” hit the camera you never have a perfectly clean image: there is always some noise.</p>
+<p>The above is a good explaination I found in Unity forms <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.</p>
+<h2 id="the-rendering-equation">The Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#the-rendering-equation">#</a></h2>
+<p>At the heart of physically based rendering lies the <strong>Rendering Equation</strong>, introduced by James Kajiya (1986). It provides a unified mathematical framework describing how light is transferred and redistributed in a scene. Intuitively, it says that the radiance leaving a surface point in some direction is the sum of the light the surface emits and the light it reflects from all incoming directions.</p>
+<p>Formally:</p>
+$$
+L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)\; L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
+$$<p>Where:</p>
+<ul>
+<li>$L_o(x, \omega_o)$ — outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).</li>
+<li>$L_e(x, \omega_o)$ — emitted radiance from $x$ (non-zero if $x$ is a light source).</li>
+<li>$f_r(x, \omega_i, \omega_o)$ — <strong>BRDF</strong> (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.</li>
+<li>$L_i(x, \omega_i)$ — incoming radiance arriving at $x$ from direction $\omega_i$.</li>
+<li>$(\omega_i \cdot n)$ — cosine foreshortening term (angle between incoming direction and surface normal $n$).</li>
+<li>$\Omega$ — hemisphere of directions above the surface.</li>
+</ul>
+<h3 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h3>
+<ul>
+<li>The integral accumulates contributions from <em>every</em> incoming direction over the hemisphere.</li>
+<li>Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive — it captures global illumination (indirect lighting, caustics, etc.).</li>
+<li>Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.</li>
+</ul>
+<p>Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.</p>
+<h2 id="assumptions">Assumptions<a hidden class="anchor" aria-hidden="true" href="#assumptions">#</a></h2>
+<p>Although there are many ways to write a ray tracer, all such systems simulate at least the following objects and phenomena:</p>
+<ul>
+<li><strong>Cameras</strong>: A camera model determines how and from where the scene is viewed, including how an image of the scene is recorded on a sensor. Many rendering systems generate viewing rays stating at the camera that are then traced into the scene to determine which objects are visible at each pixel.</li>
+</ul>
+<p align="center">
+  <img src="../../images/path_tracing/camera.png"
+       alt="Transformer Architecture"
+       width="30%">
+  <!-- <br> -->
+  <em>Camera/Sensor/Eye</em>
+</p>
+<ul>
+<li><strong>Ray-object inetrsections</strong>: We must be able to tell precisely where a given ray intersects a given geometric object. In addition, we need to determine certain properties of the object at the intersection point, such as a surface normal or its material.</li>
+</ul>
+<p align="center">
+  <img src="../../images/path_tracing/ray.png"
+       alt="Transformer Architecture"
+       width="80%">
+  <!-- <br> -->
+  <em>Ray r(t) and Ray-Triangle Intersection</em>
+</p>
+<ul>
+<li>
+<p><strong>Light Sources</strong>: Without lighting, there would be little point in rendering a scene. A ray tracer must model the distribution of light throughout the scene, including not only the locations of the lights themselves but also the way in which they distribute their energy throughout space.</p>
+</li>
+<li>
+<p><strong>Visibility</strong>: In order to know whether a given light deposits energy at a point on a surface, we must know whether there is an uninterrupted path from the point to the light source. Fortunately, this question is easy to answer in a ray tracer, since we can just construct the ray from the surface to the light, find the closest ray–object intersection, and compare the intersection distance to the light distance.</p>
+</li>
+</ul>
+<p align="center">
+  <img src="../../images/path_tracing/visibility.svg"
+       alt="Visibility"
+       width="80%">
+  <!-- <br> -->
+  <em>Visibility</em>
+</p>
+<ul>
+<li><strong>Light scattering at surfaces</strong>:  Each object must provide a description of its appearance, including information about how light interacts with the object’s surface, as well as the nature of the reradiated (or scattered) light. Models for surface scattering are typically parameterized so that they can simulate a variety of appearances.</li>
+</ul>
+<p align="center">
+  <img src="../../images/path_tracing/scattering.svg"
+       alt="Scattering"
+       width="80%">
+  <!-- <br> -->
+  <em>Scattering</em>
+</p>
+<ul>
+<li>
+<p><strong>Indirect light transport</strong>: Because light can arrive at a surface after bouncing off or passing through other surfaces, it is usually necessary to trace additional rays to capture this effect.</p>
+</li>
+<li>
+<p><strong>Ray propagation</strong>:  We need to know what happens to the light traveling along a ray as it passes through space. If we are rendering a scene in a vacuum, light energy remains constant along a ray. Although true vacuums are unusual on Earth, they are a reasonable approximation for many environments. More sophisticated models are available for tracing rays through fog, smoke, the Earth’s atmosphere, and so on.</p>
+</li>
+</ul>
+<p align="center">
+  <img src="../../images/path_tracing/path_tracing.png"
+       alt="Ray Tracing"
+       width="80%">
+  <!-- <br> -->
+  <em>Path Tracing Overview</em>
+</p>
+<h2 id="monte-carlo-basics">Monte Carlo Basics<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-basics">#</a></h2>
+<p>Because Monte Carlo integration is based on randomization, we&rsquo;ll first dicuss some ideas from probability and statistics.</p>
+<p>First we define a random variable.</p>
+<blockquote>
+<p><strong>Definition - Random Variable</strong></p>
+<p>A <strong>random variable</strong> $X$ is a function that maps outcomes from the sample space $\Omega$ to the set of real numbers $\mathbb{R}$:</p>
+$$
+X : \Omega \rightarrow \mathbb{R}
+$$<p>Each outcome $\omega \in \Omega$ is assigned a numerical value $X(\omega)$, representing the realization of the random variable.</p></blockquote>
+<p>We also defined a Probability Mass Function. The probabilitues of events $\lbrace X=x_k \rbrace$ are formally shown by the <strong>probability mass function (PMF)</strong> of $X$.</p>
+<blockquote>
+<p><strong>Definition - Probability Mass Function</strong></p>
+<p>Let $X$ be a dscrete Random variable with range $R_X=\lbrace x_1, x_2, \dots \rbrace$ (finite or countably infinite). The function:</p>
+$$
+p_X(x_k) = P(X=x_k), \text{for k = }1, 2, \dots
+$$<p>is called the <em>probability</em> mass function (PMF) of $X$</p></blockquote>
+<p>Thus, the PMF is a probability measure that gives us probabilities of the possible values for a random variable.</p>
+<h3 id="properties--probability-mass-function-pmf">Properties — Probability Mass Function (PMF)<a hidden class="anchor" aria-hidden="true" href="#properties--probability-mass-function-pmf">#</a></h3>
+$$
+\boxed{
+\begin{aligned}
+&\text{Let } X \text{ be a discrete random variable with range } \mathcal{R}_X 
+\text{ and PMF } p_X(x) = P(X = x). \\[6pt]
+&\text{Then the PMF satisfies the following properties:} \\[10pt]
+&1.\ \textbf{Non-negativity: } 0 \le p_X(x) \le 1, \quad \forall x \in \mathcal{R}_X \\[6pt]
+&2.\ \textbf{Normalization: } \sum_{x \in \mathcal{R}_X} p_X(x) = 1 \\[6pt]
+&3.\ \textbf{Additivity over sets: } 
+P(X \in A) = \sum_{x \in A} p_X(x), \quad \forall A \subseteq \mathcal{R}_X
+\end{aligned}
+}
+$$<p>The PMF is one way to describe the distribution of a discrete random variable and cannot gbe defined over continuous variabels. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of random variable (discrete, continuous, and mixed).</p>
+<blockquote>
+<p><strong>Definition - Probability Mass Function</strong></p>
+<p>The cumulative distribution function (CDF) of random variable $X$ is defined as :</p>
+$$F_X(x) = p(X\leq x_k), \text{for all }x\in\mathbb{R}$$<p>is called the <em>probability</em> mass function (PMF) of $X$</p></blockquote>
+<p>Note that the subscript $X$ indicates that this is the CDF of the random variable $X$. Also, note that the CDF is defined for all $x\in \mathbb{R}$</p>
+$$
+\boxed{
+\forall\, a \le b, \quad 
+P(a < X \le b) = F_X(b) - F_X(a)
+}
+$$<blockquote>
+<p><strong>Definition — Probability Density Function (PDF)</strong></p>
+<p>Let $X$ be a <strong>continuous random variable</strong>. The <strong>probability density function (PDF)</strong> of $X$ is a non-negative function $f_X(x)$ satisfying:</p>
+$$
+P(a \le X \le b) = \int_a^b f_X(x)\,dx
+$$<p>for all real numbers $a \le b$.</p></blockquote>
+<p>The PDF must satisfy the following properties:</p>
+$$
+ \boxed{
+ \begin{aligned}
+ &1.\ \textbf{Non-negativity: } f_X(x) \ge 0, \quad \forall x \in \mathbb{R} \\[4pt]
+ &2.\ \textbf{Normalization: } \int_{-\infty}^{\infty} f_X(x)\,dx = 1
+ \end{aligned}
+ }
+ $$<p>Unlike a PMF, the PDF itself does not give probabilities directly; instead, the probability that $X$ lies in an interval is given by the area under $f_X(x)$ over that interval.</p>
+<blockquote>
+<p><strong>Definition — Expected Value</strong></p>
+<p>Let $X$ be a <strong>continuous random variable</strong> with probability density function $f_X(x)$.<br>
+The <strong>expected value</strong> (or <strong>mean</strong>) of $X$, denoted by $\mathbb{E}[X]$, is defined as:</p>
+$$
+\boxed{
+\mathbb{E}[X] = \int_{-\infty}^{\infty} x\, f_X(x)\, dx
+ }
+$$</blockquote>
+<p>The expected value represents the theoretical average value of $X$ - the value one would obtain as the limit of the sample mean if the random process were repeated infinitely many times.</p>
+<blockquote>
+<p><strong>Definition — Variance</strong></p>
+<p>Let $X$ be a <strong>continuous random variable</strong> with probability density function $f_X(x)$ and expected value $\mu = \mathbb{E}[X]$.<br>
+The <strong>variance</strong> of $X$, denoted by $\mathrm{Var}(X)$, measures the expected squared deviation of $X$ from its mean:</p>
+$$
+ \boxed{
+ \mathrm{Var}(X) = \int_{-\infty}^{\infty} (x - \mu)^2\, f_X(x)\, dx
+ }
+ $$<p>Equivalently, variance can also be expressed as:</p>
+$$
+ \boxed{
+ \mathrm{Var}(X) = \mathbb{E}[X^2] - (\mathbb{E}[X])^2
+ }
+$$</blockquote>
+<p>The variance quantifies the spread or dispersion of the distribution - larger values indicate greater variability of $X$ around its mean.</p>
+<h2 id="the-monte-carlo-estimator">The Monte Carlo Estimator<a hidden class="anchor" aria-hidden="true" href="#the-monte-carlo-estimator">#</a></h2>
+<p>Let $I$ be an integral of interest (the rendering equation for us), defined over $\Omega$:</p>
+$$
+I = \int_{\Omega} f(x)\, dx
+$$<p>where $\Omega$ is any reasonable integration domain.</p>
+<h3 id="from-expectation-to-integration">From Expectation to Integration<a hidden class="anchor" aria-hidden="true" href="#from-expectation-to-integration">#</a></h3>
+<p>The key insight of Monte Carlo integration is recognizing that any integral can be rewritten as an <strong>expectation</strong> of a random variable.</p>
+<p>Given a probability density function (PDF) $p(x)$ defined over $\Omega$, we can decompose the integral as:</p>
+$$
+I = \int_{\Omega} f(x)\, dx = \int_{\Omega} \frac{f(x)}{p(x)} p(x)\, dx
+$$<p>By the definition of expected value for a continuous random variable $X$ with PDF $p(x)$:</p>
+$$
+\mathbb{E}[g(X)] = \int_{\Omega} g(x) \cdot p(x)\, dx
+$$<p>we can identify:</p>
+$$
+I = \mathbb{E}\left[\frac{f(X)}{p(X)}\right]
+$$<p>where $X$ is a random variable drawn from distribution $p(x)$.</p>
+<h3 id="properties-of-the-probability-density-function-px">Properties of the Probability Density Function $p(x)$<a hidden class="anchor" aria-hidden="true" href="#properties-of-the-probability-density-function-px">#</a></h3>
+<p>The PDF $p(x)$ must satisfy the following fundamental properties:</p>
+$$
+\boxed{
+\begin{aligned}
+&1.\ \textbf{Non-negativity:}\quad p(x) \geq 0, \quad \forall x \in \Omega \\[8pt]
+&2.\ \textbf{Normalization:}\quad \int_{\Omega} p(x)\, dx = 1 \\[8pt]
+&3.\ \textbf{Support condition:}\quad p(x) > 0 \text{ wherever } f(x) \neq 0
+\end{aligned}
+}
+$$<p>The third property is <strong>crucial</strong>: if $p(x) = 0$ at some point where $f(x) \neq 0$, the ratio $\frac{f(x)}{p(x)}$ becomes undefined or infinite, making the estimator invalid.</p>
+<h3 id="definition---monte-carlo-estimator">Definition - Monte Carlo Estimator<a hidden class="anchor" aria-hidden="true" href="#definition---monte-carlo-estimator">#</a></h3>
+<p>To approximate the expected value $\mathbb{E}[f(X)/p(X)]$, we draw $N$ independent samples $X_1, X_2, \ldots, X_N$ from $p(x)$ and compute their average:</p>
+$$
+\boxed{
+\hat{I}_{MC} = \frac{1}{N}\sum_{i=1}^{N} \frac{f(X_i)}{p(X_i)}, \quad X_i \stackrel{\text{i.i.d.}}{\sim} p(x)
+}
+$$<p>This is the <strong>importance sampling</strong> Monte Carlo estimator. The term &ldquo;importance sampling&rdquo; refers to the fact that we sample proportionally to how important each region is to the integral (weighted by $p(x)$).</p>
+<h3 id="derivation-of-properties">Derivation of Properties<a hidden class="anchor" aria-hidden="true" href="#derivation-of-properties">#</a></h3>
+<h4 id="property-1-unbiasedness">Property 1: Unbiasedness<a hidden class="anchor" aria-hidden="true" href="#property-1-unbiasedness">#</a></h4>
+<p>To prove that $\mathbb{E}[\hat{I}_{MC}] = I$, we take the expectation of both sides:</p>
+$$
+\mathbb{E}[\hat{I}_{MC}] = \mathbb{E}\left[\frac{1}{N}\sum_{i=1}^{N} \frac{f(X_i)}{p(X_i)}\right]
+$$<p>By linearity of expectation:</p>
+$$
+= \frac{1}{N}\sum_{i=1}^{N} \mathbb{E}\left[\frac{f(X_i)}{p(X_i)}\right]
+$$<p>Since each $X_i \sim p(x)$ independently and identically, each term equals the same expectation:</p>
+$$
+= \frac{1}{N}\sum_{i=1}^{N} \int_{\Omega} \frac{f(x)}{p(x)} \cdot p(x)\, dx
+$$$$
+= \frac{1}{N}\sum_{i=1}^{N} \int_{\Omega} f(x)\, dx
+$$$$
+= \frac{1}{N} \cdot N \cdot I = I
+$$<p>Therefore:</p>
+$$
+\boxed{\mathbb{E}[\hat{I}_{MC}] = I}
+$$<p>The estimator is <strong>unbiased</strong>, meaning its expected value equals the true integral.</p>
+<h4 id="property-2-variance-derivation">Property 2: Variance Derivation<a hidden class="anchor" aria-hidden="true" href="#property-2-variance-derivation">#</a></h4>
+<p>The variance of the estimator is:</p>
+$$
+\text{Var}(\hat{I}_{MC}) = \text{Var}\left(\frac{1}{N}\sum_{i=1}^{N} \frac{f(X_i)}{p(X_i)}\right)
+$$<p>Using the property that $\text{Var}(cY) = c^2 \text{Var}(Y)$ for constant $c$:</p>
+$$
+= \frac{1}{N^2} \text{Var}\left(\sum_{i=1}^{N} \frac{f(X_i)}{p(X_i)}\right)
+$$<p>Since the $X_i$ are independent, variances of independent random variables add:</p>
+$$
+= \frac{1}{N^2} \sum_{i=1}^{N} \text{Var}\left(\frac{f(X_i)}{p(X_i)}\right)
+$$<p>Each term has the same variance since all $X_i$ are identically distributed:</p>
+$$
+= \frac{1}{N^2} \cdot N \cdot \text{Var}\left[\frac{f(X_1)}{p(X_1)}\right]
+$$$$
+\boxed{\text{Var}(\hat{I}_{MC}) = \frac{1}{N}\text{Var}\left[\frac{f(X)}{p(X)}\right]}
+$$<p><strong>Key observation</strong>: The variance decreases as $\frac{1}{N}$, so to reduce variance by a factor of 4, we need 16 times more samples.</p>
+<h4 id="property-3-convergence-rate-and-standard-error">Property 3: Convergence Rate and Standard Error<a hidden class="anchor" aria-hidden="true" href="#property-3-convergence-rate-and-standard-error">#</a></h4>
+<p>The <strong>standard deviation</strong> (standard error) of the estimator is:</p>
+$$
+\sigma(\hat{I}_{MC}) = \sqrt{\text{Var}(\hat{I}_{MC})} = \frac{1}{\sqrt{N}}\sqrt{\text{Var}\left[\frac{f(X)}{p(X)}\right]}
+$$$$
+\boxed{\sigma(\hat{I}_{MC}) = \mathcal{O}\left(\frac{1}{\sqrt{N}}\right)}
+$$<p>This means the error decreases proportionally to $N^{-1/2}$, <strong>independent of the dimensionality</strong> of the problem. This is a major advantage over deterministic numerical integration methods, which suffer from the &ldquo;curse of dimensionality.&rdquo;</p>
+<h3 id="summary-properties-of-the-monte-carlo-estimator">Summary: Properties of the Monte Carlo Estimator<a hidden class="anchor" aria-hidden="true" href="#summary-properties-of-the-monte-carlo-estimator">#</a></h3>
+$$
+\boxed{
+\begin{aligned}
+&\text{1. Unbiasedness:}\quad \mathbb{E}[\hat{I}_{MC}] = I \\[8pt]
+&\text{2. Variance:}\quad \text{Var}(\hat{I}_{MC}) = \frac{1}{N}\text{Var}\left[\frac{f(X)}{p(X)}\right] \\[8pt]
+&\text{3. Convergence:}\quad \text{Error} = \mathcal{O}(N^{-1/2}) \\[8pt]
+&\text{4. Standard Error:}\quad \sigma(\hat{I}_{MC}) \propto \frac{1}{\sqrt{N}}
+\end{aligned}
+}
+$$<p>These properties make Monte Carlo integration particularly attractive for high-dimensional problems like rendering, where evaluating the rendering equation requires integrating over many dimensions (directions, wavelengths, time, etc.).</p>
+<p align="center">
+  <img src="../../images/path_tracing/importance_sampling_graph.png"
+       alt="Importance Sampling PDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Importance Sampling PDF</em>
+</p>
+<h3 id="optimal-importance-sampling">Optimal Importance Sampling?<a hidden class="anchor" aria-hidden="true" href="#optimal-importance-sampling">#</a></h3>
+<p>A natural question arises: <strong>what choice of $p(x)$ minimizes the variance?</strong> This is crucial because:</p>
+$$
+\text{Var}(\hat{I}_{MC}) = \frac{1}{N}\text{Var}\left[\frac{f(X)}{p(X)}\right]
+$$<p>The variance depends directly on how we choose $p(x)$. Can we choose $p(x)$ to make it smaller?</p>
+<h4 id="variance-of-the-weighted-function">Variance of the Weighted Function<a hidden class="anchor" aria-hidden="true" href="#variance-of-the-weighted-function">#</a></h4>
+<p>Let&rsquo;s expand the variance term:</p>
+$$
+\text{Var}\left[\frac{f(X)}{p(X)}\right] = \mathbb{E}\left[\left(\frac{f(X)}{p(X)}\right)^2\right] - \left(\mathbb{E}\left[\frac{f(X)}{p(X)}\right]\right)^2
+$$<p>The second term is fixed (it equals $I^2$, the integral we&rsquo;re trying to compute). So <strong>to minimize variance, we need to minimize</strong>:</p>
+$$
+\mathbb{E}\left[\left(\frac{f(X)}{p(X)}\right)^2\right] = \int_{\Omega} \frac{f(x)^2}{p(x)^2} \cdot p(x)\, dx = \int_{\Omega} \frac{f(x)^2}{p(x)}\, dx
+$$<h4 id="the-optimal-choice-px--fx">The Optimal Choice: p(x) ∝ f(x)<a hidden class="anchor" aria-hidden="true" href="#the-optimal-choice-px--fx">#</a></h4>
+<p><strong>Claim</strong>: The variance is <strong>minimized when $p(x)$ is proportional to $f(x)$</strong>.</p>
+<p>Let&rsquo;s assume:</p>
+$$
+p^*(x) = \frac{|f(x)|}{\int_{\Omega} |f(x)|\, dx} = \frac{|f(x)|}{I}
+$$<p>where $I = \int_{\Omega} |f(x)|, dx$ (assuming $f(x) \geq 0$ for simplicity).</p>
+<p><strong>What happens to the weighted ratio?</strong></p>
+$$
+\frac{f(X)}{p^*(X)} = \frac{f(X)}{f(X)/I} = I \quad \text{(constant!)}
+$$<p>Since $\frac{f(X)}{p^*(X)}$ is a constant:</p>
+$$
+\text{Var}\left[\frac{f(X)}{p^*(X)}\right] = \text{Var}[I] = 0
+$$<p><strong>This is the best possible case: zero variance!</strong></p>
+<h4 id="why-this-makes-intuitive-sense">Why This Makes Intuitive Sense<a hidden class="anchor" aria-hidden="true" href="#why-this-makes-intuitive-sense">#</a></h4>
+<p>When $p(x) \propto f(x)$:</p>
+<ul>
+<li><strong>Regions where $f(x)$ is large</strong>: We sample frequently, so each sample contributes significant information</li>
+<li><strong>Regions where $f(x)$ is small</strong>: We sample rarely, which is fine because they don&rsquo;t contribute much anyway</li>
+<li><strong>Result</strong>: Every sample carries roughly equal &ldquo;importance&rdquo; to the integral</li>
+</ul>
+<p>By contrast, with uniform sampling $p(x) = \text{constant}$:</p>
+<ul>
+<li>We waste samples in regions where $f(x) \approx 0$ (unimportant)</li>
+<li>We don&rsquo;t sample enough where $f(x)$ is large (important)</li>
+<li>The ratio $\frac{f(X)}{p(X)}$ varies wildly, causing high variance</li>
+</ul>
+<h4 id="practical-reality-the-catch">Practical Reality: The Catch<a hidden class="anchor" aria-hidden="true" href="#practical-reality-the-catch">#</a></h4>
+<p>While optimal importance sampling with $p(x) \propto f(x)$ is theoretically perfect, it&rsquo;s <strong>impractical</strong>:</p>
+$$
+p^*(x) = \frac{f(x)}{\int_{\Omega} f(x)\, dx}
+$$<p>To construct this PDF, we already need to compute the integral we&rsquo;re trying to find! This is circular.</p>
+<p><strong>In practice, we approximate</strong>: Choose $p(x)$ to be proportional to $f(x)$ as best we can:</p>
+<ul>
+<li>In path tracing: $p(x)$ might be proportional to the BRDF and lighting</li>
+<li>In neural importance sampling: Use neural networks to learn $p(x) \approx f(x)$</li>
+</ul>
+<p>The better our approximation $p(x) \approx c \cdot f(x)$, the lower the variance.</p>
+<h4 id="the-importance-sampling-principle">The Importance Sampling Principle<a hidden class="anchor" aria-hidden="true" href="#the-importance-sampling-principle">#</a></h4>
+$$
+\boxed{
+\begin{aligned}
+&\text{Best choice:}\quad p(x) \propto f(x) \Rightarrow \text{Var} = 0 \text{ (ideal)}\\[8pt]
+&\text{General principle:}\quad \text{Var} \propto \int_{\Omega} \frac{f(x)^2}{p(x)}\, dx\\[8pt]
+&\text{Practical strategy:}\quad \text{Choose } p(x) \text{ to approximate } f(x) \\[8pt]
+&\qquad\qquad\text{Better approximation} \Rightarrow \text{Lower variance} \Rightarrow \text{Fewer samples needed}
+\end{aligned}
+}
+$$<p>This is why <strong>importance sampling is so powerful</strong>: by choosing $p(x)$ wisely, we can dramatically reduce the number of samples needed to achieve a target accuracy.</p>
+<h2 id="product-function-integral">Product Function Integral<a hidden class="anchor" aria-hidden="true" href="#product-function-integral">#</a></h2>
+<p>We are frequently face with integrals that are product of tow or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially comon in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.</p>
+<p>To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:</p>
+<p>Sample using $p_a$, which gives estimator:</p>
+$$
+\frac{f(X)}{p_a(x)} = cf_b(X)
+$$<p>
+where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the varianc eof $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.</p>
+<p>Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator.</p>
+<h2 id="multiple-importance-sampling-mis">Multiple Importance Sampling (MIS)<a hidden class="anchor" aria-hidden="true" href="#multiple-importance-sampling-mis">#</a></h2>
+<p>Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to-implement variance reduction technique</p>
+<p>The basic idea is that, when estimating an integral, we should draw samples from multiple sampling distributions, chosen in the hope that at least one of them will match the shape of the integrand reasonably well, even if we do not know which one this will be. MIS then provides a method to weight the samples from each technique that can eliminate large variance spikes due to mismatches between the integrand’s value and the sampling density.</p>
+<blockquote>
+<p><strong>Definition — Multiple Importance Sampling</strong></p>
+<p>With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
+</p>
+$$
+w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}
+>$$<p>
+where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$</p>
+<p>More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
+</p>
+$$
+F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}
+>$$</blockquote>
+<p>The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.</p>
+<p>In practice, a good choice for the weighting functions is given by the <strong>balance heuristic</strong>, which attempts to fulfill this goal by taking into account all the different ways that a sample could have been generated, rather than just the particular one that was used to do so. The balance heuristic’s weighting function for the th sampling technique is :</p>
+$$
+w_i(x) = \frac{n_ip_i(x)}{\sum_j n_j p_j(x)}
+$$<p>The <strong>power heuristic</strong> often reduces variance even further. For an exponent $\beta$, the power heuristic is</p>
+$$
+w_i(x) = \frac{(n_ip_i(x))^\beta}{\sum_j (n_j p_j(x))^\beta}
+$$<h3 id="russian-roulette">Russian Roulette<a hidden class="anchor" aria-hidden="true" href="#russian-roulette">#</a></h3>
+<p>Russian roulette is a technique that can improve the efficiency of Monte Carlo estimates by skipping the evaluation of samples that would make a small contribution to the final result.</p>
+<p>Select a termination probability $q$. With probability $q$, skip evaluation and contribute $c = 0$. With probability $1-q$, evaluate and weight by $\frac{1}{1-q}$:</p>
+$$
+\boxed{
+\hat{I}_{RR} = 
+\begin{cases}
+0 & \text{with probability } q \\
+\frac{\hat{I}_{MC}}{1-q} & \text{with probability } 1-q
+\end{cases}
+}
+$$<h4 id="unbiasedness">Unbiasedness<a hidden class="anchor" aria-hidden="true" href="#unbiasedness">#</a></h4>
+$$
+\mathbb{E}[\hat{I}_{RR}] = q \cdot 0 + (1-q) \cdot \frac{1}{1-q} \mathbb{E}[\hat{I}_{MC}] = \mathbb{E}[\hat{I}_{MC}] = I
+$$<p>The estimator remains unbiased despite skipping samples.</p>
+<p>With these Monte Carlo foundations in place, let&rsquo;s examine how path tracing implements these concepts in practice.</p>
+<h2 id="path-tracing">Path Tracing<a hidden class="anchor" aria-hidden="true" href="#path-tracing">#</a></h2>
+<p><strong>Path Tracing</strong> is a rendering algorithm in computer graphics that simulates how light interacts with objects and participting media to generate realistic (physically plausible) images.This is conceptually a simple algorithm; it is based on following th path of a ray of light through a scene as it interacts with and bounces off obejcts in an environment.</p>
+<p>It is an unbiased estimate of the rendering equation:</p>
+$$
+L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} \boxed{f_r(x, \omega_i, \omega_o)\;}L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
+$$<h3 id="bxdf-functions">BxDF Functions<a hidden class="anchor" aria-hidden="true" href="#bxdf-functions">#</a></h3>
+<p>The concept behind all BxDF functions could be described as a black box with the inputs being any two angles, one for incoming (incident) ray and the second one for the outgoing (reflected or transmitted) ray at a given point of the surface. The output of this black box is the value defining the ratio between the incoming and the outgoing light energy for the given couple of angles</p>
+<ul>
+<li>
+<p><strong>(BSDF) Bidirectional Scattering Distribution Function</strong> accounts for
+the light transport properties of the hit material. BSDF is a superset and the generalization of the <strong>BRDF</strong> and <strong>BTDF</strong></p>
+</li>
+<li>
+<p><strong>BRDF (Bidirectional Reflectance Distribution Function)</strong> considers
+<em>only the reflection</em> of incoming light onto a surface</p>
+</li>
+<li>
+<p><strong>BTDF (Bidirectional transmittance distribution function)</strong> is similar to BRDF but for the opposite side of the surface when it is transmitted through the surface</p>
+</li>
+</ul>
+<p>(Some tend to use the term BSDF simply as a category name covering the whole family of BxDF functions.)</p>
+<p align="center">
+  <img src="../../images/path_tracing/BSDF_combined.png"
+       alt="BTDF + BRDF"
+       width="100%">
+  <!-- <br> -->
+  <em>BTDF + BRDF Visualization (unifrom for both here)</em>
+</p>
+<p>We usually distinguish three basic material types:</p>
+<ul>
+<li>Perfectly diffuse  (light is scattered equally in/from all directions)</li>
+<li>Perfectly specular (light is reflected in/from exactly one direction)</li>
+<li>Glossy (mixture of the other two, specular highlights)</li>
+</ul>
+<p align="center">
+  <img src="../../images/path_tracing/BSDF.png"
+       alt="BSDF visualization"
+       width="100%">
+  <!-- <br> -->
+  <em>Simple BSDF Visualization for Diffuse, Specular and Glossy Material</em>
+</p>
+<p align="center">
+  <img src="../../images/path_tracing/BSDF_object.png"
+       alt="Objects woth different BSDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Objects with BSDF for Diffuse, Specular and Glossy Material</em>
+</p>
+<p>Now that we know about the BxDF functions which define the material properties, we cna look at how the Path Tracing is done.</p>
+<h3 id="path-tracing-algorithm-steps">Path Tracing Algorithm Steps<a hidden class="anchor" aria-hidden="true" href="#path-tracing-algorithm-steps">#</a></h3>
+<p>TODO</p>
+<ol>
+<li><strong>Generate camera ray</strong> through pixel using sensor</li>
+</ol>
+<p align="center">
+  <img src="../../images/path_tracing/init_cam.png"
+       alt="Objects woth different BSDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Initialize Scene and Generate Rays using Sensor</em>
+</p>
+<ol start="2">
+<li><strong>Trace ray</strong> into scene, find first intersection</li>
+</ol>
+<p align="center">
+  <img src="../../images/path_tracing/trace.png"
+       alt="Objects woth different BSDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Trace Ray and Find Intersection</em>
+</p>
+<ol start="3">
+<li><strong>Accumulate emission</strong> from light sources (NEE optional)</li>
+<li><strong>Sample BSDF</strong> to choose next direction</li>
+</ol>
+<p align="center">
+  <img src="../../images/path_tracing/surface_intersection.png"
+       alt="Objects woth different BSDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Query BSDF of intersected primitive</em>
+</p>
+<ol start="5">
+<li><strong>Spawn new ray</strong> from intersection point</li>
+</ol>
+<p align="center">
+  <img src="../../images/path_tracing/sample_ray.png"
+       alt="Sample Ray"
+       width="100%">
+  <!-- <br> -->
+  <em>Sample Next Ray using some PDF</em>
+</p>
+<ol start="6">
+<li><strong>Repeat</strong> (steps 2-5) until max depth or Russian roulette termination</li>
+</ol>
+<p align="center">
+  <img src="../../images/path_tracing/repeat.png"
+       alt="Final Ray"
+       width="100%">
+  <!-- <br> -->
+  <em>Sample Next Ray using some PDF</em>
+</p>
+<ol start="7">
+<li><strong>Return</strong> accumulated radiance</li>
+</ol>
+<p align="center">
+  <img src="../../images/path_tracing/final_ray.png"
+       alt="Objects woth different BSDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Sample Next Ray using some PDF</em>
+</p>
+<p>Repeat the above process for all pixels (Parallely as this is embarrasingly parallel) for some amount of <strong>samples per pixel</strong> (for anti aliasing as well)</p>
+<p align="center">
+  <img src="../../images/path_tracing/2spp.png"
+       alt="Objects woth different BSDF"
+       width="100%">
+  <!-- <br> -->
+  <em>Sample Next Ray using some PDF</em>
+</p>
+<h3 id="path-tracing-integrator-in-mitsuba">Path Tracing Integrator in Mitsuba<a hidden class="anchor" aria-hidden="true" href="#path-tracing-integrator-in-mitsuba">#</a></h3>
+<p>I am going to use the Mitsuba components to show how a standard Path Tracer works.</p>
+<p>First we need to set up all the objects as given in the Assumptions.</p>
+<p>First the Sensor/Camera generates the initial rays that we are  going to trace.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PinholeSensor</span><span class="p">(</span><span class="n">mi</span><span class="o">.</span><span class="n">Sensor</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">m_fov</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fov&#39;</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">m_film</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;film&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">m_sampler</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sampler&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">m_to_world</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to_world&#39;</span><span class="p">,</span> <span class="n">mi</span><span class="o">.</span><span class="n">ScalarTransform4f</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sample_ray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">sample1</span><span class="p">,</span> <span class="n">sample2</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Convert sample to pixel, then to ray direction</span>
+</span></span><span class="line"><span class="cl">        <span class="n">film_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">film</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">aspect</span> <span class="o">=</span> <span class="n">film_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">film_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># Normalized device coordinates</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ndc</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample1</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mi</span><span class="o">.</span><span class="n">ScalarVector2f</span><span class="p">(</span><span class="n">aspect</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># Camera space direction</span>
+</span></span><span class="line"><span class="cl">        <span class="n">tan_fov</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">dr</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m_fov</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">direction</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">ScalarVector3f</span><span class="p">(</span><span class="n">ndc</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">tan_fov</span><span class="p">,</span>  <span class="n">ndc</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">tan_fov</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># Transform to world space</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_to_world</span> <span class="o">@</span> <span class="n">mi</span><span class="o">.</span><span class="n">Ray3f</span><span class="p">(</span><span class="n">o</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">d</span><span class="o">=</span><span class="n">dr</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">direction</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">ray</span><span class="p">,</span> <span class="n">mi</span><span class="o">.</span><span class="n">Color3f</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">film</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_film</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m_sampler</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mi</span><span class="o">.</span><span class="n">register_sensor</span><span class="p">(</span><span class="s2">&#34;pinhole&#34;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">props</span><span class="p">:</span> <span class="n">PinholeSensor</span><span class="p">(</span><span class="n">props</span><span class="p">))</span>
+</span></span></code></pre></div><p>Then those Rays are Given to the Integrator which then traces the rays through the scene:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Simple</span><span class="p">(</span><span class="n">mi</span><span class="o">.</span><span class="n">SamplingIntegrator</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="n">mi</span><span class="o">.</span><span class="n">Properties</span><span class="p">()):</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">props</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;max_depth&#34;</span><span class="p">)</span> <span class="c1"># Max Depth for Tracing</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">rr_depth</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;rr_depth&#34;</span><span class="p">)</span> <span class="c1"># Depth After which Russina Roulette Starts</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">mi</span><span class="o">.</span><span class="n">Scene</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">mi</span><span class="o">.</span><span class="n">Sampler</span><span class="p">,</span> <span class="n">ray_</span><span class="p">:</span> <span class="n">mi</span><span class="o">.</span><span class="n">RayDifferential3f</span><span class="p">,</span> <span class="n">medium</span><span class="p">:</span> <span class="n">mi</span><span class="o">.</span><span class="n">Medium</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bsdf_ctx</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">BSDFContext</span><span class="p">()</span> <span class="c1"># get the bsdf context</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">ray</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">Ray3f</span><span class="p">(</span><span class="n">ray_</span><span class="p">)</span> <span class="c1"># Copy the Rays given by the Sensor</span>
+</span></span><span class="line"><span class="cl">        <span class="n">depth</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">UInt32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Initialize depth to 0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">f</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">Spectrum</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>  <span class="c1"># initialize throughput to 1 </span>
+</span></span><span class="line"><span class="cl">        <span class="n">L</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">Spectrum</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>  <span class="c1"># Initialize Radiance to 1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">prev_si</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">mi</span><span class="o">.</span><span class="n">SurfaceInteraction3f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">loop</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">Loop</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;Path Tracing&#34;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sampler</span><span class="p">,</span> <span class="n">ray</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">prev_si</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">loop</span><span class="o">.</span><span class="n">set_max_iterations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="n">loop</span><span class="p">(</span><span class="n">active</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">#  Intersect Ray with the Primitive in the Scene</span>
+</span></span><span class="line"><span class="cl">            <span class="n">si</span><span class="p">:</span> <span class="n">mi</span><span class="o">.</span><span class="n">SurfaceInteraction3f</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">ray_intersect</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ray</span><span class="p">,</span> <span class="n">ray_flags</span><span class="o">=</span><span class="n">mi</span><span class="o">.</span><span class="n">RayFlags</span><span class="o">.</span><span class="n">All</span><span class="p">,</span> <span class="n">coherent</span><span class="o">=</span><span class="n">dr</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># Get the BSDF of the intersected Primitive</span>
+</span></span><span class="line"><span class="cl">            <span class="n">bsdf</span><span class="p">:</span> <span class="n">mi</span><span class="o">.</span><span class="n">BSDF</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="p">(</span><span class="n">ray</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># Direct emission</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ds</span> <span class="o">=</span> <span class="n">mi</span><span class="o">.</span><span class="n">DirectionSample3f</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">si</span><span class="o">=</span><span class="n">si</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">prev_si</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Le</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">ds</span><span class="o">.</span><span class="n">emitter</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">si</span><span class="p">)</span> <span class="c1"># Check if the primitive Emits light</span>
+</span></span><span class="line"><span class="cl">            <span class="n">active_next</span> <span class="o">=</span> <span class="p">(</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">si</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># BSDF Sampling</span>
+</span></span><span class="line"><span class="cl">            <span class="n">bsdf_smaple</span><span class="p">,</span> <span class="n">bsdf_val</span> <span class="o">=</span> <span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">bsdf_ctx</span><span class="p">,</span> <span class="n">si</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">next_1d</span><span class="p">(),</span> <span class="n">sampler</span><span class="o">.</span><span class="n">next_2d</span><span class="p">(),</span> <span class="n">active_next</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># Update loop variables</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">spawn_ray</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">to_world</span><span class="p">(</span><span class="n">bsdf_smaple</span><span class="o">.</span><span class="n">wo</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="n">L</span> <span class="o">+</span> <span class="n">Le</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f</span> <span class="o">*=</span> <span class="n">bsdf_val</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">prev_si</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">detach</span><span class="p">(</span><span class="n">si</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1"># Stopping criterion (russian roulettte)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">active_next</span> <span class="o">&amp;=</span> <span class="n">dr</span><span class="o">.</span><span class="n">neq</span><span class="p">(</span><span class="n">dr</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">rr_prop</span> <span class="o">=</span> <span class="n">dr</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">dr</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rr_prop</span><span class="p">[</span><span class="n">depth</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rr_depth</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f</span> <span class="o">*=</span> <span class="n">dr</span><span class="o">.</span><span class="n">rcp</span><span class="p">(</span><span class="n">rr_prop</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">active_next</span> <span class="o">&amp;=</span> <span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">next_1d</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">rr_prop</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">active</span> <span class="o">=</span> <span class="n">active_next</span>
+</span></span><span class="line"><span class="cl">            <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">dr</span><span class="o">.</span><span class="n">neq</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">[])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">mi</span><span class="o">.</span><span class="n">register_integrator</span><span class="p">(</span><span class="s2">&#34;integrator&#34;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">props</span><span class="p">:</span> <span class="n">Simple</span><span class="p">(</span><span class="n">props</span><span class="p">))</span>
+</span></span></code></pre></div><h1 id="a-look-at-the-neural-importance-sampling-techniques">A look at the Neural Importance Sampling Techniques<a hidden class="anchor" aria-hidden="true" href="#a-look-at-the-neural-importance-sampling-techniques">#</a></h1>
+<p>The techniques we&rsquo;ve covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Paper</th>
+          <th>Venue</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Path Guiding Using Spatio-Directional Mixture Models</td>
+          <td>EGSR (2014)</td>
+      </tr>
+      <tr>
+          <td>Practical Path Guiding for Efficient Light-Transport Simulation</td>
+          <td>EGSR (2017)</td>
+      </tr>
+      <tr>
+          <td>Offline Deep Importance Sampling</td>
+          <td>Pacific Graphics (2018)</td>
+      </tr>
+      <tr>
+          <td>Neural Importance Sampling</td>
+          <td>SIGGRAPH (2019)</td>
+      </tr>
+      <tr>
+          <td>Real-time Neural Radiance Caching for Path Tracing</td>
+          <td>SIGGRAPH (2021)</td>
+      </tr>
+      <tr>
+          <td>Neural Parametric Mixtures for Path Guiding</td>
+          <td>SIGGRAPH (2023)</td>
+      </tr>
+      <tr>
+          <td>Neural Product Importance Sampling via Warp Composition</td>
+          <td>SIGGRAPH Asia (2024)</td>
+      </tr>
+      <tr>
+          <td>Neural Path Guiding with Distribution Factorization</td>
+          <td>EGSR (2025)</td>
+      </tr>
+  </tbody>
+</table>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/generative-modelling/">Generative Modelling</a></li>
+      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="http://localhost:1313/tags/ray-tracing/">Ray Tracing</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/bias-variance/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Bias–Variance Tradeoff</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

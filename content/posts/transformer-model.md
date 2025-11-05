@@ -1,6 +1,6 @@
 ---
 author: ["Utkarsh Sharma"]
-title: "Vision Transformer (ViT)"
+title: "Vision Transformer (ViT) - Architecture and Implementation"
 date: "2025-11-01"
 description: "Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture"
 summary: "Understanding how transformers use scaled dot-product attention with multiple heads to process sequential data efficiently"
