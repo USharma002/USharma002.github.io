@@ -201,7 +201,7 @@ $$
 If we do not scale down variance back to $\sim\sigma^2$, the softmax over the logits will already saturate to $1$ for one random element and $0$ for all others. The gradients through the softmax will be close to zero so that we can't learn the parameters appropriately. Note that the extra factor of $\sigma^2$, i.e., having $\sigma^4$ instead of $\sigma^2$, is usually not an issue, since we keep the original variance $\sigma^2$ close to $1$ anyways.
 
 
-The visualization of the Scaled Dot Product attention is given below. The **masking step is optional** makes the score $-\infty$ for top right of the attention matrix during training to stop the model from "cheating" by looking at the next token (future).
+The visualization of the Scaled Dot Product attention is given below. The **masking step is optional** and makes the score $-\infty$ for top right of the attention matrix during training to stop the model from "cheating" by looking at the next token (future) in the Decoder.
 
 <p align="center">
   <img src="../../images/transformer/attention_head_output.png"
@@ -427,6 +427,22 @@ class Encoder(nn.Module):
         
         return x
 ```
+
+
+## Decoder Block
+Now that we’ve covered most of the concepts on the encoder side, we basically know how the components of decoders work as well. But let’s take a look at how they work together.
+
+The encoder start by processing the input sequence. The output of the top encoder is then transformed into a set of attention vectors $K$ and $V$. These are to be used by each decoder in its "encoder-decoder attention"/Cross Attention layer which helps the decoder focus on appropriate places in the input sequence. 
+<p align="center">
+  <img src="../../images/transformer/transformer_decoding_2.gif"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <em>After finishing the encoding phase, we begin the decoding phase. Each step in the decoding phase outputs an element from the output sequence </em>
+</p>
+
+The “Encoder-Decoder Attention” layer works just like multiheaded self-attention, except it creates its Queries matrix from the layer below it, and takes the Keys and Values matrix from the output of the encoder stack.
+In the decoder, the self-attention layer is only allowed to attend to earlier positions in the output sequence. This is done by masking future positions (setting them to $-\infty$) before the softmax step in the self-attention calculation.
 
 
 # Vision Transformer (ViT)
