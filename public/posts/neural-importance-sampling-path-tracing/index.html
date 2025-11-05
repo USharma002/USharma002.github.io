@@ -748,7 +748,29 @@ the light transport properties of the hit material. BSDF is a superset and the g
        alt="Objects woth different BSDF"
        width="100%">
   <!-- <br> -->
-  <em>Sample Next Ray using some PDF</em>
+  <em>2 Sampler Per Pixel</em>
+</p>
+<p>To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.</p>
+<p align="center">
+  <img src="../../images/path_tracing/bathroom.png"
+       alt="Bathroom Scene Reference"
+       width="80%">
+  <!-- <br> -->
+  <em>Bathroom Scene Reference</em>
+</p>
+<p align="center">
+  <img src="../../images/path_tracing/bathroom_spp.png"
+       alt="Bathroom Scene Rendereed at different SPP"
+       width="100%">
+  <!-- <br> -->
+  <em>Bathroom Scene Rendereed at different SPP</em>
+</p>
+<p align="center">
+  <img src="../../images/path_tracing/bathroom_depth.png"
+       alt="Bathroom Scene Rendereed at different depth"
+       width="100%">
+  <!-- <br> -->
+  <em>Bathroom Scene Rendereed at different depth</em>
 </p>
 <h3 id="path-tracing-integrator-in-mitsuba">Path Tracing Integrator in Mitsuba<a hidden class="anchor" aria-hidden="true" href="#path-tracing-integrator-in-mitsuba">#</a></h3>
 <p>I am going to use the Mitsuba components to show how a standard Path Tracer works.</p>

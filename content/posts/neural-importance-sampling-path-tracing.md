@@ -716,7 +716,34 @@ Repeat the above process for all pixels (Parallely as this is embarrasingly para
        alt="Objects woth different BSDF"
        width="100%">
   <!-- <br> -->
-  <em>Sample Next Ray using some PDF</em>
+  <em>2 Sampler Per Pixel</em>
+</p>
+
+To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.
+
+<p align="center">
+  <img src="../../images/path_tracing/bathroom.png"
+       alt="Bathroom Scene Reference"
+       width="80%">
+  <!-- <br> -->
+  <em>Bathroom Scene Reference</em>
+</p>
+
+
+<p align="center">
+  <img src="../../images/path_tracing/bathroom_spp.png"
+       alt="Bathroom Scene Rendereed at different SPP"
+       width="100%">
+  <!-- <br> -->
+  <em>Bathroom Scene Rendereed at different SPP</em>
+</p>
+
+<p align="center">
+  <img src="../../images/path_tracing/bathroom_depth.png"
+       alt="Bathroom Scene Rendereed at different depth"
+       width="100%">
+  <!-- <br> -->
+  <em>Bathroom Scene Rendereed at different depth</em>
 </p>
 
 ### Path Tracing Integrator in Mitsuba
