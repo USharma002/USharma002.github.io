@@ -21,17 +21,7 @@ We mostly work with equations developed between the 16th and early 19th century 
 
 We are going to look at the **Path Tracing** algorithm. What are differences between Ray Tracing and Path Tracing? I got the following online:
 
-
-In Ray tracing, rays are cast from the camera into the scene. When they hit some geometry, lighting is calculated at that point by tracing additional rays towards light sources.
-
-In path tracing, rays are cast from light sources containing an amount of light energy. Upon hitting a surface, the surface properties absorb some of the energy and divide the rest in multiple rays, cast back into the scene. Rays that happen to hit the camera are recorded into pixels.
-
-So, path tracing tries to simulate how light behaves when it bounces around and is captured by a camera. Optical effects like depth of field, caustic, and indirect lighting, for example, don’t require any extra specialized algorithms, unlike raytracing.
-
-On the other hand, path tracing needs a lot more rays to produce an image that raytracing, and since the rays “randomly” hit the camera you never have a perfectly clean image: there is always some noise.
-
-
-The above is a good explaination I found in Unity forms <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.
+I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.
 
 ## The Rendering Equation
 
@@ -539,15 +529,12 @@ The basic idea is that, when estimating an integral, we should draw samples from
 > **Definition — Multiple Importance Sampling**
 > 
 > With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
->$$
-w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}
->$$
+>$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$
+>
 >where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$
 >
 > More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
->$$
-F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}
->$$
+$$F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$
 
 The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.
 
@@ -649,8 +636,6 @@ Now that we know about the BxDF functions which define the material properties, 
 
 ### Path Tracing Algorithm Steps
 
-TODO
-
 1. **Generate camera ray** through pixel using sensor
 
 <p align="center">
@@ -746,11 +731,131 @@ To show a real example, we can see the effects of Max Depth and Samples per pixe
   <em>Bathroom Scene Rendereed at different depth</em>
 </p>
 
+### Recursive and Iterative Formulations
+
+| Symbol | Meaning |
+|--------|---------|
+| $f$ | **Throughput** — cumulative product of BSDF and PDF terms: $f = \prod_{k=1}^{\text{depth}} \frac{f_r^{(k)}}{p_i^{(k)}}$ |
+| $L$ | Accumulated radiance along the path |
+| $L_e$ | Emitted radiance at surface intersection |
+| $\omega_i$ | Sampled direction from BSDF distribution |
+| $f_r$ | BSDF value: $f_r(x, \omega_i, \omega_o)$ |
+| $p_i$ | PDF of sampled direction |
+| $q$ | Russian roulette survival probability |
+
+**Input:** scene, ray, depth, $\text{max\_depth}$, $\text{rr\_depth}$  
+**Output:** Radiance $L_o(x, \omega_o)$
+
+#### Recursive Formulation
+
+```markdown
+function PATHTRACE(scene, ray, depth)
+    if depth ≥ max_depth then
+        return 0
+    end if
+
+    si ← INTERSECT(ray, scene)
+    if ¬si.valid() then
+        return 0
+    end if
+
+    Lₑ ← si.bsdf.emission(ωₒ)
+    (ωᵢ, fᵣ, p_ωᵢ) ← BSDF-SAMPLE(si.bsdf, ωₒ)
+
+    next_ray ← RAY(si.p, ωᵢ)
+    Lᵢ ← PATHTRACE(next_ray, depth + 1)
+    Lᵣ ← (fᵣ · Lᵢ) / p_ωᵢ
+
+    if depth ≥ rr_depth then
+        q ← max(Lᵣ.r, Lᵣ.g, Lᵣ.b)
+        if RAND() > q then
+            return Lₑ
+        end if
+        Lᵣ ← Lᵣ / q
+    end if
+
+    return Lₑ + Lᵣ
+end function
+```
+**Recursion relation:**
+$$L_o^{(d)}(x, \omega_o) = L_e(x, \omega_o) + \frac{f_r(x, \omega_i, \omega_o) \cdot L_i^{(d+1)}(x, \omega_i)}{p(\omega_i)}$$
+
+#### Loop Formulation
+A corresponding loop version of the Path Tracing which is better for CUDA is as follows:
+
+```markdown
+function PATHTRACE(scene, ray):
+    depth ← 0
+    f ← 1                # throughput (path weight)
+    L ← 0                # accumulated radiance
+
+    while depth < max_depth
+        si ← INTERSECT(ray, scene)
+        if not si.valid():
+            break
+
+        bsdf ← si.bsdf()
+        Lₑ ← si.emission()
+        L ← L + f * Lₑ   # accumulate emitted radiance
+
+        (ωᵢ, fᵣ, pᵢ) ← BSDF_SAMPLE(bsdf)
+        if pᵢ == 0:
+            break
+
+        f ← f * (fᵣ / pᵢ)   # update throughput
+        ray ← RAY(si.p, ωᵢ)
+
+        # Russian roulette termination
+        if depth ≥ rr_depth:
+            q ← max(f.x, f.y, f.z)
+            if RAND() > q:
+                break
+            f ← f / q
+
+        depth ← depth + 1
+
+    return L
+```
+
+**Accumulation relation:**
+$$L = \sum_{d=0}^{\infty} f^{(d)} \cdot L_e^{(d)}$$
+where $f^{(d)} = \prod_{k=0}^{d-1} \frac{f_r^{(k)}}{p_i^{(k)}}$
+
+#### Equivalence
+
+Both formulations are mathematically equivalent. The recursive form (Alg. 1) naturally expresses the rendering equation recursion, while the iterative form (Alg. 2) is more efficient for GPU implementation:
+
+- **Recursive:** Computes $L_o$ by solving the implicit equation directly
+- **Iterative:** Unrolls the recursion, accumulating contributions at each bounce with throughput $f$
+
+The loop version materializes the infinite recursion by:
+1. Maintaining **throughput** $f$ instead of computing implicit weights
+2. **Accumulating** $L_e$ contributions at each step (line 14)
+3. **Early termination** via Russian roulette when $f \approx 0$
+
+#### How it matters for data collection
+The recursive formulation provides **direct access to intermediate incoming 
+radiance values at each intersection point along the path**. When recursively 
+tracing a ray, at each bounce depth $d$, you immediately have:
+
+- $L_i^{(d)}$: incoming radiance at intersection $d$
+- $\omega_i^{(d)}$: sampled direction at intersection $d$ 
+- $x^{(d)}$: surface position and properties
+
+In contrast, the iterative formulation only **accumulates the final radiance 
+over the entire path**, computing a single value $L$ by threading throughput 
+forward. The incoming radiance at intermediate intersections is never explicitly 
+computed or stored.
+
+To extract per-bounce training data from the iterative formulation, you must 
+perform a **backward pass** to decompose the accumulated radiance back to each 
+path vertex—an expensive additional computation step.
+
 ### Path Tracing Integrator in Mitsuba
 
-I am going to use the Mitsuba components to show how a standard Path Tracer works.
+Mitsuba 3 is a research-oriented retargetable rendering system, written in portable C++17 on top of the Dr.Jit Just-In-Time compiler.
 
-First we need to set up all the objects as given in the Assumptions.
+I am going to use the python bindings of Mitsuba and it's components to show how a standard Path Tracer works. First we need to set up all the objects as given in the Assumptions.
 
 First the Sensor/Camera generates the initial rays that we are  going to trace.
 
@@ -850,7 +955,6 @@ class Simple(mi.SamplingIntegrator):
 mi.register_integrator("integrator", lambda props: Simple(props))
 ```
 
-
 # A look at the Neural Importance Sampling Techniques
 
 The techniques we've covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.
@@ -866,3 +970,36 @@ The techniques we've covered (importance sampling, MIS, Russian roulette) all re
 | Neural Product Importance Sampling via Warp Composition | SIGGRAPH Asia (2024) |
 | Neural Path Guiding with Distribution Factorization | EGSR (2025) |
 
+# TODO
+
+## References
+
+1. Kajiya, James T. *"The Rendering Equation."* *SIGGRAPH '86: Proceedings of the 13th Annual Conference on Computer Graphics and Interactive Techniques*, 1986.
+
+2. Pharr, Matt, Wenzel Jakob, and Greg Humphreys. *Physically Based Rendering: From Theory to Implementation*. 3rd ed., Morgan Kaufmann, 2016. [http://www.pbr-book.org](http://www.pbr-book.org).
+
+3. Vorba, Jiří, Ondřej Karlík, Martin Šik, Tobias Ritschel, and Jaroslav Křivánek. *"Path Guiding Using Spatio-Directional Mixture Models."* *Computer Graphics Forum*, vol. 33, no. 4, pp. 141-150, 2014. Presented at EGSR 2014.
+
+4. Müller, Thomas, Markus Gross, and Jan Novák. *"Practical Path Guiding for Efficient Light-Transport Simulation."* *Computer Graphics Forum*, vol. 36, no. 4, pp. 91-100, 2017. Presented at EGSR 2017.
+
+5. Li, Tzu-Mao, Yu-Ting Wu, and Yung-Yu Chuang. *"Offline Deep Importance Sampling for Monte Carlo Path Tracing."* *Pacific Graphics*, 2018.
+
+6. Müller, Thomas, Markus Gross, and Jan Novák. *"Neural Importance Sampling."* *ACM Transactions on Graphics (TOG)*, vol. 38, no. 6, p. 145, 2019. Presented at SIGGRAPH 2019.
+
+7. Bako, Steve, Samuli Laine, Tero Karras, Jaakko Lehtinen, and Pradeep Sen. *"Real-Time Neural Radiance Caching for Path Tracing."* *ACM Transactions on Graphics (TOG)*, vol. 40, no. 4, p. 36, 2021. Presented at SIGGRAPH 2021.
+
+8. Zeltner, Tim, Shlomi Steinberg, and Wenzel Jakob. *"Neural Parametric Mixtures for Path Guiding."* *ACM Transactions on Graphics (TOG)*, vol. 42, no. 4, p. 195, 2023. Presented at SIGGRAPH 2023.
+
+9. Xu, Kartic, Jiwoo Han, Ling-Qi Yan, and Ravi Ramamoorthi. *"Neural Product Importance Sampling via Warp Composition."* *ACM Transactions on Graphics (TOG)*, vol. 43, no. 6, 2024. Presented at SIGGRAPH Asia 2024.
+
+10. Dahm, Kai, Lukas Hosek, Carsten Dachsbacher, and Nikolaus Binder. *"Neural Path Guiding with Distribution Factorization."* *Eurographics Symposium on Rendering (EGSR)*, 2025.
+
+11. *Probability Course*. University of Massachusetts Amherst. [https://www.probabilitycourse.com/](https://www.probabilitycourse.com/).
+
+12. Veach, Eric. *Robust Monte Carlo Methods for Light Transport Simulation*. PhD dissertation, Stanford University, 1997.
+
+13. Owen, Art B. *"Monte Carlo Theory, Methods and Examples."* [https://artowen.su.domains/mc/](https://artowen.su.domains/mc/).
+
+14. TU Wien. *"Rendering (VU)."* Computer Graphics and Algorithms, Summer Semester 2020. [https://www.cg.tuwien.ac.at/courses/Rendering/VU.SS2020.html](https://www.cg.tuwien.ac.at/courses/Rendering/VU.SS2020.html).
+
+15. KAIST CS580: Advanced Topics in Computer Graphics. *"Neural Rendering."* Spring 2024. [https://mhsung.github.io/kaist-cs580-spring-2024/](https://mhsung.github.io/kaist-cs580-spring-2024/).

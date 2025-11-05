@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.218cff27137dee9095236cea4eb7a9ad80317b92a0fd2c99bcc250afa6e74737.css" integrity="sha256-IYz/JxN97pCVI2zqTreprYAxe5Kg/SyZvMJQr6bnRzc=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -160,7 +160,7 @@ window.MathJax = {
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-04 00:00:00 +0000 UTC'>November 4, 2025</span>&nbsp;·&nbsp;20 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-04 00:00:00 +0000 UTC'>November 4, 2025</span>&nbsp;·&nbsp;24 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -243,12 +243,31 @@ window.MathJax = {
                 <li>
                     <a href="#path-tracing-algorithm-steps" aria-label="Path Tracing Algorithm Steps">Path Tracing Algorithm Steps</a></li>
                 <li>
+                    <a href="#recursive-and-iterative-formulations" aria-label="Recursive and Iterative Formulations">Recursive and Iterative Formulations</a><ul>
+                        
+                <li>
+                    <a href="#recursive-formulation" aria-label="Recursive Formulation">Recursive Formulation</a></li>
+                <li>
+                    <a href="#loop-formulation" aria-label="Loop Formulation">Loop Formulation</a></li>
+                <li>
+                    <a href="#equivalence" aria-label="Equivalence">Equivalence</a></li>
+                <li>
+                    <a href="#how-it-matters-for-data-collection" aria-label="How it matters for data collection">How it matters for data collection</a></li></ul>
+                </li>
+                <li>
                     <a href="#path-tracing-integrator-in-mitsuba" aria-label="Path Tracing Integrator in Mitsuba">Path Tracing Integrator in Mitsuba</a></li></ul>
                 </li></ul>
                 </li>
                 <li>
-                    <a href="#a-look-at-the-neural-importance-sampling-techniques" aria-label="A look at the Neural Importance Sampling Techniques">A look at the Neural Importance Sampling Techniques</a>
+                    <a href="#a-look-at-the-neural-importance-sampling-techniques" aria-label="A look at the Neural Importance Sampling Techniques">A look at the Neural Importance Sampling Techniques</a></li>
+                <li>
+                    <a href="#todo" aria-label="TODO">TODO</a><ul>
+                        
+                <li>
+                    <a href="#references" aria-label="References">References</a>
                 </li>
+            </ul>
+            </li>
             </ul>
         </div>
     </details>
@@ -258,11 +277,7 @@ window.MathJax = {
 <p>The goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.</p>
 <p>We mostly work with equations developed between the 16th and early 19th century that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as <strong>ray tracing</strong></p>
 <p>We are going to look at the <strong>Path Tracing</strong> algorithm. What are differences between Ray Tracing and Path Tracing? I got the following online:</p>
-<p>In Ray tracing, rays are cast from the camera into the scene. When they hit some geometry, lighting is calculated at that point by tracing additional rays towards light sources.</p>
-<p>In path tracing, rays are cast from light sources containing an amount of light energy. Upon hitting a surface, the surface properties absorb some of the energy and divide the rest in multiple rays, cast back into the scene. Rays that happen to hit the camera are recorded into pixels.</p>
-<p>So, path tracing tries to simulate how light behaves when it bounces around and is captured by a camera. Optical effects like depth of field, caustic, and indirect lighting, for example, don’t require any extra specialized algorithms, unlike raytracing.</p>
-<p>On the other hand, path tracing needs a lot more rays to produce an image that raytracing, and since the rays “randomly” hit the camera you never have a perfectly clean image: there is always some noise.</p>
-<p>The above is a good explaination I found in Unity forms <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.</p>
+<p>I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.</p>
 <h2 id="the-rendering-equation">The Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#the-rendering-equation">#</a></h2>
 <p>At the heart of physically based rendering lies the <strong>Rendering Equation</strong>, introduced by James Kajiya (1986). It provides a unified mathematical framework describing how light is transferred and redistributed in a scene. Intuitively, it says that the radiance leaving a surface point in some direction is the sum of the light the surface emits and the light it reflects from all incoming directions.</p>
 <p>Formally:</p>
@@ -598,15 +613,10 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
 <p><strong>Definition — Multiple Importance Sampling</strong></p>
 <p>With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
 </p>
-$$
-w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}
->$$<p>
-where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$</p>
+$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$<p>where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$</p>
 <p>More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
 </p>
-$$
-F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}
->$$</blockquote>
+$$F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$</blockquote>
 <p>The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.</p>
 <p>In practice, a good choice for the weighting functions is given by the <strong>balance heuristic</strong>, which attempts to fulfill this goal by taking into account all the different ways that a sample could have been generated, rather than just the particular one that was used to do so. The balance heuristic’s weighting function for the th sampling technique is :</p>
 $$
@@ -680,7 +690,6 @@ the light transport properties of the hit material. BSDF is a superset and the g
 </p>
 <p>Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.</p>
 <h3 id="path-tracing-algorithm-steps">Path Tracing Algorithm Steps<a hidden class="anchor" aria-hidden="true" href="#path-tracing-algorithm-steps">#</a></h3>
-<p>TODO</p>
 <ol>
 <li><strong>Generate camera ray</strong> through pixel using sensor</li>
 </ol>
@@ -772,9 +781,145 @@ the light transport properties of the hit material. BSDF is a superset and the g
   <!-- <br> -->
   <em>Bathroom Scene Rendereed at different depth</em>
 </p>
+<h3 id="recursive-and-iterative-formulations">Recursive and Iterative Formulations<a hidden class="anchor" aria-hidden="true" href="#recursive-and-iterative-formulations">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>Symbol</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$f$</td>
+          <td><strong>Throughput</strong> — cumulative product of BSDF and PDF terms: $f = \prod_{k=1}^{\text{depth}} \frac{f_r^{(k)}}{p_i^{(k)}}$</td>
+      </tr>
+      <tr>
+          <td>$L$</td>
+          <td>Accumulated radiance along the path</td>
+      </tr>
+      <tr>
+          <td>$L_e$</td>
+          <td>Emitted radiance at surface intersection</td>
+      </tr>
+      <tr>
+          <td>$\omega_i$</td>
+          <td>Sampled direction from BSDF distribution</td>
+      </tr>
+      <tr>
+          <td>$f_r$</td>
+          <td>BSDF value: $f_r(x, \omega_i, \omega_o)$</td>
+      </tr>
+      <tr>
+          <td>$p_i$</td>
+          <td>PDF of sampled direction</td>
+      </tr>
+      <tr>
+          <td>$q$</td>
+          <td>Russian roulette survival probability</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Input:</strong> scene, ray, depth, $\text{max_depth}$, $\text{rr_depth}$<br>
+<strong>Output:</strong> Radiance $L_o(x, \omega_o)$</p>
+<h4 id="recursive-formulation">Recursive Formulation<a hidden class="anchor" aria-hidden="true" href="#recursive-formulation">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">function PATHTRACE(scene, ray, depth)
+</span></span><span class="line"><span class="cl">    if depth ≥ max_depth then
+</span></span><span class="line"><span class="cl">        return 0
+</span></span><span class="line"><span class="cl">    end if
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    si ← INTERSECT(ray, scene)
+</span></span><span class="line"><span class="cl">    if ¬si.valid() then
+</span></span><span class="line"><span class="cl">        return 0
+</span></span><span class="line"><span class="cl">    end if
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    Lₑ ← si.bsdf.emission(ωₒ)
+</span></span><span class="line"><span class="cl">    (ωᵢ, fᵣ, p_ωᵢ) ← BSDF-SAMPLE(si.bsdf, ωₒ)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    next_ray ← RAY(si.p, ωᵢ)
+</span></span><span class="line"><span class="cl">    Lᵢ ← PATHTRACE(next_ray, depth + 1)
+</span></span><span class="line"><span class="cl">    Lᵣ ← (fᵣ · Lᵢ) / p_ωᵢ
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    if depth ≥ rr_depth then
+</span></span><span class="line"><span class="cl">        q ← max(Lᵣ.r, Lᵣ.g, Lᵣ.b)
+</span></span><span class="line"><span class="cl">        if RAND() &gt; q then
+</span></span><span class="line"><span class="cl">            return Lₑ
+</span></span><span class="line"><span class="cl">        end if
+</span></span><span class="line"><span class="cl">        Lᵣ ← Lᵣ / q
+</span></span><span class="line"><span class="cl">    end if
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    return Lₑ + Lᵣ
+</span></span><span class="line"><span class="cl">end function
+</span></span></code></pre></div><p><strong>Recursion relation:</strong>
+</p>
+$$L_o^{(d)}(x, \omega_o) = L_e(x, \omega_o) + \frac{f_r(x, \omega_i, \omega_o) \cdot L_i^{(d+1)}(x, \omega_i)}{p(\omega_i)}$$<h4 id="loop-formulation">Loop Formulation<a hidden class="anchor" aria-hidden="true" href="#loop-formulation">#</a></h4>
+<p>A corresponding loop version of the Path Tracing which is better for CUDA is as follows:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">function PATHTRACE(scene, ray):
+</span></span><span class="line"><span class="cl">    depth ← 0
+</span></span><span class="line"><span class="cl">    f ← 1                # throughput (path weight)
+</span></span><span class="line"><span class="cl">    L ← 0                # accumulated radiance
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    while depth <span class="p">&lt;</span> <span class="nt">max_depth</span>
+</span></span><span class="line"><span class="cl">        <span class="na">si</span> <span class="err">←</span> <span class="na">INTERSECT</span><span class="err">(</span><span class="na">ray</span><span class="err">,</span> <span class="na">scene</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl">        <span class="na">if</span> <span class="na">not</span> <span class="na">si</span><span class="err">.</span><span class="na">valid</span><span class="err">()</span><span class="na">:</span>
+</span></span><span class="line"><span class="cl">            <span class="na">break</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="na">bsdf</span> <span class="err">←</span> <span class="na">si</span><span class="err">.</span><span class="na">bsdf</span><span class="err">()</span>
+</span></span><span class="line"><span class="cl">        <span class="na">Lₑ</span> <span class="err">←</span> <span class="na">si</span><span class="err">.</span><span class="na">emission</span><span class="err">()</span>
+</span></span><span class="line"><span class="cl">        <span class="na">L</span> <span class="err">←</span> <span class="na">L</span> <span class="err">+</span> <span class="na">f</span> <span class="err">*</span> <span class="na">Lₑ</span>   <span class="err">#</span> <span class="na">accumulate</span> <span class="na">emitted</span> <span class="na">radiance</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="err">(</span><span class="na">ωᵢ</span><span class="err">,</span> <span class="na">fᵣ</span><span class="err">,</span> <span class="na">pᵢ</span><span class="err">)</span> <span class="err">←</span> <span class="na">BSDF_SAMPLE</span><span class="err">(</span><span class="na">bsdf</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl">        <span class="na">if</span> <span class="na">pᵢ </span><span class="o">=</span><span class="s">=</span> <span class="na">0:</span>
+</span></span><span class="line"><span class="cl">            <span class="na">break</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="na">f</span> <span class="err">←</span> <span class="na">f</span> <span class="err">*</span> <span class="err">(</span><span class="na">fᵣ</span> <span class="err">/</span> <span class="na">pᵢ</span><span class="err">)</span>   <span class="err">#</span> <span class="na">update</span> <span class="na">throughput</span>
+</span></span><span class="line"><span class="cl">        <span class="na">ray</span> <span class="err">←</span> <span class="na">RAY</span><span class="err">(</span><span class="na">si</span><span class="err">.</span><span class="na">p</span><span class="err">,</span> <span class="na">ωᵢ</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="err">#</span> <span class="na">Russian</span> <span class="na">roulette</span> <span class="na">termination</span>
+</span></span><span class="line"><span class="cl">        <span class="na">if</span> <span class="na">depth</span> <span class="err">≥</span> <span class="na">rr_depth:</span>
+</span></span><span class="line"><span class="cl">            <span class="na">q</span> <span class="err">←</span> <span class="na">max</span><span class="err">(</span><span class="na">f</span><span class="err">.</span><span class="na">x</span><span class="err">,</span> <span class="na">f</span><span class="err">.</span><span class="na">y</span><span class="err">,</span> <span class="na">f</span><span class="err">.</span><span class="na">z</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl">            <span class="na">if</span> <span class="na">RAND</span><span class="err">()</span> <span class="p">&gt;</span> q:
+</span></span><span class="line"><span class="cl">                break
+</span></span><span class="line"><span class="cl">            f ← f / q
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        depth ← depth + 1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    return L
+</span></span></code></pre></div><p><strong>Accumulation relation:</strong>
+</p>
+$$L = \sum_{d=0}^{\infty} f^{(d)} \cdot L_e^{(d)}$$<p>
+where $f^{(d)} = \prod_{k=0}^{d-1} \frac{f_r^{(k)}}{p_i^{(k)}}$</p>
+<h4 id="equivalence">Equivalence<a hidden class="anchor" aria-hidden="true" href="#equivalence">#</a></h4>
+<p>Both formulations are mathematically equivalent. The recursive form (Alg. 1) naturally expresses the rendering equation recursion, while the iterative form (Alg. 2) is more efficient for GPU implementation:</p>
+<ul>
+<li><strong>Recursive:</strong> Computes $L_o$ by solving the implicit equation directly</li>
+<li><strong>Iterative:</strong> Unrolls the recursion, accumulating contributions at each bounce with throughput $f$</li>
+</ul>
+<p>The loop version materializes the infinite recursion by:</p>
+<ol>
+<li>Maintaining <strong>throughput</strong> $f$ instead of computing implicit weights</li>
+<li><strong>Accumulating</strong> $L_e$ contributions at each step (line 14)</li>
+<li><strong>Early termination</strong> via Russian roulette when $f \approx 0$</li>
+</ol>
+<h4 id="how-it-matters-for-data-collection">How it matters for data collection<a hidden class="anchor" aria-hidden="true" href="#how-it-matters-for-data-collection">#</a></h4>
+<p>The recursive formulation provides <strong>direct access to intermediate incoming
+radiance values at each intersection point along the path</strong>. When recursively
+tracing a ray, at each bounce depth $d$, you immediately have:</p>
+<ul>
+<li>$L_i^{(d)}$: incoming radiance at intersection $d$</li>
+<li>$\omega_i^{(d)}$: sampled direction at intersection $d$</li>
+<li>$x^{(d)}$: surface position and properties</li>
+</ul>
+<p>In contrast, the iterative formulation only <strong>accumulates the final radiance
+over the entire path</strong>, computing a single value $L$ by threading throughput
+forward. The incoming radiance at intermediate intersections is never explicitly
+computed or stored.</p>
+<p>To extract per-bounce training data from the iterative formulation, you must
+perform a <strong>backward pass</strong> to decompose the accumulated radiance back to each
+path vertex—an expensive additional computation step.</p>
 <h3 id="path-tracing-integrator-in-mitsuba">Path Tracing Integrator in Mitsuba<a hidden class="anchor" aria-hidden="true" href="#path-tracing-integrator-in-mitsuba">#</a></h3>
-<p>I am going to use the Mitsuba components to show how a standard Path Tracer works.</p>
-<p>First we need to set up all the objects as given in the Assumptions.</p>
+<p>Mitsuba 3 is a research-oriented retargetable rendering system, written in portable C++17 on top of the Dr.Jit Just-In-Time compiler.</p>
+<p>I am going to use the python bindings of Mitsuba and it&rsquo;s components to show how a standard Path Tracer works. First we need to set up all the objects as given in the Assumptions.</p>
 <p>First the Sensor/Camera generates the initial rays that we are  going to trace.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PinholeSensor</span><span class="p">(</span><span class="n">mi</span><span class="o">.</span><span class="n">Sensor</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">props</span><span class="p">):</span>
@@ -907,6 +1052,55 @@ the light transport properties of the hit material. BSDF is a superset and the g
       </tr>
   </tbody>
 </table>
+<h1 id="todo">TODO<a hidden class="anchor" aria-hidden="true" href="#todo">#</a></h1>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ol>
+<li>
+<p>Kajiya, James T. <em>&ldquo;The Rendering Equation.&rdquo;</em> <em>SIGGRAPH &lsquo;86: Proceedings of the 13th Annual Conference on Computer Graphics and Interactive Techniques</em>, 1986.</p>
+</li>
+<li>
+<p>Pharr, Matt, Wenzel Jakob, and Greg Humphreys. <em>Physically Based Rendering: From Theory to Implementation</em>. 3rd ed., Morgan Kaufmann, 2016. <a href="http://www.pbr-book.org">http://www.pbr-book.org</a>.</p>
+</li>
+<li>
+<p>Vorba, Jiří, Ondřej Karlík, Martin Šik, Tobias Ritschel, and Jaroslav Křivánek. <em>&ldquo;Path Guiding Using Spatio-Directional Mixture Models.&rdquo;</em> <em>Computer Graphics Forum</em>, vol. 33, no. 4, pp. 141-150, 2014. Presented at EGSR 2014.</p>
+</li>
+<li>
+<p>Müller, Thomas, Markus Gross, and Jan Novák. <em>&ldquo;Practical Path Guiding for Efficient Light-Transport Simulation.&rdquo;</em> <em>Computer Graphics Forum</em>, vol. 36, no. 4, pp. 91-100, 2017. Presented at EGSR 2017.</p>
+</li>
+<li>
+<p>Li, Tzu-Mao, Yu-Ting Wu, and Yung-Yu Chuang. <em>&ldquo;Offline Deep Importance Sampling for Monte Carlo Path Tracing.&rdquo;</em> <em>Pacific Graphics</em>, 2018.</p>
+</li>
+<li>
+<p>Müller, Thomas, Markus Gross, and Jan Novák. <em>&ldquo;Neural Importance Sampling.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 38, no. 6, p. 145, 2019. Presented at SIGGRAPH 2019.</p>
+</li>
+<li>
+<p>Bako, Steve, Samuli Laine, Tero Karras, Jaakko Lehtinen, and Pradeep Sen. <em>&ldquo;Real-Time Neural Radiance Caching for Path Tracing.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 40, no. 4, p. 36, 2021. Presented at SIGGRAPH 2021.</p>
+</li>
+<li>
+<p>Zeltner, Tim, Shlomi Steinberg, and Wenzel Jakob. <em>&ldquo;Neural Parametric Mixtures for Path Guiding.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 42, no. 4, p. 195, 2023. Presented at SIGGRAPH 2023.</p>
+</li>
+<li>
+<p>Xu, Kartic, Jiwoo Han, Ling-Qi Yan, and Ravi Ramamoorthi. <em>&ldquo;Neural Product Importance Sampling via Warp Composition.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 43, no. 6, 2024. Presented at SIGGRAPH Asia 2024.</p>
+</li>
+<li>
+<p>Dahm, Kai, Lukas Hosek, Carsten Dachsbacher, and Nikolaus Binder. <em>&ldquo;Neural Path Guiding with Distribution Factorization.&rdquo;</em> <em>Eurographics Symposium on Rendering (EGSR)</em>, 2025.</p>
+</li>
+<li>
+<p><em>Probability Course</em>. University of Massachusetts Amherst. <a href="https://www.probabilitycourse.com/">https://www.probabilitycourse.com/</a>.</p>
+</li>
+<li>
+<p>Veach, Eric. <em>Robust Monte Carlo Methods for Light Transport Simulation</em>. PhD dissertation, Stanford University, 1997.</p>
+</li>
+<li>
+<p>Owen, Art B. <em>&ldquo;Monte Carlo Theory, Methods and Examples.&rdquo;</em> <a href="https://artowen.su.domains/mc/">https://artowen.su.domains/mc/</a>.</p>
+</li>
+<li>
+<p>TU Wien. <em>&ldquo;Rendering (VU).&rdquo;</em> Computer Graphics and Algorithms, Summer Semester 2020. <a href="https://www.cg.tuwien.ac.at/courses/Rendering/VU.SS2020.html">https://www.cg.tuwien.ac.at/courses/Rendering/VU.SS2020.html</a>.</p>
+</li>
+<li>
+<p>KAIST CS580: Advanced Topics in Computer Graphics. <em>&ldquo;Neural Rendering.&rdquo;</em> Spring 2024. <a href="https://mhsung.github.io/kaist-cs580-spring-2024/">https://mhsung.github.io/kaist-cs580-spring-2024/</a>.</p>
+</li>
+</ol>
 
 
   </div>
