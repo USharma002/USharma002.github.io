@@ -19,7 +19,7 @@ It uses encoder-decoder structure where both encoder block and decoder block hav
 <p align="center">
   <img src="../../images/transformer/transformer_architecture.svg"
        alt="Transformer Architecture"
-       width="45%">
+       width="50%">
   <!-- <br> -->
   <em>Transformer Architecture</em>
 </p>
@@ -30,6 +30,7 @@ If $d_{model}$ is our embedding dimension, and $T$ is the sequence length, the i
 $$X\in\mathbb{R}^{T \times d_{model}}$$
 
 As an example, we have $d_{model}=768$ and a sequence length $T=9$, for the following:
+
 <p align="center">
   <img src="../../images/transformer/input_embedding.png"
        alt="Input embeddings showing 9 tokens each with 768-dimensional vectors"
@@ -112,6 +113,8 @@ $$
 $$
 
 What queries to use, how the key and value vectors are defined and what score function is used is a design choice in most attention mechanisms. The attention applied inside the transformer architecture is called **self-attention**.
+
+The example assumes $T=9$, $h = 12$ and $d_{model}=768$ thus making $d_v = d_k = \frac{d_{model}}{h} = 64$
 
 <p align="center">
   <img src="../../images/transformer/QK.png"
@@ -212,7 +215,7 @@ The visualization of the Scaled Dot Product attention is given below. The **mask
 <p align="center">
   <img src="../../images/transformer/sdpa.svg"
        alt="Multi Head Attention Computation Graph"
-       width="25%">
+       width="50%">
   <!-- <br> -->
   <em>Acaled Dot Product Attention Computation Graph</em>
 </p>
@@ -294,7 +297,7 @@ One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduce
 <p align="center">
   <img src="../../images/transformer/mha.svg"
        alt="Multi Head Attention Computation Graph"
-       width="25%">
+       width="50%">
   <!-- <br> -->
   <em>Multi Head Attention Computation Graph</em>
 </p>
@@ -316,9 +319,59 @@ class MultiHeadAttention(nn.Module):
         return O                                              # residual
 ```
 
-## In a Neural Network
+### Multi-head attention is Permutation Invariant
 
-When implementing a Multi-Head Attention layer in a neural network, where we don't have an arbitrary query, key, and value vector as input, a simple but effective implementation is to set the current feature map in a NN, $X\in \mathbb{R}^{B\times T\times{d_{model}}}$ (B being the batch size, T the sequence length, $d_{model}$ the hidden dimensionality of $X$), as $Q, K$ and $V$. The consecutive weight matrices $W^Q$, $W^K$, and $W^V$ can transform $X$ to the corresponding feature vectors that represent the queries, keys, and values of the input.
+One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it's inputs. This means if we seitch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.
+
+**Proof :** Let $P$ be a permutation matrix and $X$ the input.
+
+$$
+Q = XW^Q,\quad K = XW^K,\quad V = XW^V
+$$
+
+Then for permuted input $PX$:
+
+$$
+(PX)W^Q = PQ,\quad (PX)W^K = PK,\quad (PX)W^V = PV
+$$
+
+Compute attention:
+
+$$
+\text{Att}(PQ, PK, PV) = \text{softmax}\!\left(\frac{(PQ)(PK)^\top}{\sqrt{d_k}}\right) PV
+= \text{softmax}\!\left(\frac{P Q K^\top P^\top}{\sqrt{d_k}}\right) PV
+$$
+
+Using $\text{softmax}(P S P^\top) = P\,\text{softmax}(S)\,P^\top$:
+
+$$
+\text{Att}(PQ, PK, PV)
+= P\,\text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)(P^\top P)V
+= P\,\text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+$$
+
+$$
+\boxed{\text{Att}(PX) = P\,\text{Att}(X)}
+$$
+
+Hence, self-attention (without positional encodings) is **permutation-equivariant**.
+
+
+Hence, the multi-head attention is actually looking at the input not as a sequence, but as a set of elements, that's why we need to encode the position int hte input features.
+
+
+## Feed Forward Network
+
+Additionally to the Multi-Head Attention, a small fully connected feed-forward network is added to the model, which is applied to each position separately and identically. Specifically, the model uses a Linear $\rightarrow$ ReLU (GeLU in this case) $\rightarrow$ Linear MLP. The full transformation including the residual connection can be expressed as:
+
+$$
+\begin{align*}
+FFN(x) &= \max(0,\, xW_1 + b_1)W_2 + b_2 \\
+x &= LayerNorm(x + FFN(x))
+\end{align*}
+$$
+
+This MLP adds extra complexity to the model and allows transformations on each sequence element separately. You can imagine as this allows the model to *"post-process"* the new information added by the previous Multi-Head Attention, and prepare it for the next attention block. Usually, the inner dimensionality of the MLP is $2-8\times$ larger than $d_{model}$, i.e. the dimensionality of the original input . The general advantage of a wider layer instead of a narrow, multi-layer MLP is the faster, parallelizable execution.
 
 ```python
 class FeedForwardLayer(nn.Module):
@@ -337,7 +390,15 @@ class FeedForwardLayer(nn.Module):
 
 ## Encoder Block
 
-TODO
+Originally, the Transformer model was designed for machine translation. Hence, it got an encoder-decoder structure where the encoder takes as input the sentence in the original language and generates an attention-based representation. On the other hand, the decoder attends over the encoded information and generates the translated sentence in an autoregressive manner, as in a standard RNN. While this structure is extremely useful for Sequence-to-Sequence tasks with the necessity of autoregressive decoding, we will focus here on the encoder part
+
+The encoder consists of $N$ identical blocks that are applied in sequence. Taking as input $x$, it is first passed through a Multi-Head Attention block as we have implemented above. The output is added to the original input using a residual connection, and we apply a consecutive Layer Normalization on the sum. Overall it calculates $LayerNorm(x + multihead(Q, K, V))$
+
+The residual connection in crucial in Transformer architecture dor two reasonfs:
+
+1. The residual connections are crucial for enabling a smooth gradient flow through the deep model.
+
+2. Without the residual connection, the information about the original sequence is lost.
 
 The complete Encoder Block can be implemeneted as the following:
 
@@ -367,6 +428,133 @@ class Encoder(nn.Module):
         return x
 ```
 
+
 # Vision Transformer (ViT)
 
-TODO
+To apply Transformders to sequences, we ahve simply added a positional encoding to the input feature vectors, and the model learned by itself what to do with it. So, why not do the same thing on images?
+
+This is what the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale". Specifically, the Vision transformer is a model for image classification that views images as sequence of smaller patches.
+
+Each of thise patches is considered to be a "word"/"token" and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.
+
+<p align="center">
+  <img src="../../images/transformer/vit.gif"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <em>GIF visualization of the architecture  (figure credit - <a href="https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif">Phil Wang</a>)</em>
+</p>
+
+Besides the Transformer encoder, we need the following modules:
+- A **linear projection layer** that maps the input patches to a feature vector of larger size. It is implemented by a simple linear layer that takes each $M \times M$ patch independently as input.
+
+```python
+class PatchEmbedding(nn.Module):
+    def __init__(self, img_size=32, patch_size=4, in_channels=3, d_model=128):
+        super().__init__()
+        self.proj = nn.Conv2d(in_channels, d_model, patch_size, stride=patch_size)
+        self.num_patches = (img_size // patch_size) ** 2
+        
+        self.patch_size = patch_size
+        self.img_size = img_size
+
+    def forward(self, x):
+        x = self.proj(x)                  # (B, d_model, H/patch, W/patch)
+        x = x.flatten(2).transpose(1, 2)  # (B, num_patches, d_model)
+        return x
+```
+
+- A **classification token** that is added to the input sequence. We will use the output feature vector of the classification token (CLS token in short) for determining the classification prediction.
+
+- **Learnable positional encodings** that are added to the tokens before being processed by the Transformer. Those are needed to learn position-dependent information, and convert the set to a sequence. Since we usually work with a fixed resolution, we can learn the positional encodings instead of having the pattern of sine and cosine functions.
+
+```python
+class LearnablePositionalEmbedding(nn.Module):
+    def __init__(self, num_patches, d_model):
+        super().__init__()
+        self.pos_embed = nn.Parameter(torch.randn(1, num_patches, d_model) * 0.02)
+    
+    def forward(self, x):
+        return x + self.pos_embed
+```
+
+- An **MLP head** that takes the output feature vector of the CLS token, and maps it to a classification prediction. This is usually implemented by a small feed-forward network or even a single linear layer.
+
+### Implementation
+We use the Pre-Layer Normalization version of the Transformer blocks proposed by <a href="http://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf">Ruibin Xiong et al.</a> in 2020. The idea is to apply Layer Normalization not in between residual blocks, but instead as a first layer in the residual blocks. This reorganization of the layers supports better gradient flow and removes the necessity of a warm-up stage. A visualization of the difference between the standard Post-LN and the Pre-LN version is shown below.
+
+<p align="center">
+  <img src="../../images/transformer/pre_layer_norm.svg"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <!-- <em>GIF visualization of the architecture  (figure credit - <a href="https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif">Phil Wang</a>)</em> -->
+</p>
+
+
+```python
+class ViTEncoderBlock(nn.Module):
+    def __init__(self, d_model, d_ff=2048, num_heads=8, dropout=0.1):
+        super().__init__()
+        d_v = d_k = d_model // num_heads
+        
+        self.self_attention = MultiHeadAttention(d_model, d_k, d_v, num_heads)
+        self.feed_forward = FeedForwardLayer(d_ff, d_model)
+        
+        self.attn_norm = nn.LayerNorm(d_model)
+        self.ff_norm = nn.LayerNorm(d_model)
+        
+        self.dropout = nn.Dropout(dropout)
+    
+    def forward(self, x):
+        x = x + self.dropout(self.self_attention(self.attn_norm(x)))
+        x = x + self.dropout(self.feed_forward(self.ff_norm(x)))
+        return x
+```
+
+Using the above ViT Encoder we can create a complete Classifier by stacking the encoders.
+
+```python
+class ViTClassifier(nn.Module):
+    def __init__(self, img_size=32, patch_size=4, num_classes=10, d_model=128,
+                 num_heads=4, d_ff=512, depth=4, dropout=0.1):
+        super().__init__()
+        
+        self.patch_embed = PatchEmbedding(img_size, patch_size, 3, d_model)
+        num_patches = self.patch_embed.num_patches
+        
+        self.cls_token = nn.Parameter(torch.randn(1, 1, d_model))
+        self.pos_embed = LearnablePositionalEmbedding(num_patches + 1, d_model)  # Changed
+        
+        self.encoder_blocks = nn.ModuleList([
+            ViTEncoderBlock(d_model, d_ff, num_heads, dropout)
+            for _ in range(depth)
+        ])
+        
+        self.norm = nn.LayerNorm(d_model)
+        self.classifier = nn.Linear(d_model, num_classes)
+    
+    def forward(self, x):
+        x = self.patch_embed(x)
+        cls = self.cls_token.expand(x.size(0), -1, -1)
+        x = torch.cat((cls, x), dim=1)
+        x = self.pos_embed(x)  # Changed from pos_encoding
+        
+        for block in self.encoder_blocks:
+            x = block(x)
+        
+        x = self.norm(x)
+        cls_output = x[:, 0]
+        logits = self.classifier(cls_output)
+        return logits
+```
+
+## References
+
+1. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). *Attention Is All You Need*. In *Advances in Neural Information Processing Systems (NeurIPS 2017)*. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+
+2. Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., Uszkoreit, J., & Houlsby, N. (2020). *An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale*. In *International Conference on Learning Representations (ICLR 2021)*. [arXiv:2010.11929](https://arxiv.org/abs/2010.11929)
+
+3. Alammar, J. (2018). *The Illustrated Transformer*. *The Illustrated Transformer Blog*. Retrieved from [https://jalammar.github.io/illustrated-transformer/](https://jalammar.github.io/illustrated-transformer/)
+
+4. University of Amsterdam. (n.d.). *Transformers and Multi-Head Attention — UvA Deep Learning Tutorials*. Retrieved from [https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html)
