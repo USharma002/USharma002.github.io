@@ -200,6 +200,8 @@ window.MathJax = {
                     <a href="#implementation" aria-label="Implementation">Implementation</a></li></ul>
                     
                 <li>
+                    <a href="#visualizing-attention" aria-label="Visualizing Attention">Visualizing Attention</a></li>
+                <li>
                     <a href="#references" aria-label="References">References</a>
                 </li>
             </ul>
@@ -229,7 +231,7 @@ $$X\in\mathbb{R}^{T \times d_{model}}$$<p>As an example, we have $d_{model}=768$
   <!-- <br> -->
   <em>Input embeddings showing 9 tokens each with 768-dimensional vectors</em>
 </p>
-<p>Since the model contains not recurrence and no convolution, in order for model to make use of the sequence, we must inject some information about the relative or absolute position of tolens in the sequence. To this end, we add &ldquo;positional encodings&rdquo; to the input embeddings element wise as:</p>
+<p>Since the model contains not recurrence and no convolution, in order for model to make use of the sequence, we must inject some information about the relative or absolute position of tokens in the sequence. To this end, we add &ldquo;positional encodings&rdquo; to the input embeddings element wise as:</p>
 $$X = X + PE, \quad X, PE \in \mathbb{R}^{T\times d_{model}}$$<p>The positional encodings have the same dimension $d_model$ as the embeddings, so that the two can be summed. There are many choices but the original paper uses the following:</p>
 $$ PE(pos, 2i) = sin(pos/ 10000^{2i/d_{model}}) $$<p>
 </p>
@@ -429,7 +431,7 @@ $$<p>We refer to this as Multi-Head Attention layer with the learnable parameter
     </td>
   </tr>
 </table>
-<p>One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it simila to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.</p>
+<p>One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it similar to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.</p>
 <p align="center">
   <img src="../../images/transformer/layer_out.png"
        alt="Final transformer layer output with layer normalization and feed-forward network"
@@ -445,7 +447,7 @@ $$<p>We refer to this as Multi-Head Attention layer with the learnable parameter
   <!-- <br> -->
   <em>Multi Head Attention Computation Graph</em>
 </p>
-The above concatednated output we can pass to the Feed Forward Network to get the final output.
+The above concatenated output we can pass to the Feed Forward Network to get the final output.
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">,</span> <span class="n">d_v</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -460,7 +462,7 @@ The above concatednated output we can pass to the Feed Forward Network to get th
 </span></span><span class="line"><span class="cl">        <span class="n">O</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wo</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>                                        <span class="c1"># (B, L, d_model)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">O</span>                                              <span class="c1"># residual</span>
 </span></span></code></pre></div><h3 id="multi-head-attention-is-permutation-invariant">Multi-head attention is Permutation Invariant<a hidden class="anchor" aria-hidden="true" href="#multi-head-attention-is-permutation-invariant">#</a></h3>
-<p>One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it&rsquo;s inputs. This means if we seitch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.</p>
+<p>One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it&rsquo;s inputs. This means if we switch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.</p>
 <p><strong>Proof :</strong> Let $P$ be a permutation matrix and $X$ the input.</p>
 $$
 Q = XW^Q,\quad K = XW^K,\quad V = XW^V
@@ -503,7 +505,7 @@ $$<p>This MLP adds extra complexity to the model and allows transformations on e
 </span></span></code></pre></div><h2 id="encoder-block">Encoder Block<a hidden class="anchor" aria-hidden="true" href="#encoder-block">#</a></h2>
 <p>Originally, the Transformer model was designed for machine translation. Hence, it got an encoder-decoder structure where the encoder takes as input the sentence in the original language and generates an attention-based representation. On the other hand, the decoder attends over the encoded information and generates the translated sentence in an autoregressive manner, as in a standard RNN. While this structure is extremely useful for Sequence-to-Sequence tasks with the necessity of autoregressive decoding, we will focus here on the encoder part</p>
 <p>The encoder consists of $N$ identical blocks that are applied in sequence. Taking as input $x$, it is first passed through a Multi-Head Attention block as we have implemented above. The output is added to the original input using a residual connection, and we apply a consecutive Layer Normalization on the sum. Overall it calculates $LayerNorm(x + multihead(Q, K, V))$</p>
-<p>The residual connection in crucial in Transformer architecture dor two reasonfs:</p>
+<p>The residual connection in crucial in Transformer architecture for two reasonfs:</p>
 <ol>
 <li>
 <p>The residual connections are crucial for enabling a smooth gradient flow through the deep model.</p>
@@ -512,7 +514,7 @@ $$<p>This MLP adds extra complexity to the model and allows transformations on e
 <p>Without the residual connection, the information about the original sequence is lost.</p>
 </li>
 </ol>
-<p>The complete Encoder Block can be implemeneted as the following:</p>
+<p>The complete Encoder Block can be implemented as the following:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">num_heads</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -653,7 +655,79 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </span></span><span class="line"><span class="cl">        <span class="n">cls_output</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl">        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">cls_output</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">logits</span>
-</span></span></code></pre></div><h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+</span></span></code></pre></div><h2 id="visualizing-attention">Visualizing Attention<a hidden class="anchor" aria-hidden="true" href="#visualizing-attention">#</a></h2>
+<p>I trained the above ViT on STL10 Images using the following hyperparams:</p>
+<table>
+  <thead>
+      <tr>
+          <th><strong>Configuration</strong></th>
+          <th><strong>Value</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Image Size</td>
+          <td>96×96</td>
+      </tr>
+      <tr>
+          <td>Patch Size</td>
+          <td>8×8</td>
+      </tr>
+      <tr>
+          <td>Embedding Dimension</td>
+          <td>256</td>
+      </tr>
+      <tr>
+          <td>Attention Heads</td>
+          <td>8</td>
+      </tr>
+      <tr>
+          <td>Encoder Layers</td>
+          <td>6</td>
+      </tr>
+      <tr>
+          <td>Total Parameters</td>
+          <td>~4.2M</td>
+      </tr>
+      <tr>
+          <td>Dataset</td>
+          <td>STL-10</td>
+      </tr>
+      <tr>
+          <td>Optimizer</td>
+          <td>AdamW (lr=3e-4)</td>
+      </tr>
+      <tr>
+          <td>Scheduler</td>
+          <td>CosineAnnealingLR</td>
+      </tr>
+      <tr>
+          <td>Epochs</td>
+          <td>50</td>
+      </tr>
+      <tr>
+          <td>Test Accuracy</td>
+          <td>59.51%</td>
+      </tr>
+  </tbody>
+</table>
+<p align="center">
+  <img src="../../images/transformer/training_curves.png"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <em>Training Curve for 50 Epochs</em>
+</p>
+<p>And after training I stored the attention calculated and then overlayed them on the image and got the following visualization:</p>
+<p align="center">
+  <img src="../../images/transformer/attention_4x4.png"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <em>Attention visualization overlayed on the correcponding STL10 Images</em>
+</p>
+<p>From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to &ldquo;attend&rdquo; more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some &ldquo;shortcuts&rdquo; like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model <strong>might</strong> be trying to do but is not an explaination of why it predicted a certain class for an image.</p>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <ol>
 <li>
 <p>Vaswani, Ashish, et al. <em>“Attention Is All You Need.”</em> <em>Advances in Neural Information Processing Systems (NeurIPS 2017)</em>, 2017. <a href="https://arxiv.org/abs/1706.03762">arXiv:1706.03762</a>.</p>

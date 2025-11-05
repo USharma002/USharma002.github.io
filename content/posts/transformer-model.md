@@ -39,7 +39,7 @@ As an example, we have $d_{model}=768$ and a sequence length $T=9$, for the foll
   <em>Input embeddings showing 9 tokens each with 768-dimensional vectors</em>
 </p>
 
-Since the model contains not recurrence and no convolution, in order for model to make use of the sequence, we must inject some information about the relative or absolute position of tolens in the sequence. To this end, we add "positional encodings" to the input embeddings element wise as:
+Since the model contains not recurrence and no convolution, in order for model to make use of the sequence, we must inject some information about the relative or absolute position of tokens in the sequence. To this end, we add "positional encodings" to the input embeddings element wise as:
 
 $$X = X + PE, \quad X, PE \in \mathbb{R}^{T\times d_{model}}$$
 
@@ -283,7 +283,7 @@ We refer to this as Multi-Head Attention layer with the learnable parameters:
   </tr>
 </table>
 
-One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it simila to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.
+One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it similar to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.
 
 <p align="center">
   <img src="../../images/transformer/layer_out.png"
@@ -301,7 +301,7 @@ One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduce
   <!-- <br> -->
   <em>Multi Head Attention Computation Graph</em>
 </p>
-The above concatednated output we can pass to the Feed Forward Network to get the final output.
+The above concatenated output we can pass to the Feed Forward Network to get the final output.
 
 ```python
 class MultiHeadAttention(nn.Module):
@@ -321,7 +321,7 @@ class MultiHeadAttention(nn.Module):
 
 ### Multi-head attention is Permutation Invariant
 
-One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it's inputs. This means if we seitch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.
+One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it's inputs. This means if we switch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.
 
 **Proof :** Let $P$ be a permutation matrix and $X$ the input.
 
@@ -394,13 +394,13 @@ Originally, the Transformer model was designed for machine translation. Hence, i
 
 The encoder consists of $N$ identical blocks that are applied in sequence. Taking as input $x$, it is first passed through a Multi-Head Attention block as we have implemented above. The output is added to the original input using a residual connection, and we apply a consecutive Layer Normalization on the sum. Overall it calculates $LayerNorm(x + multihead(Q, K, V))$
 
-The residual connection in crucial in Transformer architecture dor two reasonfs:
+The residual connection in crucial in Transformer architecture for two reasonfs:
 
 1. The residual connections are crucial for enabling a smooth gradient flow through the deep model.
 
 2. Without the residual connection, the information about the original sequence is lost.
 
-The complete Encoder Block can be implemeneted as the following:
+The complete Encoder Block can be implemented as the following:
 
 ```python
 class Encoder(nn.Module):
@@ -564,6 +564,43 @@ class ViTClassifier(nn.Module):
         logits = self.classifier(cls_output)
         return logits
 ```
+
+## Visualizing Attention
+I trained the above ViT on STL10 Images using the following hyperparams:
+
+| **Configuration** | **Value** |
+|---|---|
+| Image Size | 96×96 |
+| Patch Size | 8×8 |
+| Embedding Dimension | 256 |
+| Attention Heads | 8 |
+| Encoder Layers | 6 |
+| Total Parameters | ~4.2M |
+| Dataset | STL-10 |
+| Optimizer | AdamW (lr=3e-4) |
+| Scheduler | CosineAnnealingLR |
+| Epochs | 50 |
+| Test Accuracy | 59.51% |
+
+<p align="center">
+  <img src="../../images/transformer/training_curves.png"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <em>Training Curve for 50 Epochs</em>
+</p>
+
+And after training I stored the attention calculated and then overlayed them on the image and got the following visualization:
+
+<p align="center">
+  <img src="../../images/transformer/attention_4x4.png"
+       alt="Final transformer layer output with layer normalization and feed-forward network"
+       width="100%">
+  <!-- <br> -->
+  <em>Attention visualization overlayed on the correcponding STL10 Images</em>
+</p>
+
+From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to "attend" more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some "shortcuts" like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model **might** be trying to do but is not an explaination of why it predicted a certain class for an image.
 
 ## References
 
