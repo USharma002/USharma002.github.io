@@ -567,10 +567,14 @@ class ViTClassifier(nn.Module):
 
 ## References
 
-1. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, Ł., & Polosukhin, I. (2017). *Attention Is All You Need*. In *Advances in Neural Information Processing Systems (NeurIPS 2017)*. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+1. Vaswani, Ashish, et al. *“Attention Is All You Need.”* *Advances in Neural Information Processing Systems (NeurIPS 2017)*, 2017. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762).
 
-2. Dosovitskiy, A., Beyer, L., Kolesnikov, A., Weissenborn, D., Zhai, X., Unterthiner, T., Dehghani, M., Minderer, M., Heigold, G., Gelly, S., Uszkoreit, J., & Houlsby, N. (2020). *An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale*. In *International Conference on Learning Representations (ICLR 2021)*. [arXiv:2010.11929](https://arxiv.org/abs/2010.11929)
+2. Dosovitskiy, Alexey, et al. *“An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.”* *International Conference on Learning Representations (ICLR 2021)*, 2020. [arXiv:2010.11929](https://arxiv.org/abs/2010.11929).
 
-3. Alammar, J. (2018). *The Illustrated Transformer*. *The Illustrated Transformer Blog*. Retrieved from [https://jalammar.github.io/illustrated-transformer/](https://jalammar.github.io/illustrated-transformer/)
+3. Alammar, Jay. *“The Illustrated Transformer.”* *The Illustrated Transformer Blog*, 2018. [https://jalammar.github.io/illustrated-transformer/](https://jalammar.github.io/illustrated-transformer/).
 
-4. University of Amsterdam. (n.d.). *Transformers and Multi-Head Attention — UvA Deep Learning Tutorials*. Retrieved from [https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html)
+4. University of Amsterdam. *“Transformers and Multi-Head Attention — UvA Deep Learning Tutorials.”* *UvA Deep Learning Tutorials*, n.d. [https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html).
+
+5. University of Amsterdam. *“Vision Transformer — UvA Deep Learning Tutorials.”* *UvA Deep Learning Tutorials*, n.d. [https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial15/Vision_Transformer.html](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial15/Vision_Transformer.html).
+
+6. *“How DeepSeek Rewrote the Transformer.”* YouTube, uploaded by *Welch Labs*, 2024, [https://www.youtube.com/watch?v=0VLAoVGf_74](https://www.youtube.com/watch?v=0VLAoVGf_74).
