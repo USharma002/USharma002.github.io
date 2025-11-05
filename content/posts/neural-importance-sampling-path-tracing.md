@@ -35,17 +35,17 @@ $$
 
 Where:
 
-- $L_o(x, \omega_o)$ — outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).  
-- $L_e(x, \omega_o)$ — emitted radiance from $x$ (non-zero if $x$ is a light source).  
-- $f_r(x, \omega_i, \omega_o)$ — **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.  
-- $L_i(x, \omega_i)$ — incoming radiance arriving at $x$ from direction $\omega_i$.  
-- $(\omega_i \cdot n)$ — cosine foreshortening term (angle between incoming direction and surface normal $n$).  
-- $\Omega$ — hemisphere of directions above the surface.
+- $L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).  
+- $L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).  
+- $f_r(x, \omega_i, \omega_o)$ - **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.  
+- $L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.  
+- $(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).  
+- $\Omega$ - hemisphere of directions above the surface.
 
 ### Intuition
 
 - The integral accumulates contributions from *every* incoming direction over the hemisphere.  
-- Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive — it captures global illumination (indirect lighting, caustics, etc.).  
+- Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive - it captures global illumination (indirect lighting, caustics, etc.).  
 - Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.
 
 Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.
@@ -141,7 +141,7 @@ $$
 
 Thus, the PMF is a probability measure that gives us probabilities of the possible values for a random variable.
 
-### Properties — Probability Mass Function (PMF)
+### Properties - Probability Mass Function (PMF)
 
 $$
 \boxed{
@@ -178,7 +178,7 @@ P(a < X \le b) = F_X(b) - F_X(a)
 }
 $$
 
-> **Definition — Probability Density Function (PDF)**
+> **Definition - Probability Density Function (PDF)**
 >
 > Let $X$ be a **continuous random variable**. The **probability density function (PDF)** of $X$ is a non-negative function $f_X(x)$ satisfying:
 >
@@ -202,7 +202,7 @@ $$
  Unlike a PMF, the PDF itself does not give probabilities directly; instead, the probability that $X$ lies in an interval is given by the area under $f_X(x)$ over that interval.
 
 
-> **Definition — Expected Value**
+> **Definition - Expected Value**
 >
 > Let $X$ be a **continuous random variable** with probability density function $f_X(x)$.  
 > The **expected value** (or **mean**) of $X$, denoted by $\mathbb{E}[X]$, is defined as:
@@ -215,7 +215,7 @@ $$
 >
 The expected value represents the theoretical average value of $X$ - the value one would obtain as the limit of the sample mean if the random process were repeated infinitely many times.
 
-> **Definition — Variance**
+> **Definition - Variance**
 >
 > Let $X$ be a **continuous random variable** with probability density function $f_X(x)$ and expected value $\mu = \mathbb{E}[X]$.  
 > The **variance** of $X$, denoted by $\mathrm{Var}(X)$, measures the expected squared deviation of $X$ from its mean:
@@ -526,7 +526,7 @@ Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to
 
 The basic idea is that, when estimating an integral, we should draw samples from multiple sampling distributions, chosen in the hope that at least one of them will match the shape of the integrand reasonably well, even if we do not know which one this will be. MIS then provides a method to weight the samples from each technique that can eliminate large variance spikes due to mismatches between the integrand’s value and the sampling density. 
 
-> **Definition — Multiple Importance Sampling**
+> **Definition - Multiple Importance Sampling**
 > 
 > With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
 >$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$
@@ -735,7 +735,7 @@ To show a real example, we can see the effects of Max Depth and Samples per pixe
 
 | Symbol | Meaning |
 |--------|---------|
-| $f$ | **Throughput** — cumulative product of BSDF and PDF terms: $f = \prod_{k=1}^{\text{depth}} \frac{f_r^{(k)}}{p_i^{(k)}}$ |
+| $f$ | **Throughput** - cumulative product of BSDF and PDF terms: $f = \prod_{k=1}^{\text{depth}} \frac{f_r^{(k)}}{p_i^{(k)}}$ |
 | $L$ | Accumulated radiance along the path |
 | $L_e$ | Emitted radiance at surface intersection |
 | $\omega_i$ | Sampled direction from BSDF distribution |
@@ -849,7 +849,7 @@ computed or stored.
 
 To extract per-bounce training data from the iterative formulation, you must 
 perform a **backward pass** to decompose the accumulated radiance back to each 
-path vertex—an expensive additional computation step.
+path vertex-an expensive additional computation step.
 
 ### Path Tracing Integrator in Mitsuba
 

@@ -23,3 +23,31 @@ iframe {
 .main{
     max-width: calc(var(--main-width) + var(--gap) * 5);
 }
+
+/* Moderate bullet point indentation */
+.post-content ul,
+.post-content ol {
+    padding-left: 2.5em;
+}
+
+.post-content ul ul,
+.post-content ol ol,
+.post-content ul ol,
+.post-content ol ul {
+    padding-left: 2em;
+}
+
+/* Definition/Blockquote background shading */
+.post-content blockquote {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-left: 4px solid var(--primary);
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+    border-radius: 6px;
+}
+
+/* Dark mode definition background */
+.dark .post-content blockquote,
+[data-theme="dark"] .post-content blockquote {
+    background-color: rgba(255, 255, 255, 0.05);
+}
