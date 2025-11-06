@@ -5,6 +5,8 @@ url: "/about"
 summary: "about"
 ---
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <section style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 2rem; padding: 2rem; font-family: system-ui, sans-serif; max-width: 900px; margin: auto;">
   <!-- Profile Section -->
   <div style="flex: 0 0 200px; text-align: center;">
@@ -43,10 +45,10 @@ summary: "about"
 <hr style="margin: 3rem auto; max-width: 900px; border: none; border-top: 1px solid #ddd;">
 
 <section style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
-  <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem;">Projects</h3>
+  <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Projects</h3>
   
   <!-- Project 1 -->
-  <div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/py-neural-path-guiding/blob/main/assets/app.png?raw=true" alt="Neural Path Guiding Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
       <img src="https://github.com/USharma002/py-neural-path-guiding/blob/main/assets/learning_pdf.gif?raw=true" alt="Neural Path Guiding GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
@@ -62,7 +64,7 @@ summary: "about"
   </div>
   
   <!-- Project 2 -->
-  <div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/py-radiosity/blob/main/assets/cbox_rt.png?raw=true" alt="CUDA PathTracer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
       <img src="https://github.com/USharma002/py-radiosity/blob/main/assets/cbox_rt.png?raw=true" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
@@ -78,7 +80,7 @@ summary: "about"
   </div>
   
   <!-- VIT Project Placeholder -->
-  <div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem; opacity: 0.4;">
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem; opacity: 0.4;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://usharma002.github.io/images/transformer/attention_head_output.png" alt="ViT" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
       <img src="https://usharma002.github.io/images/transformer/vit.gif" alt="ViT" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
@@ -93,10 +95,10 @@ summary: "about"
   </div>
 
   <!-- Neural Denoiser Project Placeholder -->
-  <div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem; opacity: 0.4;">
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem; opacity: 0.4;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="https://gpuopen.com/images/neural_supersampling_and_denoising_for_real-time_path_tracing-html-_images-Picture3.DkEknTxE.jpg" alt="CUDA PathTracer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="https://gpuopen.com/images/neural_supersampling_and_denoising_for_real-time_path_tracing-html-_images-Picture3.DkEknTxE.jpg" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="https://gpuopen.com/images/neural_supersampling_and_denoising_for_real-time_path_tracing-html-_images-Picture3.DkEknTxE.jpg" alt="Denoiser Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
+      <img src="https://gpuopen.com/images/neural_supersampling_and_denoising_for_real-time_path_tracing-html-_images-Picture3.DkEknTxE.jpg" alt="Denoiser GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Denoiser</h4>
@@ -120,5 +122,82 @@ summary: "about"
 }
 .project-img-hover img {
   transition: opacity 0.3s;
+}
+
+/* Tablet and larger (keep desktop layout) */
+@media (min-width: 769px) {
+  .project-container {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 2rem !important;
+    align-items: flex-start !important;
+  }
+  .project-img-hover {
+    width: 200px !important;
+    height: 150px !important;
+  }
+}
+
+/* Mobile devices (switch to vertical layout) */
+@media (max-width: 768px) {
+  section {
+    padding: 0 1rem !important;
+  }
+  
+  .project-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+  
+  .project-img-hover {
+    width: 100% !important;
+    max-width: 200px !important;
+    height: 150px !important;
+    margin: 0 auto !important;
+  }
+  
+  h3 {
+    font-size: 1.3rem !important;
+  }
+  
+  h4 {
+    font-size: 0.95rem !important;
+  }
+  
+  p {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  section {
+    padding: 0 0.75rem !important;
+  }
+  
+  .project-container {
+    flex-direction: column !important;
+    gap: 0.8rem !important;
+  }
+  
+  .project-img-hover {
+    width: 100% !important;
+    max-width: 180px !important;
+    height: 135px !important;
+  }
+  
+  h3 {
+    font-size: 1.1rem !important;
+  }
+  
+  h4 {
+    font-size: 0.9rem !important;
+  }
+  
+  p {
+    font-size: 0.85rem !important;
+  }
 }
 </style>
