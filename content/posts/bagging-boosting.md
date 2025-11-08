@@ -40,46 +40,46 @@ Out goal if to reduce the Error, while we cannot reduce the inherent noise, we c
 > $$
 > \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty.
 > $$
-
-<details>
-<summary style="cursor: pointer;">Proof</summary>
-
-This proof uses the assumption of finite variance $\operatorname{Var}(X_i) = \sigma^2$ (for all $i$). The independence of the random variables implies no correlation between them, and we have:
-
-$$
+>
+><details>
+><summary style="cursor: pointer;">Proof</summary>
+>
+>This proof uses the assumption of finite variance $\operatorname{Var}(X_i) = \sigma^2$ (for all $i$). The independence of the random variables implies no correlation between them, and we have:
+>
+>$$
 \operatorname{Var}(\overline{X}_n) = \operatorname{Var}\Big(\frac{1}{n}(X_1 + \dots + X_n)\Big) 
 = \frac{1}{n^2} \operatorname{Var}(X_1 + \dots + X_n) 
 = \frac{n \sigma^2}{n} 
 = \frac{\sigma^2}{n}.
 $$
-
-The mean of the sample average is:
-
-$$
+>
+> The mean of the sample average is:
+>
+>$$
 \mathbb{E}[\overline{X}_n] = \mu.
 $$
-
-Using Chebyshev's inequality on $\overline{X}_n$ gives:
-
-$$
+>
+>Using Chebyshev's inequality on $\overline{X}_n$ gives:
+>
+>$$
 \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) \le \frac{\sigma^2}{n \varepsilon^2}.
-$$
-
-Equivalently:
-
-$$
+>$$
+>
+>Equivalently:
+>
+>$$
 \operatorname{P}\left(\left|\overline{X}_n - \mu\right| < \varepsilon\right) 
 = 1 - \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) 
 \ge 1 - \frac{\sigma^2}{n \varepsilon^2}.
 $$
-
-As $n \to \infty$, the right-hand side approaches 1. By definition of convergence in probability:
-
-$$
+>
+>As $n \to \infty$, the right-hand side approaches 1. By definition of convergence in probability:
+>
+>$$
 \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty. \quad \blacksquare
-$$
-
-</details>
+>$$
+>
+></details>
 
 ---
 
