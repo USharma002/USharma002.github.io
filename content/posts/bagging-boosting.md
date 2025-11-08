@@ -32,14 +32,14 @@ Out goal if to reduce the Error, while we cannot reduce the inherent noise, we c
 > Given $X_1, X_2, \dots$ an infinite sequence of i.i.d. random variables with finite expected value
 >
 > $$
-> \mathbb{E}[X_1] = \mathbb{E}[X_2] = \dots = \mu < \infty,
-> $$
+ \mathbb{E}[X_1] = \mathbb{E}[X_2] = \dots = \mu < \infty,
+ $$
 >
 > the weak law of large numbers states:
 >
 > $$
-> \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty.
-> $$
+ \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty.
+ $$
 >
 ><details>
 ><summary style="cursor: pointer;">Proof</summary>
