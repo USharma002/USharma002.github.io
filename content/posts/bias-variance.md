@@ -12,11 +12,6 @@ TocOpen: true
 math: true
 ---
 
-
-<span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and may be updated or expanded soon!
-</span>
-
 # Introduction
 
 Suppose we have a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.
@@ -370,10 +365,6 @@ The **bias-variance tradeoff** is clearly illustrated by these experiments:
 - Without regularization, variance explodes beyond degree 10–12 due to numerical instability.
 - Regularization ($\alpha$ increasing with degree) stabilizes high-degree fits, keeping variance and condition number controlled.
 - The table and figures above reveal the subtle interplay between bias, variance, model complexity, and regularization.
-
-<span style="color:crimson;font-weight:700">
-This post or widget may be updated further - more notes, findings, and background will appear here!
-</span>
 
 ## References
 
