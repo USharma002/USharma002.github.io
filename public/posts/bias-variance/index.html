@@ -252,7 +252,7 @@ $$
  \bar{y}(x) = \mathbb{E}_{y \mid x}[Y] = \int_y y \, p(y \mid x) \, dy
  $$</blockquote>
 <p>We draw $n$ i.i.d. inputs for dataset $D$ form distribution $p$.</p>
-<p>We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesus (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$</p>
+<p>We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesis (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$</p>
 <p>For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the deneralization error (as meased in squared loss) as follows:</p>
 <blockquote>
 <h3 id="expected-test-error-given-h_d"><strong>Expected Test Error</strong> (given $h_D$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-h_d">#</a></h3>
@@ -361,7 +361,7 @@ Y = f(X) + \varepsilon
 $$<p>where the error term $\varepsilon$ is normally distributed with a mean of zero, like so:</p>
 $$
 \varepsilon \sim \mathcal{N}(0, \sigma_\varepsilon^2)
-$$<p>We may estimate a model $\hat{f}(X)$ of $f(X)$ using linear regression or another modeling technique.<br>
+$$<p>We may estimate a model $\hat{f}(X)$ (denoted $h_D$ in earlier section) for $f(X)$ using linear regression or another modeling technique.<br>
 In this case, the <strong>expected squared prediction error</strong> at a point $x$ is:</p>
 $$
 \text{Err}(x) = \mathbb{E}[(Y - \hat{f}(x))^2]

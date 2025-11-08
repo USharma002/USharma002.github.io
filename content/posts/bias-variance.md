@@ -68,7 +68,7 @@ Assuming we are in a regression setting with dataset $\mathcal{D} = \lbrace (x_1
 
 We draw $n$ i.i.d. inputs for dataset $D$ form distribution $p$.
 
-We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesus (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$
+We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesis (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$
 
 For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the deneralization error (as meased in squared loss) as follows:
 
@@ -208,7 +208,7 @@ $$
 \varepsilon \sim \mathcal{N}(0, \sigma_\varepsilon^2)
 $$
 
-We may estimate a model $\hat{f}(X)$ of $f(X)$ using linear regression or another modeling technique.  
+We may estimate a model $\hat{f}(X)$ (denoted $h_D$ in earlier section) for $f(X)$ using linear regression or another modeling technique.  
 In this case, the **expected squared prediction error** at a point $x$ is:
 
 $$
