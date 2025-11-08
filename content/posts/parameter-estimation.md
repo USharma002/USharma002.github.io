@@ -12,8 +12,6 @@ TocOpen: true
 math: true
 ---
 
-
-
 ## Estimating probabilities of data
 
 Suppose we have a coin and I want to know the probability of heads coming up when I throw it. One natural way to estimate this is to toss is $n$ (let's say $n = 10$) times, collect the outcomes/data $\mathcal{D}=\{H, T, H, T, T, H, T, H, T, T\}$ where we got $n_H=4$ heads and $n_T=6$ tails, so intuitively we can do following:

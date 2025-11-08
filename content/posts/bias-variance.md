@@ -27,7 +27,7 @@ $$
 $$
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.
 
-## Conceptual Deifinition
+## Conceptual Definition
 - **Error due to Bias:** The error due to bias is taken as the difference between the expected (or average) prediction of our model and the correct value which we are trying to predict. Of course you only have one model so talking about expected or average prediction values might seem a little strange. However, imagine you could repeat the whole model building process more than once: each time you gather new data and run a new analysis creating a new model. Due to randomness in the underlying data sets, the resulting models will have a range of predictions. Bias measures how far off in general these models' predictions are from the correct value.
 - **Error due to Variance:** The error due to variance is taken as the variability of a model prediction for a given data point. Again, imagine you can repeat the entire model building process multiple times. The variance is how much the predictions for a given point vary between different realizations of the model.
 
@@ -135,15 +135,15 @@ We can show that the middle term of the above equation is $0$ as follows
 
 $$
 \begin{aligned}
-\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)
-\left(\bar{h}(\mathbf{x}) - y\right)\right]
-&= \mathbb{E}_{\mathbf{x}, y}\!\left[\mathbb{E}_{D}\!\left[h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right]
-\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
-&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\mathbb{E}_{D}\!\left[h_{D}(\mathbf{x})\right] - \bar{h}(\mathbf{x})\right)
-\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
-&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)
-\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
-&= \mathbb{E}_{\mathbf{x}, y}[0] \\[4pt]
+\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)
+\left(\bar{h}(x) - y\right)\right]
+&= \mathbb{E}_{x, y}\!\left[\mathbb{E}_{D}\!\left[h_{D}(x) - \bar{h}(x)\right]
+\left(\bar{h}(x) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{x, y}\!\left[\left(\mathbb{E}_{D}\!\left[h_{D}(x)\right] - \bar{h}(x)\right)
+\left(\bar{h}(x) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{x, y}\!\left[\left(\bar{h}(x) - \bar{h}(x)\right)
+\left(\bar{h}(x) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{x, y}[0] \\[4pt]
 &= 0
 \end{aligned}
 $$
@@ -152,40 +152,40 @@ Returning to the earlier expression, we're left with the variance and another te
 
 $$
 \begin{aligned}
-\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - y\right)^{2}\right]
-&= \underbrace{\mathbb{E}_{\mathbf{x}, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)^{2}\right]}_{\text{Variance}} + \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x})- y\right)^{2}\right]
+\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]
+&= \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \mathbb{E}_{x, y}\!\left[\left(\bar{h}(x)- y\right)^{2}\right]
 \end{aligned}
 $$
 
 We can break down the second term in the above equation as follows: 
 $$
 \begin{aligned}
-\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - y\right)^{2}\right]
-&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left((\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})) + (\bar{y}(\mathbf{x}) - y)\right)^{2}\right] \\[6pt]
-&= \underbrace{\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{y}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)^{2}\right]}_{\text{Bias}^2} + 2\,\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
-\left(\bar{y}(\mathbf{x}) - y\right)\right]
+\mathbb{E}_{x, y}\!\left[\left(\bar{h}(x) - y\right)^{2}\right]
+&= \mathbb{E}_{x, y}\!\left[\left((\bar{h}(x) - \bar{y}(x)) + (\bar{y}(x) - y)\right)^{2}\right] \\[6pt]
+&= \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2} + 2\,\mathbb{E}_{x, y}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)
+\left(\bar{y}(x) - y\right)\right]
 \end{aligned}
 $$
 
 The third term in the equation above is $0$, as we show below 
 $$
 \begin{aligned}
-\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
-\left(\bar{y}(\mathbf{x}) - y\right)\right]
-&= \mathbb{E}_{\mathbf{x}}\!\left[\mathbb{E}_{y \mid \mathbf{x}}\!\left[\bar{y}(\mathbf{x}) - y\right]
-\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
-&= \mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{y}(\mathbf{x}) - \mathbb{E}_{y \mid \mathbf{x}}\![y]\right)
-\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
-&= \mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{y}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
-\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
-&= \mathbb{E}_{\mathbf{x}}[0] \\[4pt]
+\mathbb{E}_{x, y}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)
+\left(\bar{y}(x) - y\right)\right]
+&= \mathbb{E}_{x}\!\left[\mathbb{E}_{y \mid x}\!\left[\bar{y}(x) - y\right]
+\left(\bar{h}(x) - \bar{y}(x)\right)\right] \\[6pt]
+&= \mathbb{E}_{x}\!\left[\left(\bar{y}(x) - \mathbb{E}_{y \mid x}\![y]\right)
+\left(\bar{h}(x) - \bar{y}(x)\right)\right] \\[6pt]
+&= \mathbb{E}_{x}\!\left[\left(\bar{y}(x) - \bar{y}(x)\right)
+\left(\bar{h}(x) - \bar{y}(x)\right)\right] \\[6pt]
+&= \mathbb{E}_{x}[0] \\[4pt]
 &= 0
 \end{aligned}
 $$
 
 This gives us the decomposition of expected test error as follows 
 $$
-\underbrace{\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{\mathbf{x}, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{y}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)^{2}\right]}_{\text{Bias}^2}
+\underbrace{\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2}
 $$
 
 - **Variance:** Captures how much your classifier changes if you train on a different training set. How "over-specialized" is your classifier to a particular training set (overfitting)? If we have the best possible model for our training data, how far off are we from the average classifier?
