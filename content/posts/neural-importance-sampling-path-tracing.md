@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "A comprehensive look into the Neural Importance Sampling for Path Tracing"
-date: "2025-11-04"
+date: "2025-11-07"
 description: "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing"
 summary: "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing"
 tags: ["Generative Modelling", "Computer Graphics", "Ray Tracing"]
@@ -57,59 +57,59 @@ Although there are many ways to write a ray tracer, all such systems simulate at
 
 - **Cameras**: A camera model determines how and from where the scene is viewed, including how an image of the scene is recorded on a sensor. Many rendering systems generate viewing rays stating at the camera that are then traced into the scene to determine which objects are visible at each pixel.
 
-<p align="center">
-  <img src="../../images/path_tracing/camera.png"
-       alt="Transformer Architecture"
-       width="30%">
-  <!-- <br> -->
-  <em>Camera/Sensor/Eye</em>
-</p>
-
+{{< 
+figure src="../../images/path_tracing/camera.png"
+num="1"
+id="fig-camera"
+caption="Camera/Sensor/Eye"
+width="30%" 
+>}}
 
 - **Ray-object inetrsections**: We must be able to tell precisely where a given ray intersects a given geometric object. In addition, we need to determine certain properties of the object at the intersection point, such as a surface normal or its material.
 
-<p align="center">
-  <img src="../../images/path_tracing/ray.png"
-       alt="Transformer Architecture"
-       width="80%">
-  <!-- <br> -->
-  <em>Ray r(t) and Ray-Triangle Intersection</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/ray.png"
+num="2"
+id="fig-ray-triangle"
+caption="Ray r(t) and Ray-Triangle Intersection"
+width="80%" 
+>}}
 
 
 - **Light Sources**: Without lighting, there would be little point in rendering a scene. A ray tracer must model the distribution of light throughout the scene, including not only the locations of the lights themselves but also the way in which they distribute their energy throughout space.
 
 - **Visibility**: In order to know whether a given light deposits energy at a point on a surface, we must know whether there is an uninterrupted path from the point to the light source. Fortunately, this question is easy to answer in a ray tracer, since we can just construct the ray from the surface to the light, find the closest ray–object intersection, and compare the intersection distance to the light distance. 
 
-<p align="center">
-  <img src="../../images/path_tracing/visibility.svg"
-       alt="Visibility"
-       width="80%">
-  <!-- <br> -->
-  <em>Visibility</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/visibility.svg"
+num="3"
+id="fig-visibility"
+caption="Visibility"
+width="80%" 
+>}}
 
 - **Light scattering at surfaces**:  Each object must provide a description of its appearance, including information about how light interacts with the object’s surface, as well as the nature of the reradiated (or scattered) light. Models for surface scattering are typically parameterized so that they can simulate a variety of appearances. 
 
-<p align="center">
-  <img src="../../images/path_tracing/scattering.svg"
-       alt="Scattering"
-       width="80%">
-  <!-- <br> -->
-  <em>Scattering</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/scattering.svg"
+num="4"
+id="fig-scattering"
+caption="Scattering"
+width="80%" 
+>}}
+
 
 - **Indirect light transport**: Because light can arrive at a surface after bouncing off or passing through other surfaces, it is usually necessary to trace additional rays to capture this effect. 
 
 - **Ray propagation**:  We need to know what happens to the light traveling along a ray as it passes through space. If we are rendering a scene in a vacuum, light energy remains constant along a ray. Although true vacuums are unusual on Earth, they are a reasonable approximation for many environments. More sophisticated models are available for tracing rays through fog, smoke, the Earth’s atmosphere, and so on. 
 
-<p align="center">
-  <img src="../../images/path_tracing/path_tracing.png"
-       alt="Ray Tracing"
-       width="80%">
-  <!-- <br> -->
-  <em>Path Tracing Overview</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/path_tracing.png"
+num="5"
+id="fig-path-tracing-overview"
+caption="Path Tracing Overview"
+width="80%" 
+>}}
 
 ## Monte Carlo Basics
 
@@ -399,13 +399,13 @@ $$
 
 These properties make Monte Carlo integration particularly attractive for high-dimensional problems like rendering, where evaluating the rendering equation requires integrating over many dimensions (directions, wavelengths, time, etc.).
 
-<p align="center">
-  <img src="../../images/path_tracing/importance_sampling_graph.png"
-       alt="Importance Sampling PDF"
-       width="100%">
-  <!-- <br> -->
-  <em>Importance Sampling PDF</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/importance_sampling_graph.png"
+num="6"
+id="fig-importance-sampling"
+caption="Importance Sampling PDF"
+width="100%" 
+>}}
 
 
 ### Optimal Importance Sampling?
@@ -600,13 +600,13 @@ the light transport properties of the hit material. BSDF is a superset and the g
 
 (Some tend to use the term BSDF simply as a category name covering the whole family of BxDF functions.)
 
-<p align="center">
-  <img src="../../images/path_tracing/BSDF_combined.png"
-       alt="BTDF + BRDF"
-       width="100%">
-  <!-- <br> -->
-  <em>BTDF + BRDF Visualization (unifrom for both here)</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/BSDF_combined.png"
+num="7"
+id="fig-bsdf-combined"
+caption="BTDF + BRDF Visualization (uniform for both here)"
+width="100%" 
+>}}
 
 We usually distinguish three basic material types:
 
@@ -614,22 +614,21 @@ We usually distinguish three basic material types:
 - Perfectly specular (light is reflected in/from exactly one direction)
 - Glossy (mixture of the other two, specular highlights)
 
-<p align="center">
-  <img src="../../images/path_tracing/BSDF.png"
-       alt="BSDF visualization"
-       width="100%">
-  <!-- <br> -->
-  <em>Simple BSDF Visualization for Diffuse, Specular and Glossy Material</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/BSDF.png"
+num="8"
+id="fig-bsdf-types"
+caption="Simple BSDF Visualization for Diffuse, Specular and Glossy Material"
+width="100%" 
+>}}
 
-
-<p align="center">
-  <img src="../../images/path_tracing/BSDF_object.png"
-       alt="Objects woth different BSDF"
-       width="100%">
-  <!-- <br> -->
-  <em>Objects with BSDF for Diffuse, Specular and Glossy Material</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/BSDF_object.png"
+num="9"
+id="fig-bsdf-objects"
+caption="Objects with BSDF for Diffuse, Specular and Glossy Material"
+width="100%" 
+>}}
 
 
 Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.
@@ -638,98 +637,100 @@ Now that we know about the BxDF functions which define the material properties, 
 
 1. **Generate camera ray** through pixel using sensor
 
-<p align="center">
-  <img src="../../images/path_tracing/init_cam.png"
-       alt="Objects woth different BSDF"
-       width="100%">
-  <!-- <br> -->
-  <em>Initialize Scene and Generate Rays using Sensor</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/init_cam.png"
+num="10"
+id="fig-init-camera"
+caption="Initialize Scene and Generate Rays using Sensor"
+width="100%" 
+>}}
+
 
 2. **Trace ray** into scene, find first intersection
-<p align="center">
-  <img src="../../images/path_tracing/trace.png"
-       alt="Objects woth different BSDF"
-       width="100%">
-  <!-- <br> -->
-  <em>Trace Ray and Find Intersection</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/trace.png"
+num="11"
+id="fig-trace-ray"
+caption="Trace Ray and Find Intersection"
+width="100%" 
+>}}
 
 3. **Accumulate emission** from light sources (NEE optional)
 4. **Sample BSDF** to choose next direction
-<p align="center">
-  <img src="../../images/path_tracing/surface_intersection.png"
-       alt="Objects woth different BSDF"
-       width="100%">
-  <!-- <br> -->
-  <em>Query BSDF of intersected primitive</em>
-</p>
-
+{{< 
+figure src="../../images/path_tracing/surface_intersection.png"
+num="12"
+id="fig-surface-intersection"
+caption="Query BSDF of intersected primitive"
+width="100%" 
+>}}
 
 5. **Spawn new ray** from intersection point
-<p align="center">
-  <img src="../../images/path_tracing/sample_ray.png"
-       alt="Sample Ray"
-       width="100%">
-  <!-- <br> -->
-  <em>Sample Next Ray using some PDF</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/sample_ray.png"
+num="13"
+id="fig-sample-ray"
+caption="Sample Next Ray using some PDF"
+width="100%" 
+>}}
+
 
 
 6. **Repeat** (steps 2-5) until max depth or Russian roulette termination
-<p align="center">
-  <img src="../../images/path_tracing/repeat.png"
-       alt="Final Ray"
-       width="100%">
-  <!-- <br> -->
-  <em>Sample Next Ray using some PDF</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/repeat.png"
+num="14"
+id="fig-repeat"
+caption="Repeat bouncing until termination"
+width="100%" 
+>}}
 
 7. **Return** accumulated radiance
-<p align="center">
-  <img src="../../images/path_tracing/final_ray.png"
-       alt="Objects woth different BSDF"
-       width="100%">
-  <!-- <br> -->
-  <em>Sample Next Ray using some PDF</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/final_ray.png"
+num="15"
+id="fig-final-ray"
+caption="Return accumulated radiance"
+width="100%" 
+>}}
 
 Repeat the above process for all pixels (Parallely as this is embarrassingly parallel) for some amount of **samples per pixel** (for anti aliasing as well)
 
-<p align="center">
-  <img src="../../images/path_tracing/2spp.png"
-       alt="Objects woth different BSDF"
-       width="100%">
-  <!-- <br> -->
-  <em>2 Sampler Per Pixel</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/2spp.png"
+num="16"
+id="fig-2spp"
+caption="2 Samples Per Pixel"
+width="100%" 
+>}}
 
 To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.
 
-<p align="center">
-  <img src="../../images/path_tracing/bathroom.png"
-       alt="Bathroom Scene Reference"
-       width="80%">
-  <!-- <br> -->
-  <em>Bathroom Scene Reference</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/bathroom.png"
+num="17"
+id="fig-bathroom-ref"
+caption="Bathroom Scene Reference"
+width="80%" 
+>}}
 
 
-<p align="center">
-  <img src="../../images/path_tracing/bathroom_spp.png"
-       alt="Bathroom Scene Rendereed at different SPP"
-       width="100%">
-  <!-- <br> -->
-  <em>Bathroom Scene Rendereed at different SPP</em>
-</p>
 
-<p align="center">
-  <img src="../../images/path_tracing/bathroom_depth.png"
-       alt="Bathroom Scene Rendereed at different depth"
-       width="100%">
-  <!-- <br> -->
-  <em>Bathroom Scene Rendereed at different depth</em>
-</p>
+{{< 
+figure src="../../images/path_tracing/bathroom_spp.png"
+num="18"
+id="fig-bathroom-spp"
+caption="Bathroom Scene Rendered at different SPP"
+width="100%" 
+>}}
+
+{{< 
+figure src="../../images/path_tracing/bathroom_depth.png"
+num="19"
+id="fig-bathroom-depth"
+caption="Bathroom Scene Rendered at different depth"
+width="100%" 
+>}}
 
 ### Recursive and Iterative Formulations
 

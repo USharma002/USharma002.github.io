@@ -427,8 +427,17 @@ plt.scatter(X[:, 0], X[:, 1], c=y, edgecolor="k", cmap="coolwarm", s=40, linewid
 plt.savefig("pca_scatter_original.png", dpi=300)
 ```
 
-![Original Data](../../images/pca/pca_scatter_original.png)
-*Original 2D data with two classes*
+<!-- ![Original Data](../../images/pca/pca_scatter_original.png)
+*Original 2D data with two classes* -->
+
+{{< 
+figure src="../../images/pca/pca_scatter_original.png" 
+num="1" 
+id="original-data"
+caption="Original 2D data with two classes" 
+width="70%" 
+>}}
+
 
 After projecting onto the first principal component:
 ```python
@@ -458,10 +467,16 @@ plt.savefig("pca_projection.png", dpi=300)
 
 ```
 
-![PCA Projection](../../images/pca/pca_projection.png)
-*Data projected onto the first principal component (shown in black)*
+{{< 
+figure src="../../images/pca/pca_projection.png" 
+num="1" 
+id="fig-pca-projection"
+caption="Data projected onto the first principal component (shown in black)" 
+width="70%" 
 
-Notice how the principal component captures the direction of maximum variance.
+>}}
+
+Notice in [Fig. 1](#fig-pca-projection) how the principal component captures the direction of maximum variance.
 
 ---
 

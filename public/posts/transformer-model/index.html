@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/transformer-model/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.2dda3a421b754233aa5ba8c76b8f4537b2aba2423700f650d6364f04a4bb3e97.css" integrity="sha256-Ldo6Qht1QjOqW6jHa49FN7KrokI3APZQ1jZPBKS7Ppc=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.7d71119822ff9cce5ed302d4bc5b0258e23e168ca87fc346690121c472db64a3.css" integrity="sha256-fXERmCL/nM5e0wLUvFsCWOI&#43;Foyof8NGaQEhxHLbZKM=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -160,7 +160,7 @@ window.MathJax = {
     <div class="post-description">
       Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture
     </div>
-    <div class="post-meta"><span title='2025-11-01 00:00:00 +0000 UTC'>November 1, 2025</span>&nbsp;·&nbsp;15 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-04 00:00:00 +0000 UTC'>November 4, 2025</span>&nbsp;·&nbsp;16 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -213,24 +213,20 @@ window.MathJax = {
 
   <div class="post-content"><h1 id="transformer-model">Transformer Model<a hidden class="anchor" aria-hidden="true" href="#transformer-model">#</a></h1>
 <p>It uses encoder-decoder structure where both encoder block and decoder block have an attention mechanism.</p>
-<p align="center">
-  <img src="../../images/transformer/transformer_architecture.svg"
-       alt="Transformer Architecture"
-       width="50%">
-  <!-- <br> -->
-  <em>Transformer Architecture</em>
-</p>
+<figure id="fig-1" style="text-align: center; margin: 2em auto; max-width: 50%; scroll-margin-top: 80px;"><img src="../../images/transformer/transformer_architecture.svg" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 1. </span>Transformer Architecture
+  </figcaption></figure>
+
 <h2 id="positional-encoding">Positional Encoding<a hidden class="anchor" aria-hidden="true" href="#positional-encoding">#</a></h2>
 <p>If $d_{model}$ is our embedding dimension, and $T$ is the sequence length, the input can be represented as
 </p>
 $$X\in\mathbb{R}^{T \times d_{model}}$$<p>As an example, we have $d_{model}=768$ and a sequence length $T=9$, for the following:</p>
-<p align="center">
-  <img src="../../images/transformer/input_embedding.png"
-       alt="Input embeddings showing 9 tokens each with 768-dimensional vectors"
-       width="45%">
-  <!-- <br> -->
-  <em>Input embeddings showing 9 tokens each with 768-dimensional vectors</em>
-</p>
+<figure id="fig-input-embedding" style="text-align: center; margin: 2em auto; max-width: 45%; scroll-margin-top: 80px;"><img src="../../images/transformer/input_embedding.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 2. </span>Input embeddings showing 9 tokens each with 768-dimensional vectors
+  </figcaption></figure>
+
 <p>Since the model contains not recurrence and no convolution, in order for model to make use of the sequence, we must inject some information about the relative or absolute position of tokens in the sequence. To this end, we add &ldquo;positional encodings&rdquo; to the input embeddings element wise as:</p>
 $$X = X + PE, \quad X, PE \in \mathbb{R}^{T\times d_{model}}$$<p>The positional encodings have the same dimension $d_model$ as the embeddings, so that the two can be summed. There are many choices but the original paper uses the following:</p>
 $$ PE(pos, 2i) = sin(pos/ 10000^{2i/d_{model}}) $$<p>
@@ -269,13 +265,11 @@ $$ PE(pos, 2i + 1) = cos(pos/ 10000^{2i/d_{model}}) $$<p>where $pos$ is the posi
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&#34;Positional Encoding Heatmap&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</span></span></code></pre></div><p align="center">
-  <img src="../../images/transformer/pos_encoding.png"
-       alt="Input embeddings showing 9 tokens each with 768-dimensional vectors"
-       width="90%">
-  <!-- <br> -->
-  <em>Positional Encoding visualization for d_model=768 and T = 100</em>
-</p>
+</span></span></code></pre></div><figure id="fig-pos-encoding" style="text-align: center; margin: 2em auto; max-width: 90%; scroll-margin-top: 80px;"><img src="../../images/transformer/pos_encoding.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 3. </span>Positional Encoding visualization for d_model=768 and T = 100
+  </figcaption></figure>
+
 <h2 id="attention">Attention<a hidden class="anchor" aria-hidden="true" href="#attention">#</a></h2>
 <p>The attention mechanism describes how &ldquo;important&rdquo; some features are and how much we want to &ldquo;attend&rdquo; to them. The kind of attention we use here <em>describes a weighted average of (sequence) elements with the weights dynamically computed based on an input query and element&rsquo;s keys</em>.</p>
 <ul>
@@ -297,13 +291,11 @@ $$
 \alpha_i = \frac{\exp(f_{attn}(key_i, query))}{\sum_j \exp(f_{attn}(key_j, query))}, \quad out=\sum_i\alpha_i\cdot value_i
 $$<p>What queries to use, how the key and value vectors are defined and what score function is used is a design choice in most attention mechanisms. The attention applied inside the transformer architecture is called <strong>self-attention</strong>.</p>
 <p>The example assumes $T=9$, $h = 12$ and $d_{model}=768$ thus making $d_v = d_k = \frac{d_{model}}{h} = 64$</p>
-<p align="center">
-  <img src="../../images/transformer/QK.png"
-       alt="Query, key, value projections showing dimensions through attention computation"
-       width="65%">
-  <br>
-  <em>Query, key projections showing dimensions through attention computation</em>
-</p>
+<figure id="fig-qk-projection" style="text-align: center; margin: 2em auto; max-width: 65%; scroll-margin-top: 80px;"><img src="../../images/transformer/QK.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 4. </span>Query, key projections showing dimensions through attention computation
+  </figcaption></figure>
+
 <h2 id="scaled-dot-product-attention">Scaled Dot Product Attention<a hidden class="anchor" aria-hidden="true" href="#scaled-dot-product-attention">#</a></h2>
 <p>The core concept behind self-attention is the scaled dot product attention. Our goal is to have an attention mechanism with which any element in a sequence can attend to any other while being efficient to compute.</p>
 <p>The dot product attention takes as input the following:</p>
@@ -341,44 +333,36 @@ q_2^{\top}k_1 & q_2^{\top}k_2 & \cdots & q_2^{\top}k_T\\
 q_T^{\top}k_1 & q_T^{\top}k_2 & \cdots & q_T^{\top}k_T
 \end{bmatrix}
 }_{QK^{\top}}
-$$<p align="center">
-  <img src="../../images/transformer/attention_score.png"
-       alt="Attention score matrix visualization showing query-key dot products with heatmap"
-       width="65%">
-  <!-- <br> -->
-  <em>Attention score matrix visualization showing query-key dot products with heatmap</em>
-</p>
+$$<figure id="fig-attention-score" style="text-align: center; margin: 2em auto; max-width: 65%; scroll-margin-top: 80px;"><img src="../../images/transformer/attention_score.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 5. </span>Attention score matrix visualization showing query-key dot products with heatmap
+  </figcaption></figure>
+
 <p>The matrix multiplication $QK^{\top}$ performs the dot product for every possible pair of queries and keys, resulting in a matrix of shape $T\times T$. Each row represents the attention logits for a specific element $i$ to all other elements in the sequence. On these we apply the softmax and multiply with value vector to obtain a weighted mean (weights determined by the attention).</p>
 $$
 \text{Attention}(Q, K, V)
 = \mathrm{softmax}\left(\frac{Q K^{\top}}{\sqrt{d_k}}\right) V
-$$<p align="center">
-  <img src="../../images/transformer/QKV.png"
-       alt="Scaled dot-product attention computation flow with softmax and value multiplication"
-       width="100%">
-  <!-- <br> -->
-  <em>Scaled dot-product attention computation flow with softmax and value multiplication</em>
-</p>
+$$<figure id="fig-qkv-flow" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/QKV.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 6. </span>Scaled dot-product attention computation flow with softmax and value multiplication
+  </figcaption></figure>
+
 <p>The scaling factor $1/\sqrt{d_k}$ is crucial to maintain an appropriate variance of attention values after initialization. We initialize our layers with intention of having equal variance throughout the model, and hence, $Q$ and $K$ might also have a variance close to $1$. However, performing a dot product over two vectors with variance $\sigma^2$ results in a scalar having $d_k$ times higher variance:</p>
 $$
 q_i\sim\mathcal{N}(0, \sigma^2), k_i\sim\mathcal{N}(0, \sigma^2) \rightarrow \text{Var}\left(\sum_{i=1}^{d_k}q_i\cdot k_i\right) = \sigma^4\cdot d_k
 $$<p>If we do not scale down variance back to $\sim\sigma^2$, the softmax over the logits will already saturate to $1$ for one random element and $0$ for all others. The gradients through the softmax will be close to zero so that we can&rsquo;t learn the parameters appropriately. Note that the extra factor of $\sigma^2$, i.e., having $\sigma^4$ instead of $\sigma^2$, is usually not an issue, since we keep the original variance $\sigma^2$ close to $1$ anyways.</p>
 <p>The visualization of the Scaled Dot Product attention is given below. The <strong>masking step is optional</strong> and makes the score $-\infty$ for top right of the attention matrix during training to stop the model from &ldquo;cheating&rdquo; by looking at the next token (future) in the Decoder.</p>
-<p align="center">
-  <img src="../../images/transformer/attention_head_output.png"
-       alt="Attention Head Output"
-       width="100%">
-  <!-- <br> -->
-  <em>Attention Head Output</em>
-</p>
+<figure id="fig-attention-head-output" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/attention_head_output.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 7. </span>Attention Head Output
+  </figcaption></figure>
+
 <br>
-<p align="center">
-  <img src="../../images/transformer/sdpa.svg"
-       alt="Multi Head Attention Computation Graph"
-       width="50%">
-  <!-- <br> -->
-  <em>Acaled Dot Product Attention Computation Graph</em>
-</p>
+<figure id="fig-sdpa-graph" style="text-align: center; margin: 2em auto; max-width: 50%; scroll-margin-top: 80px;"><img src="../../images/transformer/sdpa.svg" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 8. </span>Scaled Dot Product Attention Computation Graph
+  </figcaption></figure>
+
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">SelfAttentionBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -416,38 +400,33 @@ $$<p>We refer to this as Multi-Head Attention layer with the learnable parameter
 <table align="center">
   <tr>
     <td align="center" width="45%">
-      <img src="../../images/transformer/attention_head.png"
-           alt="Single attention head computation showing queries, keys, values projections"
-           width="100%">
-      <!-- <br> -->
-      <em>Single attention head — queries, keys, values projections</em>
-    </td>
-    <td align="center" width="45%">
-      <img src="../../images/transformer/multihead.png"
-           alt="Multi-head attention with parallel attention heads and concatenation"
-           width="100%">
-      <!-- <br> -->
-      <em>Multi-head attention — parallel heads and concatenation</em>
+      <figure id="fig-single-head" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/attention_head.png" 
+             alt="" 
+             style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 9. </span>Single attention head — queries, keys, values projections
+        </figcaption></figure>
+
+      </td>
+    <td align="center" width="45%"> <figure id="fig-multihead" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/multihead.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 10. </span>Multi-head attention — parallel heads and concatenation
+  </figcaption></figure>
+
     </td>
   </tr>
 </table>
 <p>One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it similar to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.</p>
-<p align="center">
-  <img src="../../images/transformer/layer_out.png"
-       alt="Concatenating the output from all heads and then projecting it for FFN input"
-       width="65%">
-  <!-- <br> -->
-  <em>Concatenating the output from all heads and then projecting it for FFN input</em>
-</p>
+<figure id="fig-layer-concat" style="text-align: center; margin: 2em auto; max-width: 65%; scroll-margin-top: 80px;"><img src="../../images/transformer/layer_out.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 11. </span>Concatenating the output from all heads and then projecting it for FFN input
+  </figcaption></figure>
+
 <br>
-<p align="center">
-  <img src="../../images/transformer/mha.svg"
-       alt="Multi Head Attention Computation Graph"
-       width="50%">
-  <!-- <br> -->
-  <em>Multi Head Attention Computation Graph</em>
-</p>
-The above concatenated output we can pass to the Feed Forward Network to get the final output.
+<figure id="fig-mha-graph" style="text-align: center; margin: 2em auto; max-width: 50%; scroll-margin-top: 80px;"><img src="../../images/transformer/mha.svg" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 12. </span>Multi Head Attention Computation Graph
+  </figcaption></figure>
+
+<p>The above concatenated output we can pass to the Feed Forward Network to get the final output.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MultiHeadAttention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">,</span> <span class="n">d_v</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -541,26 +520,22 @@ $$<p>This MLP adds extra complexity to the model and allows transformations on e
 </span></span></code></pre></div><h2 id="decoder-block">Decoder Block<a hidden class="anchor" aria-hidden="true" href="#decoder-block">#</a></h2>
 <p>Now that we’ve covered most of the concepts on the encoder side, we basically know how the components of decoders work as well. But let’s take a look at how they work together.</p>
 <p>The encoder start by processing the input sequence. The output of the top encoder is then transformed into a set of attention vectors $K$ and $V$. These are to be used by each decoder in its &ldquo;encoder-decoder attention&rdquo;/Cross Attention layer which helps the decoder focus on appropriate places in the input sequence.</p>
-<p align="center">
-  <img src="../../images/transformer/transformer_decoding_2.gif"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
-       width="100%">
-  <!-- <br> -->
-  <em>After finishing the encoding phase, we begin the decoding phase. Each step in the decoding phase outputs an element from the output sequence </em>
-</p>
+<figure id="fig-decoding" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/transformer_decoding_2.gif" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 13. </span>After finishing the encoding phase, we begin the decoding phase. Each step in the decoding phase outputs an element from the output sequence
+  </figcaption></figure>
+
 <p>The “Encoder-Decoder Attention” layer works just like multiheaded self-attention, except it creates its Queries matrix from the layer below it, and takes the Keys and Values matrix from the output of the encoder stack.
 In the decoder, the self-attention layer is only allowed to attend to earlier positions in the output sequence. This is done by masking future positions (setting them to $-\infty$) before the softmax step in the self-attention calculation.</p>
 <h1 id="vision-transformer-vit">Vision Transformer (ViT)<a hidden class="anchor" aria-hidden="true" href="#vision-transformer-vit">#</a></h1>
 <p>To apply Transformders to sequences, we ahve simply added a positional encoding to the input feature vectors, and the model learned by itself what to do with it. So, why not do the same thing on images?</p>
 <p>This is what the paper &ldquo;An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale&rdquo;. Specifically, the Vision transformer is a model for image classification that views images as sequence of smaller patches.</p>
 <p>Each of thise patches is considered to be a &ldquo;word&rdquo;/&ldquo;token&rdquo; and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.</p>
-<p align="center">
-  <img src="../../images/transformer/vit.gif"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
-       width="100%">
-  <!-- <br> -->
-  <em>GIF visualization of the architecture  (figure credit - <a href="https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif">Phil Wang</a>)</em>
-</p>
+<figure id="fig-vit-animation" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/vit.gif" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 14. </span>GIF visualization of the architecture (figure credit - <a href="https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif">Phil Wang</a>)
+  </figcaption></figure>
+
 <p>Besides the Transformer encoder, we need the following modules:</p>
 <ul>
 <li>A <strong>linear projection layer</strong> that maps the input patches to a feature vector of larger size. It is implemented by a simple linear layer that takes each $M \times M$ patch independently as input.</li>
@@ -598,13 +573,11 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </ul>
 <h3 id="implementation">Implementation<a hidden class="anchor" aria-hidden="true" href="#implementation">#</a></h3>
 <p>We use the Pre-Layer Normalization version of the Transformer blocks proposed by <a href="http://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf">Ruibin Xiong et al.</a> in 2020. The idea is to apply Layer Normalization not in between residual blocks, but instead as a first layer in the residual blocks. This reorganization of the layers supports better gradient flow and removes the necessity of a warm-up stage. A visualization of the difference between the standard Post-LN and the Pre-LN version is shown below.</p>
-<p align="center">
-  <img src="../../images/transformer/pre_layer_norm.svg"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
-       width="100%">
-  <!-- <br> -->
-  <!-- <em>GIF visualization of the architecture  (figure credit - <a href="https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif">Phil Wang</a>)</em> -->
-</p>
+<figure id="fig-pre-layer-norm" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/pre_layer_norm.svg" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 15. </span>Pre-Layer Normalization vs Post-Layer Normalization
+  </figcaption></figure>
+
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ViTEncoderBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">num_heads</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -711,21 +684,17 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
       </tr>
   </tbody>
 </table>
-<p align="center">
-  <img src="../../images/transformer/training_curves.png"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
-       width="100%">
-  <!-- <br> -->
-  <em>Training Curve for 50 Epochs</em>
-</p>
+<figure id="fig-training-curves" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/training_curves.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 16. </span>Training Curve for 50 Epochs
+  </figcaption></figure>
+
 <p>And after training I stored the attention calculated and then overlayed them on the image and got the following visualization:</p>
-<p align="center">
-  <img src="../../images/transformer/attention_4x4.png"
-       alt="Final transformer layer output with layer normalization and feed-forward network"
-       width="100%">
-  <!-- <br> -->
-  <em>Attention visualization overlayed on the correcponding STL10 Images</em>
-</p>
+<figure id="fig-attention-viz" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/transformer/attention_4x4.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 17. </span>Attention visualization overlayed on the corresponding STL10 Images
+  </figcaption></figure>
+
 <p>From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to &ldquo;attend&rdquo; more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some &ldquo;shortcuts&rdquo; like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model <strong>might</strong> be trying to do but is not an explaination of why it predicted a certain class for an image.</p>
 <h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <ol>
@@ -765,10 +734,10 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
     <br>
     <span>Linear Regression with MLE and MAP</span>
   </a>
-  <a class="next" href="http://localhost:1313/posts/bias-variance/">
+  <a class="next" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
     <span class="title">Next »</span>
     <br>
-    <span>Bias–Variance Tradeoff</span>
+    <span>A comprehensive look into the Neural Importance Sampling for Path Tracing</span>
   </a>
 </nav>
 

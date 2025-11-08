@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Linear Regression with MLE and MAP"
-date: "2025-10-30"
+date: "2025-11-01"
 description: "Linear Regression using MLE and MAP"
 summary: "Linear Regression using MLE and MAP with visualization and implementation"
 tags: ["Linear Regression","MLE"]

@@ -10,7 +10,7 @@
 <meta name="description" content="Notes on PCA and high Dimensional PCA">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/dimensionality-reduction-pca/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.2dda3a421b754233aa5ba8c76b8f4537b2aba2423700f650d6364f04a4bb3e97.css" integrity="sha256-Ldo6Qht1QjOqW6jHa49FN7KrokI3APZQ1jZPBKS7Ppc=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.7d71119822ff9cce5ed302d4bc5b0258e23e168ca87fc346690121c472db64a3.css" integrity="sha256-fXERmCL/nM5e0wLUvFsCWOI&#43;Foyof8NGaQEhxHLbZKM=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -530,8 +530,13 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 <p>Let&rsquo;s see how PCA works on above dataset:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">&#34;k&#34;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&#34;coolwarm&#34;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&#34;pca_scatter_original.png&#34;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-</span></span></code></pre></div><p><img alt="Original Data" loading="lazy" src="../../images/pca/pca_scatter_original.png">
-<em>Original 2D data with two classes</em></p>
+</span></span></code></pre></div><!-- ![Original Data](../../images/pca/pca_scatter_original.png)
+*Original 2D data with two classes* -->
+<figure id="original-data" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/pca/pca_scatter_original.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 1. </span>Original 2D data with two classes
+  </figcaption></figure>
+
 <p>After projecting onto the first principal component:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
@@ -556,9 +561,12 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&#34;Feature 2&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&#34;equal&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&#34;pca_projection.png&#34;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-</span></span></code></pre></div><p><img alt="PCA Projection" loading="lazy" src="../../images/pca/pca_projection.png">
-<em>Data projected onto the first principal component (shown in black)</em></p>
-<p>Notice how the principal component captures the direction of maximum variance.</p>
+</span></span></code></pre></div><figure id="fig-pca-projection" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/pca/pca_projection.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 1. </span>Data projected onto the first principal component (shown in black)
+  </figcaption></figure>
+
+<p>Notice in <a href="/posts/dimensionality-reduction-pca/#fig-pca-projection">Fig. 1</a> how the principal component captures the direction of maximum variance.</p>
 <hr>
 <p><strong>Bottom line:</strong><br>
 PCA gives you the best linear low-dimensional representation of your data in the least-squares sense -
