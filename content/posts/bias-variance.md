@@ -28,8 +28,63 @@ The expected prediction error can be decomposed as:
 \]
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.
 
+## Conceptual Deifinition
+- **Error due to Bias:** The error due to bias is taken as the difference between the expected (or average) prediction of our model and the correct value which we are trying to predict. Of course you only have one model so talking about expected or average prediction values might seem a little strange. However, imagine you could repeat the whole model building process more than once: each time you gather new data and run a new analysis creating a new model. Due to randomness in the underlying data sets, the resulting models will have a range of predictions. Bias measures how far off in general these models' predictions are from the correct value.
+- **Error due to Variance:** The error due to variance is taken as the variability of a model prediction for a given data point. Again, imagine you can repeat the entire model building process multiple times. The variance is how much the predictions for a given point vary between different realizations of the model.
 
-### Experimentation
+
+## Graphical Definition
+We can create a graphical visualization of bias and variance using a bulls-eye diagram. Imagine that the center of the target is a model that perfectly predicts the correct values. As we move away from the bulls-eye, our predictions get worse and worse. Imagine we can repeat our entire model building process to get a number of separate hits on the target. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well and we are close to the bulls-eye, while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. These different realizations result in a scatter of hits on the target.
+
+We can plot four different cases representing combinations of both high and low bias and variance.
+
+{{< 
+figure src="../../images/bias-variance/bias_variance_bulls_eye.png" 
+num="1" 
+id="true-function"
+caption="True cubic function (ground truth)" 
+width="70%" 
+>}}
+
+## Mathematical Definition
+
+If we denote the variable we are trying to predict as $Y$ and our covariates as $X$, we may assume that there is a relationship relating one to the other such as:
+
+$$
+Y = f(X) + \varepsilon
+$$
+
+where the error term $\varepsilon$ is normally distributed with a mean of zero, like so:
+
+$$
+\varepsilon \sim \mathcal{N}(0, \sigma_\varepsilon^2)
+$$
+
+We may estimate a model $\hat{f}(X)$ of $f(X)$ using linear regression or another modeling technique.  
+In this case, the **expected squared prediction error** at a point $x$ is:
+
+$$
+\text{Err}(x) = \mathbb{E}[(Y - \hat{f}(x))^2]
+$$
+
+This error may then be decomposed into **bias** and **variance** components:
+
+$$
+\text{Err}(x) = (\mathbb{E}[\hat{f}(x)] - f(x))^2 + \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] + \sigma_\varepsilon^2
+$$
+
+Or equivalently,
+
+$$
+\text{Err}(x) = \text{Bias}^2 + \text{Variance} + \text{Irreducible Error}
+$$
+
+That third term, *irreducible error*, is the noise term in the true relationship that cannot fundamentally be reduced by any model.  
+Given the true model and infinite data to calibrate it, we should be able to reduce both the bias and variance terms to 0.  
+However, in a world with imperfect models and finite data, there is a **tradeoff between minimizing bias and minimizing variance**.
+
+
+# Experimentation
 
 For the following experiments, I am calculting the best fit as follows:
 $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$
@@ -65,14 +120,14 @@ width="70%"
 
 ---
 
-# Experimental Results
+## Experimental Results
 
 **Setup:**  
 500 random datasets, each with 100 training points ($N=100$); noise: $\sigma=0.5$.
 
 ---
 
-## Without Regularization ($\alpha = 0$)
+### Without Regularization ($\alpha = 0$)
 
 | Degree | Bias²   | Variance | Condition Number |
 |:------:|:-------:|:--------:|:----------------:|
@@ -105,7 +160,7 @@ width="100%"
 
 ---
 
-## With Regularization ($\alpha = 0.1$ × degree)
+### With Regularization ($\alpha = 0.1$ × degree)
 
 | Degree | $\alpha$ | Bias²   | Variance | Condition Number |
 |:------:|:-------:|:-------:|:--------:|:----------------:|

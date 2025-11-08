@@ -160,7 +160,7 @@ window.MathJax = {
     <div class="post-description">
       Exploring the bias–variance tradeoff in polynomial regression
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;5 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -172,14 +172,19 @@ window.MathJax = {
         <div class="inner"><ul>
                 <li>
                     <a href="#introduction" aria-label="Introduction">Introduction</a><ul>
-                        <ul>
                         
                 <li>
-                    <a href="#experimentation" aria-label="Experimentation">Experimentation</a></li></ul>
-                    
+                    <a href="#conceptual-deifinition" aria-label="Conceptual Deifinition">Conceptual Deifinition</a></li>
                 <li>
-                    <a href="#interactive-demo" aria-label="Interactive Demo">Interactive Demo</a></li></ul>
+                    <a href="#graphical-definition" aria-label="Graphical Definition">Graphical Definition</a></li>
+                <li>
+                    <a href="#mathematical-definition" aria-label="Mathematical Definition">Mathematical Definition</a></li></ul>
                 </li>
+                <li>
+                    <a href="#experimentation" aria-label="Experimentation">Experimentation</a><ul>
+                        
+                <li>
+                    <a href="#interactive-demo" aria-label="Interactive Demo">Interactive Demo</a></li>
                 <li>
                     <a href="#experimental-results" aria-label="Experimental Results">Experimental Results</a><ul>
                         
@@ -187,6 +192,7 @@ window.MathJax = {
                     <a href="#without-regularization-alpha--0" aria-label="Without Regularization ($\alpha = 0$)">Without Regularization ($\alpha = 0$)</a></li>
                 <li>
                     <a href="#with-regularization-alpha--01--degree" aria-label="With Regularization ($\alpha = 0.1$ × degree)">With Regularization ($\alpha = 0.1$ × degree)</a></li></ul>
+                </li></ul>
                 </li>
                 <li>
                     <a href="#conclusion" aria-label="Conclusion">Conclusion</a>
@@ -209,7 +215,40 @@ drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \
 \mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
 \]<p>
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.</p>
-<h3 id="experimentation">Experimentation<a hidden class="anchor" aria-hidden="true" href="#experimentation">#</a></h3>
+<h2 id="conceptual-deifinition">Conceptual Deifinition<a hidden class="anchor" aria-hidden="true" href="#conceptual-deifinition">#</a></h2>
+<ul>
+<li><strong>Error due to Bias:</strong> The error due to bias is taken as the difference between the expected (or average) prediction of our model and the correct value which we are trying to predict. Of course you only have one model so talking about expected or average prediction values might seem a little strange. However, imagine you could repeat the whole model building process more than once: each time you gather new data and run a new analysis creating a new model. Due to randomness in the underlying data sets, the resulting models will have a range of predictions. Bias measures how far off in general these models&rsquo; predictions are from the correct value.</li>
+<li><strong>Error due to Variance:</strong> The error due to variance is taken as the variability of a model prediction for a given data point. Again, imagine you can repeat the entire model building process multiple times. The variance is how much the predictions for a given point vary between different realizations of the model.</li>
+</ul>
+<h2 id="graphical-definition">Graphical Definition<a hidden class="anchor" aria-hidden="true" href="#graphical-definition">#</a></h2>
+<p>We can create a graphical visualization of bias and variance using a bulls-eye diagram. Imagine that the center of the target is a model that perfectly predicts the correct values. As we move away from the bulls-eye, our predictions get worse and worse. Imagine we can repeat our entire model building process to get a number of separate hits on the target. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well and we are close to the bulls-eye, while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. These different realizations result in a scatter of hits on the target.</p>
+<p>We can plot four different cases representing combinations of both high and low bias and variance.</p>
+<figure id="true-function" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_bulls_eye.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 1. </span>True cubic function (ground truth)
+  </figcaption></figure>
+
+<h2 id="mathematical-definition">Mathematical Definition<a hidden class="anchor" aria-hidden="true" href="#mathematical-definition">#</a></h2>
+<p>If we denote the variable we are trying to predict as $Y$ and our covariates as $X$, we may assume that there is a relationship relating one to the other such as:</p>
+$$
+Y = f(X) + \varepsilon
+$$<p>where the error term $\varepsilon$ is normally distributed with a mean of zero, like so:</p>
+$$
+\varepsilon \sim \mathcal{N}(0, \sigma_\varepsilon^2)
+$$<p>We may estimate a model $\hat{f}(X)$ of $f(X)$ using linear regression or another modeling technique.<br>
+In this case, the <strong>expected squared prediction error</strong> at a point $x$ is:</p>
+$$
+\text{Err}(x) = \mathbb{E}[(Y - \hat{f}(x))^2]
+$$<p>This error may then be decomposed into <strong>bias</strong> and <strong>variance</strong> components:</p>
+$$
+\text{Err}(x) = (\mathbb{E}[\hat{f}(x)] - f(x))^2 + \mathbb{E}[(\hat{f}(x) - \mathbb{E}[\hat{f}(x)])^2] + \sigma_\varepsilon^2
+$$<p>Or equivalently,</p>
+$$
+\text{Err}(x) = \text{Bias}^2 + \text{Variance} + \text{Irreducible Error}
+$$<p>That third term, <em>irreducible error</em>, is the noise term in the true relationship that cannot fundamentally be reduced by any model.<br>
+Given the true model and infinite data to calibrate it, we should be able to reduce both the bias and variance terms to 0.<br>
+However, in a world with imperfect models and finite data, there is a <strong>tradeoff between minimizing bias and minimizing variance</strong>.</p>
+<h1 id="experimentation">Experimentation<a hidden class="anchor" aria-hidden="true" href="#experimentation">#</a></h1>
 <p>For the following experiments, I am calculting the best fit as follows:
 </p>
 $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$<p>I can  simulate the MLE results by putting $\alpha=0$ giving me Estimate when there is no prior information/distribution on weights/coefficients.</p>
@@ -231,11 +270,11 @@ f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
         style="border-radius:8px; min-width: 900px;">
 </iframe>
 <hr>
-<h1 id="experimental-results">Experimental Results<a hidden class="anchor" aria-hidden="true" href="#experimental-results">#</a></h1>
+<h2 id="experimental-results">Experimental Results<a hidden class="anchor" aria-hidden="true" href="#experimental-results">#</a></h2>
 <p><strong>Setup:</strong><br>
 500 random datasets, each with 100 training points ($N=100$); noise: $\sigma=0.5$.</p>
 <hr>
-<h2 id="without-regularization-alpha--0">Without Regularization ($\alpha = 0$)<a hidden class="anchor" aria-hidden="true" href="#without-regularization-alpha--0">#</a></h2>
+<h3 id="without-regularization-alpha--0">Without Regularization ($\alpha = 0$)<a hidden class="anchor" aria-hidden="true" href="#without-regularization-alpha--0">#</a></h3>
 <table>
   <thead>
       <tr>
@@ -348,7 +387,7 @@ f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
   </figcaption></figure>
 
 <hr>
-<h2 id="with-regularization-alpha--01--degree">With Regularization ($\alpha = 0.1$ × degree)<a hidden class="anchor" aria-hidden="true" href="#with-regularization-alpha--01--degree">#</a></h2>
+<h3 id="with-regularization-alpha--01--degree">With Regularization ($\alpha = 0.1$ × degree)<a hidden class="anchor" aria-hidden="true" href="#with-regularization-alpha--01--degree">#</a></h3>
 <table>
   <thead>
       <tr>
