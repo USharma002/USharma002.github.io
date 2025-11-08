@@ -241,9 +241,9 @@ I can  simulate the MLE results by putting $\alpha=0$ giving me Estimate when th
 
 The (unknown) true function used for experiments is:
 
-\[
+$$
 f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
-\]
+$$
 
 {{< 
 figure src="../../images/bias-variance/true_function.png" 
@@ -374,3 +374,9 @@ The **bias-variance tradeoff** is clearly illustrated by these experiments:
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>
+
+## References
+
+1. Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.  
+2. Cornell University CS4780/5780: Machine Learning for Intelligent Systems Lecture Notes. (Lecture 12: Bias‑Variance Tradeoff) Retrieved from: [https://www.cs.cornell.edu/courses/cs4780/2024sp/lectures/lecturenote12.html](https://www.cs.cornell.edu/courses/cs4780/2024sp/lectures/lecturenote12.html)  
+3. Fortmann‑Roe, S. (2012). *Understanding the Bias‑Variance Tradeoff*. Retrieved from: [https://scott.fortmann-roe.com/docs/BiasVariance.html](https://scott.fortmann-roe.com/docs/BiasVariance.html)

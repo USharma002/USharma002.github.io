@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the bias–variance tradeoff in polynomial regression
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;10 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -209,8 +209,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 </li></ul>
                 </li>
                 <li>
-                    <a href="#conclusion" aria-label="Conclusion">Conclusion</a>
+                    <a href="#conclusion" aria-label="Conclusion">Conclusion</a><ul>
+                        
+                <li>
+                    <a href="#references" aria-label="References">References</a>
                 </li>
+            </ul>
+            </li>
             </ul>
         </div>
     </details>
@@ -381,9 +386,9 @@ However, in a world with imperfect models and finite data, there is a <strong>tr
 </p>
 $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$<p>I can  simulate the MLE results by putting $\alpha=0$ giving me Estimate when there is no prior information/distribution on weights/coefficients.</p>
 <p>The (unknown) true function used for experiments is:</p>
-\[
+$$
 f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
-\]<figure id="fig-true-function" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/true_function.png" 
+$$<figure id="fig-true-function" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/true_function.png" 
        alt="" 
        style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 3. </span>True underlying cubic function used for bias-variance experiments. Models attempt to recover this from noisy training data.
   </figcaption></figure>
@@ -662,6 +667,12 @@ f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ol>
+<li>Bishop, C. M. (2006). <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
+<li>Cornell University CS4780/5780: Machine Learning for Intelligent Systems Lecture Notes. (Lecture 12: Bias‑Variance Tradeoff) Retrieved from: <a href="https://www.cs.cornell.edu/courses/cs4780/2024sp/lectures/lecturenote12.html">https://www.cs.cornell.edu/courses/cs4780/2024sp/lectures/lecturenote12.html</a></li>
+<li>Fortmann‑Roe, S. (2012). <em>Understanding the Bias‑Variance Tradeoff</em>. Retrieved from: <a href="https://scott.fortmann-roe.com/docs/BiasVariance.html">https://scott.fortmann-roe.com/docs/BiasVariance.html</a></li>
+</ol>
 
 
   </div>
