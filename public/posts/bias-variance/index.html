@@ -7,7 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Bias–Variance Tradeoff | USharma Notes</title>
 <meta name="keywords" content="Bias-Variance, Model Generalization, Machine Learning">
-<meta name="description" content="Exploring the bias–variance tradeoff and its implications for model generalization in machine learning">
+<meta name="description" content="Exploring the bias–variance tradeoff in polynomial regression">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/bias-variance/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.7d71119822ff9cce5ed302d4bc5b0258e23e168ca87fc346690121c472db64a3.css" integrity="sha256-fXERmCL/nM5e0wLUvFsCWOI&#43;Foyof8NGaQEhxHLbZKM=" rel="preload stylesheet" as="style">
@@ -158,9 +158,9 @@ window.MathJax = {
       Bias–Variance Tradeoff
     </h1>
     <div class="post-description">
-      Exploring the bias–variance tradeoff and its implications for model generalization in machine learning
+      Exploring the bias–variance tradeoff in polynomial regression
     </div>
-    <div class="post-meta"><span title='2025-11-04 00:00:00 +0000 UTC'>November 4, 2025</span>&nbsp;·&nbsp;1 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -171,16 +171,317 @@ window.MathJax = {
 
         <div class="inner"><ul>
                 <li>
-                    <a href="#introduction" aria-label="Introduction">Introduction</a>
+                    <a href="#introduction" aria-label="Introduction">Introduction</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#experimentation" aria-label="Experimentation">Experimentation</a></li></ul>
+                    
+                <li>
+                    <a href="#interactive-demo" aria-label="Interactive Demo">Interactive Demo</a></li></ul>
+                </li>
+                <li>
+                    <a href="#experimental-results" aria-label="Experimental Results">Experimental Results</a><ul>
+                        
+                <li>
+                    <a href="#without-regularization-alpha--0" aria-label="Without Regularization ($\alpha = 0$)">Without Regularization ($\alpha = 0$)</a></li>
+                <li>
+                    <a href="#with-regularization-alpha--01--degree" aria-label="With Regularization ($\alpha = 0.1$ × degree)">With Regularization ($\alpha = 0.1$ × degree)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#conclusion" aria-label="Conclusion">Conclusion</a>
                 </li>
             </ul>
         </div>
     </details>
 </div>
 
-  <div class="post-content"><h1 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h1>
-<p>Assume we are given a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)  \rbrace$ drawn from an i/i/d from some distribution $p(X, Y)$. We will also asume we are in regression setting, i.e., $y\in \mathbb{R}$.</p>
-<p>Based on this, we can define the following:</p>
+  <div class="post-content"><span style="color:red;font-weight:700;font-size:1.05em">
+This post is a work in progress and may be updated or expanded soon!
+</span>
+<h1 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h1>
+<p>Suppose we have a dataset<br>
+$\mathcal{D} = {(x_1, y_1), \dots, (x_N, y_N)}$<br>
+drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.</p>
+<p>The expected prediction error can be decomposed as:
+</p>
+\[
+\mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
+\]<p>
+where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.</p>
+<h3 id="experimentation">Experimentation<a hidden class="anchor" aria-hidden="true" href="#experimentation">#</a></h3>
+<p>For the following experiments, I am calculting the best fit as follows:
+</p>
+$$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$<p>I can  simulate the MLE results by putting $\alpha=0$ giving me Estimate when there is no prior information/distribution on weights/coefficients.</p>
+<p>The (unknown) true function used for experiments is:</p>
+\[
+f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
+\]<figure id="true-function" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/true_function.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 1. </span>True cubic function (ground truth)
+  </figcaption></figure>
+
+<hr>
+<h2 id="interactive-demo">Interactive Demo<a hidden class="anchor" aria-hidden="true" href="#interactive-demo">#</a></h2>
+<p><em>Experiment with polynomial degree and regularization below:</em></p>
+<iframe src="/interactive/bias_variance.html"
+        width="100%"
+        height="850"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
+<hr>
+<h1 id="experimental-results">Experimental Results<a hidden class="anchor" aria-hidden="true" href="#experimental-results">#</a></h1>
+<p><strong>Setup:</strong><br>
+500 random datasets, each with 100 training points ($N=100$); noise: $\sigma=0.5$.</p>
+<hr>
+<h2 id="without-regularization-alpha--0">Without Regularization ($\alpha = 0$)<a hidden class="anchor" aria-hidden="true" href="#without-regularization-alpha--0">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Degree</th>
+          <th style="text-align: center">Bias²</th>
+          <th style="text-align: center">Variance</th>
+          <th style="text-align: center">Condition Number</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">0.2789</td>
+          <td style="text-align: center">0.0124</td>
+          <td style="text-align: center">1.00e+00</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">0.0576</td>
+          <td style="text-align: center">0.0109</td>
+          <td style="text-align: center">7.92e+00</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0111</td>
+          <td style="text-align: center">3.95e+01</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0140</td>
+          <td style="text-align: center">2.49e+02</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0172</td>
+          <td style="text-align: center">1.79e+03</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0205</td>
+          <td style="text-align: center">1.37e+04</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">7</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0248</td>
+          <td style="text-align: center">1.13e+05</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0329</td>
+          <td style="text-align: center">9.60e+05</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">9</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0443</td>
+          <td style="text-align: center">8.57e+06</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0548</td>
+          <td style="text-align: center">7.86e+07</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">11</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0706</td>
+          <td style="text-align: center">7.49e+08</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">0.0005</td>
+          <td style="text-align: center">0.1235</td>
+          <td style="text-align: center">7.29e+09</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">13</td>
+          <td style="text-align: center">0.0017</td>
+          <td style="text-align: center">0.2015</td>
+          <td style="text-align: center">7.32e+10</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">14</td>
+          <td style="text-align: center">0.0002</td>
+          <td style="text-align: center">0.6302</td>
+          <td style="text-align: center">7.38e+11</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">15</td>
+          <td style="text-align: center">0.0036</td>
+          <td style="text-align: center">1.4014</td>
+          <td style="text-align: center">7.77e+12</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li><strong>Bias quickly drops to zero</strong> by degree 3 (the true function’s degree).</li>
+<li><strong>Variance increases modestly</strong> for low degrees, but explodes as the condition number becomes large ($\gtrsim 10^9$).</li>
+</ul>
+<figure id="unregularized" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_stacked.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 2. </span>Bias-Variance decomposition (no regularization)
+  </figcaption></figure>
+
+<hr>
+<h2 id="with-regularization-alpha--01--degree">With Regularization ($\alpha = 0.1$ × degree)<a hidden class="anchor" aria-hidden="true" href="#with-regularization-alpha--01--degree">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: center">Degree</th>
+          <th style="text-align: center">$\alpha$</th>
+          <th style="text-align: center">Bias²</th>
+          <th style="text-align: center">Variance</th>
+          <th style="text-align: center">Condition Number</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">0.0200</td>
+          <td style="text-align: center">0.0576</td>
+          <td style="text-align: center">0.0109</td>
+          <td style="text-align: center">7.91e+00</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">3</td>
+          <td style="text-align: center">0.0300</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0111</td>
+          <td style="text-align: center">3.94e+01</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">0.0400</td>
+          <td style="text-align: center">0.0000</td>
+          <td style="text-align: center">0.0139</td>
+          <td style="text-align: center">2.47e+02</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">0.0500</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0170</td>
+          <td style="text-align: center">1.74e+03</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">0.0600</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0198</td>
+          <td style="text-align: center">1.26e+04</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">7</td>
+          <td style="text-align: center">0.0700</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0225</td>
+          <td style="text-align: center">8.64e+04</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">0.0800</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0259</td>
+          <td style="text-align: center">4.91e+05</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">9</td>
+          <td style="text-align: center">0.0900</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0313</td>
+          <td style="text-align: center">2.18e+06</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">10</td>
+          <td style="text-align: center">0.1000</td>
+          <td style="text-align: center">0.0001</td>
+          <td style="text-align: center">0.0398</td>
+          <td style="text-align: center">7.92e+06</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">11</td>
+          <td style="text-align: center">0.1100</td>
+          <td style="text-align: center">0.0002</td>
+          <td style="text-align: center">0.0501</td>
+          <td style="text-align: center">2.63e+07</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">0.1200</td>
+          <td style="text-align: center">0.0002</td>
+          <td style="text-align: center">0.0637</td>
+          <td style="text-align: center">8.58e+07</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">13</td>
+          <td style="text-align: center">0.1300</td>
+          <td style="text-align: center">0.0002</td>
+          <td style="text-align: center">0.0696</td>
+          <td style="text-align: center">2.82e+08</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">14</td>
+          <td style="text-align: center">0.1400</td>
+          <td style="text-align: center">0.0004</td>
+          <td style="text-align: center">0.1030</td>
+          <td style="text-align: center">9.44e+08</td>
+      </tr>
+      <tr>
+          <td style="text-align: center">15</td>
+          <td style="text-align: center">0.1500</td>
+          <td style="text-align: center">0.0007</td>
+          <td style="text-align: center">0.1272</td>
+          <td style="text-align: center">3.23e+09</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li><strong>Regularization controls variance even for high degrees.</strong></li>
+<li><strong>Condition number</strong> stays manageable, preventing numerical instability.</li>
+<li><strong>Bias increases only minimally</strong>, a small price for much lower variance at high degrees.</li>
+</ul>
+<figure id="regularized" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_stacked_regularized.png" 
+       alt="" 
+       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 3. </span>Bias-Variance decomposition (adaptive regularization)
+  </figcaption></figure>
+
+<hr>
+<h1 id="conclusion">Conclusion<a hidden class="anchor" aria-hidden="true" href="#conclusion">#</a></h1>
+<p>The <strong>bias-variance tradeoff</strong> is clearly illustrated by these experiments:</p>
+<ul>
+<li>Degree 3 is optimal for this cubic regression task.</li>
+<li>Without regularization, variance explodes beyond degree 10–12 due to numerical instability.</li>
+<li>Regularization ($\alpha$ increasing with degree) stabilizes high-degree fits, keeping variance and condition number controlled.</li>
+<li>The table and figures above reveal the subtle interplay between bias, variance, model complexity, and regularization.</li>
+</ul>
+<span style="color:crimson;font-weight:700">
+This post or widget may be updated further - more notes, findings, and background will appear here!
+</span>
 
 
   </div>
@@ -192,13 +493,8 @@ window.MathJax = {
       <li><a href="http://localhost:1313/tags/machine-learning/">Machine Learning</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/transformer-model/">
+  <a class="prev" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
     <span class="title">« Prev</span>
-    <br>
-    <span>Vision Transformer (ViT) - Architecture and Implementation</span>
-  </a>
-  <a class="next" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
-    <span class="title">Next »</span>
     <br>
     <span>A comprehensive look into the Neural Importance Sampling for Path Tracing</span>
   </a>
