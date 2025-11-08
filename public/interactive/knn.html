@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-delaunay/6.0.4/d3-delaunay.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--page-bg, white);
+            color: var(--page-text, #212529);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            background: var(--card-bg, #f8f9fa);
+            border-radius: 8px;
+            border: 1px solid var(--border-color, #dee2e6);
+        }
+        
+        .slider-row {
+            display: flex;
+            align-items: center;
+            margin: 0.75rem 0;
+            gap: 1rem;
+        }
+        
+        .slider-row label {
+            min-width: 150px;
+            font-weight: 600;
+            color: var(--page-text, #212529);
+            font-size: 0.95rem;
+        }
+        
+        .slider-row input[type="range"] {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border-color, #dee2e6);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider-row input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2E86AB;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .slider-row input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2E86AB;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .slider-row span {
+            min-width: 50px;
+            font-size: 1rem;
+            color: #2E86AB;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .input-row {
+            display: flex;
+            align-items: center;
+            margin: 0.75rem 0;
+            gap: 1rem;
+        }
+        
+        .input-row label {
+            min-width: 150px;
+            font-weight: 600;
+            color: var(--page-text, #212529);
+            font-size: 0.95rem;
+        }
+        
+        .input-row input[type="number"] {
+            width: 100px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color, #dee2e6);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            background: var(--card-bg, white);
+            color: var(--page-text, #212529);
+        }
+        
+        .resample-btn {
+            padding: 0.6rem 1.5rem;
+            background: #2E86AB;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-left: auto;
+        }
+        
+        .resample-btn:hover {
+            background: #236b8a;
+        }
+        
+        .resample-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .viz-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .plot-container {
+            background: var(--card-bg, white);
+            border-radius: 8px;
+            border: 1px solid var(--border-color, #dee2e6);
+            padding: 1rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .plot-title {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--page-text, #212529);
+            font-size: 0.95rem;
+        }
+        
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        
+        .true-boundary {
+            fill: none;
+            stroke: black;
+            stroke-width: 3;
+            stroke-dasharray: 5,5;
+        }
+        
+        .data-point {
+            stroke: black;
+            stroke-width: 1.5;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <div class="slider-row">
+                <label>Number of Neighbors (K):</label>
+                <input type="range" id="k-slider" min="1" max="50" value="8" oninput="updateVisualization()">
+                <span id="k-value">8</span>
+            </div>
+            <div class="input-row">
+                <label>Number of Data Points:</label>
+                <input type="number" id="n-points" min="10" max="500" value="100" step="10">
+                <button class="resample-btn" onclick="resampleData()">Resample Data</button>
+            </div>
+        </div>
+        
+        <div class="viz-container">
+            <div class="plot-container">
+                <div class="plot-title">Voronoi Cells with KNN Decision Boundary</div>
+                <svg id="voronoi-plot" viewBox="0 0 400 400"></svg>
+            </div>
+            
+            <div class="plot-container">
+                <div class="plot-title">Training Data (True Classes)</div>
+                <svg id="data-plot" viewBox="0 0 400 400"></svg>
+            </div>
+            
+            <div class="plot-container">
+                <div class="plot-title">Prediction Certainty Heat Map</div>
+                <svg id="heatmap-plot" viewBox="0 0 400 400"></svg>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgb(0,0,255);"></div>
+                <span>Class 0 (Below Boundary)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: rgb(255,0,0);"></div>
+                <span>Class 1 (Above Boundary)</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Detect theme from parent Hugo page
+        function detectTheme() {
+            try {
+                const parentBody = window.parent.document.body;
+                const computedStyle = window.getComputedStyle(parentBody);
+                const bgColor = computedStyle.backgroundColor;
+                
+                // Parse RGB to determine if dark or light
+                const rgb = bgColor.match(/\d+/g);
+                if (rgb) {
+                    const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+                    const isDark = brightness < 128;
+                    
+                    // Set CSS custom properties based on theme
+                    if (isDark) {
+                        document.documentElement.style.setProperty('--page-bg', '#1a1a1a');
+                        document.documentElement.style.setProperty('--page-text', '#e4e4e4');
+                        document.documentElement.style.setProperty('--text-secondary', '#a0a0a0');
+                        document.documentElement.style.setProperty('--card-bg', '#2d2d2d');
+                        document.documentElement.style.setProperty('--border-color', '#404040');
+                    } else {
+                        document.documentElement.style.setProperty('--page-bg', '#ffffff');
+                        document.documentElement.style.setProperty('--page-text', '#212529');
+                        document.documentElement.style.setProperty('--text-secondary', '#6c757d');
+                        document.documentElement.style.setProperty('--card-bg', '#f8f9fa');
+                        document.documentElement.style.setProperty('--border-color', '#dee2e6');
+                    }
+                    
+                    return isDark;
+                }
+            } catch (e) {
+                console.log('Using default theme (cannot access parent)');
+            }
+            return false;
+        }
+        
+        // Initial theme detection
+        let isDarkMode = detectTheme();
+        
+        // Watch for theme changes in parent
+        setInterval(() => {
+            const newIsDark = detectTheme();
+            if (newIsDark !== isDarkMode) {
+                isDarkMode = newIsDark;
+                updateVisualization();
+            }
+        }, 1000);
+        
+        const width = 400;
+        const height = 400;
+        const xScale = d3.scaleLinear().domain([-3, 3]).range([0, width]);
+        const yScale = d3.scaleLinear().domain([-3, 3]).range([height, 0]);
+        
+        // Generate dataset
+        function boundaryFunc(x) {
+            return -x - 1.0 * Math.sin(2 * x) + 1.0 * Math.cos(2.5 * x);
+        }
+        
+        function generateData(n = 100) {
+            const data = [];
+            for (let i = 0; i < n; i++) {
+                const x = Math.random() * 6 - 3;
+                const y = Math.random() * 6 - 3;
+                const label = y > boundaryFunc(x) ? 1 : 0;
+                data.push({x, y, label});
+            }
+            return data;
+        }
+        
+        const trainingData = generateData(100);
+        
+        // Resample data function
+        function resampleData() {
+            const n = parseInt(document.getElementById('n-points').value);
+            if (n < 10 || n > 500) {
+                alert('Please enter a value between 10 and 500');
+                return;
+            }
+            trainingData.length = 0;
+            generateData(n).forEach(d => trainingData.push(d));
+            updateVisualization();
+        }
+        
+        // KNN classifier
+        function knnPredict(point, k) {
+            const distances = trainingData.map(d => ({
+                dist: Math.sqrt((d.x - point.x) ** 2 + (d.y - point.y) ** 2),
+                label: d.label
+            }));
+            
+            distances.sort((a, b) => a.dist - b.dist);
+            const neighbors = distances.slice(0, k);
+            const sum = neighbors.reduce((acc, n) => acc + n.label, 0);
+            const prob1 = sum / k;
+            
+            return {
+                label: prob1 >= 0.5 ? 1 : 0,
+                prob1: prob1,
+                certainty: Math.abs(prob1 - 0.5) * 2
+            };
+        }
+        
+        // Generate grid for predictions
+        function generateGrid(resolution = 50) {
+            const grid = [];
+            for (let i = 0; i < resolution; i++) {
+                for (let j = 0; j < resolution; j++) {
+                    const x = -3 + (i / resolution) * 6;
+                    const y = -3 + (j / resolution) * 6;
+                    grid.push({x, y});
+                }
+            }
+            return grid;
+        }
+        
+        // Draw true boundary
+        function drawBoundary(svg, useThemeColor = true) {
+            const textColor = getComputedStyle(document.body).getPropertyValue('--page-text') || '#212529';
+            
+            const boundaryPoints = [];
+            for (let i = 0; i <= 100; i++) {
+                const x = -3 + (i / 100) * 6;
+                const y = boundaryFunc(x);
+                if (y >= -3 && y <= 3) {
+                    boundaryPoints.push({x, y});
+                }
+            }
+            
+            const line = d3.line()
+                .x(d => xScale(d.x))
+                .y(d => yScale(d.y));
+            
+            svg.append("path")
+                .datum(boundaryPoints)
+                .attr("class", "true-boundary")
+                .attr("stroke", useThemeColor ? textColor : '#000000')
+                .attr("d", line);
+        }
+        
+        function updateVisualization() {
+            const k = parseInt(document.getElementById('k-slider').value);
+            document.getElementById('k-value').textContent = k;
+            
+            // Get current theme colors
+            const svgBg = getComputedStyle(document.body).getPropertyValue('--card-bg') || 'white';
+            const textColor = getComputedStyle(document.body).getPropertyValue('--page-text') || '#212529';
+            const borderColor = getComputedStyle(document.body).getPropertyValue('--border-color') || '#dee2e6';
+            
+            // Clear all plots
+            d3.select("#voronoi-plot").selectAll("*").remove();
+            d3.select("#data-plot").selectAll("*").remove();
+            d3.select("#heatmap-plot").selectAll("*").remove();
+            
+            // Add background rectangles to SVGs
+            [d3.select("#voronoi-plot"), d3.select("#heatmap-plot")].forEach(svg => {
+                svg.append("rect")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("fill", svgBg);
+            });
+            
+            // Middle plot always has white background
+            d3.select("#data-plot").append("rect")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("fill", "white");
+            
+            // Plot 1: Voronoi cells with KNN predictions
+            const svg1 = d3.select("#voronoi-plot");
+            
+            // Create Voronoi diagram
+            const delaunay = d3.Delaunay.from(trainingData, d => xScale(d.x), d => yScale(d.y));
+            const voronoi = delaunay.voronoi([0, 0, width, height]);
+            
+            // Draw Voronoi cells colored by prediction
+            trainingData.forEach((d, i) => {
+                const cell = voronoi.cellPolygon(i);
+                if (cell) {
+                    const pred = knnPredict(d, k);
+                    const baseColor = pred.label === 1 ? [255, 0, 0] : [0, 0, 255];
+                    const color = baseColor.map(c => c * pred.certainty + 255 * (1 - pred.certainty));
+                    
+                    svg1.append("path")
+                        .attr("d", "M" + cell.join("L") + "Z")
+                        .attr("fill", `rgb(${color[0]},${color[1]},${color[2]})`)
+                        .attr("stroke", borderColor)
+                        .attr("stroke-width", 0.5)
+                        .attr("opacity", 0.6);
+                }
+            });
+            
+            drawBoundary(svg1);
+            
+            // Draw training points
+            svg1.selectAll(".training-point")
+                .data(trainingData)
+                .join("circle")
+                .attr("class", "data-point")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 3)
+                .attr("fill", d => d.label === 1 ? "rgb(255,0,0)" : "rgb(0,0,255)");
+            
+            // Plot 2: Original data
+            const svg2 = d3.select("#data-plot");
+            drawBoundary(svg2);
+            
+            svg2.selectAll(".data-point")
+                .data(trainingData)
+                .join("circle")
+                .attr("class", "data-point")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 4)
+                .attr("fill", d => d.label === 1 ? "rgb(255,0,0)" : "rgb(0,0,255)");
+            
+            // Plot 3: Heat map
+            const svg3 = d3.select("#heatmap-plot");
+            const grid = generateGrid(80);
+            
+            const colorScale = d3.scaleSequential(d3.interpolateViridis)
+                .domain([0, 1]);
+            
+            const cellSize = width / 80;
+            
+            grid.forEach(point => {
+                const pred = knnPredict(point, k);
+                svg3.append("rect")
+                    .attr("x", xScale(point.x) - cellSize/2)
+                    .attr("y", yScale(point.y) - cellSize/2)
+                    .attr("width", cellSize)
+                    .attr("height", cellSize)
+                    .attr("fill", colorScale(pred.certainty))
+                    .attr("opacity", 0.8);
+            });
+            
+            drawBoundary(svg3);
+            
+            // Draw training points
+            svg3.selectAll(".data-point")
+                .data(trainingData)
+                .join("circle")
+                .attr("class", "data-point")
+                .attr("cx", d => xScale(d.x))
+                .attr("cy", d => yScale(d.y))
+                .attr("r", 2.5)
+                .attr("fill", d => d.label === 1 ? "rgb(255,0,0)" : "rgb(0,0,255)")
+                .attr("opacity", 0.6);
+        }
+        
+        // Initial render
+        updateVisualization();
+    </script>
+</body>
+</html>

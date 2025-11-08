@@ -348,6 +348,18 @@ caption="Stacked bar chart of bias, variance, and irreducible error for polynomi
 width="100%"
 >}}
 
+
+---
+
+### K-Nearest Neighbor Interactive Example
+
+<iframe src="/interactive/knn.html"
+        width="100%"
+        height="570"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
+
 ---
 
 # Conclusion
