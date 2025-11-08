@@ -56,32 +56,30 @@
 
     </style>
 </noscript>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+  crossorigin="anonymous">
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+  crossorigin="anonymous"></script>
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  crossorigin="anonymous"></script>
+
 <script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: {
-    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-  },
-  svg: { fontCache: 'global' }
-};
-</script>
-
-
-<script id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-
-window.MathJax = {
-  tex: {
-    macros: {
-      argmax: ["\\operatorname*{arg\\,max}", 0]
-    }
-  }
-};
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false }
+    ],
+    throwOnError: false
+  });
+});
 </script>
 
 </head>
@@ -160,7 +158,7 @@ window.MathJax = {
     <div class="post-description">
       Exploring the bias–variance tradeoff in polynomial regression
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -178,7 +176,21 @@ window.MathJax = {
                 <li>
                     <a href="#graphical-definition" aria-label="Graphical Definition">Graphical Definition</a></li>
                 <li>
-                    <a href="#mathematical-definition" aria-label="Mathematical Definition">Mathematical Definition</a></li></ul>
+                    <a href="#mathematical-definition" aria-label="Mathematical Definition">Mathematical Definition</a><ul>
+                        
+                <li>
+                    <a href="#expected-label-given-xin-mathbbr" aria-label="Expected Label (given $x\in \mathbb{R}$)">Expected Label (given $x\in \mathbb{R}$)</a></li>
+                <li>
+                    <a href="#expected-test-error-given-h_d" aria-label="Expected Test Error (given $h_D$)">Expected Test Error (given $h_D$)</a></li>
+                <li>
+                    <a href="#expected-classifier-given-mathcala" aria-label="Expected Classifier (given $\mathcal{A}$)">Expected Classifier (given $\mathcal{A}$)</a></li>
+                <li>
+                    <a href="#expected-test-error-given-mathcala" aria-label="Expected Test Error (given $\mathcal{A}$)">Expected Test Error (given $\mathcal{A}$)</a></li>
+                <li>
+                    <a href="#decomposition-of-expected-test-error" aria-label="Decomposition of Expected Test Error">Decomposition of Expected Test Error</a></li>
+                <li>
+                    <a href="#for-a-simplified-version" aria-label="For a simplified version:">For a simplified version:</a></li></ul>
+                </li></ul>
                 </li>
                 <li>
                     <a href="#experimentation" aria-label="Experimentation">Experimentation</a><ul>
@@ -206,14 +218,12 @@ window.MathJax = {
 This post is a work in progress and may be updated or expanded soon!
 </span>
 <h1 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h1>
-<p>Suppose we have a dataset<br>
-$\mathcal{D} = {(x_1, y_1), \dots, (x_N, y_N)}$<br>
-drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.</p>
+<p>Suppose we have a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.</p>
 <p>The expected prediction error can be decomposed as:
 </p>
-\[
+$$
 \mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
-\]<p>
+$$<p>
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.</p>
 <h2 id="conceptual-deifinition">Conceptual Deifinition<a hidden class="anchor" aria-hidden="true" href="#conceptual-deifinition">#</a></h2>
 <ul>
@@ -234,6 +244,117 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
   </figcaption></figure>
 
 <h2 id="mathematical-definition">Mathematical Definition<a hidden class="anchor" aria-hidden="true" href="#mathematical-definition">#</a></h2>
+<p>Assuming we are in a regression setting with dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ with $y\in \mathbb{R}$, we define the following:</p>
+<blockquote>
+<h3 id="expected-label-given-xin-mathbbr"><strong>Expected Label</strong> (given $x\in \mathbb{R}$)<a hidden class="anchor" aria-hidden="true" href="#expected-label-given-xin-mathbbr">#</a></h3>
+<p>Given a feature vector $x \in \mathbb{R}^D$, the <strong>expected label</strong> denotes the label you would expect to obtain:</p>
+$$
+ \bar{y}(x) = \mathbb{E}_{y \mid x}[Y] = \int_y y \, p(y \mid x) \, dy
+ $$</blockquote>
+<p>We draw $n$ i.i.d. inputs for dataset $D$ form distribution $p$.</p>
+<p>We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesus (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$</p>
+<p>For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the deneralization error (as meased in squared loss) as follows:</p>
+<blockquote>
+<h3 id="expected-test-error-given-h_d"><strong>Expected Test Error</strong> (given $h_D$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-h_d">#</a></h3>
+$$
+ \mathbb{E}_{(x, y) \sim p} \big[(h_D(x) - y)^2\big]
+ \;=\;
+ \int_x \int_y (h_D(x) - y)^2 \, p(x, y) \, dy \, dx
+ $$</blockquote>
+<p>Note that one can use other loss functions but here we are using squared loss because it has nice mathematical properties and also the most common loss function.</p>
+<p>The previous statement is true for a given training set  $D$. However, remember that $D$ itself is drawn from $p^n$, and is therefore a random variable. We can of course compute it&rsquo;s expectation:</p>
+<blockquote>
+<h3 id="expected-classifier-given-mathcala"><strong>Expected Classifier</strong> (given $\mathcal{A}$)<a hidden class="anchor" aria-hidden="true" href="#expected-classifier-given-mathcala">#</a></h3>
+$$
+ \bar{h} = \mathbb{E}_{D \sim p^n}[h_D] = \int_D h_D \, p(D) \, dD
+ $$<p>where</p>
+<ul>
+<li>$p(D)$ is the probability of drawing $D$ from $p^n$, and</li>
+<li>$\bar{h}$ represents a weighted average over functions (i.e., the expected hypothesis under the data distribution).</li>
+</ul></blockquote>
+<p>We can also use the fact that $h_D$ is a random variable to compute the expected test error only given $\mathcal{A}$, taking expectation over $D$.</p>
+<blockquote>
+<h3 id="expected-test-error-given-mathcala"><strong>Expected Test Error</strong> (given $\mathcal{A}$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-mathcala">#</a></h3>
+$$
+ \mathbb{E}_{D \sim p^n} \Big[\, \mathbb{E}_{(x, y) \sim p} \big[ (h_D(x) - y)^2 \big] \,\Big]
+ $$<p>Equivalent integral form:</p>
+$$
+ \int_D \int_x \int_y (h_D(x) - y)^2 \, p(D) \, p(x, y) \, dy \, dx \, dD
+ $$<p>where</p>
+<ul>
+<li>$D$ denotes the training dataset, sampled as $D \sim p^n$,</li>
+<li>$(x, y)$ is a test sample drawn from the data distribution $p(x, y)$, and</li>
+<li>$h_D$ is the hypothesis (predictor) learned from $D$.</li>
+</ul></blockquote>
+<p>We are interested in this expression, because it evaluates the quality of a machine learning algorithm $\mathcal{A}$ with respect to a data distrbution $p(x, y)$.</p>
+<h3 id="decomposition-of-expected-test-error">Decomposition of Expected Test Error<a hidden class="anchor" aria-hidden="true" href="#decomposition-of-expected-test-error">#</a></h3>
+$$
+\begin{aligned}
+\mathbb{E}_{x,y,D}\left[(h_D(x) - y)^2\right]
+&= \mathbb{E}_{x,y,D}\left[\big((h_D(x) - \bar{h}(x)) + (\bar{h}(x) - y)\big)^2\right] \\
+&= \mathbb{E}_{x,y,D}\left[(h_D(x) - \bar{h}(x))^2\right] + 2\mathbb{E}_{x,y,D}\left[(h_D(x) - \bar{h}(x))(\bar{h}(x) - y)\right] \\
+&\quad + \mathbb{E}_{x,y,D}\left[(\bar{h}(x) - y)^2\right]
+\end{aligned}
+$$<p>We can show that the middle term of the above equation is $0$ as follows</p>
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - y\right)\right]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\mathbb{E}_{D}\!\left[h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right]
+\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\mathbb{E}_{D}\!\left[h_{D}(\mathbf{x})\right] - \bar{h}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}, y}[0] \\[4pt]
+&= 0
+\end{aligned}
+$$<p>Returning to the earlier expression, we&rsquo;re left with the variance and another term</p>
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - y\right)^{2}\right]
+&= \underbrace{\mathbb{E}_{\mathbf{x}, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)^{2}\right]}_{\text{Variance}} + \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x})- y\right)^{2}\right]
+\end{aligned}
+$$<p>We can break down the second term in the above equation as follows:
+</p>
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - y\right)^{2}\right]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left((\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})) + (\bar{y}(\mathbf{x}) - y)\right)^{2}\right] \\[6pt]
+&= \underbrace{\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{y}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)^{2}\right]}_{\text{Bias}^2} + 2\,\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
+\left(\bar{y}(\mathbf{x}) - y\right)\right]
+\end{aligned}
+$$<p>The third term in the equation above is $0$, as we show below
+</p>
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
+\left(\bar{y}(\mathbf{x}) - y\right)\right]
+&= \mathbb{E}_{\mathbf{x}}\!\left[\mathbb{E}_{y \mid \mathbf{x}}\!\left[\bar{y}(\mathbf{x}) - y\right]
+\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{y}(\mathbf{x}) - \mathbb{E}_{y \mid \mathbf{x}}\![y]\right)
+\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{y}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}}[0] \\[4pt]
+&= 0
+\end{aligned}
+$$<p>This gives us the decomposition of expected test error as follows
+</p>
+$$
+\underbrace{\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{\mathbf{x}, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{y}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)^{2}\right]}_{\text{Bias}^2}
+$$<ul>
+<li>
+<p><strong>Variance:</strong> Captures how much your classifier changes if you train on a different training set. How &ldquo;over-specialized&rdquo; is your classifier to a particular training set (overfitting)? If we have the best possible model for our training data, how far off are we from the average classifier?</p>
+</li>
+<li>
+<p><strong>Bias:</strong> What is the inherent error that you obtain from your classifier even with infinite training data? This is due to your classifier being &ldquo;biased&rdquo; to a particular kind of solution (e.g. linear classifier). In other words, bias is inherent to your model.</p>
+</li>
+<li>
+<p><strong>Noise:</strong> How big is the data-intrinsic noise? This error measures ambiguity due to your data distribution and feature representation. You can never beat this, it is an aspect of the data.</p>
+</li>
+</ul>
+<h3 id="for-a-simplified-version">For a simplified version:<a hidden class="anchor" aria-hidden="true" href="#for-a-simplified-version">#</a></h3>
 <p>If we denote the variable we are trying to predict as $Y$ and our covariates as $X$, we may assume that there is a relationship relating one to the other such as:</p>
 $$
 Y = f(X) + \varepsilon
@@ -252,7 +373,7 @@ $$
 \text{Err}(x) = \text{Bias}^2 + \text{Variance} + \text{Irreducible Error}
 $$<p>That third term, <em>irreducible error</em>, is the noise term in the true relationship that cannot fundamentally be reduced by any model.<br>
 Given the true model and infinite data to calibrate it, we should be able to reduce both the bias and variance terms to 0.<br>
-However, in a world with imperfect models and finite data, there is a <strong>tradeoff between minimizing bias and minimizing variance</strong>.</p>
+However, in a world with imperfect models and finite data, there is a <strong>tradeoff between minimizing bias and minimizing variance</strong> as seen in <a href="/posts/bias-variance/#fig-complexity">Figure 2.</a>.</p>
 <h1 id="experimentation">Experimentation<a hidden class="anchor" aria-hidden="true" href="#experimentation">#</a></h1>
 <p>For the following experiments, I am calculting the best fit as follows:
 </p>
@@ -308,10 +429,10 @@ f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
           <td style="text-align: center">7.92e+00</td>
       </tr>
       <tr>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">0.0000</td>
-          <td style="text-align: center">0.0111</td>
-          <td style="text-align: center">3.95e+01</td>
+          <td style="text-align: center"><strong>3</strong></td>
+          <td style="text-align: center"><strong>0.0000</strong></td>
+          <td style="text-align: center"><strong>0.0111</strong></td>
+          <td style="text-align: center"><strong>3.95e+01</strong></td>
       </tr>
       <tr>
           <td style="text-align: center">4</td>
@@ -417,11 +538,11 @@ f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
           <td style="text-align: center">7.91e+00</td>
       </tr>
       <tr>
-          <td style="text-align: center">3</td>
-          <td style="text-align: center">0.0300</td>
-          <td style="text-align: center">0.0000</td>
-          <td style="text-align: center">0.0111</td>
-          <td style="text-align: center">3.94e+01</td>
+          <td style="text-align: center"><strong>3</strong></td>
+          <td style="text-align: center"><strong>0.0300</strong></td>
+          <td style="text-align: center"><strong>0.0000</strong></td>
+          <td style="text-align: center"><strong>0.0111</strong></td>
+          <td style="text-align: center"><strong>3.94e+01</strong></td>
       </tr>
       <tr>
           <td style="text-align: center">4</td>

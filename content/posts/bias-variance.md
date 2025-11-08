@@ -12,20 +12,19 @@ TocOpen: true
 math: true
 ---
 
+
 <span style="color:red;font-weight:700;font-size:1.05em">
 This post is a work in progress and may be updated or expanded soon!
 </span>
 
 # Introduction
 
-Suppose we have a dataset  
-$\mathcal{D} = \{(x_1, y_1), \dots, (x_N, y_N)\}$  
-drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.
+Suppose we have a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.
 
 The expected prediction error can be decomposed as:
-\[
+$$
 \mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
-\]
+$$
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.
 
 ## Conceptual Deifinition
@@ -56,6 +55,146 @@ width="70%"
 
 
 ## Mathematical Definition
+
+Assuming we are in a regression setting with dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ with $y\in \mathbb{R}$, we define the following:
+
+> ### **Expected Label** (given $x\in \mathbb{R}$)
+>
+> Given a feature vector $x \in \mathbb{R}^D$, the **expected label** denotes the label you would expect to obtain:
+>
+> $$
+ \bar{y}(x) = \mathbb{E}_{y \mid x}[Y] = \int_y y \, p(y \mid x) \, dy
+ $$
+
+We draw $n$ i.i.d. inputs for dataset $D$ form distribution $p$.
+
+We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesus (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$
+
+For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the deneralization error (as meased in squared loss) as follows:
+
+> ### **Expected Test Error** (given $h_D$)
+>
+> $$
+ \mathbb{E}_{(x, y) \sim p} \big[(h_D(x) - y)^2\big]
+ \;=\;
+ \int_x \int_y (h_D(x) - y)^2 \, p(x, y) \, dy \, dx
+ $$
+
+
+Note that one can use other loss functions but here we are using squared loss because it has nice mathematical properties and also the most common loss function.
+
+The previous statement is true for a given training set  $D$. However, remember that $D$ itself is drawn from $p^n$, and is therefore a random variable. We can of course compute it's expectation:
+
+> ### **Expected Classifier** (given $\mathcal{A}$)
+>
+> $$
+ \bar{h} = \mathbb{E}_{D \sim p^n}[h_D] = \int_D h_D \, p(D) \, dD
+ $$
+>
+> where  
+> - $p(D)$ is the probability of drawing $D$ from $p^n$, and  
+> - $\bar{h}$ represents a weighted average over functions (i.e., the expected hypothesis under the data distribution).
+
+
+We can also use the fact that $h_D$ is a random variable to compute the expected test error only given $\mathcal{A}$, taking expectation over $D$.
+
+> ### **Expected Test Error** (given $\mathcal{A}$)
+>
+> $$
+ \mathbb{E}_{D \sim p^n} \Big[\, \mathbb{E}_{(x, y) \sim p} \big[ (h_D(x) - y)^2 \big] \,\Big]
+ $$
+>
+> Equivalent integral form:
+>
+> $$
+ \int_D \int_x \int_y (h_D(x) - y)^2 \, p(D) \, p(x, y) \, dy \, dx \, dD
+ $$
+>
+> where  
+> - $D$ denotes the training dataset, sampled as $D \sim p^n$,  
+> - $(x, y)$ is a test sample drawn from the data distribution $p(x, y)$, and  
+> - $h_D$ is the hypothesis (predictor) learned from $D$.
+
+We are interested in this expression, because it evaluates the quality of a machine learning algorithm $\mathcal{A}$ with respect to a data distrbution $p(x, y)$. 
+
+
+
+### Decomposition of Expected Test Error
+
+$$
+\begin{aligned}
+\mathbb{E}_{x,y,D}\left[(h_D(x) - y)^2\right]
+&= \mathbb{E}_{x,y,D}\left[\big((h_D(x) - \bar{h}(x)) + (\bar{h}(x) - y)\big)^2\right] \\
+&= \mathbb{E}_{x,y,D}\left[(h_D(x) - \bar{h}(x))^2\right] + 2\mathbb{E}_{x,y,D}\left[(h_D(x) - \bar{h}(x))(\bar{h}(x) - y)\right] \\
+&\quad + \mathbb{E}_{x,y,D}\left[(\bar{h}(x) - y)^2\right]
+\end{aligned}
+$$
+
+
+We can show that the middle term of the above equation is $0$ as follows
+
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - y\right)\right]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\mathbb{E}_{D}\!\left[h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right]
+\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\mathbb{E}_{D}\!\left[h_{D}(\mathbf{x})\right] - \bar{h}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - y\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}, y}[0] \\[4pt]
+&= 0
+\end{aligned}
+$$
+
+Returning to the earlier expression, we're left with the variance and another term 
+
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - y\right)^{2}\right]
+&= \underbrace{\mathbb{E}_{\mathbf{x}, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)^{2}\right]}_{\text{Variance}} + \mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x})- y\right)^{2}\right]
+\end{aligned}
+$$
+
+We can break down the second term in the above equation as follows: 
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - y\right)^{2}\right]
+&= \mathbb{E}_{\mathbf{x}, y}\!\left[\left((\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})) + (\bar{y}(\mathbf{x}) - y)\right)^{2}\right] \\[6pt]
+&= \underbrace{\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{y}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)^{2}\right]}_{\text{Bias}^2} + 2\,\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
+\left(\bar{y}(\mathbf{x}) - y\right)\right]
+\end{aligned}
+$$
+
+The third term in the equation above is $0$, as we show below 
+$$
+\begin{aligned}
+\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
+\left(\bar{y}(\mathbf{x}) - y\right)\right]
+&= \mathbb{E}_{\mathbf{x}}\!\left[\mathbb{E}_{y \mid \mathbf{x}}\!\left[\bar{y}(\mathbf{x}) - y\right]
+\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{y}(\mathbf{x}) - \mathbb{E}_{y \mid \mathbf{x}}\![y]\right)
+\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{y}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)
+\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)\right] \\[6pt]
+&= \mathbb{E}_{\mathbf{x}}[0] \\[4pt]
+&= 0
+\end{aligned}
+$$
+
+This gives us the decomposition of expected test error as follows 
+$$
+\underbrace{\mathbb{E}_{\mathbf{x}, y, D}\!\left[\left(h_{D}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{\mathbf{x}, D}\!\left[\left(h_{D}(\mathbf{x}) - \bar{h}(\mathbf{x})\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{\mathbf{x}, y}\!\left[\left(\bar{y}(\mathbf{x}) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{\mathbf{x}}\!\left[\left(\bar{h}(\mathbf{x}) - \bar{y}(\mathbf{x})\right)^{2}\right]}_{\text{Bias}^2}
+$$
+
+- **Variance:** Captures how much your classifier changes if you train on a different training set. How "over-specialized" is your classifier to a particular training set (overfitting)? If we have the best possible model for our training data, how far off are we from the average classifier?
+
+- **Bias:** What is the inherent error that you obtain from your classifier even with infinite training data? This is due to your classifier being "biased" to a particular kind of solution (e.g. linear classifier). In other words, bias is inherent to your model.
+
+- **Noise:** How big is the data-intrinsic noise? This error measures ambiguity due to your data distribution and feature representation. You can never beat this, it is an aspect of the data. 
+
+### For a simplified version:
 
 If we denote the variable we are trying to predict as $Y$ and our covariates as $X$, we may assume that there is a relationship relating one to the other such as:
 
@@ -90,7 +229,7 @@ $$
 
 That third term, *irreducible error*, is the noise term in the true relationship that cannot fundamentally be reduced by any model.  
 Given the true model and infinite data to calibrate it, we should be able to reduce both the bias and variance terms to 0.  
-However, in a world with imperfect models and finite data, there is a **tradeoff between minimizing bias and minimizing variance**.
+However, in a world with imperfect models and finite data, there is a **tradeoff between minimizing bias and minimizing variance** as seen in [Figure 2.](#fig-complexity).
 
 
 # Experimentation
@@ -151,7 +290,7 @@ width="100%"
 |:------:|:-------:|:--------:|:----------------:|
 | 1      | 0.2789  | 0.0124   | 1.00e+00         |
 | 2      | 0.0576  | 0.0109   | 7.92e+00         |
-| 3      | 0.0000  | 0.0111   | 3.95e+01         |
+| **3**  | **0.0000**  | **0.0111**   | **3.95e+01**         |
 | 4      | 0.0000  | 0.0140   | 2.49e+02         |
 | 5      | 0.0000  | 0.0172   | 1.79e+03         |
 | 6      | 0.0000  | 0.0205   | 1.37e+04         |
@@ -183,7 +322,7 @@ width="100%"
 | Degree | $\alpha$ | Bias²   | Variance | Condition Number |
 |:------:|:-------:|:-------:|:--------:|:----------------:|
 | 2      | 0.0200  | 0.0576  | 0.0109   | 7.91e+00         |
-| 3      | 0.0300  | 0.0000  | 0.0111   | 3.94e+01         |
+| **3**  | **0.0300**  | **0.0000**  | **0.0111**   | **3.94e+01**         |
 | 4      | 0.0400  | 0.0000  | 0.0139   | 2.47e+02         |
 | 5      | 0.0500  | 0.0001  | 0.0170   | 1.74e+03         |
 | 6      | 0.0600  | 0.0001  | 0.0198   | 1.26e+04         |

@@ -56,32 +56,30 @@
 
     </style>
 </noscript>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+  crossorigin="anonymous">
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+  crossorigin="anonymous"></script>
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  crossorigin="anonymous"></script>
+
 <script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']],
-    displayMath: [['$$', '$$'], ['\\[', '\\]']],
-    processEscapes: true,
-    processEnvironments: true
-  },
-  options: {
-    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-  },
-  svg: { fontCache: 'global' }
-};
-</script>
-
-
-<script id="MathJax-script" async
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-
-window.MathJax = {
-  tex: {
-    macros: {
-      argmax: ["\\operatorname*{arg\\,max}", 0]
-    }
-  }
-};
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false }
+    ],
+    throwOnError: false
+  });
+});
 </script>
 
 </head>
@@ -170,7 +168,7 @@ window.MathJax = {
       <div class="archive-entry">
         <h3 class="archive-entry-title entry-hint-parent">Bias–Variance Tradeoff
         </h3>
-        <div class="archive-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Utkarsh Sharma</div>
+        <div class="archive-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma</div>
         <a class="entry-link" aria-label="post link to Bias–Variance Tradeoff" href="http://localhost:1313/posts/bias-variance/"></a>
       </div>
       <div class="archive-entry">
