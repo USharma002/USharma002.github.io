@@ -42,7 +42,16 @@ We can plot four different cases representing combinations of both high and low 
 figure src="../../images/bias-variance/bias_variance_bulls_eye.png" 
 num="1" 
 id="true-function"
-caption="True cubic function (ground truth)" 
+caption="Graphical illustration of bias and variance." 
+width="70%" 
+>}}
+
+
+{{< 
+figure src="../../images/bias-variance/bias_variance_model_complexity.png" 
+num="1" 
+id="true-function"
+caption="The variation of Bias and Variance with the model complexity. This is similar to the concept of overfitting and underfitting. More complex models overfit while the simplest models underfit." 
 width="70%" 
 >}}
 
