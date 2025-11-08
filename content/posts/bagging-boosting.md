@@ -77,17 +77,16 @@ $$
 >
 >$$
 \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty. \quad \blacksquare
->$$
+$$
 >
 ></details>
 
 ---
 
 Our goal is to reduce the variance term:
-
-$$
-\mathbb{E}_{x,D}\!\left[\left(h_D(x) - \bar{h}(x)\right)^2\right].
-$$
+$
+\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right].
+$
 
 For this, we need that $h_D \to \bar{h}$.  
 
@@ -99,7 +98,7 @@ $$
 
 We refer to such an average of multiple classifiers as an ensemble of classifiers. 
 
-**Good news:** If h^→h¯ the variance component of the error must also vanish, i.e. $\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right] \rightarrow 0$
+**Good news:** If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e. $$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$
 
 **Problem:** We don't have $m$ data sets $D1,\dots,D_m$, we only have $D$.
 
@@ -111,9 +110,11 @@ $$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|
 
 We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.
 
-**Bagged classifier:** $\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$
+**Bagged classifier:**  $$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$
 
-Notice $\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0 $ because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.
+Notice that for the bagged classifier: 
+$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0 $$ 
+because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.
 
 
 ## Analysis

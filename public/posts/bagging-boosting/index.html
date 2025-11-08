@@ -231,25 +231,29 @@ $$
 $$<p>As $n \to \infty$, the right-hand side approaches 1. By definition of convergence in probability:</p>
 $$
 \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty. \quad \blacksquare
->$$</details></blockquote>
+$$</details></blockquote>
 <hr>
-<p>Our goal is to reduce the variance term:</p>
-$$
-\mathbb{E}_{x,D}\!\left[\left(h_D(x) - \bar{h}(x)\right)^2\right].
-$$<p>For this, we need that $h_D \to \bar{h}$.</p>
+<p>Our goal is to reduce the variance term:
+$
+\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right].
+$</p>
+<p>For this, we need that $h_D \to \bar{h}$.</p>
 <p>Apply WLLN to classifiers: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a classifier on each one, and average results:</p>
 $$
 \hat{h} = \frac{1}{m} \sum_{i=1}^m h_{D_i} \to \bar{h} \qquad \text{as } m \to \infty.
 $$<p>We refer to such an average of multiple classifiers as an ensemble of classifiers.</p>
-<p><strong>Good news:</strong> If h^→h¯ the variance component of the error must also vanish, i.e. $\mathbb{E}<em>{x, D}!\left[\left(h</em>{D}(x) - \bar{h}(x)\right)^{2}\right] \rightarrow 0$</p>
-<p><strong>Problem:</strong> We don&rsquo;t have $m$ data sets $D1,\dots,D_m$, we only have $D$.</p>
+<p><strong>Good news:</strong> If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e. </p>
+$$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$<p><strong>Problem:</strong> We don&rsquo;t have $m$ data sets $D1,\dots,D_m$, we only have $D$.</p>
 <h2 id="bagging-bootstrap-aggregating">Bagging (Bootstrap Aggregating)<a hidden class="anchor" aria-hidden="true" href="#bagging-bootstrap-aggregating">#</a></h2>
 <p>Simulate drawing from $p$ by drawing uniformly with replacement from the set $D$.
 i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training sample $(x_i,y_i)$ from $D$ uniformly at random. More formally,
 </p>
 $$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|.$$<p>We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.</p>
-<p><strong>Bagged classifier:</strong> $\hat{h}<em>D =\frac{1}{m} \sum</em>{i=1}^{m} h_{D_i}$</p>
-<p>Notice $\hat{h}<em>D =\frac{1}{m} \sum</em>{i=1}^{m} h_{D_i} \nrightarrow 0 $ because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
+<p><strong>Bagged classifier:</strong>  </p>
+$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged classifier:
+</p>
+$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0 $$<p>
+because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
 <h2 id="analysis">Analysis<a hidden class="anchor" aria-hidden="true" href="#analysis">#</a></h2>
 <p>Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let&rsquo;s ignore the label for now for simplicity)</p>
 $$
