@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -194,8 +194,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#bagging-summary" aria-label="Bagging Summary">Bagging Summary</a></li>
                 <li>
-                    <a href="#advantages-of-bagging" aria-label="Advantages of Bagging">Advantages of Bagging</a>
+                    <a href="#advantages-of-bagging" aria-label="Advantages of Bagging">Advantages of Bagging</a></li>
+                <li>
+                    <a href="#random-forest" aria-label="Random Forest">Random Forest</a><ul>
+                        
+                <li>
+                    <a href="#algorithm" aria-label="Algorithm">Algorithm</a></li>
+                <li>
+                    <a href="#why-random-forests-work-so-well" aria-label="Why Random Forests Work So Well">Why Random Forests Work So Well</a>
                 </li>
+            </ul>
+            </li>
             </ul>
             </li>
             </ul>
@@ -211,7 +220,7 @@ This post is a work in progress and may be updated or expanded soon!
 </p>
 $$
 \underbrace{\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2}
-$$<p>Out goal if to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.</p>
+$$<p>Out goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.</p>
 <h1 id="reducing-variance">Reducing Variance<a hidden class="anchor" aria-hidden="true" href="#reducing-variance">#</a></h1>
 <blockquote>
 <h3 id="weak-law-of-large-numbers">Weak Law of Large Numbers<a hidden class="anchor" aria-hidden="true" href="#weak-law-of-large-numbers">#</a></h3>
@@ -235,7 +244,7 @@ $$
 $$<p>Using Chebyshev&rsquo;s inequality on $\overline{X}_n$ gives:</p>
 $$
 \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) \le \frac{\sigma^2}{n \varepsilon^2}.
->$$<p>Equivalently:</p>
+$$<p>Equivalently:</p>
 $$
 \operatorname{P}\left(\left|\overline{X}_n - \mu\right| < \varepsilon\right) 
 = 1 - \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) 
@@ -262,10 +271,10 @@ i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training 
 </p>
 $$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|.$$<p>We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.</p>
 <p><strong>Bagged predictor:</strong>  </p>
-$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged predictor:
+$$\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged predictor:
 </p>
 $$
-\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0
+\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow \bar{h}
 $$<p>because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
 <h2 id="analysis">Analysis<a hidden class="anchor" aria-hidden="true" href="#analysis">#</a></h2>
 <p>Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let&rsquo;s ignore the label for now for simplicity)</p>
@@ -284,8 +293,34 @@ $$<p>There is a simple intuitive argument why $p(X=x_i)=q(X=x_i)$.</p>
 <hr>
 <h3 id="variance-of-bagged-estimator">Variance of Bagged Estimator<a hidden class="anchor" aria-hidden="true" href="#variance-of-bagged-estimator">#</a></h3>
 <p>The variance of the bagged estimator is:</p>
-$$Var(\hat{h_D}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$<p>If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:</p>
-$$Var(\hat{h_D}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$<p>Notice that we can have 3 cases here:</p>
+$$Var(\hat{h}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$<p>If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:</p>
+$$Var(\hat{h}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$<blockquote>
+<details>
+<summary style="cursor: pointer;">Proof</summary>
+$$
+\operatorname{Var}(\hat{h}(x)) = \operatorname{Var}\!\left(\frac{1}{m}\sum_{i=1}^m h_i(x)\right)
+= \frac{1}{m^2}\operatorname{Var}\!\left(\sum_{i=1}^m h_i(x)\right).
+$$<p>For any random variables,</p>
+$$
+\operatorname{Var}\!\left(\sum_{i=1}^m h_i\right) = \sum_{i=1}^m \operatorname{Var}(h_i) + \sum_{i \neq j} \operatorname{Cov}(h_i, h_j).
+$$<p>Plugging in our assumptions:</p>
+<ul>
+<li>$\sum_{i=1}^m \operatorname{Var}(h_i) = m\sigma^2$</li>
+<li>There are $m(m-1)$ ordered pairs $(i,j)$ with $i \neq j$,    and $\operatorname{Cov}(h_i, h_j) = \rho\sigma^2$ for all $i \neq j$</li>
+</ul>
+<p>Thus,</p>
+$$
+\operatorname{Var}\left(\sum_{i=1}^m h_i\right) = m\sigma^2 + m(m-1)\rho\sigma^2.$$<p>Now,</p>
+$$
+\operatorname{Var}(\hat{h}(x))
+= \frac{1}{m^2} \big( m\sigma^2 + m(m-1)\rho\sigma^2 \big)
+= \sigma^2 \frac{1 + (m-1)\rho}{m}.
+$$<p>Rearrange to separate the correlated and averaging parts:</p>
+$$
+\operatorname{Var}(\hat{h}(x)) = \rho\sigma^2 + \frac{1-\rho}{m}\sigma^2.
+$$<p>(Proof of equivalence:  $\rho + \frac{1-\rho}{m} = \frac{\rho m + 1 - \rho}{m} = \frac{1 + (m - 1)\rho}{m}$.)</p></blockquote>
+</details>
+<p>Notice that we can have 3 cases here:</p>
 <ul>
 <li>
 <p><strong>Models are Independent</strong>, in which case the variance is reduced by a factor of $m$ since $\rho = 0$</p>
@@ -377,7 +412,7 @@ You train a model $h_{D_i}$ on each bootstrap sample $D_i$.</p>
 <p><strong>Compute the bagged predictor</strong><br>
 The bagged predictor is the average:</p>
 $$
-   \hat{h}_D = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
+   \hat{h} = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
    $$</li>
 </ol>
 <p>In practice larger $m$ results in a better ensemble, however at some point you will obtain <strong>diminishing returns</strong>. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier.</p>
@@ -393,9 +428,80 @@ $$
 <p>As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)</p>
 </li>
 <li>
-<p>Bagging provides an unbiased estimate of the test error, which we refer to as the out-of-bag error.</p>
+<p>Bagging provides an unbiased estimate of the test error, which we refer to as the <strong>out-of-bag error</strong>. The idea is that each training point was not picked and all the data sets $D_k$. If we average the classifiers $h_k$ of all such data sets, we obtain a classifier (with a slightly smaller $m$) that was not trained on $(x_i, y_i)$ ever and it is therefore equivalent to a test sample. If we compute the error of all these classifiers, we obtain an estimate of the true test error. The beauty is that we can do this without reducing the training set. We just run bagging as it is intended and obtain this so called out-of-bag error for free.</p>
+<p>More formally, for each training point $(x_i, y_i) \in D$
+let</p>
+$$
+  S_i = \{k \mid (x_i, y_i) \notin D_k\}
+  $$<ul>
+<li>in other words $S_i$ is a set of all the training sets $D_k$, which do not contain $(x_k, y_k)$. Let the averaged classifier over all these data sets be</li>
+</ul>
+$$
+  \tilde{h}_i(x) = \frac{1}{|S_i|} \sum_{k \in S_i} h_k(x).
+  $$<p>The out-of-bag error becomes simply the average error/loss that all these classifiers yield</p>
+$$
+  \epsilon_{\text{OOB}} = \frac{1}{n} \sum_{(x_i, y_i) \in D} l(\tilde{h}_i(x_i), y_i).
+  $$<p>This is an estimate of the test error, because for each training point we used the subset of classifiers that never saw that training point during training. If $m$ is sufficiently large, the fact that we take out some classifiers has no significant effect and the estimate is pretty reliable.</p>
 </li>
 </ul>
+<h2 id="random-forest">Random Forest<a hidden class="anchor" aria-hidden="true" href="#random-forest">#</a></h2>
+<p>One of the most famous and useful bagged algorithms is the <strong>Random Forest</strong>!<br>
+A Random Forest is essentially nothing else but <strong>bagged decision trees</strong>, with a slightly modified splitting criterion.</p>
+<hr>
+<h3 id="algorithm">Algorithm<a hidden class="anchor" aria-hidden="true" href="#algorithm">#</a></h3>
+<ol>
+<li>
+<p><strong>Bootstrap Sampling</strong></p>
+<p>Sample $m$ datasets $D_1, \dots, D_m$ from $D$ <strong>with replacement</strong>.</p>
+</li>
+<li>
+<p><strong>Train Trees</strong></p>
+<p>For each dataset $D_j$, train a <strong>full decision tree</strong> $h_j(\cdot)$ (i.e., with <code>max-depth = ∞</code>)<br>
+but with one small modification:</p>
+<ul>
+<li>Before each split, <strong>randomly subsample</strong> $k \le d$ features (without replacement),<br>
+and only consider these features for the split.</li>
+<li>This additional randomness further <strong>increases the variance</strong> of the trees, making the ensemble more robust.</li>
+</ul>
+</li>
+<li>
+<p><strong>Aggregate Predictions</strong></p>
+<p>The final classifier is given by:</p>
+$$
+   h(x) = \frac{1}{m} \sum_{j=1}^{m} h_j(x)
+   $$</li>
+</ol>
+<hr>
+<h3 id="why-random-forests-work-so-well">Why Random Forests Work So Well<a hidden class="anchor" aria-hidden="true" href="#why-random-forests-work-so-well">#</a></h3>
+<p>The Random Forest (RF) is one of the <strong>best, most popular, and easiest-to-use out-of-the-box classifiers</strong>.<br>
+There are two main reasons for this:</p>
+<ol>
+<li>
+<p><strong>Few and Stable Hyperparameters</strong></p>
+<ul>
+<li>
+<p>The RF only has two main hyperparameters: $m$ and $k$.</p>
+</li>
+<li>
+<p>It is <strong>extremely insensitive</strong> to both of these.</p>
+</li>
+<li>
+<p>A good rule of thumb for $k$ is:</p>
+$$
+     k = \sqrt{d}
+     $$<p>where $d$ denotes the number of features.</p>
+</li>
+<li>
+<p>You can set $m$ as <strong>large as you can afford computationally</strong>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Minimal Preprocessing Requirements</strong></p>
+<p>Decision trees do not require much preprocessing.<br>
+Features can have <strong>different scales, magnitudes, or units</strong>, and trees will still perform well.</p>
+</li>
+</ol>
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>

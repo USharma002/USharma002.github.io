@@ -24,7 +24,7 @@ $$
 \underbrace{\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2}
 $$
 
-Out goal if to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.
+Out goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.
 
 # Reducing Variance
 > ### Weak Law of Large Numbers
@@ -63,7 +63,7 @@ $$
 >
 >$$
 \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) \le \frac{\sigma^2}{n \varepsilon^2}.
->$$
+$$
 >
 >Equivalently:
 >
@@ -110,11 +110,11 @@ $$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|
 
 We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.
 
-**Bagged predictor:**  $$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$
+**Bagged predictor:**  $$\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$
 
 Notice that for the bagged predictor: 
 $$
-\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0
+\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow \bar{h}
 $$ 
 
 because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.
@@ -147,11 +147,53 @@ Consider that you first use $q$ to reserve a "spot" in $D$, i.e. a number from $
 ### Variance of Bagged Estimator
 The variance of the bagged estimator is:
 
-$$Var(\hat{h_D}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$
+$$Var(\hat{h}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$
 
 If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:
 
-$$Var(\hat{h_D}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$
+$$Var(\hat{h}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$
+
+><details>
+><summary style="cursor: pointer;">Proof</summary>
+>
+>$$
+\operatorname{Var}(\hat{h}(x)) = \operatorname{Var}\!\left(\frac{1}{m}\sum_{i=1}^m h_i(x)\right)
+= \frac{1}{m^2}\operatorname{Var}\!\left(\sum_{i=1}^m h_i(x)\right).
+$$
+>
+>For any random variables,
+>
+>$$
+\operatorname{Var}\!\left(\sum_{i=1}^m h_i\right) = \sum_{i=1}^m \operatorname{Var}(h_i) + \sum_{i \neq j} \operatorname{Cov}(h_i, h_j).
+$$
+>
+>Plugging in our assumptions:
+>
+>- $\sum_{i=1}^m \operatorname{Var}(h_i) = m\sigma^2$  
+>- There are $m(m-1)$ ordered pairs $(i,j)$ with $i \neq j$,    and $\operatorname{Cov}(h_i, h_j) = \rho\sigma^2$ for all $i \neq j$
+>
+>Thus,
+>
+>$$
+\operatorname{Var}\left(\sum_{i=1}^m h_i\right) = m\sigma^2 + m(m-1)\rho\sigma^2.$$
+>
+>Now,
+>
+>$$
+\operatorname{Var}(\hat{h}(x))
+= \frac{1}{m^2} \big( m\sigma^2 + m(m-1)\rho\sigma^2 \big)
+= \sigma^2 \frac{1 + (m-1)\rho}{m}.
+$$
+>
+>Rearrange to separate the correlated and averaging parts:
+>
+>$$
+\operatorname{Var}(\hat{h}(x)) = \rho\sigma^2 + \frac{1-\rho}{m}\sigma^2.
+$$
+>
+>(Proof of equivalence:  $\rho + \frac{1-\rho}{m} = \frac{\rho m + 1 - \rho}{m} = \frac{1 + (m - 1)\rho}{m}$.)
+>
+</details>
 
 Notice that we can have 3 cases here:
 - **Models are Independent**, in which case the variance is reduced by a factor of $m$ since $\rho = 0$
@@ -273,7 +315,7 @@ D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.
    The bagged predictor is the average:
 
    $$
-   \hat{h}_D = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
+   \hat{h} = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
    $$
 
 
@@ -285,7 +327,83 @@ In practice larger $m$ results in a better ensemble, however at some point you w
 - Reduces variance, so has a strong beneficial effect on high variance classifiers.
 - As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)
 
-- Bagging provides an unbiased estimate of the test error, which we refer to as the out-of-bag error. 
+- Bagging provides an unbiased estimate of the test error, which we refer to as the **out-of-bag error**. The idea is that each training point was not picked and all the data sets $D_k$. If we average the classifiers $h_k$ of all such data sets, we obtain a classifier (with a slightly smaller $m$) that was not trained on $(x_i, y_i)$ ever and it is therefore equivalent to a test sample. If we compute the error of all these classifiers, we obtain an estimate of the true test error. The beauty is that we can do this without reducing the training set. We just run bagging as it is intended and obtain this so called out-of-bag error for free.
+
+  More formally, for each training point $(x_i, y_i) \in D$
+  let 
+
+  $$
+  S_i = \{k \mid (x_i, y_i) \notin D_k\}
+  $$
+
+  - in other words $S_i$ is a set of all the training sets $D_k$, which do not contain $(x_k, y_k)$. Let the averaged classifier over all these data sets be
+
+  $$
+  \tilde{h}_i(x) = \frac{1}{|S_i|} \sum_{k \in S_i} h_k(x).
+  $$
+
+  The out-of-bag error becomes simply the average error/loss that all these classifiers yield
+
+  $$
+  \epsilon_{\text{OOB}} = \frac{1}{n} \sum_{(x_i, y_i) \in D} l(\tilde{h}_i(x_i), y_i).
+  $$
+
+  This is an estimate of the test error, because for each training point we used the subset of classifiers that never saw that training point during training. If $m$ is sufficiently large, the fact that we take out some classifiers has no significant effect and the estimate is pretty reliable.
+
+## Random Forest
+
+One of the most famous and useful bagged algorithms is the **Random Forest**!  
+A Random Forest is essentially nothing else but **bagged decision trees**, with a slightly modified splitting criterion.
+
+---
+
+### Algorithm
+
+1. **Bootstrap Sampling**
+
+   Sample $m$ datasets $D_1, \dots, D_m$ from $D$ **with replacement**.
+
+2. **Train Trees**
+
+   For each dataset $D_j$, train a **full decision tree** $h_j(\cdot)$ (i.e., with `max-depth = ∞`)  
+   but with one small modification:
+
+   - Before each split, **randomly subsample** $k \le d$ features (without replacement),  
+     and only consider these features for the split.  
+   - This additional randomness further **increases the variance** of the trees, making the ensemble more robust.
+
+3. **Aggregate Predictions**
+
+   The final classifier is given by:
+
+   $$
+   h(x) = \frac{1}{m} \sum_{j=1}^{m} h_j(x)
+   $$
+
+---
+
+### Why Random Forests Work So Well
+
+The Random Forest (RF) is one of the **best, most popular, and easiest-to-use out-of-the-box classifiers**.  
+There are two main reasons for this:
+
+1. **Few and Stable Hyperparameters**
+
+   - The RF only has two main hyperparameters: $m$ and $k$.
+   - It is **extremely insensitive** to both of these.
+   - A good rule of thumb for $k$ is:
+
+     $$
+     k = \sqrt{d}
+     $$
+
+     where $d$ denotes the number of features.
+   - You can set $m$ as **large as you can afford computationally**.
+
+2. **Minimal Preprocessing Requirements**
+
+   Decision trees do not require much preprocessing.  
+   Features can have **different scales, magnitudes, or units**, and trees will still perform well.
 
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
