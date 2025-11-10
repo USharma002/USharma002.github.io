@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>3D Reconstruction with 3DGS, NeRF, and Their Variants | USharma Notes</title>
+<meta name="keywords" content="3D Reconstruction, 3DGS, NeRF, Computer Vision, Deep Learning">
+<meta name="description" content="Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.">
+<meta name="author" content="Utkarsh Sharma">
+<link rel="canonical" href="http://localhost:1313/posts/3d-reconstruction/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.7d71119822ff9cce5ed302d4bc5b0258e23e168ca87fc346690121c472db64a3.css" integrity="sha256-fXERmCL/nM5e0wLUvFsCWOI&#43;Foyof8NGaQEhxHLbZKM=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/3d-reconstruction/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+  crossorigin="anonymous">
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+  crossorigin="anonymous"></script>
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  crossorigin="anonymous"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false }
+    ],
+    throwOnError: false
+  });
+});
+</script>
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      3D Reconstruction with 3DGS, NeRF, and Their Variants
+    </h1>
+    <div class="post-description">
+      Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
+    </div>
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Utkarsh Sharma
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#basics" aria-label="Basics">Basics</a><ul>
+                        
+                <li>
+                    <a href="#inverse-transform-sampling" aria-label="Inverse Transform Sampling">Inverse Transform Sampling</a></li>
+                <li>
+                    <a href="#sfm" aria-label="SfM">SfM</a></li>
+                <li>
+                    <a href="#mpi" aria-label="MPI">MPI</a></li>
+                <li>
+                    <a href="#stereo-magnification" aria-label="Stereo Magnification">Stereo Magnification</a></li></ul>
+                </li>
+                <li>
+                    <a href="#radiance-fields" aria-label="Radiance Fields">Radiance Fields</a><ul>
+                        
+                <li>
+                    <a href="#nerf" aria-label="NeRF">NeRF</a><ul>
+                        
+                <li>
+                    <a href="#positional-encoding" aria-label="Positional Encoding">Positional Encoding</a></li>
+                <li>
+                    <a href="#hierarchical-sampling" aria-label="Hierarchical Sampling">Hierarchical Sampling</a></li>
+                <li>
+                    <a href="#loss-function" aria-label="Loss Function">Loss Function</a></li></ul>
+                </li>
+                <li>
+                    <a href="#plenoxels" aria-label="Plenoxels">Plenoxels</a></li>
+                <li>
+                    <a href="#tensorf" aria-label="TensoRF">TensoRF</a></li>
+                <li>
+                    <a href="#instant-ngp" aria-label="Instant NGP">Instant NGP</a></li>
+                <li>
+                    <a href="#3dgs" aria-label="3DGS">3DGS</a></li></ul>
+                </li>
+                <li>
+                    <a href="#sparse-input" aria-label="Sparse Input">Sparse Input</a><ul>
+                        
+                <li>
+                    <a href="#ds-nerf" aria-label="DS NeRF">DS NeRF</a></li>
+                <li>
+                    <a href="#vip-nerf" aria-label="VIP NeRF">VIP NeRF</a></li>
+                <li>
+                    <a href="#midas" aria-label="MiDAS">MiDAS</a></li>
+                <li>
+                    <a href="#fsgs" aria-label="FSGS">FSGS</a></li>
+                <li>
+                    <a href="#cor-3dgs" aria-label="Cor 3DGS">Cor 3DGS</a></li>
+                <li>
+                    <a href="#dust3r" aria-label="Dust3R">Dust3R</a></li>
+                <li>
+                    <a href="#instant-splat" aria-label="Instant Splat">Instant Splat</a></li></ul>
+                </li>
+                <li>
+                    <a href="#dynamic-scenes" aria-label="Dynamic Scenes">Dynamic Scenes</a><ul>
+                        
+                <li>
+                    <a href="#optical-flow" aria-label="Optical Flow">Optical Flow</a></li>
+                <li>
+                    <a href="#nsff" aria-label="NSFF">NSFF</a></li>
+                <li>
+                    <a href="#raft" aria-label="RAFT">RAFT</a></li>
+                <li>
+                    <a href="#raft-derf" aria-label="RAFT DERF">RAFT DERF</a></li>
+                <li>
+                    <a href="#4dgs" aria-label="4DGS">4DGS</a></li></ul>
+                </li>
+                <li>
+                    <a href="#feedforward-and-barf" aria-label="Feedforward and BARF">Feedforward and BARF</a><ul>
+                        
+                <li>
+                    <a href="#pixel-splat" aria-label="Pixel Splat">Pixel Splat</a></li>
+                <li>
+                    <a href="#barf" aria-label="BARF">BARF</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="basics">Basics<a hidden class="anchor" aria-hidden="true" href="#basics">#</a></h1>
+<h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
+<h2 id="sfm">SfM<a hidden class="anchor" aria-hidden="true" href="#sfm">#</a></h2>
+<h2 id="mpi">MPI<a hidden class="anchor" aria-hidden="true" href="#mpi">#</a></h2>
+<h2 id="stereo-magnification">Stereo Magnification<a hidden class="anchor" aria-hidden="true" href="#stereo-magnification">#</a></h2>
+<h1 id="radiance-fields">Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#radiance-fields">#</a></h1>
+<h2 id="nerf">NeRF<a hidden class="anchor" aria-hidden="true" href="#nerf">#</a></h2>
+<p>Uses a Neural Network to represent a continuous scene as a $5D$ vector-valued function whose input is a $3D$ location and a $2D$ viewing direction, and whose output is a volume density and emitted color.</p>
+$$
+f\!\left(
+\underbrace{x, y, z}_{\text{3D point}},\;
+\underbrace{\theta, \phi}_{\text{viewing direction}}
+\right)
+\;\longrightarrow\;
+\left(
+\underbrace{\sigma}_{\text{opacity}},\;
+\underbrace{\mathbf{c} = (r, g, b)}_{\text{RGB color}}
+\right)
+$$<ul>
+<li>Sample some pixels from the image to train the model</li>
+<li>Render using NeRF along the ray for that pixel; use an MLP to sample along the ray</li>
+<li>Use a loss (e.g., MSE or PSNR) to compare the rendered output and backpropagate to train</li>
+</ul>
+<h3 id="positional-encoding">Positional Encoding<a hidden class="anchor" aria-hidden="true" href="#positional-encoding">#</a></h3>
+<p>Despite the fact that neural networks are universal function approximators, having the network $F_\Theta$ directly operate on $xyz\theta\phi$ input coordinates results in renderings that perform poorly at representing high-frequency variation in color and geometry because deep networks are biased towards learning lower frequency functions.</p>
+<p>Mapping the inputs to a higher dimensional space using high frequency functions before passing them to the network enables better fitting of data that contains high frequency variation.</p>
+$$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p), \cos(2^0\pi p), \dots, \sin(2^{L - 1}\pi p), \cos(2^{L - 1}\pi p))$$<p>This function $\gamma(\cdot)$ is applied separately to each of the three coordinate values in $\mathbf{x}$ which are normalized to lie in $[-1, 1]$ and to the three components of the Cartesian viewing direction unit vector $\mathbf{d}$ (which by construction lie in $[-1, 1]$).</p>
+<p>A similar mapping is used in the popular Transformer architecture, where it is referred to as a positional encoding.</p>
+<h3 id="hierarchical-sampling">Hierarchical Sampling<a hidden class="anchor" aria-hidden="true" href="#hierarchical-sampling">#</a></h3>
+<p>To render using the NeRF we need to sample along the ray for the pixel. A ray is defined as:</p>
+$$\mathbf{r}(t) = \underbrace{\mathbf{o}}_{\text{origin}} + t\underbrace{\mathbf{d}}_{\text{direction}}$$<p>Divide the scene&rsquo;s $[z_{\text{near}}, z_{\text{far}}]$ into $n$ intervals of equal length. Uniformly sample at random within each interval:</p>
+$$
+z_i \sim \mathbb{U} \left[
+  z_n + \frac{(i - 1)(z_{\text{far}} - z_{\text{near}})}{n},
+  \; z_n + \frac{i (z_{\text{far}} - z_{\text{near}})}{n}
+\right]
+$$<p>Our rendering strategy of <strong>densely evaluating</strong> the neural radiance field network at $N$ query points along each camera ray is inefficient, free space and occluded regions that do not contribute to the rendered image are still sampled repeatedly.</p>
+<p>Instead, simulate two networks: <strong>coarse network</strong> and <strong>fine network</strong>.</p>
+<p>Sample $N_c$ locations using stratified sampling, and evaluate the coarse network at these locations. Given the output of this network, we then produce a more informed sampling of points along each ray where samples are biased towards the relevant parts of the volume.</p>
+<p>To do this, we first rewrite the alpha composited color from the coarse network $\hat{C}_c(\mathbf{r})$ as a weighted sum of all sampled colors $c_i$ along the ray:</p>
+$$\hat{C}_c(\mathbf{r}) = \sum_{i=1}^{N_c} w_i c_i, \quad w_i = T_i (1 - \exp(-\sigma_i \delta_i))$$<p>We can normalize these weights as $\hat{w}_i = \frac{w_i}{\sum_j w_j}$ to produce a piecewise-constant PDF along the ray.</p>
+<p>We then sample a second set of $N_f$ locations from this distribution using inverse transform sampling, evaluate the network at the union of first and second set of samples, and compute the final rendered color of ray $\hat{C}_f(\mathbf{r})$ using $N_c + N_f$ samples.</p>
+<h3 id="loss-function">Loss Function<a hidden class="anchor" aria-hidden="true" href="#loss-function">#</a></h3>
+<p>During training, the loss is simply the total squared error between the rendered and true pixel colors for both the coarse and fine renderings:</p>
+$$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) - C(\mathbf{r})\|_2^2 + \|\hat{C}_f(\mathbf{r}) - C(\mathbf{r})\|_2^2 \right]$$<p>where $\mathcal{R}$ is the set of rays in each batch, and $C(\mathbf{r})$, $\hat{C}_c(\mathbf{r})$ and $\hat{C}_f(\mathbf{r})$ are the ground truth, coarse volume predicted and fine volume predicted RGB colors for the ray $\mathbf{r}$ respectively.</p>
+<p>Note that even though the final rendering comes from $\hat{C}_f(\mathbf{r})$, we also minimize the loss of $\hat{C}_c(\mathbf{r})$ so that the weight distribution from the coarse network can be used to allocate samples in the fine network.</p>
+<h2 id="plenoxels">Plenoxels<a hidden class="anchor" aria-hidden="true" href="#plenoxels">#</a></h2>
+<h2 id="tensorf">TensoRF<a hidden class="anchor" aria-hidden="true" href="#tensorf">#</a></h2>
+<h2 id="instant-ngp">Instant NGP<a hidden class="anchor" aria-hidden="true" href="#instant-ngp">#</a></h2>
+<h2 id="3dgs">3DGS<a hidden class="anchor" aria-hidden="true" href="#3dgs">#</a></h2>
+<h1 id="sparse-input">Sparse Input<a hidden class="anchor" aria-hidden="true" href="#sparse-input">#</a></h1>
+<h2 id="ds-nerf">DS NeRF<a hidden class="anchor" aria-hidden="true" href="#ds-nerf">#</a></h2>
+<h2 id="vip-nerf">VIP NeRF<a hidden class="anchor" aria-hidden="true" href="#vip-nerf">#</a></h2>
+<h2 id="midas">MiDAS<a hidden class="anchor" aria-hidden="true" href="#midas">#</a></h2>
+<h2 id="fsgs">FSGS<a hidden class="anchor" aria-hidden="true" href="#fsgs">#</a></h2>
+<h2 id="cor-3dgs">Cor 3DGS<a hidden class="anchor" aria-hidden="true" href="#cor-3dgs">#</a></h2>
+<h2 id="dust3r">Dust3R<a hidden class="anchor" aria-hidden="true" href="#dust3r">#</a></h2>
+<h2 id="instant-splat">Instant Splat<a hidden class="anchor" aria-hidden="true" href="#instant-splat">#</a></h2>
+<h1 id="dynamic-scenes">Dynamic Scenes<a hidden class="anchor" aria-hidden="true" href="#dynamic-scenes">#</a></h1>
+<h2 id="optical-flow">Optical Flow<a hidden class="anchor" aria-hidden="true" href="#optical-flow">#</a></h2>
+<h2 id="nsff">NSFF<a hidden class="anchor" aria-hidden="true" href="#nsff">#</a></h2>
+<h2 id="raft">RAFT<a hidden class="anchor" aria-hidden="true" href="#raft">#</a></h2>
+<h2 id="raft-derf">RAFT DERF<a hidden class="anchor" aria-hidden="true" href="#raft-derf">#</a></h2>
+<h2 id="4dgs">4DGS<a hidden class="anchor" aria-hidden="true" href="#4dgs">#</a></h2>
+<h1 id="feedforward-and-barf">Feedforward and BARF<a hidden class="anchor" aria-hidden="true" href="#feedforward-and-barf">#</a></h1>
+<h2 id="pixel-splat">Pixel Splat<a hidden class="anchor" aria-hidden="true" href="#pixel-splat">#</a></h2>
+<h2 id="barf">BARF<a hidden class="anchor" aria-hidden="true" href="#barf">#</a></h2>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/3d-reconstruction/">3D Reconstruction</a></li>
+      <li><a href="http://localhost:1313/tags/3dgs/">3DGS</a></li>
+      <li><a href="http://localhost:1313/tags/nerf/">NeRF</a></li>
+      <li><a href="http://localhost:1313/tags/computer-vision/">Computer Vision</a></li>
+      <li><a href="http://localhost:1313/tags/deep-learning/">Deep Learning</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/bagging-boosting/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Bagging and Boosting</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

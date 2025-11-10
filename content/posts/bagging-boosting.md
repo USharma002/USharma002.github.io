@@ -90,13 +90,13 @@ $
 
 For this, we need that $h_D \to \bar{h}$.  
 
-Apply WLLN to classifiers: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a classifier on each one, and average results:
+Apply WLLN to predictors: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a predictor on each one, and average results:
 
 $$
 \hat{h} = \frac{1}{m} \sum_{i=1}^m h_{D_i} \to \bar{h} \qquad \text{as } m \to \infty.
 $$
 
-We refer to such an average of multiple classifiers as an ensemble of classifiers. 
+We refer to such an average of multiple predictors as an ensemble of predictors. 
 
 **Good news:** If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e. $$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$
 
@@ -110,10 +110,13 @@ $$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|
 
 We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.
 
-**Bagged classifier:**  $$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$
+**Bagged predictor:**  $$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$
 
-Notice that for the bagged classifier: 
-$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0 $$ 
+Notice that for the bagged predictor: 
+$$
+\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0
+$$ 
+
 because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.
 
 
@@ -139,6 +142,120 @@ So far we assumed that you draw $D$ from $p^n$ and then $q$ picks a sample from 
 
 Consider that you first use $q$ to reserve a "spot" in $D$, i.e. a number from $1,\dots,n$ where $i$ means that you sampled the $i^{th}$ data point in $D$. So far you only have the slot, $i$, and you still need to fill it with a data point $(x_i,y_i)$. You do this by sampling $(x_i,y_i)$ from $p$. It is now obvious that which slot you picked doesn't really matter, so we have $q(X=x)=p(X=x)$.
 
+---
+
+### Variance of Bagged Estimator
+The variance of the bagged estimator is:
+
+$$Var(\hat{h_D}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$
+
+If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:
+
+$$Var(\hat{h_D}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$
+
+Notice that we can have 3 cases here:
+- **Models are Independent**, in which case the variance is reduced by a factor of $m$ since $\rho = 0$
+
+- **Modela are not prefectly correlated**, in which case the reduction depends on $\rho$
+
+- **Modela are prefectly correlated**, so no variance reduction at all.
+
+**Why the models are not independent**  
+Even though the bootstrap sampling is random, the models $h_{D_i}$ are **not independent** because:  
+- All $D_i$ are sampled from the **same original dataset $D$**.  
+- The models $h_{D_i}$ share **overlapping data points**, thus the resulting models $h_{D_i}$ are **statistically dependent**. 
+
+**But how much data can we expect to be common among them?**
+
+We have an original dataset $D$ of size $n$ (distinct items).  
+Two bootstrap samples $D_i$ and $D_j$ are drawn independently by sampling $n$ items **with replacement** from $D$.
+
+Let
+
+$$
+S = |\text{unique}(D_i) \cap \text{unique}(D_j)|
+$$
+
+be the number of **distinct original items** that appear in both bootstrap samples.  
+(This is the usual meaning of “intersection” in the bagging context.)
+
+---
+
+### Derivation
+
+For a fixed original item $k$ (one of the $n$ items), let
+
+$$
+I_k =
+\begin{cases}
+1 & \text{if item } k \text{ appears at least once in } D_i, \\
+0 & \text{otherwise.}
+\end{cases}
+$$
+
+Similarly, define $J_k$ for $D_j$. Then
+
+$$
+S = \sum_{k=1}^{n} I_k J_k,
+$$
+
+so by linearity of expectation,
+
+$$
+\mathbb{E}[S] = \sum_{k=1}^{n} \Pr(I_k = 1 \text{ and } J_k = 1).
+$$
+
+Because the two bootstrap draws are independent and symmetric across items,
+
+$$
+\Pr(I_k = 1 \text{ and } J_k = 1)
+= \Pr(I_k = 1)\Pr(J_k = 1)
+= p^2,
+$$
+
+where
+
+$$
+p = \Pr(\text{a given item appears at least once in one bootstrap sample})
+   = 1 - \left(1 - \frac{1}{n}\right)^{n}.
+$$
+
+Hence,
+
+$$
+\boxed{\mathbb{E}[\,|D_i \cap D_j|\,] = n \left( 1 - \left(1 - \frac{1}{n}\right)^{n} \right)^2.}
+$$
+
+---
+
+### Large-$n$ Approximation
+
+As $n \to \infty$,
+
+$$
+\left(1 - \frac{1}{n}\right)^{n} \to e^{-1}.
+$$
+
+Therefore,
+
+$$
+\mathbb{E}[\,|D_i \cap D_j|\,] \approx n (1 - e^{-1})^2
+   \approx n (0.63212056)^2
+   \approx 0.3996\,n.
+$$
+
+So about **40% of the original items (on average)** appear in both bootstrap samples.
+
+---
+
+### Intuition
+
+- Probability that an item appears in one bootstrap sample: $p \approx 0.632$
+- Probability that it appears in both: $p^2 \approx 0.3996$
+- Thus, two bootstrap samples share roughly **$0.4n$** distinct items on average.
+
+----
+
 ## Bagging Summary
 
 You have a dataset $
@@ -152,19 +269,23 @@ D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.
 2. **Train models**  
    You train a model $h_{D_i}$ on each bootstrap sample $D_i$.
 
-3. **Compute the bagged classifier**  
-   The bagged classifier is the average:
+3. **Compute the bagged predictor**  
+   The bagged predictor is the average:
 
    $$
    \hat{h}_D = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
    $$
 
-**Why the models are not independent**  
-Even though the bootstrap sampling is random, the models $h_{D_i}$ are **not independent** because:  
-- All $D_i$ are sampled from the **same original dataset $D$**.  
-- The models $h_{D_i}$ share **overlapping data points**, thus the resulting models $h_{D_i}$ are **statistically dependent**. 
 
 In practice larger $m$ results in a better ensemble, however at some point you will obtain **diminishing returns**. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier. 
+
+
+## Advantages of Bagging
+- Easy to implement
+- Reduces variance, so has a strong beneficial effect on high variance classifiers.
+- As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)
+
+- Bagging provides an unbiased estimate of the test error, which we refer to as the out-of-bag error. 
 
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!

@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the bias–variance tradeoff in polynomial regression
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;10 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -170,7 +170,11 @@ document.addEventListener("DOMContentLoaded", function() {
         <div class="inner"><ul>
                 <li>
                     <a href="#introduction" aria-label="Introduction">Introduction</a><ul>
+                        <ul>
                         
+                <li>
+                    <a href="#bayes-optimal-predictor" aria-label="Bayes Optimal Predictor">Bayes Optimal Predictor</a></li></ul>
+                    
                 <li>
                     <a href="#conceptual-definition" aria-label="Conceptual Definition">Conceptual Definition</a></li>
                 <li>
@@ -222,11 +226,24 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
   <div class="post-content"><h1 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h1>
-<p>Suppose we have a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.</p>
-<p>The expected prediction error can be decomposed as:
+<p>All we assume is that data comes from some unknown joint distribution:</p>
+$$(x_i, y_i)\sim p(x, y)$$<ul>
+<li>$x$ is random variable with marginal $p(x)$</li>
+<li>$y$ is a random variable with conditional distribution $p(y\mid x)$</li>
+</ul>
+<p>Our learning algorithm samples a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ i.i.d from this distribution.</p>
+<h3 id="bayes-optimal-predictor">Bayes Optimal Predictor<a hidden class="anchor" aria-hidden="true" href="#bayes-optimal-predictor">#</a></h3>
+<p>If we wanted to pick a deterministic predictor $g(x)$ that minimizes the expected squared error under $p(x, y)$:
+</p>
+$$g^*(x) = \arg \min_g \mathbb{E}_{p(x, y)}\left[ (y - g(x))^2\right]$$<p>We can solve this analytically as:</p>
+$$\frac{\partial}{\partial g(x)} \mathbb{E}_{p(x, y)}\left[ (y - g(x))^2\right] = 0 \Rightarrow g(x) = \mathbb{E}\left[ y  \mid x\right] = f(x)$$<p>So $f(x)$ is the true regression function or &ldquo;expected label” - the best possible prediction in the mean-squared-error sense, directly derived from $p(x,y)$. Note that the choice of squared error is somewhat arbitrary. Suppose instead we chose absolute error loss,
+$\mathbb{E}_{p(x, y)}\left[ |y - g(x)|\right]$, the risk/error would then be minimized by the
+</p>
+$$f(x) = \operatorname {median} [p(y \mid x)]$$<p>Despite this possibility, our preference will still be for squared error loss. The reasons for this are numerous, including: historical, ease of optimization, and protecting against large deviations.</p>
+<p>Our goal becomes finding some $\hat{f}$ that is a good estimate of the regression function $f$. The expected prediction error can then be decomposed as:
 </p>
 $$
-\mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
+\mathbb{E}_{D'\sim p^n}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
 $$<p>
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.</p>
 <h2 id="conceptual-definition">Conceptual Definition<a hidden class="anchor" aria-hidden="true" href="#conceptual-definition">#</a></h2>
@@ -257,7 +274,7 @@ $$
  $$</blockquote>
 <p>We draw $n$ i.i.d. inputs for dataset $D$ form distribution $p$.</p>
 <p>We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesis (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$</p>
-<p>For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the deneralization error (as meased in squared loss) as follows:</p>
+<p>For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the generalization error (as meased in squared loss) as follows:</p>
 <blockquote>
 <h3 id="expected-test-error-given-h_d"><strong>Expected Test Error</strong> (given $h_D$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-h_d">#</a></h3>
 $$

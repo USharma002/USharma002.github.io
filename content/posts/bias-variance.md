@@ -13,12 +13,31 @@ math: true
 ---
 
 # Introduction
+All we assume is that data comes from some unknown joint distribution:
 
-Suppose we have a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ drawn i.i.d. from some distribution $p(X, Y)$ in a regression setting where $y \in \mathbb{R}$.
+$$(x_i, y_i)\sim p(x, y)$$
+- $x$ is random variable with marginal $p(x)$
+- $y$ is a random variable with conditional distribution $p(y\mid x)$
 
-The expected prediction error can be decomposed as:
+Our learning algorithm samples a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ i.i.d from this distribution.
+
+### Bayes Optimal Predictor
+If we wanted to pick a deterministic predictor $g(x)$ that minimizes the expected squared error under $p(x, y)$:
+$$g^*(x) = \arg \min_g \mathbb{E}_{p(x, y)}\left[ (y - g(x))^2\right]$$
+
+We can solve this analytically as:
+
+$$\frac{\partial}{\partial g(x)} \mathbb{E}_{p(x, y)}\left[ (y - g(x))^2\right] = 0 \Rightarrow g(x) = \mathbb{E}\left[ y  \mid x\right] = f(x)$$
+
+So $f(x)$ is the true regression function or "expected label” - the best possible prediction in the mean-squared-error sense, directly derived from $p(x,y)$. Note that the choice of squared error is somewhat arbitrary. Suppose instead we chose absolute error loss,
+$\mathbb{E}_{p(x, y)}\left[ |y - g(x)|\right]$, the risk/error would then be minimized by the
+$$f(x) = \operatorname {median} [p(y \mid x)]$$
+
+Despite this possibility, our preference will still be for squared error loss. The reasons for this are numerous, including: historical, ease of optimization, and protecting against large deviations.
+
+Our goal becomes finding some $\hat{f}$ that is a good estimate of the regression function $f$. The expected prediction error can then be decomposed as:
 $$
-\mathbb{E}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
+\mathbb{E}_{D'\sim p^n}[(y - \hat{f}(x))^2] = \text{Bias}^2(\hat{f}(x)) + \text{Var}(\hat{f}(x)) + \sigma^2
 $$
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.
 
@@ -65,7 +84,7 @@ We draw $n$ i.i.d. inputs for dataset $D$ form distribution $p$.
 
 We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesis (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$
 
-For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the deneralization error (as meased in squared loss) as follows:
+For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the generalization error (as meased in squared loss) as follows:
 
 > ### **Expected Test Error** (given $h_D$)
 >

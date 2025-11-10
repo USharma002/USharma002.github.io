@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -180,9 +180,21 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#bagging-bootstrap-aggregating" aria-label="Bagging (Bootstrap Aggregating)">Bagging (Bootstrap Aggregating)</a></li>
                 <li>
-                    <a href="#analysis" aria-label="Analysis">Analysis</a></li>
+                    <a href="#analysis" aria-label="Analysis">Analysis</a><ul>
+                        
                 <li>
-                    <a href="#bagging-summary" aria-label="Bagging Summary">Bagging Summary</a>
+                    <a href="#variance-of-bagged-estimator" aria-label="Variance of Bagged Estimator">Variance of Bagged Estimator</a></li>
+                <li>
+                    <a href="#derivation" aria-label="Derivation">Derivation</a></li>
+                <li>
+                    <a href="#large-n-approximation" aria-label="Large-$n$ Approximation">Large-$n$ Approximation</a></li>
+                <li>
+                    <a href="#intuition" aria-label="Intuition">Intuition</a></li></ul>
+                </li>
+                <li>
+                    <a href="#bagging-summary" aria-label="Bagging Summary">Bagging Summary</a></li>
+                <li>
+                    <a href="#advantages-of-bagging" aria-label="Advantages of Bagging">Advantages of Bagging</a>
                 </li>
             </ul>
             </li>
@@ -238,10 +250,10 @@ $
 \mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right].
 $</p>
 <p>For this, we need that $h_D \to \bar{h}$.</p>
-<p>Apply WLLN to classifiers: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a classifier on each one, and average results:</p>
+<p>Apply WLLN to predictors: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a predictor on each one, and average results:</p>
 $$
 \hat{h} = \frac{1}{m} \sum_{i=1}^m h_{D_i} \to \bar{h} \qquad \text{as } m \to \infty.
-$$<p>We refer to such an average of multiple classifiers as an ensemble of classifiers.</p>
+$$<p>We refer to such an average of multiple predictors as an ensemble of predictors.</p>
 <p><strong>Good news:</strong> If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e. </p>
 $$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$<p><strong>Problem:</strong> We don&rsquo;t have $m$ data sets $D1,\dots,D_m$, we only have $D$.</p>
 <h2 id="bagging-bootstrap-aggregating">Bagging (Bootstrap Aggregating)<a hidden class="anchor" aria-hidden="true" href="#bagging-bootstrap-aggregating">#</a></h2>
@@ -249,11 +261,12 @@ $$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 
 i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training sample $(x_i,y_i)$ from $D$ uniformly at random. More formally,
 </p>
 $$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|.$$<p>We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.</p>
-<p><strong>Bagged classifier:</strong>  </p>
-$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged classifier:
+<p><strong>Bagged predictor:</strong>  </p>
+$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged predictor:
 </p>
-$$\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0 $$<p>
-because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
+$$
+\hat{h}_D =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow 0
+$$<p>because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
 <h2 id="analysis">Analysis<a hidden class="anchor" aria-hidden="true" href="#analysis">#</a></h2>
 <p>Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let&rsquo;s ignore the label for now for simplicity)</p>
 $$
@@ -268,6 +281,82 @@ $$
 $$<p>There is a simple intuitive argument why $p(X=x_i)=q(X=x_i)$.</p>
 <p>So far we assumed that you draw $D$ from $p^n$ and then $q$ picks a sample from $D$. However, you don&rsquo;t have to do it in that order. You can also view sampling from $q$ in reverse order:</p>
 <p>Consider that you first use $q$ to reserve a &ldquo;spot&rdquo; in $D$, i.e. a number from $1,\dots,n$ where $i$ means that you sampled the $i^{th}$ data point in $D$. So far you only have the slot, $i$, and you still need to fill it with a data point $(x_i,y_i)$. You do this by sampling $(x_i,y_i)$ from $p$. It is now obvious that which slot you picked doesn&rsquo;t really matter, so we have $q(X=x)=p(X=x)$.</p>
+<hr>
+<h3 id="variance-of-bagged-estimator">Variance of Bagged Estimator<a hidden class="anchor" aria-hidden="true" href="#variance-of-bagged-estimator">#</a></h3>
+<p>The variance of the bagged estimator is:</p>
+$$Var(\hat{h_D}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$<p>If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:</p>
+$$Var(\hat{h_D}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$<p>Notice that we can have 3 cases here:</p>
+<ul>
+<li>
+<p><strong>Models are Independent</strong>, in which case the variance is reduced by a factor of $m$ since $\rho = 0$</p>
+</li>
+<li>
+<p><strong>Modela are not prefectly correlated</strong>, in which case the reduction depends on $\rho$</p>
+</li>
+<li>
+<p><strong>Modela are prefectly correlated</strong>, so no variance reduction at all.</p>
+</li>
+</ul>
+<p><strong>Why the models are not independent</strong><br>
+Even though the bootstrap sampling is random, the models $h_{D_i}$ are <strong>not independent</strong> because:</p>
+<ul>
+<li>All $D_i$ are sampled from the <strong>same original dataset $D$</strong>.</li>
+<li>The models $h_{D_i}$ share <strong>overlapping data points</strong>, thus the resulting models $h_{D_i}$ are <strong>statistically dependent</strong>.</li>
+</ul>
+<p><strong>But how much data can we expect to be common among them?</strong></p>
+<p>We have an original dataset $D$ of size $n$ (distinct items).<br>
+Two bootstrap samples $D_i$ and $D_j$ are drawn independently by sampling $n$ items <strong>with replacement</strong> from $D$.</p>
+<p>Let</p>
+$$
+S = |\text{unique}(D_i) \cap \text{unique}(D_j)|
+$$<p>be the number of <strong>distinct original items</strong> that appear in both bootstrap samples.<br>
+(This is the usual meaning of “intersection” in the bagging context.)</p>
+<hr>
+<h3 id="derivation">Derivation<a hidden class="anchor" aria-hidden="true" href="#derivation">#</a></h3>
+<p>For a fixed original item $k$ (one of the $n$ items), let</p>
+$$
+I_k =
+\begin{cases}
+1 & \text{if item } k \text{ appears at least once in } D_i, \\
+0 & \text{otherwise.}
+\end{cases}
+$$<p>Similarly, define $J_k$ for $D_j$. Then</p>
+$$
+S = \sum_{k=1}^{n} I_k J_k,
+$$<p>so by linearity of expectation,</p>
+$$
+\mathbb{E}[S] = \sum_{k=1}^{n} \Pr(I_k = 1 \text{ and } J_k = 1).
+$$<p>Because the two bootstrap draws are independent and symmetric across items,</p>
+$$
+\Pr(I_k = 1 \text{ and } J_k = 1)
+= \Pr(I_k = 1)\Pr(J_k = 1)
+= p^2,
+$$<p>where</p>
+$$
+p = \Pr(\text{a given item appears at least once in one bootstrap sample})
+   = 1 - \left(1 - \frac{1}{n}\right)^{n}.
+$$<p>Hence,</p>
+$$
+\boxed{\mathbb{E}[\,|D_i \cap D_j|\,] = n \left( 1 - \left(1 - \frac{1}{n}\right)^{n} \right)^2.}
+$$<hr>
+<h3 id="large-n-approximation">Large-$n$ Approximation<a hidden class="anchor" aria-hidden="true" href="#large-n-approximation">#</a></h3>
+<p>As $n \to \infty$,</p>
+$$
+\left(1 - \frac{1}{n}\right)^{n} \to e^{-1}.
+$$<p>Therefore,</p>
+$$
+\mathbb{E}[\,|D_i \cap D_j|\,] \approx n (1 - e^{-1})^2
+   \approx n (0.63212056)^2
+   \approx 0.3996\,n.
+$$<p>So about <strong>40% of the original items (on average)</strong> appear in both bootstrap samples.</p>
+<hr>
+<h3 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h3>
+<ul>
+<li>Probability that an item appears in one bootstrap sample: $p \approx 0.632$</li>
+<li>Probability that it appears in both: $p^2 \approx 0.3996$</li>
+<li>Thus, two bootstrap samples share roughly <strong>$0.4n$</strong> distinct items on average.</li>
+</ul>
+<hr>
 <h2 id="bagging-summary">Bagging Summary<a hidden class="anchor" aria-hidden="true" href="#bagging-summary">#</a></h2>
 <p>You have a dataset $
 D = {(x_1, y_1), \dots, (x_n, y_n)}$ of size $n$.</p>
@@ -285,19 +374,28 @@ You create $m$ bootstrap samples $D_1, \dots, D_m$, where each $D_i$ is sampled 
 You train a model $h_{D_i}$ on each bootstrap sample $D_i$.</p>
 </li>
 <li>
-<p><strong>Compute the bagged classifier</strong><br>
-The bagged classifier is the average:</p>
+<p><strong>Compute the bagged predictor</strong><br>
+The bagged predictor is the average:</p>
 $$
    \hat{h}_D = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
    $$</li>
 </ol>
-<p><strong>Why the models are not independent</strong><br>
-Even though the bootstrap sampling is random, the models $h_{D_i}$ are <strong>not independent</strong> because:</p>
-<ul>
-<li>All $D_i$ are sampled from the <strong>same original dataset $D$</strong>.</li>
-<li>The models $h_{D_i}$ share <strong>overlapping data points</strong>, thus the resulting models $h_{D_i}$ are <strong>statistically dependent</strong>.</li>
-</ul>
 <p>In practice larger $m$ results in a better ensemble, however at some point you will obtain <strong>diminishing returns</strong>. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier.</p>
+<h2 id="advantages-of-bagging">Advantages of Bagging<a hidden class="anchor" aria-hidden="true" href="#advantages-of-bagging">#</a></h2>
+<ul>
+<li>
+<p>Easy to implement</p>
+</li>
+<li>
+<p>Reduces variance, so has a strong beneficial effect on high variance classifiers.</p>
+</li>
+<li>
+<p>As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)</p>
+</li>
+<li>
+<p>Bagging provides an unbiased estimate of the test error, which we refer to as the out-of-bag error.</p>
+</li>
+</ul>
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>
@@ -316,6 +414,11 @@ This post or widget may be updated further - more notes, findings, and backgroun
     <span class="title">« Prev</span>
     <br>
     <span>Bias–Variance Tradeoff</span>
+  </a>
+  <a class="next" href="http://localhost:1313/posts/3d-reconstruction/">
+    <span class="title">Next »</span>
+    <br>
+    <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
   </a>
 </nav>
 
