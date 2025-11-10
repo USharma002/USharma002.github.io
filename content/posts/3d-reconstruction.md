@@ -12,6 +12,11 @@ TocOpen: true
 math: true
 ---
 
+<span style="color:red;font-weight:700;font-size:1.05em">
+This post is a work in progress and may be updated or expanded soon!
+</span>
+
+
 # Basics
 ## Inverse Transform Sampling
 ## SfM
@@ -118,3 +123,7 @@ Note that even though the final rendering comes from $\hat{C}_f(\mathbf{r})$, we
 # Feedforward and BARF
 ## Pixel Splat
 ## BARF
+
+<span style="color:crimson;font-weight:700">
+This post or widget may be updated further - more notes, findings, and background will appear here!
+</span>
