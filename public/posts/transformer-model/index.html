@@ -450,7 +450,7 @@ $$<p>Compute attention:</p>
 $$
 \text{Att}(PQ, PK, PV) = \text{softmax}\!\left(\frac{(PQ)(PK)^\top}{\sqrt{d_k}}\right) PV
 = \text{softmax}\!\left(\frac{P Q K^\top P^\top}{\sqrt{d_k}}\right) PV
-$$<p>Using $\text{softmax}(P S P^\top) = P,\text{softmax}(S),P^\top$:</p>
+$$<p>Using $\text{softmax}(P S P^\top) = P\,\text{softmax}(S)\,P^\top$:</p>
 $$
 \text{Att}(PQ, PK, PV)
 = P\,\text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)(P^\top P)V

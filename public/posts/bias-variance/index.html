@@ -183,13 +183,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#mathematical-definition" aria-label="Mathematical Definition">Mathematical Definition</a><ul>
                         
                 <li>
-                    <a href="#expected-label-given-xin-mathbbr" aria-label="Expected Label (given $x\in \mathbb{R}$)">Expected Label (given $x\in \mathbb{R}$)</a></li>
+                    <a href="#expected-label-given-" aria-label="Expected Label (given $x\in \mathbb{R}$)">Expected Label (given $x\in \mathbb{R}$)</a></li>
                 <li>
-                    <a href="#expected-test-error-given-h_d" aria-label="Expected Test Error (given $h_D$)">Expected Test Error (given $h_D$)</a></li>
+                    <a href="#expected-test-error-given-" aria-label="Expected Test Error (given $h_D$)">Expected Test Error (given $h_D$)</a></li>
                 <li>
-                    <a href="#expected-classifier-given-mathcala" aria-label="Expected Classifier (given $\mathcal{A}$)">Expected Classifier (given $\mathcal{A}$)</a></li>
+                    <a href="#expected-classifier-given-" aria-label="Expected Classifier (given $\mathcal{A}$)">Expected Classifier (given $\mathcal{A}$)</a></li>
                 <li>
-                    <a href="#expected-test-error-given-mathcala" aria-label="Expected Test Error (given $\mathcal{A}$)">Expected Test Error (given $\mathcal{A}$)</a></li>
+                    <a href="#expected-test-error-given--1" aria-label="Expected Test Error (given $\mathcal{A}$)">Expected Test Error (given $\mathcal{A}$)</a></li>
                 <li>
                     <a href="#decomposition-of-expected-test-error" aria-label="Decomposition of Expected Test Error">Decomposition of Expected Test Error</a></li>
                 <li>
@@ -205,9 +205,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#experimental-results" aria-label="Experimental Results">Experimental Results</a><ul>
                         
                 <li>
-                    <a href="#without-regularization-alpha--0" aria-label="Without Regularization ($\alpha = 0$)">Without Regularization ($\alpha = 0$)</a></li>
+                    <a href="#without-regularization-" aria-label="Without Regularization ($\alpha = 0$)">Without Regularization ($\alpha = 0$)</a></li>
                 <li>
-                    <a href="#with-regularization-alpha--01--degree" aria-label="With Regularization ($\alpha = 0.1$ × degree)">With Regularization ($\alpha = 0.1$ × degree)</a></li>
+                    <a href="#with-regularization---degree" aria-label="With Regularization ($\alpha = 0.1$ × degree)">With Regularization ($\alpha = 0.1$ × degree)</a></li>
                 <li>
                     <a href="#k-nearest-neighbor-interactive-example" aria-label="K-Nearest Neighbor Interactive Example">K-Nearest Neighbor Interactive Example</a></li></ul>
                 </li></ul>
@@ -267,7 +267,7 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
 <h2 id="mathematical-definition">Mathematical Definition<a hidden class="anchor" aria-hidden="true" href="#mathematical-definition">#</a></h2>
 <p>Assuming we are in a regression setting with dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ with $y\in \mathbb{R}$, we define the following:</p>
 <blockquote>
-<h3 id="expected-label-given-xin-mathbbr"><strong>Expected Label</strong> (given $x\in \mathbb{R}$)<a hidden class="anchor" aria-hidden="true" href="#expected-label-given-xin-mathbbr">#</a></h3>
+<h3 id="expected-label-given-"><strong>Expected Label</strong> (given $x\in \mathbb{R}$)<a hidden class="anchor" aria-hidden="true" href="#expected-label-given-">#</a></h3>
 <p>Given a feature vector $x \in \mathbb{R}^D$, the <strong>expected label</strong> denotes the label you would expect to obtain:</p>
 $$
  \bar{y}(x) = \mathbb{E}_{y \mid x}[Y] = \int_y y \, p(y \mid x) \, dy
@@ -276,7 +276,7 @@ $$
 <p>We then typically use some machine learning algorithm $\mathcal{A}$ on this data to learn a hypothesis (aka classifier). Formally, we can denote this process as $h_D = \mathcal{A}(D).$</p>
 <p>For a given $h_D$, learned on dataset $D$ with an algorithm $\mathcal{A}$, we can compute the generalization error (as meased in squared loss) as follows:</p>
 <blockquote>
-<h3 id="expected-test-error-given-h_d"><strong>Expected Test Error</strong> (given $h_D$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-h_d">#</a></h3>
+<h3 id="expected-test-error-given-"><strong>Expected Test Error</strong> (given $h_D$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-">#</a></h3>
 $$
  \mathbb{E}_{(x, y) \sim p} \big[(h_D(x) - y)^2\big]
  \;=\;
@@ -285,7 +285,7 @@ $$
 <p>Note that one can use other loss functions but here we are using squared loss because it has nice mathematical properties and also the most common loss function.</p>
 <p>The previous statement is true for a given training set  $D$. However, remember that $D$ itself is drawn from $p^n$, and is therefore a random variable. We can of course compute it&rsquo;s expectation:</p>
 <blockquote>
-<h3 id="expected-classifier-given-mathcala"><strong>Expected Classifier</strong> (given $\mathcal{A}$)<a hidden class="anchor" aria-hidden="true" href="#expected-classifier-given-mathcala">#</a></h3>
+<h3 id="expected-classifier-given-"><strong>Expected Classifier</strong> (given $\mathcal{A}$)<a hidden class="anchor" aria-hidden="true" href="#expected-classifier-given-">#</a></h3>
 $$
  \bar{h} = \mathbb{E}_{D \sim p^n}[h_D] = \int_D h_D \, p(D) \, dD
  $$<p>where</p>
@@ -295,7 +295,7 @@ $$
 </ul></blockquote>
 <p>We can also use the fact that $h_D$ is a random variable to compute the expected test error only given $\mathcal{A}$, taking expectation over $D$.</p>
 <blockquote>
-<h3 id="expected-test-error-given-mathcala"><strong>Expected Test Error</strong> (given $\mathcal{A}$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given-mathcala">#</a></h3>
+<h3 id="expected-test-error-given--1"><strong>Expected Test Error</strong> (given $\mathcal{A}$)<a hidden class="anchor" aria-hidden="true" href="#expected-test-error-given--1">#</a></h3>
 $$
  \mathbb{E}_{D \sim p^n} \Big[\, \mathbb{E}_{(x, y) \sim p} \big[ (h_D(x) - y)^2 \big] \,\Big]
  $$<p>Equivalent integral form:</p>
@@ -426,7 +426,7 @@ $$<figure id="fig-true-function" style="text-align: center; margin: 2em auto; ma
 <p><strong>Setup:</strong><br>
 500 random datasets, each with 100 training points ($N=100$); noise: $\sigma=0.5$.</p>
 <hr>
-<h3 id="without-regularization-alpha--0">Without Regularization ($\alpha = 0$)<a hidden class="anchor" aria-hidden="true" href="#without-regularization-alpha--0">#</a></h3>
+<h3 id="without-regularization-">Without Regularization ($\alpha = 0$)<a hidden class="anchor" aria-hidden="true" href="#without-regularization-">#</a></h3>
 <table>
   <thead>
       <tr>
@@ -539,7 +539,7 @@ $$<figure id="fig-true-function" style="text-align: center; margin: 2em auto; ma
   </figcaption></figure>
 
 <hr>
-<h3 id="with-regularization-alpha--01--degree">With Regularization ($\alpha = 0.1$ × degree)<a hidden class="anchor" aria-hidden="true" href="#with-regularization-alpha--01--degree">#</a></h3>
+<h3 id="with-regularization---degree">With Regularization ($\alpha = 0.1$ × degree)<a hidden class="anchor" aria-hidden="true" href="#with-regularization---degree">#</a></h3>
 <table>
   <thead>
       <tr>

@@ -1,24 +1,18 @@
-baseURL = "https://USharma002.github.io/" # Replace with your actual base URL
+baseURL = "https://USharma002.github.io/"
 title = "USharma Notes"
 theme = ["PaperMod"]
 
 enableRobotsTXT = true
 enableEmoji = true
-pygmentsUseClasses = true # Good for code highlighting if you use it
-# mainsections = ["posts"] # Uncomment and adjust if you have specific main sections
+pygmentsUseClasses = true
 
 [languages]
   [languages.en]
     languageName = "English"
     weight = 1
-    # title = "USharma Notes" # Optional: Override global title for this language
-    #[[languages.en.menu.main]]
-    #  name = "Home"
-    #  url = "/"
-    #  weight = 1
     [[languages.en.menu.main]]
       name = "Posts"
-      url = "/" # Assuming you have a 'posts' section
+      url = "/"
       weight = 5
     [[languages.en.menu.main]]
       name = "Tags"
@@ -34,9 +28,9 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
       weight = 20
 
 [params]
-  defaultTheme = "auto" # Options: "light", "dark", "auto"
+  defaultTheme = "auto"
   ShowReadingTime = true
-  ShowShareButtons = false # Set to true if you want share buttons
+  ShowShareButtons = false
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
   ShowCodeCopyButtons = true
@@ -44,7 +38,6 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
   ShowPageNums = true
   separator = true
   math = true
-
   comments = true
 
   [params.homeInfoParams]
@@ -61,15 +54,14 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
     keys = ["title", "permalink", "summary", "content"]
   
 [outputs]
-  home = ["HTML", "RSS", "JSON"] # JSON is good for search functionality in PaperMod
+  home = ["HTML", "RSS", "JSON"]
   
 [markup]
   [markup.goldmark.renderer]
-    unsafe = true # Usually needed for themes that allow raw HTML in markdown
+    unsafe = true
   
   [markup.highlight]
     noClasses = false
-    # style = "monokai" # Or any other Chroma style
   
   [markup.goldmark]
     [markup.goldmark.extensions]
@@ -77,4 +69,4 @@ pygmentsUseClasses = true # Good for code highlighting if you use it
         enable = true
         [markup.goldmark.extensions.passthrough.delimiters]
           block = [['\[', '\]'], ['$$', '$$']]
-          inline = [['\(', '\)']]
+          inline = [['\(', '\)'], ['$', '$']]

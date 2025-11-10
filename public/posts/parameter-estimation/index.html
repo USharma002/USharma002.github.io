@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
   <div class="post-content"><h2 id="estimating-probabilities-of-data">Estimating probabilities of data<a hidden class="anchor" aria-hidden="true" href="#estimating-probabilities-of-data">#</a></h2>
-<p>Suppose we have a coin and I want to know the probability of heads coming up when I throw it. One natural way to estimate this is to toss is $n$ (let&rsquo;s say $n = 10$) times, collect the outcomes/data $\mathcal{D}={H, T, H, T, T, H, T, H, T, T}$ where we got $n_H=4$ heads and $n_T=6$ tails, so intuitively we can do following:
+<p>Suppose we have a coin and I want to know the probability of heads coming up when I throw it. One natural way to estimate this is to toss is $n$ (let&rsquo;s say $n = 10$) times, collect the outcomes/data $\mathcal{D}=\{H, T, H, T, T, H, T, H, T, T\}$ where we got $n_H=4$ heads and $n_T=6$ tails, so intuitively we can do following:
 </p>
 $$P(H) = \frac{n_H}{n_H + n_T}$$<p>Can we derive th above more formally ?</p>
 <hr>
@@ -223,7 +223,7 @@ $$\frac{n_H}{\theta} = \frac{n_T}{1-\theta}\Longrightarrow n_H - n_H\theta = n_T
 </ul>
 <p><strong>Continuing Example: Coin toss with prior knowledge</strong></p>
 <p>Assume we have a hunch that $\theta$ is close to 0.5, but the sample size is small so you don&rsquo;t trst the estimate. How can we fix this using the prior/knwoledge?</p>
-<p>Simple Fix: Add $m$ imaginary throws that would result in $\theta&rsquo;$ (e.g. $\theta=0.5$). Add $m$ Heads and $m$ Tails to the data:
+<p>Simple Fix: Add $m$ imaginary throws that would result in $\theta'$ (e.g. $\theta=0.5$). Add $m$ Heads and $m$ Tails to the data:
 </p>
 $$\hat\theta = \frac{n_H + m}{n_H + n_T + 2m}$$<hr>
 <h3 id="the-bayesian-way">The Bayesian Way<a hidden class="anchor" aria-hidden="true" href="#the-bayesian-way">#</a></h3>

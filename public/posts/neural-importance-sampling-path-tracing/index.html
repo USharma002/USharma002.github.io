@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#from-expectation-to-integration" aria-label="From Expectation to Integration">From Expectation to Integration</a></li>
                 <li>
-                    <a href="#properties-of-the-probability-density-function-px" aria-label="Properties of the Probability Density Function $p(x)$">Properties of the Probability Density Function $p(x)$</a></li>
+                    <a href="#properties-of-the-probability-density-function" aria-label="Properties of the Probability Density Function $p(x)$">Properties of the Probability Density Function $p(x)$</a></li>
                 <li>
                     <a href="#definition---monte-carlo-estimator" aria-label="Definition - Monte Carlo Estimator">Definition - Monte Carlo Estimator</a></li>
                 <li>
@@ -447,7 +447,7 @@ $$<p>we can identify:</p>
 $$
 I = \mathbb{E}\left[\frac{f(X)}{p(X)}\right]
 $$<p>where $X$ is a random variable drawn from distribution $p(x)$.</p>
-<h3 id="properties-of-the-probability-density-function-px">Properties of the Probability Density Function $p(x)$<a hidden class="anchor" aria-hidden="true" href="#properties-of-the-probability-density-function-px">#</a></h3>
+<h3 id="properties-of-the-probability-density-function">Properties of the Probability Density Function $p(x)$<a hidden class="anchor" aria-hidden="true" href="#properties-of-the-probability-density-function">#</a></h3>
 <p>The PDF $p(x)$ must satisfy the following fundamental properties:</p>
 $$
 \boxed{
@@ -540,7 +540,7 @@ $$<h4 id="the-optimal-choice-px--fx">The Optimal Choice: p(x) ∝ f(x)<a hidden 
 <p>Let&rsquo;s assume:</p>
 $$
 p^*(x) = \frac{|f(x)|}{\int_{\Omega} |f(x)|\, dx} = \frac{|f(x)|}{I}
-$$<p>where $I = \int_{\Omega} |f(x)|, dx$ (assuming $f(x) \geq 0$ for simplicity).</p>
+$$<p>where $I = \int_{\Omega} |f(x)|\, dx$ (assuming $f(x) \geq 0$ for simplicity).</p>
 <p><strong>What happens to the weighted ratio?</strong></p>
 $$
 \frac{f(X)}{p^*(X)} = \frac{f(X)}{f(X)/I} = I \quad \text{(constant!)}
@@ -784,7 +784,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
       </tr>
   </tbody>
 </table>
-<p><strong>Input:</strong> scene, ray, depth, $\text{max_depth}$, $\text{rr_depth}$<br>
+<p><strong>Input:</strong> scene, ray, depth, $\text{max\_depth}$, $\text{rr\_depth}$<br>
 <strong>Output:</strong> Radiance $L_o(x, \omega_o)$</p>
 <h4 id="recursive-formulation">Recursive Formulation<a hidden class="anchor" aria-hidden="true" href="#recursive-formulation">#</a></h4>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">function PATHTRACE(scene, ray, depth)

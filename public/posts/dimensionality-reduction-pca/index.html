@@ -174,9 +174,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#goal" aria-label="Goal">Goal</a></li>
                 <li>
-                    <a href="#solving-for-alpha_i" aria-label="Solving for $\alpha_i$">Solving for $\alpha_i$</a></li>
+                    <a href="#solving-for" aria-label="Solving for $\alpha_i$">Solving for $\alpha_i$</a></li>
                 <li>
-                    <a href="#choosing-the-best-basis-u" aria-label="Choosing the Best Basis $U$">Choosing the Best Basis $U$</a></li>
+                    <a href="#choosing-the-best-basis" aria-label="Choosing the Best Basis $U$">Choosing the Best Basis $U$</a></li>
                 <li>
                     <a href="#connection-with-covariance-and-eigenvalues" aria-label="Connection with Covariance and Eigenvalues">Connection with Covariance and Eigenvalues</a></li>
                 <li>
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#svd-vs-eigendecomposition" aria-label="SVD vs Eigendecomposition">SVD vs Eigendecomposition</a></li>
                 <li>
-                    <a href="#choosing-k" aria-label="Choosing $K$">Choosing $K$</a></li></ul>
+                    <a href="#choosing" aria-label="Choosing $K$">Choosing $K$</a></li></ul>
                 </li>
                 <li>
                     <a href="#summary" aria-label="Summary">Summary</a></li>
@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function() {
 Imagine you have 10,000-dimensional vectors (like flattened MNIST images which would be 768 dimensional) but most dimensions contain redundant information.<br>
 Can we compress these to, say, 50 dimensions while retaining 95% of the variation?<br>
 This is exactly what <strong>PCA</strong> does — it finds the most <em>&ldquo;informative&rdquo;</em> directions in the data.</p>
-<p>Suppose we have data points $x_1, x_2, \dots , x_N \in \mathbb{R}^D$ and we want to reduce their dimension to $K$ such that $K &lt; D$ while still preserving most of the &ldquo;information&rdquo; in the data.</p>
+<p>Suppose we have data points $x_1, x_2, \dots , x_N \in \mathbb{R}^D$ and we want to reduce their dimension to $K$ such that $K < D$ while still preserving most of the &ldquo;information&rdquo; in the data.</p>
 <p><strong>Note</strong>: PCA assumes linear relationships. For non-linear manifolds like Swiss rolls, consider kernel PCA or autoencoders</p>
 <hr>
 <h3 id="goal">Goal<a hidden class="anchor" aria-hidden="true" href="#goal">#</a></h3>
@@ -239,7 +239,7 @@ $$
 (x_i - U\alpha_i)^T (x_i - U\alpha_i)
 = x_i^T x_i - 2x_i^T U\alpha_i + \alpha_i^T U^T U \alpha_i
 $$<hr>
-<h3 id="solving-for-alpha_i">Solving for $\alpha_i$<a hidden class="anchor" aria-hidden="true" href="#solving-for-alpha_i">#</a></h3>
+<h3 id="solving-for">Solving for $\alpha_i$<a hidden class="anchor" aria-hidden="true" href="#solving-for">#</a></h3>
 <p>Taking derivative w.r.t. $\alpha_i$ and setting to zero:</p>
 $$
 \frac{\partial}{\partial \alpha_i} \|x_i - U\alpha_i\|^2
@@ -260,7 +260,7 @@ $UU^T$ is a <strong>projection matrix</strong> that projects $x_i$ onto the subs
 Note that $UU^T \neq I$ unless $K = D$, so $\hat{x}_i \neq x_i$ in general —<br>
 the reconstruction is an approximation that discards information in the orthogonal complement.</p>
 <hr>
-<h3 id="choosing-the-best-basis-u">Choosing the Best Basis $U$<a hidden class="anchor" aria-hidden="true" href="#choosing-the-best-basis-u">#</a></h3>
+<h3 id="choosing-the-best-basis">Choosing the Best Basis $U$<a hidden class="anchor" aria-hidden="true" href="#choosing-the-best-basis">#</a></h3>
 <p>Now that we know how to project and reconstruct for a given $U$, the next question is:<br>
 <strong>How do we choose $U$?</strong></p>
 <p>We want $U$ that minimizes the total reconstruction error:</p>
@@ -304,7 +304,7 @@ $$
 \text{tr}(U^T S U)
 = \text{tr}(U^T V \Lambda V^T U)
 = \sum_{j=1}^{D} \lambda_j \|v_j^T U\|^2
-$$<p>Since the columns of $U$ are orthonormal, the weights $|v_j^T U|^2$ sum to $K$.<br>
+$$<p>Since the columns of $U$ are orthonormal, the weights $\|v_j^T U\|^2$ sum to $K$.<br>
 To maximize the above expression, we assign all weight to the largest eigenvalues —<br>
 i.e., choose $U$ as the top-$K$ eigenvectors of $S$:</p>
 $$
@@ -378,8 +378,8 @@ $$<hr>
 <li>The corresponding eigenvectors are related by simple linear transformations.</li>
 <li>Since $X X^T$ is only $N \times N$, we can compute its eigen-decomposition much faster when $N \ll D$.</li>
 </ul>
-<p>After obtaining ${v_i, \lambda_i}_{i=1}^N$ from $X X^T$,<br>
-we recover the PCA directions in the original high-dimensional space as ${u_i}$ using the formula above.</p>
+<p>After obtaining $\{v_i, \lambda_i\}_{i=1}^N$ from $X X^T$,<br>
+we recover the PCA directions in the original high-dimensional space as $\{u_i\}$ using the formula above.</p>
 <hr>
 <h3 id="computational-comparison">Computational Comparison<a hidden class="anchor" aria-hidden="true" href="#computational-comparison">#</a></h3>
 <table>
@@ -433,7 +433,7 @@ $$<p>where:</p>
 <li><code>np.linalg.svd(X)</code>: more stable and efficient → <strong>preferred in practice</strong></li>
 </ul>
 <hr>
-<h4 id="choosing-k">Choosing $K$<a hidden class="anchor" aria-hidden="true" href="#choosing-k">#</a></h4>
+<h4 id="choosing">Choosing $K$<a hidden class="anchor" aria-hidden="true" href="#choosing">#</a></h4>
 <p><strong>Scree plot:</strong><br>
 Plot eigenvalues $\lambda_1, \lambda_2, \dots , \lambda_D$ in descending order.<br>
 Look for an &ldquo;elbow&rdquo; where the curve flattens — this suggests a good cutoff.</p>
