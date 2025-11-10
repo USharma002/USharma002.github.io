@@ -117,7 +117,7 @@ width="100%"
 
 ### Overview
 {{< figure src="../../images/3dvis/plenoxel-overview.png"
-num="2"
+num="3"
 caption="Plenoxels Overview"
 width="100%" 
 >}}
@@ -234,7 +234,7 @@ width="100%"
 
 ### Tensor for Scene Modeling
 
-In this work, we focus on the task of modeling and reconstructing radiance fields. In this case, the three tensor modes correspond to the XYZ axes, and we thus directly denote the modes with XYZ to make it intuitive. Meanwhile, in the context of 3D scene representation, we consider $R_1 = R_2 = R_3 = R$ for most scenes, reflecting the fact that a scene can distribute and appear equally complex along its three axes. Therefore, the previous equation can be re-written as:
+In this work, we focus on the task of modeling and reconstructing radiance fields. We can view the image [below](#scene-tensorf). In this case, the three tensor modes correspond to the XYZ axes, and we thus directly denote the modes with XYZ to make it intuitive. Meanwhile, in the context of 3D scene representation, we consider $R_1 = R_2 = R_3 = R$ for most scenes, reflecting the fact that a scene can distribute and appear equally complex along its three axes. Therefore, the previous equation can be re-written as:
 
 $$
 \mathcal{T} = \sum_{r=1}^{R} \mathbf{v}_r^{X} \circ \mathbf{M}_r^{Y,Z} + \mathbf{v}_r^{Y} \circ \mathbf{M}_r^{X,Z} + \mathbf{v}_r^{Z} \circ \mathbf{M}_r^{X,Y}
@@ -249,13 +249,6 @@ $$
 $$
 
 where $m \in \{X, Y, Z\}$, $A_{r,ijk}^{X} = v_{r,i}^{X} M_{r,jk}^{Y,Z}$, $A_{r,ijk}^{Y} = v_{r,j}^{Y} M_{r,ik}^{X,Z}$, and $A_{r,ijk}^{Z} = v_{r,k}^{Z} M_{r,ij}^{X,Y}$.
-
-{{< figure src="../../images/3dvis/tensorf_scene.png"
-num="8"
-caption="Tensorf Scene Representation."
-width="100%" 
->}}
-
 
 ### Feature Grids and Radiance Field
 
@@ -300,6 +293,14 @@ By stacking all $\mathbf{b}_{r}$ as columns together, we have a $P \times 3R_{c}
 ### Interpolation
 
 Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.
+
+{{< figure src="../../images/3dvis/tensorf_scene.png"
+num="8"
+id="scene-tensorf"
+caption="Tensorf Scene Representation."
+width="100%" 
+>}}
+
 
 ## Instant NGP
 
