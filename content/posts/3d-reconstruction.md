@@ -67,6 +67,13 @@ This function $\gamma(\cdot)$ is applied separately to each of the three coordin
 
 A similar mapping is used in the popular Transformer architecture, where it is referred to as a positional encoding.
 
+{{< figure src="../../images/3dvis/nerf-posenc.png"
+num="9"
+caption="Positional Encoding"
+width="80%" 
+>}}
+
+
 ### Hierarchical Sampling
 
 To render using the NeRF we need to sample along the ray for the pixel. A ray is defined as:
@@ -122,21 +129,21 @@ caption="Plenoxels Overview"
 width="100%" 
 >}}
 
-In light of the substantial computational requirements of NeRF for both training and rendering,
-many recent papers have proposed methods to improve efficiency, particularly for rendering.
+In light of the substantial computational requirements of NeRF for both training and rendering, many recent papers have proposed methods to improve efficiency, particularly for rendering.
 
 ### Method
 
 Plenoxels (plenoptic voxels) represent a scene as a sparse 3D grid with spherical harmonics. This representation can be optimized from calibrated images via gradient methods and regularization without any neural components.
 
 ### Spherical Harmonics
-Uses spherical haromnic coefficients $\mathbf{k}$, rather than RGB values:
 
-$$(\mathbf{k}, \sigma), \quad \mathbf{k} = (k^m_l)^{m:-l \leq m \leq l}_{l: 0 \leq l \leq l_{max}}$$
+Uses spherical harmonic coefficients $\mathbf{k}$, rather than RGB values:
 
-Each $k_l^m \in \mathbb{R}^{3}$ is a set of 3 coeffieincts corresponding to RGB components. In this setup, the view dependednt color $\mathbf{c}$ at a point $\mathbf{x}$ may be determined by querying the SH funcitons $Y_l^m:\mathbb{S}\rightarrow\mathbb{R}$ at desired vieweing angle $\mathbf{d}$:
+$$(\mathbf{k}, \sigma), \quad \mathbf{k} = (k^m_l)_{l: 0 \leq l \leq l_{max}}^{m: -l \leq m \leq l}$$
 
-$$c(\mathbf{x}; \mathbf{k}) = S=sigmoid\left( \sum_{l-0}^{l_{max}}\sum_{m=-l}^{m} k_l^mY_l^m(\mathbf{d}) \right)$$
+Each $k_l^m \in \mathbb{R}^{3}$ is a set of 3 coefficients corresponding to RGB components. In this setup, the view-dependent color $\mathbf{c}$ at a point $\mathbf{x}$ may be determined by querying the SH functions $Y_l^m:\mathbb{S}\rightarrow\mathbb{R}$ at desired viewing angle $\mathbf{d}$:
+
+$$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$
 
 {{< figure src="../../images/3dvis/spherical-harmonics.png"
 num="4"
@@ -148,11 +155,11 @@ width="60%"
 
 So, each vertex of the grid has the SH coefficients and opacity $\sigma$.
 
-The opacity and color at each sample point along ray are computed by trilinear interpolation of opacity and harmonic coefficinets stored at nearest 8 voxels.
+The opacity and color at each sample point along ray are computed by trilinear interpolation of opacity and harmonic coefficients stored at nearest 8 voxels.
 
 ### Coarse to Fine 
 
-Achieves high resolution via coars-to-fine strategy that begins with a dense grid at lower resolution, optimizes, prunes unnecessary voxelss, refins the remaining voxels by subdividing each in half in each dimension, and continues optimizing.
+Achieves high resolution via coarse-to-fine strategy that begins with a dense grid at lower resolution, optimizes, prunes unnecessary voxels, refines the remaining voxels by subdividing each in half in each dimension, and continues optimizing.
 
 Voxel pruning is performed using the method from PlenOctrees [Paper here](), which applies a threshold to the maximum weight $T_i(1 - \exp(-\sigma_i \delta_i))$ of each voxel over all training ray (or, alternatively, to the density value in each voxel). 
 
@@ -162,23 +169,23 @@ caption="Plenoctree Visualization"
 width="60%" 
 >}}
 
-Due to trilinear interpolation, naively pruning can adversely impact the the color and density near surfaces since values at these points interpolate with the voxels in the immediate exterior, to solve this, they performed a dilation operation so that voxel is only pruned if both itself and its neighbors are deemed unoccupied.
-
+Due to trilinear interpolation, naively pruning can adversely impact the color and density near surfaces since values at these points interpolate with the voxels in the immediate exterior. To solve this, they performed a dilation operation so that voxel is only pruned if both itself and its neighbors are deemed unoccupied.
 
 ### Optimization
 
-Optimize the voxel opacities and spherical harmonic coefficients with respect to the mean squared error (MSE) over rendered pixel xolors with total variation (TV) regularization. Specifically, the loss is:
+Optimize the voxel opacities and spherical harmonic coefficients with respect to the mean squared error (MSE) over rendered pixel colors with total variation (TV) regularization. Specifically, the loss is:
 
 $$\mathcal{L} = \mathcal{L}_{recon} + \lambda_{TV}\mathcal{L}_{TV}$$
 
 where these losses are defined as
+
 $$\mathcal{L}_{\text{recon}}= \frac{1}{|\mathcal{R}|} \sum_{\mathbf{r} \in \mathcal{R}}\left\| C(\mathbf{r}) - \hat{C}(\mathbf{r}) \right\|_2^2 $$
 
-$$\mathcal{L}_{\text{TV}} = \frac{1}{|\mathcal{V}|} \sum_{\mathbf{v} \in \mathcal{V}} \sum_{d \in [D]} \sqrt{\Delta_x^2(\mathbf{v}, d)+ \Delta_y^2(\mathbf{v}, d)+ \Delta_z^2(\mathbf{v}, d)}
-$$
+$$\mathcal{L}_{\text{TV}} = \frac{1}{|\mathcal{V}|} \sum_{\mathbf{v} \in \mathcal{V}} \sum_{d \in [D]} \sqrt{\Delta_x^2(\mathbf{v}, d)+ \Delta_y^2(\mathbf{v}, d)+ \Delta_z^2(\mathbf{v}, d)}$$
 
 where $ \Delta_x^2(\mathbf{v}, d) $ denotes the squared difference between the $ d^\text{th} $ value in voxel $ \mathbf{v} := (i, j, k) $ and the $ d^\text{th} $ value in voxel $ (i + 1, j, k) $, normalized by the resolution. Analogously, $ \Delta_y^2(\mathbf{v}, d) $ and $ \Delta_z^2(\mathbf{v}, d) $ represent the squared differences along the $ y $- and $ z $-axes, respectively.
 
+Plenoxels achieves **significantly faster training** than NeRF while maintaining comparable rendering quality since they don't use neural networks just use differentiable rendering framework.
 
 ## TensoRF
 
@@ -255,7 +262,7 @@ where $m \in \{X, Y, Z\}$, $A_{r,ijk}^{X} = v_{r,i}^{X} M_{r,jk}^{Y,Z}$, $A_{r,i
 We leverage a regular 3D grid G with per-voxel multi-channel features to model such a function. We split it (by feature channels) into a geometry grid $\mathcal{G}_{\sigma}$ and an appearance grid $\mathcal{G}_{c}$, separately modelling the volume density $\sigma$ and view-dependent color $c$:
 
 $$
-\sigma, c = \mathcal{G}_{\sigma}(\mathbf{x}), \; \mathcal{S}(\mathcal{G}_{c}(\mathbf{x}), d)
+\sigma, c = \mathcal{G}_{\sigma}(\mathbf{x}), \; \underbrace{\mathcal{S}(\mathcal{G}_{c}(\mathbf{x}), d)}_{\text{it can be MLP/SH}}
 $$
 
 where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.
@@ -301,6 +308,41 @@ caption="Tensorf Scene Representation."
 width="100%" 
 >}}
 
+### Rendering Process
+
+For a 3D point $\mathbf{x}$ and viewing direction $\mathbf{d}$:
+
+1. **Interpolate geometry features**: 
+   $$\mathbf{f}_{\sigma} = \text{interp}(\mathcal{G}_{\sigma}, \mathbf{x})$$
+
+2. **Compute density**: 
+   $$\sigma(\mathbf{x}) = \text{ReLU}(\mathbf{f}_{\sigma})$$
+
+3. **Interpolate appearance features**:
+   $$\mathbf{f}_{c} = \text{interp}(\mathcal{G}_{c}, \mathbf{x})$$
+
+4. **Predict color with small MLP or SH**:
+   $$\mathbf{c}(\mathbf{x}, \mathbf{d}) = \text{MLP/SH}([\mathbf{f}_{c}, \mathbf{d}])$$
+
+
+### Training Objective
+
+The optimization minimizes a composite loss:
+
+$$
+\mathcal{L} = \mathcal{L}_{\text{recon}} + \lambda_{\text{TV}} \mathcal{L}_{\text{TV}}
+$$
+
+where:
+- **Reconstruction loss**: $\mathcal{L}_{\text{recon}} = \|\mathbf{C} - \hat{\mathbf{C}}\|_2^2$ (MSE between rendered and ground truth colors)
+- **Total Variation (TV) regularization**: $\mathcal{L}_{\text{TV}}$ encourages spatial smoothness in the vector and matrix factors:
+
+$$
+\mathcal{L}_{\text{TV}} = \sum_{r} \left( \|\nabla \mathbf{v}_r\|_1 + \|\nabla \mathbf{M}_r\|_1 \right)
+$$
+
+TV regularization prevents overfitting and removes floaters/artifacts by enforcing piecewise-smooth geometry and appearance.
+
 
 ## Instant NGP
 
@@ -308,16 +350,16 @@ width="100%"
 
 {{< figure src="../../images/3dvis/instant-ngp-overview.png"
 num="9"
-caption="Instant-NGP Overview."
+caption="Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)→(4)→(3) to update hash table features."
 width="100%" 
 >}}
 
-Given a fully connected neural network $m(y; \Phi)$, we are interested in  
-an encoding of its inputs $y = \text{enc}(x; \theta)$ that improves the approximation quality and training speed across a wide range of applications  without incurring a notable performance overhead.  
+
+Given a fully connected neural network $m(y; \Phi)$, we are interested in an encoding of its inputs $y = \text{enc}(x; \theta)$ that improves the approximation quality and training speed across a wide range of applications without incurring a notable performance overhead.
 
 ### Multiresolution Hash Encoding
-Our neural network not only has trainable weight parameters $\Phi$, but also trainable encoding parameters $\theta$. These are arranged into $L$ levels, each containing up to $T$ feature vectors  
-with dimensionality $D$.
+
+Our neural network not only has trainable weight parameters $\Phi$, but also trainable encoding parameters $\theta$. These are arranged into $L$ levels, each containing up to $T$ feature vectors with dimensionality $F$.
 
 Each level (two of which are shown as red and blue in the figure) is independent and conceptually stores feature vectors at the vertices of a grid, the resolution of which is chosen to be a geometric progression between the coarsest and finest resolutions $[N_{\min}, N_{\max}]$:
 
@@ -331,29 +373,333 @@ $$
 
 $N_{\max}$ is chosen to match the finest detail in the training data. Due to the large number of levels $L$, the growth factor is usually small.
 
-We map each corner to an entry in the level’s respective feature vector array,  which has a fixed size of at most $T$.  For coarse levels where a dense grid requires fewer than $T$ parameters, i.e. $(N_l + 1)^d \leq T$, this mapping is $1\!:\!1$.
+### Growth Factor Derivation
+
+To create a geometric progression of resolutions from $N_{\min}$ to $N_{\max}$ over $L$ levels:
+
+$$N_l = N_{\min} \cdot b^l \quad \text{for } l = 0, 1, \ldots, L-1$$
+
+At the finest level ($l = L-1$), we want $N_{L-1} = N_{\max}$:
+
+$$N_{\min} \cdot b^{L-1} = N_{\max}$$
+
+Solving for $b$:
+
+$$b^{L-1} = \frac{N_{\max}}{N_{\min}}$$
+
+Take natural log of both sides:
+
+$$(L-1) \ln(b) = \ln(N_{\max}) - \ln(N_{\min})$$
+
+Therefore:
+
+$$b = \exp\left(\frac{\ln N_{\max} - \ln N_{\min}}{L - 1}\right)$$
+
+**Intuition**: We have $L$ levels, requiring $(L-1)$ multiplicative steps. The formula ensures each level's resolution is exactly $b$ times the previous level, creating a smooth exponential growth from coarse to fine detail.
 
 
-At finer levels, we use a hash function $h : \mathbb{Z}^d \rightarrow \mathbb{Z}_T$ to index into the array, effectively treating it as a hash table, although there is no explicit collision handling.  We rely instead on the gradient-based optimization to store appropriate sparse detail in the array, and the subsequent neural network $m(y; \Phi)$ for collision resolution.  
+We map each corner to an entry in the level's respective feature vector array, which has a fixed size of at most $T$. For coarse levels where a dense grid requires fewer than $T$ parameters, i.e. $(N_l + 1)^d \leq T$, this mapping is $1\!:\!1$.
 
-The number of trainable encoding parameters $\theta$ is therefore $\mathcal{O}(T)$ and bounded by $T \cdot L \cdot D$.
+At finer levels, we use a hash function $h : \mathbb{Z}^d \rightarrow \mathbb{Z}_T$ to index into the array, effectively treating it as a hash table, although there is no explicit collision handling. We rely instead on the gradient-based optimization to store appropriate sparse detail in the array, and the subsequent neural network $m(y; \Phi)$ for collision resolution.
 
-Uses a spatial hash function of the form
+The number of trainable encoding parameters $\theta$ is therefore $\mathcal{O}(T)$ and bounded by $T \cdot L \cdot F$.
+
+The spatial hash function has the form:
+
 $$
-h(\mathbf{x}) =
-\left( \sum_{i=1}^{d} x_i \, \pi_i \right)
-\bmod T,
-\tag{4}
+h(\mathbf{x}) = \left( \sum_{i=1}^{d} x_i \, \pi_i \right) \bmod T,
 $$
 
+where $\pi_i$ are unique large prime numbers (e.g., $\pi_1 = 1$, $\pi_2 = 2654435761$, $\pi_3 = 805459861$).
+
+### Feature Lookup and Interpolation
+
+For a query point $\mathbf{x}$, the encoding process at each resolution level $l$ involves:
+
+1. **Identify surrounding voxel**: Find the 8 corner vertices of the voxel containing $\mathbf{x}$ at resolution $N_l$
+2. **Hash each corner**: Apply $h(\mathbf{x}_i)$ to each of the 8 corners to get indices into the hash table
+3. **Retrieve features**: Look up the $F$-dimensional feature vectors $\mathbf{f}_i \in \mathbb{R}^F$ from the hash table
+4. **Trilinear interpolation**: Interpolate features based on $\mathbf{x}$'s position within the voxel:
+
+$$
+\mathbf{y}_l = \text{trilinear}\left(\{\mathbf{f}_i\}_{i=1}^{8}, \mathbf{x}\right) \in \mathbb{R}^F
+$$
+
+5. **Concatenate across all levels**: The final encoded representation is:
+
+$$
+y = \text{enc}(\mathbf{x}; \theta) = [\mathbf{y}_1, \mathbf{y}_2, \ldots, \mathbf{y}_L] \in \mathbb{R}^{L \cdot F}
+$$
+
+This encoded feature vector $y$ is then fed to the MLP $m(y; \Phi)$ for final prediction.
+
+### Network Architecture
+
+After hash encoding, a **compact MLP** processes the concatenated features. For NeRF applications:
+
+- **Input**: Encoded position features $y \in \mathbb{R}^{L \cdot F}$ concatenated with viewing direction $\mathbf{d}$
+- **Architecture**: 2 hidden layers with 64 neurons each (vs. original NeRF's 8 layers × 256 neurons)
+- **Activation**: ReLU
+- **Output**: RGB color $\mathbf{c} \in \mathbb{R}^3$ and volume density $\sigma \in \mathbb{R}$
+
+The forward pass is:
+
+$$
+\mathbf{c}, \sigma = m\left([\text{enc}(\mathbf{x}; \theta), \mathbf{d}]; \Phi\right)
+$$
+
+The dramatically smaller network (2 layers vs 8) is enabled by the expressive hash encoding, which offloads spatial feature learning from the MLP to the trainable hash table.
+
+### Collision Handling
+
+When multiple voxel corners hash to the same index in the hash table (a collision), no explicit resolution mechanism is used. Instead:
+
+- **Multi-resolution disambiguation**: The same 3D location maps to different indices at different resolution levels, providing redundancy
+- **Neural disambiguation**: The MLP $m(y; \Phi)$ learns to interpret ambiguous/collided features correctly during training
+- **Gradient-based prioritization**: Backpropagation naturally stores important features where gradients are high, while collisions in low-gradient regions have minimal impact
+- **Sparse detail**: The optimization focuses hash table capacity on regions with fine detail, letting collisions occur in smooth/empty areas
+
+This implicit collision handling is what allows a fixed-size hash table ($T \approx 2^{19}$ entries) to represent arbitrarily fine detail without explicit collision resolution overhead.
+
+### Hyperparameter Configuration
+
+Typical values for NeRF applications:
+
+- **Hash table size**: $T = 2^{19}$ (~524K entries)
+- **Feature dimension**: $F = 2$ per level
+- **Number of levels**: $L = 16$
+- **Resolution range**: $N_{\min} = 16$, $N_{\max} = 2048$
+- **Total encoding parameters**: $T \cdot L \cdot F \approx 16.8$ million
+
+Total trainable parameters (encoding + MLP) is still much smaller than original NeRF while achieving 20-60× faster training.
 
 ## 3DGS
+
 ### Overview
 {{< figure src="../../images/3dvis/3dgs-overview.png"
 num="10"
 caption="3DGS Overview"
 width="100%" 
 >}}
+
+The input to the method is a set of images of a static scene, together with the corresponding cameras calibrated by Structure-from-Motion (SfM), which produces a sparse point cloud as a side-effect.
+
+### Gaussian Parametrization
+
+From these sparse points, a set of 3D Gaussians is created, where each Gaussian is parametrized by:
+
+$$\mu \in \mathbb{R}^{3}: \text{center position (mean)}$$
+
+$$r \in \mathbb{R}^{4}: \text{rotation (using quaternion representation)}$$
+
+$$s \in \mathbb{R}^{3}: \text{scale factors}$$
+
+The covariance matrix $\Sigma \in \mathbb{R}^{3\times 3}$ is decomposed as:
+
+$$\Sigma = RSS^TR^T$$
+
+where:
+- $S \in \mathbb{R}^{3 \times 3}$ is a diagonal scaling matrix: $S = \text{diag}(s_x, s_y, s_z)$
+- $R \in \mathbb{R}^{3 \times 3}$ is a rotation matrix constructed from quaternion $r$: $R = \text{q2R}(r)$
+
+This parametrization ensures the covariance $\Sigma$ is positive semi-definite (PSD), which is required for valid Gaussians.
+
+### Rendering using Gaussians
+
+3DGS uses **spherical harmonics (SH)** to encode view-dependent appearance and uses $\alpha$-blending. Point-based $\alpha$-blending and NeRF-style volumetric rendering share essentially the same image formation model. The color $C$ along a ray is given by:
+
+$$
+C = \sum_{i=1}^{N} T_i (1 - \exp(-\sigma_i \delta_i)) c_i \quad \text{with} \quad T_i = \exp\left(-\sum_{j=1}^{i-1} \sigma_j \delta_j\right)
+$$
+
+where samples of density $\sigma$, transmittance $T$, and color $\mathbf{c}$ are taken along the ray with intervals $\delta_i$. This can be rewritten as:
+
+$$
+C = \sum_{i=1}^{N} T_i \alpha_i \mathbf{c}_i
+$$
+
+with
+
+$$
+\alpha_i = (1 - \exp(-\sigma_i \delta_i)) \quad \text{and} \quad T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
+$$
+
+For each pixel, the color and opacity of $N$ overlapping Gaussians are combined as:
+
+$$
+C = \sum_{i=1}^{N}c_i\alpha_i\prod_{j=1}^{i - 1}(1 - \alpha_j)
+$$
+
+The $\alpha_i$ value for each Gaussian is computed as:
+
+$$\alpha_i = o_i \cdot e^{-\frac{1}{2}(\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mathbf{x} - \mu_i)}$$
+
+where $o_i$ is the learned opacity parameter, ensuring $\alpha_i$ decreases as we move away from the Gaussian center $\mu_i$.
+
+### Projection to Screen Space
+
+To render 3D Gaussians, they must be projected to 2D screen space. Given camera extrinsic matrix $T$ and intrinsic matrix $K$:
+
+$$\hat{\mu} = KT[\mu, 1]^T$$
+$$\hat{\Sigma} = J W \Sigma W^T J^T$$
+
+where:
+- $\hat{\mu}$: 2D position on screen
+- $\hat{\Sigma}$: 2D covariance in screen space
+- $J$: Jacobian of the projection
+- $W = T$ (world-to-camera transformation)
+
+This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.
+
+
+### Adaptive Density Control
+
+Starting from the initial sparse SfM point cloud, the method adaptively controls the number of Gaussians and their density through densification and pruning operations.
+
+Two main scenarios require density adjustment:
+- **Under-reconstruction**: Regions with missing geometric features
+- **Over-reconstruction**: Regions where Gaussians cover excessively large areas
+
+#### Clone (Under-Reconstruction)
+
+For under-reconstructed regions, Gaussians with high positional gradients are **cloned**: a copy is created and moved in the direction of the positional gradient.
+
+#### Split (Over-Reconstruction)
+
+For over-reconstructed regions with large Gaussians:
+- Replace the original Gaussian with two smaller ones
+- Divide each scale component by 1.6 (as specified in the paper)
+- Initialize positions by sampling from the PDF of the original Gaussian
+
+#### Pruning
+
+Gaussians are removed to maintain efficiency:
+- Remove Gaussians with opacity $o < \epsilon$ (typically $\epsilon = 0.005$)
+- Reset opacity to near-zero every $K$ iterations (typically 3000 iterations) to force re-optimization
+- Remove Gaussians that are excessively large in world space
+
+{{< figure src="../../images/3dvis/3dgs_adc.png"
+num="11"
+caption="Adaptive Density Control in 3DGS"
+width="100%" 
+>}}
+
+
+---
+### Algorithm 1 Optimization and Densification
+$w, h$: width and height of the training images
+
+---
+<table style="border: none !important; border-collapse: collapse !important; width: 100%;">
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">$M \leftarrow$ SfM Points</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Positions</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">$S, C, A \leftarrow$ InitAttributes()</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Covariances, Colors, Opacities</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">$i \leftarrow 0$</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Iteration Count</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>while</strong> not converged <strong>do</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$V, \hat{I} \leftarrow$ SampleTrainingView()</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Camera $V$ and Image</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$I \leftarrow$ Rasterize$(M, S, C, A, V)$</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Alg. 2</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$L \leftarrow$ Loss$(I, \hat{I})$</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Loss</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$M, S, C, A \leftarrow$ Adam$(\nabla L)$</td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Backprop & Step</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinementIteration$(i)$ <strong>then</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for all</strong> Gaussians $(\mu, \Sigma, c, \alpha)$ <strong>in</strong> $(M, S, C, A)$ <strong>do</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha < \epsilon$ or IsTooLarge$(\mu, \Sigma)$ <strong>then</strong></td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Pruning</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RemoveGaussian()</td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p L > \tau_p$ <strong>then</strong></td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Densification</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\|S\| > \tau_S$ <strong>then</strong></td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Over-reconstruction</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SplitGaussian$(\mu, \Sigma, c, \alpha)$</td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>else</strong></td>
+<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Under-reconstruction</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CloneGaussian$(\mu, \Sigma, c, \alpha)$</td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$i \leftarrow i + 1$</td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>end while</strong></td>
+<td style="border: none !important; padding: 2px 0 !important;"></td>
+</tr>
+</table>
+<hr>
+
+### Training Loss
+
+The optimization uses a combination of L1 and SSIM losses:
+
+$$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}$$
+
+where $\lambda = 0.2$. This balances:
+- **L1 loss**: Pixel-wise color difference
+- **D-SSIM**: Structural similarity (captures perceptual quality)
+
 
 # Sparse Input
 ## DS NeRF

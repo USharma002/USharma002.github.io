@@ -39,11 +39,19 @@ summary: "about"
         </svg>
       </a>
     </div>
+  
+<div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
+  <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2025</h4>
+  <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.5rem;">
+    <strong>Favourite Game This Year:</strong> Expedition 33
+  </p>
+</div>
+
   </div>
 </section>
 
-<hr style="margin: 3rem auto; max-width: 900px; border: none; border-top: 1px solid #ddd;">
-
+<hr style="margin: 2rem auto; max-width: 900px; border: none; border-top: 1px solid #ddd;">
+<!-- --- -->
 <section style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
   <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Projects</h3>
   
