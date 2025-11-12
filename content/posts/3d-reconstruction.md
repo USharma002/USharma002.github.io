@@ -500,7 +500,7 @@ $$\Sigma = RSS^TR^T$$
 
 where:
 - $S \in \mathbb{R}^{3 \times 3}$ is a diagonal scaling matrix: $S = \text{diag}(s_x, s_y, s_z)$
-- $R \in \mathbb{R}^{3 \times 3}$ is a rotation matrix constructed from quaternion $r$: $R = \text{q2R}(r)$
+- $R \in SO(3)$ is a rotation matrix constructed from quaternion $r$: $R = \text{q2R}(r)$
 
 This parametrization ensures the covariance $\Sigma$ is positive semi-definite (PSD), which is required for valid Gaussians.
 
@@ -550,6 +550,12 @@ where:
 - $W = T$ (world-to-camera transformation)
 
 This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.
+
+{{< figure src="../../images/3dvis/3dgs-projection.png"
+num="9"
+caption="When projecting a Gaussian particle from 3D space onto the camera image plane, Monte Carlo sampling (left) provides the most accurate estimate but is costly to compute. EWA Splatting formulation used in approximates the projection function via linearization, which requires a dedicated Jacobian J for each camera model and leads to approximation errors with increasing distortion. Unscented Transform instead approximates the particle with Sigma points than can be projected exactly and from which the 2D conic can then be estimated."
+width="100%" 
+>}}
 
 
 ### Adaptive Density Control

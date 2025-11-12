@@ -606,6 +606,202 @@ width="100%"
 
 From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to "attend" more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some "shortcuts" like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model **might** be trying to do but is not an explaination of why it predicted a certain class for an image.
 
+## ViT Decoder
+
+The ViT Decoder generates or reconstructs image patches by attending to both its own tokens and the encoded image features. It consists of three main components and can operate in two modes: parallel reconstruction or autoregressive generation.
+
+### Masked Self Attention BLock
+
+This allows the decoder to consider only past tokens in the sequence by applying a causal mask, ensuring predictions are autoregressive and do not peek into the future. The mask sets the upper triangular attention scores to $-\infty$, effectively preventing access to future positions.
+
+```python
+causal_mask = torch.tril(torch.ones(T, T)).to(device)
+```
+
+Note: 
+- The causal mask is only required for autoregressive generation where patches are predicted sequentially. For parallel reconstruction tasks (like image reconstruction or masked autoencoding), set ```mask=None``` to allow bidirectional attention, which is more suitable for vision tasks where spatial relationships are non-sequential.
+- When ```mask=None```, this behaves as standard self-attention (suitable for parallel reconstruction).
+
+{{< 
+figure src="../../images/transformer/attention_comparison.png"
+num="17"
+id="fig-attention-viz"
+caption="Masked Self Attention"
+width="100%" 
+>}}
+
+```python
+class MaskedSelfAttentionBlock(nn.Module):
+    def __init__(self, d_model, d_k):
+        super().__init__()
+        self.d_k = d_k
+        self.Wq = nn.Linear(d_model, d_k)
+        self.Wk = nn.Linear(d_model, d_k)
+        self.Wv = nn.Linear(d_model, d_k) # d_v = d_k for now
+
+        self.scores = None
+        self.attention = None
+
+    def forward(self, x, mask = None):
+        Q = self.Wq(x)  # (B, T, d_k)
+        K = self.Wk(x)  # (B, T, d_k)
+        V = self.Wv(x)  # (B, T, d_v)
+        
+        self.scores = torch.matmul(Q, K.transpose(-2, -1)) / (self.d_k ** 0.5)  # (B, T, T)
+
+        if mask is not None:
+            self.scores = self.scores.masked_fill(mask == 0, float('-inf')) 
+
+        self.attention = torch.softmax(self.scores, dim=-1)
+        self.attention = torch.nan_to_num(self.attention, nan=0.0)  
+        return torch.matmul(self.attention, V)  # (B, T, d_v)
+```
+
+Now using the above Masked Self-Attention Block, we can have multiple heads:
+
+```python
+class MaskedMultiHeadAttention(nn.Module):
+    def __init__(self, d_model, d_k, d_v, num_heads):
+        super().__init__()
+        self.num_heads = num_heads
+        self.heads = nn.ModuleList([MaskedSelfAttentionBlock(d_model, d_k) for _ in range(num_heads)])
+        self.Wo = nn.Linear(num_heads*d_v, d_model)
+
+    def forward(self, x, mask=None):
+        # x: (B, L, d_model)
+        head_outputs = [head(x, mask) for head in self.heads] # list of (B, T, d_v)
+        Z = torch.cat(head_outputs, dim=-1)                   # (B, T, num_heads*d_v)
+        O = self.Wo(Z)                                        # (B, T, d_model)
+        return O                                              # residual
+```
+
+
+### Cross Attention
+The cross-attention layer allows the decoder to query information from the encoder's output. The decoder's queries ($Q$) attend to keys ($K$) and values ($V$) derived from the encoder, integrating the rich image representations with the decoding process.
+
+Key difference from self-attention: $K$ and $V$ come from the encoder output, while $Q$ comes from the decoder's hidden state.
+
+
+```python
+class CrossAttentionBlock(nn.Module):
+    def __init__(self, d_model, d_k):
+        super().__init__()
+        self.d_k = d_k
+        self.Wq = nn.Linear(d_model, d_k)
+        self.Wk = nn.Linear(d_model, d_k)
+        self.Wv = nn.Linear(d_model, d_k)
+
+        self.scores = None
+        self.attention = None
+
+    def forward(self, x, encoder_output):
+        Q = self.Wq(x)  # (B, T, d_k)
+        K = self.Wk(encoder_output)  # (B, T, d_k)
+        V = self.Wv(encoder_output)  # (B, T, d_k)
+
+        self.scores = torch.matmul(Q, K.transpose(-2, -1)) / (self.d_k ** 0.5)  # (B, T, T)
+
+        self.attention = torch.softmax(self.scores, dim=-1) 
+    
+        return torch.matmul(self.attention, V)  # (B, T, d_k)
+```
+
+Multi-head version:
+
+```python
+class CrossMultiHeadAttention(nn.Module):
+    def __init__(self, d_model, d_k, d_v, num_heads):
+        super().__init__()
+        self.num_heads = num_heads
+        self.heads = nn.ModuleList([CrossAttentionBlock(d_model, d_k) for _ in range(num_heads)])
+        self.Wo = nn.Linear(num_heads*d_v, d_model)
+
+    def forward(self, x, encoder_output):
+        # x: (B, L, d_model)
+        head_outputs = [head(x, encoder_output) for head in self.heads]       # list of (B, T, d_v)
+        Z = torch.cat(head_outputs, dim=-1)                   # (B, T, num_heads*d_v)
+        O = self.Wo(Z)                                        # (B, T, d_model)
+        return O                                              # residual
+```
+
+### Decoder Block
+
+Putting everything together in a decoder block. The architecture follows the standard Transformer decoder design:
+
+- **Masked Self-Attention** - Attend to previous tokens (with optional causal mask)
+- **Cross-Attention** - Attend to encoder features
+- **Feed-Forward Network** - Process the combined information
+
+{{< figure src="../../images/transformer/transformer_architecture.svg"
+num="1"
+caption="Transformer Architecture"
+width="50%" 
+>}}
+
+```python
+class ViTDecoderBlock(nn.Module):
+    def __init__(self, d_model, d_ff=2048, num_heads=8, dropout=0.1):
+        super().__init__()
+        d_v = d_k = d_model // num_heads
+        
+        self.masked_attention = MaskedMultiHeadAttention(d_model, d_k, d_v, num_heads)
+        self.cross_attention = CrossMultiHeadAttention(d_model, d_k, d_v, num_heads)
+        self.feed_forward = FeedForwardLayer(d_ff, d_model)
+        
+        self.masked_attn_norm = nn.LayerNorm(d_model)
+        self.cross_attn_norm = nn.LayerNorm(d_model)
+        self.ff_norm = nn.LayerNorm(d_model)
+        
+        self.dropout = nn.Dropout(dropout)
+    
+    def forward(self, x, encoder_output, mask = None):
+        x = x + self.dropout(self.masked_attention(self.masked_attn_norm(x), mask))
+        x = x + self.dropout(self.cross_attention(self.cross_attn_norm(x), encoder_output))
+        x = x + self.dropout(self.feed_forward(self.ff_norm(x)))
+        return x
+```
+
+The full decoder that can handle both autoregressive and parallel generation:
+
+```python
+class ViTDecoder(nn.Module):
+    def __init__(self, img_size=32, patch_size=4, d_model=128, 
+                 num_heads=4, d_ff=512, depth=4, dropout=0.1):
+        super().__init__()
+        
+        num_patches = (img_size // patch_size) ** 2
+        
+        # Learnable mask token (represents missing/to-be-generated patches)
+        self.mask_token = nn.Parameter(torch.zeros(1, 1, d_model))
+        
+        # Positional embeddings for spatial information
+        self.pos_embed = LearnablePositionalEmbedding(num_patches, d_model)
+        
+        self.decoder_blocks = nn.ModuleList([
+            ViTDecoderBlock(d_model, d_ff, num_heads, dropout)
+            for _ in range(depth)
+        ])
+        
+        self.norm = nn.LayerNorm(d_model)
+        self.patch_size = patch_size
+        self.num_patches = num_patches
+    
+    def forward(self, encoder_output, mask=None):
+        B = encoder_output.shape[0]
+        
+        # Create mask tokens for all patches
+        mask_tokens = self.mask_token.expand(B, self.num_patches, -1)
+        
+        # Add positional information
+        x = self.pos_embed(mask_tokens)
+        
+        # Cross-attend to encoder features
+        for block in self.decoder_blocks:
+            x = block(x, encoder_output, mask)
+        
+        return self.norm(x)
+```
+
 ## References
 
 1. Vaswani, Ashish, et al. *“Attention Is All You Need.”* *Advances in Neural Information Processing Systems (NeurIPS 2017)*, 2017. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762).

@@ -1,29 +1,46 @@
+{{/* ---------- Reset on first figure per page ---------- */}}
+{{- if not (.Page.Scratch.Get "figureInit") -}}
+  {{- .Page.Scratch.Delete "figureIDs" -}}
+  {{- .Page.Scratch.Set "figureIDs" (dict) -}}
+  {{- .Page.Scratch.Set "figureCount" 0 -}}
+  {{- .Page.Scratch.Set "figureInit" true -}}
+{{- end -}}
+
+{{/* ---------- Get next number ---------- */}}
+{{- $figIDs := .Page.Scratch.Get "figureIDs" | default (dict) -}}
+{{- $count := .Page.Scratch.Get "figureCount" | default 0 -}}
+{{- $num := add $count 1 -}}
+{{- .Page.Scratch.Set "figureCount" $num -}}
+
+{{- $id := .Get "id" | default (printf "fig-%d" $num) -}}
+
+{{/* ---------- Register this figure ---------- */}}
+{{- $figIDs = merge $figIDs (dict (printf "%d" $num) $id) -}}
+
+{{- if .Get "name" -}}
+  {{- $figIDs = merge $figIDs (dict (printf "%v" (.Get "name")) $id) -}}
+{{- end -}}
+
+{{- if .Get "id" -}}
+  {{- $figIDs = merge $figIDs (dict (.Get "id") $id) -}}
+{{- end -}}
+
+{{- .Page.Scratch.Set "figureIDs" $figIDs -}}
+
+{{/* ---------- Other params ---------- */}}
 {{- $src := .Get "src" -}}
 {{- $alt := .Get "alt" | default "" -}}
 {{- $caption := .Get "caption" | default "" -}}
 {{- $width := .Get "width" | default "80%" -}}
-{{- $num := .Get "num" | default "" -}}
-{{- $id := .Get "id" | default (printf "fig-%s" $num) -}}
 
-<figure id="{{ $id }}" style="text-align: center; margin: 2em auto; max-width: {{ $width }}; scroll-margin-top: 80px;">
-  {{- if .Get "link" -}}
-  <a href="{{ .Get "link" }}">
-  {{- end -}}
-  
-  <img src="{{ $src }}" 
-       alt="{{ $alt }}" 
-       style="width: 100%; height: auto; border-radius: 8px;">
-  
-  {{- if .Get "link" -}}
-  </a>
-  {{- end -}}
-  
-  {{- if or $num $caption -}}
-  <figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);">
-    {{- if $num -}}
-    <span style="font-weight: 600; user-select: none; color: var(--primary);">Figure {{ $num }}. </span>
-    {{- end -}}
-    {{ $caption | markdownify }}
-  </figcaption>
+<figure id="{{ $id }}" style="text-align:center;margin:2em auto;max-width:{{ $width }};scroll-margin-top:80px;">
+  {{- if .Get "link" -}}<a href="{{ .Get "link" }}">{{ end -}}
+  <img src="{{ $src }}" alt="{{ $alt }}" style="width:100%;height:auto;border-radius:8px;">
+  {{- if .Get "link" -}}</a>{{ end -}}
+  {{- if $caption -}}
+    <figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure {{ $num }}.</span>
+      {{ $caption | markdownify }}
+    </figcaption>
   {{- end -}}
 </figure>

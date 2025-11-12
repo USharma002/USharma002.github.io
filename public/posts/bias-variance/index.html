@@ -254,15 +254,15 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
 <h2 id="graphical-definition">Graphical Definition<a hidden class="anchor" aria-hidden="true" href="#graphical-definition">#</a></h2>
 <p>We can create a graphical visualization of bias and variance using a bulls-eye diagram. Imagine that the center of the target is a model that perfectly predicts the correct values. As we move away from the bulls-eye, our predictions get worse and worse. Imagine we can repeat our entire model building process to get a number of separate hits on the target. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well and we are close to the bulls-eye, while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. These different realizations result in a scatter of hits on the target.</p>
 <p>We can plot four different cases representing combinations of both high and low bias and variance.</p>
-<figure id="fig-bulls-eye" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_bulls_eye.png" 
-       alt="" 
-       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 1. </span>Bias and variance visualized using a bulls-eye diagram: Each dot is a model trained on a random dataset. High bias: far from target center. High variance: scattered dots. Low bias and variance: tight cluster near center.
-  </figcaption></figure>
+<figure id="fig-bulls-eye" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/bias-variance/bias_variance_bulls_eye.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
+      Bias and variance visualized using a bulls-eye diagram: Each dot is a model trained on a random dataset. High bias: far from target center. High variance: scattered dots. Low bias and variance: tight cluster near center.
+    </figcaption></figure>
 
-<figure id="fig-complexity" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_model_complexity.png" 
-       alt="" 
-       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 2. </span>How bias and variance change with model complexity. Low-complexity (left): high bias, low variance. High-complexity (right): low bias, high variance — a classic overfitting/underfitting curve.
-  </figcaption></figure>
+<figure id="fig-complexity" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/bias-variance/bias_variance_model_complexity.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
+      How bias and variance change with model complexity. Low-complexity (left): high bias, low variance. High-complexity (right): low bias, high variance — a classic overfitting/underfitting curve.
+    </figcaption></figure>
 
 <h2 id="mathematical-definition">Mathematical Definition<a hidden class="anchor" aria-hidden="true" href="#mathematical-definition">#</a></h2>
 <p>Assuming we are in a regression setting with dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ with $y\in \mathbb{R}$, we define the following:</p>
@@ -402,15 +402,15 @@ $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$<p>I can  si
 <p>The (unknown) true function used for experiments is:</p>
 $$
 f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
-$$<figure id="fig-true-function" style="text-align: center; margin: 2em auto; max-width: 70%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/true_function.png" 
-       alt="" 
-       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 3. </span>True underlying cubic function used for bias-variance experiments. Models attempt to recover this from noisy training data.
-  </figcaption></figure>
+$$<figure id="fig-true-function" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/bias-variance/true_function.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
+      True underlying cubic function used for bias-variance experiments. Models attempt to recover this from noisy training data.
+    </figcaption></figure>
 
-<figure id="fig-poly-degrees" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/polynomial_degrees.png" 
-       alt="" 
-       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 4. </span>Polynomial regression fits for varying degrees. Underfitting for low degree; overfitting and oscillations for very high degree.
-  </figcaption></figure>
+<figure id="fig-poly-degrees" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/bias-variance/polynomial_degrees.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
+      Polynomial regression fits for varying degrees. Underfitting for low degree; overfitting and oscillations for very high degree.
+    </figcaption></figure>
 
 <hr>
 <h2 id="interactive-demo">Interactive Demo<a hidden class="anchor" aria-hidden="true" href="#interactive-demo">#</a></h2>
@@ -533,10 +533,10 @@ $$<figure id="fig-true-function" style="text-align: center; margin: 2em auto; ma
 <li><strong>Bias quickly drops to zero</strong> by degree 3 (the true function’s degree).</li>
 <li><strong>Variance increases modestly</strong> for low degrees, but explodes as the condition number becomes large ($\gtrsim 10^9$).</li>
 </ul>
-<figure id="fig-bias-variance-unregularized" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_stacked.png" 
-       alt="" 
-       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 5. </span>Stacked bar chart of bias, variance, and irreducible error for polynomial regression with no regularization (α=0).
-  </figcaption></figure>
+<figure id="fig-bias-variance-unregularized" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/bias-variance/bias_variance_stacked.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
+      Stacked bar chart of bias, variance, and irreducible error for polynomial regression with no regularization (α=0).
+    </figcaption></figure>
 
 <hr>
 <h3 id="with-regularization---degree">With Regularization ($\alpha = 0.1$ × degree)<a hidden class="anchor" aria-hidden="true" href="#with-regularization---degree">#</a></h3>
@@ -656,10 +656,10 @@ $$<figure id="fig-true-function" style="text-align: center; margin: 2em auto; ma
 <li><strong>Condition number</strong> stays manageable, preventing numerical instability.</li>
 <li><strong>Bias increases only minimally</strong>, a small price for much lower variance at high degrees.</li>
 </ul>
-<figure id="fig-bias-variance-regularized" style="text-align: center; margin: 2em auto; max-width: 100%; scroll-margin-top: 80px;"><img src="../../images/bias-variance/bias_variance_stacked_regularized.png" 
-       alt="" 
-       style="width: 100%; height: auto; border-radius: 8px;"><figcaption style="margin-top: 0.5em; font-size: 0.9em; color: var(--secondary);"><span style="font-weight: 600; user-select: none; color: var(--primary);">Figure 6. </span>Stacked bar chart of bias, variance, and irreducible error for polynomial regression with adaptive regularization (α = 0.1 × degree).
-  </figcaption></figure>
+<figure id="fig-bias-variance-regularized" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/bias-variance/bias_variance_stacked_regularized.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
+      Stacked bar chart of bias, variance, and irreducible error for polynomial regression with adaptive regularization (α = 0.1 × degree).
+    </figcaption></figure>
 
 <hr>
 <h3 id="k-nearest-neighbor-interactive-example">K-Nearest Neighbor Interactive Example<a hidden class="anchor" aria-hidden="true" href="#k-nearest-neighbor-interactive-example">#</a></h3>
