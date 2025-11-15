@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;24 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;27 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -307,11 +307,21 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#depth-supervised-nerf" aria-label="Depth-supervised NeRF">Depth-supervised NeRF</a><ul>
                         
                 <li>
+                    <a href="#overview-5" aria-label="Overview">Overview</a></li>
+                <li>
                     <a href="#volumetric-rendering-revisited" aria-label="Volumetric Rendering Revisited">Volumetric Rendering Revisited</a></li>
                 <li>
                     <a href="#ray-distribution" aria-label="Ray Distribution">Ray Distribution</a></li>
                 <li>
                     <a href="#idealized-distribution" aria-label="Idealized distribution">Idealized distribution</a></li></ul>
+                </li>
+                <li>
+                    <a href="#deriving-depth-supervision" aria-label="Deriving Depth Supervision">Deriving Depth Supervision</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#ray-distribution-loss" aria-label="Ray Distribution Loss">Ray Distribution Loss</a></li></ul>
+                    </ul>
                 </li>
                 <li>
                     <a href="#vip-nerf" aria-label="VIP NeRF">VIP NeRF</a></li>
@@ -320,7 +330,33 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#fsgs" aria-label="FSGS">FSGS</a></li>
                 <li>
-                    <a href="#cor-3dgs" aria-label="Cor 3DGS">Cor 3DGS</a></li>
+                    <a href="#cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization" aria-label="CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization">CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization</a><ul>
+                        
+                <li>
+                    <a href="#overview-6" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#point-disagreement" aria-label="Point Disagreement">Point Disagreement</a></li>
+                <li>
+                    <a href="#rendering-disagreement" aria-label="Rendering Disagreement">Rendering Disagreement</a></li>
+                <li>
+                    <a href="#reconstruction-quality-evaluation" aria-label="Reconstruction Quality Evaluation">Reconstruction Quality Evaluation</a></li>
+                <li>
+                    <a href="#method-1" aria-label="Method">Method</a></li>
+                <li>
+                    <a href="#co-pruning" aria-label="Co-pruning">Co-pruning</a></li>
+                <li>
+                    <a href="#pseudo-view-co-regularization" aria-label="Pseudo-view Co-regularization">Pseudo-view Co-regularization</a><ul>
+                        
+                <li>
+                    <a href="#sampling-pseudo-views" aria-label="Sampling pseudo-views">Sampling pseudo-views</a></li></ul>
+                </li>
+                <li>
+                    <a href="#color-co-regularization" aria-label="Color co-regularization">Color co-regularization</a></li>
+                <li>
+                    <a href="#ground-truth-supervision" aria-label="Ground-truth supervision">Ground-truth supervision</a></li>
+                <li>
+                    <a href="#final-loss" aria-label="Final loss">Final loss</a></li></ul>
+                </li>
                 <li>
                     <a href="#dust3r" aria-label="Dust3R">Dust3R</a></li>
                 <li>
@@ -984,34 +1020,175 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <h1 id="sparse-input">Sparse Input<a hidden class="anchor" aria-hidden="true" href="#sparse-input">#</a></h1>
 <h2 id="depth-supervised-nerf">Depth-supervised NeRF<a hidden class="anchor" aria-hidden="true" href="#depth-supervised-nerf">#</a></h2>
 <p>A commonly observed failure mode of Neural Radiance Field (NeRF) is fitting incorrect geometries when given an insufficient number of input views. One potential reason is that standard volumetric rendering does not enforce the constraint that most of a scene’s geometry consist of empty space and opaque surfaces.</p>
+<h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
 <p><strong>Key idea</strong> Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as &ldquo;free&rdquo; depth super-
 vision during training:</p>
+<figure id="fig-14" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
+      NeRF Overview
+    </figcaption></figure>
+
 <h3 id="volumetric-rendering-revisited">Volumetric Rendering Revisited<a hidden class="anchor" aria-hidden="true" href="#volumetric-rendering-revisited">#</a></h3>
 <p>To render a 2D image given a pose P, we cast rays r
 originating from the P’s center of projection o in direction d
 derived from its intrinsics.  We integrate the implicit radiance
 field along this ray to compute the incoming radiance from any object that lies along d:</p>
-<p>C =
-Z ∞
-0
-T (t)σ(t)c(t)dt,</p>
-<p>here t parameterizes the aforementioned ray as r(t) =
+$$
+C = \int_{0}^{\infty} T(t)\,\sigma(t)\,c(t)\,dt.
+$$<p>here t parameterizes the aforementioned ray as r(t) =
 o + td and T (t) = exp(− R t
 0 σ(s)ds) checks for occlusions
 by integrating the differential density between 0 to t</p>
 <h3 id="ray-distribution">Ray Distribution<a hidden class="anchor" aria-hidden="true" href="#ray-distribution">#</a></h3>
 <p>$h(t) = T(t)\sigma{(t)}$ is a continuous probability distribution over ray distance $t$ that describes the likelihood of a ray terminating at $t$. Due to practical constraints, NeRFs assume scene lies between a near and far bound $(t_n, t_f)$. To Ensure $h(t)$. To ensure $h(t)$ sums to one, NeRF implementation often treat $t_f$ as opaque wall. With this definition, the rendered color can be written as an expectation:</p>
-<p>C =
-Z ∞
-0
-h(t)c(t)dt = Eh(t)[c(t)].</p>
-<h3 id="idealized-distribution">Idealized distribution<a hidden class="anchor" aria-hidden="true" href="#idealized-distribution">#</a></h3>
-<p>The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrivt the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image</p>
-<h2 id="vip-nerf">VIP NeRF<a hidden class="anchor" aria-hidden="true" href="#vip-nerf">#</a></h2>
+$$
+C = \int_{0}^{\infty} h(t)\,c(t)\,dt 
+    = \mathbb{E}_{h(t)}[\,c(t)\,].
+$$<h3 id="idealized-distribution">Idealized distribution<a hidden class="anchor" aria-hidden="true" href="#idealized-distribution">#</a></h3>
+<p>The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrict the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image  point with a closes-surface depth of $D$ should be $\delta (t - D)$. This insight motivates the depth-supervised ray termination loss.</p>
+<h2 id="deriving-depth-supervision">Deriving Depth Supervision<a hidden class="anchor" aria-hidden="true" href="#deriving-depth-supervision">#</a></h2>
+<p>Most NeRF pipelines require images together with their camera matrices $(P_1, P_2, \dots)$, typically estimated using an SfM system such as COLMAP. SfM uses bundle adjustment, which also outputs:</p>
+<ul>
+<li>a set of reconstructed 3D keypoints $\mathcal{X} = \{ X_i \in \mathbb{R}^3 \}$,</li>
+<li>and visibility sets $\mathcal{X}_j \subset \mathcal{X}$, where $\mathcal{X}_j$ contains the keypoints visible in camera $j$.</li>
+</ul>
+<p>Given an image $I_j$ and its camera matrix $P_j$, the depth of a visible keypoint $X_i \in \mathcal{X}_j$ is computed by projecting $X_i$ through $P_j$ and taking the reprojected $z$-value as the keypoint’s depth: $D_{ij}.$</p>
+<p><strong>Depth Uncertainty</strong></p>
+<p>These depth estimates $D_{ij}$ are noisy due to imperfect matches, inaccurate camera parameters, or suboptimal COLMAP optimization. The reliability of a keypoint $X_i$ can be measured using its average  reprojection error $\hat{\sigma}_i$ across all views in which it appears.</p>
+<p>Model the true depth along the ray as a Gaussian random variable:
+</p>
+$$
+D_{ij} \sim \mathcal{N}(D_{ij},\, \hat{\sigma}_i^2).
+$$<p>A perfect depth measurement would correspond to a delta distribution $\delta(t - D_{ij})$. To align NeRF’s termination distribution $h_{ij}(t)$ with the noisy supervision, we minimize the KL divergence:</p>
+$$
+\mathbb{E}_{D_{ij}}
+\left[
+\mathrm{KL}\big( \delta(t - D_{ij}) \,\|\, h_{ij}(t) \big)
+\right]=
+\mathrm{KL}\big( \mathcal{N}(D_{ij},\, \hat{\sigma}_i^{\,2}) \,\|\, h_{ij}(t) \big)+ \text{const}.
+$$<hr>
+<h4 id="ray-distribution-loss">Ray Distribution Loss<a hidden class="anchor" aria-hidden="true" href="#ray-distribution-loss">#</a></h4>
+<p>This leads to the following probabilistic depth-supervision loss:</p>
+$$
+\mathcal{L}_{\text{Depth}} =
+\mathbb{E}_{X_i \in \mathcal{X}_j}
+\left[-\int\log h(t)\;\exp\!\left(-\frac{(t - D_{ij})^2}{2 \hat{\sigma}_i^{\,2}}\right)dt\right].
+$$<p>Discretizing along ray samples $t_k$ gives:</p>
+$$
+\mathcal{L}_{\text{Depth}}
+\approx
+\mathbb{E}_{X_i \in \mathcal{X}_j}
+\left[-
+\sum_k
+\log h_k\;
+\exp\!\left(-\frac{(t_k - D_{ij})^2}{2 \hat{\sigma}_i^{\,2}}
+\right)
+\Delta t_k
+\right].
+$$<p>The full NeRF loss combines color reconstruction with depth supervision:</p>
+$$
+\mathcal{L}=
+\mathcal{L}_{\text{Color}}+
+\lambda_D \, \mathcal{L}_{\text{Depth}}.
+$$<h2 id="vip-nerf">VIP NeRF<a hidden class="anchor" aria-hidden="true" href="#vip-nerf">#</a></h2>
 <h2 id="midas">MiDAS<a hidden class="anchor" aria-hidden="true" href="#midas">#</a></h2>
 <h2 id="fsgs">FSGS<a hidden class="anchor" aria-hidden="true" href="#fsgs">#</a></h2>
-<h2 id="cor-3dgs">Cor 3DGS<a hidden class="anchor" aria-hidden="true" href="#cor-3dgs">#</a></h2>
-<h2 id="dust3r">Dust3R<a hidden class="anchor" aria-hidden="true" href="#dust3r">#</a></h2>
+<h2 id="cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization<a hidden class="anchor" aria-hidden="true" href="#cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">#</a></h2>
+<h3 id="overview-6">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-6">#</a></h3>
+<p>Two 3D Gaussian radiance fields trained from the same sparse set of views can exhibit different behaviors. By training two fields simultaneously and measuring their disagreement throughout training, one can analyze the consistency of the learned geometry and appearance. Because ground-truth supervision is applied only on training views, rendering disagreement is evaluated on unseen views.</p>
+<p>A notable pattern is that disagreement increases significantly during <strong>densification</strong>, a phase in which new Gaussians are created but placed without strong geometric constraints. This randomness can introduce geometric errors in sparse-view 3DGS.</p>
+<p><strong>Key Point:</strong> Both <strong>point disagreement</strong> (differences in Gaussian positions) and <strong>rendering disagreement</strong> (differences in rendered appearance or depth) are typically <strong>negatively correlated</strong> with reconstruction accuracy.</p>
+<figure id="fig-15" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/corgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
+      NeRF Overview
+    </figcaption></figure>
+
+<h3 id="point-disagreement">Point Disagreement<a hidden class="anchor" aria-hidden="true" href="#point-disagreement">#</a></h3>
+<p>When treating the 3D positions of Gaussians in two radiance fields as point clouds, their geometric differences can be quantified using <strong>Fitness</strong> and <strong>RMSE</strong>, metrics commonly used in point-cloud registration.</p>
+<ul>
+<li><strong>Fitness</strong>: measures the fraction of points that successfully form correspondences within a maximum distance threshold $\tau = 5$. Higher Fitness indicates better overlap.</li>
+<li><strong>RMSE</strong>: computes the root mean square of distances between corresponding points, reflecting the average positional discrepancy.</li>
+</ul>
+<hr>
+<h3 id="rendering-disagreement">Rendering Disagreement<a hidden class="anchor" aria-hidden="true" href="#rendering-disagreement">#</a></h3>
+<p>Differences between radiance fields can also be evaluated in image space.</p>
+<ul>
+<li><strong>PSNR</strong> is used to measure disagreement between rendered RGB images.</li>
+<li><strong>Relative Absolute Error (absErrorRel)</strong> is used for depth-map comparison and is widely adopted for assessing depth estimation accuracy.</li>
+</ul>
+<hr>
+<h3 id="reconstruction-quality-evaluation">Reconstruction Quality Evaluation<a hidden class="anchor" aria-hidden="true" href="#reconstruction-quality-evaluation">#</a></h3>
+<p>Reconstruction fidelity is typically measured by comparing rendered test-view images against ground-truth images using <strong>PSNR</strong>.</p>
+<p>For a more comprehensive assessment, ground-truth Gaussian positions and depth maps can be obtained by training a 3D Gaussian radiance field using dense multi-view data. Evaluation then includes:</p>
+<ul>
+<li><strong>Fitness</strong> and <strong>RMSE</strong> for geometric accuracy.</li>
+<li><strong>absErrorRel</strong> for depth accuracy.</li>
+</ul>
+<h3 id="method-1">Method<a hidden class="anchor" aria-hidden="true" href="#method-1">#</a></h3>
+<p>CoR-GS identifies and suppresses inaccurate reconstructions using <strong>point disagreement</strong> and <strong>rendering disagreement</strong>. Two 3D Gaussian radiance fields are trained in parallel:
+</p>
+$$
+\Theta_1 = \{\theta^1_i\}, \qquad
+\Theta_2 = \{\theta^2_i\}.
+$$<p>
+Only one field is kept for inference; the other is used to detect disagreement.<br>
+The following describes the process for $\Theta_1$ (the procedure for $\Theta_2$ is identical).</p>
+<hr>
+<h3 id="co-pruning">Co-pruning<a hidden class="anchor" aria-hidden="true" href="#co-pruning">#</a></h3>
+<p>Densification may create Gaussians that are poorly aligned with scene geometry, especially under sparse-view supervision.<br>
+Co-pruning removes Gaussians whose positions disagree across the two fields.</p>
+<p><strong>Nearest-neighbor correspondence</strong>
+</p>
+$$
+f(\theta^1_i) = \mathrm{KNN}(\theta^1_i, \Theta_2). 
+$$<p><strong>Non-matching mask</strong>
+A Gaussian is flagged if its nearest counterpart differs by more than $\tau = 5$:
+</p>
+$$
+M_i =
+\begin{cases}
+1, &
+\sqrt{
+(\theta^1_{xi} - f(\theta^1_i)_x)^2 +
+(\theta^1_{yi} - f(\theta^1_i)_y)^2 +
+(\theta^1_{zi} - f(\theta^1_i)_z)^2
+} > \tau,\\[4pt]
+0, & \text{otherwise}.
+\end{cases}
+$$<p><strong>Pruning</strong>
+All Gaussians with $M_i = 1$ are removed.<br>
+Co-pruning is performed every few (e.g., 5) optimization/density-control interleaves.</p>
+<hr>
+<h3 id="pseudo-view-co-regularization">Pseudo-view Co-regularization<a hidden class="anchor" aria-hidden="true" href="#pseudo-view-co-regularization">#</a></h3>
+<h4 id="sampling-pseudo-views">Sampling pseudo-views<a hidden class="anchor" aria-hidden="true" href="#sampling-pseudo-views">#</a></h4>
+<p>Pseudo-views are sampled using nearby training cameras:
+</p>
+$$
+P' = (t + \epsilon,\, q),
+$$<p>
+where $t$ is a training camera position, $\epsilon \sim \mathcal{N}(0,\sigma^2)$,<br>
+and $q$ is an averaged quaternion from the two nearest cameras.</p>
+<h3 id="color-co-regularization">Color co-regularization<a hidden class="anchor" aria-hidden="true" href="#color-co-regularization">#</a></h3>
+<p>Render $I'^1$ and $I'^2$ from $\Theta_1$ and $\Theta_2$ at the pseudo-view, and enforce consistency:
+</p>
+$$
+\mathcal{R}_{pcolor}=
+(1-\lambda)\,\mathcal{L}_1(I'^1, I'^2)+
+\lambda\,\mathcal{L}_{\mathrm{D\text{-}SSIM}}(I'^1, I'^2).
+$$<h3 id="ground-truth-supervision">Ground-truth supervision<a hidden class="anchor" aria-hidden="true" href="#ground-truth-supervision">#</a></h3>
+<p>At training views:
+</p>
+$$
+\mathcal{L}_{color}=
+(1-\lambda)\,\mathcal{L}_1(I^1, I^*)+
+\lambda\,\mathcal{L}_{\mathrm{D\text{-}SSIM}}(I^1, I^*).
+$$<h3 id="final-loss">Final loss<a hidden class="anchor" aria-hidden="true" href="#final-loss">#</a></h3>
+$$
+\mathcal{L}=
+\mathcal{L}_{color}+
+\lambda_p \mathcal{R}_{pcolor}, \qquad
+\lambda_p = 1.0.
+$$<h2 id="dust3r">Dust3R<a hidden class="anchor" aria-hidden="true" href="#dust3r">#</a></h2>
 <h2 id="instant-splat">Instant Splat<a hidden class="anchor" aria-hidden="true" href="#instant-splat">#</a></h2>
 <h1 id="dynamic-scenes">Dynamic Scenes<a hidden class="anchor" aria-hidden="true" href="#dynamic-scenes">#</a></h1>
 <h2 id="optical-flow">Optical Flow<a hidden class="anchor" aria-hidden="true" href="#optical-flow">#</a></h2>

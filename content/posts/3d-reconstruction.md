@@ -947,8 +947,16 @@ where $\lambda = 0.2$. This balances:
 
 A commonly observed failure mode of Neural Radiance Field (NeRF) is fitting incorrect geometries when given an insufficient number of input views. One potential reason is that standard volumetric rendering does not enforce the constraint that most of a scene’s geometry consist of empty space and opaque surfaces.
 
+### Overview
+
 **Key idea** Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as "free" depth super-
 vision during training: 
+
+{{< figure src="../../images/3dvis/ds-nerf-overview.png"
+num="1"
+caption="NeRF Overview"
+width="100%" 
+>}}
 
 ### Volumetric Rendering Revisited
 To render a 2D image given a pose P, we cast rays r
@@ -956,10 +964,9 @@ originating from the P’s center of projection o in direction d
 derived from its intrinsics.  We integrate the implicit radiance
 field along this ray to compute the incoming radiance from any object that lies along d:
 
-C =
-Z ∞
-0
-T (t)σ(t)c(t)dt, 
+$$
+C = \int_{0}^{\infty} T(t)\,\sigma(t)\,c(t)\,dt.
+$$
 
 here t parameterizes the aforementioned ray as r(t) =
 o + td and T (t) = exp(− R t
@@ -970,17 +977,206 @@ by integrating the differential density between 0 to t
 
 $h(t) = T(t)\sigma{(t)}$ is a continuous probability distribution over ray distance $t$ that describes the likelihood of a ray terminating at $t$. Due to practical constraints, NeRFs assume scene lies between a near and far bound $(t_n, t_f)$. To Ensure $h(t)$. To ensure $h(t)$ sums to one, NeRF implementation often treat $t_f$ as opaque wall. With this definition, the rendered color can be written as an expectation:
 
-C =
-Z ∞
-0
-h(t)c(t)dt = Eh(t)[c(t)].
+$$
+C = \int_{0}^{\infty} h(t)\,c(t)\,dt 
+    = \mathbb{E}_{h(t)}[\,c(t)\,].
+$$
+
+
 
 ### Idealized distribution
-The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrivt the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image 
+The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrict the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image  point with a closes-surface depth of $D$ should be $\delta (t - D)$. This insight motivates the depth-supervised ray termination loss.
+
+## Deriving Depth Supervision
+
+Most NeRF pipelines require images together with their camera matrices $(P_1, P_2, \dots)$, typically estimated using an SfM system such as COLMAP. SfM uses bundle adjustment, which also outputs:
+
+- a set of reconstructed 3D keypoints $\mathcal{X} = \{ X_i \in \mathbb{R}^3 \}$,
+- and visibility sets $\mathcal{X}_j \subset \mathcal{X}$, where $\mathcal{X}_j$ contains the keypoints visible in camera $j$.
+
+Given an image $I_j$ and its camera matrix $P_j$, the depth of a visible keypoint $X_i \in \mathcal{X}_j$ is computed by projecting $X_i$ through $P_j$ and taking the reprojected $z$-value as the keypoint’s depth: $D_{ij}.$
+
+**Depth Uncertainty**
+
+These depth estimates $D_{ij}$ are noisy due to imperfect matches, inaccurate camera parameters, or suboptimal COLMAP optimization. The reliability of a keypoint $X_i$ can be measured using its average  reprojection error $\hat{\sigma}_i$ across all views in which it appears.
+
+Model the true depth along the ray as a Gaussian random variable:
+$$
+D_{ij} \sim \mathcal{N}(D_{ij},\, \hat{\sigma}_i^2).
+$$
+
+A perfect depth measurement would correspond to a delta distribution $\delta(t - D_{ij})$. To align NeRF’s termination distribution $h_{ij}(t)$ with the noisy supervision, we minimize the KL divergence:
+
+$$
+\mathbb{E}_{D_{ij}}
+\left[
+\mathrm{KL}\big( \delta(t - D_{ij}) \,\|\, h_{ij}(t) \big)
+\right]=
+\mathrm{KL}\big( \mathcal{N}(D_{ij},\, \hat{\sigma}_i^{\,2}) \,\|\, h_{ij}(t) \big)+ \text{const}.
+$$
+
+---
+
+#### Ray Distribution Loss
+
+This leads to the following probabilistic depth-supervision loss:
+
+$$
+\mathcal{L}_{\text{Depth}} =
+\mathbb{E}_{X_i \in \mathcal{X}_j}
+\left[-\int\log h(t)\;\exp\!\left(-\frac{(t - D_{ij})^2}{2 \hat{\sigma}_i^{\,2}}\right)dt\right].
+$$
+
+Discretizing along ray samples $t_k$ gives:
+
+$$
+\mathcal{L}_{\text{Depth}}
+\approx
+\mathbb{E}_{X_i \in \mathcal{X}_j}
+\left[-
+\sum_k
+\log h_k\;
+\exp\!\left(-\frac{(t_k - D_{ij})^2}{2 \hat{\sigma}_i^{\,2}}
+\right)
+\Delta t_k
+\right].
+$$
+
+
+The full NeRF loss combines color reconstruction with depth supervision:
+
+$$
+\mathcal{L}=
+\mathcal{L}_{\text{Color}}+
+\lambda_D \, \mathcal{L}_{\text{Depth}}.
+$$
+
+
 ## VIP NeRF
 ## MiDAS
 ## FSGS
-## Cor 3DGS
+## CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization
+
+### Overview
+
+Two 3D Gaussian radiance fields trained from the same sparse set of views can exhibit different behaviors. By training two fields simultaneously and measuring their disagreement throughout training, one can analyze the consistency of the learned geometry and appearance. Because ground-truth supervision is applied only on training views, rendering disagreement is evaluated on unseen views.
+
+A notable pattern is that disagreement increases significantly during **densification**, a phase in which new Gaussians are created but placed without strong geometric constraints. This randomness can introduce geometric errors in sparse-view 3DGS. 
+
+**Key Point:** Both **point disagreement** (differences in Gaussian positions) and **rendering disagreement** (differences in rendered appearance or depth) are typically **negatively correlated** with reconstruction accuracy.
+
+{{< figure src="../../images/3dvis/corgs-overview.png"
+num="1"
+caption="NeRF Overview"
+width="100%" 
+>}}
+
+### Point Disagreement
+
+When treating the 3D positions of Gaussians in two radiance fields as point clouds, their geometric differences can be quantified using **Fitness** and **RMSE**, metrics commonly used in point-cloud registration.
+
+- **Fitness**: measures the fraction of points that successfully form correspondences within a maximum distance threshold $\tau = 5$. Higher Fitness indicates better overlap.
+- **RMSE**: computes the root mean square of distances between corresponding points, reflecting the average positional discrepancy.
+
+---
+
+### Rendering Disagreement
+
+Differences between radiance fields can also be evaluated in image space.
+
+- **PSNR** is used to measure disagreement between rendered RGB images.
+- **Relative Absolute Error (absErrorRel)** is used for depth-map comparison and is widely adopted for assessing depth estimation accuracy.
+
+---
+
+### Reconstruction Quality Evaluation
+
+Reconstruction fidelity is typically measured by comparing rendered test-view images against ground-truth images using **PSNR**.
+
+For a more comprehensive assessment, ground-truth Gaussian positions and depth maps can be obtained by training a 3D Gaussian radiance field using dense multi-view data. Evaluation then includes:
+
+- **Fitness** and **RMSE** for geometric accuracy.  
+- **absErrorRel** for depth accuracy.
+
+### Method
+
+CoR-GS identifies and suppresses inaccurate reconstructions using **point disagreement** and **rendering disagreement**. Two 3D Gaussian radiance fields are trained in parallel:
+$$
+\Theta_1 = \{\theta^1_i\}, \qquad
+\Theta_2 = \{\theta^2_i\}.
+$$
+Only one field is kept for inference; the other is used to detect disagreement.  
+The following describes the process for $\Theta_1$ (the procedure for $\Theta_2$ is identical).
+
+---
+
+### Co-pruning
+
+Densification may create Gaussians that are poorly aligned with scene geometry, especially under sparse-view supervision.  
+Co-pruning removes Gaussians whose positions disagree across the two fields.
+
+**Nearest-neighbor correspondence**
+$$
+f(\theta^1_i) = \mathrm{KNN}(\theta^1_i, \Theta_2). 
+$$
+
+**Non-matching mask**
+A Gaussian is flagged if its nearest counterpart differs by more than $\tau = 5$:
+$$
+M_i =
+\begin{cases}
+1, &
+\sqrt{
+(\theta^1_{xi} - f(\theta^1_i)_x)^2 +
+(\theta^1_{yi} - f(\theta^1_i)_y)^2 +
+(\theta^1_{zi} - f(\theta^1_i)_z)^2
+} > \tau,\\[4pt]
+0, & \text{otherwise}.
+\end{cases}
+$$
+
+**Pruning**
+All Gaussians with $M_i = 1$ are removed.  
+Co-pruning is performed every few (e.g., 5) optimization/density-control interleaves.
+
+---
+
+### Pseudo-view Co-regularization
+
+#### Sampling pseudo-views
+Pseudo-views are sampled using nearby training cameras:
+$$
+P' = (t + \epsilon,\, q),
+$$
+where $t$ is a training camera position, $\epsilon \sim \mathcal{N}(0,\sigma^2)$,  
+and $q$ is an averaged quaternion from the two nearest cameras.
+
+### Color co-regularization
+
+Render $I'^1$ and $I'^2$ from $\Theta_1$ and $\Theta_2$ at the pseudo-view, and enforce consistency:
+$$
+\mathcal{R}_{pcolor}=
+(1-\lambda)\,\mathcal{L}_1(I'^1, I'^2)+
+\lambda\,\mathcal{L}_{\mathrm{D\text{-}SSIM}}(I'^1, I'^2).
+$$
+
+### Ground-truth supervision
+At training views:
+$$
+\mathcal{L}_{color}=
+(1-\lambda)\,\mathcal{L}_1(I^1, I^*)+
+\lambda\,\mathcal{L}_{\mathrm{D\text{-}SSIM}}(I^1, I^*).
+$$
+
+### Final loss
+$$
+\mathcal{L}=
+\mathcal{L}_{color}+
+\lambda_p \mathcal{R}_{pcolor}, \qquad
+\lambda_p = 1.0.
+$$
+
+
 ## Dust3R
 ## Instant Splat
 
