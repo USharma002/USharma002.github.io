@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;19 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;24 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -172,7 +172,29 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#basics" aria-label="Basics">Basics</a><ul>
                         
                 <li>
-                    <a href="#inverse-transform-sampling" aria-label="Inverse Transform Sampling">Inverse Transform Sampling</a></li>
+                    <a href="#camera-transformations" aria-label="Camera Transformations">Camera Transformations</a><ul>
+                        
+                <li>
+                    <a href="#1-world--camera-coordinates" aria-label="1. World $\rightarrow$ Camera Coordinates">1. World $\rightarrow$ Camera Coordinates</a></li>
+                <li>
+                    <a href="#2-camera--pixel-coordinates" aria-label="2. Camera $\rightarrow$ Pixel Coordinates">2. Camera $\rightarrow$ Pixel Coordinates</a></li>
+                <li>
+                    <a href="#3-pixel--camera-ray-back-projection" aria-label="3. Pixel → Camera Ray (Back-Projection)">3. Pixel → Camera Ray (Back-Projection)</a><ul>
+                        
+                <li>
+                    <a href="#step-1-remove-intrinsics" aria-label="Step 1: Remove intrinsics">Step 1: Remove intrinsics</a></li>
+                <li>
+                    <a href="#step-2-form-the-3d-ray" aria-label="Step 2: Form the 3D ray">Step 2: Form the 3D ray</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#inverse-transform-sampling" aria-label="Inverse Transform Sampling">Inverse Transform Sampling</a><ul>
+                        
+                <li>
+                    <a href="#definition" aria-label="Definition">Definition</a></li>
+                <li>
+                    <a href="#interactive-simulation" aria-label="Interactive Simulation">Interactive Simulation</a></li></ul>
+                </li>
                 <li>
                     <a href="#sfm" aria-label="SfM">SfM</a></li>
                 <li>
@@ -282,7 +304,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#sparse-input" aria-label="Sparse Input">Sparse Input</a><ul>
                         
                 <li>
-                    <a href="#ds-nerf" aria-label="DS NeRF">DS NeRF</a></li>
+                    <a href="#depth-supervised-nerf" aria-label="Depth-supervised NeRF">Depth-supervised NeRF</a><ul>
+                        
+                <li>
+                    <a href="#volumetric-rendering-revisited" aria-label="Volumetric Rendering Revisited">Volumetric Rendering Revisited</a></li>
+                <li>
+                    <a href="#ray-distribution" aria-label="Ray Distribution">Ray Distribution</a></li>
+                <li>
+                    <a href="#idealized-distribution" aria-label="Idealized distribution">Idealized distribution</a></li></ul>
+                </li>
                 <li>
                     <a href="#vip-nerf" aria-label="VIP NeRF">VIP NeRF</a></li>
                 <li>
@@ -329,7 +359,172 @@ document.addEventListener("DOMContentLoaded", function() {
 This post is a work in progress and may be updated or expanded soon!
 </span>
 <h1 id="basics">Basics<a hidden class="anchor" aria-hidden="true" href="#basics">#</a></h1>
-<h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
+<h2 id="camera-transformations">Camera Transformations<a hidden class="anchor" aria-hidden="true" href="#camera-transformations">#</a></h2>
+<p>To map a 3D world point to the image, we use two steps:</p>
+<ol>
+<li>Convert the point from world coordinates to camera coordinates.</li>
+<li>Project the camera-space point to pixel coordinates using the intrinsics.</li>
+</ol>
+<hr>
+<h3 id="1-world--camera-coordinates">1. World $\rightarrow$ Camera Coordinates<a hidden class="anchor" aria-hidden="true" href="#1-world--camera-coordinates">#</a></h3>
+<p>Let the camera center be $C$ and orientation be $R$.<br>
+A world point $X$ is mapped into camera coordinates by</p>
+$$
+X_C = R(X - C).
+$$<p>Define the translation</p>
+$$
+t = -RC,
+$$<p>so the extrinsic mapping becomes</p>
+$$
+X_C = RX + t.
+$$<p>In homogeneous coordinates:</p>
+$$
+\begin{bmatrix}
+X_C \\ Y_C \\ Z_C \\ 1
+\end{bmatrix}=\begin{bmatrix}
+R & t \\
+0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+X \\ Y \\ Z \\ 1
+\end{bmatrix}.
+$$<hr>
+<h3 id="2-camera--pixel-coordinates">2. Camera $\rightarrow$ Pixel Coordinates<a hidden class="anchor" aria-hidden="true" href="#2-camera--pixel-coordinates">#</a></h3>
+<p>A point in the camera frame projects via</p>
+$$
+u = \frac{X_C}{Z_C}, \qquad 
+v = \frac{Y_C}{Z_C}.
+$$<p>To convert into pixels, we apply the intrinsic matrix</p>
+$$
+K =
+\begin{bmatrix}
+f_x & 0   & c_x \\
+0   & f_y & c_y \\
+0   & 0   & 1
+\end{bmatrix}.
+$$<p>This gives</p>
+$$
+u = \frac{f_x X_C}{Z_C} + c_x, \qquad
+v = \frac{f_y Y_C}{Z_C} + c_y.
+$$<p>Combined:</p>
+$$
+\begin{bmatrix}u \\ v \\ 1\end{bmatrix}=
+K\,[R\;t]
+\begin{bmatrix}X \\ Y \\ Z \\ 1\end{bmatrix},
+\qquad s = Z_C.
+$$<hr>
+<h3 id="3-pixel--camera-ray-back-projection">3. Pixel → Camera Ray (Back-Projection)<a hidden class="anchor" aria-hidden="true" href="#3-pixel--camera-ray-back-projection">#</a></h3>
+<p>To go from pixel $(u, v)$ <strong>back into camera space</strong>, we recover the <strong>ray direction</strong>.</p>
+<h4 id="step-1-remove-intrinsics">Step 1: Remove intrinsics<a hidden class="anchor" aria-hidden="true" href="#step-1-remove-intrinsics">#</a></h4>
+$$
+\begin{bmatrix}
+x \\ y \\ 1
+\end{bmatrix}=
+K^{-1}
+\begin{bmatrix}
+u \\ v \\ 1
+\end{bmatrix}.
+$$<p>Explicitly:</p>
+$$
+x = \frac{u - c_x}{f_x}, \qquad
+y = \frac{v - c_y}{f_y}.
+$$<p>This gives the direction in <strong>camera coordinates</strong>:</p>
+$$
+d_C =
+\begin{bmatrix}
+x \\ y \\ 1
+\end{bmatrix}.
+$$<h4 id="step-2-form-the-3d-ray">Step 2: Form the 3D ray<a hidden class="anchor" aria-hidden="true" href="#step-2-form-the-3d-ray">#</a></h4>
+<p>All 3D points along that pixel’s ray in <strong>camera space</strong> are:</p>
+$$
+X_C(\lambda) = \lambda \, d_C = 
+\lambda \begin{bmatrix}
+x \\ y \\ 1
+\end{bmatrix},
+\qquad \lambda>0.
+$$<p>Here</p>
+<ul>
+<li>$\lambda$ controls the depth,</li>
+<li>$d_C$ is the ray direction in the camera frame,</li>
+<li>the camera center is at the origin in camera coordinates, so there is no position term.</li>
+</ul>
+<p>This is the complete back-projection from pixel → ray in camera space.</p>
+<hr>
+$$
+\begin{array}{c|cccccccc|c}
+\textbf{World point} &
+& \xrightarrow[\text{rotate + translate}]{\begin{bmatrix}
+R & t \\
+0 & 1
+\end{bmatrix}} &
+\begin{bmatrix}X_C\\Y_C\\Z_C\\1\end{bmatrix}
+& \xrightarrow[\text{Drop last component}]{\begin{bmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0
+\end{bmatrix}} &
+\begin{bmatrix}X_C\\Y_C\\Z_C\end{bmatrix}
+& \xrightarrow[\text{intrinsics}]{K =
+\begin{bmatrix}
+f_x & 0   & c_x \\
+0   & f_y & c_y \\
+0   & 0   & 1
+\end{bmatrix}} &
+\begin{bmatrix}\tilde u\\ \tilde v\\Z_C\end{bmatrix}
+& \xrightarrow[\text{Normalizing}]{\text{Perspective Divide}} 
+\frac{1}{Z_C}\begin{bmatrix}u\\v\\1\end{bmatrix}
+& \textbf{Pixel}
+\\[20pt]
+\begin{bmatrix}X\\Y\\Z\\1\end{bmatrix} &
+& \xleftarrow[\text{(rotate + translate)}^{-1}]{\begin{bmatrix}
+R & t \\
+0 & 1
+\end{bmatrix}^{-1}} &
+\begin{bmatrix}X_C\\Y_C\\Z_C\\1\end{bmatrix}
+& \xleftarrow[\text{make homogeneous}]{\text{append 1}} &
+\begin{bmatrix}X_C\\Y_C\\Z_C\end{bmatrix}
+& \xleftarrow[\text{If depth known}]{\lambda = Z_C} &
+\begin{bmatrix}x\lambda\\y\lambda\\\lambda\end{bmatrix}
+& \xleftarrow[\substack{\text{invert intrinsics} \\[3pt] \text{create 3D ray}}]{\lambda K^{-1}} &
+\begin{bmatrix}u\\v\\1\end{bmatrix}
+\end{array}
+$$<h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
+<h3 id="definition">Definition<a hidden class="anchor" aria-hidden="true" href="#definition">#</a></h3>
+<p>Let $U \sim \mathrm{Unif}[0,1]$. We want to generate a random variable $X$ with CDF $F_X(x)$.<br>
+Assume $F_X$ is continuous and strictly increasing so that it has a well-defined inverse.</p>
+<p>We look for a strictly monotone transformation<br>
+</p>
+$$
+T : [0,1] \to \mathbb{R},
+$$<p><br>
+such that the transformed variable $T(U)$ has the same distribution as $X$:</p>
+$$
+T(U) \overset{d}{=} X.
+$$<p>Compute the CDF of $T(U)$:</p>
+$$
+F_X(x) 
+= \Pr(X \le x) 
+= \Pr(T(U) \le x)
+= \Pr(U \le T^{-1}(x)).
+$$<p>Because $U \sim \mathrm{Unif}[0,1]$,</p>
+$$
+\Pr(U \le y) = y, \qquad 0 \le y \le 1.
+$$<p>Thus,</p>
+$$
+F_X(x) = T^{-1}(x).
+$$<p>So $F_X$ is the inverse of $T$, which implies</p>
+$$
+T(u) = F_X^{-1}(u), \qquad u \in [0,1].
+$$<p>Therefore, the desired random variable $X$ can be generated by</p>
+$$
+X = F_X^{-1}(U).
+$$<h3 id="interactive-simulation">Interactive Simulation<a hidden class="anchor" aria-hidden="true" href="#interactive-simulation">#</a></h3>
+<iframe src="/interactive/inverse_transform_sampling.html"
+        width="150%"
+        height="330"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
 <h2 id="sfm">SfM<a hidden class="anchor" aria-hidden="true" href="#sfm">#</a></h2>
 <h2 id="mpi">MPI<a hidden class="anchor" aria-hidden="true" href="#mpi">#</a></h2>
 <h2 id="stereo-magnification">Stereo Magnification<a hidden class="anchor" aria-hidden="true" href="#stereo-magnification">#</a></h2>
@@ -787,7 +982,31 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <li><strong>D-SSIM</strong>: Structural similarity (captures perceptual quality)</li>
 </ul>
 <h1 id="sparse-input">Sparse Input<a hidden class="anchor" aria-hidden="true" href="#sparse-input">#</a></h1>
-<h2 id="ds-nerf">DS NeRF<a hidden class="anchor" aria-hidden="true" href="#ds-nerf">#</a></h2>
+<h2 id="depth-supervised-nerf">Depth-supervised NeRF<a hidden class="anchor" aria-hidden="true" href="#depth-supervised-nerf">#</a></h2>
+<p>A commonly observed failure mode of Neural Radiance Field (NeRF) is fitting incorrect geometries when given an insufficient number of input views. One potential reason is that standard volumetric rendering does not enforce the constraint that most of a scene’s geometry consist of empty space and opaque surfaces.</p>
+<p><strong>Key idea</strong> Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as &ldquo;free&rdquo; depth super-
+vision during training:</p>
+<h3 id="volumetric-rendering-revisited">Volumetric Rendering Revisited<a hidden class="anchor" aria-hidden="true" href="#volumetric-rendering-revisited">#</a></h3>
+<p>To render a 2D image given a pose P, we cast rays r
+originating from the P’s center of projection o in direction d
+derived from its intrinsics.  We integrate the implicit radiance
+field along this ray to compute the incoming radiance from any object that lies along d:</p>
+<p>C =
+Z ∞
+0
+T (t)σ(t)c(t)dt,</p>
+<p>here t parameterizes the aforementioned ray as r(t) =
+o + td and T (t) = exp(− R t
+0 σ(s)ds) checks for occlusions
+by integrating the differential density between 0 to t</p>
+<h3 id="ray-distribution">Ray Distribution<a hidden class="anchor" aria-hidden="true" href="#ray-distribution">#</a></h3>
+<p>$h(t) = T(t)\sigma{(t)}$ is a continuous probability distribution over ray distance $t$ that describes the likelihood of a ray terminating at $t$. Due to practical constraints, NeRFs assume scene lies between a near and far bound $(t_n, t_f)$. To Ensure $h(t)$. To ensure $h(t)$ sums to one, NeRF implementation often treat $t_f$ as opaque wall. With this definition, the rendered color can be written as an expectation:</p>
+<p>C =
+Z ∞
+0
+h(t)c(t)dt = Eh(t)[c(t)].</p>
+<h3 id="idealized-distribution">Idealized distribution<a hidden class="anchor" aria-hidden="true" href="#idealized-distribution">#</a></h3>
+<p>The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrivt the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image</p>
 <h2 id="vip-nerf">VIP NeRF<a hidden class="anchor" aria-hidden="true" href="#vip-nerf">#</a></h2>
 <h2 id="midas">MiDAS<a hidden class="anchor" aria-hidden="true" href="#midas">#</a></h2>
 <h2 id="fsgs">FSGS<a hidden class="anchor" aria-hidden="true" href="#fsgs">#</a></h2>

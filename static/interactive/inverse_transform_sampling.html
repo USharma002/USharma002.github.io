@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inverse Transform Sampling</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: var(--page-bg, white); 
+            color: var(--page-text, #212529); 
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .chart-row { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 1rem; 
+            margin-bottom: 1rem; 
+        }
+        .chart-container { 
+            background: var(--card-bg, white); 
+            padding: 0.75rem; 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color, #dee2e6);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        canvas { max-width: 100%; }
+        .controls { 
+            display: flex; 
+            align-items: center; 
+            padding: 1rem; 
+            background: var(--card-bg, #f8f9fa); 
+            border-radius: 8px; 
+            border: 1px solid var(--border-color, #dee2e6); 
+            gap: 1.5rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .buttons { display: flex; flex-direction: column; gap: 0.6rem; }
+        button { 
+            background: #2E86AB; 
+            border: none; 
+            color: white; 
+            padding: 0.6rem 1.5rem; 
+            font-size: 0.9rem; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        button:hover { background: #236b8a; }
+        .stats { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 0.5rem; 
+        }
+        .stat-item { 
+            font-size: 0.95rem; 
+            display: flex;
+            align-items: baseline;
+        }
+        .stat-label { 
+            color: var(--page-text, #495057); 
+            font-weight: 600; 
+            min-width: 130px;
+        }
+        .stat-value { 
+            font-weight: 700; 
+            color: #2E86AB; 
+            font-size: 1.1rem; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-row">
+            <div class="chart-container"><canvas id="pmfChart"></canvas></div>
+            <div class="chart-container"><canvas id="cdfChart"></canvas></div>
+            <div class="chart-container"><canvas id="samplingChart"></canvas></div>
+        </div>
+        <div class="controls">
+            <div class="buttons">
+                <button onclick="generateSample()">Sample</button>
+                <button onclick="generateRandomPMF()">Random PMF</button>
+            </div>
+            <div class="stats">
+                <div class="stat-item"><span class="stat-label">Uniform RV (U):</span> <span class="stat-value" id="uniformValue">-</span></div>
+                <div class="stat-item"><span class="stat-label">Sampled X:</span> <span class="stat-value" id="sampledValue">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Detect theme from parent Hugo page
+        function detectTheme() {
+            try {
+                const parentBody = window.parent.document.body;
+                const computedStyle = window.getComputedStyle(parentBody);
+                const bgColor = computedStyle.backgroundColor;
+
+                // Parse RGB to determine if dark or light
+                const rgb = bgColor.match(/\d+/g);
+                if (rgb) {
+                    const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+                    const isDark = brightness < 128;
+
+                    // Set CSS custom properties based on theme
+                    if (isDark) {
+                        document.documentElement.style.setProperty('--page-bg', '#1a1a1a');
+                        document.documentElement.style.setProperty('--page-text', '#e4e4e4');
+                        document.documentElement.style.setProperty('--card-bg', '#2d2d2d');
+                        document.documentElement.style.setProperty('--border-color', '#404040');
+                    } else {
+                        document.documentElement.style.setProperty('--page-bg', '#ffffff');
+                        document.documentElement.style.setProperty('--page-text', '#212529');
+                        document.documentElement.style.setProperty('--card-bg', '#f8f9fa');
+                        document.documentElement.style.setProperty('--border-color', '#dee2e6');
+                    }
+
+                    return isDark;
+                }
+            } catch (e) {
+                console.log('Using default theme (cannot access parent)');
+            }
+            return false;
+        }
+
+        // Initial theme detection
+        let isDarkMode = detectTheme();
+
+        // Watch for theme changes in parent
+        setInterval(() => {
+            const newIsDark = detectTheme();
+            if (newIsDark !== isDarkMode) {
+                isDarkMode = newIsDark;
+                updateChartColors();
+            }
+        }, 1000);
+
+        const x_vals = [1, 2, 3, 4, 5];
+        let pmf = [0.1, 0.2, 0.4, 0.2, 0.1];
+        let cdf = [];
+        let pmfChart, cdfChart, samplingChart;
+
+        function getChartColors() {
+            const isDark = isDarkMode;
+            return {
+                pmf: { bg: 'rgba(46, 134, 171, 0.7)', border: 'rgba(46, 134, 171, 1)' },
+                cdf: 'rgba(230, 57, 70, 1)',
+                line1: 'rgba(241, 250, 238, 1)',
+                line2: 'rgba(168, 218, 220, 1)',
+                point: 'rgba(249, 159, 64, 1)',
+                grid: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                text: isDark ? '#e4e4e4' : '#212529'
+            };
+        }
+
+        function computeCDF() {
+            cdf = [];
+            let sum = 0;
+            for (let i = 0; i < pmf.length; i++) {
+                sum += pmf[i];
+                cdf.push(sum);
+            }
+        }
+
+        function generateRandomPMF() {
+            let raw = [];
+            for (let i = 0; i < 5; i++) raw.push(Math.random());
+            let sum = raw.reduce((a, b) => a + b, 0);
+            pmf = raw.map(x => x / sum);
+            computeCDF();
+            updateAllCharts();
+            document.getElementById('uniformValue').textContent = '-';
+            document.getElementById('sampledValue').textContent = '-';
+        }
+
+        function getCDFStepData() {
+            let data = [{x: 0, y: 0}];
+            for (let i = 0; i < x_vals.length; i++) {
+                data.push({x: x_vals[i], y: cdf[i]});
+                data.push({x: i < x_vals.length - 1 ? x_vals[i+1] : x_vals[i] + 1, y: cdf[i]});
+            }
+            return data;
+        }
+
+        function getChartOptions(title) {
+            const colors = getChartColors();
+            return {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { 
+                    title: { 
+                        display: true, 
+                        text: title, 
+                        font: { size: 14, weight: '600' },
+                        color: colors.text
+                    }, 
+                    legend: { display: false } 
+                },
+                scales: {
+                    y: { 
+                        grid: { color: colors.grid },
+                        ticks: { color: colors.text }
+                    },
+                    x: { 
+                        grid: { color: colors.grid },
+                        ticks: { color: colors.text }
+                    }
+                }
+            };
+        }
+
+        function initCharts() {
+            computeCDF();
+            const colors = getChartColors();
+
+            pmfChart = new Chart(document.getElementById('pmfChart'), {
+                type: 'bar',
+                data: { labels: x_vals, datasets: [{ data: pmf, backgroundColor: colors.pmf.bg, borderColor: colors.pmf.border, borderWidth: 2 }] },
+                options: {
+                    ...getChartOptions('PMF'),
+                    scales: {
+                        y: { beginAtZero: true, max: 0.5, grid: { color: colors.grid, display: true }, ticks: { color: colors.text } },
+                        x: { grid: { display: false }, ticks: { color: colors.text } }
+                    }
+                }
+            });
+
+            cdfChart = new Chart(document.getElementById('cdfChart'), {
+                type: 'line',
+                data: { datasets: [{ data: getCDFStepData(), borderColor: colors.cdf, borderWidth: 2.5, fill: false, stepped: true }] },
+                options: {
+                    ...getChartOptions('CDF'),
+                    scales: {
+                        y: { min: 0, max: 1, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                        x: { type: 'linear', min: 0, max: 6, grid: { color: colors.grid }, ticks: { color: colors.text } }
+                    }
+                }
+            });
+
+            samplingChart = new Chart(document.getElementById('samplingChart'), {
+                type: 'line',
+                data: { datasets: [{ data: getCDFStepData(), borderColor: colors.cdf, borderWidth: 2.5, fill: false, stepped: true }] },
+                options: {
+                    ...getChartOptions('Sampling'),
+                    scales: {
+                        y: { min: 0, max: 1, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                        x: { type: 'linear', min: 0, max: 6, ticks: { stepSize: 1, color: colors.text }, grid: { color: colors.grid } }
+                    }
+                }
+            });
+        }
+
+        function updateChartColors() {
+            const colors = getChartColors();
+
+            // Update PMF chart
+            pmfChart.options = {
+                ...getChartOptions('PMF'),
+                scales: {
+                    y: { beginAtZero: true, max: pmfChart.options.scales.y.max, grid: { color: colors.grid, display: true }, ticks: { color: colors.text } },
+                    x: { grid: { display: false }, ticks: { color: colors.text } }
+                }
+            };
+            pmfChart.update();
+
+            // Update CDF chart
+            cdfChart.options = {
+                ...getChartOptions('CDF'),
+                scales: {
+                    y: { min: 0, max: 1, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                    x: { type: 'linear', min: 0, max: 6, grid: { color: colors.grid }, ticks: { color: colors.text } }
+                }
+            };
+            cdfChart.update();
+
+            // Update Sampling chart
+            samplingChart.options = {
+                ...getChartOptions('Sampling'),
+                scales: {
+                    y: { min: 0, max: 1, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                    x: { type: 'linear', min: 0, max: 6, ticks: { stepSize: 1, color: colors.text }, grid: { color: colors.grid } }
+                }
+            };
+            samplingChart.update();
+        }
+
+        function updateAllCharts() {
+            const colors = getChartColors();
+            pmfChart.data.datasets[0].data = pmf;
+            pmfChart.options.scales.y.max = Math.max(...pmf) * 1.2;
+            pmfChart.update();
+
+            let stepData = getCDFStepData();
+            cdfChart.data.datasets[0].data = stepData;
+            cdfChart.update();
+
+            samplingChart.data.datasets = [{ data: stepData, borderColor: colors.cdf, borderWidth: 2.5, fill: false, stepped: true, pointRadius: 0 }];
+            samplingChart.update();
+        }
+
+        function inverseCDF(u) {
+            for (let i = 0; i < cdf.length; i++) {
+                if (u <= cdf[i]) return x_vals[i];
+            }
+            return x_vals[x_vals.length - 1];
+        }
+
+        function generateSample() {
+            const colors = getChartColors();
+            let currentU = Math.random();
+            let currentSample = inverseCDF(currentU);
+            document.getElementById('uniformValue').textContent = currentU.toFixed(4);
+            document.getElementById('sampledValue').textContent = currentSample;
+
+            let stepData = getCDFStepData();
+            samplingChart.data.datasets = [
+                { data: stepData, borderColor: colors.cdf, borderWidth: 2.5, fill: false, stepped: true, pointRadius: 0 },
+                { data: [{x: 0, y: currentU}, {x: currentSample, y: currentU}], borderColor: colors.line1, borderWidth: 2.5, borderDash: [5, 5], fill: false, pointRadius: 0 },
+                { data: [{x: currentSample, y: currentU}, {x: currentSample, y: 0}], borderColor: colors.line2, borderWidth: 2.5, borderDash: [5, 5], fill: false, pointRadius: 0 },
+                { data: [{x: currentSample, y: currentU}], borderColor: colors.point, backgroundColor: colors.point, pointRadius: 7, showLine: false }
+            ];
+            samplingChart.update();
+        }
+
+        window.onload = initCharts;
+    </script>
+</body>
+</html>
