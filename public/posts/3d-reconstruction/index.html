@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#2-camera--pixel-coordinates" aria-label="2. Camera $\rightarrow$ Pixel Coordinates">2. Camera $\rightarrow$ Pixel Coordinates</a></li>
                 <li>
-                    <a href="#3-pixel--camera-ray-back-projection" aria-label="3. Pixel → Camera Ray (Back-Projection)">3. Pixel → Camera Ray (Back-Projection)</a><ul>
+                    <a href="#3-pixel--camera-ray-back-projection" aria-label="3. Pixel $\rightarrow$ Camera Ray (Back-Projection)">3. Pixel $\rightarrow$ Camera Ray (Back-Projection)</a><ul>
                         
                 <li>
                     <a href="#step-1-remove-intrinsics" aria-label="Step 1: Remove intrinsics">Step 1: Remove intrinsics</a></li>
@@ -241,7 +241,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#cp-decomposition" aria-label="CP Decomposition">CP Decomposition</a></li>
                 <li>
-                    <a href="#vector-matrix-vm-decomposition" aria-label="Vector-Matrix (VM) Decomposition">Vector-Matrix (VM) Decomposition</a></li>
+                    <a href="#vector-matrix-vm-decomposition" aria-label="Vector-Matrix (VM) Decomposition">Vector-Matrix (VM) Decomposition</a><ul>
+                        
+                <li>
+                    <a href="#comparison" aria-label="Comparison">Comparison</a></li></ul>
+                </li>
                 <li>
                     <a href="#tensor-for-scene-modeling" aria-label="Tensor for Scene Modeling">Tensor for Scene Modeling</a></li>
                 <li>
@@ -473,7 +477,7 @@ K\,[R\;t]
 \begin{bmatrix}X \\ Y \\ Z \\ 1\end{bmatrix},
 \qquad s = Z_C.
 $$<hr>
-<h3 id="3-pixel--camera-ray-back-projection">3. Pixel → Camera Ray (Back-Projection)<a hidden class="anchor" aria-hidden="true" href="#3-pixel--camera-ray-back-projection">#</a></h3>
+<h3 id="3-pixel--camera-ray-back-projection">3. Pixel $\rightarrow$ Camera Ray (Back-Projection)<a hidden class="anchor" aria-hidden="true" href="#3-pixel--camera-ray-back-projection">#</a></h3>
 <p>To go from pixel $(u, v)$ <strong>back into camera space</strong>, we recover the <strong>ray direction</strong>.</p>
 <h4 id="step-1-remove-intrinsics">Step 1: Remove intrinsics<a hidden class="anchor" aria-hidden="true" href="#step-1-remove-intrinsics">#</a></h4>
 $$
@@ -508,7 +512,7 @@ $$<p>Here</p>
 <li>$d_C$ is the ray direction in the camera frame,</li>
 <li>the camera center is at the origin in camera coordinates, so there is no position term.</li>
 </ul>
-<p>This is the complete back-projection from pixel → ray in camera space.</p>
+<p>This is the complete back-projection from pixel $\rightarrow$ ray in camera space.</p>
 <hr>
 $$
 \begin{array}{c|cccccccc|c}
@@ -698,14 +702,25 @@ $$
 \mathcal{T}_{ijk} = \sum_{r=1}^R \mathbf{v}_{r,i}^{1} \mathbf{v}_{r,j}^{2} \mathbf{v}_{r,k}^{3}
 $$<p>where $i, j, k$ denote the indices of the three modes.</p>
 <p>CP decomposition factorizes a tensor into multiple vectors, expressing multiple compact rank-one components. However, because of too high compactness, CP decomposition can require many components to model complex scenes, leading to high computational costs in radiance field reconstruction.</p>
+<figure id="fig-8" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
+      CP decomposition, which factorizes a tensor as a sum of vector outer products
+    </figcaption></figure>
+
 <h3 id="vector-matrix-vm-decomposition">Vector-Matrix (VM) Decomposition<a hidden class="anchor" aria-hidden="true" href="#vector-matrix-vm-decomposition">#</a></h3>
 <p>Unlike CP decomposition that utilizes pure vector factors, VM decomposition factorizes a tensor into multiple vectors and matrices. This is expressed by:</p>
 $$
 \mathcal{T} = \sum_{r=1}^{R_1} \mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3} + \sum_{r=1}^{R_2} \mathbf{v}_r^{2} \circ \mathbf{M}_r^{1,3} + \sum_{r=1}^{R_3} \mathbf{v}_r^{3} \circ \mathbf{M}_r^{1,2}
 $$<p>where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3} \in \mathbb{R}^{I \times K}$, and $\mathbf{M}_r^{1,2} \in \mathbb{R}^{I \times J}$ are matrix factors for two (denoted by superscripts) of the three modes.</p>
 <p>For each component, we relax its two mode ranks to be arbitrarily large, while restricting the third mode to be rank-one; e.g., for component tensor $\mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3}$, its mode-1 rank is 1, and its mode-2 and mode-3 ranks can be arbitrary, depending on the rank of the matrix $\mathbf{M}_r^{2,3}$.</p>
-<figure id="fig-8" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
+<figure id="fig-9" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
+      vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
+    </figcaption></figure>
+
+<h4 id="comparison">Comparison<a hidden class="anchor" aria-hidden="true" href="#comparison">#</a></h4>
+<figure id="fig-10" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
 
@@ -723,6 +738,11 @@ $$<p>where $m \in \{X, Y, Z\}$, $A_{r,ijk}^{X} = v_{r,i}^{X} M_{r,jk}^{Y,Z}$, $A
 $$
 \sigma, c = \mathcal{G}_{\sigma}(\mathbf{x}), \; \underbrace{\mathcal{S}(\mathcal{G}_{c}(\mathbf{x}), d)}_{\text{it can be MLP/SH}}
 $$<p>where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.</p>
+<figure id="fig-11" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_vm_factorization_full.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
+      TensoRF using CP decomposition and VM decomposition
+    </figcaption></figure>
+
 <h3 id="factorizing-radiance-fields">Factorizing Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#factorizing-radiance-fields">#</a></h3>
 <p>While $\mathcal{G}_{\sigma} \in \mathbb{R}^{I \times J \times K}$ is a 3D tensor, $\mathcal{G}_{c} \in \mathbb{R}^{I \times J \times K \times P}$ is a 4D tensor. Here $I, J, K$ correspond to the resolutions of the feature grid along the X, Y, Z axes, and $P$ is the number of appearance feature channels.</p>
 <p>We factorize these radiance field tensors to compact components. In particular, with the VM decomposition, the 3D geometry tensor $\mathcal{G}_{\sigma}$ is factorized as:</p>
@@ -741,7 +761,7 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
 <h3 id="interpolation-1">Interpolation<a hidden class="anchor" aria-hidden="true" href="#interpolation-1">#</a></h3>
 <p>Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.</p>
 <figure id="scene-tensorf" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/tensorf_scene.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       Tensorf Scene Representation.
     </figcaption></figure>
 
@@ -779,8 +799,8 @@ $$
 $$<p>TV regularization prevents overfitting and removes floaters/artifacts by enforcing piecewise-smooth geometry and appearance.</p>
 <h2 id="instant-ngp">Instant NGP<a hidden class="anchor" aria-hidden="true" href="#instant-ngp">#</a></h2>
 <h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
-<figure id="fig-10" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/instant-ngp-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
+<figure id="fig-13" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/instant-ngp-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)→(4)→(3) to update hash table features.
     </figcaption></figure>
 
@@ -856,8 +876,8 @@ $$<p>The dramatically smaller network (2 layers vs 8) is enabled by the expressi
 <p>Total trainable parameters (encoding + MLP) is still much smaller than original NeRF while achieving 20-60× faster training.</p>
 <h2 id="3dgs">3DGS<a hidden class="anchor" aria-hidden="true" href="#3dgs">#</a></h2>
 <h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
-<figure id="fig-11" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
+<figure id="fig-14" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       3DGS Overview
     </figcaption></figure>
 
@@ -898,8 +918,8 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <li>$W = T$ (world-to-camera transformation)</li>
 </ul>
 <p>This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.</p>
-<figure id="fig-12" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
+<figure id="fig-15" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
       When projecting a Gaussian particle from 3D space onto the camera image plane, Monte Carlo sampling (left) provides the most accurate estimate but is costly to compute. EWA Splatting formulation used in approximates the projection function via linearization, which requires a dedicated Jacobian J for each camera model and leads to approximation errors with increasing distortion. Unscented Transform instead approximates the particle with Sigma points than can be projected exactly and from which the 2D conic can then be estimated.
     </figcaption></figure>
 
@@ -926,8 +946,8 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <li>Reset opacity to near-zero every $K$ iterations (typically 3000 iterations) to force re-optimization</li>
 <li>Remove Gaussians that are excessively large in world space</li>
 </ul>
-<figure id="fig-13" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs_adc.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
+<figure id="fig-16" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs_adc.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       Adaptive Density Control in 3DGS
     </figcaption></figure>
 
@@ -1047,8 +1067,8 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
 <p><strong>Key idea</strong> Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as &ldquo;free&rdquo; depth super-
 vision during training:</p>
-<figure id="fig-14" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
+<figure id="fig-17" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       Depth Supervised NeRF Overview
     </figcaption></figure>
 
@@ -1122,8 +1142,8 @@ $$<h2 id="vip-nerf">VIP NeRF<a hidden class="anchor" aria-hidden="true" href="#v
 <p>Two 3D Gaussian radiance fields trained from the same sparse set of views can exhibit different behaviors. By training two fields simultaneously and measuring their disagreement throughout training, one can analyze the consistency of the learned geometry and appearance. Because ground-truth supervision is applied only on training views, rendering disagreement is evaluated on unseen views.</p>
 <p>A notable pattern is that disagreement increases significantly during <strong>densification</strong>, a phase in which new Gaussians are created but placed without strong geometric constraints. This randomness can introduce geometric errors in sparse-view 3DGS.</p>
 <p><strong>Key Point:</strong> Both <strong>point disagreement</strong> (differences in Gaussian positions) and <strong>rendering disagreement</strong> (differences in rendered appearance or depth) are typically <strong>negatively correlated</strong> with reconstruction accuracy.</p>
-<figure id="fig-15" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/corgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
+<figure id="fig-18" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/corgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       NeRF Overview
     </figcaption></figure>
 
@@ -1363,8 +1383,8 @@ $$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$<p>We can co
 <h1 id="feedforward-and-barf">Feedforward and BARF<a hidden class="anchor" aria-hidden="true" href="#feedforward-and-barf">#</a></h1>
 <h2 id="pixel-splat">Pixel Splat<a hidden class="anchor" aria-hidden="true" href="#pixel-splat">#</a></h2>
 <h3 id="overview-8">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-8">#</a></h3>
-<figure id="fig-16" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/pixel-splat-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
+<figure id="fig-19" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/pixel-splat-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       Proposed probabilistic prediction of pixel-aligned Gaussians
     </figcaption></figure>
 

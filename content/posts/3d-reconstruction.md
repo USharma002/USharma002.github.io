@@ -103,7 +103,7 @@ $$
 
 ---
 
-### 3. Pixel → Camera Ray (Back-Projection)
+### 3. Pixel $\rightarrow$ Camera Ray (Back-Projection)
 
 To go from pixel $(u, v)$ **back into camera space**, we recover the **ray direction**.
 
@@ -152,7 +152,7 @@ Here
 - $d_C$ is the ray direction in the camera frame,  
 - the camera center is at the origin in camera coordinates, so there is no position term.
 
-This is the complete back-projection from pixel → ray in camera space.
+This is the complete back-projection from pixel $\rightarrow$ ray in camera space.
 
 ---
 
@@ -455,6 +455,13 @@ where $i, j, k$ denote the indices of the three modes.
 
 CP decomposition factorizes a tensor into multiple vectors, expressing multiple compact rank-one components. However, because of too high compactness, CP decomposition can require many components to model complex scenes, leading to high computational costs in radiance field reconstruction.
 
+
+{{< figure src="../../images/3dvis/cp_factorization.png"
+num="7"
+caption="CP decomposition, which factorizes a tensor as a sum of vector outer products"
+width="60%" 
+>}}
+
 ### Vector-Matrix (VM) Decomposition
 
 Unlike CP decomposition that utilizes pure vector factors, VM decomposition factorizes a tensor into multiple vectors and matrices. This is expressed by:
@@ -467,12 +474,18 @@ where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3} \in 
 
 For each component, we relax its two mode ranks to be arbitrarily large, while restricting the third mode to be rank-one; e.g., for component tensor $\mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3}$, its mode-1 rank is 1, and its mode-2 and mode-3 ranks can be arbitrary, depending on the rank of the matrix $\mathbf{M}_r^{2,3}$.
 
+{{< figure src="../../images/3dvis/vm_factorization.png"
+num="7"
+caption="vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products."
+width="100%" 
+>}}
+
+#### Comparison
 {{< figure src="../../images/3dvis/cp_vm_factorization.png"
 num="7"
 caption="Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products."
 width="100%" 
 >}}
-
 
 ### Tensor for Scene Modeling
 
@@ -501,6 +514,11 @@ $$
 $$
 
 where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.
+
+{{< figure src="../../images/3dvis/cp_vm_factorization_full.png"
+caption="TensoRF using CP decomposition and VM decomposition"
+width="100%" 
+>}}
 
 ### Factorizing Radiance Fields
 
