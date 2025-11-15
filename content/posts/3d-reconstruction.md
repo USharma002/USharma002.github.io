@@ -178,7 +178,7 @@ f_x & 0   & c_x \\
 \end{bmatrix}} &
 \begin{bmatrix}\tilde u\\ \tilde v\\Z_C\end{bmatrix}
 & \xrightarrow[\text{Normalizing}]{\text{Perspective Divide}} 
-\frac{1}{Z_C}\begin{bmatrix}u\\v\\1\end{bmatrix}
+Z_C\begin{bmatrix}u\\v\\1\end{bmatrix}
 & \textbf{Pixel}
 \\[20pt]
 \begin{bmatrix}X\\Y\\Z\\1\end{bmatrix} &
