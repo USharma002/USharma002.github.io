@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-07 00:00:00 +0000 UTC'>November 7, 2025</span>&nbsp;·&nbsp;37 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-07 00:00:00 +0000 UTC'>November 7, 2025</span>&nbsp;·&nbsp;48 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -260,14 +260,76 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#a-look-at-the-neural-importance-sampling-techniques" aria-label="A look at the Neural Importance Sampling Techniques">A look at the Neural Importance Sampling Techniques</a><ul>
                         
                 <li>
-                    <a href="#neural-importance-sampling" aria-label="Neural Importance Sampling">Neural Importance Sampling</a></li>
+                    <a href="#neural-importance-sampling" aria-label="Neural Importance Sampling">Neural Importance Sampling</a><ul>
+                        
                 <li>
-                    <a href="#real-time-neural-radiance-caching-for-path-tracing" aria-label="Real-time Neural Radiance Caching for Path Tracing">Real-time Neural Radiance Caching for Path Tracing</a></li>
+                    <a href="#overview" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#normalizing-flows-and-nice" aria-label="Normalizing Flows and NICE">Normalizing Flows and NICE</a></li>
+                <li>
+                    <a href="#coupling-layers" aria-label="Coupling Layers">Coupling Layers</a></li>
+                <li>
+                    <a href="#piecewise-polynomial-coupling-transforms" aria-label="Piecewise-Polynomial Coupling Transforms">Piecewise-Polynomial Coupling Transforms</a><ul>
+                        
+                <li>
+                    <a href="#piecewise-linear-coupling-transform" aria-label="Piecewise-Linear Coupling Transform">Piecewise-Linear Coupling Transform</a></li>
+                <li>
+                    <a href="#piecewise-quadratic-coupling-transform" aria-label="Piecewise-Quadratic Coupling Transform">Piecewise-Quadratic Coupling Transform</a></li></ul>
+                </li>
+                <li>
+                    <a href="#one-blob-encoding" aria-label="One-Blob Encoding">One-Blob Encoding</a></li>
+                <li>
+                    <a href="#network-architecture" aria-label="Network Architecture">Network Architecture</a></li>
+                <li>
+                    <a href="#optimization-for-monte-carlo-integration" aria-label="Optimization for Monte Carlo Integration">Optimization for Monte Carlo Integration</a><ul>
+                        
+                <li>
+                    <a href="#minimizing-kl-divergence" aria-label="Minimizing KL Divergence">Minimizing KL Divergence</a></li>
+                <li>
+                    <a href="#minimizing-variance-%cf%87-divergence" aria-label="Minimizing Variance (χ² Divergence)">Minimizing Variance (χ² Divergence)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#application-to-path-guiding" aria-label="Application to Path Guiding">Application to Path Guiding</a><ul>
+                        
+                <li>
+                    <a href="#sampling-strategy" aria-label="Sampling Strategy">Sampling Strategy</a></li>
+                <li>
+                    <a href="#mis-aware-optimization" aria-label="MIS-Aware Optimization">MIS-Aware Optimization</a></li>
+                <li>
+                    <a href="#learned-selection-probabilities" aria-label="Learned Selection Probabilities">Learned Selection Probabilities</a></li></ul>
+                </li>
+                <li>
+                    <a href="#training-procedure" aria-label="Training Procedure">Training Procedure</a></li></ul>
+                </li>
+                <li>
+                    <a href="#real-time-neural-radiance-caching-for-path-tracing" aria-label="Real-time Neural Radiance Caching for Path Tracing">Real-time Neural Radiance Caching for Path Tracing</a><ul>
+                        
+                <li>
+                    <a href="#overview-1" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#algorithm-design" aria-label="Algorithm Design">Algorithm Design</a><ul>
+                        
+                <li>
+                    <a href="#rendering-phase" aria-label="Rendering Phase">Rendering Phase</a></li>
+                <li>
+                    <a href="#training-phase" aria-label="Training Phase">Training Phase</a></li></ul>
+                </li>
+                <li>
+                    <a href="#self-training-strategy" aria-label="Self-Training Strategy">Self-Training Strategy</a></li>
+                <li>
+                    <a href="#temporal-stabilization" aria-label="Temporal Stabilization">Temporal Stabilization</a></li>
+                <li>
+                    <a href="#network-architecture-and-input-encoding" aria-label="Network Architecture and Input Encoding">Network Architecture and Input Encoding</a></li>
+                <li>
+                    <a href="#training-budget-and-amortization" aria-label="Training Budget and Amortization">Training Budget and Amortization</a></li>
+                <li>
+                    <a href="#loss-function-and-optimization" aria-label="Loss Function and Optimization">Loss Function and Optimization</a></li></ul>
+                </li>
                 <li>
                     <a href="#neural-parametric-mixtures-for-path-guiding" aria-label="Neural Parametric Mixtures for Path Guiding">Neural Parametric Mixtures for Path Guiding</a><ul>
                         
                 <li>
-                    <a href="#overview" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-2" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#von-misesfisher-distribution" aria-label="von Mises–Fisher Distribution">von Mises–Fisher Distribution</a></li>
                 <li>
@@ -292,10 +354,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#limitations" aria-label="Limitations">Limitations</a></li></ul>
                 </li>
                 <li>
+                    <a href="#online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians" aria-label="Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians">Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians</a><ul>
+                        
+                <li>
+                    <a href="#overview-3" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#limitation" aria-label="Limitation">Limitation</a></li></ul>
+                </li>
+                <li>
                     <a href="#neural-product-importance-sampling-via-warp-composition" aria-label="Neural Product Importance Sampling via Warp Composition">Neural Product Importance Sampling via Warp Composition</a><ul>
                         
                 <li>
-                    <a href="#overview-1" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-4" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#decomposing-the-product--and" aria-label="Decomposing the Product: $p_1$ and $p_2$">Decomposing the Product: $p_1$ and $p_2$</a><ul>
                         
@@ -311,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#sampling-procedure" aria-label="Sampling Procedure">Sampling Procedure</a></li></ul>
                 </li>
                 <li>
-                    <a href="#head-warp--conditional-neural-spline-flow" aria-label="Head Warp — Conditional Neural Spline Flow">Head Warp — Conditional Neural Spline Flow</a><ul>
+                    <a href="#head-warp---conditional-neural-spline-flow" aria-label="Head Warp - Conditional Neural Spline Flow">Head Warp - Conditional Neural Spline Flow</a><ul>
                         
                 <li>
                     <a href="#inputs-and-conditioning" aria-label="Inputs and Conditioning">Inputs and Conditioning</a></li>
@@ -319,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#architecture" aria-label="Architecture">Architecture</a></li></ul>
                 </li>
                 <li>
-                    <a href="#tail-warp--environment-map-flow" aria-label="Tail Warp — Environment Map Flow">Tail Warp — Environment Map Flow</a><ul>
+                    <a href="#tail-warp---environment-map-flow" aria-label="Tail Warp - Environment Map Flow">Tail Warp - Environment Map Flow</a><ul>
                         
                 <li>
                     <a href="#training" aria-label="Training">Training</a></li>
@@ -329,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#final-product-sampler" aria-label="Final Product Sampler">Final Product Sampler</a></li>
                 <li>
-                    <a href="#training-objective--forward-kl" aria-label="Training Objective — Forward KL">Training Objective — Forward KL</a><ul>
+                    <a href="#training-objective---forward-kl" aria-label="Training Objective - Forward KL">Training Objective - Forward KL</a><ul>
                         
                 <li>
                     <a href="#stabilization" aria-label="Stabilization">Stabilization</a></li></ul>
@@ -341,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#neural-path-guiding-with-distribution-factorization" aria-label="Neural Path Guiding with Distribution Factorization">Neural Path Guiding with Distribution Factorization</a><ul>
                         
                 <li>
-                    <a href="#overview-2" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-5" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#hemisphere-to-square-mapping" aria-label="Hemisphere-to-Square Mapping">Hemisphere-to-Square Mapping</a></li>
                 <li>
@@ -1128,6 +1198,10 @@ path vertex-an expensive additional computation step.</p>
           <td>SIGGRAPH (2023)</td>
       </tr>
       <tr>
+          <td>Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians</td>
+          <td>ACM TOG (2024)</td>
+      </tr>
+      <tr>
           <td>Neural Product Importance Sampling via Warp Composition</td>
           <td>SIGGRAPH Asia (2024)</td>
       </tr>
@@ -1137,12 +1211,270 @@ path vertex-an expensive additional computation step.</p>
       </tr>
   </tbody>
 </table>
+<p>While a lot more methods have emerged (not necessarily neural), I will add them once I read them in detail and the above papers are what I feel cover a good amount of methods over the years from foundational to recent methods.</p>
 <h2 id="neural-importance-sampling">Neural Importance Sampling<a hidden class="anchor" aria-hidden="true" href="#neural-importance-sampling">#</a></h2>
-<h2 id="real-time-neural-radiance-caching-for-path-tracing">Real-time Neural Radiance Caching for Path Tracing<a hidden class="anchor" aria-hidden="true" href="#real-time-neural-radiance-caching-for-path-tracing">#</a></h2>
-<h2 id="neural-parametric-mixtures-for-path-guiding">Neural Parametric Mixtures for Path Guiding<a hidden class="anchor" aria-hidden="true" href="#neural-parametric-mixtures-for-path-guiding">#</a></h2>
 <h3 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h3>
-<figure id="fig-npm-overview" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/neuropara-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<p>Neural Importance Sampling (NIS) proposes to use deep neural networks for generating samples in Monte Carlo integration . The approach is based on Non-linear Independent Components Estimation (NICE), extended with novel coupling transforms and optimization strategies specifically designed for integration problems . The key innovation is learning expressive sampling densities $q(x;\theta)$ that closely match the integrand $f(x)$, thereby reducing estimation variance .</p>
+<p>Given an integral:</p>
+$$
+F = \int_D f(x) dx
+$$<p>we introduce a probability density function (PDF) $q(x)$ to express $F$ as an expected ratio :</p>
+$$
+F = \int_D \frac{f(x)}{q(x)} q(x) dx = \mathbb{E}\left[\frac{f(X)}{q(X)}\right]
+$$<p>This expectation can be approximated using $N$ independent samples $\{X_1, X_2, \ldots, X_N\}$ where $X_i \in D, X_i \sim q(x)$ :</p>
+$$
+F \approx \langle F \rangle_N = \frac{1}{N} \sum_{i=1}^{N} \frac{f(X_i)}{q(X_i)}
+$$<p>The variance of this estimator heavily depends on how closely $q$ matches the normalized integrand $p(x) \equiv f(x)/F$ . In the ideal case where samples are drawn from a PDF proportional to $f(x)$, we obtain a zero-variance estimator .</p>
+<h3 id="normalizing-flows-and-nice">Normalizing Flows and NICE<a hidden class="anchor" aria-hidden="true" href="#normalizing-flows-and-nice">#</a></h3>
+<p>Neural Importance Sampling leverages <strong>normalizing flows</strong> to model the sampling distribution as a deterministic bijective mapping $x = h(z;\theta)$ from a simple latent distribution $q(z)$ (e.g., uniform or Gaussian) to the complex target distribution . The probability density is computed using the change-of-variables formula:</p>
+$$
+q(x;\theta) = q(z) \left|\det\left(\frac{\partial h(z;\theta)}{\partial z^T}\right)\right|^{-1}
+$$<p>where the inverse Jacobian determinant accounts for density changes due to the transformation .</p>
+<p>For this to be practical in Monte Carlo integration, three requirements must be satisfied :</p>
+<ol>
+<li><strong>Tractable inverse</strong>: Given $x$, we must efficiently compute $z = h^{-1}(x)$</li>
+<li><strong>Fast evaluation</strong>: Both $h$ and $h^{-1}$ must be computationally efficient</li>
+<li><strong>Tractable Jacobian</strong>: The Jacobian determinant must be efficiently computable</li>
+</ol>
+<p>NICE satisfies all these requirements through <strong>coupling layers</strong> that admit triangular Jacobian matrices with determinants reducing to products of diagonal terms .</p>
+<h3 id="coupling-layers">Coupling Layers<a hidden class="anchor" aria-hidden="true" href="#coupling-layers">#</a></h3>
+<p>A coupling layer partitions the $D$-dimensional input vector $x$ into two disjoint groups $A$ and $B$ . It leaves partition $A$ unchanged while using it to parameterize the transformation of partition $B$:</p>
+$$
+y_A = x_A
+$$$$
+y_B = C(x_B; m(x_A))
+$$<p>where $C: \mathbb{R}^{|B|} \times m(\mathbb{R}^{|A|}) \to \mathbb{R}^{|B|}$ is a separable and invertible coupling transform, and $m$ is a neural network .</p>
+<p>The invertibility is trivial :</p>
+$$
+x_A = y_A
+$$$$
+x_B = C^{-1}(y_B; m(x_A)) = C^{-1}(y_B; m(y_A))
+$$<p>Since $C$ is separable by design, its Jacobian matrix is diagonal, making determinant computation tractable even in high dimensions . The complete transformation is obtained by compounding multiple coupling layers $\tilde{h} = h_L \circ \cdots \circ h_2 \circ h_1$, alternating which partition is transformed .</p>
+<figure id="fig-coupling-layer" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/couplin_layer.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
+      Coupling layer architecture showing partitioning and transformation
+    </figcaption></figure>
+
+<h3 id="piecewise-polynomial-coupling-transforms">Piecewise-Polynomial Coupling Transforms<a hidden class="anchor" aria-hidden="true" href="#piecewise-polynomial-coupling-transforms">#</a></h3>
+<p>Instead of the affine (multiply-add) coupling transforms from prior work, Neural Importance Sampling introduces <strong>piecewise-polynomial coupling transforms</strong> with significantly greater modeling power .</p>
+<figure id="fig-pdf-generation" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/pdf_gen.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
+      PDF generation using piecewise-polynomial coupling transforms
+    </figcaption></figure>
+
+<h4 id="piecewise-linear-coupling-transform">Piecewise-Linear Coupling Transform<a hidden class="anchor" aria-hidden="true" href="#piecewise-linear-coupling-transform">#</a></h4>
+<p>The approach operates on the unit hypercube $x, y \in [0,1]^D$ with uniformly distributed latent variables . Each dimension in partition $B$ is divided into $K$ bins of equal width $w = 1/K$ .</p>
+<p>The neural network $m(x_A)$ outputs a $|B| \times K$ matrix $\tilde{Q}$, where each row defines an unnormalized probability mass function . After softmax normalization $Q_i = \sigma(\tilde{Q}_i)$, the PDF in dimension $i$ is:</p>
+$$
+q_i(x_i^B) = \frac{Q_{ib}}{w}
+$$<p>where $b = \lfloor Kx_i^B \rfloor$ is the bin containing $x_i^B$ .</p>
+<p>The piecewise-linear coupling transform is obtained by integration :</p>
+$$
+C_i(x_i^B; Q) = \int_0^{x_i^B} q_i(t) dt = \alpha Q_{ib} + \sum_{k=1}^{b-1} Q_{ik}
+$$<p>where $\alpha = Kx_i^B - \lfloor Kx_i^B \rfloor$ represents the relative position within bin $b$ .</p>
+<p>The Jacobian determinant reduces to :</p>
+$$
+\det\left(\frac{\partial C(x^B; Q)}{\partial (x^B)^T}\right) = \prod_{i=1}^{|B|} q_i(x_i^B) = \prod_{i=1}^{|B|} \frac{Q_{ib}}{w}
+$$<h4 id="piecewise-quadratic-coupling-transform">Piecewise-Quadratic Coupling Transform<a hidden class="anchor" aria-hidden="true" href="#piecewise-quadratic-coupling-transform">#</a></h4>
+<p>For improved expressiveness and adaptive bin sizing, piecewise-quadratic transforms admit a piecewise-linear PDF modeled using $K+1$ vertices . The network outputs unnormalized matrices $\tilde{W}$ and $\tilde{V}$, which are normalized as:</p>
+$$
+W_i = \sigma(\tilde{W}_i)
+$$$$
+V_{i,j} = \frac{\exp(\tilde{V}_{i,j})}{\sum_{k=1}^{K} \frac{\exp(\tilde{V}_{i,k}) + \exp(\tilde{V}_{i,k+1})}{2} W_{i,k}}
+$$<p>where the denominator ensures $V_i$ represents a valid PDF .</p>
+<p>The PDF is defined as :</p>
+$$
+q_i(x_i^B) = \text{lerp}(V_{ib}, V_{ib+1}, \alpha)
+$$<p>where $\alpha = (x_i^B - \sum_{k=1}^{b-1} W_{ik})/W_{ib}$ represents the relative position in bin $b$ .</p>
+<p>The invertible coupling transform is :</p>
+$$
+C_i(x_i^B; W, V) = \frac{\alpha^2}{2}(V_{ib+1} - V_{ib})W_{ib} + \alpha V_{ib} W_{ib} + \sum_{k=1}^{b-1} \frac{V_{ik} + V_{ik+1}}{2} W_{ik}
+$$<p>Inverting this transform involves solving a quadratic equation, which can be done efficiently and robustly .</p>
+<figure id="fig-coupling-layer" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/predicted_pdf.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
+      Coupling layer architecture showing partitioning and transformation
+    </figcaption></figure>
+
+<h3 id="one-blob-encoding">One-Blob Encoding<a hidden class="anchor" aria-hidden="true" href="#one-blob-encoding">#</a></h3>
+<p>To improve network performance, <strong>one-blob encoding</strong> generalizes one-hot encoding for continuous variables . For a scalar $s \in [0,1]$ and quantization into $k$ bins (typically $k=32$), a Gaussian kernel with $\sigma = 1/k$ is placed at $s$ and discretized into the bins .</p>
+<p>Unlike one-hot encoding, one-blob encoding is lossless for continuous variables while stimulating localization of computation . This encoding effectively shuts down certain parts of the network, allowing specialization on various sub-domains .</p>
+<h3 id="network-architecture">Network Architecture<a hidden class="anchor" aria-hidden="true" href="#network-architecture">#</a></h3>
+<p>The neural network $m$ uses a <strong>U-shaped architecture</strong> with fully connected layers . For each coupling layer:</p>
+<ul>
+<li>Input: One-blob encoded partition $A$ dimensions and optional features (position, normal, etc.)</li>
+<li>Architecture: Typically 8-10 fully connected layers with ReLU activations</li>
+<li>Outermost layers: 256 neurons, halved at each nesting level</li>
+<li>Output layer: Produces parameters for coupling transform ($Q$, or $W$ and $V$)</li>
+</ul>
+<p>All inputs are one-blob encoded with $k=32$ bins . For 3D positions, each coordinate is normalized by the scene bounding box, encoded independently, and concatenated into a $3 \times k$ array . Directions are parameterized using cylindrical coordinates, transformed to $[0,1]$, and similarly encoded .</p>
+<h3 id="optimization-for-monte-carlo-integration">Optimization for Monte Carlo Integration<a hidden class="anchor" aria-hidden="true" href="#optimization-for-monte-carlo-integration">#</a></h3>
+<h4 id="minimizing-kl-divergence">Minimizing KL Divergence<a hidden class="anchor" aria-hidden="true" href="#minimizing-kl-divergence">#</a></h4>
+<p>The Kullback-Leibler divergence between the ideal distribution $p(x)$ and learned $q(x;\theta)$ is :</p>
+$$
+D_{KL}(p \| q; \theta) = \int_{\Omega} p(x) \log \frac{p(x)}{q(x;\theta)} dx
+$$<p>The gradient with respect to trainable parameters $\theta$ is :</p>
+$$
+\nabla_{\theta} D_{KL}(p \| q; \theta) = \mathbb{E}\left[-\frac{p(X)}{q(X;\theta)} \nabla_{\theta} \log q(X;\theta)\right]
+$$<p>where the expectation is over $X \sim q(x;\theta)$ .</p>
+<p>Since $p(x) = f(x)/F$ and $F$ is unknown, the stochastic gradient uses unnormalized estimates :</p>
+$$
+\nabla_{\theta} D_{KL}(p \| q; \theta) \approx -\frac{1}{N} \sum_{j=1}^{N} \frac{f(X_j)}{q(X_j;\theta)} \nabla_{\theta} \log q(X_j;\theta)
+$$<p>where $X_j \sim q(x;\theta)$ .</p>
+<h4 id="minimizing-variance-χ-divergence">Minimizing Variance (χ² Divergence)<a hidden class="anchor" aria-hidden="true" href="#minimizing-variance-χ-divergence">#</a></h4>
+<p>Directly minimizing the estimator variance is equivalent to minimizing the Pearson χ² divergence :</p>
+$$
+\mathbb{V}\left[\frac{p(X)}{q(X;\theta)}\right] = \mathbb{E}\left[\frac{p(X)^2}{q(X;\theta)^2}\right] - \mathbb{E}\left[\frac{p(X)}{q(X;\theta)}\right]^2
+$$<p>The stochastic gradient for variance minimization is :</p>
+$$
+\nabla_{\theta} \mathbb{V}\left[\frac{p(X)}{q(X;\theta)}\right] = \mathbb{E}\left[-\left(\frac{p(X)}{q(X;\theta)}\right)^2 \nabla_{\theta} \log q(X;\theta)\right]
+$$<p>In practice, this becomes :</p>
+$$
+\nabla_{\theta} \mathbb{V} \approx -\frac{1}{N} \sum_{j=1}^{N} \left(\frac{f(X_j)}{q(X_j;\theta)}\right)^2 \nabla_{\theta} \log q(X_j;\theta)
+$$<h3 id="application-to-path-guiding">Application to Path Guiding<a hidden class="anchor" aria-hidden="true" href="#application-to-path-guiding">#</a></h3>
+<p>For path guiding in rendering, the goal is to learn directional sampling densities $q(\omega|x,\omega_o)$ proportional to the product of incident illumination and BSDF in the rendering equation :</p>
+$$
+L_o(x,\omega_o) = L_e(x,\omega_o) + \int_{\Omega} L(x,\omega) f_s(x,\omega_o,\omega) |\cos\gamma| d\omega
+$$<p>The reflected radiance estimator is :</p>
+$$
+\langle L_r(x,\omega_o) \rangle = \frac{1}{N} \sum_{j=1}^{N} \frac{L(x,\omega_j) f_s(x,\omega_o,\omega_j) |\cos\gamma_j|}{q(\omega_j|x,\omega_o)}
+$$<h4 id="sampling-strategy">Sampling Strategy<a hidden class="anchor" aria-hidden="true" href="#sampling-strategy">#</a></h4>
+<p>Since the integration domain is 2D (directional hemisphere), partitions $A$ and $B$ each contain one cylindrical coordinate dimension . To generate a sample:</p>
+<ol>
+<li>Draw random pair $u \in [0,1]^2$ from uniform distribution</li>
+<li>Pass through inverted coupling layers: $h_1^{-1}(\cdots h_L^{-1}(u))$</li>
+<li>Transform to cylindrical coordinates to obtain direction $\omega$</li>
+</ol>
+<p>The neural network $m$ takes as input :</p>
+<ul>
+<li>One cylindrical coordinate from partition $A$ (one-blob encoded, $k=32$)</li>
+<li>Surface position $x$ (normalized, one-blob encoded per dimension, total $3k$)</li>
+<li>Outgoing direction $\omega_o$ (cylindrical coords, one-blob encoded, total $2k$)</li>
+<li>Surface normal $\mathbf{n}(x)$ (one-blob encoded)</li>
+<li>Optional additional features</li>
+</ul>
+<h4 id="mis-aware-optimization">MIS-Aware Optimization<a hidden class="anchor" aria-hidden="true" href="#mis-aware-optimization">#</a></h4>
+<p>When combining the learned distribution $q$ with existing techniques (e.g., BSDF sampling) using multiple importance sampling (MIS), the effective PDF becomes :</p>
+$$
+q'(\omega) = c \cdot q(\omega) + (1-c) \cdot p_{f_s}(\omega)
+$$<p>where $c$ is the selection probability . The networks are optimized with respect to $q'$ instead of $q$, minimizing $D(p \| q')$ where $D$ is either KL or χ² divergence .</p>
+<h4 id="learned-selection-probabilities">Learned Selection Probabilities<a hidden class="anchor" aria-hidden="true" href="#learned-selection-probabilities">#</a></h4>
+<p>An additional network $\hat{m}$ learns approximately optimal selection probability $c = \ell(\hat{m}(x,\omega_o))$, where $\ell$ is the logistic function . This network is optimized jointly with the coupling layer networks using the same architecture except for the output layer .</p>
+<h3 id="training-procedure">Training Procedure<a hidden class="anchor" aria-hidden="true" href="#training-procedure">#</a></h3>
+<p>Training occurs online during rendering in an interleaved fashion :</p>
+<ol>
+<li><strong>Sample Generation</strong>: Draw samples using current network parameters</li>
+<li><strong>Feedback</strong>: Evaluate integrand $f(x)$ at sample locations</li>
+<li><strong>Gradient Computation</strong>: Compute stochastic gradient using KL or χ² loss</li>
+<li><strong>Parameter Update</strong>: Update network weights using Adam optimizer</li>
+<li><strong>Iteration</strong>: Repeat with updated network</li>
+</ol>
+<p>The approach enables fast inference and efficient sample generation independently of integration domain dimensionality . Training converges rapidly, producing usable sampling distributions within seconds to minutes depending on scene complexity .</p>
+<figure id="fig-comparison" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/comparison.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
+      Visual comparison of different sampling strategies across training iterations
+    </figcaption></figure>
+
+<h2 id="real-time-neural-radiance-caching-for-path-tracing">Real-time Neural Radiance Caching for Path Tracing<a hidden class="anchor" aria-hidden="true" href="#real-time-neural-radiance-caching-for-path-tracing">#</a></h2>
+<h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
+<p>Real-time Neural Radiance Caching (NRC) is a method for accelerating path-traced global illumination by approximating the scattered radiance field using a neural network . The system handles fully dynamic scenes without assumptions about lighting, geometry, or materials . The core idea is to <strong>terminate paths early</strong> by querying a neural cache once the path spread becomes large enough to blur small inaccuracies in the cache approximation .</p>
+<p>The neural network approximates the scattered radiance $L_s(x,\omega)$, which represents the radiative energy leaving point $x$ in direction $\omega$ after being scattered at $x$ :</p>
+$$
+L_s(x,\omega) := \int_{S^2} f_s(x,\omega,\omega_i) L_i(x,\omega_i) | \cos\theta_i| d\omega_i
+$$<p>where $f_s$ is the BSDF, $L_i$ is the incident radiance, and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x$ .</p>
+<h3 id="algorithm-design">Algorithm Design<a hidden class="anchor" aria-hidden="true" href="#algorithm-design">#</a></h3>
+<figure id="fig-radiance-cache-png" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nrc/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      Radiance cache visualization showing path termination
+    </figcaption></figure>
+
+<p>Rendering a single frame consists of two phases: computing pixel colors and updating the neural radiance cache .</p>
+<h4 id="rendering-phase">Rendering Phase<a hidden class="anchor" aria-hidden="true" href="#rendering-phase">#</a></h4>
+<p>Short <strong>rendering paths</strong> are traced (one per pixel) and terminated early when the neural cache approximation becomes sufficiently accurate . The termination criterion uses the area-spread heuristic from Bekaert et al. (2003), which compares the footprint of the path to the size of the directly visible surface in the image plane .</p>
+<p>The area spread along subpath $x_1 \cdots x_n$ is approximated as :</p>
+$$
+a(x_1 \cdots x_n) = \left(\sum_{i=2}^{n} \frac{\|x_{i-1} - x_i\|^2}{p(\omega_i \mid x_{i-1},\omega) |\cos\theta_i|}\right)^2
+$$<p>where $p$ is the BSDF sampling PDF and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x_i$ .</p>
+<figure id="fig-radiance-cache-termination" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nrc/radiance_cache_termination.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+      Path termination heuristic comparing path spread to primary vertex footprint
+    </figcaption></figure>
+
+<p>The path is terminated when $a(x_1 \cdots x_n) > c \cdot a_0$, where $c = 0.01$ is a hyperparameter and $a_0$ is the spread at the primary vertex :</p>
+$$
+a_0 := \frac{\|x_0 - x_1\|^2}{4\pi \cos\theta_1}
+$$<p>At the terminal vertex $x_k$, the neural radiance cache $\tilde{L}_s(x_k,\omega_k)$ is evaluated to approximate the scattered radiance .</p>
+<h4 id="training-phase">Training Phase<a hidden class="anchor" aria-hidden="true" href="#training-phase">#</a></h4>
+<p>A small fraction (typically under 3%) of rendering paths are extended by a few vertices to form <strong>training paths</strong> . These longer paths are terminated using the same area-spread heuristic applied to the training suffix . The collected radiance estimates along all vertices of the training paths serve as reference values for updating the neural cache .</p>
+<figure id="fig-radiance-cache-training" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nrc/radiance_cache_training.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      Training suffix extends rendering paths to collect radiance estimates
+    </figcaption></figure>
+
+<h3 id="self-training-strategy">Self-Training Strategy<a hidden class="anchor" aria-hidden="true" href="#self-training-strategy">#</a></h3>
+<p>Instead of using noisy Monte Carlo path-traced estimates as training targets, NRC employs <strong>self-training</strong> by evaluating the neural cache itself at terminal vertices of training paths . This approach trades variance for potential bias and enables progressive simulation of multi-bounce illumination through iteration .</p>
+<p>Each training iteration increases the number of simulated light bounces by transporting radiance learned from previous iterations . To mitigate bias, a small fraction $u = 1/16$ of training paths are made truly unbiased by terminating only via Russian roulette .</p>
+<p>The self-training mechanism resembles Q-learning and progressive radiosity algorithms that simulate multi-bounce transport by iterating single-bounce updates .</p>
+<h3 id="temporal-stabilization">Temporal Stabilization<a hidden class="anchor" aria-hidden="true" href="#temporal-stabilization">#</a></h3>
+<p>To prevent temporal flickering from aggressive optimization (high learning rates and multiple gradient descent steps per frame), an <strong>exponential moving average (EMA)</strong> is applied to the network weights :</p>
+$$
+\bar{W}_t := \frac{1-\alpha}{\eta_t} \cdot W_t + \alpha \cdot \eta_{t-1} \cdot \bar{W}_{t-1}, \quad \text{where } \eta_t := 1 - \alpha^t
+$$<p>The parameter $\alpha = 0.99$ balances fast adaptation with temporal stability . The EMA weights $\bar{W}_t$ are used for rendering queries, while raw weights $W_t$ continue to be optimized .</p>
+<h3 id="network-architecture-and-input-encoding">Network Architecture and Input Encoding<a hidden class="anchor" aria-hidden="true" href="#network-architecture-and-input-encoding">#</a></h3>
+<p>Parameters and their encoding, amounting to $62$ dimensions: <code>freq</code> denotes frequency encoding [Mildenhall et al. 2020], <code>ob</code> denotes one-blob encoding [Müller et al. 2019], <code>sph</code> denotes a conversion to spherical coordinates normalized to $[0,1]^2$, and <code>id</code> is the identity.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Parameter</th>
+          <th>Symbol</th>
+          <th>with Encoding</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Position</td>
+          <td>$ \mathbf{x} \in \mathbb{R}^3 $</td>
+          <td>$\mathrm{freq}(\mathbf{x}) \in \mathbb{R}^{3 \times 12}$</td>
+      </tr>
+      <tr>
+          <td>Scattered dir.</td>
+          <td>$ \omega \in S^2 $</td>
+          <td>$\mathrm{ob}(\mathrm{sph}(\omega)) \in \mathbb{R}^{2 \times 4}$</td>
+      </tr>
+      <tr>
+          <td>Surface normal</td>
+          <td>$ \mathbf{n}(\mathbf{x}) \in S^2 $</td>
+          <td>$\mathrm{ob}(\mathrm{sph}(\mathbf{n}(\mathbf{x}))) \in \mathbb{R}^{2 \times 4}$</td>
+      </tr>
+      <tr>
+          <td>Surface roughness</td>
+          <td>$ r(\mathbf{x}, \omega) \in \mathbb{R} $</td>
+          <td>$\mathrm{ob}\!\left( 1 - e^{-r(\mathbf{x},\omega)} \right) \in \mathbb{R}^{4}$</td>
+      </tr>
+      <tr>
+          <td>Diffuse reflectance</td>
+          <td>$ \alpha(\mathbf{x}, \omega) \in \mathbb{R}^3 $</td>
+          <td>$\mathrm{id}(\alpha(\mathbf{x},\omega)) \in \mathbb{R}^3$</td>
+      </tr>
+      <tr>
+          <td>Specular reflectance</td>
+          <td>$ \beta(\mathbf{x}, \omega) \in \mathbb{R}^3 $</td>
+          <td>$\mathrm{id}(\beta(\mathbf{x},\omega)) \in \mathbb{R}^3$</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Frequency encoding</strong> ($\mathrm{freq}$) is applied to position using 12 sine functions with frequencies $2^d$, $d \in \{0, \ldots, 11\}$ . <strong>One-blob encoding</strong> ($\mathrm{ob}$) with $k=4$ evenly-spaced blobs is used for directional parameters and roughness . Diffuse and specular reflectances are passed directly ($\mathrm{id}$) .</p>
+<h3 id="training-budget-and-amortization">Training Budget and Amortization<a hidden class="anchor" aria-hidden="true" href="#training-budget-and-amortization">#</a></h3>
+<p>The training budget is kept stable and independent of image resolution by using a fixed number of training records per frame . Training paths are interleaved with rendering paths using a tiling mechanism: one path per tile is promoted to a training path using a random offset .</p>
+<p>Training uses $s = 4$ batches of $l = 16384$ records each (65536 total per frame) . The tile size is dynamically adjusted to match this target budget . The training overhead is approximately 2.6ms on Full HD resolution .</p>
+<h3 id="loss-function-and-optimization">Loss Function and Optimization<a hidden class="anchor" aria-hidden="true" href="#loss-function-and-optimization">#</a></h3>
+<p>The network is optimized using mean squared error between predicted radiance $\tilde{L}_s(x,\omega)$ and target radiance collected from training path terminal vertices :</p>
+$$
+\mathcal{L} = \frac{1}{N} \sum_{i=1}^{N} \|\tilde{L}_s(x_i, \omega_i) - L_{\text{target}}(x_i, \omega_i)\|^2
+$$<p>Four gradient descent steps are performed per frame on disjoint random subsets of training data to prevent overfitting . The high learning rate and multiple steps per frame enable rapid adaptation to dynamic scenes.</p>
+<h2 id="neural-parametric-mixtures-for-path-guiding">Neural Parametric Mixtures for Path Guiding<a hidden class="anchor" aria-hidden="true" href="#neural-parametric-mixtures-for-path-guiding">#</a></h2>
+<h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
+<figure id="fig-npm-overview" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/neuropara-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       High-level illustration of Neural Parametric Mixtures (NPM). Spatially varying target distributions are encoded using a multi-resolution embedding. For a queried location $x$, (1) nearby grid features are interpolated and concatenated to form $G(x)$, which (2–3) is passed to a lightweight MLP to (4) decode vMF mixture parameters $\Theta$. (5) The resulting distribution guides importance sampling; the MC radiance estimate $\langle L_i(x,\omega_i)\rangle$ supplies the gradient $\nabla_\Theta D_{KL}$ for training.
     </figcaption></figure>
 
@@ -1158,13 +1490,13 @@ It is parameterized by:</p>
 </p>
 $$
 v(\omega \mid \mu,\kappa)= C_D(\kappa)\,\exp(\kappa\,\mu^\top \omega)
-$$<figure id="fig-21" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
+$$<figure id="fig-28" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       As $\kappa \to \infty$, the vMF distribution becomes a delta lobe around $\mu$.
     </figcaption></figure>
 
-<figure id="fig-22" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf_3d.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
+<figure id="fig-29" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf_3d.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       3D vMF distribution used in NPM.
     </figcaption></figure>
 
@@ -1187,8 +1519,8 @@ $$
   \Theta = \{ (\lambda_k,\mu_k,\kappa_k) \}_{k=1}^K
   $$</li>
 </ul>
-<figure id="fig-23" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf_mixture.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
+<figure id="fig-30" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf_mixture.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
       vMF Mixture with $K=3$ components
     </figcaption></figure>
 
@@ -1200,8 +1532,8 @@ V(\omega_i\mid\Theta(x))
 \propto
 L_i(x,\omega_i).
 $$<p>Traditional path guiding uses kd-trees / octrees → discretization → <strong>parallax error</strong>.</p>
-<figure id="fig-24" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/parallax.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+<figure id="fig-31" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/parallax.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
       Parallax error in discretized guiding structures.
     </figcaption></figure>
 
@@ -1310,8 +1642,8 @@ G(x\mid\Phi_E)=
 \operatorname{bilinear}(x,V_\ell[x]),
 \qquad
 G:\mathbb{R}^3\to\mathbb{R}^{L\times F}.
-$$<figure id="fig-25" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/emb_interpolation.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+$$<figure id="fig-32" style="text-align:center;margin:2em auto;max-width:40%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/emb_interpolation.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
       Multi-resolution interpolation of $G(x)$.
     </figcaption></figure>
 
@@ -1321,8 +1653,8 @@ $$<figure id="fig-25" style="text-align:center;margin:2em auto;max-width:60%;scr
 $$
 \hat{\Theta}(x)=
 \mathrm{MLP}(G(x\mid\Phi_E)\mid\Phi_M).
-$$<figure id="fig-26" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/decoding_parameters.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+$$<figure id="fig-33" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/decoding_parameters.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
       Decoding the vMF mixture parameters.
     </figcaption></figure>
 
@@ -1348,13 +1680,26 @@ $$<p>This aligns sampling with both the scattering function and the learned radi
 <li>vMF is isotropic; complex lobes may require many mixture components</li>
 <li>The number of vMF components $K$ is fixed</li>
 </ul>
+<h2 id="online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians">Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians<a hidden class="anchor" aria-hidden="true" href="#online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians">#</a></h2>
+<h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
+<p>Fixes the limitation of vMF Mixture bwing isotropic by using Spherical Gaussians.</p>
+<figure id="nasg" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nasg/nasg.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+      PDF generation using piecewise-polynomial coupling transforms
+    </figcaption></figure>
+
+<h3 id="limitation">Limitation<a hidden class="anchor" aria-hidden="true" href="#limitation">#</a></h3>
+<ul>
+<li>Degenerated Distributions in Certain Cases.</li>
+<li>Fixed components (but more expressive than vMF mixture)</li>
+</ul>
 <h2 id="neural-product-importance-sampling-via-warp-composition">Neural Product Importance Sampling via Warp Composition<a hidden class="anchor" aria-hidden="true" href="#neural-product-importance-sampling-via-warp-composition">#</a></h2>
 <figure id="fig-naive-fit" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/naive_fit.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
       Naively fitting a normalizing flow (NF) model to the product of a complex unconditioned density $p_1$ (image) and a simple conditioned density $p_2$ (Gaussian with parameterized mean $\mu$) yields a poor result. The model is tasked with simultaneously learning the intricate shape of $p_1$ <em>and</em> the variations in $\mu$. Instead, we apply a $p_1$ warp to the NF-model output, which drastically simplifies the shape of the distribution it needs to learn. The result is a near-perfect fit with an equal number of NF parameters
     </figcaption></figure>
 
-<h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
+<h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
 <p>Many rendering integrands take the form of a <em>product</em> of two functions:
 </p>
 $$
@@ -1369,12 +1714,12 @@ where</p>
 <p>Such products are often <strong>highly multi-modal</strong>, <strong>HDR</strong>, and <strong>material dependent</strong>, making standard MIS mixtures ineffective.</p>
 <p>This method learns a sampler for the <em>product distribution</em> via a <strong>neural warp composition</strong>:</p>
 <ol>
-<li><strong>Head warp</strong> — a <em>conditional</em> neural spline flow that models BRDF and cosine effects.</li>
-<li><strong>Tail warp</strong> — an <em>unconditional</em> neural flow representing the environment map.</li>
+<li><strong>Head warp</strong> - a <em>conditional</em> neural spline flow that models BRDF and cosine effects.</li>
+<li><strong>Tail warp</strong> - an <em>unconditional</em> neural flow representing the environment map.</li>
 </ol>
 <p>The decomposition reduces complexity: the tail warp embeds all lighting structure once, and the head warp learns only how the material reshapes that distribution.</p>
 <figure id="fig-warp-overview" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
       Given a shading condition, the model maps uniform points through two warps to produce samples distributed approximately proportionally to a target product density. The shape of intermediate density is coarse, similarly to a naive product fit, but leads to a precise fit when mapped through the tail warp.
     </figcaption></figure>
 
@@ -1433,7 +1778,7 @@ where</p>
 <li>$T_{\text{tail}} = C$ is the unconditional tail warp.</li>
 </ul>
 <figure id="fig-architecture" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/architecture.gif" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
       Architecture of warp composition. The head warp is a conditional spline flow (two coupling layers), and the tail warp is a large unconditional emitter flow. Their composition yields an efficient product sampler.
     </figcaption></figure>
 
@@ -1446,10 +1791,10 @@ where</p>
 </ol>
 <p>The two warps handle different parts of the product.</p>
 <hr>
-<h3 id="head-warp--conditional-neural-spline-flow">Head Warp — Conditional Neural Spline Flow<a hidden class="anchor" aria-hidden="true" href="#head-warp--conditional-neural-spline-flow">#</a></h3>
+<h3 id="head-warp---conditional-neural-spline-flow">Head Warp - Conditional Neural Spline Flow<a hidden class="anchor" aria-hidden="true" href="#head-warp---conditional-neural-spline-flow">#</a></h3>
 <p>The head warp models the BRDF × cosine factor $p_2(\omega\mid c)$.</p>
 <figure id="fig-head-warp" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/head_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
       Visualization of $p_2(\omega \mid c) \propto f_r(\omega_o,\omega)\cos\theta$ captured by the head warp. The conditional flow reshapes uniform samples according to material and shading.
     </figcaption></figure>
 
@@ -1471,10 +1816,10 @@ which the encoder converts into a latent vector $\ell$.</p>
 </ul>
 <p>The head warp is intentionally <strong>compact</strong> because $p_2$ is low-frequency and smooth.</p>
 <hr>
-<h3 id="tail-warp--environment-map-flow">Tail Warp — Environment Map Flow<a hidden class="anchor" aria-hidden="true" href="#tail-warp--environment-map-flow">#</a></h3>
+<h3 id="tail-warp---environment-map-flow">Tail Warp - Environment Map Flow<a hidden class="anchor" aria-hidden="true" href="#tail-warp---environment-map-flow">#</a></h3>
 <p>The tail warp learns the mapping $x = C(y),$ such that $x$ follows the emitter distribution $p_1(\omega)$.</p>
 <figure id="fig-tail-warp" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/tail_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
       Visualization of $p_1(\omega) \propto L(\omega)$ captured by the tail warp. The unconditional flow learns the environment-map density, including HDR lighting structure.
     </figcaption></figure>
 
@@ -1516,17 +1861,17 @@ $$<ul>
 $$p^*(\omega \mid c) \propto p_1(\omega) p_2(\omega\mid c).$$</li>
 </ul>
 <figure id="fig-product-warp" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/product_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
       The composed mapping $T = C \circ h_\theta$ approximates the full product distribution $p^*(\omega \mid c)$. The figure shows how the head warp and tail warp contributions combine.
     </figcaption></figure>
 
 <figure id="fig-product-warp" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/all_warps.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
       All warps combined
     </figcaption></figure>
 
 <hr>
-<h3 id="training-objective--forward-kl">Training Objective — Forward KL<a hidden class="anchor" aria-hidden="true" href="#training-objective--forward-kl">#</a></h3>
+<h3 id="training-objective---forward-kl">Training Objective - Forward KL<a hidden class="anchor" aria-hidden="true" href="#training-objective---forward-kl">#</a></h3>
 <p>The head warp is trained (with the tail warp fixed) via <strong>forward KL divergence</strong>:
 </p>
 $$
@@ -1545,15 +1890,15 @@ $$<h4 id="stabilization">Stabilization<a hidden class="anchor" aria-hidden="true
 <hr>
 <h3 id="limitations-1">Limitations<a hidden class="anchor" aria-hidden="true" href="#limitations-1">#</a></h3>
 <ul>
-<li>Tail warp must be retrained for each new environment map</li>
+<li>Tail warp requires training per material model for new environment map, with duration depending on conditioning dimension and target-distribution complexity</li>
 <li>Extremely glossy BRDFs reduce the advantage of composition</li>
 <li>Single-pixel sun emitters can harm tail warp smoothness</li>
-<li>Sometimes requires MIS fallback in pathological lighting conditions</li>
+<li>Sometimes performs poorly when product distribution is strongly dominated by BRDF and requires MIS fallback in pathological lighting conditions</li>
 </ul>
 <hr>
 <h2 id="neural-path-guiding-with-distribution-factorization">Neural Path Guiding with Distribution Factorization<a hidden class="anchor" aria-hidden="true" href="#neural-path-guiding-with-distribution-factorization">#</a></h2>
 <hr>
-<h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
+<h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
 <p>The goal of path guiding is to learn a sampling distribution that approximates the <strong>target distribution</strong>:
 </p>
 $$
@@ -1570,52 +1915,52 @@ where $\boldsymbol{\omega}$ is the incoming direction, $\boldsymbol{\omega}_o$ i
 <p><strong>Distribution Factorization</strong> solves these issues by factorizing the directional PDF into a marginal and a conditional distribution defined on a square domain.</p>
 <hr>
 <h3 id="hemisphere-to-square-mapping">Hemisphere-to-Square Mapping<a hidden class="anchor" aria-hidden="true" href="#hemisphere-to-square-mapping">#</a></h3>
-<p>We map the incoming direction $\boldsymbol{\omega}$ into uniform square coordinates $(\xi_1, \xi_2) \in [0,1]^2$:</p>
+<p>We map the incoming direction $\boldsymbol{\omega}$ into uniform square coordinates $(\epsilon_1, \epsilon_2) \in [0,1]^2$:</p>
 <ul>
 <li>
 <p><strong>Polar coordinate:</strong><br>
 </p>
 $$
-  \xi_1 = \cos\theta \in [0,1]
+  \epsilon_1 = \cos\theta \in [0,1]
   $$</li>
 <li>
 <p><strong>Normalized azimuth coordinate:</strong><br>
 </p>
 $$
-  \xi_2 = \frac{\phi}{2\pi} \in [0,1]
+  \epsilon_2 = \frac{\phi}{2\pi} \in [0,1]
   $$</li>
 </ul>
-<p>These coordinates can be converted to spherical domain through $\phi = 2\pi\xi_2$ and $\theta = \cos^{-1}(\xi_1)$.</p>
+<p>These coordinates can be converted to spherical domain through $\phi = 2\pi\epsilon_2$ and $\theta = \cos^{-1}(\epsilon_1)$.</p>
 <h3 id="jacobian-of-the-mapping">Jacobian of the Mapping<a hidden class="anchor" aria-hidden="true" href="#jacobian-of-the-mapping">#</a></h3>
-<p>The PDF defined over the uniform square space $p(\xi_1, \xi_2 \mid \mathbf{x}, \boldsymbol{\omega}_o)$ can be converted to distribution over $\boldsymbol{\omega}$, $p_\Omega(\boldsymbol{\omega} \mid \mathbf{x}, \boldsymbol{\omega}_o)$, by taking the Jacobian of the transformation into account.</p>
+<p>The PDF defined over the uniform square space $p(\epsilon_1, \epsilon_2 \mid \mathbf{x}, \boldsymbol{\omega}_o)$ can be converted to distribution over $\boldsymbol{\omega}$, $p_\Omega(\boldsymbol{\omega} \mid \mathbf{x}, \boldsymbol{\omega}_o)$, by taking the Jacobian of the transformation into account.</p>
 <hr>
 <h3 id="factorized-distribution-representation">Factorized Distribution Representation<a hidden class="anchor" aria-hidden="true" href="#factorized-distribution-representation">#</a></h3>
 <p>We use the product rule to represent the joint PDF over the uniform square domain as:
 </p>
 $$
-p(\xi_1, \xi_2 \mid \mathbf{x}, \boldsymbol{\omega}_o) = p_{\boldsymbol{\omega}_1}(\xi_1 \mid \mathbf{x}, \boldsymbol{\omega}_o) \cdot p_{\boldsymbol{\omega}_2}(\xi_2 \mid \xi_1, \mathbf{x}, \boldsymbol{\omega}_o)
+p(\epsilon_1, \epsilon_2 \mid \mathbf{x}, \boldsymbol{\omega}_o) = p_{\boldsymbol{\omega}_1}(\epsilon_1 \mid \mathbf{x}, \boldsymbol{\omega}_o) \cdot p_{\boldsymbol{\omega}_2}(\epsilon_2 \mid \epsilon_1, \mathbf{x}, \boldsymbol{\omega}_o)
 $$<p>Through this representation, estimating the joint PDF boils down to predicting two 1D distributions.</p>
 <hr>
 <h3 id="neural-network-architecture-and-discretization">Neural Network Architecture and Discretization<a hidden class="anchor" aria-hidden="true" href="#neural-network-architecture-and-discretization">#</a></h3>
-<p>We discretize the two domains $\xi_1$ and $\xi_2$ into $M_1$ and $M_2$ discrete locations, respectively, and use <strong>two independent networks</strong> to estimate the PDF at those locations.</p>
+<p>We discretize the two domains $\epsilon_1$ and $\epsilon_2$ into $M_1$ and $M_2$ discrete locations, respectively, and use <strong>two independent networks</strong> to estimate the PDF at those locations.</p>
 <h4 id="network-structure">Network Structure<a hidden class="anchor" aria-hidden="true" href="#network-structure">#</a></h4>
 <p><strong>Marginal Network $f_{\boldsymbol{\omega}_1}$:</strong></p>
 <ul>
 <li><strong>Input:</strong> $\mathbf{x}$ and $\boldsymbol{\omega}_o$</li>
 <li><strong>Output:</strong> An $M_1$-dimensional vector $\mathbf{v}_1$</li>
-<li><strong>Function:</strong> Models $p_{\boldsymbol{\omega}_1}(\xi_1 \mid \mathbf{x}, \boldsymbol{\omega}_o)$</li>
+<li><strong>Function:</strong> Models $p_{\boldsymbol{\omega}_1}(\epsilon_1 \mid \mathbf{x}, \boldsymbol{\omega}_o)$</li>
 </ul>
 <p><strong>Conditional Network $f_{\boldsymbol{\omega}_2}$:</strong></p>
 <ul>
-<li><strong>Input:</strong> $\xi_1$, in addition to $\mathbf{x}$ and $\boldsymbol{\omega}_o$</li>
+<li><strong>Input:</strong> $\epsilon_1$, in addition to $\mathbf{x}$ and $\boldsymbol{\omega}_o$</li>
 <li><strong>Output:</strong> An $M_2$-dimensional vector $\mathbf{v}_2$</li>
-<li><strong>Function:</strong> Models $p_{\boldsymbol{\omega}_2}(\xi_2 \mid \xi_1, \mathbf{x}, \boldsymbol{\omega}_o)$</li>
+<li><strong>Function:</strong> Models $p_{\boldsymbol{\omega}_2}(\epsilon_2 \mid \epsilon_1, \mathbf{x}, \boldsymbol{\omega}_o)$</li>
 </ul>
 <p>The PDF at an arbitrary location can then be obtained by interpolating the estimated PDFs at discrete locations.</p>
 <h4 id="discretization-resolution">Discretization Resolution<a hidden class="anchor" aria-hidden="true" href="#discretization-resolution">#</a></h4>
-<p>The paper sets $M_1 = 32$ and $M_2 = 16$. The reduction in resolution in the second dimension is due to the smaller angular range of $\xi_2$ corresponding to $\phi$ which is between 0 and $\pi$.</p>
+<p>The paper sets $M_1 = 32$ and $M_2 = 16$. The reduction in resolution in the second dimension is due to the smaller angular range of $\epsilon_2$ corresponding to $\phi$ which is between 0 and $\pi$.</p>
 <figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/PDF_grid.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
       Discretized PDF
     </figcaption></figure>
 
@@ -1631,7 +1976,7 @@ $$
 \mathbf{v} = M \cdot \text{softmax}(f_{\boldsymbol{\omega}}(\mathbf{C}))
 $$<p>where $\mathbf{C}$ is the condition (different for marginal and conditional) and $M$ is the number of bins.</p>
 <figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/network_architecture.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
       MLP takes the condition $\mathcal{C}$ as the input and estimates an $M$ dimensional vector. We then apply softmax function to this vector and multiply each element by $M$ to obtain a vector containing the PDF estimate at discrete locations. We use this network to model the marginal and conditional distributions. Note that the we use $x$ and $ω_o$ as the condition when modeling the marginal distribution, but for the conditional one, we additionally pass the first dimension $\epsilon_1$ to the network. We use two separate networks to model the two distributions, but we follow the process illustrated in this figure in both cases.
     </figcaption></figure>
 
@@ -1640,7 +1985,7 @@ $$<p>where $\mathbf{C}$ is the condition (different for marginal and conditional
 <li><strong>Position $\mathbf{x}$:</strong> Learnable dense grid encoding</li>
 <li><strong>Direction $\boldsymbol{\omega}_o$:</strong> Spherical harmonics with degree 4</li>
 <li><strong>Normal and roughness:</strong> One-blob encoding using 4 bins</li>
-<li><strong>Conditional input $\xi_1$:</strong> Triangle wave encoding with 12 frequencies for $f_{\boldsymbol{\omega}_2}$</li>
+<li><strong>Conditional input $\epsilon_1$:</strong> Triangle wave encoding with 12 frequencies for $f_{\boldsymbol{\omega}_2}$</li>
 </ul>
 <p>The networks are implemented in tiny-cuda-nn.</p>
 <hr>
@@ -1650,9 +1995,9 @@ $$<p>where $\mathbf{C}$ is the condition (different for marginal and conditional
 <p>The domain is divided into $M$ bins and the PDF inside each bin is obtained from the corresponding element of the estimated vector $\mathbf{v}$:
 </p>
 $$
-p_{\boldsymbol{\omega}}(\xi \mid \mathbf{C}) = \mathbf{v}[\lfloor\xi M\rfloor]
+p_{\boldsymbol{\omega}}(\epsilon \mid \mathbf{C}) = \mathbf{v}[\lfloor\epsilon M\rfloor]
 $$<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/nearest_neighbor.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
       Nearest Neighbor interpolation
     </figcaption></figure>
 
@@ -1660,27 +2005,27 @@ $$<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:50%
 <p>The PDF at an arbitrary location is obtained by linearly interpolating the estimated PDF at the two nearest discrete coordinates:
 </p>
 $$
-p_{\boldsymbol{\omega}}(\xi \mid \mathbf{C}) = (1-\alpha)\mathbf{v}[m] + \alpha\mathbf{v}[m+1]
+p_{\boldsymbol{\omega}}(\epsilon \mid \mathbf{C}) = (1-\alpha)\mathbf{v}[m] + \alpha\mathbf{v}[m+1]
 $$<p>
-where $m = \lfloor \xi M - 0.5 \rfloor$ and $\alpha = \xi M - m - 0.5$.</p>
+where $m = \lfloor \epsilon M - 0.5 \rfloor$ and $\alpha = \epsilon M - m - 0.5$.</p>
 <figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/linear_interp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
       Linear Interpolation
     </figcaption></figure>
 
 <figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/interp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
       We demonstrate the PDF evaluation and sampling process for nearest neighbor and linear interpolation. To model the $1D$ distributions (marginal and conditional) our network first predicts a vector $v$ containing estimates of the PDF at discrete locations. To obtain the PDF at an arbitrary location, we either use the PDF estimate at the closest sample (top-left), or linearly interpolate between the two closest samples (top-right). Sampling is done by evaluating the inverse CDF at a randomly generated value $u$ with a uniform distribution. Note that the CDF for nearest neighbor interpolation is piecewise linear, while it is piecewise quadratic for linear interpolation.
     </figcaption></figure>
 
 <hr>
 <h3 id="sampling">Sampling<a hidden class="anchor" aria-hidden="true" href="#sampling">#</a></h3>
-<p>Sampling is performed using <strong>inverse transform sampling</strong>. The inverse CDF is evaluated at a randomly generated number with uniform distribution $u \sim \mathcal{U}[0,1]$, i.e., $\xi = P_{\boldsymbol{\omega}}^{-1}(u \mid \mathbf{C})$.</p>
+<p>Sampling is performed using <strong>inverse transform sampling</strong>. The inverse CDF is evaluated at a randomly generated number with uniform distribution $u \sim \mathcal{U}[0,1]$, i.e., $\epsilon = P_{\boldsymbol{\omega}}^{-1}(u \mid \mathbf{C})$.</p>
 <p>The sampling process:</p>
 <ol>
-<li>Sample from the marginal: $\xi_1 = P_{\boldsymbol{\omega}_1}^{-1}(u_1 \mid \mathbf{x}, \boldsymbol{\omega}_o)$</li>
-<li>Sample from the conditional: $\xi_2 = P_{\boldsymbol{\omega}_2}^{-1}(u_2 \mid \xi_1, \mathbf{x}, \boldsymbol{\omega}_o)$</li>
-<li>Convert to spherical: $\theta = \cos^{-1}(\xi_1)$, $\phi = 2\pi\xi_2$</li>
+<li>Sample from the marginal: $\epsilon_1 = P_{\boldsymbol{\omega}_1}^{-1}(u_1 \mid \mathbf{x}, \boldsymbol{\omega}_o)$</li>
+<li>Sample from the conditional: $\epsilon_2 = P_{\boldsymbol{\omega}_2}^{-1}(u_2 \mid \epsilon_1, \mathbf{x}, \boldsymbol{\omega}_o)$</li>
+<li>Convert to spherical: $\theta = \cos^{-1}(\epsilon_1)$, $\phi = 2\pi\epsilon_2$</li>
 </ol>
 <hr>
 <h3 id="optimization-with-radiance-caching">Optimization with Radiance Caching<a hidden class="anchor" aria-hidden="true" href="#optimization-with-radiance-caching">#</a></h3>
@@ -1711,7 +2056,7 @@ $$
 \hat{p}^*(\boldsymbol{\omega}_i \mid \mathbf{x}, \boldsymbol{\omega}_o) = \frac{f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) \cdot f_{\boldsymbol{\Phi}}(\mathbf{x}', \boldsymbol{\omega}_o') \cdot \cos\theta_i}{f_{\boldsymbol{\Phi}}(\mathbf{x}, \boldsymbol{\omega}_o)}
 $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and uses a small MLP network that takes surface location and ray direction as input and estimates the corresponding radiance.</p>
 <figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
       Computing the target distribution requires obtaining $L_r(x,\omega_o)$ and $L_i(x,\omega_i)$. We use a neural network that takes location and direction as the input and estimates the cached reflected radiance along that particular ray. By evaluating the network at the current $(x', \omega_o')$ and next $(x,\omega_i)$ intersection points, we obtain an estimate of the reflected Lr and incoming $L_i$ radiance. Note that here the incoming radiance at $x,\omega_i$ is equal to the reflected radiance at $x', \omega_o'$
     </figcaption></figure>
 
@@ -1723,7 +2068,7 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
 <li>70% of paths are guided using the learned method, 30% use BSDF sampling for exploration</li>
 </ul>
 <figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/df-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
       During path tracing, we generate samples using our guiding distribution $p_\Theta$ to increase the number of paths that reach light sources. These paths are then used to train our radiance caching $f_\Theta$. We leverage the cached radiance as a smoother objective to improve $p_\Theta$, which in turn is used on the next sample generation.
     </figcaption></figure>
 
@@ -1733,7 +2078,6 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
 <li>Uses a fixed resolution, struggling with features significantly smaller than each bin</li>
 <li>High-frequency distributions may require many bins</li>
 <li>On simple scenes with easy-to-model light transport, the advantage is not significant</li>
-<li>Faster methods might produce better results on simple scenes due to ability to trace more samples</li>
 </ul>
 <h1 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h1>
 <ol>
