@@ -151,15 +151,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <main class="about-content"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <section style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 2rem; padding: 2rem; font-family: system-ui, sans-serif; max-width: 900px; margin: auto;">
-  <!-- Profile Section -->
-  <div style="flex: 0 0 200px; text-align: center;">
-    <img 
-      src="https://media.licdn.com/dms/image/v2/C5603AQEE3cL4mekk1A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1652800654430?e=1764201600&v=beta&t=4o8bYlW82VY-VyuMCh_cE8uSQ15PviTH0LmpSpgKNQU" 
-      alt="Utkarsh Sharma" 
-      style="width: 160px; height: 160px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin: 0 auto;">
-    <h2 style="margin-top: 1rem; font-size: 1.4rem;">Utkarsh Sharma</h2>
-    <p style="font-size: 0.95rem; color: #666;">MTech @ CSA, <br>IISc Bangalore</p>
-  </div>
+<!-- Profile Section -->
+<div style="flex: 0 0 200px; text-align: center;">
+  <img 
+    src="https://media.licdn.com/dms/image/v2/C5603AQEE3cL4mekk1A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1652800654430?e=1764201600&v=beta&t=4o8bYlW82VY-VyuMCh_cE8uSQ15PviTH0LmpSpgKNQU" 
+    alt="Utkarsh Sharma" 
+    style="width: 160px; height: 160px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin: 0 auto;">
+  <h2 style="margin-top: 1rem; font-size: 1.4rem;">Utkarsh Sharma</h2>
+  <p style="font-size: 0.95rem; color: #666; margin-bottom: 0.75rem;">MTech @ CSA, <br>IISc Bangalore</p>
+  <!-- CV Button -->
+<p><a href="../CV/CV_Utkarsh_Sharma.pdf" 
+style="display: inline-block; 
+padding: 0.5rem 1.5rem; 
+background-color: #0A66C2; 
+color: white; 
+text-decoration: none; 
+border-radius: 6px; 
+font-size: 0.9rem; 
+font-weight: 500;
+margin-top: 0.5rem;
+transition: background-color 0.3s;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+onmouseover="this.style.backgroundColor='#084d8f'" 
+onmouseout="this.style.backgroundColor='#0A66C2'">
+📄 View CV
+</a></p>
+</div>
   <!-- Bio Section -->
   <div style="flex: 1; min-width: 260px;">
     <h3 style="margin-bottom: 0.5rem;">About Me</h3>
@@ -180,6 +197,7 @@ document.addEventListener("DOMContentLoaded", function() {
           <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
       </a>
+      <!-- Add after the email icon in the social links div: -->
     </div>
 <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
   <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2025</h4>
