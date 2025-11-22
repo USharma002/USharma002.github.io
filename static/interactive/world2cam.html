@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camera Coordinate System Demo</title>
     <style>
-        /* --- CSS VARIABLES & THEME INHERITANCE --- */
+        /* --- CSS VARIABLES --- */
         :root {
             --page-bg: #ffffff;
             --page-text: #212529;
@@ -227,7 +227,6 @@ const canvases = {
 };
 const ctxs = {};
 
-// Initialize Contexts
 Object.keys(canvases).forEach(k => {
     ctxs[k] = canvases[k].getContext('2d');
     new ResizeObserver(() => {
@@ -261,12 +260,12 @@ function getFrustumCorners() {
     ];
 }
 
-/* --- DRAWING FUNCTIONS --- */
+/* --- DRAWING --- */
 function drawWireframe(ctx, corners, origin, styles) {
     ctx.lineWidth = 1;
     ctx.strokeStyle = styles.frustumStroke;
     
-    // 1. Connecting Edges (Near to Far)
+    // Edges
     ctx.beginPath();
     for(let i=0; i<4; i++) {
         ctx.moveTo(corners[i].x, corners[i].y);
@@ -274,28 +273,20 @@ function drawWireframe(ctx, corners, origin, styles) {
     }
     ctx.stroke();
 
-    // 2. Near Face
-    ctx.beginPath();
-    ctx.moveTo(corners[0].x, corners[0].y);
-    ctx.lineTo(corners[1].x, corners[1].y);
-    ctx.lineTo(corners[2].x, corners[2].y);
-    ctx.lineTo(corners[3].x, corners[3].y);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fillStyle = styles.frustum;
-    ctx.fill();
+    // Faces
+    [0, 4].forEach(start => {
+        ctx.beginPath();
+        ctx.moveTo(corners[start].x, corners[start].y);
+        ctx.lineTo(corners[start+1].x, corners[start+1].y);
+        ctx.lineTo(corners[start+2].x, corners[start+2].y);
+        ctx.lineTo(corners[start+3].x, corners[start+3].y);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.fillStyle = styles.frustum;
+        ctx.fill();
+    });
 
-    // 3. Far Face
-    ctx.beginPath();
-    ctx.moveTo(corners[4].x, corners[4].y);
-    ctx.lineTo(corners[5].x, corners[5].y);
-    ctx.lineTo(corners[6].x, corners[6].y);
-    ctx.lineTo(corners[7].x, corners[7].y);
-    ctx.closePath();
-    ctx.stroke();
-    ctx.fill();
-
-    // 4. Apex Lines
+    // Apex
     ctx.beginPath();
     ctx.setLineDash([2, 4]);
     for(let i=0; i<4; i++) {
@@ -307,12 +298,13 @@ function drawWireframe(ctx, corners, origin, styles) {
 }
 
 function render() {
+    // --- DYNAMIC THEME VARIABLES ---
     const styles = {
         bg: getComputedStyle(document.body).getPropertyValue('--card-bg'),
         text: getComputedStyle(document.body).getPropertyValue('--page-text'),
         frustum: getComputedStyle(document.documentElement).getPropertyValue('--frustum-color') || 'rgba(0, 120, 255, 0.05)',
         frustumStroke: getComputedStyle(document.documentElement).getPropertyValue('--frustum-stroke') || '#0078ff',
-        grid: '#ddd'
+        grid: isDark ? '#444' : '#ddd'
     };
 
     const camX = Math.sin(state.orbit.angle) * state.orbit.dist * Math.cos(state.orbit.pitch);
@@ -333,7 +325,6 @@ function draw3DScene(ctx, cvs, viewMat, isWorld, styles) {
     const h = cvs.height / window.devicePixelRatio;
     ctx.clearRect(0,0,w,h);
 
-    // Grid
     ctx.strokeStyle = styles.grid;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -347,33 +338,20 @@ function draw3DScene(ctx, cvs, viewMat, isWorld, styles) {
     }
     ctx.stroke();
 
-    // Frustum
     let corners = getFrustumCorners();
     let camOrigin = {x:0,y:0,z:0};
     if(isWorld) {
-        corners = corners.map(p => ({
-            x: p.x + state.cam.pos.x,
-            y: p.y + state.cam.pos.y,
-            z: p.z + state.cam.pos.z
-        }));
+        corners = corners.map(p => ({x: p.x + state.cam.pos.x, y: p.y + state.cam.pos.y, z: p.z + state.cam.pos.z}));
         camOrigin = state.cam.pos;
     }
     const scrCorners = corners.map(p => worldToScreen(p, viewMat, w, h));
     const scrOrigin = worldToScreen(camOrigin, viewMat, w, h);
     drawWireframe(ctx, scrCorners, scrOrigin, styles);
 
-    // Point
     let pt = state.point;
-    if (!isWorld) {
-        pt = {
-            x: state.point.x - state.cam.pos.x,
-            y: state.point.y - state.cam.pos.y,
-            z: state.point.z - state.cam.pos.z
-        };
-    }
+    if (!isWorld) pt = {x: state.point.x - state.cam.pos.x, y: state.point.y - state.cam.pos.y, z: state.point.z - state.cam.pos.z};
     const scrPt = worldToScreen(pt, viewMat, w, h);
     
-    // Ray
     ctx.beginPath();
     ctx.moveTo(scrOrigin.x, scrOrigin.y);
     ctx.lineTo(scrPt.x, scrPt.y);
@@ -393,21 +371,16 @@ function drawScreen(ctx, cvs, styles) {
     const h = cvs.height / window.devicePixelRatio;
     ctx.clearRect(0,0,w,h);
 
-    const margin = 40; // Increased margin so out-of-bounds points are visible longer
+    const margin = 40;
     const size = Math.min(w,h) - margin*2;
     const sx = (w-size)/2;
     const sy = (h-size)/2;
 
-    // Frame
     ctx.strokeStyle = styles.text;
     ctx.lineWidth = 2;
     ctx.strokeRect(sx, sy, size, size);
 
-    const pc = {
-        x: state.point.x - state.cam.pos.x,
-        y: state.point.y - state.cam.pos.y,
-        z: state.point.z - state.cam.pos.z
-    };
+    const pc = {x: state.point.x - state.cam.pos.x, y: state.point.y - state.cam.pos.y, z: state.point.z - state.cam.pos.z};
 
     if(pc.z < state.cam.near) {
         ctx.fillStyle = 'orange';
@@ -419,12 +392,9 @@ function drawScreen(ctx, cvs, styles) {
     const tang = Math.tan((state.cam.fov * 0.5) * Math.PI / 180);
     const nx = (pc.x / pc.z) / tang;
     const ny = (pc.y / pc.z) / tang;
-    
-    // Calculate actual projected pixel coordinates
     const px = sx + size/2 + nx * (size/2);
     const py = sy + size/2 - ny * (size/2);
 
-    // Grid lines
     ctx.strokeStyle = 'rgba(0,0,0,0.1)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -432,18 +402,13 @@ function drawScreen(ctx, cvs, styles) {
     ctx.moveTo(sx, sy+size/2); ctx.lineTo(sx+size, sy+size/2);
     ctx.stroke();
 
-    // Check validity
     const isInside = (Math.abs(nx) <= 1 && Math.abs(ny) <= 1);
-
-    // Draw Point (No clamping)
     ctx.beginPath();
     ctx.arc(px, py, 6, 0, Math.PI*2);
-    
     if (isInside) {
         ctx.fillStyle = '#ff3333';
         ctx.fill();
     } else {
-        // Ghost style for out of bounds
         ctx.fillStyle = 'rgba(255, 50, 50, 0.2)';
         ctx.strokeStyle = '#ff3333';
         ctx.fill();
@@ -466,13 +431,10 @@ function drawOrtho(ctx, cvs, ah, av, styles) {
     ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
 
     const corners = getFrustumCorners().map(p => ({
-        x: p.x + state.cam.pos.x,
-        y: p.y + state.cam.pos.y,
-        z: p.z + state.cam.pos.z
+        x: p.x + state.cam.pos.x, y: p.y + state.cam.pos.y, z: p.z + state.cam.pos.z
     }));
     const scrCorners = corners.map(p => map(p[ah], p[av]));
     const scrOrigin = map(state.cam.pos[ah], state.cam.pos[av]);
-
     drawWireframe(ctx, scrCorners, scrOrigin, styles);
 
     const pt = map(state.point[ah], state.point[av]);
@@ -496,7 +458,6 @@ function getMouse(e, c) {
     const r = c.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
 }
-
 canvases.top.addEventListener('mousedown', () => state.dragging = 'top');
 canvases.top.addEventListener('mousemove', e => {
     if(state.dragging !== 'top') return;
@@ -506,7 +467,6 @@ canvases.top.addEventListener('mousemove', e => {
     state.point.z = (m.h/2 - m.y) / scale;
     requestAnimationFrame(render);
 });
-
 canvases.side.addEventListener('mousedown', () => state.dragging = 'side');
 canvases.side.addEventListener('mousemove', e => {
     if(state.dragging !== 'side') return;
@@ -516,11 +476,7 @@ canvases.side.addEventListener('mousemove', e => {
     state.point.y = (m.h/2 - m.y) / scale;
     requestAnimationFrame(render);
 });
-
-canvases.world.addEventListener('mousedown', e => {
-    state.dragging = 'orbit';
-    state.lastMouse = {x: e.clientX, y: e.clientY};
-});
+canvases.world.addEventListener('mousedown', e => { state.dragging = 'orbit'; state.lastMouse = {x: e.clientX, y: e.clientY}; });
 window.addEventListener('mousemove', e => {
     if(state.dragging === 'orbit') {
         const dx = e.clientX - state.lastMouse.x;
@@ -534,33 +490,54 @@ window.addEventListener('mousemove', e => {
 });
 window.addEventListener('mouseup', () => state.dragging = null);
 
-/* --- THEME --- */
+/* --- THEME DETECTION (RESTORED PARENT CHECK) --- */
 let isDark = false;
 function detectTheme() {
     try {
-        const bg = window.getComputedStyle(document.body).backgroundColor;
+        // 1. Try accessing parent (Blog context)
+        let computed;
+        try {
+            computed = window.getComputedStyle(window.parent.document.body);
+        } catch(e) {
+            // 2. Fallback: check for dark mode preference if iframe is blocked
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                isDark = true;
+            }
+            return updateTheme();
+        }
+
+        // 3. Parse parent background color
+        const bg = computed.backgroundColor;
         if(bg.includes('rgb')) {
             const rgb = bg.match(/\d+/g).map(Number);
+            // Calculate luma
             const bright = (rgb[0]*299 + rgb[1]*587 + rgb[2]*114)/1000;
             const newDark = bright < 128;
             if(newDark !== isDark) {
                 isDark = newDark;
-                if(isDark) {
-                    document.documentElement.style.setProperty('--page-bg', '#1a1a1a');
-                    document.documentElement.style.setProperty('--page-text', '#e4e4e4');
-                    document.documentElement.style.setProperty('--card-bg', '#2d2d2d');
-                    document.documentElement.style.setProperty('--border-color', '#404040');
-                } else {
-                    document.documentElement.style.setProperty('--page-bg', '#ffffff');
-                    document.documentElement.style.setProperty('--page-text', '#212529');
-                    document.documentElement.style.setProperty('--card-bg', '#f8f9fa');
-                    document.documentElement.style.setProperty('--border-color', '#dee2e6');
-                }
-                render();
+                updateTheme();
             }
         }
-    } catch(e){}
+    } catch(e) {}
 }
+
+function updateTheme() {
+    if(isDark) {
+        document.documentElement.style.setProperty('--page-bg', '#1a1a1a');
+        document.documentElement.style.setProperty('--page-text', '#e4e4e4');
+        document.documentElement.style.setProperty('--card-bg', '#2d2d2d');
+        document.documentElement.style.setProperty('--border-color', '#404040');
+        document.documentElement.style.setProperty('--frustum-color', 'rgba(100, 200, 255, 0.1)');
+    } else {
+        document.documentElement.style.setProperty('--page-bg', '#ffffff');
+        document.documentElement.style.setProperty('--page-text', '#212529');
+        document.documentElement.style.setProperty('--card-bg', '#f8f9fa');
+        document.documentElement.style.setProperty('--border-color', '#dee2e6');
+        document.documentElement.style.setProperty('--frustum-color', 'rgba(0, 120, 255, 0.05)');
+    }
+    render();
+}
+
 setInterval(detectTheme, 1000);
 detectTheme();
 render();

@@ -196,6 +196,14 @@ R & t \\
 \end{array}
 $$
 
+### Interactive World 2 Cam
+
+<iframe src="/interactive/world2cam.html"
+        width="100%"
+        height="700"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
 
 ## Inverse Transform Sampling
 
@@ -310,7 +318,7 @@ width="80%"
 
 <iframe src="/interactive/pos_enc.html"
         width="100%"
-        height="560"
+        height="490"
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>

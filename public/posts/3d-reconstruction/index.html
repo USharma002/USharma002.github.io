@@ -185,7 +185,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#step-1-remove-intrinsics" aria-label="Step 1: Remove intrinsics">Step 1: Remove intrinsics</a></li>
                 <li>
                     <a href="#step-2-form-the-3d-ray" aria-label="Step 2: Form the 3D ray">Step 2: Form the 3D ray</a></li></ul>
-                </li></ul>
+                </li>
+                <li>
+                    <a href="#interactive-world-2-cam" aria-label="Interactive World 2 Cam">Interactive World 2 Cam</a></li></ul>
                 </li>
                 <li>
                     <a href="#inverse-transform-sampling" aria-label="Inverse Transform Sampling">Inverse Transform Sampling</a><ul>
@@ -552,7 +554,14 @@ R & t \\
 & \xleftarrow[\substack{\text{invert intrinsics} \\[3pt] \text{create 3D ray}}]{\lambda K^{-1}} &
 \begin{bmatrix}u\\v\\1\end{bmatrix}
 \end{array}
-$$<h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
+$$<h3 id="interactive-world-2-cam">Interactive World 2 Cam<a hidden class="anchor" aria-hidden="true" href="#interactive-world-2-cam">#</a></h3>
+<iframe src="/interactive/world2cam.html"
+        width="100%"
+        height="700"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
+<h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
 <h3 id="definition">Definition<a hidden class="anchor" aria-hidden="true" href="#definition">#</a></h3>
 <p>Let $U \sim \mathrm{Unif}[0,1]$. We want to generate a random variable $X$ with CDF $F_X(x)$.<br>
 Assume $F_X$ is continuous and strictly increasing so that it has a well-defined inverse.</p>
@@ -628,7 +637,7 @@ $$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p),
 
 <iframe src="/interactive/pos_enc.html"
         width="100%"
-        height="560"
+        height="490"
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
