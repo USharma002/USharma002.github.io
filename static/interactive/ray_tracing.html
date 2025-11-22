@@ -110,7 +110,7 @@
                 <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Click preview canvas or frustum to select</div>
             </div>
             
-            <button onclick="generateNewPath()" style="width:100%; margin-bottom:8px; background:#444;">⚡ Generate Ray for Selected Pixel</button>
+            <button onclick="generateNewPath()" style="width:100%; margin-bottom:8px; background:#444;">Generate Ray for Selected Pixel</button>
             
             <div style="background: #2a2a2a; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
                 <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Final Color Preview:</div>
@@ -131,7 +131,7 @@
                 <input type="checkbox" id="chkCullingDebug" onchange="toggleCulling()" checked> Enable Backface Culling
             </label>
             
-            <button onclick="toggleCameraEdit()" id="btnCamEdit" style="width:100%; margin-top:8px; background:#2c3e50;">📷 Edit Camera Transform</button>
+            <button onclick="toggleCameraEdit()" id="btnCamEdit" style="width:100%; margin-top:8px; background:#2c3e50;">Edit Camera Transform</button>
             
             <div id="camEditPanel" style="display:none; background: #222; padding: 8px; border-radius: 4px; margin-top: 8px;">
                 <div style="font-size: 11px; color: #aaa; margin-bottom: 6px;">Position:</div>
@@ -167,7 +167,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
    ========================================== */
 const scene = new THREE.Scene();
 const viewerCam = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-viewerCam.position.set(12, 8, 20);
+viewerCam.position.set(10, 8, 25);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);

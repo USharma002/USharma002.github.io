@@ -704,6 +704,14 @@ caption="2 Samples Per Pixel"
 width="100%" 
 >}}
 
+### Interactive Ray Tracer Visualization
+{{< 
+fullscreen-iframe 
+id="rt_iframe" 
+src="/interactive/ray_tracing.html" 
+height="800" 
+>}}
+
 To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.
 
 {{< 

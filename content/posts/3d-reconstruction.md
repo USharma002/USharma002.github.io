@@ -205,6 +205,7 @@ $$
         style="border-radius:8px; min-width: 900px;">
 </iframe>
 
+
 ## Inverse Transform Sampling
 
 ### Definition
