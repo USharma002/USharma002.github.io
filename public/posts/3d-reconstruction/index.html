@@ -626,6 +626,12 @@ $$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p),
       Positional Encoding
     </figcaption></figure>
 
+<iframe src="/interactive/pos_enc.html"
+        width="100%"
+        height="560"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
 <h3 id="hierarchical-sampling">Hierarchical Sampling<a hidden class="anchor" aria-hidden="true" href="#hierarchical-sampling">#</a></h3>
 <p>To render using the NeRF we need to sample along the ray for the pixel. A ray is defined as:</p>
 $$\mathbf{r}(t) = \underbrace{\mathbf{o}}_{\text{origin}} + t\underbrace{\mathbf{d}}_{\text{direction}}$$<p>Divide the scene&rsquo;s $[z_{\text{near}}, z_{\text{far}}]$ into $n$ intervals of equal length. Uniformly sample at random within each interval:</p>
@@ -640,6 +646,12 @@ $$<p>Our rendering strategy of <strong>densely evaluating</strong> the neural ra
 <p>To do this, we first rewrite the alpha composited color from the coarse network $\hat{C}_c(\mathbf{r})$ as a weighted sum of all sampled colors $c_i$ along the ray:</p>
 $$\hat{C}_c(\mathbf{r}) = \sum_{i=1}^{N_c} w_i c_i, \quad w_i = T_i (1 - \exp(-\sigma_i \delta_i))$$<p>We can normalize these weights as $\hat{w}_i = \frac{w_i}{\sum_j w_j}$ to produce a piecewise-constant PDF along the ray.</p>
 <p>We then sample a second set of $N_f$ locations from this distribution using inverse transform sampling, evaluate the network at the union of first and second set of samples, and compute the final rendered color of ray $\hat{C}_f(\mathbf{r})$ using $N_c + N_f$ samples.</p>
+<iframe src="/interactive/nerf.html"
+        width="100%"
+        height="560"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
 <h3 id="loss-function">Loss Function<a hidden class="anchor" aria-hidden="true" href="#loss-function">#</a></h3>
 <p>During training, the loss is simply the total squared error between the rendered and true pixel colors for both the coarse and fine renderings:</p>
 $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) - C(\mathbf{r})\|_2^2 + \|\hat{C}_f(\mathbf{r}) - C(\mathbf{r})\|_2^2 \right]$$<p>where $\mathcal{R}$ is the set of rays in each batch, and $C(\mathbf{r})$, $\hat{C}_c(\mathbf{r})$ and $\hat{C}_f(\mathbf{r})$ are the ground truth, coarse volume predicted and fine volume predicted RGB colors for the ray $\mathbf{r}$ respectively.</p>

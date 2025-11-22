@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeRF Stratified & Hierarchical Sampling</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --page-bg: #ffffff;
+            --page-text: #212529;
+            --card-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --accent-blue: #2E86AB;
+            --accent-red: #e74c3c;
+            --accent-muted: #7f8c8d;
+            --grid-line: #e0e0e0;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--page-bg);
+            color: var(--page-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px 18px 14px;
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            color: var(--text-secondary, #6c757d);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 340px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: #fafafa;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.4rem 0.9rem;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--page-text);
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--page-text);
+            color: var(--page-bg);
+            border-color: var(--page-text);
+        }
+
+        button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 10px;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            white-space: nowrap;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+        }
+
+        .line-icon {
+            width: 18px;
+            height: 2px;
+        }
+
+        .bin-indicator {
+            width: 10px;
+            height: 8px;
+            border-radius: 0;
+            border: 1px solid var(--border-color);
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>NeRF Sampling Along a Ray</h2>
+        <div class="description">
+            Step&nbsp;1 (coarse): stratified samples, one per bin along the ray. Step&nbsp;2 (fine): hierarchical
+            resampling from a PDF built from coarse weights.
+        </div>
+
+        <canvas id="simCanvas" width="760" height="320"></canvas>
+
+        <div class="controls">
+            <button id="btnRandom" type="button" onclick="randomizeScene()">Randomize scene</button>
+            <button id="btnCoarse" type="button" onclick="runCoarse()">1. Coarse samples</button>
+            <button id="btnFine" type="button" onclick="runFine()" disabled>2. Fine samples</button>
+            <button id="btnReset" type="button" onclick="resetSim()">Reset</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="bin-indicator"></span>
+                <span>Stratified bins</span>
+            </div>
+            <div class="legend-item">
+                <span class="line-icon" style="background: var(--accent-muted);"></span>
+                <span>True density</span>
+            </div>
+            <div class="legend-item">
+                <span class="dot" style="background: var(--accent-blue);"></span>
+                <span>Coarse sample</span>
+            </div>
+            <div class="legend-item">
+                <span class="dot" style="background: var(--accent-red);"></span>
+                <span>Fine sample</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Theme detection (inherits from parent Hugo page) ---
+    function detectTheme() {
+        try {
+            const parentBody = window.parent.document.body;
+            const computedStyle = window.getComputedStyle(parentBody);
+            const bgColor = computedStyle.backgroundColor;
+
+            const rgb = bgColor.match(/\d+/g);
+            if (rgb) {
+                const brightness =
+                    (parseInt(rgb[0]) * 299 +
+                        parseInt(rgb[1]) * 587 +
+                        parseInt(rgb[2]) * 114) / 1000;
+                const isDark = brightness < 128;
+
+                if (isDark) {
+                    document.documentElement.style.setProperty("--page-bg", "#1a1a1a");
+                    document.documentElement.style.setProperty("--page-text", "#e4e4e4");
+                    document.documentElement.style.setProperty("--text-secondary", "#a0a0a0");
+                    document.documentElement.style.setProperty("--card-bg", "#2d2d2d");
+                    document.documentElement.style.setProperty("--border-color", "#404040");
+                    document.documentElement.style.setProperty("--grid-line", "#404040");
+                } else {
+                    document.documentElement.style.setProperty("--page-bg", "#ffffff");
+                    document.documentElement.style.setProperty("--page-text", "#212529");
+                    document.documentElement.style.setProperty("--text-secondary", "#6c757d");
+                    document.documentElement.style.setProperty("--card-bg", "#f8f9fa");
+                    document.documentElement.style.setProperty("--border-color", "#dee2e6");
+                    document.documentElement.style.setProperty("--grid-line", "#e0e0e0");
+                }
+                return isDark;
+            }
+        } catch (e) {
+            // Fallback to defaults
+        }
+        return false;
+    }
+
+    let isDarkMode = detectTheme();
+
+    // Re-check in case Hugo theme toggles after load
+    setInterval(() => {
+        const newIsDark = detectTheme();
+        if (newIsDark !== isDarkMode) {
+            isDarkMode = newIsDark;
+            drawScene();
+        }
+    }, 1000);
+
+    // --- Canvas + NeRF sampling demo ---
+    const canvas = document.getElementById("simCanvas");
+    const ctx = canvas.getContext("2d");
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const PADDING = 36;
+    const RAY_Y = 260;
+    const Z_NEAR = 2.0;
+    const Z_FAR = 6.0;
+    const NUM_COARSE = 16;
+    const NUM_FINE = 32;
+
+    let stage = 0;        // 0: initial, 1: coarse, 2: fine
+    let coarseSamples = [];
+    let fineSamples = [];
+    let weights = [];
+    let cdf = [];
+
+    // Scene peaks (sum of Gaussians)
+    let peaks = [
+        {mean: 4.0, std: 0.3, height: 1.0}
+    ];
+
+    function randomizeScene() {
+        peaks = [];
+        const numObjects = Math.floor(Math.random() * 3) + 1;
+        for (let i = 0; i < numObjects; i++) {
+            peaks.push({
+                mean: Z_NEAR + 0.5 + Math.random() * (Z_FAR - Z_NEAR - 1.0),
+                std: 0.1 + Math.random() * 0.4,
+                height: 0.5 + Math.random() * 0.5
+            });
+        }
+        resetSim();
+    }
+
+    function getTrueDensity(z) {
+        let d = 0;
+        for (const p of peaks) {
+            d += p.height * Math.exp(-0.5 * Math.pow((z - p.mean) / p.std, 2));
+        }
+        return Math.min(d, 1.0);
+    }
+
+    function mapZtoX(z) {
+        const norm = (z - Z_NEAR) / (Z_FAR - Z_NEAR);
+        return PADDING + norm * (width - 2 * PADDING);
+    }
+
+    function mapDensToY(d) {
+        return RAY_Y - d * 170;
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, width, height);
+
+        const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
+        const pxBinWidth = (width - 2 * PADDING) / NUM_COARSE;
+
+        const textColor = getComputedStyle(document.body)
+            .getPropertyValue("--page-text") || "#212529";
+        const gridColor = getComputedStyle(document.documentElement)
+            .getPropertyValue("--grid-line") || "#e0e0e0";
+        const borderColor = getComputedStyle(document.documentElement)
+            .getPropertyValue("--border-color") || "#dee2e6";
+
+        // Bin grid
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        ctx.strokeStyle = gridColor;
+        for (let i = 0; i <= NUM_COARSE; i++) {
+            const x = mapZtoX(Z_NEAR + i * binWidth);
+            ctx.beginPath();
+            ctx.moveTo(x, 36);
+            ctx.lineTo(x, RAY_Y + 8);
+            ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        // Bin indices
+        ctx.fillStyle = textColor;
+        ctx.font = "10px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctx.textAlign = "center";
+        for (let i = 0; i < NUM_COARSE; i++) {
+            const x = mapZtoX(Z_NEAR + i * binWidth);
+            ctx.fillText(String(i + 1), x + pxBinWidth / 2 - 3, RAY_Y + 16);
+        }
+
+        // Ray axis
+        ctx.strokeStyle = textColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(PADDING - 8, RAY_Y);
+        ctx.lineTo(width - PADDING + 8, RAY_Y);
+        ctx.stroke();
+
+        // Arrow
+        ctx.beginPath();
+        ctx.moveTo(width - PADDING + 8, RAY_Y);
+        ctx.lineTo(width - PADDING, RAY_Y - 4);
+        ctx.lineTo(width - PADDING, RAY_Y + 4);
+        ctx.closePath();
+        ctx.fillStyle = textColor;
+        ctx.fill();
+
+        // Z labels
+        ctx.font = "11px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+        ctx.fillText("z_near = " + Z_NEAR.toFixed(1), mapZtoX(Z_NEAR), RAY_Y + 32);
+        ctx.fillText("z_far = " + Z_FAR.toFixed(1), mapZtoX(Z_FAR), RAY_Y + 32);
+
+        // True density curve
+        ctx.beginPath();
+        ctx.strokeStyle = getComputedStyle(document.documentElement)
+            .getPropertyValue("--accent-muted") || "#7f8c8d";
+        ctx.lineWidth = 2;
+        let started = false;
+        for (let x = PADDING; x <= width - PADDING; x += 2) {
+            const norm = (x - PADDING) / (width - 2 * PADDING);
+            const z = Z_NEAR + norm * (Z_FAR - Z_NEAR);
+            const d = getTrueDensity(z);
+            const y = mapDensToY(d);
+            if (!started) {
+                ctx.moveTo(x, y);
+                started = true;
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+
+        // Coarse samples and PDF bars
+        if (stage >= 1) {
+            for (let i = 0; i < NUM_COARSE; i++) {
+                const binStartZ = Z_NEAR + i * binWidth;
+                const w = weights[i] || 0;
+                const barHeight = w * 170;
+                const x0 = mapZtoX(binStartZ);
+
+                ctx.fillStyle = "rgba(46,134,171,0.15)";
+                ctx.fillRect(x0, RAY_Y - barHeight, pxBinWidth, barHeight);
+
+                ctx.strokeStyle = "rgba(46,134,171,0.6)";
+                ctx.strokeRect(x0, RAY_Y - barHeight, pxBinWidth, barHeight);
+
+                const sampleZ = coarseSamples[i];
+                const sampleX = mapZtoX(sampleZ);
+
+                ctx.beginPath();
+                ctx.arc(sampleX, RAY_Y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = getComputedStyle(document.documentElement)
+                    .getPropertyValue("--accent-blue") || "#2E86AB";
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.moveTo(sampleX, RAY_Y);
+                ctx.lineTo(sampleX, RAY_Y - barHeight);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = getComputedStyle(document.documentElement)
+                    .getPropertyValue("--accent-blue") || "#2E86AB";
+                ctx.stroke();
+            }
+        }
+
+        // Fine samples
+        if (stage >= 2) {
+            const fineColor = getComputedStyle(document.documentElement)
+                .getPropertyValue("--accent-red") || "#e74c3c";
+            ctx.fillStyle = fineColor;
+            for (const z of fineSamples) {
+                const x = mapZtoX(z);
+                ctx.beginPath();
+                ctx.arc(x, RAY_Y - 6, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.font = "11px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Fine samples cluster where coarse weights are high", width / 2, 26);
+        }
+    }
+
+    function runCoarse() {
+        if (stage > 0) return;
+
+        const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
+        coarseSamples = [];
+        weights = [];
+        let sumWeights = 0;
+
+        for (let i = 0; i < NUM_COARSE; i++) {
+            const binStart = Z_NEAR + i * binWidth;
+            const t = Math.random();
+            const z = binStart + t * binWidth;
+            coarseSamples.push(z);
+
+            const d = getTrueDensity(z);
+            weights.push(d);
+            sumWeights += d;
+        }
+
+        const eps = 1e-8;
+        weights = weights.map(w => w / (sumWeights + eps));
+
+        cdf = [];
+        let acc = 0;
+        for (const w of weights) {
+            acc += w;
+            cdf.push(acc);
+        }
+        cdf[cdf.length - 1] = 1.0;
+
+        stage = 1;
+        document.getElementById("btnCoarse").disabled = true;
+        document.getElementById("btnFine").disabled = false;
+        drawScene();
+    }
+
+    function runFine() {
+        if (stage !== 1) return;
+
+        const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
+        fineSamples = [];
+
+        for (let i = 0; i < NUM_FINE; i++) {
+            const u = Math.random();
+            let binIdx = 0;
+            for (let j = 0; j < NUM_COARSE; j++) {
+                if (u <= cdf[j]) {
+                    binIdx = j;
+                    break;
+                }
+            }
+            const binStart = Z_NEAR + binIdx * binWidth;
+            const z = binStart + Math.random() * binWidth;
+            fineSamples.push(z);
+        }
+
+        stage = 2;
+        document.getElementById("btnFine").disabled = true;
+        drawScene();
+    }
+
+    function resetSim() {
+        stage = 0;
+        coarseSamples = [];
+        fineSamples = [];
+        weights = [];
+        document.getElementById("btnCoarse").disabled = false;
+        document.getElementById("btnFine").disabled = true;
+        drawScene();
+    }
+
+    // Initial render
+    drawScene();
+</script>
+</body>
+</html>

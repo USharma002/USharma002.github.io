@@ -308,6 +308,13 @@ caption="Positional Encoding"
 width="80%" 
 >}}
 
+<iframe src="/interactive/pos_enc.html"
+        width="100%"
+        height="560"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
+
 
 ### Hierarchical Sampling
 
@@ -338,6 +345,15 @@ $$\hat{C}_c(\mathbf{r}) = \sum_{i=1}^{N_c} w_i c_i, \quad w_i = T_i (1 - \exp(-\
 We can normalize these weights as $\hat{w}_i = \frac{w_i}{\sum_j w_j}$ to produce a piecewise-constant PDF along the ray.
 
 We then sample a second set of $N_f$ locations from this distribution using inverse transform sampling, evaluate the network at the union of first and second set of samples, and compute the final rendered color of ray $\hat{C}_f(\mathbf{r})$ using $N_c + N_f$ samples.
+
+
+<iframe src="/interactive/nerf.html"
+        width="100%"
+        height="560"
+        frameborder="0"
+        style="border-radius:8px; min-width: 900px;">
+</iframe>
+
 
 ### Loss Function
 
