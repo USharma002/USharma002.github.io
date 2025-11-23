@@ -202,7 +202,7 @@ $$
         width="100%"
         height="700"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 
 ---
@@ -261,7 +261,7 @@ $$
         width="100%"
         height="330"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 
 ---
@@ -561,9 +561,9 @@ width="80%"
 
 <iframe src="/interactive/pos_enc.html"
         width="100%"
-        height="490"
+        height="450"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 
 ---
@@ -601,9 +601,9 @@ We then sample a second set of $N_f$ locations from this distribution using inve
 
 <iframe src="/interactive/nerf.html"
         width="100%"
-        height="1050"
+        height="1000"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 
 ---
@@ -656,6 +656,17 @@ num="4"
 caption="Spherical Harmonics"
 width="60%" 
 >}}
+
+---
+
+### Interactive Spherical Harmonics Viewer
+{{< 
+fullscreen-iframe 
+id="sh_2d_iframe" 
+src="/interactive/sh.html" 
+height="500" 
+>}}
+
 
 ### Interpolation
 
@@ -850,7 +861,7 @@ width="100%"
 fullscreen-iframe 
 id="tensorf_iframe" 
 src="/interactive/tensorf.html" 
-height="800" 
+height="600" 
 >}}
 
 ### Rendering Process
@@ -1844,124 +1855,166 @@ Gaussian unpooling occurs every 100 iterations, starting after iteration 500, al
 ### Algorithm: The training pipeline of FSGS
 ---
 
-<table style="border:none !important; border-collapse:collapse !important; width:100%;">
-
-<tr>
-  <td style="border:none; padding:2px 0; text-align:left;">
-    Training view images $\mathcal{I} = \{ I_i \in \mathbb{R}^{H \times W \times 3} \}_{i=1}^N$ and their associated camera poses  
-    $\mathcal{P} = \{ \phi_i \in \mathbb{R}^{3 \times 4} \}_{i=1}^N$.
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    Run SfM with the input images and camera poses and obtain an initial point cloud $\mathcal{P}$,  
-    used to define 3D Gaussians function $\mathcal{G} = \{ G_i(\mu_i, \sigma_i, c_i, \alpha_i) \}_{i=1}^K$.
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    Leverage pretrained depth estimator $\mathcal{E}$ to predict the depth map $D_i = \mathcal{E}(I_i)$.
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    Synthesize pseudo views $\mathcal{P}^\dagger = \{ \phi_i^\dagger \in \mathbb{R}^{3 \times 4} \}_{i=1}^M$ from input camera poses $\mathcal{P}$.
-  </td>
-</tr>
-
-<tr><td style="border:none; padding:2px 0;"><strong>while</strong> until convergence <strong>do</strong></td></tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;Randomly sample an image $I_i \in \mathcal{I}$ and the corresponding camera pose $\phi_i$
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_i$ and the depth map $\hat{D}_i$ with camera pose $\phi_i$
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} = \lambda_1 \lVert I_i - \hat{I}_i \rVert_1 + \lambda_2\, \mathrm{D\!-\!SSIM}(I_i,\hat{I}_i) + \lambda_3\, \mathrm{Pearson}(D_i, \hat{D}_i)$
-  </td>
-</tr>
-
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> iteration $> t_{\text{iter}}$ <strong>then</strong></td></tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample a pseudo camera pose $\phi_j^\dagger \in \mathcal{P}^\dagger$
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_j^\dagger$ and the depth $\hat{D}_i^\dagger$
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the estimated depth as $D_j^\dagger = \mathcal{E}(\hat{I}_j^\dagger)$
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} \leftarrow \mathcal{L} + \lambda_4\, \mathrm{Pearson}(D_j^\dagger, \hat{D}_i^\dagger)$
-  </td>
-</tr>
-
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
-
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinement(iteration) <strong>then</strong></td></tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> each Gaussian $G_i(\mu_i,\sigma_i,c_i,\alpha_i)$
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha_i < \varepsilon$ <strong>or</strong> IsTooLarge$(\mu_i,\sigma_i)$  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RemoveGaussian()
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p \mathcal{L} > \tau_{\text{pos}}$  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianDensify()
-  </td>
-</tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> NoProximity$(\mathcal{G})$  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianUnpooling()
-  </td>
-</tr>
-
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td></tr>
-
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
-
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;Update Gaussians parameter $\mathcal{G}$ via $\nabla_{\mathcal{G}} \mathcal{L}$.
-  </td>
-</tr>
-
-<tr><td style="border:none; padding:2px 0;"><strong>end while</strong></td></tr>
-
+<table style="border:none; border-collapse:collapse; width:100%; font-size:0.95rem;">
+    <style>
+        table, tr, td {
+    border: none !important;
+}
+        .algo-ln { 
+            color: #999; 
+            text-align: right; 
+            padding-right: 12px; 
+            user-select: none; 
+            width: 1%; 
+            white-space: nowrap; 
+            vertical-align: top;
+            border: none;
+        }
+        .algo-content {
+            text-align: left;
+            padding-bottom: 2px;
+            vertical-align: top;
+            border: none;
+            border:none; 
+            padding:2px 0;
+        }
+    </style>
+    <tr>
+        <td class="algo-ln">1:</td>
+        <td class="algo-content">
+            Training view images $\mathcal{I} = \{ I_i \in \mathbb{R}^{H \times W \times 3} \}_{i=1}^N$ and their associated camera poses $\mathcal{P} = \{ \phi_i \in \mathbb{R}^{3 \times 4} \}_{i=1}^N$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">2:</td>
+        <td class="algo-content">
+            Run SfM with the input images and camera poses and obtain an initial point cloud $\mathcal{P}$, used to define 3D Gaussians function $\mathcal{G} = \{ G_i(\mu_i, \sigma_i, c_i, \alpha_i) \}_{i=1}^K$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">3:</td>
+        <td class="algo-content">
+            Leverage pretrained depth estimator $\mathcal{E}$ to predict the depth map $D_i = \mathcal{E}(I_i)$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">4:</td>
+        <td class="algo-content">
+            Synthesize pseudo views $\mathcal{P}^\dagger = \{ \phi_i^\dagger \in \mathbb{R}^{3 \times 4} \}_{i=1}^M$ from input camera poses $\mathcal{P}$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">5:</td>
+        <td class="algo-content"><strong>while</strong> until convergence <strong>do</strong></td>
+    </tr>
+    <tr>
+        <td class="algo-ln">6:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;Randomly sample an image $I_i \in \mathcal{I}$ and the corresponding camera pose $\phi_i$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">7:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_i$ and the depth map $\hat{D}_i$ with camera pose $\phi_i$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">8:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} = \lambda_1 \lVert I_i - \hat{I}_i \rVert_1 + \lambda_2\, \mathrm{D\!-\!SSIM}(I_i,\hat{I}_i) + \lambda_3\, \mathrm{Pearson}(D_i, \hat{D}_i)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">9:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> iteration $> t_{\text{iter}}$ <strong>then</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">10:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample a pseudo camera pose $\phi_j^\dagger \in \mathcal{P}^\dagger$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">11:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_j^\dagger$ and the depth $\hat{D}_i^\dagger$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">12:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the estimated depth as $D_j^\dagger = \mathcal{E}(\hat{I}_j^\dagger)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">13:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} \leftarrow \mathcal{L} + \lambda_4\, \mathrm{Pearson}(D_j^\dagger, \hat{D}_i^\dagger)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">14:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">15:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinement(iteration) <strong>then</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">16:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> each Gaussian $G_i(\mu_i,\sigma_i,c_i,\alpha_i)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">17:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha_i < \varepsilon$ <strong>or</strong> IsTooLarge$(\mu_i,\sigma_i)$ RemoveGaussian()
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">18:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p \mathcal{L} > \tau_{\text{pos}}$ GaussianDensify()
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">19:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> NoProximity$(\mathcal{G})$ GaussianUnpooling()
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">20:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">21:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">22:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;Update Gaussians parameter $\mathcal{G}$ via $\nabla_{\mathcal{G}} \mathcal{L}$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">23:</td>
+        <td class="algo-content"><strong>end while</strong></td>
+    </tr>
 </table>
+
 
 ---
 

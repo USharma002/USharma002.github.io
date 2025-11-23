@@ -261,6 +261,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#spherical-harmonics" aria-label="Spherical Harmonics">Spherical Harmonics</a></li>
                 <li>
+                    <a href="#interactive-spherical-harmonics-viewer" aria-label="Interactive Spherical Harmonics Viewer">Interactive Spherical Harmonics Viewer</a></li>
+                <li>
                     <a href="#interpolation" aria-label="Interpolation">Interpolation</a></li>
                 <li>
                     <a href="#coarse-to-fine" aria-label="Coarse to Fine">Coarse to Fine</a></li>
@@ -649,7 +651,7 @@ $$<h3 id="interactive-world-2-cam">Interactive World 2 Cam<a hidden class="ancho
         width="100%"
         height="700"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 <hr>
 <h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
@@ -687,7 +689,7 @@ $$<h3 id="interactive-simulation">Interactive Simulation<a hidden class="anchor"
         width="100%"
         height="330"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 <hr>
 <h2 id="sfm">SfM<a hidden class="anchor" aria-hidden="true" href="#sfm">#</a></h2>
@@ -697,13 +699,117 @@ $$<h3 id="interactive-simulation">Interactive Simulation<a hidden class="anchor"
 <h2 id="volume-rendering">Volume Rendering<a hidden class="anchor" aria-hidden="true" href="#volume-rendering">#</a></h2>
 <h3 id="the-physics-of-light-transport">The Physics of Light Transport<a hidden class="anchor" aria-hidden="true" href="#the-physics-of-light-transport">#</a></h3>
 <p>Unlike standard mesh rendering, where light bounces off a hard surface at a specific depth $z$, volume rendering assumes the scene is composed of particles that can <strong>emit</strong> and <strong>absorb</strong> light at any point in space (<strong>assuming no scattering</strong> of light).</p>
-<figure id="fig-30" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-1" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/voldev-cylinder2.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Light beam passing through a cylinder interacting with the medium in four different ways ( we will be assuming no scattering). <em>Image credit:</em> <a href='https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html' target='_blank'>Scratchapixel</a>.
     </figcaption></figure>
 
+<style>
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
+    .zoom-overlay img {
+      width: 90vw;           
+      height: 75vh;          
+      object-fit: contain;   
+      
+      border-radius: 12px;
+      box-shadow: 0 0 0px rgba(0,0,0,0.45);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .zoom-overlay.active img {
+      transform: scale(1);
+    }
+  </style>
+
+<div id="zoom-overlay" class="zoom-overlay">
+<button id="zoom-close-btn"
+  style="
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:rgba(0,0,0,0.55);
+    border:none;
+    color:white;
+    font-size:1.8rem;
+    line-height:1;
+    padding:0.2em 0.5em;
+    border-radius:6px;
+    cursor:pointer;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    transition:background 0.2s;
+  "
+  aria-label="Close image"
+>&times;</button>
+  <div style="text-align:center;">
+    <img id="zoom-img" src="">
+    
+    <div id="zoom-caption"
+         style="margin-top:1em;
+           font-size:1em;
+           color:white;
+           background:rgba(0,0,0,0.65);
+           padding:0.5em 1em;
+           border-radius:6px;
+           max-width:90%;
+           margin-left:auto;
+           margin-right:auto;">
+    </div>
+
+  </div>
+</div>
+
+<script>
+const overlay = document.getElementById('zoom-overlay');
+const zoomImg = document.getElementById('zoom-img');
+const zoomCaption = document.getElementById('zoom-caption');
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('.zoomable-image');
+  if (img) {
+    zoomImg.src = img.src;
+
+    
+    const figure = img.closest('figure');
+    const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+
+    zoomCaption.innerHTML = caption;
+    overlay.classList.add('active');
+  } else if (e.target === overlay || e.target === zoomImg) {
+    overlay.classList.remove('active');
+  }
+});
+
+document.getElementById('zoom-close-btn').addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape") {
+    overlay.classList.remove('active');
+  }
+});
+
+</script>
 <h4 id="the-differential-equation">The Differential Equation<a hidden class="anchor" aria-hidden="true" href="#the-differential-equation">#</a></h4>
 <p>Let a ray $\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$ travel through a volume. At any point $t$, the radiance (light energy) $L(t)$ changes based on two competing forces:</p>
 <ol>
@@ -812,9 +918,9 @@ $$
 $$<p>Or compactly, defining the contribution weight $w_i = T_i \alpha_i$:</p>
 $$
 \hat{C}(\mathbf{r}) = \sum_{i=1}^{N} w_i \mathbf{c}_i
-$$<figure id="fig-31" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+$$<figure id="fig-2" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/vol_render_diagram.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       Volume Rendering Intuition. A ray passes through samples. (A) Light is emitted at a sample. (B) It must pass through previous samples to reach the camera. If an earlier sample has high opacity (alpha), the transmittance (T) drops, shielding the camera from samples behind it. [AI Generated image :)]
     </figcaption></figure>
 
@@ -862,9 +968,9 @@ The weights sum to exactly <strong>1</strong> if and only if the remaining trans
 <h1 id="radiance-fields">Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#radiance-fields">#</a></h1>
 <h2 id="nerf">NeRF<a hidden class="anchor" aria-hidden="true" href="#nerf">#</a></h2>
 <h3 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h3>
-<figure id="fig-32" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-3" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       NeRF Overview
     </figcaption></figure>
 
@@ -890,18 +996,18 @@ $$<ul>
 <p>Mapping the inputs to a higher dimensional space using high frequency functions before passing them to the network enables better fitting of data that contains high frequency variation.</p>
 $$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p), \cos(2^0\pi p), \dots, \sin(2^{L - 1}\pi p), \cos(2^{L - 1}\pi p))$$<p>This function $\gamma(\cdot)$ is applied separately to each of the three coordinate values in $\mathbf{x}$ which are normalized to lie in $[-1, 1]$ and to the three components of the Cartesian viewing direction unit vector $\mathbf{d}$ (which by construction lie in $[-1, 1]$).</p>
 <p>A similar mapping is used in the popular Transformer architecture, where it is referred to as a positional encoding.</p>
-<figure id="fig-33" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+<figure id="fig-4" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/nerf-posenc.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Positional Encoding
     </figcaption></figure>
 
 
 <iframe src="/interactive/pos_enc.html"
         width="100%"
-        height="490"
+        height="450"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 <hr>
 <h3 id="hierarchical-sampling">Hierarchical Sampling<a hidden class="anchor" aria-hidden="true" href="#hierarchical-sampling">#</a></h3>
@@ -920,18 +1026,18 @@ $$\hat{C}_c(\mathbf{r}) = \sum_{i=1}^{N_c} w_i c_i, \quad w_i = T_i (1 - \exp(-\
 <p>We then sample a second set of $N_f$ locations from this distribution using inverse transform sampling, evaluate the network at the union of first and second set of samples, and compute the final rendered color of ray $\hat{C}_f(\mathbf{r})$ using $N_c + N_f$ samples.</p>
 <iframe src="/interactive/nerf.html"
         width="100%"
-        height="1050"
+        height="1000"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px; min-width: 700px;">
 </iframe>
 <hr>
 <h3 id="loss-function">Loss Function<a hidden class="anchor" aria-hidden="true" href="#loss-function">#</a></h3>
 <p>During training, the loss is simply the total squared error between the rendered and true pixel colors for both the coarse and fine renderings:</p>
 $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) - C(\mathbf{r})\|_2^2 + \|\hat{C}_f(\mathbf{r}) - C(\mathbf{r})\|_2^2 \right]$$<p>where $\mathcal{R}$ is the set of rays in each batch, and $C(\mathbf{r})$, $\hat{C}_c(\mathbf{r})$ and $\hat{C}_f(\mathbf{r})$ are the ground truth, coarse volume predicted and fine volume predicted RGB colors for the ray $\mathbf{r}$ respectively.</p>
 <p>Note that even though the final rendering comes from $\hat{C}_f(\mathbf{r})$, we also minimize the loss of $\hat{C}_c(\mathbf{r})$ so that the weight distribution from the coarse network can be used to allocate samples in the fine network.</p>
-<figure id="fig-34" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-5" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/nerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       NeRF MLP Architecture
     </figcaption></figure>
 
@@ -939,9 +1045,9 @@ $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) 
 <hr>
 <h2 id="plenoxels-radiance-fields-without-neural-networks">Plenoxels: Radiance Fields without Neural Networks<a hidden class="anchor" aria-hidden="true" href="#plenoxels-radiance-fields-without-neural-networks">#</a></h2>
 <h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
-<figure id="fig-35" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-6" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/plenoxel-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       Plenoxels Overview
     </figcaption></figure>
 
@@ -952,22 +1058,83 @@ $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) 
 <h3 id="spherical-harmonics">Spherical Harmonics<a hidden class="anchor" aria-hidden="true" href="#spherical-harmonics">#</a></h3>
 <p>Uses spherical harmonic coefficients $\mathbf{k}$, rather than RGB values:</p>
 $$(\mathbf{k}, \sigma), \quad \mathbf{k} = (k^m_l)_{l: 0 \leq l \leq l_{max}}^{m: -l \leq m \leq l}$$<p>Each $k_l^m \in \mathbb{R}^{3}$ is a set of 3 coefficients corresponding to RGB components. In this setup, the view-dependent color $\mathbf{c}$ at a point $\mathbf{x}$ may be determined by querying the SH functions $Y_l^m:\mathbb{S}\rightarrow\mathbb{R}$ at desired viewing angle $\mathbf{d}$:</p>
-$$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$<figure id="fig-36" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+$$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$<figure id="fig-7" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/spherical-harmonics.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
       Spherical Harmonics
     </figcaption></figure>
 
 
+<hr>
+<h3 id="interactive-spherical-harmonics-viewer">Interactive Spherical Harmonics Viewer<a hidden class="anchor" aria-hidden="true" href="#interactive-spherical-harmonics-viewer">#</a></h3>
+<style>
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 700px;
+}
+.fullscreen-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 10px;
+  font-size: 20px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s;
+  z-index: 10;  
+}
+.iframe-wrapper:hover .fullscreen-btn {
+  opacity: 1;
+}
+.fullscreen-btn:hover {
+  background: rgba(0,0,0,0.75);
+}
+</style>
+
+<div class="iframe-wrapper">
+  <button class="fullscreen-btn" onclick="goFullscreen('sh_2d_iframe')">⛶</button>
+
+  <iframe id="sh_2d_iframe"
+          src="/interactive/sh.html"
+          allowfullscreen
+          style="width:100%; height:500px; border:0 !important; border-radius:8px;">
+  </iframe>
+</div>
+
+<script>
+  
+  if (typeof goFullscreen !== 'function') {
+    
+    
+    function goFullscreen(elementId) {
+      const iframe = document.getElementById(elementId);
+      
+      if (!iframe) return;
+
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.webkitRequestFullscreen) {  
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) {  
+        iframe.msRequestFullscreen();
+      }
+    }
+  }
+</script>
 <h3 id="interpolation">Interpolation<a hidden class="anchor" aria-hidden="true" href="#interpolation">#</a></h3>
 <p>So, each vertex of the grid has the SH coefficients and opacity $\sigma$.</p>
 <p>The opacity and color at each sample point along ray are computed by trilinear interpolation of opacity and harmonic coefficients stored at nearest 8 voxels.</p>
 <h3 id="coarse-to-fine">Coarse to Fine<a hidden class="anchor" aria-hidden="true" href="#coarse-to-fine">#</a></h3>
 <p>Achieves high resolution via coarse-to-fine strategy that begins with a dense grid at lower resolution, optimizes, prunes unnecessary voxels, refines the remaining voxels by subdividing each in half in each dimension, and continues optimizing.</p>
 <p>Voxel pruning is performed using the method from PlenOctrees <a href="">Paper here</a>, which applies a threshold to the maximum weight $T_i(1 - \exp(-\sigma_i \delta_i))$ of each voxel over all training ray (or, alternatively, to the density value in each voxel).</p>
-<figure id="fig-37" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+<figure id="fig-8" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/plenoctree.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
       Plenoctree Visualization
     </figcaption></figure>
 
@@ -978,7 +1145,7 @@ $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_
 .iframe-wrapper {
   position: relative;
   width: 100%;
-  min-width: 900px;
+  min-width: 700px;
 }
 .fullscreen-btn {
   position: absolute;
@@ -1041,9 +1208,9 @@ $$\mathcal{L}_{\text{recon}}= \frac{1}{|\mathcal{R}|} \sum_{\mathbf{r} \in \math
 <hr>
 <h2 id="tensorf">TensoRF<a hidden class="anchor" aria-hidden="true" href="#tensorf">#</a></h2>
 <h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
-<figure id="fig-38" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-9" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/tensorf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
       TensoRF (VM) reconstruction and rendering.
     </figcaption></figure>
 
@@ -1059,9 +1226,9 @@ $$
 \mathcal{T}_{ijk} = \sum_{r=1}^R \mathbf{v}_{r,i}^{1} \mathbf{v}_{r,j}^{2} \mathbf{v}_{r,k}^{3}
 $$<p>where $i, j, k$ denote the indices of the three modes.</p>
 <p>CP decomposition factorizes a tensor into multiple vectors, expressing multiple compact rank-one components. However, because of too high compactness, CP decomposition can require many components to model complex scenes, leading to high computational costs in radiance field reconstruction.</p>
-<figure id="fig-39" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+<figure id="fig-10" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/cp_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       CP decomposition, which factorizes a tensor as a sum of vector outer products
     </figcaption></figure>
 
@@ -1072,17 +1239,17 @@ $$
 \mathcal{T} = \sum_{r=1}^{R_1} \mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3} + \sum_{r=1}^{R_2} \mathbf{v}_r^{2} \circ \mathbf{M}_r^{1,3} + \sum_{r=1}^{R_3} \mathbf{v}_r^{3} \circ \mathbf{M}_r^{1,2}
 $$<p>where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3} \in \mathbb{R}^{I \times K}$, and $\mathbf{M}_r^{1,2} \in \mathbb{R}^{I \times J}$ are matrix factors for two (denoted by superscripts) of the three modes.</p>
 <p>For each component, we relax its two mode ranks to be arbitrarily large, while restricting the third mode to be rank-one; e.g., for component tensor $\mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3}$, its mode-1 rank is 1, and its mode-2 and mode-3 ranks can be arbitrary, depending on the rank of the matrix $\mathbf{M}_r^{2,3}$.</p>
-<figure id="fig-40" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-11" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
       vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
 
 
 <h4 id="comparison">Comparison<a hidden class="anchor" aria-hidden="true" href="#comparison">#</a></h4>
-<figure id="fig-41" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-12" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
 
@@ -1101,9 +1268,9 @@ $$<p>where $m \in \{X, Y, Z\}$, $A_{r,ijk}^{X} = v_{r,i}^{X} M_{r,jk}^{Y,Z}$, $A
 $$
 \sigma, c = \mathcal{G}_{\sigma}(\mathbf{x}), \; \underbrace{\mathcal{S}(\mathcal{G}_{c}(\mathbf{x}), d)}_{\text{it can be MLP/SH}}
 $$<p>where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.</p>
-<figure id="fig-42" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-13" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization_full.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       TensoRF using CP decomposition and VM decomposition
     </figcaption></figure>
 
@@ -1127,7 +1294,7 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
 <p>Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.</p>
 <figure id="scene-tensorf" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/tensorf_scene.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       Tensorf Scene Representation.
     </figcaption></figure>
 
@@ -1138,7 +1305,7 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
 .iframe-wrapper {
   position: relative;
   width: 100%;
-  min-width: 900px;
+  min-width: 700px;
 }
 .fullscreen-btn {
   position: absolute;
@@ -1169,7 +1336,7 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
   <iframe id="tensorf_iframe"
           src="/interactive/tensorf.html"
           allowfullscreen
-          style="width:100%; height:800px; border:0 !important; border-radius:8px;">
+          style="width:100%; height:600px; border:0 !important; border-radius:8px;">
   </iframe>
 </div>
 
@@ -1228,9 +1395,9 @@ $$<p>TV regularization prevents overfitting and removes floaters/artifacts by en
 <hr>
 <h2 id="instant-ngp">Instant NGP<a hidden class="anchor" aria-hidden="true" href="#instant-ngp">#</a></h2>
 <h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
-<figure id="fig-44" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-15" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/instant-ngp-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
       Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)$\rightarrow$(4)$\rightarrow$(3) to update hash table features.
     </figcaption></figure>
 
@@ -1308,9 +1475,9 @@ $$<p>The dramatically smaller network (2 layers vs 8) is enabled by the expressi
 <hr>
 <h2 id="3dgs">3DGS<a hidden class="anchor" aria-hidden="true" href="#3dgs">#</a></h2>
 <h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
-<figure id="fig-45" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-16" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/3dgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       3DGS Overview
     </figcaption></figure>
 
@@ -1352,9 +1519,9 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <li>$W:$ the $3\times3$ rotation component of the world-to-camera transformation</li>
 </ul>
 <p>This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.</p>
-<figure id="fig-46" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-17" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       When projecting a Gaussian particle from 3D space onto the camera image plane, Monte Carlo sampling (left) provides the most accurate estimate but is costly to compute. EWA Splatting formulation used in approximates the projection function via linearization, which requires a dedicated Jacobian J for each camera model and leads to approximation errors with increasing distortion. Unscented Transform instead approximates the particle with Sigma points than can be projected exactly and from which the 2D conic can then be estimated.
     </figcaption></figure>
 
@@ -1382,9 +1549,9 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <li>Reset opacity to near-zero every $K$ iterations (typically 3000 iterations) to force re-optimization</li>
 <li>Remove Gaussians that are excessively large in world space</li>
 </ul>
-<figure id="fig-47" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-18" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/3dgs_adc.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       Adaptive Density Control in 3DGS
     </figcaption></figure>
 
@@ -1503,7 +1670,7 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 .iframe-wrapper {
   position: relative;
   width: 100%;
-  min-width: 900px;
+  min-width: 700px;
 }
 .fullscreen-btn {
   position: absolute;
@@ -1565,9 +1732,9 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
 <p><strong>Key idea</strong> Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as &ldquo;free&rdquo; depth super-
 vision during training:</p>
-<figure id="fig-48" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-19" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       Depth Supervised NeRF Overview
     </figcaption></figure>
 
@@ -1631,9 +1798,9 @@ $$
 $$<hr>
 <h2 id="vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields">ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields">#</a></h2>
 <h3 id="overview-6">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-6">#</a></h3>
-<figure id="fig-49" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-20" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/vipnerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 49.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
       <strong>Overview of ViP-NeRF architecture.</strong> Given the images from primary and secondary views, we estimate a visibility prior map in the primary view and use it to supervise the visibility of pixels as predicted by the NeRF. Specifically, we cast a ray through a randomly selected pixel in the primary view and sample 3D points along the ray. For every point ${\mathbf p}_i$, we use the NeRF MLPs to obtain its visibility in primary and secondary views, along with volume density $\sigma_i$ and color $\mathbf c_i$. Volume rendering outputs visibility $t'$ of the chosen pixel in the secondary view which is supervised by the visibility prior. $\mathcal{L}_v$ constrains the visibilities $\hat{T}_i$ output by network and $T_i$ computed using volume rendering to be consistent with each other.
     </figcaption></figure>
 
@@ -1650,9 +1817,9 @@ $$<hr>
 <p>This visibility information relates to the <strong>relative depth</strong> of scene objects - foreground objects are typically visible in multiple views, while background objects may be partially occluded.</p>
 <h3 id="computing-visibility-prior-using-plane-sweep-volumes">Computing Visibility Prior using Plane Sweep Volumes<a hidden class="anchor" aria-hidden="true" href="#computing-visibility-prior-using-plane-sweep-volumes">#</a></h3>
 <p>ViP-NeRF estimates the visibility prior using <strong>plane sweep volumes (PSV)</strong> without requiring any pre-training:</p>
-<figure id="fig-50" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-21" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/vipnerf-psv.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 50.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
       <strong>Visibility Prior Computation.</strong> The secondary view image is warped to the primary view at different depth planes to create a PSV. Error maps are computed by comparing warped images with the primary view. The minimum error across all planes is thresholded to obtain the visibility prior map. Regions with low error (white) indicate visibility in both views, while high error (black) indicates occlusion.
     </figcaption></figure>
 
@@ -1688,18 +1855,18 @@ $$\mathcal{L}_{\text{vip}}(q) = \max(\tau'(q) - t'(q), 0)$$<p>This loss is only 
 <table align="center">
   <tr>
     <td align="center" width="45%">
-<figure id="fig-51" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+<figure id="fig-22" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/vipnerf-naive.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 51.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
       Computing $T'_i$ naively requiring $N^2$ MLP queries per pixel
     </figcaption></figure>
 
 
       </td>
     <td align="center" width="45%"> 
-<figure id="fig-52" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-23" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/vipnerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 52.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
       Reformulated the NeRF MLP
     </figcaption></figure>
 
@@ -1771,9 +1938,9 @@ $$\mathcal{L} = \lambda_1 \mathcal{L}_{\text{mse}} + \lambda_2 \mathcal{L}_{\tex
 <hr>
 <h2 id="dust3r-geometric-3d-vision-made-easy">DUSt3R: Geometric 3D Vision Made Easy<a hidden class="anchor" aria-hidden="true" href="#dust3r-geometric-3d-vision-made-easy">#</a></h2>
 <h3 id="overview-7">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-7">#</a></h3>
-<figure id="fig-53" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-24" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/dust3r-arch.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 53.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
       <strong>Architecture of the network $\mathcal{F}$.</strong> Two views of a scene $(I^1, I^2)$ are first encoded in a Siamese manner with a shared ViT encoder. The resulting token representations $F^1$ and $F^2$ are then passed to two transformer decoders that constantly exchange information via cross-attention. Finally, two regression heads output the two corresponding pointmaps and associated confidence maps. Importantly, the two pointmaps are expressed in the same coordinate frame of the first image $I^1$. The network $\mathcal{F}$ is trained using a simple regression loss
     </figcaption></figure>
 
@@ -1836,9 +2003,9 @@ $$<p>To avoid the trivial optimum where $\sigma_e = 0, \forall e \in \mathcal{E}
 <hr>
 <h2 id="instantsplat-sparse-view-3d-reconstruction-in-seconds">InstantSplat: Sparse-view 3D Reconstruction in Seconds<a hidden class="anchor" aria-hidden="true" href="#instantsplat-sparse-view-3d-reconstruction-in-seconds">#</a></h2>
 <h3 id="overview-8">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-8">#</a></h3>
-<figure id="fig-54" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-25" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/instantsplat-pipeline.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 54.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
       InstantSplat Pipeline. Multi-view unposed captures. Initialization using a geometric foundation model followed by co-visibility pruning. Joint optimization of 3D Gaussians and camera poses.
     </figcaption></figure>
 
@@ -1906,9 +2073,9 @@ $$<p>Low-confidence points (e.g., sky, reflections) have higher learning rates t
 <hr>
 <h2 id="fsgs-real-time-few-shot-view-synthesis">FSGS: Real-Time Few-shot View Synthesis<a hidden class="anchor" aria-hidden="true" href="#fsgs-real-time-few-shot-view-synthesis">#</a></h2>
 <h3 id="overview-9">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-9">#</a></h3>
-<figure id="fig-55" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-26" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/fsgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 55.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       <strong>FSGS Pipeline.</strong> 3D Gaussians are initialized from COLMAP, with a few images (<strong>black cameras</strong>). For the sparsely placed Gaussians, we propose densifying new Gaussians to enhance scene coverage by unpooling existing Gaussians into new ones, with properly initialized Gaussian attributes. Monocular depth priors, enhanced by sampling unobserved views (<strong>red cameras</strong>), guide the optimization of grown Gaussians towards a reasonable geometry. The final loss consists of a photometric loss term, and a geometric regularization term calculated as depth relative correspondence.
     </figcaption></figure>
 
@@ -1935,9 +2102,9 @@ $$<p><strong>Gaussian Unpooling Strategy:</strong></p>
 <li><strong>SH Coefficients:</strong> Initialized to zero</li>
 </ul>
 <p>This strategy encourages Gaussians to grow in representative locations and progressively fill observation gaps. The proximity graph is updated after each densification or pruning operation.</p>
-<figure id="fig-56" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+<figure id="fig-27" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/gaussian-unpooling.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 56.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       <strong>Gaussian Unpooling Illustration.</strong> We show a 2D toy case for visualizing Gaussian Unpooling with depth guidance, where the example 1D depth provides priors on the relative distance of the Gaussians from the viewing direction, guiding the Gaussian deformation toward a better solution.
     </figcaption></figure>
 
@@ -1978,99 +2145,164 @@ $$<p>where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This lo
 <hr>
 <h3 id="algorithm-the-training-pipeline-of-fsgs">Algorithm: The training pipeline of FSGS<a hidden class="anchor" aria-hidden="true" href="#algorithm-the-training-pipeline-of-fsgs">#</a></h3>
 <hr>
-<table style="border:none !important; border-collapse:collapse !important; width:100%;">
-<tr>
-  <td style="border:none; padding:2px 0; text-align:left;">
-    Training view images $\mathcal{I} = \{ I_i \in \mathbb{R}^{H \times W \times 3} \}_{i=1}^N$ and their associated camera poses  
-    $\mathcal{P} = \{ \phi_i \in \mathbb{R}^{3 \times 4} \}_{i=1}^N$.
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    Run SfM with the input images and camera poses and obtain an initial point cloud $\mathcal{P}$,  
-    used to define 3D Gaussians function $\mathcal{G} = \{ G_i(\mu_i, \sigma_i, c_i, \alpha_i) \}_{i=1}^K$.
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    Leverage pretrained depth estimator $\mathcal{E}$ to predict the depth map $D_i = \mathcal{E}(I_i)$.
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    Synthesize pseudo views $\mathcal{P}^\dagger = \{ \phi_i^\dagger \in \mathbb{R}^{3 \times 4} \}_{i=1}^M$ from input camera poses $\mathcal{P}$.
-  </td>
-</tr>
-<tr><td style="border:none; padding:2px 0;"><strong>while</strong> until convergence <strong>do</strong></td></tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;Randomly sample an image $I_i \in \mathcal{I}$ and the corresponding camera pose $\phi_i$
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_i$ and the depth map $\hat{D}_i$ with camera pose $\phi_i$
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} = \lambda_1 \lVert I_i - \hat{I}_i \rVert_1 + \lambda_2\, \mathrm{D\!-\!SSIM}(I_i,\hat{I}_i) + \lambda_3\, \mathrm{Pearson}(D_i, \hat{D}_i)$
-  </td>
-</tr>
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> iteration $> t_{\text{iter}}$ <strong>then</strong></td></tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample a pseudo camera pose $\phi_j^\dagger \in \mathcal{P}^\dagger$
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_j^\dagger$ and the depth $\hat{D}_i^\dagger$
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the estimated depth as $D_j^\dagger = \mathcal{E}(\hat{I}_j^\dagger)$
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} \leftarrow \mathcal{L} + \lambda_4\, \mathrm{Pearson}(D_j^\dagger, \hat{D}_i^\dagger)$
-  </td>
-</tr>
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinement(iteration) <strong>then</strong></td></tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> each Gaussian $G_i(\mu_i,\sigma_i,c_i,\alpha_i)$
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha_i < \varepsilon$ <strong>or</strong> IsTooLarge$(\mu_i,\sigma_i)$  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RemoveGaussian()
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p \mathcal{L} > \tau_{\text{pos}}$  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianDensify()
-  </td>
-</tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> NoProximity$(\mathcal{G})$  
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianUnpooling()
-  </td>
-</tr>
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td></tr>
-<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
-<tr>
-  <td style="border:none; padding:2px 0;">
-    &nbsp;&nbsp;&nbsp;&nbsp;Update Gaussians parameter $\mathcal{G}$ via $\nabla_{\mathcal{G}} \mathcal{L}$.
-  </td>
-</tr>
-<tr><td style="border:none; padding:2px 0;"><strong>end while</strong></td></tr>
+<table style="border:none; border-collapse:collapse; width:100%; font-size:0.95rem;">
+    <style>
+        table, tr, td {
+    border: none !important;
+}
+        .algo-ln { 
+            color: #999; 
+            text-align: right; 
+            padding-right: 12px; 
+            user-select: none; 
+            width: 1%; 
+            white-space: nowrap; 
+            vertical-align: top;
+            border: none;
+        }
+        .algo-content {
+            text-align: left;
+            padding-bottom: 2px;
+            vertical-align: top;
+            border: none;
+            border:none; 
+            padding:2px 0;
+        }
+    </style>
+    <tr>
+        <td class="algo-ln">1:</td>
+        <td class="algo-content">
+            Training view images $\mathcal{I} = \{ I_i \in \mathbb{R}^{H \times W \times 3} \}_{i=1}^N$ and their associated camera poses $\mathcal{P} = \{ \phi_i \in \mathbb{R}^{3 \times 4} \}_{i=1}^N$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">2:</td>
+        <td class="algo-content">
+            Run SfM with the input images and camera poses and obtain an initial point cloud $\mathcal{P}$, used to define 3D Gaussians function $\mathcal{G} = \{ G_i(\mu_i, \sigma_i, c_i, \alpha_i) \}_{i=1}^K$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">3:</td>
+        <td class="algo-content">
+            Leverage pretrained depth estimator $\mathcal{E}$ to predict the depth map $D_i = \mathcal{E}(I_i)$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">4:</td>
+        <td class="algo-content">
+            Synthesize pseudo views $\mathcal{P}^\dagger = \{ \phi_i^\dagger \in \mathbb{R}^{3 \times 4} \}_{i=1}^M$ from input camera poses $\mathcal{P}$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">5:</td>
+        <td class="algo-content"><strong>while</strong> until convergence <strong>do</strong></td>
+    </tr>
+    <tr>
+        <td class="algo-ln">6:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;Randomly sample an image $I_i \in \mathcal{I}$ and the corresponding camera pose $\phi_i$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">7:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_i$ and the depth map $\hat{D}_i$ with camera pose $\phi_i$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">8:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} = \lambda_1 \lVert I_i - \hat{I}_i \rVert_1 + \lambda_2\, \mathrm{D\!-\!SSIM}(I_i,\hat{I}_i) + \lambda_3\, \mathrm{Pearson}(D_i, \hat{D}_i)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">9:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> iteration $> t_{\text{iter}}$ <strong>then</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">10:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample a pseudo camera pose $\phi_j^\dagger \in \mathcal{P}^\dagger$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">11:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_j^\dagger$ and the depth $\hat{D}_i^\dagger$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">12:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the estimated depth as $D_j^\dagger = \mathcal{E}(\hat{I}_j^\dagger)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">13:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} \leftarrow \mathcal{L} + \lambda_4\, \mathrm{Pearson}(D_j^\dagger, \hat{D}_i^\dagger)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">14:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">15:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinement(iteration) <strong>then</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">16:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> each Gaussian $G_i(\mu_i,\sigma_i,c_i,\alpha_i)$
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">17:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha_i < \varepsilon$ <strong>or</strong> IsTooLarge$(\mu_i,\sigma_i)$ RemoveGaussian()
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">18:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p \mathcal{L} > \tau_{\text{pos}}$ GaussianDensify()
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">19:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> NoProximity$(\mathcal{G})$ GaussianUnpooling()
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">20:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">21:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong>
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">22:</td>
+        <td class="algo-content">
+            &nbsp;&nbsp;&nbsp;&nbsp;Update Gaussians parameter $\mathcal{G}$ via $\nabla_{\mathcal{G}} \mathcal{L}$.
+        </td>
+    </tr>
+    <tr>
+        <td class="algo-ln">23:</td>
+        <td class="algo-content"><strong>end while</strong></td>
+    </tr>
 </table>
 <hr>
 <h2 id="cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization<a hidden class="anchor" aria-hidden="true" href="#cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">#</a></h2>
@@ -2078,9 +2310,9 @@ $$<p>where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This lo
 <p>Two 3D Gaussian radiance fields trained from the same sparse set of views can exhibit different behaviors. By training two fields simultaneously and measuring their disagreement throughout training, one can analyze the consistency of the learned geometry and appearance. Because ground-truth supervision is applied only on training views, rendering disagreement is evaluated on unseen views.</p>
 <p>A notable pattern is that disagreement increases significantly during <strong>densification</strong>, a phase in which new Gaussians are created but placed without strong geometric constraints. This randomness can introduce geometric errors in sparse-view 3DGS.</p>
 <p><strong>Key Point:</strong> Both <strong>point disagreement</strong> (differences in Gaussian positions) and <strong>rendering disagreement</strong> (differences in rendered appearance or depth) are typically <strong>negatively correlated</strong> with reconstruction accuracy.</p>
-<figure id="fig-57" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-28" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/corgs-pipeline.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 57.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       Overview of CoR-GS. We train two 3D Gaussian radiance fields simultaneously and regularize them by suppressing point disagreement and rendering disagreement.
     </figcaption></figure>
 
@@ -2321,9 +2553,9 @@ $$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$<p>We can co
 <h1 id="feedforward-and-barf">Feedforward and BARF<a hidden class="anchor" aria-hidden="true" href="#feedforward-and-barf">#</a></h1>
 <h2 id="pixel-splat">Pixel Splat<a hidden class="anchor" aria-hidden="true" href="#pixel-splat">#</a></h2>
 <h3 id="overview-12">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-12">#</a></h3>
-<figure id="fig-58" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-29" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/pixel-splat-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 58.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       Proposed probabilistic prediction of pixel-aligned Gaussians
     </figcaption></figure>
 
@@ -2358,122 +2590,41 @@ This post or widget may be updated further - more notes, findings, and backgroun
   </footer>
 </article>
     </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const katexCSS = "/katex/katex.min.css";
+    const katexJS = "/katex/katex.min.js";
+    const autoRenderJS = "/katex/contrib/auto-render.min.js";
 
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
+    document.querySelectorAll("iframe").forEach(iframe => {
+        iframe.addEventListener("load", () => {
+            const doc = iframe.contentDocument;
 
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
+            if (!doc) return;
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
+            
+            const link = doc.createElement("link");
+            link.rel = "stylesheet";
+            link.href = katexCSS;
+            doc.head.appendChild(link);
+
+            
+            const script1 = doc.createElement("script");
+            script1.src = katexJS;
+            script1.defer = true;
+
+            const script2 = doc.createElement("script");
+            script2.src = autoRenderJS;
+            script2.defer = true;
+            script2.onload = () => {
+                doc.defaultView.renderMathInElement(doc.body);
+            };
+
+            doc.head.appendChild(script1);
+            doc.head.appendChild(script2);
         });
     });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-<script>
-    document.querySelectorAll('pre > code').forEach((codeblock) => {
-        const container = codeblock.parentNode.parentNode;
-
-        const copybutton = document.createElement('button');
-        copybutton.classList.add('copy-code');
-        copybutton.innerHTML = 'copy';
-
-        function copyingDone() {
-            copybutton.innerHTML = 'copied!';
-            setTimeout(() => {
-                copybutton.innerHTML = 'copy';
-            }, 2000);
-        }
-
-        copybutton.addEventListener('click', (cb) => {
-            if ('clipboard' in navigator) {
-                navigator.clipboard.writeText(codeblock.textContent);
-                copyingDone();
-                return;
-            }
-
-            const range = document.createRange();
-            range.selectNodeContents(codeblock);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            try {
-                document.execCommand('copy');
-                copyingDone();
-            } catch (e) { };
-            selection.removeRange(range);
-        });
-
-        if (container.classList.contains("highlight")) {
-            container.appendChild(copybutton);
-        } else if (container.parentNode.firstChild == container) {
-            
-        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
-            
-            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
-        } else {
-            
-            codeblock.parentNode.appendChild(copybutton);
-        }
-    });
+});
 </script>
 </body>
 
