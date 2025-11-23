@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;53 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;55 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -504,10 +504,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#overview-12" aria-label="Overview">Overview</a></li></ul>
                 </li>
                 <li>
-                    <a href="#barf" aria-label="BARF">BARF</a>
+                    <a href="#barf" aria-label="BARF">BARF</a></li></ul>
                 </li>
-            </ul>
-            </li>
+                <li>
+                    <a href="#references" aria-label="References">References</a>
+                </li>
             </ul>
         </div>
     </details>
@@ -2409,11 +2410,6 @@ $$<hr>
 <p>Given a video, optical flow is defined as a $2D$ vector field describing the apparent movement of each pixel due to relative motion between the camera (observer) and the scene (objects, surfaces, edges). The camera or the scene or both
 may be moving</p>
 <h3 id="computing-optical-flow">Computing Optical Flow<a hidden class="anchor" aria-hidden="true" href="#computing-optical-flow">#</a></h3>
-<p>References</p>
-<ul>
-<li><a href="https://web.stanford.edu/class/cs231a/course_notes/09-optical-flow.pdf">https://web.stanford.edu/class/cs231a/course_notes/09-optical-flow.pdf</a></li>
-<li><a href="https://www.cs.cmu.edu/~16385/s15/lectures/Lecture21.pdf">https://www.cs.cmu.edu/~16385/s15/lectures/Lecture21.pdf</a></li>
-</ul>
 <p>We define a video as an ordered sequence of frames captured over time. $I(x, y, t)$, a function of both space and time, represents the intensity of pixel $(x, y)$ in the frame at time t. In dense optical flow, at every time t and for every pixel $(x, y)$, we want to compute the apparent velocity of the pixel in both the $x$-axis and $y$-axis, given by
 </p>
 $$ u(x, y, t) = \frac{\Delta x}{\Delta t}$$<p>
@@ -2567,6 +2563,78 @@ $$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$<p>We can co
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>
+<h1 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h1>
+<ol>
+<li>
+<p>Zhou, T., Tucker, R., Flynn, J., Fyffe, G., &amp; Snavely, N. (2018). <strong>Stereo Magnification: High-Resolution View Synthesis.</strong> SIGGRAPH 2018.</p>
+</li>
+<li>
+<p>Mildenhall, B., Srinivasan, P. P., Tancik, M., Barron, J. T., Ramamoorthi, R., &amp; Ng, R. (2020). <strong>NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis.</strong> ECCV 2020.</p>
+</li>
+<li>
+<p>Fridovich-Keil, S., Yu, A., Tancik, M., Chen, Q., Recht, B., &amp; Kanazawa, A. (2022). <strong>Plenoxels: Radiance Fields without Neural Networks.</strong> CVPR 2022 (Oral).</p>
+</li>
+<li>
+<p>Chen, A., Xu, Z., Geiger, A., Yu, J., &amp; Su, H. (2022). <strong>TensoRF: Tensorial Radiance Fields.</strong> ECCV 2022.</p>
+</li>
+<li>
+<p>Müller, T., Evans, A., Schied, C., &amp; Keller, A. (2022). <strong>Instant Neural Graphics Primitives with a Multiresolution Hash Encoding.</strong> SIGGRAPH 2022.</p>
+</li>
+<li>
+<p>Kerbl, B., Kopanas, G., Leimkühler, T., &amp; Drettakis, G. (2023). <strong>3D Gaussian Splatting for Real-Time Radiance Field Rendering.</strong> SIGGRAPH 2023.</p>
+</li>
+<li>
+<p>Deng, K., Liu, A., Zhu, J.-Y., &amp; Ramanan, D. (2022). <strong>Depth-supervised NeRF: Fewer Views and Faster Training for Free.</strong> CVPR 2022.</p>
+</li>
+<li>
+<p>Somraj, N., &amp; Soundararajan, R. (2023). <strong>ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields.</strong> SIGGRAPH 2023.</p>
+</li>
+<li>
+<p>Ranftl, R., Bochkovskiy, A., &amp; Koltun, V. (2021). <strong>Vision Transformers for Dense Prediction (DPT / MiDaS).</strong> ICCV 2021.</p>
+</li>
+<li>
+<p>Wang, W., et al. (2024). <strong>DUSt3R: Geometric 3D Vision Made Easy.</strong> CVPR 2024.</p>
+</li>
+<li>
+<p>Leroy, V., Cabon, Y., &amp; Revaud, J. (2024). <strong>Grounding Image Matching in 3D with MASt3R.</strong> arXiv:2406.09756.</p>
+</li>
+<li>
+<p>Fan, Z., Wang, K., Wen, K., Zhu, Z., Xu, D., Wang, Z., &amp; others. (2024). <strong>InstantSplat: Unbounded Sparse-view Pose-free 3D Gaussian Splatting in 40 Seconds.</strong> arXiv:2403.20309.</p>
+</li>
+<li>
+<p>Zhu, Z., Fan, Z., Jiang, Y., &amp; Wang, Z. (2024). <strong>FSGS: Real-Time Few-Shot View Synthesis using Gaussian Splatting.</strong> ECCV 2024.</p>
+</li>
+<li>
+<p>Zhang, J., et al. (2024). <strong>CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization.</strong> CVPR 2024.</p>
+</li>
+<li>
+<p>Lucas, B. D., &amp; Kanade, T. (1981). <strong>An Iterative Image Registration Technique with an Application to Stereo Vision.</strong> IJCAI 1981.</p>
+</li>
+<li>
+<p>Horn, B. K. P., &amp; Schunck, B. G. (1981). <strong>Determining Optical Flow.</strong> Artificial Intelligence, 17(1–3).</p>
+</li>
+<li>
+<p>Teed, Z., &amp; Deng, J. (2020). <strong>RAFT: Recurrent All-Pairs Field Transforms for Optical Flow.</strong> ECCV 2020.</p>
+</li>
+<li>
+<p>Stanford CS231A Notes: <strong>Optical Flow.</strong> <a href="https://web.stanford.edu/class/cs231a/course_notes/09-optical-flow.pdf">https://web.stanford.edu/class/cs231a/course_notes/09-optical-flow.pdf</a></p>
+</li>
+<li>
+<p>CMU 16-385 Notes: <strong>Optical Flow.</strong> <a href="https://www.cs.cmu.edu/~16385/s15/lectures/Lecture21.pdf">https://www.cs.cmu.edu/~16385/s15/lectures/Lecture21.pdf</a></p>
+</li>
+<li>
+<p>Li, Z., Niklaus, S., Mai, L., Yang, J., &amp; Ranjan, R. (2021). <strong>Neural Scene Flow Fields (NSFF).</strong> CVPR 2021.</p>
+</li>
+<li>
+<p>Wu, G., et al. (2024). <strong>4D Gaussian Splatting for Real-Time Dynamic Scene Rendering.</strong> CVPR 2024.</p>
+</li>
+<li>
+<p>Charatan, D., Li, S., Tagliasacchi, A., &amp; Sitzmann, V. (2024). <strong>PixelSplat: 3D Gaussian Splats from Image Pairs for Scalable Generalizable 3D Reconstruction.</strong> CVPR 2024.</p>
+</li>
+<li>
+<p>Chen, A., Barron, J. T., Srinivasan, P. P., Xiang, T., &amp; Ng, R. (2021). <strong>BARF: Bundle-Adjusting Neural Radiance Fields.</strong> ICCV 2021.</p>
+</li>
+</ol>
 
 
   </div>
