@@ -1108,6 +1108,122 @@ where:
 - $J:$ Jacobian of the projection
 - $W:$ the $3\times3$ rotation component of the world-to-camera transformation
 
+
+><details>
+><summary style="cursor: pointer;">Proof</summary>
+>
+> We start with a Gaussian defined in **world space**:
+>
+> $$
+ X_w \sim \mathcal N(\mu_w, \Sigma).
+ $$
+>
+> This means:
+> - $\mathbb E[X_w] = \mu_w$
+> - $\mathrm{Cov}(X_w) = \Sigma \in \mathbb R^{3\times 3}$
+>
+> #### Transform Gaussian into camera space
+>
+> The world→camera transform is an affine map:
+>
+> $$
+ X_c = W X_w + t.
+ $$
+>
+> Since $t$ is constant, it does not affect covariance.  
+> Using the affine Gaussian rule:
+>
+> > If $X \sim \mathcal N(\mu, \Sigma)$ and $Y = A X + b$, then  
+> > $\mathrm{Cov}(Y) = A \Sigma A^\top$.
+> we obtain:
+>
+> $$
+ \mu_c = W \mu_w + t, \qquad \Sigma_c = W \Sigma W^\top.
+ $$
+>
+> Thus:
+>
+> $$
+ X_c \sim \mathcal N(\mu_c,\, W\Sigma W^\top).
+ $$
+>
+>
+> #### Linearize the camera projection
+>
+> Let the projection be:
+>
+> $$
+ f: \mathbb R^3 \to \mathbb R^2, \quad Y = f(X_c).
+ $$
+>
+> Because $f$ is nonlinear (from division by depth), the distribution of $f(X_c)$ is not Gaussian.  
+> We use the **first-order Taylor expansion** of $f$ at the mean $\mu_c$:
+>
+> $$
+ f(X_c) \approx f(\mu_c) + J(\mu_c)(X_c - \mu_c),
+ $$
+>
+> where the Jacobian is:
+>
+> $$
+ J = \left. \frac{\partial f}{\partial X_c} \right|_{X_c = \mu_c}.
+ $$
+>
+> Ignoring the constant term $f(\mu_c)$ for covariance gives the linearized random variable:
+>
+> $$
+ Y_{\text{lin}} = J(X_c - \mu_c).
+ $$
+>
+> #### Propagate the covariance
+>
+> Using $\mathrm{Cov}(A Z) = A\,\mathrm{Cov}(Z)\,A^\top$:
+>
+> $$
+ \Sigma' = \mathrm{Cov}(Y_{\text{lin}}) = J\,\mathrm{Cov}(X_c - \mu_c)\,J^\top.
+ $$
+>
+> Since subtracting the mean does not affect covariance:
+>
+> $$
+ \mathrm{Cov}(X_c - \mu_c) = \mathrm{Cov}(X_c) = \Sigma_c,
+ $$
+>
+> we get:
+>
+> $$
+ \Sigma' = J \Sigma_c J^\top.
+ $$
+>
+> Substituting $\Sigma_c = W\Sigma W^\top$:
+>
+> $$
+ \boxed{\Sigma' = J ( W \Sigma W^\top ) J^\top }.
+ $$
+>
+> The full chain of transformations is:
+>
+> $$
+ X_w
+ \;\longrightarrow\;
+ X_c = W X_w + t
+ \;\longrightarrow\;
+ Y \approx f(\mu_c) + J(X_c - \mu_c).
+ $$
+>
+> and the covariance flow is:
+>
+> $$
+ \Sigma
+ \;\longrightarrow\;
+ W \Sigma W^\top
+ \;\longrightarrow\;
+ J(W \Sigma W^\top) J^\top.
+ $$
+>
+> Thus, under first-order projection, the 3D Gaussian ellipsoid becomes a 2D Gaussian ellipse with covariance $\Sigma'$.
+></details>
+
 This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.
 
 {{< figure src="../../images/3dvis/3dgs-projection.png"

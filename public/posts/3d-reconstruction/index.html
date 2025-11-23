@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;55 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;56 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -327,7 +327,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#rendering-using-gaussians" aria-label="Rendering using Gaussians">Rendering using Gaussians</a></li>
                 <li>
-                    <a href="#projection-to-screen-space" aria-label="Projection to Screen Space">Projection to Screen Space</a></li>
+                    <a href="#projection-to-screen-space" aria-label="Projection to Screen Space">Projection to Screen Space</a><ul>
+                        
+                <li>
+                    <a href="#transform-gaussian-into-camera-space" aria-label="Transform Gaussian into camera space">Transform Gaussian into camera space</a></li>
+                <li>
+                    <a href="#linearize-the-camera-projection" aria-label="Linearize the camera projection">Linearize the camera projection</a></li>
+                <li>
+                    <a href="#propagate-the-covariance" aria-label="Propagate the covariance">Propagate the covariance</a></li></ul>
+                </li>
                 <li>
                     <a href="#adaptive-density-control" aria-label="Adaptive Density Control">Adaptive Density Control</a><ul>
                         
@@ -1519,6 +1527,75 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <li>$J:$ Jacobian of the projection</li>
 <li>$W:$ the $3\times3$ rotation component of the world-to-camera transformation</li>
 </ul>
+<blockquote>
+<details>
+<summary style="cursor: pointer;">Proof</summary>
+<p>We start with a Gaussian defined in <strong>world space</strong>:</p>
+$$
+ X_w \sim \mathcal N(\mu_w, \Sigma).
+ $$<p>This means:</p>
+<ul>
+<li>$\mathbb E[X_w] = \mu_w$</li>
+<li>$\mathrm{Cov}(X_w) = \Sigma \in \mathbb R^{3\times 3}$</li>
+</ul>
+<h4 id="transform-gaussian-into-camera-space">Transform Gaussian into camera space<a hidden class="anchor" aria-hidden="true" href="#transform-gaussian-into-camera-space">#</a></h4>
+<p>The world→camera transform is an affine map:</p>
+$$
+ X_c = W X_w + t.
+ $$<p>Since $t$ is constant, it does not affect covariance.<br>
+Using the affine Gaussian rule:</p>
+<blockquote>
+<p>If $X \sim \mathcal N(\mu, \Sigma)$ and $Y = A X + b$, then<br>
+$\mathrm{Cov}(Y) = A \Sigma A^\top$.
+we obtain:</p></blockquote>
+$$
+ \mu_c = W \mu_w + t, \qquad \Sigma_c = W \Sigma W^\top.
+ $$<p>Thus:</p>
+$$
+ X_c \sim \mathcal N(\mu_c,\, W\Sigma W^\top).
+ $$<h4 id="linearize-the-camera-projection">Linearize the camera projection<a hidden class="anchor" aria-hidden="true" href="#linearize-the-camera-projection">#</a></h4>
+<p>Let the projection be:</p>
+$$
+ f: \mathbb R^3 \to \mathbb R^2, \quad Y = f(X_c).
+ $$<p>Because $f$ is nonlinear (from division by depth), the distribution of $f(X_c)$ is not Gaussian.<br>
+We use the <strong>first-order Taylor expansion</strong> of $f$ at the mean $\mu_c$:</p>
+$$
+ f(X_c) \approx f(\mu_c) + J(\mu_c)(X_c - \mu_c),
+ $$<p>where the Jacobian is:</p>
+$$
+ J = \left. \frac{\partial f}{\partial X_c} \right|_{X_c = \mu_c}.
+ $$<p>Ignoring the constant term $f(\mu_c)$ for covariance gives the linearized random variable:</p>
+$$
+ Y_{\text{lin}} = J(X_c - \mu_c).
+ $$<h4 id="propagate-the-covariance">Propagate the covariance<a hidden class="anchor" aria-hidden="true" href="#propagate-the-covariance">#</a></h4>
+<p>Using $\mathrm{Cov}(A Z) = A\,\mathrm{Cov}(Z)\,A^\top$:</p>
+$$
+ \Sigma' = \mathrm{Cov}(Y_{\text{lin}}) = J\,\mathrm{Cov}(X_c - \mu_c)\,J^\top.
+ $$<p>Since subtracting the mean does not affect covariance:</p>
+$$
+ \mathrm{Cov}(X_c - \mu_c) = \mathrm{Cov}(X_c) = \Sigma_c,
+ $$<p>we get:</p>
+$$
+ \Sigma' = J \Sigma_c J^\top.
+ $$<p>Substituting $\Sigma_c = W\Sigma W^\top$:</p>
+$$
+ \boxed{\Sigma' = J ( W \Sigma W^\top ) J^\top }.
+ $$<p>The full chain of transformations is:</p>
+$$
+ X_w
+ \;\longrightarrow\;
+ X_c = W X_w + t
+ \;\longrightarrow\;
+ Y \approx f(\mu_c) + J(X_c - \mu_c).
+ $$<p>and the covariance flow is:</p>
+$$
+ \Sigma
+ \;\longrightarrow\;
+ W \Sigma W^\top
+ \;\longrightarrow\;
+ J(W \Sigma W^\top) J^\top.
+ $$<p>Thus, under first-order projection, the 3D Gaussian ellipsoid becomes a 2D Gaussian ellipse with covariance $\Sigma'$.</p>
+</details></blockquote>
 <p>This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.</p>
 <figure id="fig-17" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
