@@ -82,15 +82,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 </script>
-
-<script>
-    const iframe = document.getElementById("myframe");
-
-    iframe.onload = () => {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        iframeDoc.body.classList.add("dark");
-    };
-</script>
 </head>
 
 <body class="list" id="top">
@@ -247,43 +238,6 @@ document.addEventListener("DOMContentLoaded", function() {
   <a class="entry-link" aria-label="post link to Dimensionality Reduction using PCA" href="http://localhost:1313/posts/dimensionality-reduction-pca/"></a>
 </article>
     </main>
-    <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const katexCSS = "/katex/katex.min.css";
-    const katexJS = "/katex/katex.min.js";
-    const autoRenderJS = "/katex/contrib/auto-render.min.js";
-
-    document.querySelectorAll("iframe").forEach(iframe => {
-        iframe.addEventListener("load", () => {
-            const doc = iframe.contentDocument;
-
-            if (!doc) return;
-
-            
-            const link = doc.createElement("link");
-            link.rel = "stylesheet";
-            link.href = katexCSS;
-            doc.head.appendChild(link);
-
-            
-            const script1 = doc.createElement("script");
-            script1.src = katexJS;
-            script1.defer = true;
-
-            const script2 = doc.createElement("script");
-            script2.src = autoRenderJS;
-            script2.defer = true;
-            script2.onload = () => {
-                doc.defaultView.renderMathInElement(doc.body);
-            };
-
-            doc.head.appendChild(script1);
-            doc.head.appendChild(script2);
-        });
-    });
-});
-</script>
-
-</body>
+    </body>
 
 </html>
