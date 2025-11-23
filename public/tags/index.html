@@ -83,6 +83,14 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+<script>
+    const iframe = document.getElementById("myframe");
+
+    iframe.onload = () => {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.body.classList.add("dark");
+    };
+</script>
 </head>
 
 <body class="list" id="top">
@@ -246,6 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
 </body>
 
 </html>

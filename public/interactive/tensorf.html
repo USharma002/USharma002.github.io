@@ -17,7 +17,7 @@
             width: 100vw;
             height: 100vh;
         }
-
+                
         #ui-layer {
             position: relative;
             top: 20px;
@@ -25,10 +25,11 @@
             background: rgba(255, 255, 255, 0.95);
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            max-width: 350px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            width: 320px;
             border: 1px solid #eee;
-            pointer-events: auto;
+            max-height: 88vh; /* Slightly less than collapsible to prevent clipping */
+            overflow-y: auto;
         }
 
         h1 {
@@ -126,6 +127,7 @@
             pointer-events: none;
             user-select: none;
         }
+
 #ui-toggle {
     position: absolute;
     top: 20px;
@@ -133,31 +135,39 @@
     z-index: 99999;
     width: 40px;
     height: 40px;
-    background: #fff;
-    border: 1px solid #ccc;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #444;
     border-radius: 6px;
     cursor: pointer;
     font-size: 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* COLLAPSIBLE CONTAINER */
+#ui-toggle:hover {
+    background: rgba(50, 50, 50, 0.95);
+}
+
+/* Collapsible container */
 #ui-collapsible {
     position: absolute;
     top: 20px;
     left: 20px;
     z-index: 99990;
-    max-height: 800px;     /* <<< MUST EXIST */
+    max-height: 800px;
     opacity: 1;
     transition: max-height .35s ease, opacity .25s ease;
 }
 
 #ui-collapsible.closed {
-    max-height: 0px;       /* <<< WHEN CLOSED */
+    max-height: 0px; 
     opacity: 0;
     pointer-events: none;
+    
 }
-
 
     </style>
     <!-- Three.js CDN -->
@@ -678,16 +688,14 @@
     }
 
     animate();
-const uiToggle = document.getElementById("ui-toggle");
-const uiCollapsible = document.getElementById("ui-collapsible");
 
-uiToggle.addEventListener("click", () => {
-    const nowClosed = uiCollapsible.classList.toggle("closed");
-    uiToggle.textContent = nowClosed ? "☰" : "✕";
-});
+    const uiToggle = document.getElementById("ui-toggle");
+    const uiCollapsible = document.getElementById("ui-collapsible");
 
-
-
+    uiToggle.addEventListener("click", () => {
+        const nowClosed = uiCollapsible.classList.toggle("closed");
+        uiToggle.textContent = nowClosed ? "☰" : "✕";
+    });
 </script>
 </body>
 </html>

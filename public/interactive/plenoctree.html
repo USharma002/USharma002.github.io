@@ -73,6 +73,61 @@
             border-radius: 4px;
             transition: background 0.3s ease, color 0.3s ease;
         }
+
+#ui-layer {
+    position: relative;
+    top: 20px;
+    left: 20px;
+    background: rgba(30, 30, 30, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    width: 320px;
+    border: 1px solid #444;
+    max-height: 88vh; /* Slightly less than collapsible to prevent clipping */
+    overflow-y: auto;
+}
+
+#ui-toggle {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 99999;
+    width: 40px;
+    height: 40px;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ui-toggle:hover {
+    background: rgba(50, 50, 50, 0.95);
+}
+
+/* Collapsible container */
+#ui-collapsible {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 99990;
+    max-height: 800px;
+    opacity: 1;
+    transition: max-height .35s ease, opacity .25s ease;
+}
+
+#ui-collapsible.closed {
+    max-height: 0px; 
+    opacity: 0;
+    pointer-events: none;
+    
+}
     </style>
     <!-- Load Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -80,7 +135,10 @@
 </head>
 <body>
 
-<div id="info">
+<button id="ui-toggle">☰</button>
+
+<div id="ui-collapsible" class="closed">
+<div id="ui-layer">
     <h1>PlenOctree Algorithm</h1>
     <p>
         <strong>Sparse Octree Construction:</strong><br>
@@ -97,7 +155,7 @@
         Depth: 6
     </div>
 </div>
-
+</div>
 <script>
     let scene, camera, renderer, controls;
     let octreeLines, contentMesh;
@@ -397,6 +455,17 @@
         controls.update();
         renderer.render(scene, camera);
     }
+
+        // UI Toggle Handler
+        const uiToggle = document.getElementById("ui-toggle");
+        const uiCollapsible = document.getElementById("ui-collapsible");
+
+        uiToggle.addEventListener("click", () => {
+            const nowClosed = uiCollapsible.classList.toggle("closed");
+            uiToggle.textContent = nowClosed ? "☰" : "✕";
+        });
+
+
 </script>
 
 </body>

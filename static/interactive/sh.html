@@ -48,24 +48,24 @@ window.MathJax = {
         .tab-btn.active { background: #333; color: #fff; }
 
         /* --- UI PANEL --- */
-#ui-toggle {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 99999;
-    width: 40px;
-    height: 40px;
-    background: rgba(30, 30, 30, 0.9);
-    border: 1px solid #444;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        #ui-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 99999;
+            width: 40px;
+            height: 40px;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #444;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
 
         #ui-panel {
@@ -417,12 +417,17 @@ function updateLabels() {
         if(mode === '3d') {
             document.getElementById('view-3d').style.display = 'block';
             document.getElementById('view-2d').style.display = 'none';
+            // Force resize after display change
+            setTimeout(() => {
+                handleResize3D();
+            }, 10);
         } else {
             document.getElementById('view-3d').style.display = 'none';
             document.getElementById('view-2d').style.display = 'flex';
-            draw2D(); // Draw on switch
+            draw2D();
         }
     }
+
 
     function toggleUI() {
         const p = document.getElementById('ui-panel');
@@ -431,18 +436,54 @@ function updateLabels() {
 
     // --- BOOTSTRAP ---
     createSliders();
-    init3D();
-    
-    window.addEventListener('resize', () => {
-        // Resize 3D
-        if(camera && renderer) {
+
+    // Track fullscreen state
+    let isFullscreen = false;
+
+    // Handle fullscreen dimension changes with retry logic
+    function handleResize3D() {
+        if (camera && renderer) {
             const c = document.getElementById('view-3d');
-            const asp = c.clientWidth/c.clientHeight;
-            camera.left = -14*asp/2; camera.right = 14*asp/2;
-            camera.updateProjectionMatrix();
-            renderer.setSize(c.clientWidth, c.clientHeight);
+            const w = c.clientWidth;
+            const h = c.clientHeight;
+            
+            // Validate dimensions before resizing
+            if (w > 0 && h > 0) {
+                const asp = w / h;
+                const frus = 14;
+                camera.left = -frus * asp / 2;
+                camera.right = frus * asp / 2;
+                camera.top = frus / 2;
+                camera.bottom = -frus / 2;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+                return true;
+            }
+            return false;
         }
-    });
+        return false;
+    }
+
+    // Robust resize with retry mechanism
+    function resizeWithRetry(attempts = 5, delay = 50) {
+        if (!handleResize3D() && attempts > 0) {
+            setTimeout(() => resizeWithRetry(attempts - 1, delay), delay);
+        }
+    }
+
+    // Fullscreen event listeners
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'msfullscreenchange'].forEach(
+        eventType => document.addEventListener(eventType, function() {
+            isFullscreen = !!document.fullscreenElement;
+            if (isFullscreen && document.getElementById('view-3d').style.display !== 'none') {
+                resizeWithRetry();
+            }
+        }, false)
+    );
+
+    init3D();
+
+    window.addEventListener('resize', handleResize3D);
 
 </script>
 </body>
