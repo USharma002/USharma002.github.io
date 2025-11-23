@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NeRF Stratified & Hierarchical Sampling</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         :root {
             --page-bg: #ffffff;
@@ -22,8 +20,8 @@
 
         body {
             margin: 0;
-            padding: 16px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background: var(--page-bg);
             color: var(--page-text);
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -39,17 +37,15 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 16px 18px 14px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        h2 {
-            margin: 0 0 8px;
-            font-size: 1.1rem;
-        }
-
+        h2 { margin: 0 0 8px; font-size: 1.1rem; }
         .description {
             font-size: 0.9rem;
             color: var(--text-secondary, #6c757d);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             line-height: 1.4;
         }
 
@@ -57,7 +53,6 @@
             display: block;
             width: 100%;
             height: auto;
-            max-height: 340px;
             border-radius: 4px;
             border: 1px solid var(--border-color);
             background: #fafafa;
@@ -67,7 +62,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         button {
@@ -78,7 +73,8 @@
             background: var(--card-bg);
             color: var(--page-text);
             cursor: pointer;
-            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+            transition: all 0.15s ease;
+            font-weight: 500;
         }
 
         button:hover:not(:disabled) {
@@ -87,47 +83,31 @@
             border-color: var(--page-text);
         }
 
-        button:active:not(:disabled) {
-            transform: scale(0.98);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: default;
-        }
+        button:active:not(:disabled) { transform: scale(0.98); }
+        button:disabled { opacity: 0.5; cursor: default; }
 
         .legend {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-top: 10px;
+            gap: 1rem;
+            margin-top: 15px;
             font-size: 0.8rem;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
         }
 
         .legend-item {
             display: inline-flex;
             align-items: center;
             gap: 0.35rem;
-            white-space: nowrap;
         }
 
-        .dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-        }
-
-        .line-icon {
-            width: 18px;
-            height: 2px;
-        }
-
+        .dot { width: 9px; height: 9px; border-radius: 50%; }
+        .line-icon { width: 18px; height: 2px; }
         .bin-indicator {
-            width: 10px;
-            height: 8px;
-            border-radius: 0;
+            width: 10px; height: 8px;
             border: 1px solid var(--border-color);
-            background: transparent;
+            border-right: 1px dashed var(--border-color);
         }
     </style>
 </head>
@@ -136,113 +116,155 @@
     <div class="card">
         <h2>NeRF Sampling Along a Ray</h2>
         <div class="description">
-            Step&nbsp;1 (coarse): stratified samples, one per bin along the ray. Step&nbsp;2 (fine): hierarchical
-            resampling from a PDF built from coarse weights.
+            Step&nbsp;1 (Coarse): Stratified random sampling within fixed bins.<br>
+            Step&nbsp;2 (Fine): Hierarchical sampling based on the probability distribution (PDF) of coarse weights.
         </div>
 
-        <canvas id="simCanvas" width="760" height="320"></canvas>
+        <canvas id="simCanvas" style="width: 100%;"></canvas>
 
         <div class="controls">
-            <button id="btnRandom" type="button" onclick="randomizeScene()">Randomize scene</button>
-            <button id="btnCoarse" type="button" onclick="runCoarse()">1. Coarse samples</button>
-            <button id="btnFine" type="button" onclick="runFine()" disabled>2. Fine samples</button>
+            <button id="btnRandom" type="button" onclick="randomizeScene()">Randomize Scene</button>
+            <button id="btnCoarse" type="button" onclick="runCoarse()">1. Coarse Samples</button>
+            <button id="btnFine" type="button" onclick="runFine()" disabled>2. Fine Samples</button>
             <button id="btnReset" type="button" onclick="resetSim()">Reset</button>
         </div>
 
         <div class="legend">
             <div class="legend-item">
                 <span class="bin-indicator"></span>
-                <span>Stratified bins</span>
+                <span>Stratified Bins</span>
             </div>
             <div class="legend-item">
                 <span class="line-icon" style="background: var(--accent-muted);"></span>
-                <span>True density</span>
+                <span>True Density</span>
             </div>
             <div class="legend-item">
                 <span class="dot" style="background: var(--accent-blue);"></span>
-                <span>Coarse sample</span>
+                <span>Coarse Sample</span>
             </div>
             <div class="legend-item">
                 <span class="dot" style="background: var(--accent-red);"></span>
-                <span>Fine sample</span>
+                <span>Fine Sample</span>
             </div>
         </div>
+    </div>
+
+    <div class="card">
+        <h2>Cumulative Distribution Function (CDF)</h2>
+        <div class="description">
+            Inverse transform sampling is performed on this CDF to place fine samples in high-density regions.
+        </div>
+        <canvas id="cdfCanvas" style="width: 100%; height: 280px;"></canvas>
     </div>
 </div>
 
 <script>
-    // --- Theme detection (inherits from parent Hugo page) ---
+    // --- Theme Detection ---
     function detectTheme() {
         try {
-            const parentBody = window.parent.document.body;
-            const computedStyle = window.getComputedStyle(parentBody);
-            const bgColor = computedStyle.backgroundColor;
-
-            const rgb = bgColor.match(/\d+/g);
-            if (rgb) {
-                const brightness =
-                    (parseInt(rgb[0]) * 299 +
-                        parseInt(rgb[1]) * 587 +
-                        parseInt(rgb[2]) * 114) / 1000;
-                const isDark = brightness < 128;
-
-                if (isDark) {
-                    document.documentElement.style.setProperty("--page-bg", "#1a1a1a");
-                    document.documentElement.style.setProperty("--page-text", "#e4e4e4");
-                    document.documentElement.style.setProperty("--text-secondary", "#a0a0a0");
-                    document.documentElement.style.setProperty("--card-bg", "#2d2d2d");
-                    document.documentElement.style.setProperty("--border-color", "#404040");
-                    document.documentElement.style.setProperty("--grid-line", "#404040");
-                } else {
-                    document.documentElement.style.setProperty("--page-bg", "#ffffff");
-                    document.documentElement.style.setProperty("--page-text", "#212529");
-                    document.documentElement.style.setProperty("--text-secondary", "#6c757d");
-                    document.documentElement.style.setProperty("--card-bg", "#f8f9fa");
-                    document.documentElement.style.setProperty("--border-color", "#dee2e6");
-                    document.documentElement.style.setProperty("--grid-line", "#e0e0e0");
+            // Check parent iframe if embedded
+            if (window.parent !== window) {
+                const parentBody = window.parent.document.body;
+                const computedStyle = window.getComputedStyle(parentBody);
+                const bgColor = computedStyle.backgroundColor;
+                const rgb = bgColor.match(/\d+/g);
+                if (rgb) {
+                    const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+                    return brightness < 128;
                 }
-                return isDark;
             }
-        } catch (e) {
-            // Fallback to defaults
-        }
-        return false;
+        } catch(e) {}
+        // Fallback to system preference
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
 
     let isDarkMode = detectTheme();
 
-    // Re-check in case Hugo theme toggles after load
+    function applyTheme() {
+        const root = document.documentElement.style;
+        if (isDarkMode) {
+            root.setProperty("--page-bg", "#1a1a1a");
+            root.setProperty("--page-text", "#e4e4e4");
+            root.setProperty("--text-secondary", "#a0a0a0");
+            root.setProperty("--card-bg", "#2d2d2d");
+            root.setProperty("--border-color", "#404040");
+            root.setProperty("--grid-line", "#404040");
+        } else {
+            root.setProperty("--page-bg", "#ffffff");
+            root.setProperty("--page-text", "#212529");
+            root.setProperty("--text-secondary", "#6c757d");
+            root.setProperty("--card-bg", "#f8f9fa");
+            root.setProperty("--border-color", "#dee2e6");
+            root.setProperty("--grid-line", "#e0e0e0");
+        }
+    }
+    applyTheme();
+
     setInterval(() => {
-        const newIsDark = detectTheme();
-        if (newIsDark !== isDarkMode) {
-            isDarkMode = newIsDark;
+        const newMode = detectTheme();
+        if (newMode !== isDarkMode) {
+            isDarkMode = newMode;
+            applyTheme();
             drawScene();
+            drawCDF();
         }
     }, 1000);
 
-    // --- Canvas + NeRF sampling demo ---
-    const canvas = document.getElementById("simCanvas");
-    const ctx = canvas.getContext("2d");
-    const width = canvas.width;
-    const height = canvas.height;
+    // --- High DPI Canvas Setup ---
+    function setupCanvas(canvas) {
+        // Get the CSS size (logical pixels)
+        const rect = canvas.getBoundingClientRect();
+        // We want the internal resolution to match the physical pixels
+        const dpr = window.devicePixelRatio || 1;
+        
+        // Set internal dimensions (physical pixels)
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
 
-    const PADDING = 36;
-    const RAY_Y = 260;
+        // Ensure CSS dimensions match the rect (logical pixels)
+        // Note: Inline styles in HTML handle the 'display' size, 
+        // but we ensure consistency here if needed.
+        
+        const ctx = canvas.getContext('2d');
+        // Scale all drawing operations by dpr
+        ctx.scale(dpr, dpr);
+        
+        // Return the logical width/height for calculations
+        return { width: rect.width, height: rect.height, ctx: ctx };
+    }
+
+    const canvas = document.getElementById("simCanvas");
+    const cdfCanvas = document.getElementById("cdfCanvas");
+
+    // Initialize contexts and logical dimensions
+    let simObj = setupCanvas(canvas);
+    let cdfObj = setupCanvas(cdfCanvas);
+
+    // Handle Resize (Responsive)
+    window.addEventListener('resize', () => {
+        simObj = setupCanvas(canvas);
+        cdfObj = setupCanvas(cdfCanvas);
+        drawScene();
+        drawCDF();
+    });
+
+    const PADDING = 40;
+    const DENSITY_TOP = 40;
+    const DENSITY_HEIGHT = 200;
+    const RAY_Y = DENSITY_TOP + DENSITY_HEIGHT + 80;
     const Z_NEAR = 2.0;
     const Z_FAR = 6.0;
     const NUM_COARSE = 16;
     const NUM_FINE = 32;
 
-    let stage = 0;        // 0: initial, 1: coarse, 2: fine
+    let stage = 0; 
     let coarseSamples = [];
     let fineSamples = [];
     let weights = [];
     let cdf = [];
 
-    // Scene peaks (sum of Gaussians)
-    let peaks = [
-        {mean: 4.0, std: 0.3, height: 1.0}
-    ];
+    // Scene Data
+    let peaks = [{mean: 4.0, std: 0.3, height: 1.0}];
 
     function randomizeScene() {
         peaks = [];
@@ -259,153 +281,270 @@
 
     function getTrueDensity(z) {
         let d = 0;
-        for (const p of peaks) {
-            d += p.height * Math.exp(-0.5 * Math.pow((z - p.mean) / p.std, 2));
-        }
+        for (const p of peaks) d += p.height * Math.exp(-0.5 * Math.pow((z - p.mean) / p.std, 2));
         return Math.min(d, 1.0);
     }
 
-    function mapZtoX(z) {
+    function mapZtoX(z, width) {
         const norm = (z - Z_NEAR) / (Z_FAR - Z_NEAR);
         return PADDING + norm * (width - 2 * PADDING);
     }
 
     function mapDensToY(d) {
-        return RAY_Y - d * 170;
+        return DENSITY_TOP + DENSITY_HEIGHT - d * DENSITY_HEIGHT;
     }
 
     function drawScene() {
-        ctx.clearRect(0, 0, width, height);
+        const { ctx, width, height } = simObj;
+        
+        // Clear (Logical dimensions)
+        const canvasBg = isDarkMode ? "#0d1117" : "#fafafa";
+        ctx.fillStyle = canvasBg;
+        ctx.fillRect(0, 0, width, height);
 
         const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
         const pxBinWidth = (width - 2 * PADDING) / NUM_COARSE;
 
-        const textColor = getComputedStyle(document.body)
-            .getPropertyValue("--page-text") || "#212529";
-        const gridColor = getComputedStyle(document.documentElement)
-            .getPropertyValue("--grid-line") || "#e0e0e0";
-        const borderColor = getComputedStyle(document.documentElement)
-            .getPropertyValue("--border-color") || "#dee2e6";
+        const textColor = isDarkMode ? "#e4e4e4" : "#212529";
+        const gridColor = isDarkMode ? "#404040" : "#e0e0e0";
 
-        // Bin grid
+        // Density Plot Area
+        ctx.fillStyle = isDarkMode ? "#161b22" : "#ffffff";
+        ctx.fillRect(PADDING, DENSITY_TOP, width - 2 * PADDING, DENSITY_HEIGHT);
+
+        // Vertical Grid (Bins)
         ctx.lineWidth = 1;
-        ctx.setLineDash([2, 2]);
+        ctx.setLineDash([3, 3]);
         ctx.strokeStyle = gridColor;
         for (let i = 0; i <= NUM_COARSE; i++) {
-            const x = mapZtoX(Z_NEAR + i * binWidth);
+            const x = mapZtoX(Z_NEAR + i * binWidth, width);
             ctx.beginPath();
-            ctx.moveTo(x, 36);
-            ctx.lineTo(x, RAY_Y + 8);
+            ctx.moveTo(x, DENSITY_TOP);
+            ctx.lineTo(x, DENSITY_TOP + DENSITY_HEIGHT);
             ctx.stroke();
         }
         ctx.setLineDash([]);
 
-        // Bin indices
-        ctx.fillStyle = textColor;
-        ctx.font = "10px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        ctx.textAlign = "center";
-        for (let i = 0; i < NUM_COARSE; i++) {
-            const x = mapZtoX(Z_NEAR + i * binWidth);
-            ctx.fillText(String(i + 1), x + pxBinWidth / 2 - 3, RAY_Y + 16);
+        // Horizontal Grid
+        ctx.setLineDash([3, 3]);
+        for (let i = 0; i <= 4; i++) {
+            const y = DENSITY_TOP + (i / 4) * DENSITY_HEIGHT;
+            ctx.beginPath();
+            ctx.moveTo(PADDING, y);
+            ctx.lineTo(width - PADDING, y);
+            ctx.stroke();
         }
+        ctx.setLineDash([]);
 
-        // Ray axis
-        ctx.strokeStyle = textColor;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(PADDING - 8, RAY_Y);
-        ctx.lineTo(width - PADDING + 8, RAY_Y);
-        ctx.stroke();
-
-        // Arrow
-        ctx.beginPath();
-        ctx.moveTo(width - PADDING + 8, RAY_Y);
-        ctx.lineTo(width - PADDING, RAY_Y - 4);
-        ctx.lineTo(width - PADDING, RAY_Y + 4);
-        ctx.closePath();
+        // Y-axis Text
         ctx.fillStyle = textColor;
-        ctx.fill();
+        ctx.font = "11px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.textAlign = "right";
+        for (let i = 0; i <= 4; i++) {
+            const y = DENSITY_TOP + (i / 4) * DENSITY_HEIGHT;
+            ctx.fillText((1 - i / 4).toFixed(1), PADDING - 8, y + 4);
+        }
+        
+        // Y-axis Label (Rotated)
+        ctx.save();
+        ctx.translate(15, DENSITY_TOP + DENSITY_HEIGHT / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = "center";
+        ctx.font = "bold 12px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.fillText("Density σ(z)", 0, 0);
+        ctx.restore();
 
-        // Z labels
-        ctx.font = "11px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-        ctx.fillText("z_near = " + Z_NEAR.toFixed(1), mapZtoX(Z_NEAR), RAY_Y + 32);
-        ctx.fillText("z_far = " + Z_FAR.toFixed(1), mapZtoX(Z_FAR), RAY_Y + 32);
-
-        // True density curve
+        // True Density Curve
         ctx.beginPath();
-        ctx.strokeStyle = getComputedStyle(document.documentElement)
-            .getPropertyValue("--accent-muted") || "#7f8c8d";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#7f8c8d";
+        ctx.lineWidth = 2.5;
         let started = false;
+        // Step in logical pixels
         for (let x = PADDING; x <= width - PADDING; x += 2) {
             const norm = (x - PADDING) / (width - 2 * PADDING);
             const z = Z_NEAR + norm * (Z_FAR - Z_NEAR);
             const d = getTrueDensity(z);
             const y = mapDensToY(d);
-            if (!started) {
-                ctx.moveTo(x, y);
-                started = true;
-            } else {
-                ctx.lineTo(x, y);
-            }
+            if (!started) { ctx.moveTo(x, y); started = true; } 
+            else { ctx.lineTo(x, y); }
         }
         ctx.stroke();
 
-        // Coarse samples and PDF bars
+        // Coarse Samples Visualization
         if (stage >= 1) {
             for (let i = 0; i < NUM_COARSE; i++) {
                 const binStartZ = Z_NEAR + i * binWidth;
                 const w = weights[i] || 0;
-                const barHeight = w * 170;
-                const x0 = mapZtoX(binStartZ);
+                const barHeight = w * DENSITY_HEIGHT;
+                const x0 = mapZtoX(binStartZ, width);
+                const barTop = DENSITY_TOP + DENSITY_HEIGHT - barHeight;
 
-                ctx.fillStyle = "rgba(46,134,171,0.15)";
-                ctx.fillRect(x0, RAY_Y - barHeight, pxBinWidth, barHeight);
+                // Histogram Bar
+                ctx.fillStyle = "rgba(46,134,171,0.2)";
+                ctx.fillRect(x0, barTop, pxBinWidth, barHeight);
+                ctx.strokeStyle = "rgba(46,134,171,0.5)";
+                ctx.strokeRect(x0, barTop, pxBinWidth, barHeight);
 
-                ctx.strokeStyle = "rgba(46,134,171,0.6)";
-                ctx.strokeRect(x0, RAY_Y - barHeight, pxBinWidth, barHeight);
-
+                // Line to Ray
                 const sampleZ = coarseSamples[i];
-                const sampleX = mapZtoX(sampleZ);
+                const sampleX = mapZtoX(sampleZ, width);
+                
+                ctx.beginPath();
+                ctx.moveTo(sampleX, barTop);
+                ctx.lineTo(sampleX, RAY_Y);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "#2E86AB";
+                ctx.stroke();
 
+                // Dot on Ray
                 ctx.beginPath();
                 ctx.arc(sampleX, RAY_Y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = getComputedStyle(document.documentElement)
-                    .getPropertyValue("--accent-blue") || "#2E86AB";
+                ctx.fillStyle = "#2E86AB";
                 ctx.fill();
-
-                ctx.beginPath();
-                ctx.moveTo(sampleX, RAY_Y);
-                ctx.lineTo(sampleX, RAY_Y - barHeight);
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = getComputedStyle(document.documentElement)
-                    .getPropertyValue("--accent-blue") || "#2E86AB";
-                ctx.stroke();
             }
         }
 
-        // Fine samples
+        // Fine Samples Visualization
         if (stage >= 2) {
-            const fineColor = getComputedStyle(document.documentElement)
-                .getPropertyValue("--accent-red") || "#e74c3c";
-            ctx.fillStyle = fineColor;
+            ctx.fillStyle = "#e74c3c";
             for (const z of fineSamples) {
-                const x = mapZtoX(z);
+                const x = mapZtoX(z, width);
                 ctx.beginPath();
-                ctx.arc(x, RAY_Y - 6, 3.5, 0, Math.PI * 2);
+                ctx.arc(x, RAY_Y, 3.5, 0, Math.PI * 2);
                 ctx.fill();
             }
-
-            ctx.fillStyle = textColor;
-            ctx.font = "11px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("Fine samples cluster where coarse weights are high", width / 2, 26);
         }
+
+        // Ray Axis
+        ctx.strokeStyle = textColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(PADDING - 10, RAY_Y);
+        ctx.lineTo(width - PADDING + 10, RAY_Y);
+        ctx.stroke();
+
+        // Arrow Head
+        ctx.beginPath();
+        ctx.moveTo(width - PADDING + 10, RAY_Y);
+        ctx.lineTo(width - PADDING, RAY_Y - 5);
+        ctx.lineTo(width - PADDING, RAY_Y + 5);
+        ctx.closePath();
+        ctx.fillStyle = textColor;
+        ctx.fill();
+
+        // X-axis Labels
+        ctx.fillStyle = textColor;
+        ctx.font = "12px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`z_near = ${Z_NEAR.toFixed(1)}`, mapZtoX(Z_NEAR, width), RAY_Y + 25);
+        ctx.fillText(`z_far = ${Z_FAR.toFixed(1)}`, mapZtoX(Z_FAR, width), RAY_Y + 25);
+        ctx.font = "bold 12px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.fillText("Camera Ray Depth (z)", width / 2, RAY_Y + 40);
     }
+
+    function drawCDF() {
+        const { ctx, width, height } = cdfObj;
+
+        // Clear
+        const canvasBg = isDarkMode ? "#0d1117" : "#fafafa";
+        ctx.fillStyle = canvasBg;
+        ctx.fillRect(0, 0, width, height);
+
+        const textColor = isDarkMode ? "#e4e4e4" : "#212529";
+        const gridColor = isDarkMode ? "#404040" : "#e0e0e0";
+
+        if (cdf.length === 0) {
+            ctx.fillStyle = textColor;
+            ctx.font = "14px -apple-system, BlinkMacSystemFont, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Run coarse sampling to generate CDF", width / 2, height / 2);
+            return;
+        }
+
+        const plotTop = 30;
+        const plotHeight = height - 70;
+        const plotBottom = plotTop + plotHeight;
+
+        // Plot Bg
+        ctx.fillStyle = isDarkMode ? "#161b22" : "#ffffff";
+        ctx.fillRect(PADDING, plotTop, width - 2 * PADDING, plotHeight);
+
+        // Grid
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        
+        // Verticals
+        const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
+        for (let i = 0; i <= NUM_COARSE; i++) {
+            const x = mapZtoX(Z_NEAR + i * binWidth, width);
+            ctx.beginPath();
+            ctx.moveTo(x, plotTop);
+            ctx.lineTo(x, plotBottom);
+            ctx.stroke();
+        }
+
+        // Horizontals
+        for (let i = 0; i <= 4; i++) {
+            const y = plotTop + (i / 4) * plotHeight;
+            ctx.beginPath();
+            ctx.moveTo(PADDING, y);
+            ctx.lineTo(width - PADDING, y);
+            ctx.stroke();
+        }
+        ctx.setLineDash([]);
+
+        // Y-labels
+        ctx.fillStyle = textColor;
+        ctx.font = "11px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.textAlign = "right";
+        for (let i = 0; i <= 4; i++) {
+            const y = plotTop + (i / 4) * plotHeight;
+            ctx.fillText((1 - i / 4).toFixed(1), PADDING - 8, y + 4);
+        }
+
+        ctx.save();
+        ctx.translate(15, plotTop + plotHeight / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = "center";
+        ctx.font = "bold 12px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.fillText("Probability (CDF)", 0, 0);
+        ctx.restore();
+
+        // Draw Step Function
+        ctx.beginPath();
+        ctx.strokeStyle = "#2E86AB";
+        ctx.lineWidth = 2.5;
+        
+        ctx.moveTo(PADDING, plotBottom); // Start at 0,0 relative to plot
+        
+        for (let i = 0; i < cdf.length; i++) {
+            const zEnd = Z_NEAR + (i + 1) * binWidth;
+            const xEnd = mapZtoX(zEnd, width);
+            const yVal = plotTop + (1 - cdf[i]) * plotHeight;
+            
+            ctx.lineTo(xEnd, yVal); // Horizontal step
+            
+            // Vertical connector if not last
+            if (i < cdf.length - 1) {
+                const yNext = plotTop + (1 - cdf[i + 1]) * plotHeight;
+                ctx.lineTo(xEnd, yNext);
+            }
+        }
+        ctx.stroke();
+
+        // X-labels
+        ctx.fillStyle = textColor;
+        ctx.textAlign = "center";
+        ctx.font = "12px -apple-system, BlinkMacSystemFont, sans-serif";
+        ctx.fillText(`z_near`, mapZtoX(Z_NEAR, width), plotBottom + 20);
+        ctx.fillText(`z_far`, mapZtoX(Z_FAR, width), plotBottom + 20);
+    }
+
+    // --- Simulation Logic ---
 
     function runCoarse() {
         if (stage > 0) return;
-
         const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
         coarseSamples = [];
         weights = [];
@@ -413,10 +552,8 @@
 
         for (let i = 0; i < NUM_COARSE; i++) {
             const binStart = Z_NEAR + i * binWidth;
-            const t = Math.random();
-            const z = binStart + t * binWidth;
+            const z = binStart + Math.random() * binWidth;
             coarseSamples.push(z);
-
             const d = getTrueDensity(z);
             weights.push(d);
             sumWeights += d;
@@ -437,17 +574,18 @@
         document.getElementById("btnCoarse").disabled = true;
         document.getElementById("btnFine").disabled = false;
         drawScene();
+        drawCDF();
     }
 
     function runFine() {
         if (stage !== 1) return;
-
         const binWidth = (Z_FAR - Z_NEAR) / NUM_COARSE;
         fineSamples = [];
 
         for (let i = 0; i < NUM_FINE; i++) {
             const u = Math.random();
             let binIdx = 0;
+            // Inverse Transform Sampling using CDF
             for (let j = 0; j < NUM_COARSE; j++) {
                 if (u <= cdf[j]) {
                     binIdx = j;
@@ -469,13 +607,17 @@
         coarseSamples = [];
         fineSamples = [];
         weights = [];
+        cdf = [];
         document.getElementById("btnCoarse").disabled = false;
         document.getElementById("btnFine").disabled = true;
         drawScene();
+        drawCDF();
     }
 
-    // Initial render
+    // Initial Draw
     drawScene();
+    drawCDF();
+
 </script>
 </body>
 </html>

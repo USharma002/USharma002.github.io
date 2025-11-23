@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.f86d48a07d8eab0dfd10963295547cd692dc17e3f71b3d8e90e1317f65fbe08a.css" integrity="sha256-&#43;G1IoH2Oqw39EJYylVR81pLcF&#43;P3Gz2OkOExf2X74Io=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4caa312c75941eee3f9972f2fdbb5b5498402bd3b09db71a6a94827976a7e1a2.css" integrity="sha256-TKoxLHWUHu4/mXLy/btbVJhAK9OwnbcaapSCeXan4aI=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-07 00:00:00 +0000 UTC'>November 7, 2025</span>&nbsp;·&nbsp;48 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;48 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -495,18 +495,126 @@ $$<p>Where:</p>
 <ul>
 <li><strong>Cameras</strong>: A camera model determines how and from where the scene is viewed, including how an image of the scene is recorded on a sensor. Many rendering systems generate viewing rays stating at the camera that are then traced into the scene to determine which objects are visible at each pixel.</li>
 </ul>
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:30%;scroll-margin-top:80px;"><img src="../../images/path_tracing/camera.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:30%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/camera.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Camera/Sensor/Eye
     </figcaption></figure>
 
+<style>
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .zoom-overlay img {
+      width: 90vw;           
+      height: 75vh;          
+      object-fit: contain;   
+      
+      border-radius: 12px;
+      box-shadow: 0 0 0px rgba(0,0,0,0.45);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .zoom-overlay.active img {
+      transform: scale(1);
+    }
+  </style>
+
+<div id="zoom-overlay" class="zoom-overlay">
+<button id="zoom-close-btn"
+  style="
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:rgba(0,0,0,0.55);
+    border:none;
+    color:white;
+    font-size:1.8rem;
+    line-height:1;
+    padding:0.2em 0.5em;
+    border-radius:6px;
+    cursor:pointer;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    transition:background 0.2s;
+  "
+  aria-label="Close image"
+>&times;</button>
+  <div style="text-align:center;">
+    <img id="zoom-img" src="">
+    
+    <div id="zoom-caption"
+         style="margin-top:1em;
+           font-size:1em;
+           color:white;
+           background:rgba(0,0,0,0.65);
+           padding:0.5em 1em;
+           border-radius:6px;
+           max-width:90%;
+           margin-left:auto;
+           margin-right:auto;">
+    </div>
+
+  </div>
+</div>
+
+<script>
+const overlay = document.getElementById('zoom-overlay');
+const zoomImg = document.getElementById('zoom-img');
+const zoomCaption = document.getElementById('zoom-caption');
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('.zoomable-image');
+  if (img) {
+    zoomImg.src = img.src;
+
+    
+    const figure = img.closest('figure');
+    const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+
+    zoomCaption.innerHTML = caption;
+    overlay.classList.add('active');
+  } else if (e.target === overlay || e.target === zoomImg) {
+    overlay.classList.remove('active');
+  }
+});
+
+document.getElementById('zoom-close-btn').addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape") {
+    overlay.classList.remove('active');
+  }
+});
+
+</script>
 <ul>
 <li><strong>Ray-object inetrsections</strong>: We must be able to tell precisely where a given ray intersects a given geometric object. In addition, we need to determine certain properties of the object at the intersection point, such as a surface normal or its material.</li>
 </ul>
-<figure id="fig-ray-triangle" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/ray.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-ray-triangle" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/ray.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       Ray r(t) and Ray-Triangle Intersection
     </figcaption></figure>
+
 
 <ul>
 <li>
@@ -516,18 +624,22 @@ $$<p>Where:</p>
 <p><strong>Visibility</strong>: In order to know whether a given light deposits energy at a point on a surface, we must know whether there is an uninterrupted path from the point to the light source. Fortunately, this question is easy to answer in a ray tracer, since we can just construct the ray from the surface to the light, find the closest ray–object intersection, and compare the intersection distance to the light distance.</p>
 </li>
 </ul>
-<figure id="fig-visibility" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/visibility.svg" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-visibility" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/visibility.svg" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       Visibility
     </figcaption></figure>
 
+
 <ul>
 <li><strong>Light scattering at surfaces</strong>:  Each object must provide a description of its appearance, including information about how light interacts with the object’s surface, as well as the nature of the reradiated (or scattered) light. Models for surface scattering are typically parameterized so that they can simulate a variety of appearances.</li>
 </ul>
-<figure id="fig-scattering" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/scattering.svg" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-scattering" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/scattering.svg" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Scattering
     </figcaption></figure>
+
 
 <ul>
 <li>
@@ -537,10 +649,12 @@ $$<p>Where:</p>
 <p><strong>Ray propagation</strong>:  We need to know what happens to the light traveling along a ray as it passes through space. If we are rendering a scene in a vacuum, light energy remains constant along a ray. Although true vacuums are unusual on Earth, they are a reasonable approximation for many environments. More sophisticated models are available for tracing rays through fog, smoke, the Earth’s atmosphere, and so on.</p>
 </li>
 </ul>
-<figure id="fig-path-tracing-overview" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/path_tracing.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-path-tracing-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/path_tracing.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       Path Tracing Overview
     </figcaption></figure>
+
 
 <h2 id="monte-carlo-basics">Monte Carlo Basics<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-basics">#</a></h2>
 <p>Because Monte Carlo integration is based on randomization, we&rsquo;ll first discuss some ideas from probability and statistics.</p>
@@ -711,10 +825,12 @@ $$
 \end{aligned}
 }
 $$<p>These properties make Monte Carlo integration particularly attractive for high-dimensional problems like rendering, where evaluating the rendering equation requires integrating over many dimensions (directions, wavelengths, time, etc.).</p>
-<figure id="fig-importance-sampling" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/importance_sampling_graph.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-importance-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/importance_sampling_graph.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       Importance Sampling PDF
     </figcaption></figure>
+
 
 <h3 id="optimal-importance-sampling">Optimal Importance Sampling?<a hidden class="anchor" aria-hidden="true" href="#optimal-importance-sampling">#</a></h3>
 <p>A natural question arises: <strong>what choice of $p(x)$ minimizes the variance?</strong> This is crucial because:</p>
@@ -840,10 +956,12 @@ the light transport properties of the hit material. BSDF is a superset and the g
 </li>
 </ul>
 <p>(Some tend to use the term BSDF simply as a category name covering the whole family of BxDF functions.)</p>
-<figure id="fig-bsdf-combined" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/BSDF_combined.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-bsdf-combined" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/BSDF_combined.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
       BTDF + BRDF Visualization (uniform for both here)
     </figcaption></figure>
+
 
 <p>We usually distinguish three basic material types:</p>
 <ul>
@@ -851,33 +969,41 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <li>Perfectly specular (light is reflected in/from exactly one direction)</li>
 <li>Glossy (mixture of the other two, specular highlights)</li>
 </ul>
-<figure id="fig-bsdf-types" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/BSDF.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-bsdf-types" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/BSDF.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
       Simple BSDF Visualization for Diffuse, Specular and Glossy Material
     </figcaption></figure>
 
-<figure id="fig-bsdf-objects" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/BSDF_object.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+
+<figure id="fig-bsdf-objects" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/BSDF_object.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
       Objects with BSDF for Diffuse, Specular and Glossy Material
     </figcaption></figure>
+
 
 <p>Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.</p>
 <h3 id="path-tracing-algorithm-steps">Path Tracing Algorithm Steps<a hidden class="anchor" aria-hidden="true" href="#path-tracing-algorithm-steps">#</a></h3>
 <ol>
 <li><strong>Generate camera ray</strong> through pixel using sensor</li>
 </ol>
-<figure id="fig-init-camera" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/init_cam.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-init-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/init_cam.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       Initialize Scene and Generate Rays using Sensor
     </figcaption></figure>
 
+
 <ol start="2">
 <li>
 <p><strong>Trace ray</strong> into scene, find first intersection
-<figure id="fig-trace-ray" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/trace.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-trace-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/trace.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
       Trace Ray and Find Intersection
     </figcaption></figure>
+
 </p>
 </li>
 <li>
@@ -885,42 +1011,52 @@ the light transport properties of the hit material. BSDF is a superset and the g
 </li>
 <li>
 <p><strong>Sample BSDF</strong> to choose next direction
-<figure id="fig-surface-intersection" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/surface_intersection.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-surface-intersection" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/surface_intersection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       Query BSDF of intersected primitive
     </figcaption></figure>
+
 </p>
 </li>
 <li>
 <p><strong>Spawn new ray</strong> from intersection point
-<figure id="fig-sample-ray" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/sample_ray.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-sample-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/sample_ray.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       Sample Next Ray using some PDF
     </figcaption></figure>
+
 </p>
 </li>
 <li>
 <p><strong>Repeat</strong> (steps 2-5) until max depth or Russian roulette termination
-<figure id="fig-repeat" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/repeat.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-repeat" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/repeat.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       Repeat bouncing until termination
     </figcaption></figure>
+
 </p>
 </li>
 <li>
 <p><strong>Return</strong> accumulated radiance
-<figure id="fig-final-ray" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/final_ray.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-final-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/final_ray.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
       Return accumulated radiance
     </figcaption></figure>
+
 </p>
 </li>
 </ol>
 <p>Repeat the above process for all pixels (Parallely as this is embarrassingly parallel) for some amount of <strong>samples per pixel</strong> (for anti aliasing as well)</p>
-<figure id="fig-2spp" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/2spp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-2spp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/2spp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       2 Samples Per Pixel
     </figcaption></figure>
+
 
 <h3 id="interactive-ray-tracer-visualization">Interactive Ray Tracer Visualization<a hidden class="anchor" aria-hidden="true" href="#interactive-ray-tracer-visualization">#</a></h3>
 <style>
@@ -971,20 +1107,26 @@ function goFullscreen() {
 </script>
 
 <p>To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.</p>
-<figure id="fig-bathroom-ref" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/bathroom.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-bathroom-ref" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/bathroom.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       Bathroom Scene Reference
     </figcaption></figure>
 
-<figure id="fig-bathroom-spp" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/bathroom_spp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+
+<figure id="fig-bathroom-spp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/bathroom_spp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       Bathroom Scene Rendered at different SPP
     </figcaption></figure>
 
-<figure id="fig-bathroom-depth" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/bathroom_depth.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+
+<figure id="fig-bathroom-depth" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/bathroom_depth.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       Bathroom Scene Rendered at different depth
     </figcaption></figure>
+
 
 <h3 id="recursive-and-iterative-formulations">Recursive and Iterative Formulations<a hidden class="anchor" aria-hidden="true" href="#recursive-and-iterative-formulations">#</a></h3>
 <table>
@@ -1300,17 +1442,21 @@ x_A = y_A
 $$$$
 x_B = C^{-1}(y_B; m(x_A)) = C^{-1}(y_B; m(y_A))
 $$<p>Since $C$ is separable by design, its Jacobian matrix is diagonal, making determinant computation tractable even in high dimensions . The complete transformation is obtained by compounding multiple coupling layers $\tilde{h} = h_L \circ \cdots \circ h_2 \circ h_1$, alternating which partition is transformed .</p>
-<figure id="fig-coupling-layer" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/couplin_layer.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-coupling-layer" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nis/couplin_layer.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
       Coupling layer architecture showing partitioning and transformation
     </figcaption></figure>
 
+
 <h3 id="piecewise-polynomial-coupling-transforms">Piecewise-Polynomial Coupling Transforms<a hidden class="anchor" aria-hidden="true" href="#piecewise-polynomial-coupling-transforms">#</a></h3>
 <p>Instead of the affine (multiply-add) coupling transforms from prior work, Neural Importance Sampling introduces <strong>piecewise-polynomial coupling transforms</strong> with significantly greater modeling power .</p>
-<figure id="fig-pdf-generation" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/pdf_gen.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-pdf-generation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nis/pdf_gen.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
       PDF generation using piecewise-polynomial coupling transforms
     </figcaption></figure>
+
 
 <h4 id="piecewise-linear-coupling-transform">Piecewise-Linear Coupling Transform<a hidden class="anchor" aria-hidden="true" href="#piecewise-linear-coupling-transform">#</a></h4>
 <p>The approach operates on the unit hypercube $x, y \in [0,1]^D$ with uniformly distributed latent variables . Each dimension in partition $B$ is divided into $K$ bins of equal width $w = 1/K$ .</p>
@@ -1340,10 +1486,12 @@ $$<p>where $\alpha = (x_i^B - \sum_{k=1}^{b-1} W_{ik})/W_{ib}$ represents the re
 $$
 C_i(x_i^B; W, V) = \frac{\alpha^2}{2}(V_{ib+1} - V_{ib})W_{ib} + \alpha V_{ib} W_{ib} + \sum_{k=1}^{b-1} \frac{V_{ik} + V_{ik+1}}{2} W_{ik}
 $$<p>Inverting this transform involves solving a quadratic equation, which can be done efficiently and robustly .</p>
-<figure id="fig-coupling-layer" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/predicted_pdf.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-coupling-layer" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nis/predicted_pdf.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
       Coupling layer architecture showing partitioning and transformation
     </figcaption></figure>
+
 
 <h3 id="one-blob-encoding">One-Blob Encoding<a hidden class="anchor" aria-hidden="true" href="#one-blob-encoding">#</a></h3>
 <p>To improve network performance, <strong>one-blob encoding</strong> generalizes one-hot encoding for continuous variables . For a scalar $s \in [0,1]$ and quantization into $k$ bins (typically $k=32$), a Gaussian kernel with $\sigma = 1/k$ is placed at $s$ and discretized into the bins .</p>
@@ -1419,10 +1567,12 @@ $$<p>where $c$ is the selection probability . The networks are optimized with re
 <li><strong>Iteration</strong>: Repeat with updated network</li>
 </ol>
 <p>The approach enables fast inference and efficient sample generation independently of integration domain dimensionality . Training converges rapidly, producing usable sampling distributions within seconds to minutes depending on scene complexity .</p>
-<figure id="fig-comparison" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nis/comparison.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-comparison" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nis/comparison.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
       Visual comparison of different sampling strategies across training iterations
     </figcaption></figure>
+
 
 <h2 id="real-time-neural-radiance-caching-for-path-tracing">Real-time Neural Radiance Caching for Path Tracing<a hidden class="anchor" aria-hidden="true" href="#real-time-neural-radiance-caching-for-path-tracing">#</a></h2>
 <h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
@@ -1432,10 +1582,12 @@ $$
 L_s(x,\omega) := \int_{S^2} f_s(x,\omega,\omega_i) L_i(x,\omega_i) | \cos\theta_i| d\omega_i
 $$<p>where $f_s$ is the BSDF, $L_i$ is the incident radiance, and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x$ .</p>
 <h3 id="algorithm-design">Algorithm Design<a hidden class="anchor" aria-hidden="true" href="#algorithm-design">#</a></h3>
-<figure id="fig-radiance-cache-png" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nrc/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-radiance-cache-png" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nrc/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
       Radiance cache visualization showing path termination
     </figcaption></figure>
+
 
 <p>Rendering a single frame consists of two phases: computing pixel colors and updating the neural radiance cache .</p>
 <h4 id="rendering-phase">Rendering Phase<a hidden class="anchor" aria-hidden="true" href="#rendering-phase">#</a></h4>
@@ -1444,10 +1596,12 @@ $$<p>where $f_s$ is the BSDF, $L_i$ is the incident radiance, and $\theta_i$ is 
 $$
 a(x_1 \cdots x_n) = \left(\sum_{i=2}^{n} \frac{\|x_{i-1} - x_i\|^2}{p(\omega_i \mid x_{i-1},\omega) |\cos\theta_i|}\right)^2
 $$<p>where $p$ is the BSDF sampling PDF and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x_i$ .</p>
-<figure id="fig-radiance-cache-termination" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nrc/radiance_cache_termination.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-radiance-cache-termination" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nrc/radiance_cache_termination.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
       Path termination heuristic comparing path spread to primary vertex footprint
     </figcaption></figure>
+
 
 <p>The path is terminated when $a(x_1 \cdots x_n) > c \cdot a_0$, where $c = 0.01$ is a hyperparameter and $a_0$ is the spread at the primary vertex :</p>
 $$
@@ -1455,10 +1609,12 @@ a_0 := \frac{\|x_0 - x_1\|^2}{4\pi \cos\theta_1}
 $$<p>At the terminal vertex $x_k$, the neural radiance cache $\tilde{L}_s(x_k,\omega_k)$ is evaluated to approximate the scattered radiance .</p>
 <h4 id="training-phase">Training Phase<a hidden class="anchor" aria-hidden="true" href="#training-phase">#</a></h4>
 <p>A small fraction (typically under 3%) of rendering paths are extended by a few vertices to form <strong>training paths</strong> . These longer paths are terminated using the same area-spread heuristic applied to the training suffix . The collected radiance estimates along all vertices of the training paths serve as reference values for updating the neural cache .</p>
-<figure id="fig-radiance-cache-training" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nrc/radiance_cache_training.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-radiance-cache-training" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nrc/radiance_cache_training.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       Training suffix extends rendering paths to collect radiance estimates
     </figcaption></figure>
+
 
 <h3 id="self-training-strategy">Self-Training Strategy<a hidden class="anchor" aria-hidden="true" href="#self-training-strategy">#</a></h3>
 <p>Instead of using noisy Monte Carlo path-traced estimates as training targets, NRC employs <strong>self-training</strong> by evaluating the neural cache itself at terminal vertices of training paths . This approach trades variance for potential bias and enables progressive simulation of multi-bounce illumination through iteration .</p>
@@ -1523,10 +1679,12 @@ $$
 $$<p>Four gradient descent steps are performed per frame on disjoint random subsets of training data to prevent overfitting . The high learning rate and multiple steps per frame enable rapid adaptation to dynamic scenes.</p>
 <h2 id="neural-parametric-mixtures-for-path-guiding">Neural Parametric Mixtures for Path Guiding<a hidden class="anchor" aria-hidden="true" href="#neural-parametric-mixtures-for-path-guiding">#</a></h2>
 <h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
-<figure id="fig-npm-overview" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/neuropara-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-npm-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/neuropara-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       High-level illustration of Neural Parametric Mixtures (NPM). Spatially varying target distributions are encoded using a multi-resolution embedding. For a queried location $x$, (1) nearby grid features are interpolated and concatenated to form $G(x)$, which (2–3) is passed to a lightweight MLP to (4) decode vMF mixture parameters $\Theta$. (5) The resulting distribution guides importance sampling; the MC radiance estimate $\langle L_i(x,\omega_i)\rangle$ supplies the gradient $\nabla_\Theta D_{KL}$ for training.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="von-misesfisher-distribution">von Mises–Fisher Distribution<a hidden class="anchor" aria-hidden="true" href="#von-misesfisher-distribution">#</a></h3>
@@ -1540,15 +1698,19 @@ It is parameterized by:</p>
 </p>
 $$
 v(\omega \mid \mu,\kappa)= C_D(\kappa)\,\exp(\kappa\,\mu^\top \omega)
-$$<figure id="fig-28" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+$$<figure id="fig-28" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/vmf.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       As $\kappa \to \infty$, the vMF distribution becomes a delta lobe around $\mu$.
     </figcaption></figure>
 
-<figure id="fig-29" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf_3d.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+
+<figure id="fig-29" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/vmf_3d.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       3D vMF distribution used in NPM.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="vmf-mixture-model">vMF Mixture Model<a hidden class="anchor" aria-hidden="true" href="#vmf-mixture-model">#</a></h3>
@@ -1569,10 +1731,12 @@ $$
   \Theta = \{ (\lambda_k,\mu_k,\kappa_k) \}_{k=1}^K
   $$</li>
 </ul>
-<figure id="fig-30" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/vmf_mixture.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-30" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/vmf_mixture.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
       vMF Mixture with $K=3$ components
     </figcaption></figure>
+
 
 <hr>
 <h3 id="radiance-based-npm">Radiance-Based NPM<a hidden class="anchor" aria-hidden="true" href="#radiance-based-npm">#</a></h3>
@@ -1582,10 +1746,12 @@ V(\omega_i\mid\Theta(x))
 \propto
 L_i(x,\omega_i).
 $$<p>Traditional path guiding uses kd-trees / octrees → discretization → <strong>parallax error</strong>.</p>
-<figure id="fig-31" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/parallax.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-31" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/parallax.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
       Parallax error in discretized guiding structures.
     </figcaption></figure>
+
 
 <p>NPM instead learns a <strong>continuous implicit function</strong>:</p>
 $$
@@ -1692,10 +1858,12 @@ G(x\mid\Phi_E)=
 \operatorname{bilinear}(x,V_\ell[x]),
 \qquad
 G:\mathbb{R}^3\to\mathbb{R}^{L\times F}.
-$$<figure id="fig-32" style="text-align:center;margin:2em auto;max-width:40%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/emb_interpolation.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+$$<figure id="fig-32" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:40%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/emb_interpolation.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
       Multi-resolution interpolation of $G(x)$.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="decoding-mixture-parameters">Decoding Mixture Parameters<a hidden class="anchor" aria-hidden="true" href="#decoding-mixture-parameters">#</a></h3>
@@ -1703,10 +1871,12 @@ $$<figure id="fig-32" style="text-align:center;margin:2em auto;max-width:40%;scr
 $$
 \hat{\Theta}(x)=
 \mathrm{MLP}(G(x\mid\Phi_E)\mid\Phi_M).
-$$<figure id="fig-33" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/neuropara/decoding_parameters.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+$$<figure id="fig-33" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/neuropara/decoding_parameters.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
       Decoding the vMF mixture parameters.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="product-distribution-for-importance-sampling">Product Distribution for Importance Sampling<a hidden class="anchor" aria-hidden="true" href="#product-distribution-for-importance-sampling">#</a></h3>
@@ -1733,10 +1903,12 @@ $$<p>This aligns sampling with both the scattering function and the learned radi
 <h2 id="online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians">Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians<a hidden class="anchor" aria-hidden="true" href="#online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians">#</a></h2>
 <h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
 <p>Fixes the limitation of vMF Mixture bwing isotropic by using Spherical Gaussians.</p>
-<figure id="nasg" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/nasg/nasg.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="nasg" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/nasg/nasg.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
       PDF generation using piecewise-polynomial coupling transforms
     </figcaption></figure>
+
 
 <h3 id="limitation">Limitation<a hidden class="anchor" aria-hidden="true" href="#limitation">#</a></h3>
 <ul>
@@ -1744,10 +1916,12 @@ $$<p>This aligns sampling with both the scattering function and the learned radi
 <li>Fixed components (but more expressive than vMF mixture)</li>
 </ul>
 <h2 id="neural-product-importance-sampling-via-warp-composition">Neural Product Importance Sampling via Warp Composition<a hidden class="anchor" aria-hidden="true" href="#neural-product-importance-sampling-via-warp-composition">#</a></h2>
-<figure id="fig-naive-fit" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/naive_fit.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-naive-fit" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/naive_fit.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
       Naively fitting a normalizing flow (NF) model to the product of a complex unconditioned density $p_1$ (image) and a simple conditioned density $p_2$ (Gaussian with parameterized mean $\mu$) yields a poor result. The model is tasked with simultaneously learning the intricate shape of $p_1$ <em>and</em> the variations in $\mu$. Instead, we apply a $p_1$ warp to the NF-model output, which drastically simplifies the shape of the distribution it needs to learn. The result is a near-perfect fit with an equal number of NF parameters
     </figcaption></figure>
+
 
 <h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
 <p>Many rendering integrands take the form of a <em>product</em> of two functions:
@@ -1768,10 +1942,12 @@ where</p>
 <li><strong>Tail warp</strong> - an <em>unconditional</em> neural flow representing the environment map.</li>
 </ol>
 <p>The decomposition reduces complexity: the tail warp embeds all lighting structure once, and the head warp learns only how the material reshapes that distribution.</p>
-<figure id="fig-warp-overview" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-warp-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
       Given a shading condition, the model maps uniform points through two warps to produce samples distributed approximately proportionally to a target product density. The shape of intermediate density is coarse, similarly to a naive product fit, but leads to a precise fit when mapped through the tail warp.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="decomposing-the-product--and">Decomposing the Product: $p_1$ and $p_2$<a hidden class="anchor" aria-hidden="true" href="#decomposing-the-product--and">#</a></h3>
@@ -1827,10 +2003,12 @@ where</p>
 <li>$T_{\text{head}} = h_\theta$ is the conditional head warp,</li>
 <li>$T_{\text{tail}} = C$ is the unconditional tail warp.</li>
 </ul>
-<figure id="fig-architecture" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/architecture.gif" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-architecture" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/architecture.gif" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
       Architecture of warp composition. The head warp is a conditional spline flow (two coupling layers), and the tail warp is a large unconditional emitter flow. Their composition yields an efficient product sampler.
     </figcaption></figure>
+
 
 <h4 id="sampling-procedure">Sampling Procedure<a hidden class="anchor" aria-hidden="true" href="#sampling-procedure">#</a></h4>
 <ol>
@@ -1843,10 +2021,12 @@ where</p>
 <hr>
 <h3 id="head-warp---conditional-neural-spline-flow">Head Warp - Conditional Neural Spline Flow<a hidden class="anchor" aria-hidden="true" href="#head-warp---conditional-neural-spline-flow">#</a></h3>
 <p>The head warp models the BRDF × cosine factor $p_2(\omega\mid c)$.</p>
-<figure id="fig-head-warp" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/head_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-head-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/head_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
       Visualization of $p_2(\omega \mid c) \propto f_r(\omega_o,\omega)\cos\theta$ captured by the head warp. The conditional flow reshapes uniform samples according to material and shading.
     </figcaption></figure>
+
 
 <h4 id="inputs-and-conditioning">Inputs and Conditioning<a hidden class="anchor" aria-hidden="true" href="#inputs-and-conditioning">#</a></h4>
 <p>The head warp conditions on<br>
@@ -1868,10 +2048,12 @@ which the encoder converts into a latent vector $\ell$.</p>
 <hr>
 <h3 id="tail-warp---environment-map-flow">Tail Warp - Environment Map Flow<a hidden class="anchor" aria-hidden="true" href="#tail-warp---environment-map-flow">#</a></h3>
 <p>The tail warp learns the mapping $x = C(y),$ such that $x$ follows the emitter distribution $p_1(\omega)$.</p>
-<figure id="fig-tail-warp" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/tail_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-tail-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/tail_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
       Visualization of $p_1(\omega) \propto L(\omega)$ captured by the tail warp. The unconditional flow learns the environment-map density, including HDR lighting structure.
     </figcaption></figure>
+
 
 <h4 id="training">Training<a hidden class="anchor" aria-hidden="true" href="#training">#</a></h4>
 <ul>
@@ -1910,15 +2092,19 @@ $$<ul>
 <li>Together they approximate the ideal product<br>
 $$p^*(\omega \mid c) \propto p_1(\omega) p_2(\omega\mid c).$$</li>
 </ul>
-<figure id="fig-product-warp" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/product_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-product-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/product_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
       The composed mapping $T = C \circ h_\theta$ approximates the full product distribution $p^*(\omega \mid c)$. The figure shows how the head warp and tail warp contributions combine.
     </figcaption></figure>
 
-<figure id="fig-product-warp" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/path_tracing/warp_composition/all_warps.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+
+<figure id="fig-product-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/warp_composition/all_warps.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
       All warps combined
     </figcaption></figure>
+
 
 <hr>
 <h3 id="training-objective---forward-kl">Training Objective - Forward KL<a hidden class="anchor" aria-hidden="true" href="#training-objective---forward-kl">#</a></h3>
@@ -2009,10 +2195,12 @@ $$<p>Through this representation, estimating the joint PDF boils down to predict
 <p>The PDF at an arbitrary location can then be obtained by interpolating the estimated PDFs at discrete locations.</p>
 <h4 id="discretization-resolution">Discretization Resolution<a hidden class="anchor" aria-hidden="true" href="#discretization-resolution">#</a></h4>
 <p>The paper sets $M_1 = 32$ and $M_2 = 16$. The reduction in resolution in the second dimension is due to the smaller angular range of $\epsilon_2$ corresponding to $\phi$ which is between 0 and $\pi$.</p>
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/PDF_grid.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/PDF_grid.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
       Discretized PDF
     </figcaption></figure>
+
 
 <h4 id="network-implementation-details">Network Implementation Details<a hidden class="anchor" aria-hidden="true" href="#network-implementation-details">#</a></h4>
 <p>The networks share the same architecture:</p>
@@ -2025,10 +2213,12 @@ $$<p>Through this representation, estimating the joint PDF boils down to predict
 $$
 \mathbf{v} = M \cdot \text{softmax}(f_{\boldsymbol{\omega}}(\mathbf{C}))
 $$<p>where $\mathbf{C}$ is the condition (different for marginal and conditional) and $M$ is the number of bins.</p>
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/network_architecture.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/network_architecture.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
       MLP takes the condition $\mathcal{C}$ as the input and estimates an $M$ dimensional vector. We then apply softmax function to this vector and multiply each element by $M$ to obtain a vector containing the PDF estimate at discrete locations. We use this network to model the marginal and conditional distributions. Note that the we use $x$ and $ω_o$ as the condition when modeling the marginal distribution, but for the conditional one, we additionally pass the first dimension $\epsilon_1$ to the network. We use two separate networks to model the two distributions, but we follow the process illustrated in this figure in both cases.
     </figcaption></figure>
+
 
 <h4 id="input-encoding">Input Encoding<a hidden class="anchor" aria-hidden="true" href="#input-encoding">#</a></h4>
 <ul>
@@ -2046,10 +2236,12 @@ $$<p>where $\mathbf{C}$ is the condition (different for marginal and conditional
 </p>
 $$
 p_{\boldsymbol{\omega}}(\epsilon \mid \mathbf{C}) = \mathbf{v}[\lfloor\epsilon M\rfloor]
-$$<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/nearest_neighbor.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+$$<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/nearest_neighbor.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
       Nearest Neighbor interpolation
     </figcaption></figure>
+
 
 <h4 id="linear-interpolation">Linear Interpolation<a hidden class="anchor" aria-hidden="true" href="#linear-interpolation">#</a></h4>
 <p>The PDF at an arbitrary location is obtained by linearly interpolating the estimated PDF at the two nearest discrete coordinates:
@@ -2058,15 +2250,19 @@ $$
 p_{\boldsymbol{\omega}}(\epsilon \mid \mathbf{C}) = (1-\alpha)\mathbf{v}[m] + \alpha\mathbf{v}[m+1]
 $$<p>
 where $m = \lfloor \epsilon M - 0.5 \rfloor$ and $\alpha = \epsilon M - m - 0.5$.</p>
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/linear_interp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/linear_interp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
       Linear Interpolation
     </figcaption></figure>
 
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/interp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/interp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
       We demonstrate the PDF evaluation and sampling process for nearest neighbor and linear interpolation. To model the $1D$ distributions (marginal and conditional) our network first predicts a vector $v$ containing estimates of the PDF at discrete locations. To obtain the PDF at an arbitrary location, we either use the PDF estimate at the closest sample (top-left), or linearly interpolate between the two closest samples (top-right). Sampling is done by evaluating the inverse CDF at a randomly generated value $u$ with a uniform distribution. Note that the CDF for nearest neighbor interpolation is piecewise linear, while it is piecewise quadratic for linear interpolation.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="sampling">Sampling<a hidden class="anchor" aria-hidden="true" href="#sampling">#</a></h3>
@@ -2105,10 +2301,12 @@ $$<p>where the numerator is the integrand and the denominator is the reflected r
 $$
 \hat{p}^*(\boldsymbol{\omega}_i \mid \mathbf{x}, \boldsymbol{\omega}_o) = \frac{f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) \cdot f_{\boldsymbol{\Phi}}(\mathbf{x}', \boldsymbol{\omega}_o') \cdot \cos\theta_i}{f_{\boldsymbol{\Phi}}(\mathbf{x}, \boldsymbol{\omega}_o)}
 $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and uses a small MLP network that takes surface location and ray direction as input and estimates the corresponding radiance.</p>
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
       Computing the target distribution requires obtaining $L_r(x,\omega_o)$ and $L_i(x,\omega_i)$. We use a neural network that takes location and direction as the input and estimates the cached reflected radiance along that particular ray. By evaluating the network at the current $(x', \omega_o')$ and next $(x,\omega_i)$ intersection points, we obtain an estimate of the reflected Lr and incoming $L_i$ radiance. Note that here the incoming radiance at $x,\omega_i$ is equal to the reflected radiance at $x', \omega_o'$
     </figcaption></figure>
+
 
 <hr>
 <h3 id="training-details">Training Details<a hidden class="anchor" aria-hidden="true" href="#training-details">#</a></h3>
@@ -2117,10 +2315,12 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
 <li>Adam optimizer with learning rate of $10^{-2}$ for $f_{\boldsymbol{\Phi}}$ and $3 \times 10^{-2}$ for $f_{\boldsymbol{\omega}_1}$ and $f_{\boldsymbol{\omega}_2}$</li>
 <li>70% of paths are guided using the learned method, 30% use BSDF sampling for exploration</li>
 </ul>
-<figure id="fig-camera" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/path_tracing/distribution_factorization/df-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/df-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
       During path tracing, we generate samples using our guiding distribution $p_\Theta$ to increase the number of paths that reach light sources. These paths are then used to train our radiance caching $f_\Theta$. We leverage the cached radiance as a smoother objective to improve $p_\Theta$, which in turn is used on the next sample generation.
     </figcaption></figure>
+
 
 <hr>
 <h3 id="limitations-2">Limitations<a hidden class="anchor" aria-hidden="true" href="#limitations-2">#</a></h3>
@@ -2188,15 +2388,15 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
       <li><a href="http://localhost:1313/tags/ray-tracing/">Ray Tracing</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/transformer-model/">
+  <a class="prev" href="http://localhost:1313/posts/bagging-boosting/">
     <span class="title">« Prev</span>
     <br>
-    <span>Vision Transformer (ViT) - Architecture and Implementation</span>
+    <span>Bagging and Boosting</span>
   </a>
-  <a class="next" href="http://localhost:1313/posts/bias-variance/">
+  <a class="next" href="http://localhost:1313/posts/3d-reconstruction/">
     <span class="title">Next »</span>
     <br>
-    <span>Bias–Variance Tradeoff</span>
+    <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
   </a>
 </nav>
 

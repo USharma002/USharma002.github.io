@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "A comprehensive look into the Neural Importance Sampling for Path Tracing"
-date: "2025-11-07"
+date: "2025-11-22"
 description: "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing"
 summary: "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing"
 tags: ["Generative Modelling", "Computer Graphics", "Ray Tracing"]

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TensoRF: Vector-Matrix Decomposition Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #ui-layer {
+            position: relative;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 350px;
+            border: 1px solid #eee;
+            pointer-events: auto;
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.4rem;
+            color: #111;
+        }
+
+        p {
+            margin: 0 0 15px 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .math-block {
+            background: #f4f6f8;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+            border: 1px solid #e1e4e8;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            padding: 6px;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #eee;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .legend-item:hover {
+            transform: translateX(5px);
+            border-color: #ccc;
+        }
+
+        .legend-item.inactive {
+            opacity: 0.5;
+            background: #f9f9f9;
+        }
+
+        .color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .equation-part {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-family: monospace;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        #vis-status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-family: monospace;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            pointer-events: none;
+            user-select: none;
+        }
+#ui-toggle {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 99999;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* COLLAPSIBLE CONTAINER */
+#ui-collapsible {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 99990;
+    max-height: 800px;     /* <<< MUST EXIST */
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height .35s ease, opacity .25s ease;
+}
+
+#ui-collapsible.closed {
+    max-height: 0px;       /* <<< WHEN CLOSED */
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+    </style>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<div id="ui-collapsible" class="closed">
+<div id="ui-layer">
+    <h1>TensoRF-VM</h1>
+    <p>Visualizing Vector-Matrix Decomposition. The ray sampling point projects to discrete grid cells (Matrices) and segments (Vectors) to retrieve features.</p>
+    
+    <div class="math-block">
+        T &approx; &sum; v &otimes; M
+    </div>
+
+    <div class="legend">
+        <div class="legend-item" id="btn-x" onclick="toggleGroup('x')">
+            <div class="color-box" style="background: #e74c3c;"></div>
+            <div style="flex:1">
+                <strong>X-Mode</strong>
+                <div class="equation-part">Vector v<sup>X</sup> &otimes; Matrix M<sup>YZ</sup></div>
+            </div>
+            <input type="checkbox" checked id="chk-x">
+        </div>
+
+        <div class="legend-item" id="btn-y" onclick="toggleGroup('y')">
+            <div class="color-box" style="background: #3498db;"></div>
+            <div style="flex:1">
+                <strong>Y-Mode</strong>
+                <div class="equation-part">Vector v<sup>Y</sup> &otimes; Matrix M<sup>XZ</sup></div>
+            </div>
+            <input type="checkbox" checked id="chk-y">
+        </div>
+
+        <div class="legend-item" id="btn-z" onclick="toggleGroup('z')">
+            <div class="color-box" style="background: #f1c40f;"></div>
+            <div style="flex:1">
+                <strong>Z-Mode</strong>
+                <div class="equation-part">Vector v<sup>Z</sup> &otimes; Matrix M<sup>XY</sup></div>
+            </div>
+            <input type="checkbox" checked id="chk-z">
+        </div>
+    </div>
+    
+    <div class="controls">
+        <label class="control-row">
+            <input type="checkbox" id="chk-animate" checked>
+            <span><strong>Auto-Animate Ray</strong></span>
+        </label>
+        <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">
+            Uncheck to enable mouse hover control.
+        </p>
+    </div>
+</div>
+</div>
+
+
+<div id="vis-status">Sampling: x=0.00, y=0.00, z=0.00</div>
+<div id="canvas-container"></div>
+<button id="ui-toggle">☰</button>
+<script>
+    // --- Configuration ---
+    const COLORS = {
+        X_MODE: 0xe74c3c,
+        Y_MODE: 0x3498db,
+        Z_MODE: 0xf1c40f,
+        RAY: 0xff3333,
+        BG: 0xffffff,
+        HIGHLIGHT: 0x00ff00, // Bright Green for visibility
+        HIGHLIGHT_VEC: 0x000000 // Black for vector wireframe
+    };
+    
+    const SIZE = 10;
+    const HALF_SIZE = SIZE / 2;
+    const GRID_RES = 16; // Lower res to make cells more visible
+    const CELL_SIZE = SIZE / GRID_RES;
+    
+    // --- Scene Setup ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(COLORS.BG);
+    scene.fog = new THREE.Fog(COLORS.BG, 30, 60);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(20, 16, 20);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // --- Lighting ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
+
+    // --- Groups ---
+    const groupX = new THREE.Group();
+    const groupY = new THREE.Group();
+    const groupZ = new THREE.Group();
+    scene.add(groupX);
+    scene.add(groupY);
+    scene.add(groupZ);
+
+    // --- Helper Functions ---
+    
+    function createMatrixTexture(colorHex) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        
+        // Background
+        ctx.fillStyle = '#' + new THREE.Color(colorHex).getHexString();
+        ctx.fillRect(0,0,512,512);
+        
+        // Grid
+        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+        ctx.lineWidth = 2;
+        const step = 512 / GRID_RES;
+        for(let i=0; i<=512; i+=step) {
+            ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,512); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(512,i); ctx.stroke();
+        }
+        
+        // Noise features
+        for(let i=0; i<30; i++) {
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            const x = Math.floor(Math.random() * GRID_RES) * step;
+            const y = Math.floor(Math.random() * GRID_RES) * step;
+            ctx.fillRect(x, y, step, step);
+        }
+        
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.magFilter = THREE.NearestFilter; // Keep sharp pixel look
+        return tex;
+    }
+
+    function createVectorTexture(colorHex) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+        
+        const col = new THREE.Color(colorHex);
+        // Gradient look
+        const grad = ctx.createLinearGradient(0,0,64,0);
+        grad.addColorStop(0, '#' + col.getHexString());
+        grad.addColorStop(0.5, '#ffffff');
+        grad.addColorStop(1, '#' + col.getHexString());
+        
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,64,512);
+        
+        // Segments
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.lineWidth = 2;
+        const step = 512 / GRID_RES;
+        for(let i=0; i<=512; i+=step) {
+            ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(64,i); ctx.stroke();
+        }
+        
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.magFilter = THREE.NearestFilter;
+        return tex;
+    }
+
+    function createDashedLine(color) {
+        const material = new THREE.LineDashedMaterial({
+            color: 0x333333, // Darker for contrast
+            linewidth: 1,
+            scale: 1,
+            dashSize: 0.3,
+            gapSize: 0.2,
+            opacity: 0.5,
+            transparent: true
+        });
+        const geometry = new THREE.BufferGeometry();
+        geometry.setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,1,0)]);
+        const line = new THREE.Line(geometry, material);
+        line.computeLineDistances();
+        return line;
+    }
+
+    // --- Highlight Components ---
+    // 1. Matrix Cell Highlight (Wireframe square)
+    const cellHighlightGeo = new THREE.PlaneGeometry(CELL_SIZE, CELL_SIZE);
+    const cellBorderGeo = new THREE.EdgesGeometry(cellHighlightGeo);
+    const cellBorderMat = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
+    
+    function createMatrixHighlight() {
+        const mesh = new THREE.Group();
+        // Fill
+        const fill = new THREE.Mesh(cellHighlightGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4, side: THREE.DoubleSide}));
+        // Border
+        const border = new THREE.LineSegments(cellBorderGeo, cellBorderMat);
+        mesh.add(fill);
+        mesh.add(border);
+        return mesh;
+    }
+
+    // 2. Vector Segment Highlight (Wireframe box segment)
+    const vecHighlightGeo = new THREE.BoxGeometry(0.7, CELL_SIZE, 0.7);
+    const vecHighlightMat = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true, transparent: true, opacity: 0.6 });
+    const vecFillGeo = new THREE.BoxGeometry(0.65, CELL_SIZE, 0.65);
+    const vecFillMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
+
+    function createVectorHighlight() {
+        const g = new THREE.Group();
+        g.add(new THREE.Mesh(vecHighlightGeo, vecHighlightMat));
+        g.add(new THREE.Mesh(vecFillGeo, vecFillMat));
+        return g;
+    }
+
+    // --- Build Components ---
+    const planeGeo = new THREE.PlaneGeometry(SIZE, SIZE);
+    const vectorGeo = new THREE.BoxGeometry(0.5, SIZE, 0.5);
+    
+    // --- Z Group (v^Z o M^XY) ---
+    // M^XY on Back (-Z)
+    const matXY = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({ map: createMatrixTexture(COLORS.Z_MODE), side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+    matXY.position.set(0, 0, -HALF_SIZE);
+    groupZ.add(matXY);
+    
+    // v^Z along Edge
+    const vecZ = new THREE.Mesh(vectorGeo, new THREE.MeshBasicMaterial({ map: createVectorTexture(COLORS.Z_MODE) }));
+    vecZ.rotation.x = Math.PI / 2; // Align with Z
+    vecZ.position.set(-HALF_SIZE - 1, -HALF_SIZE - 1, 0);
+    groupZ.add(vecZ);
+
+    // Highlights
+    const hlZ_Mat = createMatrixHighlight();
+    hlZ_Mat.position.z = -HALF_SIZE + 0.05;
+    groupZ.add(hlZ_Mat);
+    
+    const hlZ_Vec = createVectorHighlight();
+    hlZ_Vec.rotation.x = Math.PI / 2;
+    hlZ_Vec.position.copy(vecZ.position);
+    groupZ.add(hlZ_Vec);
+
+    const lineZ_Mat = createDashedLine();
+    const lineZ_Vec = createDashedLine();
+    groupZ.add(lineZ_Mat, lineZ_Vec);
+
+
+    // --- Y Group (v^Y o M^XZ) ---
+    // M^XZ on Bottom (-Y)
+    const matXZ = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({ map: createMatrixTexture(COLORS.Y_MODE), side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+    matXZ.rotation.x = Math.PI / 2;
+    matXZ.position.set(0, -HALF_SIZE, 0);
+    groupY.add(matXZ);
+
+    // v^Y along Edge
+    const vecY = new THREE.Mesh(vectorGeo, new THREE.MeshBasicMaterial({ map: createVectorTexture(COLORS.Y_MODE) }));
+    vecY.position.set(-HALF_SIZE - 1, 0, -HALF_SIZE - 1);
+    groupY.add(vecY);
+
+    // Highlights
+    const hlY_Mat = createMatrixHighlight();
+    hlY_Mat.rotation.x = Math.PI / 2;
+    hlY_Mat.position.y = -HALF_SIZE + 0.05;
+    groupY.add(hlY_Mat);
+
+    const hlY_Vec = createVectorHighlight();
+    hlY_Vec.position.copy(vecY.position);
+    groupY.add(hlY_Vec);
+
+    const lineY_Mat = createDashedLine();
+    const lineY_Vec = createDashedLine();
+    groupY.add(lineY_Mat, lineY_Vec);
+
+
+    // --- X Group (v^X o M^YZ) ---
+    // M^YZ on Left (-X)
+    const matYZ = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial({ map: createMatrixTexture(COLORS.X_MODE), side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+    matYZ.rotation.y = Math.PI / 2;
+    matYZ.position.set(-HALF_SIZE, 0, 0);
+    groupX.add(matYZ);
+
+    // v^X along Edge
+    const vecX = new THREE.Mesh(vectorGeo, new THREE.MeshBasicMaterial({ map: createVectorTexture(COLORS.X_MODE) }));
+    vecX.rotation.z = Math.PI / 2; // Align with X
+    vecX.position.set(0, -HALF_SIZE - 1, -HALF_SIZE - 1);
+    groupX.add(vecX);
+
+    // Highlights
+    const hlX_Mat = createMatrixHighlight();
+    hlX_Mat.rotation.y = Math.PI / 2;
+    hlX_Mat.position.x = -HALF_SIZE + 0.05;
+    groupX.add(hlX_Mat);
+
+    const hlX_Vec = createVectorHighlight();
+    hlX_Vec.rotation.z = Math.PI / 2;
+    hlX_Vec.position.copy(vecX.position);
+    groupX.add(hlX_Vec);
+
+    const lineX_Mat = createDashedLine();
+    const lineX_Vec = createDashedLine();
+    groupX.add(lineX_Mat, lineX_Vec);
+
+
+    // --- Scene Essentials ---
+    // Bounding Box
+    const boxGeo = new THREE.BoxGeometry(SIZE, SIZE, SIZE);
+    const invisibleBox = new THREE.Mesh(boxGeo, new THREE.MeshBasicMaterial({ visible: false }));
+    scene.add(invisibleBox); // For raycasting mouse
+
+    const edges = new THREE.EdgesGeometry(boxGeo);
+    const boxHelper = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: 0xaaaaaa } ));
+    scene.add(boxHelper);
+
+    // The Main Ray
+    // We define a long ray, but we will only render the segment inside/near the box
+    const rawRayStart = new THREE.Vector3(12, 8, 15);
+    const rawRayEnd = new THREE.Vector3(-12, -8, -15);
+    const rayDir = new THREE.Vector3().subVectors(rawRayEnd, rawRayStart).normalize();
+    
+    // Visual Line for Ray
+    const rayGeo = new THREE.BufferGeometry().setFromPoints([rawRayStart, rawRayEnd]);
+    const rayLine = new THREE.Line(rayGeo, new THREE.LineBasicMaterial({ color: COLORS.RAY, linewidth: 2 }));
+    scene.add(rayLine);
+
+    // Sample Point
+    const samplePointGeo = new THREE.SphereGeometry(0.25, 32, 32);
+    const samplePointMat = new THREE.MeshBasicMaterial({ color: COLORS.RAY });
+    const samplePoint = new THREE.Mesh(samplePointGeo, samplePointMat);
+    scene.add(samplePoint);
+
+
+    // --- Logic: Ray-Box Intersection ---
+    // Returns {min, max} t-values relative to origin and dir
+    function intersectRayAABB(origin, dir, min, max) {
+        let tmin = (min.x - origin.x) / dir.x;
+        let tmax = (max.x - origin.x) / dir.x;
+        if (tmin > tmax) [tmin, tmax] = [tmax, tmin];
+
+        let tymin = (min.y - origin.y) / dir.y;
+        let tymax = (max.y - origin.y) / dir.y;
+        if (tymin > tymax) [tymin, tymax] = [tymax, tymin];
+
+        if ((tmin > tymax) || (tymin > tmax)) return null;
+        if (tymin > tmin) tmin = tymin;
+        if (tymax < tmax) tmax = tymax;
+
+        let tzmin = (min.z - origin.z) / dir.z;
+        let tzmax = (max.z - origin.z) / dir.z;
+        if (tzmin > tzmax) [tzmin, tzmax] = [tzmax, tzmin];
+
+        if ((tmin > tzmax) || (tzmin > tmax)) return null;
+        if (tzmin > tmin) tmin = tzmin;
+        if (tzmax < tmax) tmax = tzmax;
+
+        return { start: tmin, end: tmax };
+    }
+
+    // Calculate intersection interval once
+    const boxMin = new THREE.Vector3(-HALF_SIZE, -HALF_SIZE, -HALF_SIZE);
+    const boxMax = new THREE.Vector3(HALF_SIZE, HALF_SIZE, HALF_SIZE);
+    const intersection = intersectRayAABB(rawRayStart, rayDir, boxMin, boxMax);
+    
+    // Safety fallback if ray misses box (shouldn't happen with these coords)
+    const rayTMin = intersection ? intersection.start : 0;
+    const rayTMax = intersection ? intersection.end : 1;
+
+
+    // --- Logic: Snapping to Discrete Grid ---
+    function snapToGrid(val) {
+        // Map -5..5 to grid index
+        const relative = val + HALF_SIZE;
+        const idx = Math.floor(relative / CELL_SIZE);
+        const clampedIdx = Math.max(0, Math.min(GRID_RES - 1, idx));
+        // Return center of that cell
+        return (clampedIdx * CELL_SIZE) + (CELL_SIZE / 2) - HALF_SIZE;
+    }
+
+    function updateProjectionLines(point) {
+        // 1. Find snapped coordinates
+        const sx = snapToGrid(point.x);
+        const sy = snapToGrid(point.y);
+        const sz = snapToGrid(point.z);
+
+        // 2. Update Z Group (M^XY, v^Z)
+        if(groupZ.visible) {
+            // Matrix: Highlight cell at (sx, sy) on back plane
+            hlZ_Mat.position.x = sx;
+            hlZ_Mat.position.y = sy;
+            
+            // Projection line: From Point -> Snapped Matrix Cell
+            lineZ_Mat.geometry.setFromPoints([point, new THREE.Vector3(sx, sy, -HALF_SIZE)]);
+            lineZ_Mat.computeLineDistances();
+
+            // Vector: Highlight segment at sz
+            hlZ_Vec.position.z = sz;
+            
+            // Projection line: From Point -> Snapped Vector Segment
+            lineZ_Vec.geometry.setFromPoints([point, new THREE.Vector3(vecZ.position.x, vecZ.position.y, sz)]);
+            lineZ_Vec.computeLineDistances();
+        }
+
+        // 3. Update Y Group (M^XZ, v^Y)
+        if(groupY.visible) {
+            // Matrix: Highlight cell at (sx, sz) on bottom plane
+            hlY_Mat.position.x = sx;
+            hlY_Mat.position.z = sz;
+            lineY_Mat.geometry.setFromPoints([point, new THREE.Vector3(sx, -HALF_SIZE, sz)]);
+            lineY_Mat.computeLineDistances();
+
+            // Vector: Highlight segment at sy
+            hlY_Vec.position.y = sy;
+            lineY_Vec.geometry.setFromPoints([point, new THREE.Vector3(vecY.position.x, sy, vecY.position.z)]);
+            lineY_Vec.computeLineDistances();
+        }
+
+        // 4. Update X Group (M^YZ, v^X)
+        if(groupX.visible) {
+            // Matrix: Highlight cell at (sy, sz) on left plane
+            hlX_Mat.position.y = sy;
+            hlX_Mat.position.z = sz;
+            lineX_Mat.geometry.setFromPoints([point, new THREE.Vector3(-HALF_SIZE, sy, sz)]);
+            lineX_Mat.computeLineDistances();
+
+            // Vector: Highlight segment at sx
+            hlX_Vec.position.x = sx;
+            lineX_Vec.geometry.setFromPoints([point, new THREE.Vector3(sx, vecX.position.y, vecX.position.z)]);
+            lineX_Vec.computeLineDistances();
+        }
+        
+        // Trigger update
+        [lineZ_Mat, lineZ_Vec, lineY_Mat, lineY_Vec, lineX_Mat, lineX_Vec].forEach(l => {
+            l.geometry.attributes.position.needsUpdate = true;
+        });
+    }
+
+    // --- Animation Loop ---
+    const clock = new THREE.Clock();
+    let isAutoAnimate = true;
+    
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    // Handle Mouse Move for Manual Mode
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        
+        if (!isAutoAnimate) {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(invisibleBox);
+            if(intersects.length > 0) {
+                const p = intersects[0].point;
+                samplePoint.position.copy(p);
+                updateProjectionLines(p);
+                updateStatus(p);
+            }
+        }
+    });
+
+    document.getElementById('chk-animate').addEventListener('change', (e) => {
+        isAutoAnimate = e.target.checked;
+        document.getElementById('vis-status').innerText = isAutoAnimate ? "Auto-Animation Resumed" : "Manual: Hover over the box";
+    });
+
+    function updateStatus(p) {
+        document.getElementById('vis-status').innerText = 
+            `Sampling: x=${p.x.toFixed(2)}, y=${p.y.toFixed(2)}, z=${p.z.toFixed(2)}`;
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        if (isAutoAnimate) {
+            const time = clock.getElapsedTime();
+            // Ping-pong motion between 0 and 1
+            const alpha = (Math.sin(time * 0.8) + 1) / 2; 
+            
+            // Interpolate strictly between rayTMin and rayTMax
+            const currentT = rayTMin + alpha * (rayTMax - rayTMin);
+            
+            // position = origin + t * dir
+            samplePoint.position.copy(rawRayStart).addScaledVector(rayDir, currentT);
+            
+            updateProjectionLines(samplePoint.position);
+            updateStatus(samplePoint.position);
+        }
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    // Resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Toggle Groups
+    window.toggleGroup = function(axis) {
+        let group, chk, btn;
+        if(axis === 'x') { group = groupX; chk = document.getElementById('chk-x'); btn = document.getElementById('btn-x'); }
+        if(axis === 'y') { group = groupY; chk = document.getElementById('chk-y'); btn = document.getElementById('btn-y'); }
+        if(axis === 'z') { group = groupZ; chk = document.getElementById('chk-z'); btn = document.getElementById('btn-z'); }
+        
+        const isVisible = chk.checked;
+        chk.checked = !isVisible;
+        group.visible = !isVisible;
+        if(!isVisible) btn.classList.remove('inactive');
+        else btn.classList.add('inactive');
+    }
+
+    animate();
+const uiToggle = document.getElementById("ui-toggle");
+const uiCollapsible = document.getElementById("ui-collapsible");
+
+uiToggle.addEventListener("click", () => {
+    const nowClosed = uiCollapsible.classList.toggle("closed");
+    uiToggle.textContent = nowClosed ? "☰" : "✕";
+});
+
+
+
+</script>
+</body>
+</html>

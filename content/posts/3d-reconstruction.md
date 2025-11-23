@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "3D Reconstruction with 3DGS, NeRF, and Their Variants"
-date: "2025-11-08"
+date: "2025-11-22"
 description: "Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios."
 summary: "An in-depth look at modern 3D reconstruction methods such as 3DGS and NeRF, comparing their architectures, strengths, and performance in diverse applications."
 tags: ["3D Reconstruction", "3DGS", "NeRF", "Computer Vision", "Deep Learning"]
@@ -205,6 +205,7 @@ $$
         style="border-radius:8px; min-width: 900px;">
 </iframe>
 
+---
 
 ## Inverse Transform Sampling
 
@@ -257,15 +258,256 @@ $$
 
 ### Interactive Simulation
 <iframe src="/interactive/inverse_transform_sampling.html"
-        width="150%"
+        width="100%"
         height="330"
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
 
+---
+
 ## SfM
 ## MPI
 ## Stereo Magnification
+
+---
+
+## Volume Rendering
+
+### The Physics of Light Transport
+
+Unlike standard mesh rendering, where light bounces off a hard surface at a specific depth $z$, volume rendering assumes the scene is composed of particles that can **emit** and **absorb** light at any point in space (**assuming no scattering** of light).
+
+{{< figure 
+    src="../../images/3dvis/voldev-cylinder2.png"
+    num="18"
+    width="100%"
+    caption="Light beam passing through a cylinder interacting with the medium in four different ways ( we will be assuming no scattering). <em>Image credit:</em> <a href='https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html' target='_blank'>Scratchapixel</a>."
+>}}
+
+
+#### The Differential Equation
+Let a ray $\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$ travel through a volume. At any point $t$, the radiance (light energy) $L(t)$ changes based on two competing forces:
+
+1.  **Absorption:** The medium absorbs some existing light. The amount absorbed depends on the **volume density** $\sigma(t)$.
+2.  **Emission:** The medium adds new light (color) $\mathbf{c}(t)$, scaled by the density.
+
+The change in radiance is described by the differential equation:
+
+$$
+\frac{d L(t)}{dt} = \underbrace{\sigma(t)\mathbf{c}(t)}_{\text{Gained Light}} - \underbrace{\sigma(t)L(t)}_{\text{Lost Light}}
+$$
+
+#### The Integral Form
+Solving this differential equation from the near plane $t_n$ to the far plane $t_f$ gives us the **Volume Rendering Equation**:
+
+$$
+C(\mathbf{r}) = \int_{t_n}^{t_f} T(t) \cdot \sigma(t) \cdot \mathbf{c}(t) \, dt
+$$
+
+Where $T(t)$ is the **Transmittance**.
+
+#### Intuition: Transmittance
+Transmittance $T(t)$ represents the probability that a photon travels from the camera origin $t_n$ to the current point $t$ **without being absorbed**.
+
+$$
+T(t) = \exp\left( -\int_{t_n}^{t} \sigma(s) \, ds \right)
+$$
+
+- If $\sigma(s) = 0$ everywhere (empty space), the integral is 0, and $T(t) = 1$ (perfect visibility).
+- If $\sigma(s)$ is high (dense object), the integral becomes large, and $T(t) \to 0$ (occluded).
+
+
+><details>
+><summary style="cursor: pointer;">Proof</summary>
+>Consider what happens in an infinitesimal segment $[t, t + dt]$:
+>- The probability of absorption in this segment is proportional to the density >$\sigma(t)$ and the distance $dt$
+>- The probability of absorption = $\sigma(t) \, dt$
+>- The probability of survival = $1 - \sigma(t) \, dt$
+>
+>#### The Differential Equation
+>
+>If $T(t)$ is the transmittance up to point $t$, then the transmittance at $t + dt$ is:
+>
+>$$
+T(t + dt) = T(t) \cdot (1 - \sigma(t) \, dt)
+$$
+>
+>This says: "To survive to $t + dt$, you must survive to $t$ AND survive the next segment."
+>
+>Expanding:
+>$$
+T(t + dt) = T(t) - T(t) \sigma(t) \, dt
+$$
+>
+>Rearranging:
+>$$
+T(t + dt) - T(t) = -T(t) \sigma(t) \, dt
+$$
+>
+>Dividing both sides by $dt$:
+>$$
+\frac{T(t + dt) - T(t)}{dt} = -T(t) \sigma(t)
+$$
+>
+>Taking the limit as $dt \to 0$:
+>$$
+\frac{dT(t)}{dt} = -\sigma(t) T(t)
+$$
+>
+>#### Solving the ODE
+>
+>This is a first-order separable differential equation. We separate variables:
+>
+>$$
+\frac{dT(t)}{T(t)} = -\sigma(t) \, dt
+$$
+>
+>Integrate both sides from $t_n$ (starting point) to $t$ (current point):
+>
+>$$
+\int_{T(t_n)}^{T(t)} \frac{dT'}{T'} = -\int_{t_n}^{t} \sigma(s) \, ds
+$$
+>
+>The left side evaluates to:
+>$$
+\ln T(t) - \ln T(t_n) = -\int_{t_n}^{t} \sigma(s) \, ds
+$$
+>
+>$$
+\ln \frac{T(t)}{T(t_n)} = -\int_{t_n}^{t} \sigma(s) \, ds
+$$
+>
+>#### Initial Condition
+>
+>At the ray origin ($t = t_n$), no absorption has occurred yet, so:
+>$$
+T(t_n) = 1
+$$
+>
+>Substituting this:
+>$$
+\ln T(t) = -\int_{t_n}^{t} \sigma(s) \, ds
+$$
+>
+>Exponentiating both sides:
+>$$
+T(t) = \exp\left( -\int_{t_n}^{t} \sigma(s) \, ds \right)
+$$
+>
+>**Special Cases:**
+>- If $\sigma(s) = 0$ (vacuum): $T(t) = e^0 = 1$ (perfect transmission)
+>- If $\sigma(s) = \sigma_0$ (constant): $T(t) = e^{-\sigma_0 (t - t_n)}$ (exponential decay)
+>- As $\int \sigma(s) \, ds \to \infty$: $T(t) \to 0$ (complete occlusion)
+></details>
+
+**In simple terms:** The color of a pixel is the sum of all light emitted along the ray, weighted by how much "stuff" ($\sigma$) is at that point and how "clear" ($T$) the path is up to that point.
+
+---
+
+### Discretization (Numerical Quadrature)
+
+To estimate the above integral we must approximate it by breaking the ray into $N$ discrete segments (bins).
+
+Let the ray be split into segments $[t_i, t_{i+1}]$. We assume the density $\sigma_i$ and color $\mathbf{c}_i$ are constant within each segment of length $\delta_i = t_{i+1} - t_i$.
+
+#### 1. From Density to Alpha ($\alpha$)
+The probability that light is occluded within a *single* segment $i$ is given by standard exponential decay:
+
+$$
+\alpha_i = 1 - \exp(-\sigma_i \delta_i)
+$$
+
+Here, $\alpha_i$ ranges from $[0, 1]$.
+- $\sigma \to 0 \implies \alpha \to 0$ (Transparent)
+- $\sigma \to \infty \implies \alpha \to 1$ (Opaque)
+
+#### 2. Discrete Transmittance
+The transmittance $T_i$ (probability of reaching segment $i$) is the product of the "survival probabilities" of all previous segments:
+
+$$
+T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
+$$
+
+#### 3. The Compositing Formula
+Substituting these into the integral gives the standard alpha-compositing formula used in NeRF, 3DGS, and traditional graphics:
+
+$$
+\hat{C}(\mathbf{r}) = \sum_{i=1}^{N} \underbrace{T_i}_{\text{Vis. to Cam}} \cdot \underbrace{\alpha_i}_{\text{Opacity}} \cdot \underbrace{\mathbf{c}_i}_{\text{Color}}
+$$
+
+Or compactly, defining the contribution weight $w_i = T_i \alpha_i$:
+
+$$
+\hat{C}(\mathbf{r}) = \sum_{i=1}^{N} w_i \mathbf{c}_i
+$$
+
+{{< figure src="../../images/3dvis/vol_render_diagram.png"
+num="18"
+caption="Volume Rendering Intuition. A ray passes through samples. (A) Light is emitted at a sample. (B) It must pass through previous samples to reach the camera. If an earlier sample has high opacity (alpha), the transmittance (T) drops, shielding the camera from samples behind it. [AI Generated image :)]"
+width="100%" 
+>}}
+
+---
+
+### Proof: Summation of Weights
+
+A common question is whether the weights $w_i = T_i \alpha_i$ sum to 1. This is crucial for treating the rendering process as an expectation.
+
+**Theorem:** The sum of weights $\sum_{i=1}^N T_i \alpha_i$ equals $1 - T_{final}$. If the ray hits a fully opaque background (or extends infinitely into dense matter), the sum equals exactly 1.
+
+**Proof via Telescoping Sum:**
+
+Recall the definition of discrete transmittance:
+$$
+T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
+$$
+
+The transmittance for the *next* step $T_{i+1}$ is:
+$$
+T_{i+1} = T_i (1 - \alpha_i)
+$$
+
+We can rearrange this to solve for the weight term $T_i \alpha_i$:
+$$
+T_{i+1} = T_i - T_i \alpha_i
+$$
+$$
+T_i \alpha_i = T_i - T_{i+1}
+$$
+
+Now, we sum this term over all samples $i=1$ to $N$:
+
+$$
+\sum_{i=1}^{N} w_i = \sum_{i=1}^{N} T_i \alpha_i = \sum_{i=1}^{N} (T_i - T_{i+1})
+$$
+
+This is a **telescoping sum**:
+
+$$
+\begin{aligned}
+\sum_{i=1}^{N} (T_i - T_{i+1}) &= (T_1 - T_2) \\
+&+ (T_2 - T_3) \\
+&+ \dots \\
+&+ (T_N - T_{N+1})
+\end{aligned}
+$$
+
+Intermediate terms cancel out, leaving only the first and last terms:
+
+$$
+\sum_{i=1}^{N} w_i = T_1 - T_{N+1}
+$$
+
+Since transmittance at the start of the ray (camera origin) is perfect visibility, $T_1 = 1$.
+
+$$
+\sum_{i=1}^{N} w_i = 1 - T_{N+1}
+$$
+
+**Conclusion:**
+The weights sum to exactly **1** if and only if the remaining transmittance $T_{N+1}$ is **0**. This happens if the ray eventually hits an opaque surface ($\alpha_{background} = 1$) or accumulates enough density along the path to fully block light.
+
 
 # Radiance Fields
 ## NeRF
@@ -324,6 +566,7 @@ width="80%"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
 
+---
 
 ### Hierarchical Sampling
 
@@ -358,11 +601,12 @@ We then sample a second set of $N_f$ locations from this distribution using inve
 
 <iframe src="/interactive/nerf.html"
         width="100%"
-        height="560"
+        height="1050"
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
 
+---
 
 ### Loss Function
 
@@ -379,6 +623,8 @@ num="2"
 caption="NeRF MLP Architecture"
 width="100%" 
 >}}
+
+---
 
 ## Plenoxels: Radiance Fields without Neural Networks
 
@@ -431,6 +677,15 @@ width="60%"
 
 Due to trilinear interpolation, naively pruning can adversely impact the color and density near surfaces since values at these points interpolate with the voxels in the immediate exterior. To solve this, they performed a dilation operation so that voxel is only pruned if both itself and its neighbors are deemed unoccupied.
 
+### Interactive PlenOctree
+
+{{< 
+fullscreen-iframe 
+id="rt_iframe" 
+src="/interactive/plenoctree.html" 
+height="600" 
+>}}
+
 ### Optimization
 
 Optimize the voxel opacities and spherical harmonic coefficients with respect to the mean squared error (MSE) over rendered pixel colors with total variation (TV) regularization. Specifically, the loss is:
@@ -446,6 +701,8 @@ $$\mathcal{L}_{\text{TV}} = \frac{1}{|\mathcal{V}|} \sum_{\mathbf{v} \in \mathca
 where $ \Delta_x^2(\mathbf{v}, d) $ denotes the squared difference between the $ d^\text{th} $ value in voxel $ \mathbf{v} := (i, j, k) $ and the $ d^\text{th} $ value in voxel $ (i + 1, j, k) $, normalized by the resolution. Analogously, $ \Delta_y^2(\mathbf{v}, d) $ and $ \Delta_z^2(\mathbf{v}, d) $ represent the squared differences along the $ y $- and $ z $-axes, respectively.
 
 Plenoxels achieves **significantly faster training** than NeRF while maintaining comparable rendering quality since they don't use neural networks just use differentiable rendering framework.
+
+---
 
 ## TensoRF
 
@@ -586,6 +843,16 @@ caption="Tensorf Scene Representation."
 width="100%" 
 >}}
 
+---
+### Interactive Overview of TensoRF
+
+{{< 
+fullscreen-iframe 
+id="tensorf_iframe" 
+src="/interactive/tensorf.html" 
+height="800" 
+>}}
+
 ### Rendering Process
 
 For a 3D point $\mathbf{x}$ and viewing direction $\mathbf{d}$:
@@ -621,6 +888,7 @@ $$
 
 TV regularization prevents overfitting and removes floaters/artifacts by enforcing piecewise-smooth geometry and appearance.
 
+---
 
 ## Instant NGP
 
@@ -628,7 +896,7 @@ TV regularization prevents overfitting and removes floaters/artifacts by enforci
 
 {{< figure src="../../images/3dvis/instant-ngp-overview.png"
 num="9"
-caption="Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)→(4)→(3) to update hash table features."
+caption="Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)$\rightarrow$(4)$\rightarrow$(3) to update hash table features."
 width="100%" 
 >}}
 
@@ -751,6 +1019,8 @@ Typical values for NeRF applications:
 
 Total trainable parameters (encoding + MLP) is still much smaller than original NeRF while achieving 20-60× faster training.
 
+---
+
 ## 3DGS
 
 ### Overview
@@ -822,10 +1092,10 @@ $$\hat{\mu} = KT[\mu, 1]^T$$
 $$\hat{\Sigma} = J W \Sigma W^T J^T$$
 
 where:
-- $\hat{\mu}$: 2D position on screen
-- $\hat{\Sigma}$: 2D covariance in screen space
-- $J$: Jacobian of the projection
-- $W = T$ (world-to-camera transformation)
+- $\hat{\mu}:$ 2D position on screen
+- $\hat{\Sigma}:$ 2D covariance in screen space
+- $J:$ Jacobian of the projection
+- $W:$ the $3\times3$ rotation component of the world-to-camera transformation
 
 This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.
 
@@ -870,7 +1140,7 @@ width="100%"
 
 
 ---
-### Algorithm 1 Optimization and Densification
+### Algorithm: Optimization and Densification
 $w, h$: width and height of the training images
 
 ---
@@ -897,7 +1167,6 @@ $w, h$: width and height of the training images
 </tr>
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$I \leftarrow$ Rasterize$(M, S, C, A, V)$</td>
-<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Alg. 2</td>
 </tr>
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$L \leftarrow$ Loss$(I, \hat{I})$</td>
@@ -984,6 +1253,17 @@ where $\lambda = 0.2$. This balances:
 - **L1 loss**: Pixel-wise color difference
 - **D-SSIM**: Structural similarity (captures perceptual quality)
 
+### Interactive Gaussian Viewer
+
+
+{{< 
+fullscreen-iframe 
+id="gaussian_viewer_iframe" 
+src="/interactive/gaussian_viewer.html" 
+height="600" 
+>}}
+
+---
 
 # Sparse Input
 ## Depth-supervised NeRF
@@ -1002,19 +1282,13 @@ width="100%"
 >}}
 
 ### Volumetric Rendering Revisited
-To render a 2D image given a pose P, we cast rays r
-originating from the P’s center of projection o in direction d
-derived from its intrinsics.  We integrate the implicit radiance
-field along this ray to compute the incoming radiance from any object that lies along d:
+To render a 2D image given a pose $P$, we cast rays $r(t)$ originating from the center of projection $o$ in directions $d$ derived from its intrinsics. We then integrate the implicit radiance field along each ray to compute the incoming radiance contributed by any object intersected along $d$:
 
 $$
 C = \int_{0}^{\infty} T(t)\,\sigma(t)\,c(t)\,dt.
 $$
 
-here t parameterizes the aforementioned ray as r(t) =
-o + td and T (t) = exp(− R t
-0 σ(s)ds) checks for occlusions
-by integrating the differential density between 0 to t
+Here, $t$ parameterizes the aforementioned ray as $r(t) = o + t d$, and $T(t) = \exp\!\left(-\int_0^{t} \sigma(s)\, ds\right)$ checks for occlusions by integrating the differential density from $0$ to $t$.
 
 ### Ray Distribution
 
@@ -1030,7 +1304,7 @@ $$
 ### Idealized distribution
 The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrict the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image  point with a closes-surface depth of $D$ should be $\delta (t - D)$. This insight motivates the depth-supervised ray termination loss.
 
-## Deriving Depth Supervision
+### Deriving Depth Supervision
 
 Most NeRF pipelines require images together with their camera matrices $(P_1, P_2, \dots)$, typically estimated using an SfM system such as COLMAP. SfM uses bundle adjustment, which also outputs:
 
@@ -1094,10 +1368,603 @@ $$
 \lambda_D \, \mathcal{L}_{\text{Depth}}.
 $$
 
+---
 
-## VIP NeRF
+## ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields
+
+### Overview
+
+{{< figure src="../../images/3dvis/vipnerf-overview.png"
+num="16"
+caption="**Overview of ViP-NeRF architecture.** Given the images from primary and secondary views, we estimate a visibility prior map in the primary view and use it to supervise the visibility of pixels as predicted by the NeRF. Specifically, we cast a ray through a randomly selected pixel in the primary view and sample 3D points along the ray. For every point ${\mathbf p}_i$, we use the NeRF MLPs to obtain its visibility in primary and secondary views, along with volume density $\sigma_i$ and color $\mathbf c_i$. Volume rendering outputs visibility $t'$ of the chosen pixel in the secondary view which is supervised by the visibility prior. $\mathcal{L}_v$ constrains the visibilities $\hat{T}_i$ output by network and $T_i$ computed using volume rendering to be consistent with each other."
+width="100%" 
+>}}
+
+Neural radiance fields (NeRF) require hundreds of images to synthesize photo-realistic novel views. Training them on sparse input views leads to overfitting and incorrect scene depth estimation, resulting in artifacts like blur, ghosting, and floaters in rendered views.
+
+ViP-NeRF addresses this by introducing **visibility regularization** - instead of relying on dense depth priors that may suffer from generalization errors, it uses the visibility of pixels across different views as a more reliable form of dense supervision.
+
+### The Visibility Prior Concept
+
+**Key Insight:** When given sparse input views, it is easier to estimate whether a pixel is visible in another view (relative depth) than to estimate its absolute depth accurately.
+
+For any pixel $q$ in a primary view, the visibility prior $\tau'(q) \in \{0, 1\}$ indicates whether that pixel is also visible in a secondary view:
+- $\tau'(q) = 1$: pixel is visible in both views (no occlusion)
+- $\tau'(q) = 0$: pixel is occluded in the secondary view
+
+This visibility information relates to the **relative depth** of scene objects - foreground objects are typically visible in multiple views, while background objects may be partially occluded.
+
+### Computing Visibility Prior using Plane Sweep Volumes
+
+ViP-NeRF estimates the visibility prior using **plane sweep volumes (PSV)** without requiring any pre-training:
+
+{{< figure src="../../images/3dvis/vipnerf-psv.png"
+num="17"
+caption="**Visibility Prior Computation.** The secondary view image is warped to the primary view at different depth planes to create a PSV. Error maps are computed by comparing warped images with the primary view. The minimum error across all planes is thresholded to obtain the visibility prior map. Regions with low error (white) indicate visibility in both views, while high error (black) indicates occlusion."
+width="100%" 
+>}}
+
+**Step-by-step Process:**
+
+1. **Create Plane Sweep Volume:** Warp the secondary view image to the primary view at $D$ uniformly sampled depths between $z_{\min}$ and $z_{\max}$:
+   - $I^{(1)}$: primary view image
+   - $I^{(2)}_k$: warped secondary view images at plane $k \in \{0, 1, ..., D-1\}$
+
+2. **Compute Error Maps:** For each plane $k$, calculate the L1 error:
+   
+   $$E_k = \|I^{(1)} - I^{(2)}_k\|_1$$
+
+3. **Determine Visibility:** Extract the minimum error across all planes and threshold:
+   
+   $$e(q) = \min_k E_k(q)$$
+   
+   $$\tau'(q) = \mathbb{1}_{\{\exp(-e(q)/\gamma) > 0.5\}}$$
+   
+   where $\gamma$ is a hyperparameter (typically set to 10).
+
+**Intuition:** A low error at any plane indicates a matching pixel exists in the secondary view (pixel is visible). High error across all planes suggests occlusion or highly specular surfaces. The visibility prior is only used for pixels where a match is found, avoiding unreliable regions.
+
+### Visibility Regularization Loss
+
+For a randomly selected pixel $q$ in the primary view, ViP-NeRF samples $N$ candidate 3D points $p_1, p_2, ..., p_N$ along the ray. The visibility of pixel $q$ in the secondary view is computed as:
+
+$$t'(q) = \sum_{i=1}^{N} w_i T'_i \in [0,1]$$
+
+where:
+- $w_i = T_i(1 - \exp(-\delta_i \sigma_i))$ is the rendering weight from Equation (4)
+- $T'_i$ is the visibility (transmittance) of point $p_i$ from the secondary view
+
+The **visibility prior loss** constrains the predicted visibility to match the prior:
+
+$$\mathcal{L}_{\text{vip}}(q) = \max(\tau'(q) - t'(q), 0)$$
+
+This loss is only applied when $\tau'(q) = 1$ (pixel is reliably visible), avoiding supervision on uncertain occluded regions.
+
+### Efficient Visibility Prediction
+
+<table align="center">
+  <tr>
+    <td align="center" width="45%">
+{{< figure src="../../images/3dvis/vipnerf-naive.png"
+num="17"
+caption="Computing $T'_i$ naively requiring $N^2$ MLP queries per pixel "
+width="60%" 
+>}}
+      </td>
+    <td align="center" width="45%"> 
+{{< figure src="../../images/3dvis/vipnerf-mlp.png"
+num="17"
+caption="Reformulated the NeRF MLP"
+width="100%" 
+>}}
+    </td>
+  </tr>
+</table>
+
+
+Computing $T'_i$ naively requires sampling up to $N$ additional points along a secondary ray from the secondary camera to $p_i$, requiring $N^2$ MLP queries per pixel - computationally prohibitive.
+
+**Solution:** Reformulate the NeRF MLP $\mathcal{F}_2$ to **directly output view-dependent visibility**:
+
+$$c_i, \hat{T}_i = \mathcal{F}_2(h_i, v); \quad c'_i, \hat{T}'_i = \mathcal{F}_2(h_i, v'_i)$$
+
+where:
+- $h_i$ is the latent representation from $\mathcal{F}_1(p_i)$ (reused)
+- $v$ is the primary viewing direction
+- $v'_i$ is the secondary viewing direction
+- $\hat{T}'_i$ is the predicted visibility in the secondary view
+
+This reduces complexity from $N^2$ to just $N$ MLP $\mathcal{F}_1$ queries, since $\mathcal{F}_2$ is a single-layer MLP and significantly smaller.
+
+**Consistency Loss:** To ensure $\hat{T}_i$ matches the volume-rendered visibility $T_i$, an additional loss is introduced:
+
+$$\mathcal{L}_v = \sum_{i=1}^{N} \left[ \|\text{SG}(T_i) - \hat{T}_i\|^2 + \|T_i - \text{SG}(\hat{T}_i)\|^2 \right]$$
+
+where $\text{SG}(\cdot)$ denotes stop-gradient operation. The bidirectional loss enables:
+- First term: brings $\hat{T}_i$ closer to $T_i$
+- Second term: transfers updates from visibility prior back to $\mathcal{F}_1$ efficiently
+
+### Complete Loss Function
+
+ViP-NeRF combines multiple loss terms:
+
+$$\mathcal{L} = \lambda_1 \mathcal{L}_{\text{mse}} + \lambda_2 \mathcal{L}_{\text{sd}} + \lambda_3 \mathcal{L}_{\text{vip}} + \lambda_4 \mathcal{L}_v$$
+
+where:
+- $\mathcal{L}_{\text{mse}} = \|c - \hat{c}\|^2$: standard NeRF photometric loss
+- $\mathcal{L}_{\text{sd}} = \|z - \hat{z}\|^2$: sparse depth supervision from SfM (following DS-NeRF)
+- $\mathcal{L}_{\text{vip}}$: visibility prior loss (dense supervision on relative depth)
+- $\mathcal{L}_v$: visibility consistency loss
+
+Hyperparameters are set as: $\lambda_1 = 1$, $\lambda_2 = 0.1$, $\lambda_3 = 0.001$, $\lambda_4 = 0.1$.
+
+**Training Strategy:**
+- $\mathcal{L}_{\text{vip}}$ is imposed after 20,000 iterations to ensure $\hat{T}'_i \approx T'_i$
+- Total training: 50,000 iterations with Adam optimizer
+- Learning rate: $5 \times 10^{-4}$ exponentially decaying to $5 \times 10^{-6}$
+- Plane sweep volume parameters: $D = 64$ planes, $\gamma = 10$
+
+### Why Visibility Over Dense Depth?
+
+**Advantages of Visibility Prior:**
+
+1. **No Pre-training Required:** Computed using plane sweep volumes directly from input views
+2. **More Reliable:** Focuses on relative depth rather than absolute depth
+3. **Dense Supervision:** Provides pixel-wise constraints across view pairs
+4. **Cross-view Consistency:** Regularizes NeRF across pairs of views, unlike single-view regularization
+
+**Comparison with Dense Depth Priors:**
+- Dense depth priors (like DDP-NeRF) constrain absolute depth but may be inaccurate due to generalization errors
+- Visibility prior constrains relative depth ordering, providing more freedom for NeRF to reconstruct correct 3D geometry
+- Visibility is inherently easier to estimate reliably without sophisticated pre-trained networks
+
+### Complementary Supervision
+
+ViP-NeRF uses visibility prior **in conjunction with** sparse depth from SfM:
+- **Sparse depth ($\mathcal{L}_{\text{sd}}$):** Provides accurate but sparse supervision on absolute depth (at SfM keypoints)
+- **Dense visibility ($\mathcal{L}_{\text{vip}}$):** Provides dense but relative supervision across all pixels
+
+These two priors provide complementary information:
+- Sparse depth anchors the absolute scale
+- Dense visibility constrains relative geometry and prevents overfitting
+
+Ablation studies show that removing either prior degrades performance, confirming their complementary nature.
+
+---
+
 ## MiDAS
-## FSGS
+
+---
+
+## DUSt3R: Geometric 3D Vision Made Easy
+
+### Overview
+
+{{< figure src="../../images/3dvis/dust3r-arch.png"
+num="13"
+caption="**Architecture of the network $\mathcal{F}$.** Two views of a scene $(I^1, I^2)$ are first encoded in a Siamese manner with a shared ViT encoder. The resulting token representations $F^1$ and $F^2$ are then passed to two transformer decoders that constantly exchange information via cross-attention. Finally, two regression heads output the two corresponding pointmaps and associated confidence maps. Importantly, the two pointmaps are expressed in the same coordinate frame of the first image $I^1$. The network $\mathcal{F}$ is trained using a simple regression loss"
+width="100%" 
+>}}
+
+DUSt3R (Dense Unconstrained Stereo 3D Reconstruction) represents a paradigm shift from the traditional "SfM $\rightarrow$ MVS $\rightarrow$ Meshing" pipeline. Instead of solving for camera parameters (intrinsics/extrinsics) explicitly to then triangulate points, DUSt3R treats 3D reconstruction as a direct **regression problem** of dense 3D pointmaps from uncalibrated images.
+
+### The Pointmap Representation
+
+For an image $I \in \mathbb{R}^{H \times W \times 3}$, the network outputs a **Pointmap** $X \in \mathbb{R}^{H \times W \times 3}$:
+
+$$
+X_{i,j} = (x, y, z) \in \mathbb{R}^3
+$$
+
+This vector represents the 3D coordinates of the pixel $(i,j)$ in the scene.
+
+Crucially, for a pair of images $I^1$ and $I^2$, the network predicts two pointmaps $X^{1,1}$ and $X^{2,1}$ where **both are expressed in the coordinate frame of the first image $I^1$**. This implicitly solves the pixel matching and relative pose estimation problems simultaneously without explicit geometric constraints.
+
+### Network Architecture
+
+The model uses a Transformer-based architecture inspired by CroCo:
+
+1. **Siamese Encoder:** A shared ViT encodes $I^1$ and $I^2$ into token representations $F^1$ and $F^2$.
+
+2. **Cross-Attention Decoder:** The decoder branches constantly exchange information to resolve scale and correspondences:
+   
+   $$G^1_i = \text{DecoderBlock}(G^1_{i-1}, G^2_{i-1})$$
+
+3. **Regression Heads:** Outputs the pointmaps $X$ and a **Confidence Map** $C$ (which learns to identify invalid regions like sky or translucent objects). The confidence is defined as $C^{v,1}_i = 1 + \exp(g^{C^{v,1}_i}) > 1$, ensuring strictly positive values.
+
+### Training Objective
+
+The network is trained with a simple 3D regression loss:
+
+$$
+\mathcal{L}_{\text{regr}}(v, i) = \frac{1}{z} X^{v,1}_i - \frac{1}{\bar{z}} \bar{X}^{v,1}_i
+$$
+
+where $z$ and $\bar{z}$ are normalization factors representing the average distance of all valid points to the origin:
+
+$$
+\text{norm}(X^1, X^2) = \frac{1}{|D^1| + |D^2|} \sum_{v \in \{1,2\}} \sum_{i \in D^v} \|X^v_i\|
+$$
+
+This makes the reconstruction scale-invariant.
+
+A confidence-aware loss is also used:
+
+$$
+\mathcal{L}_{\text{conf}} = \sum_{v \in \{1,2\}} \sum_{i \in D^v} C^{v,1}_i \cdot \mathcal{L}_{\text{regr}}(v, i) - \alpha \log C^{v,1}_i
+$$
+
+where $\alpha$ is a hyperparameter controlling the regularization term, encouraging the network to extrapolate in harder areas.
+
+### Global Alignment
+
+Since the network operates pairwise, reconstructing a full scene requires fusing predictions from multiple pairs. DUSt3R constructs a connectivity graph $\mathcal{G}(\mathcal{V}, \mathcal{E})$ where vertices are images and edges indicate shared visual content between image pairs.
+
+We seek global pointmaps $\chi$ and rigid transformations $P_e$ (pose) and $\sigma_e$ (scale) for each edge to align the pairwise predictions into a common frame:
+
+$$
+\chi^* = \mathop{\arg \min}_{\chi, P, \sigma} \sum_{e \in \mathcal{E}} \sum_{v \in e} \sum_{i=1}^{HW} C_i^{v,e} \left\| \chi_i^v - \sigma_e P_e X_i^{v,e} \right\|
+$$
+
+To avoid the trivial optimum where $\sigma_e = 0, \forall e \in \mathcal{E}$, the constraint $\prod_e \sigma_e = 1$ is enforced.
+
+This optimization aligns all pairwise pointmaps in 3D space directly, avoiding the complexity of traditional Bundle Adjustment or 2D reprojection errors. The optimization is fast and simple, typically converging in a few hundred steps using standard gradient descent.
+
+### Downstream Applications
+
+From the predicted pointmaps, various geometric quantities can be straightforwardly extracted:
+
+- **Point Matching:** Correspondences between pixels are found via reciprocal nearest neighbor search in 3D pointmap space: $\mathcal{M}^{1,2} = \{(i, j) | i = \text{NN}^{1,2}_1(j) \text{ and } j = \text{NN}^{2,1}_1(i)\}$
+
+- **Camera Intrinsics:** Recovered by solving for focal length $f^*_1$ using confidence-weighted optimization. The principal point is assumed to be approximately centered.
+
+- **Relative Pose:** Estimated via Procrustes alignment between pointmaps $X^{1,1} \leftrightarrow X^{1,2}$ or using PnP-RANSAC for more robustness against noise and outliers.
+
+- **Absolute Pose:** Visual localization achieved by obtaining 2D-3D correspondences between query and reference images, then running PnP-RANSAC, or by estimating relative pose and scaling appropriately.
+
+---
+
+## InstantSplat: Sparse-view 3D Reconstruction in Seconds
+
+### Overview
+
+{{< figure src="../../images/3dvis/instantsplat-pipeline.png"
+num="14"
+caption="InstantSplat Pipeline. Multi-view unposed captures. Initialization using a geometric foundation model followed by co-visibility pruning. Joint optimization of 3D Gaussians and camera poses."
+width="100%" 
+>}}
+
+InstantSplat achieves sparse-view 3D reconstruction in **seconds** by removing the reliance on COLMAP SfM, which is slow and often fragile in sparse settings. It synergizes a geometric foundation model (MASt3R) for dense initialization with a fast 3DGS-based joint optimization.
+
+### The Problem with Traditional Approaches
+
+Standard 3D-GS relies on COLMAP for:
+1. Camera pose estimation
+2. Sparse point cloud initialization via Structure-from-Motion
+
+However, COLMAP is:
+- **Slow:** Takes minutes to hours for pose estimation
+- **Fragile:** Often fails with sparse views due to insufficient feature matches
+- **Error-prone:** Small perturbations in poses or point distribution significantly degrade 3D-GS quality
+
+### Co-visible Global Geometry Initialization
+
+Instead of starting from a sparse SfM cloud, InstantSplat initializes using **MASt3R** (a stereo prior model based on DUSt3R). This provides:
+
+1. **Dense Point Cloud:** Millions of initial points derived directly from image pixels.
+2. **Initial Poses:** Extracted from the aligned pointmaps.
+
+**View Ranking by Confidence:**
+
+Before redundancy elimination, views are ranked by their average confidence score:
+
+$$
+s_i = \frac{1}{|O^i|} \sum_{o \in O^i} o
+$$
+
+where $s_i$ represents the average confidence of view $i$. Views with higher confidence are considered more reliable.
+
+**Redundancy Elimination:**
+
+Since MASt3R predicts a pointmap for *every* image pair, simply merging them creates massive redundancy (millions of duplicate points). InstantSplat uses a **Co-visibility** check, processing views in ascending order of confidence (from lowest to highest).
+
+For each view $j$, points from higher-confidence views $\{i | s_i > s_j\}$ are projected onto view $j$:
+
+$$
+D_{\text{proj},j} = \bigcap_{\{i|s_i > s_j\}} \text{Proj}_j(\tilde{P}^i)
+$$
+
+Points in view $j$ are pruned based on depth consistency:
+
+$$
+\mathcal{M}_j = \begin{cases} 
+1 & \text{if } |D_{\text{proj}, j} - D_{\text{orig}, j}| < \theta \\ 
+0 & \text{otherwise} 
+\end{cases}
+$$
+
+The final pruned pointmap is: $\tilde{P}^j = (1 - \mathcal{M}_j) \cdot \tilde{P}^j$
+
+This significantly reduces the number of primitives and accelerates training.
+
+**Focal Length Averaging:**
+
+After global alignment, focal lengths from pairwise predictions remain inconsistent. Assuming a single-camera capture setup, InstantSplat stabilizes estimates by averaging:
+
+$$
+\bar{f} = \frac{1}{N} \sum_{i=1}^{N} f^*_i
+$$
+
+This simple step significantly improves visual quality.
+
+### Joint Optimization
+
+With the scene initialized, InstantSplat performs a **Gaussian-based Bundle Adjustment**. It jointly optimizes the Gaussian parameters $G$ and the camera poses $T$ by minimizing the photometric error between rendered and observed images:
+
+$$
+G^*, T^* = \mathop{\arg \min}_{G, T} \sum_{v} \left\| \hat{C}_v - \text{Rasterizer}(G, T) \right\|
+$$
+
+**Confidence-aware Optimizer:**
+
+To handle errors from the initialization, the learning rate for each Gaussian is dynamically scaled based on the confidence score $O_{\text{init}}$ provided by the foundation model:
+
+$$
+\text{LR}_{\text{scale}} = (1 - \text{sigmoid}(O_{\text{init}})) \cdot \beta
+$$
+
+Low-confidence points (e.g., sky, reflections) have higher learning rates to allow them to be corrected rapidly, while high-confidence points maintain stable learning rates.
+
+**Pruning Strategy:**
+
+During optimization, Gaussians are removed based on:
+- **Opacity threshold:** Gaussians with $\alpha < \epsilon$ are pruned
+- **World-space size:** Excessively large Gaussians that likely represent floaters are removed
+
+**Test View Alignment:**
+
+For novel test views, the 3D model is frozen and only camera poses are optimized. This is done by minimizing photometric error between synthesized and actual test images, similar to iNeRF.
+
+This approach allows InstantSplat to reconstruct scenes in $\approx 7.5$ seconds with pose accuracy superior to traditional COLMAP-free methods.
+
+---
+
+## FSGS: Real-Time Few-shot View Synthesis
+
+### Overview
+
+{{< figure src="../../images/3dvis/fsgs-overview.png"
+num="12"
+caption="**FSGS Pipeline.** 3D Gaussians are initialized from COLMAP, with a few images (**black cameras**). For the sparsely placed Gaussians, we propose densifying new Gaussians to enhance scene coverage by unpooling existing Gaussians into new ones, with properly initialized Gaussian attributes. Monocular depth priors, enhanced by sampling unobserved views (**red cameras**), guide the optimization of grown Gaussians towards a reasonable geometry. The final loss consists of a photometric loss term, and a geometric regularization term calculated as depth relative correspondence."
+width="100%" 
+>}}
+
+Standard 3DGS relies heavily on the density of the initial Point Cloud (from SfM/COLMAP). In few-shot scenarios (e.g., 3 views), SfM produces extremely sparse points. This leads to the optimization satisfying training views by placing "floaters" close to the camera rather than learning correct geometry, resulting in overfitting and poor novel view synthesis.
+
+FSGS introduces a **Proximity-guided Gaussian Unpooling** to densify the initialization and uses **Pseudo-view Depth Priors** to constrain the geometry.
+
+### Proximity-guided Gaussian Unpooling
+
+To address the limited 3D scene coverage, FSGS constructs a directed graph (the "proximity graph") connecting each existing Gaussian $G_i$ to its $K$ nearest neighbors (typically $K=3$).
+
+**Proximity Score Calculation:**
+
+For each Gaussian $G_i$, the $K$ nearest neighbors are identified:
+
+$$
+D^K_i = \text{K-min}(d_{ij}), \quad \forall j \neq i
+$$
+
+where $d_{ij} = \|\mu_i - \mu_j\|$ is the Euclidean distance between Gaussian centers.
+
+The **Proximity Score** $P_i$ is calculated as the average distance to these neighbors:
+
+$$
+P_i = \frac{1}{K} \sum_{j=1}^{K} D^K_i
+$$
+
+**Gaussian Unpooling Strategy:**
+
+If $P_i$ exceeds a threshold $t_{\text{prox}}$, the region is considered under-reconstructed. New Gaussians are "unpooled" at the center of each edge connecting the source Gaussian to its $K$ destination neighbors.
+
+For each new Gaussian:
+- **Position:** Placed at the midpoint between source and destination: $\mu_{\text{new}} = \frac{\mu_{\text{source}} + \mu_{\text{dest}}}{2}$
+- **Scale & Opacity:** Copied from the destination Gaussian
+- **Rotation:** Initialized to identity (zero quaternion)
+- **SH Coefficients:** Initialized to zero
+
+This strategy encourages Gaussians to grow in representative locations and progressively fill observation gaps. The proximity graph is updated after each densification or pruning operation.
+
+{{< figure src="../../images/3dvis/gaussian-unpooling.png"
+num="15"
+caption="**Gaussian Unpooling Illustration.** We show a 2D toy case for visualizing Gaussian Unpooling with depth guidance, where the example 1D depth provides priors on the relative distance of the Gaussians from the viewing direction, guiding the Gaussian deformation toward a better solution."
+width="60%" 
+>}}
+
+### Pseudo-view & Depth Regularization
+
+To prevent overfitting to the few training views, FSGS synthesizes **Pseudo-views** $P'$ by interpolating between the two closest training cameras in Euclidean space.
+
+**Pseudo-view Sampling:**
+
+$$
+P' = (t + \epsilon, q), \quad \epsilon \sim \mathcal{N}(0, \delta)
+$$
+
+where:
+- $t$ is the camera position from a training view
+- $q$ is the rotation quaternion averaged from the two nearest cameras
+- $\epsilon$ adds random noise to the 3-DoF camera location
+
+Pseudo-view sampling begins after initial convergence (typically after 2000 iterations) to ensure Gaussians roughly represent the scene first.
+
+**Differentiable Depth Rasterization:**
+
+To enable backpropagation from depth priors, FSGS implements differentiable depth rendering using alpha-blending:
+
+$$
+d = \sum_{i=1}^{n} d_i \alpha_i \prod_{j=1}^{i-1}(1 - \alpha_j)
+$$
+
+where $d_i$ represents the z-buffer (depth) of the $i$-th Gaussian and $\alpha$ is identical to that in color rendering.
+
+**Pearson Correlation Loss:**
+
+Because monocular depth estimators (e.g., DPT) provide relative depth that is scale and shift invariant, FSGS uses Pearson correlation to measure depth structure alignment:
+
+$$
+\text{Corr}(\hat{D}_{\text{ras}}, \hat{D}_{\text{est}}) = \frac{\text{Cov}(\hat{D}_{\text{ras}}, \hat{D}_{\text{est}})}{\sqrt{\text{Var}(\hat{D}_{\text{ras}})\text{Var}(\hat{D}_{\text{est}})}}
+$$
+
+This relaxed loss aligns the depth structure without requiring absolute depth values.
+
+**Complete Loss Function:**
+
+$$
+\mathcal{L} = \lambda_1 \|C - \hat{C}\|_1 + \lambda_2 \text{D-SSIM}(C, \hat{C}) + \lambda_3 \|\text{Corr}(D_{\text{ras}}, D_{\text{est}})\|_1
+$$
+
+where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This loss is applied to both training views and synthesized pseudo-views.
+
+### Optimization Strategy
+
+**Spherical Harmonic Progression:**
+
+Training starts with SH degree 0 (basic lighting), incrementing by 1 every 500 iterations up to degree 4. This progressive approach allows the model to first capture basic appearance before adding view-dependent effects.
+
+**Opacity Reset:**
+
+At specific iterations (e.g., 2000, 5000, 7000), opacity for all Gaussians is reset to a small value (0.05) to eliminate low-opacity floaters that don't contribute meaningfully to the scene.
+
+**Densification Schedule:**
+
+Gaussian unpooling occurs every 100 iterations, starting after iteration 500, allowing the model to first stabilize before adding complexity.
+
+---
+### Algorithm: The training pipeline of FSGS
+---
+
+<table style="border:none !important; border-collapse:collapse !important; width:100%;">
+
+<tr>
+  <td style="border:none; padding:2px 0; text-align:left;">
+    Training view images $\mathcal{I} = \{ I_i \in \mathbb{R}^{H \times W \times 3} \}_{i=1}^N$ and their associated camera poses  
+    $\mathcal{P} = \{ \phi_i \in \mathbb{R}^{3 \times 4} \}_{i=1}^N$.
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    Run SfM with the input images and camera poses and obtain an initial point cloud $\mathcal{P}$,  
+    used to define 3D Gaussians function $\mathcal{G} = \{ G_i(\mu_i, \sigma_i, c_i, \alpha_i) \}_{i=1}^K$.
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    Leverage pretrained depth estimator $\mathcal{E}$ to predict the depth map $D_i = \mathcal{E}(I_i)$.
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    Synthesize pseudo views $\mathcal{P}^\dagger = \{ \phi_i^\dagger \in \mathbb{R}^{3 \times 4} \}_{i=1}^M$ from input camera poses $\mathcal{P}$.
+  </td>
+</tr>
+
+<tr><td style="border:none; padding:2px 0;"><strong>while</strong> until convergence <strong>do</strong></td></tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Randomly sample an image $I_i \in \mathcal{I}$ and the corresponding camera pose $\phi_i$
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_i$ and the depth map $\hat{D}_i$ with camera pose $\phi_i$
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} = \lambda_1 \lVert I_i - \hat{I}_i \rVert_1 + \lambda_2\, \mathrm{D\!-\!SSIM}(I_i,\hat{I}_i) + \lambda_3\, \mathrm{Pearson}(D_i, \hat{D}_i)$
+  </td>
+</tr>
+
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> iteration $> t_{\text{iter}}$ <strong>then</strong></td></tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample a pseudo camera pose $\phi_j^\dagger \in \mathcal{P}^\dagger$
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_j^\dagger$ and the depth $\hat{D}_i^\dagger$
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the estimated depth as $D_j^\dagger = \mathcal{E}(\hat{I}_j^\dagger)$
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} \leftarrow \mathcal{L} + \lambda_4\, \mathrm{Pearson}(D_j^\dagger, \hat{D}_i^\dagger)$
+  </td>
+</tr>
+
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
+
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinement(iteration) <strong>then</strong></td></tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> each Gaussian $G_i(\mu_i,\sigma_i,c_i,\alpha_i)$
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha_i < \varepsilon$ <strong>or</strong> IsTooLarge$(\mu_i,\sigma_i)$  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RemoveGaussian()
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p \mathcal{L} > \tau_{\text{pos}}$  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianDensify()
+  </td>
+</tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> NoProximity$(\mathcal{G})$  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianUnpooling()
+  </td>
+</tr>
+
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td></tr>
+
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
+
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Update Gaussians parameter $\mathcal{G}$ via $\nabla_{\mathcal{G}} \mathcal{L}$.
+  </td>
+</tr>
+
+<tr><td style="border:none; padding:2px 0;"><strong>end while</strong></td></tr>
+
+</table>
+
+---
+
 ## CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization
 
 ### Overview
@@ -1108,9 +1975,9 @@ A notable pattern is that disagreement increases significantly during **densific
 
 **Key Point:** Both **point disagreement** (differences in Gaussian positions) and **rendering disagreement** (differences in rendered appearance or depth) are typically **negatively correlated** with reconstruction accuracy.
 
-{{< figure src="../../images/3dvis/corgs-overview.png"
+{{< figure src="../../images/3dvis/corgs-pipeline.png"
 num="1"
-caption="NeRF Overview"
+caption="Overview of CoR-GS. We train two 3D Gaussian radiance fields simultaneously and regularize them by suppressing point disagreement and rendering disagreement."
 width="100%" 
 >}}
 
@@ -1219,9 +2086,7 @@ $$
 \lambda_p = 1.0.
 $$
 
-
-## Dust3R
-## Instant Splat
+---
 
 # Dynamic Scenes
 ## Optical Flow
@@ -1418,6 +2283,8 @@ We can compute partial derivative, derive update equations (gradient decent)
 ## RAFT DERF
 ## 4DGS
 
+---
+
 # Feedforward and BARF
 ## Pixel Splat
 ### Overview 
@@ -1432,7 +2299,10 @@ For every pixel feature $F[u]$ in the input feature map, a neural network $f$ pr
 
 Instead, $f$ predicts per-pixel discrete probability distributions over depths $p_{\phi}(z)$ parameterized by $\phi$. Sampling from this distribution yields the locations of the Gaussian primitives The opacity of each Gaussian is set to the probability of the sampled depth bucket. The final set of Gaussian primitives can then be rendered from novel views using the splatting algorithm. For brevity, we use $h$ to represent the function that computes depths from bucket indices.
 
+---
+
 ## BARF
+
 
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!

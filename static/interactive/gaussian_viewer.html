@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaussian Splatting Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #eee;
+        }
+
+#ui-layer {
+    position: relative;
+    background: rgba(30, 30, 30, 0.9);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    width: 320px;
+    border: 1px solid #444;
+    max-height: 88vh; /* Slightly less than collapsible to prevent clipping */
+    overflow-y: auto;
+}
+
+
+        h1 { margin: 0 0 5px 0; font-size: 1.2rem; color: #fff; }
+        p { margin: 0 0 15px 0; font-size: 0.85rem; color: #aaa; line-height: 1.4; }
+
+        .control-group { margin-bottom: 15px; }
+        
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type=range] { width: 100%; accent-color: #f3c305; }
+
+        .file-drop-zone {
+            border: 2px dashed #666;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .file-drop-zone:hover, .file-drop-zone.dragover {
+            border-color: #f3c305;
+            color: #fff;
+            background: rgba(243, 195, 5, 0.1);
+        }
+        
+        .btn {
+            background: #444; color: white; border: none;
+            padding: 8px 16px; border-radius: 4px; cursor: pointer;
+            font-size: 0.8rem; width: 100%;
+            margin-top: 5px;
+        }
+        .btn:hover { background: #555; }
+
+        .stats {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #444;
+            font-size: 0.75rem;
+            color: #666;
+            font-family: monospace;
+        }
+        
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        #loading-overlay.active { opacity: 1; pointer-events: auto; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #f3c305; border-top-color: transparent;
+            border-radius: 50%; animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+#ui-toggle {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 99999;
+    width: 40px;
+    height: 40px;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ui-toggle:hover {
+    background: rgba(50, 50, 50, 0.95);
+}
+
+/* Collapsible container */
+#ui-collapsible {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 99990;
+    max-height: 800px;     /* <<< MUST EXIST */
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height .35s ease, opacity .25s ease;
+}
+
+#ui-collapsible.closed {
+    max-height: 0px; 
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+    </style>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text">Generating Scene...</div>
+</div>
+
+<button id="ui-toggle">☰</button>
+
+<div id="ui-collapsible" class="closed">
+    <div id="ui-layer">
+        <h1>Gaussian Splat Viewer</h1>
+        <p>Procedural demo or upload a trained <code>.ply</code> file.</p>
+
+        <div class="file-drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            Drag & Drop trained .ply<br>
+            <span style="font-size:0.7em">(or click to browse)</span>
+        </div>
+        <input type="file" id="file-input" accept=".ply" style="display:none">
+
+        <div class="control-group">
+            <label>Splat Scale <span id="val-scale">1.0</span></label>
+            <input type="range" id="slider-scale" min="0.1" max="5.0" step="0.1" value="1.0">
+        </div>
+
+        <div class="control-group">
+            <label>Opacity Multiplier <span id="val-opacity">1.0</span></label>
+            <input type="range" id="slider-opacity" min="0.1" max="2.0" step="0.1" value="1.0">
+        </div>
+        
+        <div class="control-group">
+            <label>Decimation (1/N points) <span id="val-decim">1</span></label>
+            <input type="range" id="slider-decim" min="1" max="20" step="1" value="1">
+            <p style="font-size:0.7em; margin:2px 0 0 0;">Increase if file is laggy.</p>
+        </div>
+
+        <button class="btn" onclick="resetToLego()">Reset to Lego Bulldozer</button>
+
+        <div class="stats" id="stats-box">
+            Mode: Procedural Demo<br>
+            Splats: ~15,000
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Configuration & Globals ---
+    const SH_C0 = 0.28209479177387814;
+    let instancedMesh;
+    let splatData = []; // Stores raw data {pos, rot, scale, color, opacity}
+    
+    // --- Scene Setup ---
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x111111);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 500);
+    camera.position.set(8, 6, 8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.sortObjects = true; 
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 1.0;
+
+    // --- Geometry Setup ---
+    // Low poly sphere for the splat
+    const geometry = new THREE.SphereGeometry(1, 8, 8);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 1.0,
+        depthWrite: false,
+        blending: THREE.NormalBlending,
+        side: THREE.DoubleSide
+    });
+
+    // --- Procedural Lego Generator ---
+    const LEGO_YELLOW = new THREE.Color(0xf3c305);
+    const LEGO_BLACK = new THREE.Color(0x1b2a34);
+    const LEGO_GREY = new THREE.Color(0xa0a5a9);
+    const LEGO_BLUE = new THREE.Color(0x0055bf);
+
+    let sortedIndices = [];
+
+function sortSplatsByDepth() {
+    if (!instancedMesh || !splatData.length) return;
+    
+    const camPos = camera.position;
+    const tempArray = [];
+    
+    // Calculate distances and store with original index
+    for (let i = 0; i < splatData.length; i++) {
+        const s = splatData[i];
+        const dist = s.pos.distanceToSquared(camPos);
+        tempArray.push({ index: i, distance: dist });
+    }
+    
+    // Sort back-to-front (furthest first for correct blending)
+    tempArray.sort((a, b) => b.distance - a.distance);
+    
+    // Extract sorted indices
+    sortedIndices = tempArray.map(item => item.index);
+    
+    // Reorder instances based on sorted indices
+    const dummy = new THREE.Object3D();
+    const globalScale = parseFloat(document.getElementById('slider-scale').value);
+    
+    for (let i = 0; i < sortedIndices.length; i++) {
+        const idx = sortedIndices[i];
+        const s = splatData[idx];
+        
+        dummy.position.copy(s.pos);
+        dummy.quaternion.copy(s.rot);
+        dummy.scale.copy(s.scale).multiplyScalar(globalScale);
+        dummy.updateMatrix();
+        
+        instancedMesh.setMatrixAt(i, dummy.matrix);
+        instancedMesh.setColorAt(i, s.color);
+    }
+    
+    instancedMesh.instanceMatrix.needsUpdate = true;
+    instancedMesh.instanceColor.needsUpdate = true;
+}
+
+    function createProceduralData() {
+        const data = [];
+        function fillBox(cx, cy, cz, wx, wy, wz, color, density = 20) {
+            const count = Math.floor(wx * wy * wz * density);
+            for (let i = 0; i < count; i++) {
+                const x = cx + (Math.random() - 0.5) * wx;
+                const y = cy + (Math.random() - 0.5) * wy;
+                const z = cz + (Math.random() - 0.5) * wz;
+                const sx = 0.05 + Math.random() * 0.1;
+                const sy = 0.05 + Math.random() * 0.1;
+                const sz = 0.05 + Math.random() * 0.1;
+                const q = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI));
+                
+                data.push({
+                    pos: new THREE.Vector3(x, y, z),
+                    scale: new THREE.Vector3(sx, sy, sz),
+                    rot: q,
+                    color: color.clone().multiplyScalar(0.8 + Math.random() * 0.4),
+                    opacity: 0.8
+                });
+            }
+        }
+        // Tracks
+        fillBox(0, 0.5, 2, 6, 1, 1, LEGO_BLACK);
+        fillBox(0, 0.5, -2, 6, 1, 1, LEGO_BLACK);
+        // Body
+        fillBox(0, 1.5, 0, 4, 1.5, 3, LEGO_YELLOW, 30);
+        fillBox(-2.5, 1.8, 0, 1.5, 1.2, 2.5, LEGO_YELLOW, 30);
+        // Cabin
+        fillBox(0.5, 3.2, 0, 2, 2, 2.5, LEGO_BLACK, 15);
+        fillBox(0.5, 3.2, 0, 1.8, 1.8, 2.3, LEGO_BLUE, 5);
+        // Bucket
+        fillBox(2.5, 1.5, 1.6, 3, 0.5, 0.3, LEGO_GREY, 40);
+        fillBox(2.5, 1.5, -1.6, 3, 0.5, 0.3, LEGO_GREY, 40);
+        fillBox(4.5, 0.8, 0, 1, 1.5, 4.5, LEGO_BLACK, 30);
+        fillBox(4.2, 1.8, 0, 0.5, 1.5, 4.5, LEGO_BLACK, 30);
+        
+        return data;
+    }
+
+    // --- PLY Parser ---
+    async function loadPLY(buffer) {
+        const decimation = parseInt(document.getElementById('slider-decim').value);
+        const textDecoder = new TextDecoder();
+        const headerLength = 2000; // Roughly peek header
+        const headerText = textDecoder.decode(new Uint8Array(buffer, 0, headerLength));
+        
+        // Parse Header
+        const headerEndIndex = headerText.indexOf('end_header');
+        if (headerEndIndex === -1) throw new Error("Invalid PLY file");
+        
+        const headerLines = headerText.substring(0, headerEndIndex).split('\n');
+        let vertexCount = 0;
+        let propertyTypes = [];
+        
+        // Mapping common PLY property names to our internal indices
+        const propMapping = {
+            'x': 'x', 'y': 'y', 'z': 'z',
+            'f_dc_0': 'r', 'f_dc_1': 'g', 'f_dc_2': 'b',
+            'opacity': 'opacity',
+            'scale_0': 'sx', 'scale_1': 'sy', 'scale_2': 'sz',
+            'rot_0': 'rw', 'rot_1': 'rx', 'rot_2': 'ry', 'rot_3': 'rz'
+        };
+
+        for (let line of headerLines) {
+            line = line.trim();
+            if (line.startsWith('element vertex')) {
+                vertexCount = parseInt(line.split(' ')[2]);
+            } else if (line.startsWith('property')) {
+                const parts = line.split(' ');
+                const name = parts[parts.length - 1];
+                propertyTypes.push(propMapping[name] || 'unknown');
+            }
+        }
+
+        const dataStart = headerEndIndex + "end_header\n".length;
+        const dataView = new DataView(buffer, dataStart);
+        const stride = propertyTypes.length * 4; // Assuming all float32 for simplicity (standard for trained ply)
+        
+        const newData = [];
+        const centerSum = new THREE.Vector3();
+        let loadedCount = 0;
+
+        // Helper: sigmoid and exp
+        const sigmoid = (v) => 1 / (1 + Math.exp(-v));
+        const SH2RGB = (v) => 0.5 + SH_C0 * v; // Approximation for DC
+
+        for (let i = 0; i < vertexCount; i += decimation) {
+            const offset = i * stride;
+            if (offset + stride > dataView.byteLength) break;
+
+            const raw = {};
+            for (let p = 0; p < propertyTypes.length; p++) {
+                const type = propertyTypes[p];
+                if (type !== 'unknown') {
+                    raw[type] = dataView.getFloat32(offset + p * 4, true); // Little endian
+                }
+            }
+
+            // Apply Gaussian Splatting transformations
+            // 1. Position
+            const pos = new THREE.Vector3(raw.x, raw.y, raw.z);
+            
+            // 2. Scale (stored as log scale)
+            const scale = new THREE.Vector3(
+                Math.exp(raw.sx), 
+                Math.exp(raw.sy), 
+                Math.exp(raw.sz)
+            );
+
+            // 3. Rotation (Quaternion) - Normailze it
+            const rot = new THREE.Quaternion(raw.rx, raw.ry, raw.rz, raw.rw).normalize();
+
+            // 4. Color (SH DC)
+            const r = Math.max(0, Math.min(1, SH2RGB(raw.r)));
+            const g = Math.max(0, Math.min(1, SH2RGB(raw.g)));
+            const b = Math.max(0, Math.min(1, SH2RGB(raw.b)));
+            const color = new THREE.Color(r, g, b);
+
+            // 5. Opacity (Sigmoid)
+            const opacity = sigmoid(raw.opacity);
+
+            // Cull very transparent points
+            if (opacity > 0.05) {
+                newData.push({ pos, scale, rot, color, opacity });
+                centerSum.add(pos);
+                loadedCount++;
+            }
+        }
+
+        // Center the object
+        if (loadedCount > 0) {
+            centerSum.divideScalar(loadedCount);
+            newData.forEach(s => s.pos.sub(centerSum));
+        }
+
+        return newData;
+    }
+
+    // --- Rendering Logic ---
+    function buildMesh(data) {
+        if (instancedMesh) {
+            scene.remove(instancedMesh);
+            instancedMesh.dispose();
+        }
+
+        instancedMesh = new THREE.InstancedMesh(geometry, material, data.length);
+        const dummy = new THREE.Object3D();
+
+        for (let i = 0; i < data.length; i++) {
+            const s = data[i];
+            dummy.position.copy(s.pos);
+            dummy.quaternion.copy(s.rot);
+            dummy.scale.copy(s.scale);
+            dummy.updateMatrix();
+            
+            instancedMesh.setMatrixAt(i, dummy.matrix);
+            instancedMesh.setColorAt(i, s.color);
+        }
+        
+        instancedMesh.instanceMatrix.needsUpdate = true;
+        instancedMesh.instanceColor.needsUpdate = true;
+        scene.add(instancedMesh);
+        splatData = data; // Save for updates
+        
+        // Reset Camera
+        controls.reset();
+        camera.position.set(8, 6, 8);
+        controls.autoRotate = false; // Stop rotating for loaded models usually
+    }
+
+    function updateSplats() {
+        if (!instancedMesh || !splatData.length) return;
+        sortSplatsByDepth(); // Use sorting instead of direct update
+
+        const globalScale = parseFloat(document.getElementById('slider-scale').value);
+        const opMult = parseFloat(document.getElementById('slider-opacity').value);
+        const dummy = new THREE.Object3D();
+
+        // We re-iterate to apply global scale updates
+        // Note: Doing this every frame for 1M points is slow, so we do it only on slider change
+        for (let i = 0; i < splatData.length; i++) {
+            const s = splatData[i];
+            dummy.position.copy(s.pos);
+            dummy.quaternion.copy(s.rot);
+            dummy.scale.copy(s.scale).multiplyScalar(globalScale);
+            dummy.updateMatrix();
+            instancedMesh.setMatrixAt(i, dummy.matrix);
+        }
+        instancedMesh.instanceMatrix.needsUpdate = true;
+        material.opacity = 1.0; // Base material opacity
+        
+        // Note: Real GS blending requires per-splat alpha, but InstancedMesh shares material opacity.
+        // We approximate by pre-culling low opacity splats and modulating global material opacity.
+        // For a true viewer, we'd need a custom shader attribute for opacity.
+    }
+
+    // --- Init ---
+    function initLego() {
+        const data = createProceduralData();
+        buildMesh(data);
+        document.getElementById('stats-box').innerHTML = `Mode: Procedural Demo<br>Splats: ${data.length}`;
+        controls.autoRotate = true;
+    }
+    
+    // --- Event Listeners ---
+    
+    // File Handling
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    function handleFile(file) {
+        if (!file.name.toLowerCase().endsWith('.ply')) {
+            alert("Please upload a .ply file.");
+            return;
+        }
+
+        loadingOverlay.classList.add('active');
+        document.getElementById('loading-text').innerText = `Parsing ${file.name}...`;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const data = await loadPLY(e.target.result);
+                buildMesh(data);
+                document.getElementById('stats-box').innerHTML = `Mode: Loaded PLY<br>Splats: ${data.length}`;
+                updateSplats();
+            } catch (err) {
+                console.error(err);
+                alert("Error parsing PLY: " + err.message);
+            } finally {
+                loadingOverlay.classList.remove('active');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) handleFile(e.target.files[0]);
+    });
+
+    // UI Controls
+    document.getElementById('slider-scale').addEventListener('input', (e) => {
+        document.getElementById('val-scale').innerText = e.target.value;
+        updateSplats();
+    });
+    document.getElementById('slider-opacity').addEventListener('input', (e) => {
+        document.getElementById('val-opacity').innerText = e.target.value;
+        // We just scale the material opacity for now
+        material.opacity = parseFloat(e.target.value);
+    });
+    document.getElementById('slider-decim').addEventListener('input', (e) => {
+        document.getElementById('val-decim').innerText = e.target.value;
+    });
+
+    // Global Reset
+    window.resetToLego = initLego;
+
+    // --- Loop ---
+    let frameCount = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        
+        // Sort every 2 frames for balance between quality and performance
+        if (frameCount % 2 === 0) {
+            sortSplatsByDepth();
+        }
+        frameCount++;
+        
+        renderer.render(scene, camera);
+    }
+
+    
+    initLego();
+    animate();
+
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // UI Toggle Handler
+const uiToggle = document.getElementById("ui-toggle");
+const uiCollapsible = document.getElementById("ui-collapsible");
+
+uiToggle.addEventListener("click", () => {
+    const nowClosed = uiCollapsible.classList.toggle("closed");
+    uiToggle.textContent = nowClosed ? "☰" : "✕";
+});
+
+</script>
+</body>
+</html>

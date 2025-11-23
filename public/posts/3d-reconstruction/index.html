@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
     </div>
-    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;32 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;53 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -202,7 +202,39 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#mpi" aria-label="MPI">MPI</a></li>
                 <li>
-                    <a href="#stereo-magnification" aria-label="Stereo Magnification">Stereo Magnification</a></li></ul>
+                    <a href="#stereo-magnification" aria-label="Stereo Magnification">Stereo Magnification</a></li>
+                <li>
+                    <a href="#volume-rendering" aria-label="Volume Rendering">Volume Rendering</a><ul>
+                        
+                <li>
+                    <a href="#the-physics-of-light-transport" aria-label="The Physics of Light Transport">The Physics of Light Transport</a><ul>
+                        
+                <li>
+                    <a href="#the-differential-equation" aria-label="The Differential Equation">The Differential Equation</a></li>
+                <li>
+                    <a href="#the-integral-form" aria-label="The Integral Form">The Integral Form</a></li>
+                <li>
+                    <a href="#intuition-transmittance" aria-label="Intuition: Transmittance">Intuition: Transmittance</a></li>
+                <li>
+                    <a href="#the-differential-equation-1" aria-label="The Differential Equation">The Differential Equation</a></li>
+                <li>
+                    <a href="#solving-the-ode" aria-label="Solving the ODE">Solving the ODE</a></li>
+                <li>
+                    <a href="#initial-condition" aria-label="Initial Condition">Initial Condition</a></li></ul>
+                </li>
+                <li>
+                    <a href="#discretization-numerical-quadrature" aria-label="Discretization (Numerical Quadrature)">Discretization (Numerical Quadrature)</a><ul>
+                        
+                <li>
+                    <a href="#1-from-density-to-alpha-" aria-label="1. From Density to Alpha ($\alpha$)">1. From Density to Alpha ($\alpha$)</a></li>
+                <li>
+                    <a href="#2-discrete-transmittance" aria-label="2. Discrete Transmittance">2. Discrete Transmittance</a></li>
+                <li>
+                    <a href="#3-the-compositing-formula" aria-label="3. The Compositing Formula">3. The Compositing Formula</a></li></ul>
+                </li>
+                <li>
+                    <a href="#proof-summation-of-weights" aria-label="Proof: Summation of Weights">Proof: Summation of Weights</a></li></ul>
+                </li></ul>
                 </li>
                 <li>
                     <a href="#radiance-fields" aria-label="Radiance Fields">Radiance Fields</a><ul>
@@ -233,6 +265,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#coarse-to-fine" aria-label="Coarse to Fine">Coarse to Fine</a></li>
                 <li>
+                    <a href="#interactive-plenoctree" aria-label="Interactive PlenOctree">Interactive PlenOctree</a></li>
+                <li>
                     <a href="#optimization" aria-label="Optimization">Optimization</a></li></ul>
                 </li>
                 <li>
@@ -256,6 +290,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#factorizing-radiance-fields" aria-label="Factorizing Radiance Fields">Factorizing Radiance Fields</a></li>
                 <li>
                     <a href="#interpolation-1" aria-label="Interpolation">Interpolation</a></li>
+                <li>
+                    <a href="#interactive-overview-of-tensorf" aria-label="Interactive Overview of TensoRF">Interactive Overview of TensoRF</a></li>
                 <li>
                     <a href="#rendering-process" aria-label="Rendering Process">Rendering Process</a></li>
                 <li>
@@ -301,9 +337,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#pruning" aria-label="Pruning">Pruning</a></li></ul>
                 </li>
                 <li>
-                    <a href="#algorithm-1-optimization-and-densification" aria-label="Algorithm 1 Optimization and Densification">Algorithm 1 Optimization and Densification</a></li>
+                    <a href="#algorithm-optimization-and-densification" aria-label="Algorithm: Optimization and Densification">Algorithm: Optimization and Densification</a></li>
                 <li>
-                    <a href="#training-loss" aria-label="Training Loss">Training Loss</a></li></ul>
+                    <a href="#training-loss" aria-label="Training Loss">Training Loss</a></li>
+                <li>
+                    <a href="#interactive-gaussian-viewer" aria-label="Interactive Gaussian Viewer">Interactive Gaussian Viewer</a></li></ul>
                 </li></ul>
                 </li>
                 <li>
@@ -319,27 +357,83 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#ray-distribution" aria-label="Ray Distribution">Ray Distribution</a></li>
                 <li>
-                    <a href="#idealized-distribution" aria-label="Idealized distribution">Idealized distribution</a></li></ul>
-                </li>
+                    <a href="#idealized-distribution" aria-label="Idealized distribution">Idealized distribution</a></li>
                 <li>
                     <a href="#deriving-depth-supervision" aria-label="Deriving Depth Supervision">Deriving Depth Supervision</a><ul>
-                        <ul>
                         
                 <li>
                     <a href="#ray-distribution-loss" aria-label="Ray Distribution Loss">Ray Distribution Loss</a></li></ul>
-                    </ul>
+                </li></ul>
                 </li>
                 <li>
-                    <a href="#vip-nerf" aria-label="VIP NeRF">VIP NeRF</a></li>
+                    <a href="#vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields" aria-label="ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields">ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields</a><ul>
+                        
+                <li>
+                    <a href="#overview-6" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#the-visibility-prior-concept" aria-label="The Visibility Prior Concept">The Visibility Prior Concept</a></li>
+                <li>
+                    <a href="#computing-visibility-prior-using-plane-sweep-volumes" aria-label="Computing Visibility Prior using Plane Sweep Volumes">Computing Visibility Prior using Plane Sweep Volumes</a></li>
+                <li>
+                    <a href="#visibility-regularization-loss" aria-label="Visibility Regularization Loss">Visibility Regularization Loss</a></li>
+                <li>
+                    <a href="#efficient-visibility-prediction" aria-label="Efficient Visibility Prediction">Efficient Visibility Prediction</a></li>
+                <li>
+                    <a href="#complete-loss-function" aria-label="Complete Loss Function">Complete Loss Function</a></li>
+                <li>
+                    <a href="#why-visibility-over-dense-depth" aria-label="Why Visibility Over Dense Depth?">Why Visibility Over Dense Depth?</a></li>
+                <li>
+                    <a href="#complementary-supervision" aria-label="Complementary Supervision">Complementary Supervision</a></li></ul>
+                </li>
                 <li>
                     <a href="#midas" aria-label="MiDAS">MiDAS</a></li>
                 <li>
-                    <a href="#fsgs" aria-label="FSGS">FSGS</a></li>
+                    <a href="#dust3r-geometric-3d-vision-made-easy" aria-label="DUSt3R: Geometric 3D Vision Made Easy">DUSt3R: Geometric 3D Vision Made Easy</a><ul>
+                        
+                <li>
+                    <a href="#overview-7" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#the-pointmap-representation" aria-label="The Pointmap Representation">The Pointmap Representation</a></li>
+                <li>
+                    <a href="#network-architecture-1" aria-label="Network Architecture">Network Architecture</a></li>
+                <li>
+                    <a href="#training-objective-1" aria-label="Training Objective">Training Objective</a></li>
+                <li>
+                    <a href="#global-alignment" aria-label="Global Alignment">Global Alignment</a></li>
+                <li>
+                    <a href="#downstream-applications" aria-label="Downstream Applications">Downstream Applications</a></li></ul>
+                </li>
+                <li>
+                    <a href="#instantsplat-sparse-view-3d-reconstruction-in-seconds" aria-label="InstantSplat: Sparse-view 3D Reconstruction in Seconds">InstantSplat: Sparse-view 3D Reconstruction in Seconds</a><ul>
+                        
+                <li>
+                    <a href="#overview-8" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#the-problem-with-traditional-approaches" aria-label="The Problem with Traditional Approaches">The Problem with Traditional Approaches</a></li>
+                <li>
+                    <a href="#co-visible-global-geometry-initialization" aria-label="Co-visible Global Geometry Initialization">Co-visible Global Geometry Initialization</a></li>
+                <li>
+                    <a href="#joint-optimization" aria-label="Joint Optimization">Joint Optimization</a></li></ul>
+                </li>
+                <li>
+                    <a href="#fsgs-real-time-few-shot-view-synthesis" aria-label="FSGS: Real-Time Few-shot View Synthesis">FSGS: Real-Time Few-shot View Synthesis</a><ul>
+                        
+                <li>
+                    <a href="#overview-9" aria-label="Overview">Overview</a></li>
+                <li>
+                    <a href="#proximity-guided-gaussian-unpooling" aria-label="Proximity-guided Gaussian Unpooling">Proximity-guided Gaussian Unpooling</a></li>
+                <li>
+                    <a href="#pseudo-view--depth-regularization" aria-label="Pseudo-view &amp; Depth Regularization">Pseudo-view &amp; Depth Regularization</a></li>
+                <li>
+                    <a href="#optimization-strategy" aria-label="Optimization Strategy">Optimization Strategy</a></li>
+                <li>
+                    <a href="#algorithm-the-training-pipeline-of-fsgs" aria-label="Algorithm: The training pipeline of FSGS">Algorithm: The training pipeline of FSGS</a></li></ul>
+                </li>
                 <li>
                     <a href="#cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization" aria-label="CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization">CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization</a><ul>
                         
                 <li>
-                    <a href="#overview-6" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-10" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#point-disagreement" aria-label="Point Disagreement">Point Disagreement</a></li>
                 <li>
@@ -362,11 +456,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#ground-truth-supervision" aria-label="Ground-truth supervision">Ground-truth supervision</a></li>
                 <li>
                     <a href="#final-loss" aria-label="Final loss">Final loss</a></li></ul>
-                </li>
-                <li>
-                    <a href="#dust3r" aria-label="Dust3R">Dust3R</a></li>
-                <li>
-                    <a href="#instant-splat" aria-label="Instant Splat">Instant Splat</a></li></ul>
+                </li></ul>
                 </li>
                 <li>
                     <a href="#dynamic-scenes" aria-label="Dynamic Scenes">Dynamic Scenes</a><ul>
@@ -375,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#optical-flow" aria-label="Optical Flow">Optical Flow</a><ul>
                         
                 <li>
-                    <a href="#overview-7" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-11" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#computing-optical-flow" aria-label="Computing Optical Flow">Computing Optical Flow</a></li>
                 <li>
@@ -409,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#pixel-splat" aria-label="Pixel Splat">Pixel Splat</a><ul>
                         
                 <li>
-                    <a href="#overview-8" aria-label="Overview">Overview</a></li></ul>
+                    <a href="#overview-12" aria-label="Overview">Overview</a></li></ul>
                 </li>
                 <li>
                     <a href="#barf" aria-label="BARF">BARF</a>
@@ -561,6 +651,7 @@ $$<h3 id="interactive-world-2-cam">Interactive World 2 Cam<a hidden class="ancho
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
+<hr>
 <h2 id="inverse-transform-sampling">Inverse Transform Sampling<a hidden class="anchor" aria-hidden="true" href="#inverse-transform-sampling">#</a></h2>
 <h3 id="definition">Definition<a hidden class="anchor" aria-hidden="true" href="#definition">#</a></h3>
 <p>Let $U \sim \mathrm{Unif}[0,1]$. We want to generate a random variable $X$ with CDF $F_X(x)$.<br>
@@ -593,21 +684,294 @@ $$
 X = F_X^{-1}(U).
 $$<h3 id="interactive-simulation">Interactive Simulation<a hidden class="anchor" aria-hidden="true" href="#interactive-simulation">#</a></h3>
 <iframe src="/interactive/inverse_transform_sampling.html"
-        width="150%"
+        width="100%"
         height="330"
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
+<hr>
 <h2 id="sfm">SfM<a hidden class="anchor" aria-hidden="true" href="#sfm">#</a></h2>
 <h2 id="mpi">MPI<a hidden class="anchor" aria-hidden="true" href="#mpi">#</a></h2>
 <h2 id="stereo-magnification">Stereo Magnification<a hidden class="anchor" aria-hidden="true" href="#stereo-magnification">#</a></h2>
+<hr>
+<h2 id="volume-rendering">Volume Rendering<a hidden class="anchor" aria-hidden="true" href="#volume-rendering">#</a></h2>
+<h3 id="the-physics-of-light-transport">The Physics of Light Transport<a hidden class="anchor" aria-hidden="true" href="#the-physics-of-light-transport">#</a></h3>
+<p>Unlike standard mesh rendering, where light bounces off a hard surface at a specific depth $z$, volume rendering assumes the scene is composed of particles that can <strong>emit</strong> and <strong>absorb</strong> light at any point in space (<strong>assuming no scattering</strong> of light).</p>
+<figure id="fig-1" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/voldev-cylinder2.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
+      Light beam passing through a cylinder interacting with the medium in four different ways ( we will be assuming no scattering). <em>Image credit:</em> <a href='https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html' target='_blank'>Scratchapixel</a>.
+    </figcaption></figure>
+
+<style>
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .zoom-overlay img {
+      width: 90vw;           
+      height: 75vh;          
+      object-fit: contain;   
+      
+      border-radius: 12px;
+      box-shadow: 0 0 0px rgba(0,0,0,0.45);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .zoom-overlay.active img {
+      transform: scale(1);
+    }
+  </style>
+
+<div id="zoom-overlay" class="zoom-overlay">
+<button id="zoom-close-btn"
+  style="
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:rgba(0,0,0,0.55);
+    border:none;
+    color:white;
+    font-size:1.8rem;
+    line-height:1;
+    padding:0.2em 0.5em;
+    border-radius:6px;
+    cursor:pointer;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    transition:background 0.2s;
+  "
+  aria-label="Close image"
+>&times;</button>
+  <div style="text-align:center;">
+    <img id="zoom-img" src="">
+    
+    <div id="zoom-caption"
+         style="margin-top:1em;
+           font-size:1em;
+           color:white;
+           background:rgba(0,0,0,0.65);
+           padding:0.5em 1em;
+           border-radius:6px;
+           max-width:90%;
+           margin-left:auto;
+           margin-right:auto;">
+    </div>
+
+  </div>
+</div>
+
+<script>
+const overlay = document.getElementById('zoom-overlay');
+const zoomImg = document.getElementById('zoom-img');
+const zoomCaption = document.getElementById('zoom-caption');
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('.zoomable-image');
+  if (img) {
+    zoomImg.src = img.src;
+
+    
+    const figure = img.closest('figure');
+    const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+
+    zoomCaption.innerHTML = caption;
+    overlay.classList.add('active');
+  } else if (e.target === overlay || e.target === zoomImg) {
+    overlay.classList.remove('active');
+  }
+});
+
+document.getElementById('zoom-close-btn').addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape") {
+    overlay.classList.remove('active');
+  }
+});
+
+</script>
+<h4 id="the-differential-equation">The Differential Equation<a hidden class="anchor" aria-hidden="true" href="#the-differential-equation">#</a></h4>
+<p>Let a ray $\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$ travel through a volume. At any point $t$, the radiance (light energy) $L(t)$ changes based on two competing forces:</p>
+<ol>
+<li><strong>Absorption:</strong> The medium absorbs some existing light. The amount absorbed depends on the <strong>volume density</strong> $\sigma(t)$.</li>
+<li><strong>Emission:</strong> The medium adds new light (color) $\mathbf{c}(t)$, scaled by the density.</li>
+</ol>
+<p>The change in radiance is described by the differential equation:</p>
+$$
+\frac{d L(t)}{dt} = \underbrace{\sigma(t)\mathbf{c}(t)}_{\text{Gained Light}} - \underbrace{\sigma(t)L(t)}_{\text{Lost Light}}
+$$<h4 id="the-integral-form">The Integral Form<a hidden class="anchor" aria-hidden="true" href="#the-integral-form">#</a></h4>
+<p>Solving this differential equation from the near plane $t_n$ to the far plane $t_f$ gives us the <strong>Volume Rendering Equation</strong>:</p>
+$$
+C(\mathbf{r}) = \int_{t_n}^{t_f} T(t) \cdot \sigma(t) \cdot \mathbf{c}(t) \, dt
+$$<p>Where $T(t)$ is the <strong>Transmittance</strong>.</p>
+<h4 id="intuition-transmittance">Intuition: Transmittance<a hidden class="anchor" aria-hidden="true" href="#intuition-transmittance">#</a></h4>
+<p>Transmittance $T(t)$ represents the probability that a photon travels from the camera origin $t_n$ to the current point $t$ <strong>without being absorbed</strong>.</p>
+$$
+T(t) = \exp\left( -\int_{t_n}^{t} \sigma(s) \, ds \right)
+$$<ul>
+<li>If $\sigma(s) = 0$ everywhere (empty space), the integral is 0, and $T(t) = 1$ (perfect visibility).</li>
+<li>If $\sigma(s)$ is high (dense object), the integral becomes large, and $T(t) \to 0$ (occluded).</li>
+</ul>
+<blockquote>
+<details>
+<summary style="cursor: pointer;">Proof</summary>
+Consider what happens in an infinitesimal segment $[t, t + dt]$:
+- The probability of absorption in this segment is proportional to the density >$\sigma(t)$ and the distance $dt$
+- The probability of absorption = $\sigma(t) \, dt$
+- The probability of survival = $1 - \sigma(t) \, dt$
+<h4 id="the-differential-equation-1">The Differential Equation<a hidden class="anchor" aria-hidden="true" href="#the-differential-equation-1">#</a></h4>
+<p>If $T(t)$ is the transmittance up to point $t$, then the transmittance at $t + dt$ is:</p>
+$$
+T(t + dt) = T(t) \cdot (1 - \sigma(t) \, dt)
+$$<p>This says: &ldquo;To survive to $t + dt$, you must survive to $t$ AND survive the next segment.&rdquo;</p>
+<p>Expanding:
+</p>
+$$
+T(t + dt) = T(t) - T(t) \sigma(t) \, dt
+$$<p>Rearranging:
+</p>
+$$
+T(t + dt) - T(t) = -T(t) \sigma(t) \, dt
+$$<p>Dividing both sides by $dt$:
+</p>
+$$
+\frac{T(t + dt) - T(t)}{dt} = -T(t) \sigma(t)
+$$<p>Taking the limit as $dt \to 0$:
+</p>
+$$
+\frac{dT(t)}{dt} = -\sigma(t) T(t)
+$$<h4 id="solving-the-ode">Solving the ODE<a hidden class="anchor" aria-hidden="true" href="#solving-the-ode">#</a></h4>
+<p>This is a first-order separable differential equation. We separate variables:</p>
+$$
+\frac{dT(t)}{T(t)} = -\sigma(t) \, dt
+$$<p>Integrate both sides from $t_n$ (starting point) to $t$ (current point):</p>
+$$
+\int_{T(t_n)}^{T(t)} \frac{dT'}{T'} = -\int_{t_n}^{t} \sigma(s) \, ds
+$$<p>The left side evaluates to:
+</p>
+$$
+\ln T(t) - \ln T(t_n) = -\int_{t_n}^{t} \sigma(s) \, ds
+$$$$
+\ln \frac{T(t)}{T(t_n)} = -\int_{t_n}^{t} \sigma(s) \, ds
+$$<h4 id="initial-condition">Initial Condition<a hidden class="anchor" aria-hidden="true" href="#initial-condition">#</a></h4>
+<p>At the ray origin ($t = t_n$), no absorption has occurred yet, so:
+</p>
+$$
+T(t_n) = 1
+$$<p>Substituting this:
+</p>
+$$
+\ln T(t) = -\int_{t_n}^{t} \sigma(s) \, ds
+$$<p>Exponentiating both sides:
+</p>
+$$
+T(t) = \exp\left( -\int_{t_n}^{t} \sigma(s) \, ds \right)
+$$<p><strong>Special Cases:</strong></p>
+<ul>
+<li>If $\sigma(s) = 0$ (vacuum): $T(t) = e^0 = 1$ (perfect transmission)</li>
+<li>If $\sigma(s) = \sigma_0$ (constant): $T(t) = e^{-\sigma_0 (t - t_n)}$ (exponential decay)</li>
+<li>As $\int \sigma(s) \, ds \to \infty$: $T(t) \to 0$ (complete occlusion)</li>
+</ul>
+</details></blockquote>
+<p><strong>In simple terms:</strong> The color of a pixel is the sum of all light emitted along the ray, weighted by how much &ldquo;stuff&rdquo; ($\sigma$) is at that point and how &ldquo;clear&rdquo; ($T$) the path is up to that point.</p>
+<hr>
+<h3 id="discretization-numerical-quadrature">Discretization (Numerical Quadrature)<a hidden class="anchor" aria-hidden="true" href="#discretization-numerical-quadrature">#</a></h3>
+<p>To estimate the above integral we must approximate it by breaking the ray into $N$ discrete segments (bins).</p>
+<p>Let the ray be split into segments $[t_i, t_{i+1}]$. We assume the density $\sigma_i$ and color $\mathbf{c}_i$ are constant within each segment of length $\delta_i = t_{i+1} - t_i$.</p>
+<h4 id="1-from-density-to-alpha-">1. From Density to Alpha ($\alpha$)<a hidden class="anchor" aria-hidden="true" href="#1-from-density-to-alpha-">#</a></h4>
+<p>The probability that light is occluded within a <em>single</em> segment $i$ is given by standard exponential decay:</p>
+$$
+\alpha_i = 1 - \exp(-\sigma_i \delta_i)
+$$<p>Here, $\alpha_i$ ranges from $[0, 1]$.</p>
+<ul>
+<li>$\sigma \to 0 \implies \alpha \to 0$ (Transparent)</li>
+<li>$\sigma \to \infty \implies \alpha \to 1$ (Opaque)</li>
+</ul>
+<h4 id="2-discrete-transmittance">2. Discrete Transmittance<a hidden class="anchor" aria-hidden="true" href="#2-discrete-transmittance">#</a></h4>
+<p>The transmittance $T_i$ (probability of reaching segment $i$) is the product of the &ldquo;survival probabilities&rdquo; of all previous segments:</p>
+$$
+T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
+$$<h4 id="3-the-compositing-formula">3. The Compositing Formula<a hidden class="anchor" aria-hidden="true" href="#3-the-compositing-formula">#</a></h4>
+<p>Substituting these into the integral gives the standard alpha-compositing formula used in NeRF, 3DGS, and traditional graphics:</p>
+$$
+\hat{C}(\mathbf{r}) = \sum_{i=1}^{N} \underbrace{T_i}_{\text{Vis. to Cam}} \cdot \underbrace{\alpha_i}_{\text{Opacity}} \cdot \underbrace{\mathbf{c}_i}_{\text{Color}}
+$$<p>Or compactly, defining the contribution weight $w_i = T_i \alpha_i$:</p>
+$$
+\hat{C}(\mathbf{r}) = \sum_{i=1}^{N} w_i \mathbf{c}_i
+$$<figure id="fig-2" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/vol_render_diagram.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
+      Volume Rendering Intuition. A ray passes through samples. (A) Light is emitted at a sample. (B) It must pass through previous samples to reach the camera. If an earlier sample has high opacity (alpha), the transmittance (T) drops, shielding the camera from samples behind it. [AI Generated image :)]
+    </figcaption></figure>
+
+
+<hr>
+<h3 id="proof-summation-of-weights">Proof: Summation of Weights<a hidden class="anchor" aria-hidden="true" href="#proof-summation-of-weights">#</a></h3>
+<p>A common question is whether the weights $w_i = T_i \alpha_i$ sum to 1. This is crucial for treating the rendering process as an expectation.</p>
+<p><strong>Theorem:</strong> The sum of weights $\sum_{i=1}^N T_i \alpha_i$ equals $1 - T_{final}$. If the ray hits a fully opaque background (or extends infinitely into dense matter), the sum equals exactly 1.</p>
+<p><strong>Proof via Telescoping Sum:</strong></p>
+<p>Recall the definition of discrete transmittance:
+</p>
+$$
+T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
+$$<p>The transmittance for the <em>next</em> step $T_{i+1}$ is:
+</p>
+$$
+T_{i+1} = T_i (1 - \alpha_i)
+$$<p>We can rearrange this to solve for the weight term $T_i \alpha_i$:
+</p>
+$$
+T_{i+1} = T_i - T_i \alpha_i
+$$<p>
+</p>
+$$
+T_i \alpha_i = T_i - T_{i+1}
+$$<p>Now, we sum this term over all samples $i=1$ to $N$:</p>
+$$
+\sum_{i=1}^{N} w_i = \sum_{i=1}^{N} T_i \alpha_i = \sum_{i=1}^{N} (T_i - T_{i+1})
+$$<p>This is a <strong>telescoping sum</strong>:</p>
+$$
+\begin{aligned}
+\sum_{i=1}^{N} (T_i - T_{i+1}) &= (T_1 - T_2) \\
+&+ (T_2 - T_3) \\
+&+ \dots \\
+&+ (T_N - T_{N+1})
+\end{aligned}
+$$<p>Intermediate terms cancel out, leaving only the first and last terms:</p>
+$$
+\sum_{i=1}^{N} w_i = T_1 - T_{N+1}
+$$<p>Since transmittance at the start of the ray (camera origin) is perfect visibility, $T_1 = 1$.</p>
+$$
+\sum_{i=1}^{N} w_i = 1 - T_{N+1}
+$$<p><strong>Conclusion:</strong>
+The weights sum to exactly <strong>1</strong> if and only if the remaining transmittance $T_{N+1}$ is <strong>0</strong>. This happens if the ray eventually hits an opaque surface ($\alpha_{background} = 1$) or accumulates enough density along the path to fully block light.</p>
 <h1 id="radiance-fields">Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#radiance-fields">#</a></h1>
 <h2 id="nerf">NeRF<a hidden class="anchor" aria-hidden="true" href="#nerf">#</a></h2>
 <h3 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h3>
-<figure id="fig-1" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
+<figure id="fig-3" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       NeRF Overview
     </figcaption></figure>
+
 
 <p>Uses a Neural Network to represent a continuous scene as a $5D$ vector-valued function whose input is a $3D$ location and a $2D$ viewing direction, and whose output is a volume density and emitted color.</p>
 $$
@@ -630,10 +994,12 @@ $$<ul>
 <p>Mapping the inputs to a higher dimensional space using high frequency functions before passing them to the network enables better fitting of data that contains high frequency variation.</p>
 $$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p), \cos(2^0\pi p), \dots, \sin(2^{L - 1}\pi p), \cos(2^{L - 1}\pi p))$$<p>This function $\gamma(\cdot)$ is applied separately to each of the three coordinate values in $\mathbf{x}$ which are normalized to lie in $[-1, 1]$ and to the three components of the Cartesian viewing direction unit vector $\mathbf{d}$ (which by construction lie in $[-1, 1]$).</p>
 <p>A similar mapping is used in the popular Transformer architecture, where it is referred to as a positional encoding.</p>
-<figure id="fig-2" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;"><img src="../../images/3dvis/nerf-posenc.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
+<figure id="fig-4" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/nerf-posenc.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Positional Encoding
     </figcaption></figure>
+
 
 <iframe src="/interactive/pos_enc.html"
         width="100%"
@@ -641,6 +1007,7 @@ $$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p),
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
+<hr>
 <h3 id="hierarchical-sampling">Hierarchical Sampling<a hidden class="anchor" aria-hidden="true" href="#hierarchical-sampling">#</a></h3>
 <p>To render using the NeRF we need to sample along the ray for the pixel. A ray is defined as:</p>
 $$\mathbf{r}(t) = \underbrace{\mathbf{o}}_{\text{origin}} + t\underbrace{\mathbf{d}}_{\text{direction}}$$<p>Divide the scene&rsquo;s $[z_{\text{near}}, z_{\text{far}}]$ into $n$ intervals of equal length. Uniformly sample at random within each interval:</p>
@@ -657,25 +1024,31 @@ $$\hat{C}_c(\mathbf{r}) = \sum_{i=1}^{N_c} w_i c_i, \quad w_i = T_i (1 - \exp(-\
 <p>We then sample a second set of $N_f$ locations from this distribution using inverse transform sampling, evaluate the network at the union of first and second set of samples, and compute the final rendered color of ray $\hat{C}_f(\mathbf{r})$ using $N_c + N_f$ samples.</p>
 <iframe src="/interactive/nerf.html"
         width="100%"
-        height="560"
+        height="1050"
         frameborder="0"
         style="border-radius:8px; min-width: 900px;">
 </iframe>
+<hr>
 <h3 id="loss-function">Loss Function<a hidden class="anchor" aria-hidden="true" href="#loss-function">#</a></h3>
 <p>During training, the loss is simply the total squared error between the rendered and true pixel colors for both the coarse and fine renderings:</p>
 $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) - C(\mathbf{r})\|_2^2 + \|\hat{C}_f(\mathbf{r}) - C(\mathbf{r})\|_2^2 \right]$$<p>where $\mathcal{R}$ is the set of rays in each batch, and $C(\mathbf{r})$, $\hat{C}_c(\mathbf{r})$ and $\hat{C}_f(\mathbf{r})$ are the ground truth, coarse volume predicted and fine volume predicted RGB colors for the ray $\mathbf{r}$ respectively.</p>
 <p>Note that even though the final rendering comes from $\hat{C}_f(\mathbf{r})$, we also minimize the loss of $\hat{C}_c(\mathbf{r})$ so that the weight distribution from the coarse network can be used to allocate samples in the fine network.</p>
-<figure id="fig-3" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/nerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
+<figure id="fig-5" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/nerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       NeRF MLP Architecture
     </figcaption></figure>
 
+
+<hr>
 <h2 id="plenoxels-radiance-fields-without-neural-networks">Plenoxels: Radiance Fields without Neural Networks<a hidden class="anchor" aria-hidden="true" href="#plenoxels-radiance-fields-without-neural-networks">#</a></h2>
 <h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
-<figure id="fig-4" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/plenoxel-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
+<figure id="fig-6" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/plenoxel-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       Plenoxels Overview
     </figcaption></figure>
+
 
 <p>In light of the substantial computational requirements of NeRF for both training and rendering, many recent papers have proposed methods to improve efficiency, particularly for rendering.</p>
 <h3 id="method">Method<a hidden class="anchor" aria-hidden="true" href="#method">#</a></h3>
@@ -683,10 +1056,12 @@ $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) 
 <h3 id="spherical-harmonics">Spherical Harmonics<a hidden class="anchor" aria-hidden="true" href="#spherical-harmonics">#</a></h3>
 <p>Uses spherical harmonic coefficients $\mathbf{k}$, rather than RGB values:</p>
 $$(\mathbf{k}, \sigma), \quad \mathbf{k} = (k^m_l)_{l: 0 \leq l \leq l_{max}}^{m: -l \leq m \leq l}$$<p>Each $k_l^m \in \mathbb{R}^{3}$ is a set of 3 coefficients corresponding to RGB components. In this setup, the view-dependent color $\mathbf{c}$ at a point $\mathbf{x}$ may be determined by querying the SH functions $Y_l^m:\mathbb{S}\rightarrow\mathbb{R}$ at desired viewing angle $\mathbf{d}$:</p>
-$$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$<figure id="fig-5" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/3dvis/spherical-harmonics.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
+$$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$<figure id="fig-7" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/spherical-harmonics.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
       Spherical Harmonics
     </figcaption></figure>
+
 
 <h3 id="interpolation">Interpolation<a hidden class="anchor" aria-hidden="true" href="#interpolation">#</a></h3>
 <p>So, each vertex of the grid has the SH coefficients and opacity $\sigma$.</p>
@@ -694,23 +1069,76 @@ $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_
 <h3 id="coarse-to-fine">Coarse to Fine<a hidden class="anchor" aria-hidden="true" href="#coarse-to-fine">#</a></h3>
 <p>Achieves high resolution via coarse-to-fine strategy that begins with a dense grid at lower resolution, optimizes, prunes unnecessary voxels, refines the remaining voxels by subdividing each in half in each dimension, and continues optimizing.</p>
 <p>Voxel pruning is performed using the method from PlenOctrees <a href="">Paper here</a>, which applies a threshold to the maximum weight $T_i(1 - \exp(-\sigma_i \delta_i))$ of each voxel over all training ray (or, alternatively, to the density value in each voxel).</p>
-<figure id="fig-6" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/3dvis/plenoctree.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
+<figure id="fig-8" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/plenoctree.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
       Plenoctree Visualization
     </figcaption></figure>
 
+
 <p>Due to trilinear interpolation, naively pruning can adversely impact the color and density near surfaces since values at these points interpolate with the voxels in the immediate exterior. To solve this, they performed a dilation operation so that voxel is only pruned if both itself and its neighbors are deemed unoccupied.</p>
+<h3 id="interactive-plenoctree">Interactive PlenOctree<a hidden class="anchor" aria-hidden="true" href="#interactive-plenoctree">#</a></h3>
+<style>
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 900px;
+}
+.fullscreen-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 10px;
+  font-size: 20px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.iframe-wrapper:hover .fullscreen-btn {
+  opacity: 1;
+}
+.fullscreen-btn:hover {
+  background: rgba(0,0,0,0.75);
+}
+</style>
+
+<div class="iframe-wrapper">
+  <button class="fullscreen-btn" onclick='goFullscreen()'>⛶</button>
+
+  <iframe id="rt_iframe"
+          src="/interactive/plenoctree.html"
+          allowfullscreen
+        style="width:100%; height:600px; border:0 !important; border-radius:8px;">
+  </iframe>
+</div>
+
+<script>
+function goFullscreen() {
+  const iframe = document.getElementById("rt_iframe");
+  if (iframe.requestFullscreen) iframe.requestFullscreen();
+  else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+  else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
+}
+</script>
+
 <h3 id="optimization">Optimization<a hidden class="anchor" aria-hidden="true" href="#optimization">#</a></h3>
 <p>Optimize the voxel opacities and spherical harmonic coefficients with respect to the mean squared error (MSE) over rendered pixel colors with total variation (TV) regularization. Specifically, the loss is:</p>
 $$\mathcal{L} = \mathcal{L}_{recon} + \lambda_{TV}\mathcal{L}_{TV}$$<p>where these losses are defined as</p>
 $$\mathcal{L}_{\text{recon}}= \frac{1}{|\mathcal{R}|} \sum_{\mathbf{r} \in \mathcal{R}}\left\| C(\mathbf{r}) - \hat{C}(\mathbf{r}) \right\|_2^2 $$$$\mathcal{L}_{\text{TV}} = \frac{1}{|\mathcal{V}|} \sum_{\mathbf{v} \in \mathcal{V}} \sum_{d \in [D]} \sqrt{\Delta_x^2(\mathbf{v}, d)+ \Delta_y^2(\mathbf{v}, d)+ \Delta_z^2(\mathbf{v}, d)}$$<p>where $ \Delta_x^2(\mathbf{v}, d) $ denotes the squared difference between the $ d^\text{th} $ value in voxel $ \mathbf{v} := (i, j, k) $ and the $ d^\text{th} $ value in voxel $ (i + 1, j, k) $, normalized by the resolution. Analogously, $ \Delta_y^2(\mathbf{v}, d) $ and $ \Delta_z^2(\mathbf{v}, d) $ represent the squared differences along the $ y $- and $ z $-axes, respectively.</p>
 <p>Plenoxels achieves <strong>significantly faster training</strong> than NeRF while maintaining comparable rendering quality since they don&rsquo;t use neural networks just use differentiable rendering framework.</p>
+<hr>
 <h2 id="tensorf">TensoRF<a hidden class="anchor" aria-hidden="true" href="#tensorf">#</a></h2>
 <h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
-<figure id="fig-7" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/tensorf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
+<figure id="fig-9" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/tensorf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
       TensoRF (VM) reconstruction and rendering.
     </figcaption></figure>
+
 
 <p>Unlike NeRF that purely uses MLPs, TensoRF models the radiance field of a scene as a 4D tensor, which represents a 3D voxel grid with per-voxel multi-channel features. The central idea is to factorize the 4D scene tensor into multiple compact low-rank tensor components.</p>
 <p>TensoRF presents a novel vector-matrix (VM) decomposition technique that effectively reduces the number of components required for the same expression capacity, leading to faster reconstruction and better rendering than the classic CANDECOMP/PARAFAC (CP) decomposition.</p>
@@ -723,10 +1151,12 @@ $$
 \mathcal{T}_{ijk} = \sum_{r=1}^R \mathbf{v}_{r,i}^{1} \mathbf{v}_{r,j}^{2} \mathbf{v}_{r,k}^{3}
 $$<p>where $i, j, k$ denote the indices of the three modes.</p>
 <p>CP decomposition factorizes a tensor into multiple vectors, expressing multiple compact rank-one components. However, because of too high compactness, CP decomposition can require many components to model complex scenes, leading to high computational costs in radiance field reconstruction.</p>
-<figure id="fig-8" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
+<figure id="fig-10" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/cp_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       CP decomposition, which factorizes a tensor as a sum of vector outer products
     </figcaption></figure>
+
 
 <h3 id="vector-matrix-vm-decomposition">Vector-Matrix (VM) Decomposition<a hidden class="anchor" aria-hidden="true" href="#vector-matrix-vm-decomposition">#</a></h3>
 <p>Unlike CP decomposition that utilizes pure vector factors, VM decomposition factorizes a tensor into multiple vectors and matrices. This is expressed by:</p>
@@ -734,16 +1164,20 @@ $$
 \mathcal{T} = \sum_{r=1}^{R_1} \mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3} + \sum_{r=1}^{R_2} \mathbf{v}_r^{2} \circ \mathbf{M}_r^{1,3} + \sum_{r=1}^{R_3} \mathbf{v}_r^{3} \circ \mathbf{M}_r^{1,2}
 $$<p>where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3} \in \mathbb{R}^{I \times K}$, and $\mathbf{M}_r^{1,2} \in \mathbb{R}^{I \times J}$ are matrix factors for two (denoted by superscripts) of the three modes.</p>
 <p>For each component, we relax its two mode ranks to be arbitrarily large, while restricting the third mode to be rank-one; e.g., for component tensor $\mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3}$, its mode-1 rank is 1, and its mode-2 and mode-3 ranks can be arbitrary, depending on the rank of the matrix $\mathbf{M}_r^{2,3}$.</p>
-<figure id="fig-9" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
+<figure id="fig-11" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
       vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
 
+
 <h4 id="comparison">Comparison<a hidden class="anchor" aria-hidden="true" href="#comparison">#</a></h4>
-<figure id="fig-10" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
+<figure id="fig-12" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
+
 
 <h3 id="tensor-for-scene-modeling">Tensor for Scene Modeling<a hidden class="anchor" aria-hidden="true" href="#tensor-for-scene-modeling">#</a></h3>
 <p>In this work, we focus on the task of modeling and reconstructing radiance fields. We can view the image <a href="/posts/3d-reconstruction/#scene-tensorf">below</a>. In this case, the three tensor modes correspond to the XYZ axes, and we thus directly denote the modes with XYZ to make it intuitive. Meanwhile, in the context of 3D scene representation, we consider $R_1 = R_2 = R_3 = R$ for most scenes, reflecting the fact that a scene can distribute and appear equally complex along its three axes. Therefore, the previous equation can be re-written as:</p>
@@ -759,10 +1193,12 @@ $$<p>where $m \in \{X, Y, Z\}$, $A_{r,ijk}^{X} = v_{r,i}^{X} M_{r,jk}^{Y,Z}$, $A
 $$
 \sigma, c = \mathcal{G}_{\sigma}(\mathbf{x}), \; \underbrace{\mathcal{S}(\mathcal{G}_{c}(\mathbf{x}), d)}_{\text{it can be MLP/SH}}
 $$<p>where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.</p>
-<figure id="fig-11" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/cp_vm_factorization_full.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
+<figure id="fig-13" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization_full.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       TensoRF using CP decomposition and VM decomposition
     </figcaption></figure>
+
 
 <h3 id="factorizing-radiance-fields">Factorizing Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#factorizing-radiance-fields">#</a></h3>
 <p>While $\mathcal{G}_{\sigma} \in \mathbb{R}^{I \times J \times K}$ is a 3D tensor, $\mathcal{G}_{c} \in \mathbb{R}^{I \times J \times K \times P}$ is a 4D tensor. Here $I, J, K$ correspond to the resolutions of the feature grid along the X, Y, Z axes, and $P$ is the number of appearance feature channels.</p>
@@ -781,10 +1217,61 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
 <p>By stacking all $\mathbf{b}_{r}$ as columns together, we have a $P \times 3R_{c}$ matrix $\mathbf{B}$; this matrix $\mathbf{B}$ can also be seen as a global appearance dictionary that abstracts the appearance commonalities across the entire scene.</p>
 <h3 id="interpolation-1">Interpolation<a hidden class="anchor" aria-hidden="true" href="#interpolation-1">#</a></h3>
 <p>Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.</p>
-<figure id="scene-tensorf" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/tensorf_scene.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
+<figure id="scene-tensorf" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/tensorf_scene.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       Tensorf Scene Representation.
     </figcaption></figure>
+
+
+<hr>
+<h3 id="interactive-overview-of-tensorf">Interactive Overview of TensoRF<a hidden class="anchor" aria-hidden="true" href="#interactive-overview-of-tensorf">#</a></h3>
+<style>
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 900px;
+}
+.fullscreen-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 10px;
+  font-size: 20px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.iframe-wrapper:hover .fullscreen-btn {
+  opacity: 1;
+}
+.fullscreen-btn:hover {
+  background: rgba(0,0,0,0.75);
+}
+</style>
+
+<div class="iframe-wrapper">
+  <button class="fullscreen-btn" onclick='goFullscreen()'>⛶</button>
+
+  <iframe id="tensorf_iframe"
+          src="/interactive/tensorf.html"
+          allowfullscreen
+        style="width:100%; height:800px; border:0 !important; border-radius:8px;">
+  </iframe>
+</div>
+
+<script>
+function goFullscreen() {
+  const iframe = document.getElementById("tensorf_iframe");
+  if (iframe.requestFullscreen) iframe.requestFullscreen();
+  else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+  else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
+}
+</script>
 
 <h3 id="rendering-process">Rendering Process<a hidden class="anchor" aria-hidden="true" href="#rendering-process">#</a></h3>
 <p>For a 3D point $\mathbf{x}$ and viewing direction $\mathbf{d}$:</p>
@@ -818,12 +1305,15 @@ $$<p>where:</p>
 $$
 \mathcal{L}_{\text{TV}} = \sum_{r} \left( \|\nabla \mathbf{v}_r\|_1 + \|\nabla \mathbf{M}_r\|_1 \right)
 $$<p>TV regularization prevents overfitting and removes floaters/artifacts by enforcing piecewise-smooth geometry and appearance.</p>
+<hr>
 <h2 id="instant-ngp">Instant NGP<a hidden class="anchor" aria-hidden="true" href="#instant-ngp">#</a></h2>
 <h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
-<figure id="fig-13" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/instant-ngp-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
-      Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)→(4)→(3) to update hash table features.
+<figure id="fig-15" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/instant-ngp-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
+      Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)$\rightarrow$(4)$\rightarrow$(3) to update hash table features.
     </figcaption></figure>
+
 
 <p>Given a fully connected neural network $m(y; \Phi)$, we are interested in an encoding of its inputs $y = \text{enc}(x; \theta)$ that improves the approximation quality and training speed across a wide range of applications without incurring a notable performance overhead.</p>
 <h3 id="multiresolution-hash-encoding">Multiresolution Hash Encoding<a hidden class="anchor" aria-hidden="true" href="#multiresolution-hash-encoding">#</a></h3>
@@ -895,12 +1385,15 @@ $$<p>The dramatically smaller network (2 layers vs 8) is enabled by the expressi
 <li><strong>Total encoding parameters</strong>: $T \cdot L \cdot F \approx 16.8$ million</li>
 </ul>
 <p>Total trainable parameters (encoding + MLP) is still much smaller than original NeRF while achieving 20-60× faster training.</p>
+<hr>
 <h2 id="3dgs">3DGS<a hidden class="anchor" aria-hidden="true" href="#3dgs">#</a></h2>
 <h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
-<figure id="fig-14" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
+<figure id="fig-16" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/3dgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       3DGS Overview
     </figcaption></figure>
+
 
 <p>The input to the method is a set of images of a static scene, together with the corresponding cameras calibrated by Structure-from-Motion (SfM), which produces a sparse point cloud as a side-effect.</p>
 <h3 id="gaussian-parametrization">Gaussian Parametrization<a hidden class="anchor" aria-hidden="true" href="#gaussian-parametrization">#</a></h3>
@@ -933,16 +1426,18 @@ $$\hat{\mu} = KT[\mu, 1]^T$$<p>
 </p>
 $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <ul>
-<li>$\hat{\mu}$: 2D position on screen</li>
-<li>$\hat{\Sigma}$: 2D covariance in screen space</li>
-<li>$J$: Jacobian of the projection</li>
-<li>$W = T$ (world-to-camera transformation)</li>
+<li>$\hat{\mu}:$ 2D position on screen</li>
+<li>$\hat{\Sigma}:$ 2D covariance in screen space</li>
+<li>$J:$ Jacobian of the projection</li>
+<li>$W:$ the $3\times3$ rotation component of the world-to-camera transformation</li>
 </ul>
 <p>This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.</p>
-<figure id="fig-15" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
+<figure id="fig-17" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       When projecting a Gaussian particle from 3D space onto the camera image plane, Monte Carlo sampling (left) provides the most accurate estimate but is costly to compute. EWA Splatting formulation used in approximates the projection function via linearization, which requires a dedicated Jacobian J for each camera model and leads to approximation errors with increasing distortion. Unscented Transform instead approximates the particle with Sigma points than can be projected exactly and from which the 2D conic can then be estimated.
     </figcaption></figure>
+
 
 <h3 id="adaptive-density-control">Adaptive Density Control<a hidden class="anchor" aria-hidden="true" href="#adaptive-density-control">#</a></h3>
 <p>Starting from the initial sparse SfM point cloud, the method adaptively controls the number of Gaussians and their density through densification and pruning operations.</p>
@@ -967,13 +1462,15 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 <li>Reset opacity to near-zero every $K$ iterations (typically 3000 iterations) to force re-optimization</li>
 <li>Remove Gaussians that are excessively large in world space</li>
 </ul>
-<figure id="fig-16" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/3dgs_adc.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
+<figure id="fig-18" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/3dgs_adc.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       Adaptive Density Control in 3DGS
     </figcaption></figure>
 
+
 <hr>
-<h3 id="algorithm-1-optimization-and-densification">Algorithm 1 Optimization and Densification<a hidden class="anchor" aria-hidden="true" href="#algorithm-1-optimization-and-densification">#</a></h3>
+<h3 id="algorithm-optimization-and-densification">Algorithm: Optimization and Densification<a hidden class="anchor" aria-hidden="true" href="#algorithm-optimization-and-densification">#</a></h3>
 <p>$w, h$: width and height of the training images</p>
 <hr>
 <table style="border: none !important; border-collapse: collapse !important; width: 100%;">
@@ -999,7 +1496,6 @@ $$\hat{\Sigma} = J W \Sigma W^T J^T$$<p>where:</p>
 </tr>
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$I \leftarrow$ Rasterize$(M, S, C, A, V)$</td>
-<td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Alg. 2</td>
 </tr>
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$L \leftarrow$ Loss$(I, \hat{I})$</td>
@@ -1082,28 +1578,73 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <li><strong>L1 loss</strong>: Pixel-wise color difference</li>
 <li><strong>D-SSIM</strong>: Structural similarity (captures perceptual quality)</li>
 </ul>
+<h3 id="interactive-gaussian-viewer">Interactive Gaussian Viewer<a hidden class="anchor" aria-hidden="true" href="#interactive-gaussian-viewer">#</a></h3>
+<style>
+.iframe-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 900px;
+}
+.fullscreen-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 6px 10px;
+  font-size: 20px;
+  background: rgba(0,0,0,0.55);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.iframe-wrapper:hover .fullscreen-btn {
+  opacity: 1;
+}
+.fullscreen-btn:hover {
+  background: rgba(0,0,0,0.75);
+}
+</style>
+
+<div class="iframe-wrapper">
+  <button class="fullscreen-btn" onclick='goFullscreen()'>⛶</button>
+
+  <iframe id="gaussian_viewer_iframe"
+          src="/interactive/gaussian_viewer.html"
+          allowfullscreen
+        style="width:100%; height:600px; border:0 !important; border-radius:8px;">
+  </iframe>
+</div>
+
+<script>
+function goFullscreen() {
+  const iframe = document.getElementById("gaussian_viewer_iframe");
+  if (iframe.requestFullscreen) iframe.requestFullscreen();
+  else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+  else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
+}
+</script>
+
+<hr>
 <h1 id="sparse-input">Sparse Input<a hidden class="anchor" aria-hidden="true" href="#sparse-input">#</a></h1>
 <h2 id="depth-supervised-nerf">Depth-supervised NeRF<a hidden class="anchor" aria-hidden="true" href="#depth-supervised-nerf">#</a></h2>
 <p>A commonly observed failure mode of Neural Radiance Field (NeRF) is fitting incorrect geometries when given an insufficient number of input views. One potential reason is that standard volumetric rendering does not enforce the constraint that most of a scene’s geometry consist of empty space and opaque surfaces.</p>
 <h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
 <p><strong>Key idea</strong> Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as &ldquo;free&rdquo; depth super-
 vision during training:</p>
-<figure id="fig-17" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
+<figure id="fig-19" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       Depth Supervised NeRF Overview
     </figcaption></figure>
 
+
 <h3 id="volumetric-rendering-revisited">Volumetric Rendering Revisited<a hidden class="anchor" aria-hidden="true" href="#volumetric-rendering-revisited">#</a></h3>
-<p>To render a 2D image given a pose P, we cast rays r
-originating from the P’s center of projection o in direction d
-derived from its intrinsics.  We integrate the implicit radiance
-field along this ray to compute the incoming radiance from any object that lies along d:</p>
+<p>To render a 2D image given a pose $P$, we cast rays $r(t)$ originating from the center of projection $o$ in directions $d$ derived from its intrinsics. We then integrate the implicit radiance field along each ray to compute the incoming radiance contributed by any object intersected along $d$:</p>
 $$
 C = \int_{0}^{\infty} T(t)\,\sigma(t)\,c(t)\,dt.
-$$<p>here t parameterizes the aforementioned ray as r(t) =
-o + td and T (t) = exp(− R t
-0 σ(s)ds) checks for occlusions
-by integrating the differential density between 0 to t</p>
+$$<p>Here, $t$ parameterizes the aforementioned ray as $r(t) = o + t d$, and $T(t) = \exp\!\left(-\int_0^{t} \sigma(s)\, ds\right)$ checks for occlusions by integrating the differential density from $0$ to $t$.</p>
 <h3 id="ray-distribution">Ray Distribution<a hidden class="anchor" aria-hidden="true" href="#ray-distribution">#</a></h3>
 <p>$h(t) = T(t)\sigma{(t)}$ is a continuous probability distribution over ray distance $t$ that describes the likelihood of a ray terminating at $t$. Due to practical constraints, NeRFs assume scene lies between a near and far bound $(t_n, t_f)$. To Ensure $h(t)$. To ensure $h(t)$ sums to one, NeRF implementation often treat $t_f$ as opaque wall. With this definition, the rendered color can be written as an expectation:</p>
 $$
@@ -1111,7 +1652,7 @@ C = \int_{0}^{\infty} h(t)\,c(t)\,dt
     = \mathbb{E}_{h(t)}[\,c(t)\,].
 $$<h3 id="idealized-distribution">Idealized distribution<a hidden class="anchor" aria-hidden="true" href="#idealized-distribution">#</a></h3>
 <p>The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrict the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image  point with a closes-surface depth of $D$ should be $\delta (t - D)$. This insight motivates the depth-supervised ray termination loss.</p>
-<h2 id="deriving-depth-supervision">Deriving Depth Supervision<a hidden class="anchor" aria-hidden="true" href="#deriving-depth-supervision">#</a></h2>
+<h3 id="deriving-depth-supervision">Deriving Depth Supervision<a hidden class="anchor" aria-hidden="true" href="#deriving-depth-supervision">#</a></h3>
 <p>Most NeRF pipelines require images together with their camera matrices $(P_1, P_2, \dots)$, typically estimated using an SfM system such as COLMAP. SfM uses bundle adjustment, which also outputs:</p>
 <ul>
 <li>a set of reconstructed 3D keypoints $\mathcal{X} = \{ X_i \in \mathbb{R}^3 \}$,</li>
@@ -1155,18 +1696,462 @@ $$
 \mathcal{L}=
 \mathcal{L}_{\text{Color}}+
 \lambda_D \, \mathcal{L}_{\text{Depth}}.
-$$<h2 id="vip-nerf">VIP NeRF<a hidden class="anchor" aria-hidden="true" href="#vip-nerf">#</a></h2>
-<h2 id="midas">MiDAS<a hidden class="anchor" aria-hidden="true" href="#midas">#</a></h2>
-<h2 id="fsgs">FSGS<a hidden class="anchor" aria-hidden="true" href="#fsgs">#</a></h2>
-<h2 id="cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization<a hidden class="anchor" aria-hidden="true" href="#cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">#</a></h2>
+$$<hr>
+<h2 id="vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields">ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields">#</a></h2>
 <h3 id="overview-6">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-6">#</a></h3>
+<figure id="fig-20" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
+      <strong>Overview of ViP-NeRF architecture.</strong> Given the images from primary and secondary views, we estimate a visibility prior map in the primary view and use it to supervise the visibility of pixels as predicted by the NeRF. Specifically, we cast a ray through a randomly selected pixel in the primary view and sample 3D points along the ray. For every point ${\mathbf p}_i$, we use the NeRF MLPs to obtain its visibility in primary and secondary views, along with volume density $\sigma_i$ and color $\mathbf c_i$. Volume rendering outputs visibility $t'$ of the chosen pixel in the secondary view which is supervised by the visibility prior. $\mathcal{L}_v$ constrains the visibilities $\hat{T}_i$ output by network and $T_i$ computed using volume rendering to be consistent with each other.
+    </figcaption></figure>
+
+
+<p>Neural radiance fields (NeRF) require hundreds of images to synthesize photo-realistic novel views. Training them on sparse input views leads to overfitting and incorrect scene depth estimation, resulting in artifacts like blur, ghosting, and floaters in rendered views.</p>
+<p>ViP-NeRF addresses this by introducing <strong>visibility regularization</strong> - instead of relying on dense depth priors that may suffer from generalization errors, it uses the visibility of pixels across different views as a more reliable form of dense supervision.</p>
+<h3 id="the-visibility-prior-concept">The Visibility Prior Concept<a hidden class="anchor" aria-hidden="true" href="#the-visibility-prior-concept">#</a></h3>
+<p><strong>Key Insight:</strong> When given sparse input views, it is easier to estimate whether a pixel is visible in another view (relative depth) than to estimate its absolute depth accurately.</p>
+<p>For any pixel $q$ in a primary view, the visibility prior $\tau'(q) \in \{0, 1\}$ indicates whether that pixel is also visible in a secondary view:</p>
+<ul>
+<li>$\tau'(q) = 1$: pixel is visible in both views (no occlusion)</li>
+<li>$\tau'(q) = 0$: pixel is occluded in the secondary view</li>
+</ul>
+<p>This visibility information relates to the <strong>relative depth</strong> of scene objects - foreground objects are typically visible in multiple views, while background objects may be partially occluded.</p>
+<h3 id="computing-visibility-prior-using-plane-sweep-volumes">Computing Visibility Prior using Plane Sweep Volumes<a hidden class="anchor" aria-hidden="true" href="#computing-visibility-prior-using-plane-sweep-volumes">#</a></h3>
+<p>ViP-NeRF estimates the visibility prior using <strong>plane sweep volumes (PSV)</strong> without requiring any pre-training:</p>
+<figure id="fig-21" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-psv.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
+      <strong>Visibility Prior Computation.</strong> The secondary view image is warped to the primary view at different depth planes to create a PSV. Error maps are computed by comparing warped images with the primary view. The minimum error across all planes is thresholded to obtain the visibility prior map. Regions with low error (white) indicate visibility in both views, while high error (black) indicates occlusion.
+    </figcaption></figure>
+
+
+<p><strong>Step-by-step Process:</strong></p>
+<ol>
+<li>
+<p><strong>Create Plane Sweep Volume:</strong> Warp the secondary view image to the primary view at $D$ uniformly sampled depths between $z_{\min}$ and $z_{\max}$:</p>
+<ul>
+<li>$I^{(1)}$: primary view image</li>
+<li>$I^{(2)}_k$: warped secondary view images at plane $k \in \{0, 1, ..., D-1\}$</li>
+</ul>
+</li>
+<li>
+<p><strong>Compute Error Maps:</strong> For each plane $k$, calculate the L1 error:</p>
+$$E_k = \|I^{(1)} - I^{(2)}_k\|_1$$</li>
+<li>
+<p><strong>Determine Visibility:</strong> Extract the minimum error across all planes and threshold:</p>
+$$e(q) = \min_k E_k(q)$$$$\tau'(q) = \mathbb{1}_{\{\exp(-e(q)/\gamma) > 0.5\}}$$<p>where $\gamma$ is a hyperparameter (typically set to 10).</p>
+</li>
+</ol>
+<p><strong>Intuition:</strong> A low error at any plane indicates a matching pixel exists in the secondary view (pixel is visible). High error across all planes suggests occlusion or highly specular surfaces. The visibility prior is only used for pixels where a match is found, avoiding unreliable regions.</p>
+<h3 id="visibility-regularization-loss">Visibility Regularization Loss<a hidden class="anchor" aria-hidden="true" href="#visibility-regularization-loss">#</a></h3>
+<p>For a randomly selected pixel $q$ in the primary view, ViP-NeRF samples $N$ candidate 3D points $p_1, p_2, ..., p_N$ along the ray. The visibility of pixel $q$ in the secondary view is computed as:</p>
+$$t'(q) = \sum_{i=1}^{N} w_i T'_i \in [0,1]$$<p>where:</p>
+<ul>
+<li>$w_i = T_i(1 - \exp(-\delta_i \sigma_i))$ is the rendering weight from Equation (4)</li>
+<li>$T'_i$ is the visibility (transmittance) of point $p_i$ from the secondary view</li>
+</ul>
+<p>The <strong>visibility prior loss</strong> constrains the predicted visibility to match the prior:</p>
+$$\mathcal{L}_{\text{vip}}(q) = \max(\tau'(q) - t'(q), 0)$$<p>This loss is only applied when $\tau'(q) = 1$ (pixel is reliably visible), avoiding supervision on uncertain occluded regions.</p>
+<h3 id="efficient-visibility-prediction">Efficient Visibility Prediction<a hidden class="anchor" aria-hidden="true" href="#efficient-visibility-prediction">#</a></h3>
+<table align="center">
+  <tr>
+    <td align="center" width="45%">
+<figure id="fig-22" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-naive.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
+      Computing $T'_i$ naively requiring $N^2$ MLP queries per pixel
+    </figcaption></figure>
+
+
+      </td>
+    <td align="center" width="45%"> 
+<figure id="fig-23" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
+      Reformulated the NeRF MLP
+    </figcaption></figure>
+
+
+    </td>
+  </tr>
+</table>
+<p>Computing $T'_i$ naively requires sampling up to $N$ additional points along a secondary ray from the secondary camera to $p_i$, requiring $N^2$ MLP queries per pixel - computationally prohibitive.</p>
+<p><strong>Solution:</strong> Reformulate the NeRF MLP $\mathcal{F}_2$ to <strong>directly output view-dependent visibility</strong>:</p>
+$$c_i, \hat{T}_i = \mathcal{F}_2(h_i, v); \quad c'_i, \hat{T}'_i = \mathcal{F}_2(h_i, v'_i)$$<p>where:</p>
+<ul>
+<li>$h_i$ is the latent representation from $\mathcal{F}_1(p_i)$ (reused)</li>
+<li>$v$ is the primary viewing direction</li>
+<li>$v'_i$ is the secondary viewing direction</li>
+<li>$\hat{T}'_i$ is the predicted visibility in the secondary view</li>
+</ul>
+<p>This reduces complexity from $N^2$ to just $N$ MLP $\mathcal{F}_1$ queries, since $\mathcal{F}_2$ is a single-layer MLP and significantly smaller.</p>
+<p><strong>Consistency Loss:</strong> To ensure $\hat{T}_i$ matches the volume-rendered visibility $T_i$, an additional loss is introduced:</p>
+$$\mathcal{L}_v = \sum_{i=1}^{N} \left[ \|\text{SG}(T_i) - \hat{T}_i\|^2 + \|T_i - \text{SG}(\hat{T}_i)\|^2 \right]$$<p>where $\text{SG}(\cdot)$ denotes stop-gradient operation. The bidirectional loss enables:</p>
+<ul>
+<li>First term: brings $\hat{T}_i$ closer to $T_i$</li>
+<li>Second term: transfers updates from visibility prior back to $\mathcal{F}_1$ efficiently</li>
+</ul>
+<h3 id="complete-loss-function">Complete Loss Function<a hidden class="anchor" aria-hidden="true" href="#complete-loss-function">#</a></h3>
+<p>ViP-NeRF combines multiple loss terms:</p>
+$$\mathcal{L} = \lambda_1 \mathcal{L}_{\text{mse}} + \lambda_2 \mathcal{L}_{\text{sd}} + \lambda_3 \mathcal{L}_{\text{vip}} + \lambda_4 \mathcal{L}_v$$<p>where:</p>
+<ul>
+<li>$\mathcal{L}_{\text{mse}} = \|c - \hat{c}\|^2$: standard NeRF photometric loss</li>
+<li>$\mathcal{L}_{\text{sd}} = \|z - \hat{z}\|^2$: sparse depth supervision from SfM (following DS-NeRF)</li>
+<li>$\mathcal{L}_{\text{vip}}$: visibility prior loss (dense supervision on relative depth)</li>
+<li>$\mathcal{L}_v$: visibility consistency loss</li>
+</ul>
+<p>Hyperparameters are set as: $\lambda_1 = 1$, $\lambda_2 = 0.1$, $\lambda_3 = 0.001$, $\lambda_4 = 0.1$.</p>
+<p><strong>Training Strategy:</strong></p>
+<ul>
+<li>$\mathcal{L}_{\text{vip}}$ is imposed after 20,000 iterations to ensure $\hat{T}'_i \approx T'_i$</li>
+<li>Total training: 50,000 iterations with Adam optimizer</li>
+<li>Learning rate: $5 \times 10^{-4}$ exponentially decaying to $5 \times 10^{-6}$</li>
+<li>Plane sweep volume parameters: $D = 64$ planes, $\gamma = 10$</li>
+</ul>
+<h3 id="why-visibility-over-dense-depth">Why Visibility Over Dense Depth?<a hidden class="anchor" aria-hidden="true" href="#why-visibility-over-dense-depth">#</a></h3>
+<p><strong>Advantages of Visibility Prior:</strong></p>
+<ol>
+<li><strong>No Pre-training Required:</strong> Computed using plane sweep volumes directly from input views</li>
+<li><strong>More Reliable:</strong> Focuses on relative depth rather than absolute depth</li>
+<li><strong>Dense Supervision:</strong> Provides pixel-wise constraints across view pairs</li>
+<li><strong>Cross-view Consistency:</strong> Regularizes NeRF across pairs of views, unlike single-view regularization</li>
+</ol>
+<p><strong>Comparison with Dense Depth Priors:</strong></p>
+<ul>
+<li>Dense depth priors (like DDP-NeRF) constrain absolute depth but may be inaccurate due to generalization errors</li>
+<li>Visibility prior constrains relative depth ordering, providing more freedom for NeRF to reconstruct correct 3D geometry</li>
+<li>Visibility is inherently easier to estimate reliably without sophisticated pre-trained networks</li>
+</ul>
+<h3 id="complementary-supervision">Complementary Supervision<a hidden class="anchor" aria-hidden="true" href="#complementary-supervision">#</a></h3>
+<p>ViP-NeRF uses visibility prior <strong>in conjunction with</strong> sparse depth from SfM:</p>
+<ul>
+<li><strong>Sparse depth ($\mathcal{L}_{\text{sd}}$):</strong> Provides accurate but sparse supervision on absolute depth (at SfM keypoints)</li>
+<li><strong>Dense visibility ($\mathcal{L}_{\text{vip}}$):</strong> Provides dense but relative supervision across all pixels</li>
+</ul>
+<p>These two priors provide complementary information:</p>
+<ul>
+<li>Sparse depth anchors the absolute scale</li>
+<li>Dense visibility constrains relative geometry and prevents overfitting</li>
+</ul>
+<p>Ablation studies show that removing either prior degrades performance, confirming their complementary nature.</p>
+<hr>
+<h2 id="midas">MiDAS<a hidden class="anchor" aria-hidden="true" href="#midas">#</a></h2>
+<hr>
+<h2 id="dust3r-geometric-3d-vision-made-easy">DUSt3R: Geometric 3D Vision Made Easy<a hidden class="anchor" aria-hidden="true" href="#dust3r-geometric-3d-vision-made-easy">#</a></h2>
+<h3 id="overview-7">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-7">#</a></h3>
+<figure id="fig-24" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/dust3r-arch.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      <strong>Architecture of the network $\mathcal{F}$.</strong> Two views of a scene $(I^1, I^2)$ are first encoded in a Siamese manner with a shared ViT encoder. The resulting token representations $F^1$ and $F^2$ are then passed to two transformer decoders that constantly exchange information via cross-attention. Finally, two regression heads output the two corresponding pointmaps and associated confidence maps. Importantly, the two pointmaps are expressed in the same coordinate frame of the first image $I^1$. The network $\mathcal{F}$ is trained using a simple regression loss
+    </figcaption></figure>
+
+
+<p>DUSt3R (Dense Unconstrained Stereo 3D Reconstruction) represents a paradigm shift from the traditional &ldquo;SfM $\rightarrow$ MVS $\rightarrow$ Meshing&rdquo; pipeline. Instead of solving for camera parameters (intrinsics/extrinsics) explicitly to then triangulate points, DUSt3R treats 3D reconstruction as a direct <strong>regression problem</strong> of dense 3D pointmaps from uncalibrated images.</p>
+<h3 id="the-pointmap-representation">The Pointmap Representation<a hidden class="anchor" aria-hidden="true" href="#the-pointmap-representation">#</a></h3>
+<p>For an image $I \in \mathbb{R}^{H \times W \times 3}$, the network outputs a <strong>Pointmap</strong> $X \in \mathbb{R}^{H \times W \times 3}$:</p>
+$$
+X_{i,j} = (x, y, z) \in \mathbb{R}^3
+$$<p>This vector represents the 3D coordinates of the pixel $(i,j)$ in the scene.</p>
+<p>Crucially, for a pair of images $I^1$ and $I^2$, the network predicts two pointmaps $X^{1,1}$ and $X^{2,1}$ where <strong>both are expressed in the coordinate frame of the first image $I^1$</strong>. This implicitly solves the pixel matching and relative pose estimation problems simultaneously without explicit geometric constraints.</p>
+<h3 id="network-architecture-1">Network Architecture<a hidden class="anchor" aria-hidden="true" href="#network-architecture-1">#</a></h3>
+<p>The model uses a Transformer-based architecture inspired by CroCo:</p>
+<ol>
+<li>
+<p><strong>Siamese Encoder:</strong> A shared ViT encodes $I^1$ and $I^2$ into token representations $F^1$ and $F^2$.</p>
+</li>
+<li>
+<p><strong>Cross-Attention Decoder:</strong> The decoder branches constantly exchange information to resolve scale and correspondences:</p>
+$$G^1_i = \text{DecoderBlock}(G^1_{i-1}, G^2_{i-1})$$</li>
+<li>
+<p><strong>Regression Heads:</strong> Outputs the pointmaps $X$ and a <strong>Confidence Map</strong> $C$ (which learns to identify invalid regions like sky or translucent objects). The confidence is defined as $C^{v,1}_i = 1 + \exp(g^{C^{v,1}_i}) > 1$, ensuring strictly positive values.</p>
+</li>
+</ol>
+<h3 id="training-objective-1">Training Objective<a hidden class="anchor" aria-hidden="true" href="#training-objective-1">#</a></h3>
+<p>The network is trained with a simple 3D regression loss:</p>
+$$
+\mathcal{L}_{\text{regr}}(v, i) = \frac{1}{z} X^{v,1}_i - \frac{1}{\bar{z}} \bar{X}^{v,1}_i
+$$<p>where $z$ and $\bar{z}$ are normalization factors representing the average distance of all valid points to the origin:</p>
+$$
+\text{norm}(X^1, X^2) = \frac{1}{|D^1| + |D^2|} \sum_{v \in \{1,2\}} \sum_{i \in D^v} \|X^v_i\|
+$$<p>This makes the reconstruction scale-invariant.</p>
+<p>A confidence-aware loss is also used:</p>
+$$
+\mathcal{L}_{\text{conf}} = \sum_{v \in \{1,2\}} \sum_{i \in D^v} C^{v,1}_i \cdot \mathcal{L}_{\text{regr}}(v, i) - \alpha \log C^{v,1}_i
+$$<p>where $\alpha$ is a hyperparameter controlling the regularization term, encouraging the network to extrapolate in harder areas.</p>
+<h3 id="global-alignment">Global Alignment<a hidden class="anchor" aria-hidden="true" href="#global-alignment">#</a></h3>
+<p>Since the network operates pairwise, reconstructing a full scene requires fusing predictions from multiple pairs. DUSt3R constructs a connectivity graph $\mathcal{G}(\mathcal{V}, \mathcal{E})$ where vertices are images and edges indicate shared visual content between image pairs.</p>
+<p>We seek global pointmaps $\chi$ and rigid transformations $P_e$ (pose) and $\sigma_e$ (scale) for each edge to align the pairwise predictions into a common frame:</p>
+$$
+\chi^* = \mathop{\arg \min}_{\chi, P, \sigma} \sum_{e \in \mathcal{E}} \sum_{v \in e} \sum_{i=1}^{HW} C_i^{v,e} \left\| \chi_i^v - \sigma_e P_e X_i^{v,e} \right\|
+$$<p>To avoid the trivial optimum where $\sigma_e = 0, \forall e \in \mathcal{E}$, the constraint $\prod_e \sigma_e = 1$ is enforced.</p>
+<p>This optimization aligns all pairwise pointmaps in 3D space directly, avoiding the complexity of traditional Bundle Adjustment or 2D reprojection errors. The optimization is fast and simple, typically converging in a few hundred steps using standard gradient descent.</p>
+<h3 id="downstream-applications">Downstream Applications<a hidden class="anchor" aria-hidden="true" href="#downstream-applications">#</a></h3>
+<p>From the predicted pointmaps, various geometric quantities can be straightforwardly extracted:</p>
+<ul>
+<li>
+<p><strong>Point Matching:</strong> Correspondences between pixels are found via reciprocal nearest neighbor search in 3D pointmap space: $\mathcal{M}^{1,2} = \{(i, j) | i = \text{NN}^{1,2}_1(j) \text{ and } j = \text{NN}^{2,1}_1(i)\}$</p>
+</li>
+<li>
+<p><strong>Camera Intrinsics:</strong> Recovered by solving for focal length $f^*_1$ using confidence-weighted optimization. The principal point is assumed to be approximately centered.</p>
+</li>
+<li>
+<p><strong>Relative Pose:</strong> Estimated via Procrustes alignment between pointmaps $X^{1,1} \leftrightarrow X^{1,2}$ or using PnP-RANSAC for more robustness against noise and outliers.</p>
+</li>
+<li>
+<p><strong>Absolute Pose:</strong> Visual localization achieved by obtaining 2D-3D correspondences between query and reference images, then running PnP-RANSAC, or by estimating relative pose and scaling appropriately.</p>
+</li>
+</ul>
+<hr>
+<h2 id="instantsplat-sparse-view-3d-reconstruction-in-seconds">InstantSplat: Sparse-view 3D Reconstruction in Seconds<a hidden class="anchor" aria-hidden="true" href="#instantsplat-sparse-view-3d-reconstruction-in-seconds">#</a></h2>
+<h3 id="overview-8">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-8">#</a></h3>
+<figure id="fig-25" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/instantsplat-pipeline.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+      InstantSplat Pipeline. Multi-view unposed captures. Initialization using a geometric foundation model followed by co-visibility pruning. Joint optimization of 3D Gaussians and camera poses.
+    </figcaption></figure>
+
+
+<p>InstantSplat achieves sparse-view 3D reconstruction in <strong>seconds</strong> by removing the reliance on COLMAP SfM, which is slow and often fragile in sparse settings. It synergizes a geometric foundation model (MASt3R) for dense initialization with a fast 3DGS-based joint optimization.</p>
+<h3 id="the-problem-with-traditional-approaches">The Problem with Traditional Approaches<a hidden class="anchor" aria-hidden="true" href="#the-problem-with-traditional-approaches">#</a></h3>
+<p>Standard 3D-GS relies on COLMAP for:</p>
+<ol>
+<li>Camera pose estimation</li>
+<li>Sparse point cloud initialization via Structure-from-Motion</li>
+</ol>
+<p>However, COLMAP is:</p>
+<ul>
+<li><strong>Slow:</strong> Takes minutes to hours for pose estimation</li>
+<li><strong>Fragile:</strong> Often fails with sparse views due to insufficient feature matches</li>
+<li><strong>Error-prone:</strong> Small perturbations in poses or point distribution significantly degrade 3D-GS quality</li>
+</ul>
+<h3 id="co-visible-global-geometry-initialization">Co-visible Global Geometry Initialization<a hidden class="anchor" aria-hidden="true" href="#co-visible-global-geometry-initialization">#</a></h3>
+<p>Instead of starting from a sparse SfM cloud, InstantSplat initializes using <strong>MASt3R</strong> (a stereo prior model based on DUSt3R). This provides:</p>
+<ol>
+<li><strong>Dense Point Cloud:</strong> Millions of initial points derived directly from image pixels.</li>
+<li><strong>Initial Poses:</strong> Extracted from the aligned pointmaps.</li>
+</ol>
+<p><strong>View Ranking by Confidence:</strong></p>
+<p>Before redundancy elimination, views are ranked by their average confidence score:</p>
+$$
+s_i = \frac{1}{|O^i|} \sum_{o \in O^i} o
+$$<p>where $s_i$ represents the average confidence of view $i$. Views with higher confidence are considered more reliable.</p>
+<p><strong>Redundancy Elimination:</strong></p>
+<p>Since MASt3R predicts a pointmap for <em>every</em> image pair, simply merging them creates massive redundancy (millions of duplicate points). InstantSplat uses a <strong>Co-visibility</strong> check, processing views in ascending order of confidence (from lowest to highest).</p>
+<p>For each view $j$, points from higher-confidence views $\{i | s_i > s_j\}$ are projected onto view $j$:</p>
+$$
+D_{\text{proj},j} = \bigcap_{\{i|s_i > s_j\}} \text{Proj}_j(\tilde{P}^i)
+$$<p>Points in view $j$ are pruned based on depth consistency:</p>
+$$
+\mathcal{M}_j = \begin{cases} 
+1 & \text{if } |D_{\text{proj}, j} - D_{\text{orig}, j}| < \theta \\ 
+0 & \text{otherwise} 
+\end{cases}
+$$<p>The final pruned pointmap is: $\tilde{P}^j = (1 - \mathcal{M}_j) \cdot \tilde{P}^j$</p>
+<p>This significantly reduces the number of primitives and accelerates training.</p>
+<p><strong>Focal Length Averaging:</strong></p>
+<p>After global alignment, focal lengths from pairwise predictions remain inconsistent. Assuming a single-camera capture setup, InstantSplat stabilizes estimates by averaging:</p>
+$$
+\bar{f} = \frac{1}{N} \sum_{i=1}^{N} f^*_i
+$$<p>This simple step significantly improves visual quality.</p>
+<h3 id="joint-optimization">Joint Optimization<a hidden class="anchor" aria-hidden="true" href="#joint-optimization">#</a></h3>
+<p>With the scene initialized, InstantSplat performs a <strong>Gaussian-based Bundle Adjustment</strong>. It jointly optimizes the Gaussian parameters $G$ and the camera poses $T$ by minimizing the photometric error between rendered and observed images:</p>
+$$
+G^*, T^* = \mathop{\arg \min}_{G, T} \sum_{v} \left\| \hat{C}_v - \text{Rasterizer}(G, T) \right\|
+$$<p><strong>Confidence-aware Optimizer:</strong></p>
+<p>To handle errors from the initialization, the learning rate for each Gaussian is dynamically scaled based on the confidence score $O_{\text{init}}$ provided by the foundation model:</p>
+$$
+\text{LR}_{\text{scale}} = (1 - \text{sigmoid}(O_{\text{init}})) \cdot \beta
+$$<p>Low-confidence points (e.g., sky, reflections) have higher learning rates to allow them to be corrected rapidly, while high-confidence points maintain stable learning rates.</p>
+<p><strong>Pruning Strategy:</strong></p>
+<p>During optimization, Gaussians are removed based on:</p>
+<ul>
+<li><strong>Opacity threshold:</strong> Gaussians with $\alpha < \epsilon$ are pruned</li>
+<li><strong>World-space size:</strong> Excessively large Gaussians that likely represent floaters are removed</li>
+</ul>
+<p><strong>Test View Alignment:</strong></p>
+<p>For novel test views, the 3D model is frozen and only camera poses are optimized. This is done by minimizing photometric error between synthesized and actual test images, similar to iNeRF.</p>
+<p>This approach allows InstantSplat to reconstruct scenes in $\approx 7.5$ seconds with pose accuracy superior to traditional COLMAP-free methods.</p>
+<hr>
+<h2 id="fsgs-real-time-few-shot-view-synthesis">FSGS: Real-Time Few-shot View Synthesis<a hidden class="anchor" aria-hidden="true" href="#fsgs-real-time-few-shot-view-synthesis">#</a></h2>
+<h3 id="overview-9">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-9">#</a></h3>
+<figure id="fig-26" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/fsgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      <strong>FSGS Pipeline.</strong> 3D Gaussians are initialized from COLMAP, with a few images (<strong>black cameras</strong>). For the sparsely placed Gaussians, we propose densifying new Gaussians to enhance scene coverage by unpooling existing Gaussians into new ones, with properly initialized Gaussian attributes. Monocular depth priors, enhanced by sampling unobserved views (<strong>red cameras</strong>), guide the optimization of grown Gaussians towards a reasonable geometry. The final loss consists of a photometric loss term, and a geometric regularization term calculated as depth relative correspondence.
+    </figcaption></figure>
+
+
+<p>Standard 3DGS relies heavily on the density of the initial Point Cloud (from SfM/COLMAP). In few-shot scenarios (e.g., 3 views), SfM produces extremely sparse points. This leads to the optimization satisfying training views by placing &ldquo;floaters&rdquo; close to the camera rather than learning correct geometry, resulting in overfitting and poor novel view synthesis.</p>
+<p>FSGS introduces a <strong>Proximity-guided Gaussian Unpooling</strong> to densify the initialization and uses <strong>Pseudo-view Depth Priors</strong> to constrain the geometry.</p>
+<h3 id="proximity-guided-gaussian-unpooling">Proximity-guided Gaussian Unpooling<a hidden class="anchor" aria-hidden="true" href="#proximity-guided-gaussian-unpooling">#</a></h3>
+<p>To address the limited 3D scene coverage, FSGS constructs a directed graph (the &ldquo;proximity graph&rdquo;) connecting each existing Gaussian $G_i$ to its $K$ nearest neighbors (typically $K=3$).</p>
+<p><strong>Proximity Score Calculation:</strong></p>
+<p>For each Gaussian $G_i$, the $K$ nearest neighbors are identified:</p>
+$$
+D^K_i = \text{K-min}(d_{ij}), \quad \forall j \neq i
+$$<p>where $d_{ij} = \|\mu_i - \mu_j\|$ is the Euclidean distance between Gaussian centers.</p>
+<p>The <strong>Proximity Score</strong> $P_i$ is calculated as the average distance to these neighbors:</p>
+$$
+P_i = \frac{1}{K} \sum_{j=1}^{K} D^K_i
+$$<p><strong>Gaussian Unpooling Strategy:</strong></p>
+<p>If $P_i$ exceeds a threshold $t_{\text{prox}}$, the region is considered under-reconstructed. New Gaussians are &ldquo;unpooled&rdquo; at the center of each edge connecting the source Gaussian to its $K$ destination neighbors.</p>
+<p>For each new Gaussian:</p>
+<ul>
+<li><strong>Position:</strong> Placed at the midpoint between source and destination: $\mu_{\text{new}} = \frac{\mu_{\text{source}} + \mu_{\text{dest}}}{2}$</li>
+<li><strong>Scale &amp; Opacity:</strong> Copied from the destination Gaussian</li>
+<li><strong>Rotation:</strong> Initialized to identity (zero quaternion)</li>
+<li><strong>SH Coefficients:</strong> Initialized to zero</li>
+</ul>
+<p>This strategy encourages Gaussians to grow in representative locations and progressively fill observation gaps. The proximity graph is updated after each densification or pruning operation.</p>
+<figure id="fig-27" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/gaussian-unpooling.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      <strong>Gaussian Unpooling Illustration.</strong> We show a 2D toy case for visualizing Gaussian Unpooling with depth guidance, where the example 1D depth provides priors on the relative distance of the Gaussians from the viewing direction, guiding the Gaussian deformation toward a better solution.
+    </figcaption></figure>
+
+
+<h3 id="pseudo-view--depth-regularization">Pseudo-view &amp; Depth Regularization<a hidden class="anchor" aria-hidden="true" href="#pseudo-view--depth-regularization">#</a></h3>
+<p>To prevent overfitting to the few training views, FSGS synthesizes <strong>Pseudo-views</strong> $P'$ by interpolating between the two closest training cameras in Euclidean space.</p>
+<p><strong>Pseudo-view Sampling:</strong></p>
+$$
+P' = (t + \epsilon, q), \quad \epsilon \sim \mathcal{N}(0, \delta)
+$$<p>where:</p>
+<ul>
+<li>$t$ is the camera position from a training view</li>
+<li>$q$ is the rotation quaternion averaged from the two nearest cameras</li>
+<li>$\epsilon$ adds random noise to the 3-DoF camera location</li>
+</ul>
+<p>Pseudo-view sampling begins after initial convergence (typically after 2000 iterations) to ensure Gaussians roughly represent the scene first.</p>
+<p><strong>Differentiable Depth Rasterization:</strong></p>
+<p>To enable backpropagation from depth priors, FSGS implements differentiable depth rendering using alpha-blending:</p>
+$$
+d = \sum_{i=1}^{n} d_i \alpha_i \prod_{j=1}^{i-1}(1 - \alpha_j)
+$$<p>where $d_i$ represents the z-buffer (depth) of the $i$-th Gaussian and $\alpha$ is identical to that in color rendering.</p>
+<p><strong>Pearson Correlation Loss:</strong></p>
+<p>Because monocular depth estimators (e.g., DPT) provide relative depth that is scale and shift invariant, FSGS uses Pearson correlation to measure depth structure alignment:</p>
+$$
+\text{Corr}(\hat{D}_{\text{ras}}, \hat{D}_{\text{est}}) = \frac{\text{Cov}(\hat{D}_{\text{ras}}, \hat{D}_{\text{est}})}{\sqrt{\text{Var}(\hat{D}_{\text{ras}})\text{Var}(\hat{D}_{\text{est}})}}
+$$<p>This relaxed loss aligns the depth structure without requiring absolute depth values.</p>
+<p><strong>Complete Loss Function:</strong></p>
+$$
+\mathcal{L} = \lambda_1 \|C - \hat{C}\|_1 + \lambda_2 \text{D-SSIM}(C, \hat{C}) + \lambda_3 \|\text{Corr}(D_{\text{ras}}, D_{\text{est}})\|_1
+$$<p>where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This loss is applied to both training views and synthesized pseudo-views.</p>
+<h3 id="optimization-strategy">Optimization Strategy<a hidden class="anchor" aria-hidden="true" href="#optimization-strategy">#</a></h3>
+<p><strong>Spherical Harmonic Progression:</strong></p>
+<p>Training starts with SH degree 0 (basic lighting), incrementing by 1 every 500 iterations up to degree 4. This progressive approach allows the model to first capture basic appearance before adding view-dependent effects.</p>
+<p><strong>Opacity Reset:</strong></p>
+<p>At specific iterations (e.g., 2000, 5000, 7000), opacity for all Gaussians is reset to a small value (0.05) to eliminate low-opacity floaters that don&rsquo;t contribute meaningfully to the scene.</p>
+<p><strong>Densification Schedule:</strong></p>
+<p>Gaussian unpooling occurs every 100 iterations, starting after iteration 500, allowing the model to first stabilize before adding complexity.</p>
+<hr>
+<h3 id="algorithm-the-training-pipeline-of-fsgs">Algorithm: The training pipeline of FSGS<a hidden class="anchor" aria-hidden="true" href="#algorithm-the-training-pipeline-of-fsgs">#</a></h3>
+<hr>
+<table style="border:none !important; border-collapse:collapse !important; width:100%;">
+<tr>
+  <td style="border:none; padding:2px 0; text-align:left;">
+    Training view images $\mathcal{I} = \{ I_i \in \mathbb{R}^{H \times W \times 3} \}_{i=1}^N$ and their associated camera poses  
+    $\mathcal{P} = \{ \phi_i \in \mathbb{R}^{3 \times 4} \}_{i=1}^N$.
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    Run SfM with the input images and camera poses and obtain an initial point cloud $\mathcal{P}$,  
+    used to define 3D Gaussians function $\mathcal{G} = \{ G_i(\mu_i, \sigma_i, c_i, \alpha_i) \}_{i=1}^K$.
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    Leverage pretrained depth estimator $\mathcal{E}$ to predict the depth map $D_i = \mathcal{E}(I_i)$.
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    Synthesize pseudo views $\mathcal{P}^\dagger = \{ \phi_i^\dagger \in \mathbb{R}^{3 \times 4} \}_{i=1}^M$ from input camera poses $\mathcal{P}$.
+  </td>
+</tr>
+<tr><td style="border:none; padding:2px 0;"><strong>while</strong> until convergence <strong>do</strong></td></tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Randomly sample an image $I_i \in \mathcal{I}$ and the corresponding camera pose $\phi_i$
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_i$ and the depth map $\hat{D}_i$ with camera pose $\phi_i$
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} = \lambda_1 \lVert I_i - \hat{I}_i \rVert_1 + \lambda_2\, \mathrm{D\!-\!SSIM}(I_i,\hat{I}_i) + \lambda_3\, \mathrm{Pearson}(D_i, \hat{D}_i)$
+  </td>
+</tr>
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> iteration $> t_{\text{iter}}$ <strong>then</strong></td></tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample a pseudo camera pose $\phi_j^\dagger \in \mathcal{P}^\dagger$
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rasterize the rgb image $\hat{I}_j^\dagger$ and the depth $\hat{D}_i^\dagger$
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute the estimated depth as $D_j^\dagger = \mathcal{E}(\hat{I}_j^\dagger)$
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{L} \leftarrow \mathcal{L} + \lambda_4\, \mathrm{Pearson}(D_j^\dagger, \hat{D}_i^\dagger)$
+  </td>
+</tr>
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> IsRefinement(iteration) <strong>then</strong></td></tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> each Gaussian $G_i(\mu_i,\sigma_i,c_i,\alpha_i)$
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\alpha_i < \varepsilon$ <strong>or</strong> IsTooLarge$(\mu_i,\sigma_i)$  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RemoveGaussian()
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> $\nabla_p \mathcal{L} > \tau_{\text{pos}}$  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianDensify()
+  </td>
+</tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>if</strong> NoProximity$(\mathcal{G})$  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GaussianUnpooling()
+  </td>
+</tr>
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td></tr>
+<tr><td style="border:none; padding:2px 0;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end if</strong></td></tr>
+<tr>
+  <td style="border:none; padding:2px 0;">
+    &nbsp;&nbsp;&nbsp;&nbsp;Update Gaussians parameter $\mathcal{G}$ via $\nabla_{\mathcal{G}} \mathcal{L}$.
+  </td>
+</tr>
+<tr><td style="border:none; padding:2px 0;"><strong>end while</strong></td></tr>
+</table>
+<hr>
+<h2 id="cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization<a hidden class="anchor" aria-hidden="true" href="#cor-gs-sparse-view-3d-gaussian-splatting-via-co-regularization">#</a></h2>
+<h3 id="overview-10">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-10">#</a></h3>
 <p>Two 3D Gaussian radiance fields trained from the same sparse set of views can exhibit different behaviors. By training two fields simultaneously and measuring their disagreement throughout training, one can analyze the consistency of the learned geometry and appearance. Because ground-truth supervision is applied only on training views, rendering disagreement is evaluated on unseen views.</p>
 <p>A notable pattern is that disagreement increases significantly during <strong>densification</strong>, a phase in which new Gaussians are created but placed without strong geometric constraints. This randomness can introduce geometric errors in sparse-view 3DGS.</p>
 <p><strong>Key Point:</strong> Both <strong>point disagreement</strong> (differences in Gaussian positions) and <strong>rendering disagreement</strong> (differences in rendered appearance or depth) are typically <strong>negatively correlated</strong> with reconstruction accuracy.</p>
-<figure id="fig-18" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/corgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
-      NeRF Overview
+<figure id="fig-28" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/corgs-pipeline.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
+      Overview of CoR-GS. We train two 3D Gaussian radiance fields simultaneously and regularize them by suppressing point disagreement and rendering disagreement.
     </figcaption></figure>
+
 
 <h3 id="point-disagreement">Point Disagreement<a hidden class="anchor" aria-hidden="true" href="#point-disagreement">#</a></h3>
 <p>When treating the 3D positions of Gaussians in two radiance fields as point clouds, their geometric differences can be quantified using <strong>Fitness</strong> and <strong>RMSE</strong>, metrics commonly used in point-cloud registration.</p>
@@ -1253,11 +2238,10 @@ $$
 \mathcal{L}_{color}+
 \lambda_p \mathcal{R}_{pcolor}, \qquad
 \lambda_p = 1.0.
-$$<h2 id="dust3r">Dust3R<a hidden class="anchor" aria-hidden="true" href="#dust3r">#</a></h2>
-<h2 id="instant-splat">Instant Splat<a hidden class="anchor" aria-hidden="true" href="#instant-splat">#</a></h2>
+$$<hr>
 <h1 id="dynamic-scenes">Dynamic Scenes<a hidden class="anchor" aria-hidden="true" href="#dynamic-scenes">#</a></h1>
 <h2 id="optical-flow">Optical Flow<a hidden class="anchor" aria-hidden="true" href="#optical-flow">#</a></h2>
-<h3 id="overview-7">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-7">#</a></h3>
+<h3 id="overview-11">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-11">#</a></h3>
 <p>Given a video, optical flow is defined as a $2D$ vector field describing the apparent movement of each pixel due to relative motion between the camera (observer) and the scene (objects, surfaces, edges). The camera or the scene or both
 may be moving</p>
 <h3 id="computing-optical-flow">Computing Optical Flow<a hidden class="anchor" aria-hidden="true" href="#computing-optical-flow">#</a></h3>
@@ -1401,16 +2385,20 @@ $$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$<p>We can co
 <h2 id="raft">RAFT<a hidden class="anchor" aria-hidden="true" href="#raft">#</a></h2>
 <h2 id="raft-derf">RAFT DERF<a hidden class="anchor" aria-hidden="true" href="#raft-derf">#</a></h2>
 <h2 id="4dgs">4DGS<a hidden class="anchor" aria-hidden="true" href="#4dgs">#</a></h2>
+<hr>
 <h1 id="feedforward-and-barf">Feedforward and BARF<a hidden class="anchor" aria-hidden="true" href="#feedforward-and-barf">#</a></h1>
 <h2 id="pixel-splat">Pixel Splat<a hidden class="anchor" aria-hidden="true" href="#pixel-splat">#</a></h2>
-<h3 id="overview-8">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-8">#</a></h3>
-<figure id="fig-19" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;"><img src="../../images/3dvis/pixel-splat-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
+<h3 id="overview-12">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-12">#</a></h3>
+<figure id="fig-29" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/3dvis/pixel-splat-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       Proposed probabilistic prediction of pixel-aligned Gaussians
     </figcaption></figure>
 
+
 <p>For every pixel feature $F[u]$ in the input feature map, a neural network $f$ predicts Gaussian primitive parameters $\Sigma$ and $S$. Gaussian locations $\mu$ and opacities $\alpha$ are <strong>not</strong> predicted directly, since this would lead to local minima.</p>
 <p>Instead, $f$ predicts per-pixel discrete probability distributions over depths $p_{\phi}(z)$ parameterized by $\phi$. Sampling from this distribution yields the locations of the Gaussian primitives The opacity of each Gaussian is set to the probability of the sampled depth bucket. The final set of Gaussian primitives can then be rendered from novel views using the splatting algorithm. For brevity, we use $h$ to represent the function that computes depths from bucket indices.</p>
+<hr>
 <h2 id="barf">BARF<a hidden class="anchor" aria-hidden="true" href="#barf">#</a></h2>
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
@@ -1428,10 +2416,10 @@ This post or widget may be updated further - more notes, findings, and backgroun
       <li><a href="http://localhost:1313/tags/deep-learning/">Deep Learning</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/bagging-boosting/">
+  <a class="prev" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
     <span class="title">« Prev</span>
     <br>
-    <span>Bagging and Boosting</span>
+    <span>A comprehensive look into the Neural Importance Sampling for Path Tracing</span>
   </a>
 </nav>
 

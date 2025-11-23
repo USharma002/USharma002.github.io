@@ -10,7 +10,7 @@
 <meta name="description" content="Notes on PCA and high Dimensional PCA">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/dimensionality-reduction-pca/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.f86d48a07d8eab0dfd10963295547cd692dc17e3f71b3d8e90e1317f65fbe08a.css" integrity="sha256-&#43;G1IoH2Oqw39EJYylVR81pLcF&#43;P3Gz2OkOExf2X74Io=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4caa312c75941eee3f9972f2fdbb5b5498402bd3b09db71a6a94827976a7e1a2.css" integrity="sha256-TKoxLHWUHu4/mXLy/btbVJhAK9OwnbcaapSCeXan4aI=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -530,11 +530,117 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&#34;pca_scatter_original.png&#34;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 </span></span></code></pre></div><!-- ![Original Data](../../images/pca/pca_scatter_original.png)
 *Original 2D data with two classes* -->
-<figure id="original-data" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/pca/pca_scatter_original.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+<figure id="original-data" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/pca/pca_scatter_original.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Original 2D data with two classes
     </figcaption></figure>
 
+<style>
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .zoom-overlay img {
+      width: 90vw;           
+      height: 75vh;          
+      object-fit: contain;   
+      
+      border-radius: 12px;
+      box-shadow: 0 0 0px rgba(0,0,0,0.45);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .zoom-overlay.active img {
+      transform: scale(1);
+    }
+  </style>
+
+<div id="zoom-overlay" class="zoom-overlay">
+<button id="zoom-close-btn"
+  style="
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:rgba(0,0,0,0.55);
+    border:none;
+    color:white;
+    font-size:1.8rem;
+    line-height:1;
+    padding:0.2em 0.5em;
+    border-radius:6px;
+    cursor:pointer;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    transition:background 0.2s;
+  "
+  aria-label="Close image"
+>&times;</button>
+  <div style="text-align:center;">
+    <img id="zoom-img" src="">
+    
+    <div id="zoom-caption"
+         style="margin-top:1em;
+           font-size:1em;
+           color:white;
+           background:rgba(0,0,0,0.65);
+           padding:0.5em 1em;
+           border-radius:6px;
+           max-width:90%;
+           margin-left:auto;
+           margin-right:auto;">
+    </div>
+
+  </div>
+</div>
+
+<script>
+const overlay = document.getElementById('zoom-overlay');
+const zoomImg = document.getElementById('zoom-img');
+const zoomCaption = document.getElementById('zoom-caption');
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('.zoomable-image');
+  if (img) {
+    zoomImg.src = img.src;
+
+    
+    const figure = img.closest('figure');
+    const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+
+    zoomCaption.innerHTML = caption;
+    overlay.classList.add('active');
+  } else if (e.target === overlay || e.target === zoomImg) {
+    overlay.classList.remove('active');
+  }
+});
+
+document.getElementById('zoom-close-btn').addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape") {
+    overlay.classList.remove('active');
+  }
+});
+
+</script>
 <p>After projecting onto the first principal component:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
@@ -559,10 +665,12 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&#34;Feature 2&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&#34;equal&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&#34;pca_projection.png&#34;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
-</span></span></code></pre></div><figure id="fig-pca-projection" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;"><img src="../../images/pca/pca_projection.png" alt="" style="width:100%;height:auto;border-radius:8px;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+</span></span></code></pre></div><figure id="fig-pca-projection" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/pca/pca_projection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       Data projected onto the first principal component (shown in black)
     </figcaption></figure>
+
 
 <p>Notice in <a href="/posts/dimensionality-reduction-pca/#fig-pca-projection">Fig. 1</a> how the principal component captures the direction of maximum variance.</p>
 <hr>

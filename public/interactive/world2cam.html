@@ -325,6 +325,7 @@ function draw3DScene(ctx, cvs, viewMat, isWorld, styles) {
     const h = cvs.height / window.devicePixelRatio;
     ctx.clearRect(0,0,w,h);
 
+    // Grid
     ctx.strokeStyle = styles.grid;
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -337,6 +338,33 @@ function draw3DScene(ctx, cvs, viewMat, isWorld, styles) {
         ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y);
     }
     ctx.stroke();
+
+    // --- NEW: RGB AXES ---
+    const axisLen = 2.0;
+    const origin = {x:0, y:0, z:0};
+    const xTip = {x:axisLen, y:0, z:0};
+    const yTip = {x:0, y:axisLen, z:0};
+    const zTip = {x:0, y:0, z:axisLen};
+
+    const pO = worldToScreen(origin, viewMat, w, h);
+    const pX = worldToScreen(xTip, viewMat, w, h);
+    const pY = worldToScreen(yTip, viewMat, w, h);
+    const pZ = worldToScreen(zTip, viewMat, w, h);
+
+    ctx.lineWidth = 3;
+    
+    // Z - Blue
+    ctx.strokeStyle = '#2E86AB'; 
+    ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pZ.x, pZ.y); ctx.stroke();
+    
+    // Y - Green
+    ctx.strokeStyle = '#48bb78'; 
+    ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pY.x, pY.y); ctx.stroke();
+    
+    // X - Red
+    ctx.strokeStyle = '#f56565'; 
+    ctx.beginPath(); ctx.moveTo(pO.x, pO.y); ctx.lineTo(pX.x, pX.y); ctx.stroke();
+    // ---------------------
 
     let corners = getFrustumCorners();
     let camOrigin = {x:0,y:0,z:0};
@@ -357,6 +385,7 @@ function draw3DScene(ctx, cvs, viewMat, isWorld, styles) {
     ctx.lineTo(scrPt.x, scrPt.y);
     ctx.setLineDash([4,4]);
     ctx.strokeStyle = 'rgba(255,0,0,0.4)';
+    ctx.lineWidth = 1;
     ctx.stroke();
     ctx.setLineDash([]);
 
@@ -425,10 +454,29 @@ function drawOrtho(ctx, cvs, ah, av, styles) {
     const scale = 18;
     const map = (u, v) => ({ x: cx + u*scale, y: cy - v*scale });
 
+    // Grid Axes lines
     ctx.strokeStyle = '#ddd';
     ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+
+    // --- NEW: RGB AXES for 2D ---
+    const axisLen = 3.0; 
+    const center = map(0,0);
+    ctx.lineWidth = 3;
+
+    // Draw Horizontal Axis (ah)
+    let colH = ah === 'x' ? '#f56565' : (ah === 'z' ? '#2E86AB' : '#48bb78');
+    const pH = map(axisLen, 0);
+    ctx.strokeStyle = colH;
+    ctx.beginPath(); ctx.moveTo(center.x, center.y); ctx.lineTo(pH.x, pH.y); ctx.stroke();
+
+    // Draw Vertical Axis (av)
+    let colV = av === 'x' ? '#f56565' : (av === 'z' ? '#2E86AB' : '#48bb78');
+    const pV = map(0, axisLen);
+    ctx.strokeStyle = colV;
+    ctx.beginPath(); ctx.moveTo(center.x, center.y); ctx.lineTo(pV.x, pV.y); ctx.stroke();
+    // ----------------------------
 
     const corners = getFrustumCorners().map(p => ({
         x: p.x + state.cam.pos.x, y: p.y + state.cam.pos.y, z: p.z + state.cam.pos.z

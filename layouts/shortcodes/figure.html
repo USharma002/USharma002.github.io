@@ -16,15 +16,12 @@
 
 {{/* ---------- Register this figure ---------- */}}
 {{- $figIDs = merge $figIDs (dict (printf "%d" $num) $id) -}}
-
 {{- if .Get "name" -}}
   {{- $figIDs = merge $figIDs (dict (printf "%v" (.Get "name")) $id) -}}
 {{- end -}}
-
 {{- if .Get "id" -}}
   {{- $figIDs = merge $figIDs (dict (.Get "id") $id) -}}
 {{- end -}}
-
 {{- .Page.Scratch.Set "figureIDs" $figIDs -}}
 
 {{/* ---------- Other params ---------- */}}
@@ -33,10 +30,8 @@
 {{- $caption := .Get "caption" | default "" -}}
 {{- $width := .Get "width" | default "80%" -}}
 
-<figure id="{{ $id }}" style="text-align:center;margin:2em auto;max-width:{{ $width }};scroll-margin-top:80px;">
-  {{- if .Get "link" -}}<a href="{{ .Get "link" }}">{{ end -}}
-  <img src="{{ $src }}" alt="{{ $alt }}" style="width:100%;height:auto;border-radius:8px;">
-  {{- if .Get "link" -}}</a>{{ end -}}
+<figure id="{{ $id }}" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:{{ $width }};scroll-margin-top:80px;">
+  <img class="zoomable-image" src="{{ $src }}" alt="{{ $alt }}" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;">
   {{- if $caption -}}
     <figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure {{ $num }}.</span>
@@ -44,3 +39,115 @@
     </figcaption>
   {{- end -}}
 </figure>
+
+{{/* ---------- Only insert zoom overlay + CSS/JS once per page ---------- */}}
+{{- if not (.Page.Scratch.Get "zoomInit") -}}
+  {{- .Page.Scratch.Set "zoomInit" true -}}
+
+  <style>
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 2rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .zoom-overlay img {
+      width: 90vw;          /* forced box width */
+      height: 75vh;         /* forced box height */
+      object-fit: contain;  /* scale image inside the box */
+      
+      border-radius: 12px;
+      box-shadow: 0 0 0px rgba(0,0,0,0.45);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .zoom-overlay.active img {
+      transform: scale(1);
+    }
+  </style>
+
+<div id="zoom-overlay" class="zoom-overlay">
+<button id="zoom-close-btn"
+  style="
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:rgba(0,0,0,0.55);
+    border:none;
+    color:white;
+    font-size:1.8rem;
+    line-height:1;
+    padding:0.2em 0.5em;
+    border-radius:6px;
+    cursor:pointer;
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    transition:background 0.2s;
+  "
+  aria-label="Close image"
+>&times;</button>
+  <div style="text-align:center;">
+    <img id="zoom-img" src="">
+    
+    <div id="zoom-caption"
+         style="margin-top:1em;
+           font-size:1em;
+           color:white;
+           background:rgba(0,0,0,0.65);
+           padding:0.5em 1em;
+           border-radius:6px;
+           max-width:90%;
+           margin-left:auto;
+           margin-right:auto;">
+    </div>
+
+  </div>
+</div>
+
+<script>
+const overlay = document.getElementById('zoom-overlay');
+const zoomImg = document.getElementById('zoom-img');
+const zoomCaption = document.getElementById('zoom-caption');
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('.zoomable-image');
+  if (img) {
+    zoomImg.src = img.src;
+
+    // Find caption from figure
+    const figure = img.closest('figure');
+    const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+
+    zoomCaption.innerHTML = caption;
+    overlay.classList.add('active');
+  } else if (e.target === overlay || e.target === zoomImg) {
+    overlay.classList.remove('active');
+  }
+});
+
+document.getElementById('zoom-close-btn').addEventListener('click', () => {
+  overlay.classList.remove('active');
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === "Escape") {
+    overlay.classList.remove('active');
+  }
+});
+
+</script>
+
+{{- end -}}
