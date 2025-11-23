@@ -268,6 +268,7 @@ texture.needsUpdate = true;
 texture.minFilter = THREE.NearestFilter;
 texture.magFilter = THREE.NearestFilter;
 texture.flipY = false; // Don't flip - we handle orientation in NDC
+texture.colorSpace = THREE.SRGBColorSpace;  
 
 // Image Plane Mesh
 const dist = vCam.far;

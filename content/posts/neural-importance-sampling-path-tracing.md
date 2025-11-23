@@ -1442,6 +1442,14 @@ Mixture parameters:
 caption="vMF Mixture with $K=3$ components" 
 width="60%" >}}
 
+<iframe src="/interactive/vmf.html"
+        width="100%"
+        height="412"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
 ---
 
 ### Radiance-Based NPM
