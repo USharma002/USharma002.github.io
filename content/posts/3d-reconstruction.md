@@ -155,7 +155,9 @@ Here
 This is the complete back-projection from pixel $\rightarrow$ ray in camera space.
 
 ---
+## Forward and Inverse Camera Projection Pipeline
 
+<div style="font-size: 0.7em;">
 $$
 \begin{array}{c|cccccccc|c}
 \textbf{World point} &
@@ -195,6 +197,7 @@ R & t \\
 \begin{bmatrix}u\\v\\1\end{bmatrix}
 \end{array}
 $$
+</div>
 
 ### Interactive World 2 Cam
 
@@ -259,9 +262,10 @@ $$
 ### Interactive Simulation
 <iframe src="/interactive/inverse_transform_sampling.html"
         width="100%"
-        height="330"
+        height="280"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px; min-width: 700px;"
+        class="dark">
 </iframe>
 
 ---
