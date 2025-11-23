@@ -1,4 +1,6 @@
-{{- $id := .Get "id" | default "rt_iframe" -}}
+{{- /* 1. Generate a unique ID if one isn't provided, otherwise duplicates break the logic */ -}}
+{{- $seed := now.UnixNano -}}
+{{- $id := .Get "id" | default (printf "iframe-%d" $seed) -}}
 {{- $src := .Get "src" -}}
 {{- $height := .Get "height" | default "800" -}}
 
@@ -21,6 +23,7 @@
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.25s;
+  z-index: 10; /* Ensure button sits above iframe content */
 }
 .iframe-wrapper:hover .fullscreen-btn {
   opacity: 1;
@@ -31,20 +34,32 @@
 </style>
 
 <div class="iframe-wrapper">
-  <button class="fullscreen-btn" onclick='goFullscreen()'>⛶</button>
+  <button class="fullscreen-btn" onclick="goFullscreen('{{ $id }}')">⛶</button>
 
   <iframe id="{{ $id }}"
           src="{{ $src }}"
           allowfullscreen
-        style="width:100%; height:{{ $height }}px; border:0 !important; border-radius:8px;">
+          style="width:100%; height:{{ $height }}px; border:0 !important; border-radius:8px;">
   </iframe>
 </div>
 
 <script>
-function goFullscreen() {
-  const iframe = document.getElementById("{{ $id }}");
-  if (iframe.requestFullscreen) iframe.requestFullscreen();
-  else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
-  else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
-}
+  // 3. Check if function exists so we don't redefine it unnecessarily
+  if (typeof goFullscreen !== 'function') {
+    
+    // 4. Accept the ID as an argument (elementId)
+    function goFullscreen(elementId) {
+      const iframe = document.getElementById(elementId);
+      
+      if (!iframe) return;
+
+      if (iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+      } else if (iframe.webkitRequestFullscreen) { /* Safari */
+        iframe.webkitRequestFullscreen();
+      } else if (iframe.msRequestFullscreen) { /* IE11 */
+        iframe.msRequestFullscreen();
+      }
+    }
+  }
 </script>

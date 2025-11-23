@@ -681,7 +681,7 @@ Due to trilinear interpolation, naively pruning can adversely impact the color a
 
 {{< 
 fullscreen-iframe 
-id="rt_iframe" 
+id="plenoctree_iframe" 
 src="/interactive/plenoctree.html" 
 height="600" 
 >}}
