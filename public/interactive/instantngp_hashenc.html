@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiresolution Hash Encoding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+    
+    * { box-sizing: border-box; }
+
+    :root {
+        /* Light Theme Defaults */
+        --page-bg: #f7f9fb;
+        --page-text: #212529;
+        --card-bg: #ffffff;
+        --card-border: #dee2e6;
+        --secondary-bg: #f8f9fa;
+        --tertiary-bg: #e9ecef;
+        
+        /* Accent Colors */
+        --level-0-color: #ef4444; /* Red for coarse level */
+        --level-1-color: #3b82f6; /* Blue for fine level */
+        --aux-color: #10b981; /* Green for auxiliary */
+        
+        /* Light variants */
+        --level-0-light: #fca5a5;
+        --level-1-light: #93c5fd;
+        --aux-dark: #059669;
+        
+        /* UI Elements */
+        --border-color: #ccc;
+        --grid-line: #ddd;
+        --shadow: rgba(0,0,0,0.1);
+        --highlight: rgba(255, 200, 0, 0.15);
+        --canvas-bg: #ffffff;
+        --canvas-border: #333;
+        
+        /* Text colors */
+        --text-primary: #333;
+        --text-secondary: #666;
+        --text-tertiary: #555;
+    }
+
+    /* Dark theme support */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --page-bg: #1a1a1a;
+            --page-text: #e5e5e5;
+            --card-bg: #242424;
+            --card-border: #404040;
+            --secondary-bg: #2a2a2a;
+            --tertiary-bg: #333333;
+            
+            /* Keep accent colors consistent for data vis */
+            --level-0-color: #ef4444;
+            --level-1-color: #3b82f6;
+            --aux-color: #10b981;
+            
+            /* Adjust light variants for dark mode */
+            --level-0-light: #7f1d1d;
+            --level-1-light: #1e3a8a;
+            --aux-dark: #065f46;
+            
+            /* UI Elements */
+            --border-color: #404040;
+            --grid-line: #333;
+            --shadow: rgba(0,0,0,0.3);
+            --highlight: rgba(255, 200, 0, 0.25);
+            --canvas-bg: #2a2a2a;
+            --canvas-border: #555;
+            
+            /* Text colors */
+            --text-primary: #e5e5e5;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #999;
+        }
+    }
+
+    body {
+        margin: 0;
+        padding: 10px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: var(--page-bg);
+        color: var(--page-text);
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 6px;
+        border: 1px solid var(--card-border);
+        box-shadow: 0 1px 4px var(--shadow);
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    h1 {
+        margin: 0 0 6px 0;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+    }
+
+    .description {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        line-height: 1.4;
+        font-size: 0.85rem;
+    }
+
+    /* --- Layout --- */
+    .viz-container {
+        display: flex;
+        gap: 12px;
+        align-items: center; 
+    }
+
+    .section-1 { flex: 0 0 240px; }
+    .grid-wrapper {
+        position: relative;
+        width: 240px;
+        height: 240px;
+    }
+
+    #canvas {
+        width: 100%;
+        height: 100%;
+        border: 2px solid var(--canvas-border);
+        cursor: crosshair;
+        background: var(--canvas-bg);
+        border-radius: 4px;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* --- Labels and Text --- */
+    .coord-display { 
+        margin-top: 6px; 
+        font-family: monospace; 
+        font-size: 0.75rem; 
+        text-align: center;
+        color: var(--text-primary);
+    }
+    
+    .param-label { 
+        position: absolute; 
+        font-size: 0.7rem; 
+        font-weight: 600; 
+        color: var(--text-tertiary);
+    }
+    
+    .weights-display { 
+        margin-top: 6px; 
+        font-size: 0.7rem; 
+        color: var(--text-secondary); 
+        line-height: 1.4;
+    }
+    
+    .step-label { 
+        text-align: center; 
+        margin-top: 8px; 
+        font-weight: 600; 
+        font-size: 0.75rem; 
+        color: var(--text-primary);
+    }
+    
+    /* --- Sections 2 & 3: Lookup and Interpolation --- */
+    .section-23 { 
+        flex: 1; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 18px; 
+        min-width: 320px;
+        max-width: 320px;
+    }
+
+    .level-container { 
+        display: flex; 
+        gap: 10px; 
+        align-items: flex-start;
+    }
+    
+    .hash-table-wrapper { flex: 0 0 110px; }
+    
+    .table-title { 
+        font-size: 0.7rem; 
+        font-weight: 600; 
+        color: var(--text-secondary); 
+        margin-bottom: 4px; 
+        text-align: center;
+    }
+
+    /* Table Structure */
+    .hash-table {
+        display: grid;
+        grid-template-columns: 28px 22px 22px 22px;
+        gap: 1px;
+        background: var(--grid-line);
+        border: 1px solid var(--border-color);
+        font-size: 0.65rem;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .table-cell {
+        background: var(--card-bg);
+        padding: 2px 1px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 22px;
+        position: relative;
+        transition: background 0.3s ease;
+    }
+
+    .header-cell { 
+        background: var(--tertiary-bg); 
+        font-weight: 600; 
+        font-size: 0.6rem; 
+        height: 22px;
+        color: var(--text-primary);
+    }
+    
+    .index-cell { 
+        background: var(--secondary-bg);
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+    
+    .feature-cell { 
+        padding: 0; 
+        width: 22px; 
+        height: 22px;
+    }
+    
+    .weight-cell { 
+        background: var(--secondary-bg);
+        font-size: 0.65rem; 
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    /* Highlight background - behind content */
+    .highlight-bg::before { 
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--highlight);
+        z-index: -1;
+    }
+    
+    /* Interpolation Canvas */
+    .interp-wrapper { flex: 0 0 120px; }
+    
+    .interp-canvas-container { 
+        width: 100px; 
+        height: 100px; 
+        margin: 0 auto; 
+        border: 2px solid var(--border-color);
+        background: var(--canvas-bg);
+        box-shadow: 0 1px 3px var(--shadow);
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    
+    #interpCanvas0, #interpCanvas1 { 
+        width: 100%; 
+        height: 100%;
+    }
+
+    /* Interpolation Result */
+    .interp-result { margin-top: 8px; }
+    
+    .result-label { 
+        font-size: 0.65rem; 
+        font-weight: 600; 
+        text-align: center; 
+        margin-bottom: 4px;
+    }
+    
+    .feature-boxes { 
+        display: flex; 
+        gap: 6px; 
+        justify-content: center;
+    }
+    
+    .result-box { 
+        width: 24px; 
+        height: 24px; 
+        border-radius: 3px; 
+        border: 2px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+
+    /* Step Label Alignment */
+    .step-label-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 8px;
+        width: 340px; 
+        position: relative;
+    }
+
+    .step-label-group > div {
+        font-weight: 600;
+        font-size: 0.75rem;
+        color: var(--text-primary);
+        text-align: center;
+    }
+    
+    .step-label-group .lookup-label { 
+        position: absolute;
+        left: 35px;
+    } 
+    
+    .step-label-group .interp-label { 
+        position: absolute;
+        left: 210px;
+    }
+
+    /* --- Section 4: Concatenation --- */
+    .arrow { 
+        font-size: 1.5rem; 
+        color: var(--text-tertiary); 
+        align-self: center; 
+        margin: 0 3px;
+    }
+    
+    .section-4 { 
+        flex: 0 0 60px; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        height: 340px; 
+        padding-top: 30px; 
+    }
+    
+    .concat-label { 
+        font-weight: 700; 
+        font-size: 1rem; 
+        margin-bottom: 6px;
+        color: var(--text-primary);
+    }
+    
+    .concat-vector {
+        width: 38px; 
+        display: flex; 
+        flex-direction: column; 
+        gap: 2px; 
+        padding: 6px; 
+        border: 2px solid var(--canvas-border);
+        border-radius: 4px; 
+        background: var(--secondary-bg);
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .concat-cell { 
+        height: 16px; 
+        border: 1px solid var(--border-color);
+        border-radius: 2px;
+        transition: border-color 0.3s ease;
+    }
+    
+    .concat-cell-l0 {
+        border: 2px solid var(--level-0-color);
+    }
+    
+    .concat-cell-l1 {
+        border: 2px solid var(--level-1-color);
+    }
+    
+    .aux-cell { 
+        background: var(--aux-color) !important; 
+        border: 2px solid var(--aux-dark);
+    }
+    
+    .dim-labels { 
+        margin-top: 6px; 
+        font-size: 0.7rem; 
+        font-weight: 600; 
+        text-align: center; 
+        line-height: 1.6;
+    }
+
+    /* --- Colors --- */
+    .level-0 { color: var(--level-0-color); }
+    .level-1 { color: var(--level-1-color); }
+
+    /* --- Responsive for mobile --- */
+    @media (max-width: 768px) {
+        .viz-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .section-1, .section-23, .section-4 {
+            flex: 1 1 auto;
+        }
+        .arrow {
+            transform: rotate(90deg);
+            margin: 5px 0;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multiresolution Hash Encoding (Instant NGP)</h1>
+        <p class="description">
+            Drag point <strong>x</strong> to see multi-resolution hash encoding. Feature values use <strong>Viridis</strong> colormap (Purple = 0, Yellow = 1).
+        </p>
+
+        <div class="viz-container">
+            <div class="section-1">
+                <div class="grid-wrapper">
+                    <span class="param-label" style="top: -18px; left: 0;">L=2, b=1.5</span>
+                    <span class="param-label" style="top: 15px; right: -35px; transform: rotate(90deg);">T</span>
+                    <span class="param-label" style="top: 0px; left: 75px;">1/N₀</span>
+                    <span class="param-label" style="top: 70px; left: -22px;">1/N₁</span>
+                    <canvas id="canvas" width="240" height="240"></canvas>
+                </div>
+                <div class="coord-display">x = (<span id="coordX">0.50</span>, <span id="coordY">0.50</span>)</div>
+                <div class="weights-display">
+                    <div><span class="level-0">●</span> N=4: wₓ=<span id="weights0x">0.00</span>, wᵧ=<span id="weights0y">0.00</span></div>
+                    <div><span class="level-1">●</span> N=6: wₓ=<span id="weights1x">0.00</span>, wᵧ=<span id="weights1y">0.00</span></div>
+                </div>
+                <div class="step-label">(1) Hash vertices</div>
+            </div>
+
+            <div class="section-23">
+                <!-- Level 0 -->
+                <div class="level-container">
+                    <div class="hash-table-wrapper">
+                        <div class="table-title level-0">T (Level 0)</div>
+                        <div class="hash-table" id="table0"></div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="interp-wrapper">
+                        <div class="table-title">Voxel (l=0)</div>
+                        <div class="interp-canvas-container">
+                            <canvas id="interpCanvas0" width="100" height="100"></canvas>
+                        </div>
+                        <div class="interp-result">
+                            <div class="result-label level-0">F₀, F₁</div>
+                            <div class="feature-boxes" id="result0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level 1 -->
+                <div class="level-container">
+                    <div class="hash-table-wrapper">
+                        <div class="table-title level-1">T (Level 1)</div>
+                        <div class="hash-table" id="table1"></div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="interp-wrapper">
+                        <div class="table-title">Voxel (l=1)</div>
+                        <div class="interp-canvas-container">
+                            <canvas id="interpCanvas1" width="100" height="100"></canvas>
+                        </div>
+                        <div class="interp-result">
+                            <div class="result-label level-1">F₀, F₁</div>
+                            <div class="feature-boxes" id="result1"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-label-group">
+                    <div class="lookup-label">(2) Lookup</div>
+                    <div class="interp-label">(3) Interpolate</div>
+                </div>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <!-- Section 4: Concatenation -->
+            <div class="section-4">
+    <div class="concat-label">y</div>
+    <div class="concat-vector" id="concatVector"></div>
+    <div class="dim-labels">
+        <div>
+            <span class="level-0">L</span>
+            <span style="color: var(--text-primary);">·</span>
+            <span class="level-1">F</span>
+        </div>
+        <div style="color: var(--text-tertiary); font-size: 1rem; font-weight: 700;">+</div>
+        <div style="color: var(--aux-color);">E</div>
+    </div>
+    <div class="step-label" style="margin-top: 12px;">(4) Concat</div>
+</div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const L = 2, F = 2, T = 8, N_min = 4, b = 1.5, E = 2, HASH_PRIME = 5;
+        const N = [Math.floor(N_min * Math.pow(b, 0)), Math.floor(N_min * Math.pow(b, 1))];
+
+        // Initialize features
+        const features = [];
+        for (let l = 0; l < L; l++) {
+            features[l] = [];
+            for (let i = 0; i < T; i++) {
+                features[l][i] = [Math.random(), Math.random()];
+            }
+        }
+
+        let pos = { x: 0.5, y: 0.5 };
+        let isDragging = false;
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const ic0 = document.getElementById('interpCanvas0');
+        const ictx0 = ic0.getContext('2d');
+        const ic1 = document.getElementById('interpCanvas1');
+        const ictx1 = ic1.getContext('2d');
+        
+        function hash(i, j) {
+            return ((i * 1) ^ (j * HASH_PRIME)) % T;
+        }
+        
+        // Viridis colormap
+        function valueToColor(v) {
+            const t = Math.max(0, Math.min(1, v));
+            const viridis = [
+                [0.267004, 0.004874, 0.329415], [0.282623, 0.140926, 0.457517],
+                [0.253935, 0.265254, 0.529983], [0.206756, 0.371758, 0.553117],
+                [0.163625, 0.471133, 0.558148], [0.127568, 0.566949, 0.550556],
+                [0.134692, 0.658636, 0.517649], [0.266941, 0.748751, 0.440573],
+                [0.477504, 0.821444, 0.318195], [0.741388, 0.873449, 0.149561],
+                [0.993248, 0.906157, 0.143936]
+            ];
+            
+            const idx = t * (viridis.length - 1);
+            const i1 = Math.floor(idx);
+            const i2 = Math.min(i1 + 1, viridis.length - 1);
+            const frac = idx - i1;
+            
+            const r = viridis[i1][0] + (viridis[i2][0] - viridis[i1][0]) * frac;
+            const g = viridis[i1][1] + (viridis[i2][1] - viridis[i1][1]) * frac;
+            const b = viridis[i1][2] + (viridis[i2][2] - viridis[i1][2]) * frac;
+            
+            return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`;
+        }
+
+        function getInterp(x, y, level) {
+            const n = N[level];
+            const sx = x * n, sy_grid = (1 - y) * n;
+            const i0 = Math.floor(sx), j0_grid = Math.floor(sy_grid);
+            const i1 = Math.min(n, i0 + 1), j1_grid = Math.min(n, j0_grid + 1);
+            const wx = sx - i0, wy_grid = sy_grid - j0_grid;
+
+            const corners = [
+                { i: i0, j: j0_grid, w: (1-wx)*(1-wy_grid) },
+                { i: i1, j: j0_grid, w: wx*(1-wy_grid) },
+                { i: i0, j: j1_grid, w: (1-wx)*wy_grid },
+                { i: i1, j: j1_grid, w: wx*wy_grid }
+            ];
+
+            let result = [0, 0];
+            const lookups = [];
+
+            corners.forEach(c => {
+                if (c.i > n || c.j > n || c.w < 0.0001) return;
+                const h = hash(c.i, c.j);
+                const feat = features[level][h];
+                if (feat) {
+                    result[0] += c.w * feat[0];
+                    result[1] += c.w * feat[1];
+                    lookups.push({ ...c, hash: h, feat: feat });
+                }
+            });
+
+            return { result, lookups, n, voxel: {i0, j0: j0_grid, i1, j1: j1_grid}, weights: {wx, wy: wy_grid} };
+        }
+
+        function drawCanvas() {
+            ctx.clearRect(0, 0, 240, 240);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, 240, 240);
+
+            const data0 = getInterp(pos.x, pos.y, 0);
+            const data1 = getInterp(pos.x, pos.y, 1);
+
+            function drawGridAndVoxel(data, color, lightColor) {
+                const step = 240 / data.n;
+                
+                ctx.strokeStyle = lightColor;
+                ctx.lineWidth = 0.8;
+                for (let i = 0; i <= data.n; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(i * step, 0); ctx.lineTo(i * step, 240);
+                    ctx.moveTo(0, i * step); ctx.lineTo(240, i * step);
+                    ctx.stroke();
+                }
+
+                ctx.strokeStyle = color + ', 1)';
+                ctx.lineWidth = 2.5;
+                ctx.strokeRect(data.voxel.i0 * step, data.voxel.j0 * step, step, step);
+                
+                data.lookups.forEach(c => {
+                    ctx.beginPath();
+                    ctx.arc(c.i * step, c.j * step, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = color + ', 1)';
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 8px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(c.hash, c.i * step, c.j * step);
+                });
+            }
+
+            drawGridAndVoxel(data0, 'rgba(239, 68, 68', '#fca5a5');
+            drawGridAndVoxel(data1, 'rgba(59, 130, 246', '#93c5fd');
+            
+            const px = pos.x * 240, py = (1 - pos.y) * 240;
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fillStyle = 'black';
+            ctx.fill();
+            ctx.font = 'bold 11px Inter';
+            ctx.fillText('x', px - 12, py - 8);
+
+            return { data0, data1 };
+        }
+
+        function drawInterpCanvas(ictx, data, level) {
+            ictx.clearRect(0, 0, 100, 100);
+            ictx.fillStyle = 'white';
+            ictx.fillRect(0, 0, 100, 100);
+
+            const n = data.n, step = 100 / n;
+            const color = level === 0 ? 'rgba(239, 68, 68' : 'rgba(59, 130, 246';
+            const lightColor = level === 0 ? '#fca5a5' : '#93c5fd';
+
+            ictx.strokeStyle = lightColor;
+            ictx.lineWidth = 0.4;
+            for (let i = 0; i <= n; i++) {
+                ictx.beginPath();
+                ictx.moveTo(i * step, 0); ictx.lineTo(i * step, 100);
+                ictx.moveTo(0, i * step); ictx.lineTo(100, i * step);
+                ictx.stroke();
+            }
+
+            ictx.strokeStyle = color + ', 1)';
+            ictx.lineWidth = 2;
+            ictx.strokeRect(data.voxel.i0 * step, data.voxel.j0 * step, step, step);
+
+            const px_interp = pos.x * n * step, py_interp = (1 - pos.y) * n * step;
+            ictx.strokeStyle = color + ', 1)';
+            ictx.lineWidth = 0.8;
+            
+            data.lookups.forEach(c => {
+                ictx.beginPath();
+                ictx.moveTo(px_interp, py_interp);
+                ictx.lineTo(c.i * step, c.j * step);
+                ictx.stroke();
+            });
+            
+            data.lookups.forEach(c => {
+                ictx.beginPath();
+                ictx.arc(c.i * step, c.j * step, 4.5, 0, Math.PI * 2);
+                ictx.fillStyle = color + ', 1)';
+                ictx.fill();
+                ictx.fillStyle = 'white';
+                ictx.font = 'bold 7px Inter';
+                ictx.textAlign = 'center';
+                ictx.textBaseline = 'middle';
+                ictx.fillText(c.hash, c.i * step, c.j * step);
+            });
+
+            ictx.beginPath();
+            ictx.arc(px_interp, py_interp, 3, 0, Math.PI * 2);
+            ictx.fillStyle = 'black';
+            ictx.fill();
+        }
+
+        function updateTable(level, data) {
+            const table = document.getElementById(`table${level}`);
+            let html = '<div class="table-cell header-cell">idx</div><div class="table-cell header-cell">F₀</div><div class="table-cell header-cell">F₁</div><div class="table-cell header-cell">w</div>';
+            
+            const usedHashes = new Set(data.lookups.map(l => l.hash));
+            const baseColor = level === 0 ? 'rgba(239, 68, 68' : 'rgba(59, 130, 246';
+            
+            for (let i = 0; i < T; i++) {
+                const isUsed = usedHashes.has(i);
+                const highlightBg = isUsed ? 'highlight-bg' : '';
+                const corners = data.lookups.filter(l => l.hash === i);
+                
+                let totalWeight = 0;
+                if (corners.length > 0) {
+                    totalWeight = corners.reduce((sum, c) => sum + c.w, 0);
+                }
+                const weightDisplay = totalWeight > 0 ? totalWeight.toFixed(2) : '';
+                const wColor = totalWeight > 0 ? `${baseColor}, ${totalWeight})` : 'rgb(245, 245, 245)';
+
+                html += `<div class="table-cell index-cell ${highlightBg}">${i}</div>`;
+                html += `<div class="table-cell feature-cell ${isUsed ? 'border-2 border-yellow-500' : ''}" style="background: ${valueToColor(features[level][i][0])}"></div>`;
+                html += `<div class="table-cell feature-cell ${isUsed ? 'border-2 border-yellow-500' : ''}" style="background: ${valueToColor(features[level][i][1])}"></div>`;
+                html += `<div class="table-cell weight-cell ${highlightBg}" style="background-color: ${wColor}">${weightDisplay}</div>`;
+            }
+            
+            table.innerHTML = html;
+
+            document.getElementById(`result${level}`).innerHTML = `
+                <div class="result-box" style="background: ${valueToColor(data.result[0])}"></div>
+                <div class="result-box" style="background: ${valueToColor(data.result[1])}"></div>
+            `;
+        }
+
+        function updateConcat(data0, data1) {
+            const concat = document.getElementById('concatVector');
+            let html = '';
+            html += `<div class="concat-cell concat-cell-l0" style="background: ${valueToColor(data0.result[0])}"></div>`;
+            html += `<div class="concat-cell concat-cell-l0" style="background: ${valueToColor(data0.result[1])}"></div>`;
+            html += `<div class="concat-cell concat-cell-l1" style="background: ${valueToColor(data1.result[0])}"></div>`;
+            html += `<div class="concat-cell concat-cell-l1" style="background: ${valueToColor(data1.result[1])}"></div>`;
+            for (let i = 0; i < E; i++) {
+                html += `<div class="concat-cell aux-cell"></div>`;
+            }
+            concat.innerHTML = html;
+        }
+
+        function update() {
+            document.getElementById('coordX').textContent = pos.x.toFixed(2);
+            document.getElementById('coordY').textContent = pos.y.toFixed(2);
+
+            const { data0, data1 } = drawCanvas();
+            
+            document.getElementById('weights0x').textContent = data0.weights.wx.toFixed(2);
+            document.getElementById('weights0y').textContent = data0.weights.wy.toFixed(2);
+            document.getElementById('weights1x').textContent = data1.weights.wx.toFixed(2);
+            document.getElementById('weights1y').textContent = data1.weights.wy.toFixed(2);
+
+            drawInterpCanvas(ictx0, data0, 0);
+            drawInterpCanvas(ictx1, data1, 1);
+
+            updateTable(0, data0);
+            updateTable(1, data1);
+
+            updateConcat(data0, data1);
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            return {
+                x: Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)),
+                y: Math.max(0, Math.min(1, 1 - ((clientY - rect.top) / rect.height)))
+            };
+        }
+
+        canvas.addEventListener('mousedown', (e) => { isDragging = true; pos = getPos(e); update(); });
+        window.addEventListener('mousemove', (e) => { if (isDragging) { pos = getPos(e); update(); } });
+        window.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); isDragging = true; pos = getPos(e); update(); }, { passive: false });
+        window.addEventListener('touchmove', (e) => { if (isDragging) { e.preventDefault(); pos = getPos(e); update(); } }, { passive: false });
+        window.addEventListener('touchend', () => isDragging = false);
+
+        update();
+    </script>
+</body>
+</html>

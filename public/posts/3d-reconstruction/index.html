@@ -305,7 +305,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#overview-3" aria-label="Overview">Overview</a></li>
                 <li>
-                    <a href="#multiresolution-hash-encoding" aria-label="Multiresolution Hash Encoding">Multiresolution Hash Encoding</a></li>
+                    <a href="#multiresolution-hash-encoding" aria-label="Multiresolution Hash Encoding">Multiresolution Hash Encoding</a><ul>
+                        
+                <li>
+                    <a href="#interactive-demo-for-multi-resolution-hash-encoding" aria-label="Interactive Demo for Multi Resolution Hash Encoding">Interactive Demo for Multi Resolution Hash Encoding</a></li></ul>
+                </li>
                 <li>
                     <a href="#growth-factor-derivation" aria-label="Growth Factor Derivation">Growth Factor Derivation</a></li>
                 <li>
@@ -1420,6 +1424,13 @@ N_l := \left\lfloor N_{\min} \cdot b^{\,l} \right\rfloor,
 $$$$
 b := \exp\!\left( \frac{\ln N_{\max} - \ln N_{\min}}{L - 1} \right).
 $$<p>$N_{\max}$ is chosen to match the finest detail in the training data. Due to the large number of levels $L$, the growth factor is usually small.</p>
+<h4 id="interactive-demo-for-multi-resolution-hash-encoding">Interactive Demo for Multi Resolution Hash Encoding<a hidden class="anchor" aria-hidden="true" href="#interactive-demo-for-multi-resolution-hash-encoding">#</a></h4>
+<iframe src="/interactive/instantngp_hashenc.html"
+        width="100%"
+        height="620"
+        frameborder="0"
+        style="border-radius:0px; min-width: 600px;">
+</iframe>
 <h3 id="growth-factor-derivation">Growth Factor Derivation<a hidden class="anchor" aria-hidden="true" href="#growth-factor-derivation">#</a></h3>
 <p>To create a geometric progression of resolutions from $N_{\min}$ to $N_{\max}$ over $L$ levels:</p>
 $$N_l = N_{\min} \cdot b^l \quad \text{for } l = 0, 1, \ldots, L-1$$<p>At the finest level ($l = L-1$), we want $N_{L-1} = N_{\max}$:</p>

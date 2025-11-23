@@ -930,6 +930,14 @@ $$
 
 $N_{\max}$ is chosen to match the finest detail in the training data. Due to the large number of levels $L$, the growth factor is usually small.
 
+#### Interactive Demo for Multi Resolution Hash Encoding
+<iframe src="/interactive/instantngp_hashenc.html"
+        width="100%"
+        height="620"
+        frameborder="0"
+        style="border-radius:0px; min-width: 600px;">
+</iframe>
+
 ### Growth Factor Derivation
 
 To create a geometric progression of resolutions from $N_{\min}$ to $N_{\max}$ over $L$ levels:
