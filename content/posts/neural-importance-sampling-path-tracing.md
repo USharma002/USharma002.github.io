@@ -12,12 +12,15 @@ TocOpen: true
 math: true
 ---
 
+<span style="color:red;font-weight:700;font-size:1.05em">
+This post is a work in progress and may be updated or expanded soon!
+</span>
 
 # Introduction to Rendering
 
 The goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.
 
-We mostly work with equations developed between the 16th and early 19th century that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as **ray tracing** 
+We mostly work with equations that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as **ray tracing** 
 
 We are going to look at the **Path Tracing** algorithm. What are differences between Ray Tracing and Path Tracing? I got the following online:
 
@@ -111,6 +114,18 @@ caption="Path Tracing Overview"
 width="80%" 
 >}}
 
+
+- **Lambert's Cosine Law**
+
+
+<iframe src="/interactive/cosine_forshortening.html"
+        width="100%"
+        height="430"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
 ## Monte Carlo Basics
 
 Because Monte Carlo integration is based on randomization, we'll first discuss some ideas from probability and statistics.
@@ -161,13 +176,13 @@ $$
 
 The PMF is one way to describe the distribution of a discrete random variable and cannot be defined over continuous variabels. The cumulative distribution function (CDF) of a random variable is another method to describe the distribution of random variables. The advantage of the CDF is that it can be defined for any kind of random variable (discrete, continuous, and mixed).
 
-> **Definition - Probability Mass Function**
+> **Definition - Cumulative Distribution Function**
 >
 > The cumulative distribution function (CDF) of random variable $X$ is defined as :
 >
 > $$F_X(x) = p(X\leq x_k), \text{for all }x\in\mathbb{R}$$
 >
-> is called the *probability* mass function (PMF) of $X$
+> $F_X$ is called the cumulative distribution function (CDF) of $X$
 
 Note that the subscript $X$ indicates that this is the CDF of the random variable $X$. Also, note that the CDF is defined for all $x\in \mathbb{R}$
 
@@ -247,7 +262,7 @@ $$
 
 where $\Omega$ is any reasonable integration domain.
 
-### From Expectation to Integration
+### From Integration to Expectation
 
 The key insight of Monte Carlo integration is recognizing that any integral can be rewritten as an **expectation** of a random variable.
 
@@ -298,6 +313,15 @@ $$
 $$
 
 This is the **importance sampling** Monte Carlo estimator. The term "importance sampling" refers to the fact that we sample proportionally to how important each region is to the integral (weighted by $p(x)$).
+
+
+<iframe src="/interactive/monte_carlo.html"
+        width="100%"
+        height="420"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
 
 ### Derivation of Properties
 
@@ -367,8 +391,6 @@ $$
 \boxed{\text{Var}(\hat{I}_{MC}) = \frac{1}{N}\text{Var}\left[\frac{f(X)}{p(X)}\right]}
 $$
 
-**Key observation**: The variance decreases as $\frac{1}{N}$, so to reduce variance by a factor of 4, we need 16 times more samples.
-
 #### Property 3: Convergence Rate and Standard Error
 
 The **standard deviation** (standard error) of the estimator is:
@@ -382,6 +404,8 @@ $$
 $$
 
 This means the error decreases proportionally to $N^{-1/2}$, **independent of the dimensionality** of the problem. This is a major advantage over deterministic numerical integration methods, which suffer from the "curse of dimensionality."
+
+**Key observation**: The error decreases as $\mathcal{O}\left(\frac{1}{\sqrt{N}}\right)$, so to reduce standard deviation by a factor of 4, we need 16 times more samples.
 
 
 ### Summary: Properties of the Monte Carlo Estimator
@@ -399,16 +423,7 @@ $$
 
 These properties make Monte Carlo integration particularly attractive for high-dimensional problems like rendering, where evaluating the rendering equation requires integrating over many dimensions (directions, wavelengths, time, etc.).
 
-{{< 
-figure src="../../images/path_tracing/importance_sampling_graph.png"
-num="6"
-id="fig-importance-sampling"
-caption="Importance Sampling PDF"
-width="100%" 
->}}
-
-
-### Optimal Importance Sampling?
+## Importance Sampling
 
 A natural question arises: **what choice of $p(x)$ minimizes the variance?** This is crucial because:
 
@@ -504,6 +519,92 @@ $$
 
 This is why **importance sampling is so powerful**: by choosing $p(x)$ wisely, we can dramatically reduce the number of samples needed to achieve a target accuracy.
 
+{{< 
+figure src="../../images/path_tracing/importance_sampling_graph.png"
+num="6"
+id="fig-importance-sampling"
+caption="Importance Sampling PDF"
+width="100%" 
+>}}
+
+<iframe src="/interactive/importance_sampling.html"
+        width="100%"
+        height="670"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+### Examples using a pair of scenes
+
+Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
+One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$) 
+both rendered with 64 spp and uniform sampling as well as cosine weighted sampling:
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
+      after="../../images/path_tracing/renders/diffuse-cosine-64.png"
+      caption="Uniform Sampling vs. Cosine Weighted Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Cosine Weighted Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/metallic-uniform-64.png"
+      after="../../images/path_tracing/renders/metallic-cosine-64.png"
+      caption="Uniform Sampling vs. Cosine Weighted Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Cosine Weighted Sampling"
+    >}}
+
+  </div>
+
+</div>
+
+
+However, it doesn't help much with the above scenes neither with the diffuse plane nor with the metallic surface. In these cases, both the uniform distribution and the cosine-weighted one poorly approximate the integrated function
+
+- For the diffuse surface, they are good approximations of the BRDF term, but they poorly approximate the incoming light since the light comes only from a handful of directions pointing to the small sphere 
+- For the metallic surface, they are OK approximations of the incoming light (which now comes from a lot of directions, because the light source is quite big), but they are poor approximations of the BRDF term, which for nice polished metals wants to reflect light only in a certain direction, and not in a random one
+
+Thus, we can use the following sampling strategies for the scenes respectively:
+- Send random directions directly to the light source! This is called direct light sampling, or light importance sampling, or just light sampling
+- One thing we can do for the metallic plane is to figure out a distribution that sends more rays towards the direction of perfect reflection. This distribution is called VNDF
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
+      after="../../images/path_tracing/renders/diffuse-light-64.png"
+      caption="Uniform Sampling vs. Direct Light Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Direct Light Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/metallic-uniform-64.png"
+      after="../../images/path_tracing/renders/metallic-vndf-64.png"
+      caption="Uniform Sampling vs. VNDF Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="VNDF Sampling"
+    >}}
+
+  </div>
+
+</div>
+
 
 ## Product Function Integral
 
@@ -519,6 +620,79 @@ $$
 where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.
 
 Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator. 
+
+### MIS Motivating Example
+
+The following is a Cornell Box scene with all diffuse materials. The sampling is done in following ways
+- Direct Light Sampling
+- Cosine Weighted Sampling
+- Direct Light Sampling
+- MIS (Cosine Weighted + Direct Light Sampling)
+
+In the Cornell box scene, we have a lot of diffuse light spreading around the scene, and using just direction light sampling produces a wrong image. The reason is that the requirement $f(x)>0 \Rightarrow p(x)>0$ is not fulfilled for this distribution: there are a lot of directions with non-zero values of our integrated function (namely, the diffuse reflections of light by the objects in the scene), but the distribution only samples a certain subset of directions (those leading directly to a light source).
+
+So, we have a bunch of sampling strategies (i.e. a bunch of distributions), and each of them works in some cases and doesn't work in other cases. 
+
+How can we combine several distributions at once? One obvious way would be to, say, each time we generate a sample, select one of the distributions at random and just use it in our calculations.
+
+For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair coin, and with probability 1/2 our estimator is either $\frac{f(X)}{p_1(X)}$ or $\frac{f(X)}{p_2(X)}$. Using cosine-weighted distribution for p1, and direct light sampling for p2, we get the **Wrong MIS** (given below).
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/box-uniform-64.png"
+      after="../../images/path_tracing/renders/box-cosine-64.png"
+      caption="Uniform Sampling vs. Cosine Weighted Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Cosine Weighted Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/box-cosine-64.png"
+      after="../../images/path_tracing/renders/box-mis-64.png"
+      caption="Cosine Weighted Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
+      width="100%"
+      beforeLabel="Cosine Weighted Sampling"
+      afterLabel="MIS"
+    >}}
+
+  </div>
+
+</div>
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/box-uniform-64.png"
+      after="../../images/path_tracing/renders/box-light-64.png"
+      caption="Uniform Sampling vs. Direct Light Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Direct Light Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/box-mis-wrong-64.png"
+      after="../../images/path_tracing/renders/box-mis-64.png"
+      caption="MIS Wrong vs. MIS (Cosine Weighted and Direct Light Sampling)"
+      width="100%"
+      beforeLabel="MIS Wrong"
+      afterLabel="MIS"
+    >}}
+
+  </div>
+
+</div>
+
+
+To get a correct combination of these pdf we have Multiple Importance Sampling
 
 ## Multiple Importance Sampling (MIS)
 
@@ -549,6 +723,24 @@ The **power heuristic** often reduces variance even further. For an exponent $\b
 $$
 w_i(x) = \frac{(n_ip_i(x))^\beta}{\sum_j (n_j p_j(x))^\beta}
 $$
+
+
+<iframe src="/interactive/mis.html"
+        width="100%"
+        height="660"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+{{< dlider
+before="../../images/path_tracing/renders/box-uniform-64.png"
+after="../../images/path_tracing/renders/box-mis-64.png"
+caption="Uniform Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
+width="60%"
+beforeLabel="Uniform Sampling"
+afterLabel="MIS"
+>}}
 
 ### Russian Roulette
 
@@ -633,10 +825,9 @@ width="100%"
 
 Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.
 
-### Path Tracing Algorithm Steps
+### Path Tracing Algorithm Steps (Recursive)
 
 1. **Generate camera ray** through pixel using sensor
-
 {{< 
 figure src="../../images/path_tracing/init_cam.png"
 num="10"
@@ -645,52 +836,49 @@ caption="Initialize Scene and Generate Rays using Sensor"
 width="100%" 
 >}}
 
-
-2. **Trace ray** into scene, find first intersection
+2. **Trace ray** into scene, find nearest intersection. **(If miss: return background)**.
 {{< 
 figure src="../../images/path_tracing/trace.png"
 num="11"
 id="fig-trace-ray"
-caption="Trace Ray and Find Intersection"
+caption="Trace Ray and Find Intersection (Base Case Check)"
 width="100%" 
 >}}
 
-3. **Accumulate emission** from light sources (NEE optional)
-4. **Sample BSDF** to choose next direction
+3. **Initialize Radiance ($L$)** with surface emission ($L_e$) and Direct Light (NEE).
+4. **Sample BSDF** to choose next direction and **calculate Throughput (color)**.
 {{< 
 figure src="../../images/path_tracing/surface_intersection.png"
 num="12"
 id="fig-surface-intersection"
-caption="Query BSDF of intersected primitive"
+caption="Query BSDF and calculate throughput (BSDF * Cos / PDF)"
 width="100%" 
 >}}
 
-5. **Spawn new ray** from intersection point
+5. **Recursive Call:** Spawn new ray and call `Trace()` function for it.
 {{< 
 figure src="../../images/path_tracing/sample_ray.png"
 num="13"
 id="fig-sample-ray"
-caption="Sample Next Ray using some PDF"
+caption="Spawn ray and recurse: `L_in = Trace(new_ray)`"
 width="100%" 
 >}}
 
-
-
-6. **Repeat** (steps 2-5) until max depth or Russian roulette termination
+6. **Recursion Depth:** The function continues calling itself until max depth or Russian Roulette termination.
 {{< 
 figure src="../../images/path_tracing/repeat.png"
 num="14"
 id="fig-repeat"
-caption="Repeat bouncing until termination"
+caption="Recursion continues (Logic repeats for new ray)"
 width="100%" 
 >}}
 
-7. **Return** accumulated radiance
+7. **Return Total Radiance:** Add indirect light to local emission ($L_e + \text{Throughput} \times L_{in}$) and return result.
 {{< 
 figure src="../../images/path_tracing/final_ray.png"
 num="15"
 id="fig-final-ray"
-caption="Return accumulated radiance"
+caption="Return combined radiance up the stack"
 width="100%" 
 >}}
 
@@ -703,7 +891,6 @@ id="fig-2spp"
 caption="2 Samples Per Pixel"
 width="100%" 
 >}}
-
 ### Interactive Ray Tracer Visualization
 {{< 
 fullscreen-iframe 
@@ -939,11 +1126,11 @@ class Simple(mi.SamplingIntegrator):
             active_next = (depth + 1 < self.max_depth) & si.is_valid()
 
             # BSDF Sampling
-            bsdf_smaple, bsdf_val = bsdf.sample(
+            bsdf_sample, bsdf_val = bsdf.sample(
                 bsdf_ctx, si, sampler.next_1d(), sampler.next_2d(), active_next)
 
             # Update loop variables
-            ray = si.spawn_ray(si.to_world(bsdf_smaple.wo))
+            ray = si.spawn_ray(si.to_world(bsdf_sample.wo))
             L = (L + Le)
             f *= bsdf_val
 

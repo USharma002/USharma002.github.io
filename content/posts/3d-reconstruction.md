@@ -2458,6 +2458,53 @@ We can compute partial derivative, derive update equations (gradient decent)
 ## RAFT
 ## RAFT DERF
 ## 4DGS
+All the dynamic NeRF algorithms can be formulated as:
+
+c, σ = M(x, d, t, λ)
+
+where M is a mapping that maps 8D space (x, d, t, λ) to
+4D space (c, σ). x reveals to the spatial point, and λ is the
+optional input as used to build topological and appearance
+changes, and d stands for view-dependency.
+
+all the deformation NeRF based
+methods estimate the world-to-canonical mapping by a
+deformation network ϕt : (x, t) → ∆x. Then a network is
+introduced to compute volume density and view-dependent
+RGB color from each ray. The formula for rendering can be
+expressed as:
+c, σ = NeRF(x + ∆x, d, λ),
+λ is a
+frame-dependent code to model the topological and appearance change
+
+### Overview
+compute
+the canonical-to-world mapping directly at time t using
+a Gaussian deformation field network F, and differential
+splatting follows. This enables the capability of computing backward flow and tracking for 3D Gaussians
+
+### Method
+
+given a view matrix M = [R, T], timestamp t, our 4D Gaussian splatting framework includes 3D
+Gaussians G and Gaussian deformation field network F.
+Then a novel-view image ˆI is rendered by differential splatting [63] S following ˆI = S(M, G
+′
+), where  G
+′ = ∆G + G.
+
+Specifically, the deformation of 3D Gaussians ∆G is introduced by the Gaussian deformation field network ∆G =
+F(G, t), in which the spatial-temporal structure encoder H
+can encode both the temporal and spatial features of 3D
+Gaussians fd = H(G, t). And the multi-head Gaussian deformation decoder D can decode the features and predict
+each 3D Gaussian’s deformation ∆G = D(f), then the deformed 3D Gaussians G
+′
+can be introduced.
+
+### Spatial-Temporal Structure Encoder
+
+
+
+### Dynamic NeRFs with Deformation Fields
 
 ---
 
