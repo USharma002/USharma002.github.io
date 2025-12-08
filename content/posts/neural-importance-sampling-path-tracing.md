@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "A comprehensive look into the Neural Importance Sampling for Path Tracing"
-date: "2025-11-22"
+date: "2025-12-09"
 description: "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing"
 summary: "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing"
 tags: ["Generative Modelling", "Computer Graphics", "Ray Tracing"]
@@ -286,7 +286,15 @@ $$
 
 where $X$ is a random variable drawn from distribution $p(x)$.
 
-### Properties of the Probability Density Function $p(x)$
+<iframe src="/interactive/monte_carlo.html"
+        width="100%"
+        height="420"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+### Properties of the $p(x)$ in MC Estimator
 
 The PDF $p(x)$ must satisfy the following fundamental properties:
 
@@ -313,14 +321,6 @@ $$
 $$
 
 This is the **importance sampling** Monte Carlo estimator. The term "importance sampling" refers to the fact that we sample proportionally to how important each region is to the integral (weighted by $p(x)$).
-
-
-<iframe src="/interactive/monte_carlo.html"
-        width="100%"
-        height="420"
-        frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
-</iframe>
 
 
 ### Derivation of Properties
@@ -536,6 +536,10 @@ width="100%"
 
 
 ### Examples using a pair of scenes
+
+I have used some renders from this [amazing blog](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html).
+
+[https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html)
 
 Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
 One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$) 

@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;51 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta">51 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#from-integration-to-expectation" aria-label="From Integration to Expectation">From Integration to Expectation</a></li>
                 <li>
-                    <a href="#properties-of-the-probability-density-function" aria-label="Properties of the Probability Density Function $p(x)$">Properties of the Probability Density Function $p(x)$</a></li>
+                    <a href="#properties-of-the--in-mc-estimator" aria-label="Properties of the $p(x)$ in MC Estimator">Properties of the $p(x)$ in MC Estimator</a></li>
                 <li>
                     <a href="#definition---monte-carlo-estimator" aria-label="Definition - Monte Carlo Estimator">Definition - Monte Carlo Estimator</a></li>
                 <li>
@@ -773,7 +773,13 @@ $$<p>we can identify:</p>
 $$
 I = \mathbb{E}\left[\frac{f(X)}{p(X)}\right]
 $$<p>where $X$ is a random variable drawn from distribution $p(x)$.</p>
-<h3 id="properties-of-the-probability-density-function">Properties of the Probability Density Function $p(x)$<a hidden class="anchor" aria-hidden="true" href="#properties-of-the-probability-density-function">#</a></h3>
+<iframe src="/interactive/monte_carlo.html"
+        width="100%"
+        height="420"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+<h3 id="properties-of-the--in-mc-estimator">Properties of the $p(x)$ in MC Estimator<a hidden class="anchor" aria-hidden="true" href="#properties-of-the--in-mc-estimator">#</a></h3>
 <p>The PDF $p(x)$ must satisfy the following fundamental properties:</p>
 $$
 \boxed{
@@ -791,12 +797,6 @@ $$
 \hat{I}_{MC} = \frac{1}{N}\sum_{i=1}^{N} \frac{f(X_i)}{p(X_i)}, \quad X_i \stackrel{\text{i.i.d.}}{\sim} p(x)
 }
 $$<p>This is the <strong>importance sampling</strong> Monte Carlo estimator. The term &ldquo;importance sampling&rdquo; refers to the fact that we sample proportionally to how important each region is to the integral (weighted by $p(x)$).</p>
-<iframe src="/interactive/monte_carlo.html"
-        width="100%"
-        height="420"
-        frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
-</iframe>
 <h3 id="derivation-of-properties">Derivation of Properties<a hidden class="anchor" aria-hidden="true" href="#derivation-of-properties">#</a></h3>
 <h4 id="property-1-unbiasedness">Property 1: Unbiasedness<a hidden class="anchor" aria-hidden="true" href="#property-1-unbiasedness">#</a></h4>
 <p>To prove that $\mathbb{E}[\hat{I}_{MC}] = I$, we take the expectation of both sides:</p>
@@ -924,6 +924,8 @@ $$<p>This is why <strong>importance sampling is so powerful</strong>: by choosin
         style="border-radius:8px; min-width: 700px;">
 </iframe>
 <h3 id="examples-using-a-pair-of-scenes">Examples using a pair of scenes<a hidden class="anchor" aria-hidden="true" href="#examples-using-a-pair-of-scenes">#</a></h3>
+<p>I have used some renders from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">amazing blog</a>.</p>
+<p><a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html</a></p>
 <p>Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
 One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$)
 both rendered with 64 spp and uniform sampling as well as cosine weighted sampling:</p>
@@ -3142,15 +3144,10 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
       <li><a href="http://localhost:1313/tags/ray-tracing/">Ray Tracing</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/bagging-boosting/">
-    <span class="title">« Prev</span>
-    <br>
-    <span>Bagging and Boosting</span>
-  </a>
-  <a class="next" href="http://localhost:1313/posts/3d-reconstruction/">
+  <a class="next" href="http://localhost:1313/posts/dimensionality-reduction-pca/">
     <span class="title">Next »</span>
     <br>
-    <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
+    <span>Dimensionality Reduction using PCA</span>
   </a>
 </nav>
 
