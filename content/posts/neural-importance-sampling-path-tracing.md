@@ -537,9 +537,7 @@ width="100%"
 
 ### Examples using a pair of scenes
 
-I have used some renders from this [amazing blog](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html).
-
-[https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html)
+I have used some renders from this [amazing blog](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html) on Multiple Importance Sampling by **Nikita Lisitsa**.
 
 Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
 One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$) 
@@ -567,11 +565,12 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
       beforeLabel="Uniform Sampling"
       afterLabel="Cosine Weighted Sampling"
     >}}
-
   </div>
 
 </div>
-
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
 
 However, it doesn't help much with the above scenes neither with the diffuse plane nor with the metallic surface. In these cases, both the uniform distribution and the cosine-weighted one poorly approximate the integrated function
 
@@ -583,7 +582,6 @@ Thus, we can use the following sampling strategies for the scenes respectively:
 - One thing we can do for the metallic plane is to figure out a distribution that sends more rays towards the direction of perfect reflection. This distribution is called VNDF
 
 <div style="display:flex; justify-content:center; gap:20px;">
-
   <div style="flex:1; text-align:center;">
     {{< dlider
       before="../../images/path_tracing/renders/diffuse-uniform-64.png"
@@ -594,7 +592,6 @@ Thus, we can use the following sampling strategies for the scenes respectively:
       afterLabel="Direct Light Sampling"
     >}}
   </div>
-
   <div style="flex:1; text-align:center;">
       {{< dlider
       before="../../images/path_tracing/renders/metallic-uniform-64.png"
@@ -604,11 +601,12 @@ Thus, we can use the following sampling strategies for the scenes respectively:
       beforeLabel="Uniform Sampling"
       afterLabel="VNDF Sampling"
     >}}
-
   </div>
 
 </div>
-
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
 
 ## Product Function Integral
 
@@ -695,6 +693,10 @@ For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair 
 
 </div>
 
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+
 
 To get a correct combination of these pdf we have Multiple Importance Sampling
 
@@ -745,6 +747,10 @@ width="60%"
 beforeLabel="Uniform Sampling"
 afterLabel="MIS"
 >}}
+
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
 
 ### Russian Roulette
 
