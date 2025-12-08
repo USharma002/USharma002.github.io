@@ -26,34 +26,6 @@ We are going to look at the **Path Tracing** algorithm. What are differences bet
 
 I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.
 
-## The Rendering Equation
-
-At the heart of physically based rendering lies the **Rendering Equation**, introduced by James Kajiya (1986). It provides a unified mathematical framework describing how light is transferred and redistributed in a scene. Intuitively, it says that the radiance leaving a surface point in some direction is the sum of the light the surface emits and the light it reflects from all incoming directions.
-
-Formally:
-
-$$
-L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)\; L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
-$$
-
-Where:
-
-- $L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).  
-- $L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).  
-- $f_r(x, \omega_i, \omega_o)$ - **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.  
-- $L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.  
-- $(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).  
-- $\Omega$ - hemisphere of directions above the surface.
-
-### Intuition
-
-- The integral accumulates contributions from *every* incoming direction over the hemisphere.  
-- Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive - it captures global illumination (indirect lighting, caustics, etc.).  
-- Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.
-
-Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.
-
-
 ## Assumptions
 
 Although there are many ways to write a ray tracer, all such systems simulate at least the following objects and phenomena:
@@ -121,6 +93,44 @@ width="80%"
 <iframe src="/interactive/cosine_forshortening.html"
         width="100%"
         height="430"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+## The Rendering Equation
+
+At the heart of physically based rendering lies the **Rendering Equation**, introduced by James Kajiya (1986). It provides a unified mathematical framework describing how light is transferred and redistributed in a scene. Intuitively, it says that the radiance leaving a surface point in some direction is the sum of the light the surface emits and the light it reflects from all incoming directions.
+
+Formally:
+
+$$
+L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)\; L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
+$$
+
+Where:
+
+- $L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).  
+- $L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).  
+- $f_r(x, \omega_i, \omega_o)$ - **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.  
+- $L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.  
+- $(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).  
+- $\Omega$ - hemisphere of directions above the surface.
+
+### Intuition
+
+- The integral accumulates contributions from *every* incoming direction over the hemisphere.  
+- Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive - it captures global illumination (indirect lighting, caustics, etc.).  
+- Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.
+
+Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.
+
+
+### Alternate formualtions of the Rendering Equation
+
+<iframe src="/interactive/light_paths.html"
+        width="100%"
+        height="500"
         frameborder="0"
         style="border-radius:8px; min-width: 700px;">
 </iframe>

@@ -605,7 +605,7 @@ We then sample a second set of $N_f$ locations from this distribution using inve
 
 <iframe src="/interactive/nerf.html"
         width="100%"
-        height="1000"
+        height="1030"
         frameborder="0"
         style="border-radius:8px; min-width: 700px;">
 </iframe>

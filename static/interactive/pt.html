@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path Tracing Visualizer</title>
+    <style>
+        :root {
+            --primary-blue: #4a90e2;
+            --primary-hover: #357abd;
+            --bg-color: #f0f2f5;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            
+            /* Color Palette */
+            --ray-forward: #000000;
+            --ray-light: #FFD700;   /* Gold */
+            --ray-bounce1: #FF851B; /* Orange */
+            --ray-bounce2: #3D9970; /* Green */
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            width: 100%;
+            max-width: 900px;
+            overflow: hidden;
+            border: 1px solid #e1e4e8;
+        }
+
+        .canvas-wrapper {
+            background: #fff;
+            position: relative;
+            height: 450px;
+            width: 100%;
+            border-bottom: 1px solid #eee;
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-container {
+            padding: 25px 30px;
+            background-color: #f8f9fa;
+        }
+
+        .step-content-wrapper {
+            background: white;
+            border-left: 5px solid var(--primary-blue);
+            padding: 15px 20px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            min-height: 80px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .step-title {
+            display: block;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .step-desc {
+            color: #666;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .counter {
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #555;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+            box-shadow: 0 2px 5px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .legend {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Path Tracing Visualizer</h1>
+
+    <div class="card">
+        <div class="canvas-wrapper">
+            <canvas id="ptCanvas" width="900" height="450"></canvas>
+        </div>
+
+        <div class="info-container">
+            <div class="step-content-wrapper">
+                <span class="step-title" id="stepTitle">Step 0: Initialization</span>
+                <p class="step-desc" id="stepDesc">Scene setup complete.</p>
+            </div>
+
+            <div class="controls-row">
+                <div class="legend">
+                    <div class="legend-item"><span class="dot" style="background:var(--ray-forward);"></span>Forward Ray (Sampling)</div>
+                    <div class="legend-item"><span class="dot" style="background:rgba(135, 206, 235, 1);"></span>BSDF Hemisphere</div>
+                    <div class="legend-item"><span class="dot" style="background:var(--ray-light);"></span>Energy Transport</div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-primary" id="prevBtn" disabled>← Previous</button>
+                    <div class="counter" id="stepIndicator">0 / 10</div>
+                    <button class="btn-primary" id="nextBtn">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('ptCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // UI Refs
+        const stepTitle = document.getElementById('stepTitle');
+        const stepDesc = document.getElementById('stepDesc');
+        const stepIndicator = document.getElementById('stepIndicator');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // Colors
+        const C_FORWARD = '#000000';
+        const C_BACK_1  = '#FFD700'; // Gold (Light -> Red)
+        const C_BACK_2  = '#FF851B'; // Orange (Red -> Green)
+        const C_BACK_3  = '#3D9970'; // Green (Green -> Eye)
+        
+        const scene = {
+            eye: { x: 80, y: 180 },
+            viewport: [
+                {x: 150, y: 120}, 
+                {x: 190, y: 140}, 
+                {x: 190, y: 260}, 
+                {x: 150, y: 240}
+            ],
+            pixelPoint: {x: 170, y: 200}, 
+            
+            greenBox: { x: 340, y: 280, w: 120, h: 120, color: '#58b17b' },
+            redBox: { x: 620, y: 180, w: 120, h: 220, color: '#ff6b6b' },
+            light: { x: 420, y: 80, r: 35, color: '#feca57' },
+            renderBuffer: { x: 800, y: 180, size: 20 },
+            
+            // Interaction Points
+            hit1: { x: 400, y: 280 }, // Top of green box
+            hit2: { x: 620, y: 240 }, // Left side of red box
+            lightHit: { x: 420, y: 80 }
+        };
+
+        let currentStep = 0;
+        const steps = [
+            { t: "Step 0: Scene Initialization", d: "Scene ready: Camera, Perspective Viewport, Objects, and Light." },
+            { t: "Step 1: Primary Ray", d: "A single ray is cast from the Eye, through the Viewport pixel, intersecting the Green Object." },
+            { t: "Step 2: Surface Intersection", d: "The ray hits the Green Object. We visualize the BSDF (Blue Hemisphere) and Normal." },
+            { t: "Step 3: Sampling (Bounce)", d: "A random direction is chosen from the BSDF hemisphere." },
+            { t: "Step 4: Secondary Intersection", d: "The bounced ray travels through the scene and hits the Red Object." },
+            { t: "Step 5: Shadow Ray", d: "We cast a ray towards the Light Source to check visibility." },
+            { t: "Step 6: Light Hit", d: "Connection established! We have a complete path from Eye to Light." },
+            { t: "Step 7: Light Transport (Backward)", d: "Energy (Yellow) flows from Light to Red Object." },
+            { t: "Step 8: Surface Interaction", d: "Light picks up Red color (Orange) and bounces to Green Object." },
+            { t: "Step 9: Final Accumulation", d: "Light picks up Green color (Green) and reaches the Eye." },
+            { t: "Step 10: Render Update", d: "The final computed color is written to the Render Buffer." }
+        ];
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // --- Static Scene ---
+            ctx.fillStyle = '#bdc3c7'; // Floor
+            ctx.fillRect(0, 400, canvas.width, 50);
+
+            drawLight();
+            drawObjects();
+            drawRenderBuffer();
+            drawViewport();
+            drawEye();
+
+            // --- Dynamic Rays ---
+            
+            // 1. Forward Pass (Black Rays)
+            if (currentStep >= 1) { 
+                // Continuous Ray from Eye to Hit1 (Through Pixel)
+                drawArrow(scene.eye, scene.hit1, C_FORWARD);
+                
+                // Highlight the pixel it passed through
+                ctx.fillStyle = C_FORWARD;
+                ctx.beginPath(); ctx.arc(scene.pixelPoint.x, scene.pixelPoint.y, 3, 0, Math.PI*2); ctx.fill();
+            }
+
+            if (currentStep >= 2) { 
+                // Draw BSDF Hemisphere and Normal for Hit 1
+                drawBSDFHemisphere(scene.hit1, -Math.PI/2); // Pointing Up
+                drawHit(scene.hit1);
+                drawNormal(scene.hit1, {x:0, y:-1});
+            }
+
+            if (currentStep >= 3) { // Green -> Red
+                drawArrow(scene.hit1, scene.hit2, C_FORWARD);
+            }
+
+            if (currentStep >= 4) { 
+                // Draw BSDF Hemisphere and Normal for Hit 2
+                drawBSDFHemisphere(scene.hit2, Math.PI); // Pointing Left
+                drawHit(scene.hit2);
+                drawNormal(scene.hit2, {x:-1, y:0});
+            }
+
+            if (currentStep >= 5) { // Red -> Light
+                drawArrow(scene.hit2, scene.lightHit, C_FORWARD);
+            }
+
+            if (currentStep >= 6) { 
+                 ctx.beginPath(); ctx.arc(scene.lightHit.x, scene.lightHit.y, 8, 0, Math.PI*2);
+                 ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+            }
+
+            // 2. Backward Pass (Colored Overlays)
+            if (currentStep >= 7) { 
+                drawArrow(scene.lightHit, scene.hit2, C_BACK_1, 4);
+            }
+            if (currentStep >= 8) { 
+                drawArrow(scene.hit2, scene.hit1, C_BACK_2, 4);
+            }
+            if (currentStep >= 9) { 
+                // Continuous path back to eye
+                drawArrow(scene.hit1, scene.eye, C_BACK_3, 4);
+            }
+
+            // 3. Render Buffer Fill
+            if (currentStep >= 10) {
+                const b = scene.renderBuffer;
+                const pxX = b.x + 2 * b.size;
+                const pxY = b.y + 1 * b.size;
+                ctx.fillStyle = C_BACK_3; 
+                ctx.fillRect(pxX, pxY, b.size, b.size);
+                ctx.strokeStyle = C_BACK_1; ctx.lineWidth = 2;
+                ctx.strokeRect(pxX, pxY, b.size, b.size);
+            }
+        }
+
+        // --- Helpers ---
+
+        function drawBSDFHemisphere(p, angleRad) {
+            const r = 30; // Radius of hemisphere
+            ctx.beginPath();
+            // Draw arc centered at p, radius r, from angle - PI/2 to angle + PI/2
+            ctx.arc(p.x, p.y, r, angleRad - Math.PI/2, angleRad + Math.PI/2);
+            ctx.closePath(); // Closes the bottom flat part
+            
+            ctx.fillStyle = 'rgba(135, 206, 235, 0.5)'; // Transparent Blue
+            ctx.fill();
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        function drawArrow(from, to, color, width=2) {
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Arrow Head
+            const angle = Math.atan2(to.y - from.y, to.x - from.x);
+            const headLen = 10 + width; 
+            const endX = to.x - Math.cos(angle) * 3;
+            const endY = to.y - Math.sin(angle) * 3;
+
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headLen * Math.cos(angle - Math.PI/6), endY - headLen * Math.sin(angle - Math.PI/6));
+            ctx.lineTo(endX - headLen * Math.cos(angle + Math.PI/6), endY - headLen * Math.sin(angle + Math.PI/6));
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawHit(p) {
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+            ctx.fillStyle = '#fff'; ctx.fill();
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
+        }
+
+        function drawNormal(p, dir) {
+            const endX = p.x + dir.x * 40;
+            const endY = p.y + dir.y * 40;
+            ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(endX, endY);
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 1; ctx.stroke();
+            // Small arrow tip for normal
+            const angle = Math.atan2(dir.y, dir.x);
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - 5 * Math.cos(angle - Math.PI/6), endY - 5 * Math.sin(angle - Math.PI/6));
+            ctx.lineTo(endX - 5 * Math.cos(angle + Math.PI/6), endY - 5 * Math.sin(angle + Math.PI/6));
+            ctx.stroke();
+        }
+
+        function drawViewport() {
+            const vp = scene.viewport;
+            ctx.beginPath();
+            ctx.moveTo(vp[0].x, vp[0].y);
+            ctx.lineTo(vp[1].x, vp[1].y);
+            ctx.lineTo(vp[2].x, vp[2].y);
+            ctx.lineTo(vp[3].x, vp[3].y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.fill();
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.stroke();
+            
+            // Grid Lines
+            ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.beginPath();
+            for(let i=1; i<4; i++) {
+                let t = i/4;
+                let topX = vp[0].x + (vp[1].x - vp[0].x)*t, topY = vp[0].y + (vp[1].y - vp[0].y)*t;
+                let botX = vp[3].x + (vp[2].x - vp[3].x)*t, botY = vp[3].y + (vp[2].y - vp[3].y)*t;
+                ctx.moveTo(topX, topY); ctx.lineTo(botX, botY);
+            }
+            for(let i=1; i<6; i++) {
+                let t = i/6;
+                let leftX = vp[0].x + (vp[3].x - vp[0].x)*t, leftY = vp[0].y + (vp[3].y - vp[0].y)*t;
+                let rightX = vp[1].x + (vp[2].x - vp[1].x)*t, rightY = vp[1].y + (vp[2].y - vp[1].y)*t;
+                ctx.moveTo(leftX, leftY); ctx.lineTo(rightX, rightY);
+            }
+            ctx.stroke();
+            ctx.fillStyle = '#333'; ctx.font = '14px sans-serif'; ctx.fillText("Viewport", vp[3].x - 20, vp[3].y + 20);
+        }
+
+        function drawObjects() {
+            const g = scene.greenBox;
+            ctx.fillStyle = g.color; ctx.fillRect(g.x, g.y, g.w, g.h);
+            ctx.strokeStyle = '#f1c40f'; ctx.lineWidth = 2; ctx.strokeRect(g.x, g.y, g.w, g.h);
+
+            const r = scene.redBox;
+            ctx.fillStyle = r.color; ctx.fillRect(r.x, r.y, r.w, r.h);
+            ctx.strokeRect(r.x, r.y, r.w, r.h);
+        }
+
+        function drawLight() {
+            const l = scene.light;
+            const grad = ctx.createRadialGradient(l.x, l.y, l.r/2, l.x, l.y, l.r*2);
+            grad.addColorStop(0, 'rgba(254, 202, 87, 0.5)'); grad.addColorStop(1, 'rgba(254, 202, 87, 0)');
+            ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(l.x, l.y, l.r*2, 0, Math.PI*2); ctx.fill();
+            
+            ctx.fillStyle = l.color; ctx.strokeStyle = '#f39c12'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(l.x, l.y, l.r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            
+            ctx.fillStyle = '#333'; ctx.font = '14px sans-serif'; ctx.fillText("Light Source", l.x + 40, l.y + 5);
+        }
+
+        function drawRenderBuffer() {
+            const b = scene.renderBuffer;
+            ctx.fillStyle = '#fff'; ctx.fillRect(b.x, b.y, 4*b.size, 4*b.size);
+            ctx.strokeStyle = '#333'; ctx.lineWidth = 1; ctx.beginPath();
+            for(let i=0; i<=4; i++) { ctx.moveTo(b.x+i*b.size, b.y); ctx.lineTo(b.x+i*b.size, b.y+4*b.size); }
+            for(let j=0; j<=4; j++) { ctx.moveTo(b.x, b.y+j*b.size); ctx.lineTo(b.x+4*b.size, b.y+j*b.size); }
+            ctx.stroke();
+            ctx.fillStyle = '#333'; ctx.fillText("Render Buffer", b.x, b.y - 10);
+        }
+
+        function drawEye() {
+            const {x, y} = scene.eye;
+            ctx.save(); ctx.translate(x, y); ctx.rotate(Math.PI/8);
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.quadraticCurveTo(15,-15,30,0); ctx.quadraticCurveTo(15,15,0,0);
+            ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#333'; ctx.lineWidth=2; ctx.stroke();
+            ctx.beginPath(); ctx.arc(15,0,5,0,Math.PI*2); ctx.fillStyle='#333'; ctx.fill();
+            ctx.restore();
+        }
+
+        // Logic
+        function update() {
+            const s = steps[currentStep];
+            stepTitle.textContent = s.t;
+            stepDesc.textContent = s.d;
+            stepIndicator.textContent = `${currentStep} / 10`;
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.disabled = currentStep === 10;
+            draw();
+        }
+
+        nextBtn.addEventListener('click', () => { if(currentStep < 10) { currentStep++; update(); } });
+        prevBtn.addEventListener('click', () => { if(currentStep > 0) { currentStep--; update(); } });
+        update();
+
+    </script>
+</body>
+</html>

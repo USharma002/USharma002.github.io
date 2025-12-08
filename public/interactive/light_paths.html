@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Light Path Expressions</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .container {
+            position: relative;
+            width: 900px;
+            height: 480px;
+        }
+
+        /* SVG Styles */
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* Static Geometry */
+        .wall { fill: #b0b0b0; }
+        
+        .specular-sphere {
+            fill: #a2c4e6; /* Light Blue */
+            stroke: #081e30;
+            stroke-width: 4;
+        }
+
+        .grid-lines {
+            stroke: #000;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .eye {
+            fill: none;
+            stroke: #000;
+            stroke-width: 3;
+        }
+        
+        .bulb-glass { fill: #fff8e1; stroke: #000; stroke-width: 2; }
+        .bulb-base { fill: #ddd; stroke: #000; stroke-width: 2; }
+        .filament { fill: none; stroke: #f0a500; stroke-width: 2; }
+
+        /* Rays */
+        .ray {
+            fill: none;
+            stroke: #f3dcb5; /* Pale orange default */
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.3s ease;
+            pointer-events: stroke; /* Only hover on the line itself */
+            cursor: pointer;
+        }
+
+        .ray:hover, .ray.active {
+            stroke: #f6a646; /* Bright Orange */
+            stroke-width: 6;
+            filter: drop-shadow(0 0 3px rgba(246, 166, 70, 0.5));
+            z-index: 100;
+        }
+
+        /* Labels (Text in the scene) */
+        .scene-label {
+            font-size: 28px;
+            fill: #b0b0b0; /* Light gray default */
+            font-weight: bold;
+            cursor: pointer;
+            transition: fill 0.3s ease;
+            user-select: none;
+        }
+
+        .scene-label:hover, .scene-label.active {
+            fill: #000; /* Dark when active */
+        }
+        
+        .object-label {
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 24px;
+            fill: #000;
+            pointer-events: none;
+        }
+
+        /* Vertex Markers (The letters L, D, S, E appearing on nodes) */
+        .vertex-marker {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 20px;
+            fill: #000;
+            text-shadow: 0 0 4px #fff, 0 0 4px #fff;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .vertex-marker.visible { opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <svg viewBox="0 0 900 550" id="mainSvg">
+        <defs>
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L6,3 z" fill="#f6a646" />
+            </marker>
+        </defs>
+
+        <rect x="240" y="30" width="620" height="30" class="wall" />
+        <rect x="240" y="490" width="620" height="30" class="wall" />
+        <rect x="830" y="30" width="30" height="490" class="wall" />
+
+        <g transform="translate(120, 150)">
+            <path d="M0 0 L50 20 L50 220 L0 240 Z" class="grid-lines" stroke-width="3"/>
+            <line x1="12" y1="5" x2="12" y2="235" class="grid-lines" stroke-width="1"/>
+            <line x1="25" y1="10" x2="25" y2="230" class="grid-lines" stroke-width="1"/>
+            <line x1="37" y1="15" x2="37" y2="225" class="grid-lines" stroke-width="1"/>
+            <line x1="0" y1="40" x2="50" y2="52" class="grid-lines" stroke-width="1"/>
+            <line x1="0" y1="80" x2="50" y2="85" class="grid-lines" stroke-width="1"/>
+            <line x1="0" y1="120" x2="50" y2="120" class="grid-lines" stroke-width="1"/>
+            <line x1="0" y1="160" x2="50" y2="155" class="grid-lines" stroke-width="1"/>
+            <line x1="0" y1="200" x2="50" y2="188" class="grid-lines" stroke-width="1"/>
+        </g>
+
+        <g transform="translate(50, 270) scale(0.8)">
+            <path d="M0,0 Q30,-30 60,0 Q30,30 0,0" class="eye" />
+            <circle cx="30" cy="0" r="12" fill="#000" />
+        </g>
+
+        <circle cx="530" cy="310" r="75" class="specular-sphere" />
+        <text x="530" y="318" text-anchor="middle" class="object-label">Specular</text>
+
+        <g transform="translate(510, 80) scale(0.7)">
+            <path d="M15,50 C-15,10 -5,-30 25,-30 C55,-30 65,10 35,50 L15,50" class="bulb-glass"/>
+            <rect x="18" y="50" width="14" height="15" rx="3" class="bulb-base"/>
+            <path d="M10,10 Q25,-10 40,10" class="filament"/>
+        </g>
+
+        <path id="path-LE" d="M510 110 L150 250" class="ray" />
+        
+        <path id="path-LDE" d="M515 90 L320 60 L150 230" class="ray" />
+        
+        <path id="path-LSE" d="M500 110 L470 260 L150 265" class="ray" />
+        
+        <path id="path-LDDE" d="M540 100 L830 310 L650 490 L150 290" class="ray" />
+
+        <path id="path-LSSDE" d="M525 110 L580 250 L570 380 L520 490 L150 310" class="ray" />
+
+        <text x="270" y="160" class="scene-label" id="label-LE">LE</text>
+        <text x="180" y="100" class="scene-label" id="label-LDE">LDE</text>
+        <text x="335" y="240" class="scene-label" id="label-LSE">LSE</text>
+        <text x="315" y="340" class="scene-label" id="label-LDDE">LDDE</text>
+        <text x="235" y="440" class="scene-label" id="label-LSSDE">LSSDE</text>
+
+        <g id="vertexLayer"></g>
+
+    </svg>
+</div>
+
+<script>
+    // Configuration Data for interactivity
+    // format: { id: 'LE', points: [[x,y,char], ...] }
+    const paths = {
+        'LE': [
+            {x: 510, y: 110, char: 'L'},
+            {x: 150, y: 250, char: 'E'}
+        ],
+        'LDE': [
+            {x: 515, y: 90, char: 'L'},
+            {x: 320, y: 60, char: 'D'},
+            {x: 150, y: 230, char: 'E'}
+        ],
+        'LSE': [
+            {x: 500, y: 110, char: 'L'},
+            {x: 470, y: 260, char: 'S'},
+            {x: 150, y: 265, char: 'E'}
+        ],
+        'LDDE': [
+            {x: 540, y: 100, char: 'L'},
+            {x: 830, y: 310, char: 'D'},
+            {x: 650, y: 490, char: 'D'},
+            {x: 150, y: 290, char: 'E'}
+        ],
+        'LSSDE': [
+            {x: 525, y: 110, char: 'L'},
+            {x: 580, y: 250, char: 'S'},
+            {x: 570, y: 380, char: 'S'}, // Internal bounce/refraction exit
+            {x: 520, y: 490, char: 'D'},
+            {x: 150, y: 310, char: 'E'}
+        ]
+    };
+
+    const vertexLayer = document.getElementById('vertexLayer');
+
+    // Helper to activate a specific path
+    function activatePath(id) {
+        // 1. Reset all
+        document.querySelectorAll('.ray').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.scene-label').forEach(el => el.classList.remove('active'));
+        vertexLayer.innerHTML = ''; // Clear vertices
+
+        // 2. Activate target
+        const pathEl = document.getElementById(`path-${id}`);
+        const labelEl = document.getElementById(`label-${id}`);
+        
+        if(pathEl) pathEl.classList.add('active');
+        if(labelEl) labelEl.classList.add('active');
+
+        // 3. Draw Vertices
+        const data = paths[id];
+        if(data) {
+            data.forEach(pt => {
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", pt.x);
+                // Offset Y slightly based on location to avoid overlapping line perfectly
+                let yOffset = -15; 
+                if(pt.char === 'D' && pt.y > 400) yOffset = -15; // Floor
+                if(pt.char === 'D' && pt.y < 100) yOffset = 25; // Ceiling
+                
+                text.setAttribute("y", pt.y + yOffset);
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("class", "vertex-marker visible");
+                text.textContent = pt.char;
+                vertexLayer.appendChild(text);
+            });
+        }
+    }
+
+    function deactivateAll() {
+        document.querySelectorAll('.ray').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.scene-label').forEach(el => el.classList.remove('active'));
+        vertexLayer.innerHTML = '';
+    }
+
+    // Attach Event Listeners
+    Object.keys(paths).forEach(id => {
+        const pathEl = document.getElementById(`path-${id}`);
+        const labelEl = document.getElementById(`label-${id}`);
+
+        // Label Hover
+        labelEl.addEventListener('mouseenter', () => activatePath(id));
+        labelEl.addEventListener('mouseleave', deactivateAll);
+
+        // Path Hover
+        pathEl.addEventListener('mouseenter', () => activatePath(id));
+        pathEl.addEventListener('mouseleave', deactivateAll);
+    });
+
+</script>
+
+</body>
+</html>

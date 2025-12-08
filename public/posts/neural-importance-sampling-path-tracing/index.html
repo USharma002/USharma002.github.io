@@ -171,13 +171,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#introduction-to-rendering" aria-label="Introduction to Rendering">Introduction to Rendering</a><ul>
                         
                 <li>
+                    <a href="#assumptions" aria-label="Assumptions">Assumptions</a></li>
+                <li>
                     <a href="#the-rendering-equation" aria-label="The Rendering Equation">The Rendering Equation</a><ul>
                         
                 <li>
-                    <a href="#intuition" aria-label="Intuition">Intuition</a></li></ul>
-                </li>
+                    <a href="#intuition" aria-label="Intuition">Intuition</a></li>
                 <li>
-                    <a href="#assumptions" aria-label="Assumptions">Assumptions</a></li>
+                    <a href="#alternate-formualtions-of-the-rendering-equation" aria-label="Alternate formualtions of the Rendering Equation">Alternate formualtions of the Rendering Equation</a></li></ul>
+                </li>
                 <li>
                     <a href="#monte-carlo-basics" aria-label="Monte Carlo Basics">Monte Carlo Basics</a><ul>
                         
@@ -479,27 +481,6 @@ This post is a work in progress and may be updated or expanded soon!
 <p>We mostly work with equations that model light as particles that travel along rays. This leads to a more efficient computational approach based on a key operation known as <strong>ray tracing</strong></p>
 <p>We are going to look at the <strong>Path Tracing</strong> algorithm. What are differences between Ray Tracing and Path Tracing? I got the following online:</p>
 <p>I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.</p>
-<h2 id="the-rendering-equation">The Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#the-rendering-equation">#</a></h2>
-<p>At the heart of physically based rendering lies the <strong>Rendering Equation</strong>, introduced by James Kajiya (1986). It provides a unified mathematical framework describing how light is transferred and redistributed in a scene. Intuitively, it says that the radiance leaving a surface point in some direction is the sum of the light the surface emits and the light it reflects from all incoming directions.</p>
-<p>Formally:</p>
-$$
-L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)\; L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
-$$<p>Where:</p>
-<ul>
-<li>$L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).</li>
-<li>$L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).</li>
-<li>$f_r(x, \omega_i, \omega_o)$ - <strong>BRDF</strong> (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.</li>
-<li>$L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.</li>
-<li>$(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).</li>
-<li>$\Omega$ - hemisphere of directions above the surface.</li>
-</ul>
-<h3 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h3>
-<ul>
-<li>The integral accumulates contributions from <em>every</em> incoming direction over the hemisphere.</li>
-<li>Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive - it captures global illumination (indirect lighting, caustics, etc.).</li>
-<li>Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.</li>
-</ul>
-<p>Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.</p>
 <h2 id="assumptions">Assumptions<a hidden class="anchor" aria-hidden="true" href="#assumptions">#</a></h2>
 <p>Although there are many ways to write a ray tracer, all such systems simulate at least the following objects and phenomena:</p>
 <ul>
@@ -672,6 +653,34 @@ document.addEventListener('keydown', e => {
 <iframe src="/interactive/cosine_forshortening.html"
         width="100%"
         height="430"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+<h2 id="the-rendering-equation">The Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#the-rendering-equation">#</a></h2>
+<p>At the heart of physically based rendering lies the <strong>Rendering Equation</strong>, introduced by James Kajiya (1986). It provides a unified mathematical framework describing how light is transferred and redistributed in a scene. Intuitively, it says that the radiance leaving a surface point in some direction is the sum of the light the surface emits and the light it reflects from all incoming directions.</p>
+<p>Formally:</p>
+$$
+L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)\; L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
+$$<p>Where:</p>
+<ul>
+<li>$L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).</li>
+<li>$L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).</li>
+<li>$f_r(x, \omega_i, \omega_o)$ - <strong>BRDF</strong> (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.</li>
+<li>$L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.</li>
+<li>$(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).</li>
+<li>$\Omega$ - hemisphere of directions above the surface.</li>
+</ul>
+<h3 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h3>
+<ul>
+<li>The integral accumulates contributions from <em>every</em> incoming direction over the hemisphere.</li>
+<li>Because $L_i$ itself depends on outgoing radiance from other points, the equation is recursive - it captures global illumination (indirect lighting, caustics, etc.).</li>
+<li>Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.</li>
+</ul>
+<p>Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.</p>
+<h3 id="alternate-formualtions-of-the-rendering-equation">Alternate formualtions of the Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#alternate-formualtions-of-the-rendering-equation">#</a></h3>
+<iframe src="/interactive/light_paths.html"
+        width="100%"
+        height="500"
         frameborder="0"
         style="border-radius:8px; min-width: 700px;">
 </iframe>
