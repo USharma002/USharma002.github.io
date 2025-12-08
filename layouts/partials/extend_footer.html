@@ -1,0 +1,71 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const originalToc = document.querySelector('.toc');
+    const content = document.querySelector('.post-content');
+
+    if (originalToc && content) {
+        // 1. Clone TOC
+        const sidebarToc = originalToc.cloneNode(true);
+        sidebarToc.classList.add('sidebar-toc');
+        sidebarToc.classList.remove('toc');
+        document.body.appendChild(sidebarToc);
+
+        // 2. Observer for showing/hiding the Sidebar (Slide in/out)
+        const visibilityObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && window.scrollY > entry.boundingClientRect.top) {
+                    sidebarToc.classList.add('visible');
+                } else {
+                    sidebarToc.classList.remove('visible');
+                }
+            });
+        });
+        visibilityObserver.observe(originalToc);
+
+        // 3. Active Section Tracking (The Accordion Logic)
+        const headers = content.querySelectorAll('h1, h2, h3, h4');
+        const sidebarLinks = sidebarToc.querySelectorAll('a');
+        
+        // Helper: Clear all active classes
+        function clearActiveStates() {
+            sidebarToc.querySelectorAll('li').forEach(li => {
+                li.classList.remove('active');
+                li.classList.remove('has-active-child');
+            });
+        }
+
+        // Create an observer to watch all headers
+        const headerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Get the ID of the header currently on screen
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = sidebarToc.querySelector(`a[href="#${id}"]`);
+
+                    if (activeLink) {
+                        clearActiveStates();
+                        
+                        // 1. Highlight the current LI
+                        let currentLi = activeLink.parentElement; // The <li>
+                        currentLi.classList.add('active');
+
+                        // 2. Walk up the tree to open parents
+                        let parent = currentLi.parentElement; // The <ul>
+                        while (parent) {
+                            if (parent.tagName === 'LI') {
+                                parent.classList.add('has-active-child');
+                            }
+                            if (parent.classList.contains('sidebar-toc')) break;
+                            parent = parent.parentElement;
+                        }
+                    }
+                }
+            });
+        }, {
+            rootMargin: '-10% 0px -80% 0px' // Trigger when header is near the top
+        });
+
+        headers.forEach(header => headerObserver.observe(header));
+    }
+});
+</script>

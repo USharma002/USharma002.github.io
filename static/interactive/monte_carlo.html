@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <meta charset="UTF-8">
+    <title>Monte Carlo Simulation</title>
+    <style>
+        :root {
+            /* Defaults (Light Mode) */
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #374151;
+            --text-sub: #6b7280;
+            --border: #e5e7eb;
+            --canvas-bg: #f3f4f6;
+            
+            /* UI Colors */
+            --primary: #2563eb;
+            --primary-fg: #ffffff;
+            --btn-bg: #e5e7eb;
+            --btn-text: #374151;
+            --danger: #ef4444;
+            
+            /* Viz Colors */
+            --circle-stroke: #d1d5db;
+            --dot-in: rgba(37, 99, 235, 0.5);
+            --dot-out: rgba(156, 163, 175, 0.3);
+            --graph-target: #dc2626;
+            --graph-est: #2563eb;
+        }
+
+        html, body { 
+            margin: 0; 
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: var(--theme);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .wrapper { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            background: var(--card-bg); 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+            border: 1px solid var(--border); 
+            max-width: 600px; 
+            justify-content: center; 
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .panel { display: flex; flex-direction: column; align-items: center; }
+        
+        canvas { 
+            background: var(--canvas-bg); 
+            border-radius: 8px; 
+            border: 1px solid var(--border); 
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .stats-container { 
+            margin-top: 10px; 
+            width: 100%; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            font-size: 13px; 
+            color: var(--text-sub); 
+        }
+        
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-val { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; font-size: 15px; }
+        
+        .controls { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
+        
+        button { 
+            flex: 1; 
+            padding: 10px 16px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 13px; 
+            transition: opacity 0.2s, background-color 0.3s, color 0.3s; 
+        }
+        button:hover { opacity: 0.9; }
+        
+        .btn-primary { background: var(--primary); color: var(--primary-fg); }
+        .btn-secondary { background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border); }
+        .btn-stop { background: var(--danger); color: white; } 
+
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Left: Visual Simulation -->
+        <div class="panel">
+            <canvas id="simCanvas" width="260" height="260"></canvas>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span>Samples</span>
+                    <span class="stat-val" id="sCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Inside</span>
+                    <span class="stat-val" id="iCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Convergence Graph -->
+        <div class="panel">
+            <canvas id="graphCanvas" width="280" height="260"></canvas>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span>Estimate (4 * In/N)</span>
+                    <span class="stat-val" id="est" style="color: var(--graph-est)">0.0000</span>
+                </div>
+                <div class="stat-item">
+                    <span>Target ($\pi$)</span>
+                    <span class="stat-val" style="color: var(--graph-target)">3.14159</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <!-- Changed default text to Start -->
+                <button id="toggleBtn" class="btn-primary" onclick="toggleSim()">Start</button>
+                <button class="btn-secondary" onclick="resetSim()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- Theme Detection ---
+    function detectTheme() {
+        try {
+            const parentBody = window.parent.document.body;
+            const style = window.getComputedStyle(parentBody);
+            const bgColor = style.backgroundColor;
+            const rgb = bgColor.match(/\d+/g);
+            
+            if (rgb) {
+                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+                const isDark = brightness < 128;
+                
+                if (isDark) {
+                    // Dark Mode
+                    document.documentElement.style.setProperty('--bg', '#1a1a1a');
+                    document.documentElement.style.setProperty('--card-bg', '#262626');
+                    document.documentElement.style.setProperty('--text', '#e5e7eb');
+                    document.documentElement.style.setProperty('--text-sub', '#9ca3af');
+                    document.documentElement.style.setProperty('--border', '#404040');
+                    document.documentElement.style.setProperty('--canvas-bg', '#333333');
+                    
+                    document.documentElement.style.setProperty('--primary', '#3b82f6');
+                    document.documentElement.style.setProperty('--btn-bg', '#404040');
+                    document.documentElement.style.setProperty('--btn-text', '#e5e7eb');
+                    
+                    document.documentElement.style.setProperty('--circle-stroke', '#555555');
+                    document.documentElement.style.setProperty('--dot-in', 'rgba(96, 165, 250, 0.6)'); 
+                    document.documentElement.style.setProperty('--dot-out', 'rgba(255, 255, 255, 0.15)');
+                    document.documentElement.style.setProperty('--graph-target', '#f87171');
+                    document.documentElement.style.setProperty('--graph-est', '#60a5fa');
+                } else {
+                    // Light Mode
+                    document.documentElement.style.setProperty('--bg', '#f8f9fa');
+                    document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--text', '#374151');
+                    document.documentElement.style.setProperty('--text-sub', '#6b7280');
+                    document.documentElement.style.setProperty('--border', '#e5e7eb');
+                    document.documentElement.style.setProperty('--canvas-bg', '#f3f4f6');
+                    
+                    document.documentElement.style.setProperty('--primary', '#2563eb');
+                    document.documentElement.style.setProperty('--btn-bg', '#e5e7eb');
+                    document.documentElement.style.setProperty('--btn-text', '#374151');
+                    
+                    document.documentElement.style.setProperty('--circle-stroke', '#d1d5db');
+                    document.documentElement.style.setProperty('--dot-in', 'rgba(37, 99, 235, 0.5)');
+                    document.documentElement.style.setProperty('--dot-out', 'rgba(156, 163, 175, 0.3)');
+                    document.documentElement.style.setProperty('--graph-target', '#dc2626');
+                    document.documentElement.style.setProperty('--graph-est', '#2563eb');
+                }
+                
+                drawCircleOutline();
+                if (!isRunning && history.length > 0) drawGraph();
+            }
+        } catch(e) {}
+    }
+    setInterval(detectTheme, 1000);
+    detectTheme();
+
+    function getVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // --- Main Logic ---
+
+    const simCtx = document.getElementById('simCanvas').getContext('2d');
+    const graphCtx = document.getElementById('graphCanvas').getContext('2d');
+    const toggleBtn = document.getElementById('toggleBtn');
+    
+    // State
+    let samples = 0;
+    let inside = 0;
+    let history = [];
+    let isRunning = false; // Start Paused
+    let animationId;
+    
+    const BATCH_SIZE = 30; 
+    const MAX_HISTORY = 300; 
+
+    simCtx.scale(1, 1); 
+    
+    function drawCircleOutline() {
+        simCtx.beginPath();
+        simCtx.arc(130, 130, 130, 0, Math.PI*2);
+        simCtx.strokeStyle = getVar('--circle-stroke');
+        simCtx.lineWidth = 2;
+        simCtx.stroke();
+    }
+
+    function drawGraph() {
+        const w = 280;
+        const h = 260;
+        const targetY = h/2;
+
+        const colTarget = getVar('--graph-target');
+        const colEst = getVar('--graph-est');
+
+        graphCtx.clearRect(0, 0, w, h);
+        
+        // 1. Target Line (PI)
+        graphCtx.beginPath();
+        graphCtx.moveTo(0, targetY);
+        graphCtx.lineTo(w, targetY);
+        graphCtx.strokeStyle = colTarget;
+        graphCtx.setLineDash([5, 3]);
+        graphCtx.lineWidth = 1;
+        graphCtx.stroke();
+        graphCtx.setLineDash([]);
+
+        // Label for PI
+        graphCtx.fillStyle = colTarget;
+        graphCtx.font = "bold 12px sans-serif";
+        graphCtx.textAlign = "right";
+        graphCtx.fillText("π", w - 5, targetY - 6);
+
+        // 2. Error History
+        if (history.length < 2) return;
+
+        graphCtx.beginPath();
+        const scaleY = 100; 
+
+        for (let i = 0; i < history.length; i++) {
+            const x = (i / (MAX_HISTORY-1)) * w;
+            const diff = history[i] - Math.PI;
+            
+            let y = targetY - (diff * scaleY);
+            if(y < 0) y = 0; 
+            if(y > h) y = h;
+
+            if (i===0) graphCtx.moveTo(x, y);
+            else graphCtx.lineTo(x, y);
+        }
+        
+        graphCtx.strokeStyle = colEst;
+        graphCtx.lineWidth = 1.5;
+        graphCtx.stroke();
+    }
+
+    function loop() {
+        if (!isRunning) return;
+
+        const colIn = getVar('--dot-in');
+        const colOut = getVar('--dot-out');
+
+        for (let i = 0; i < BATCH_SIZE; i++) {
+            const x = Math.random();
+            const y = Math.random();
+            
+            const px = x * 260;
+            const py = y * 260;
+            const dx = px - 130;
+            const dy = py - 130;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const isIn = dist <= 130;
+
+            simCtx.fillStyle = isIn ? colIn : colOut;
+            simCtx.fillRect(px, py, 2, 2);
+
+            if (isIn) inside++;
+            samples++;
+        }
+
+        const estimate = 4 * (inside / samples);
+        history.push(estimate);
+        if (history.length > MAX_HISTORY) history.shift();
+
+        document.getElementById('sCount').textContent = samples.toLocaleString();
+        document.getElementById('iCount').textContent = inside.toLocaleString();
+        document.getElementById('est').textContent = estimate.toFixed(5);
+
+        if (samples % (BATCH_SIZE * 10) === 0) drawCircleOutline();
+
+        drawGraph();
+        animationId = requestAnimationFrame(loop);
+    }
+
+    function toggleSim() {
+        isRunning = !isRunning;
+        if (isRunning) {
+            toggleBtn.textContent = "Pause";
+            toggleBtn.classList.remove('btn-stop');
+            loop();
+        } else {
+            toggleBtn.textContent = "Resume";
+            toggleBtn.classList.add('btn-stop'); 
+            cancelAnimationFrame(animationId);
+        }
+    }
+
+    function resetSim() {
+        isRunning = false;
+        cancelAnimationFrame(animationId);
+        
+        samples = 0;
+        inside = 0;
+        history = [];
+        
+        document.getElementById('sCount').textContent = "0";
+        document.getElementById('iCount').textContent = "0";
+        document.getElementById('est').textContent = "0.0000";
+        
+        // Clear Canvases
+        simCtx.clearRect(0, 0, 260, 260);
+        graphCtx.clearRect(0, 0, 280, 260);
+        
+        drawCircleOutline();
+        
+        // Auto-start on reset
+        isRunning = true;
+        toggleBtn.textContent = "Pause";
+        toggleBtn.classList.remove('btn-stop');
+        loop();
+    }
+
+    // Initialize (Start Paused)
+    drawCircleOutline();
+    // No loop() call here
+
+</script>
+</body>
+</html>

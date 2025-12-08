@@ -3,228 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeRF Positional Encoding Demo</title>
+    <title>Multiple Importance Sampling (MIS)</title>
     <style>
-        * { box-sizing: border-box; }
-
         :root {
-            /* Light Theme Defaults */
-            --page-bg: #ffffff;
-            --page-text: #212529;
-            --card-bg: #f8f9fa;
-            --border-color: #dee2e6;
-            --accent-a: #2E86AB; /* Blue for Point A */
-            --accent-b: #e74c3c; /* Red for Point B */
-            --grid-line: #e0e0e0;
-            --cell-border: #ccc;
+            /* Theme Variables (Default Light) */
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #374151;
+            --border: #e5e7eb;
+            
+            /* App Specifics */
+            --f1-color: #ef4444;    /* Red (Lighting) */
+            --f2-color: #3b82f6;    /* Blue (BRDF) */
+            --pdf-color: #10b981;   /* Green (Effective PDF) */
+            
+            /* These change based on theme */
+            --target-color: #1f2937; /* Black (Product) in Light Mode */
+            --target-fill: rgba(31, 41, 55, 0.1);
+            --axis-color: #9ca3af;
+            
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             margin: 0;
-            padding: 0px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--theme);
-            color: var(--page-text);
+            padding: 0;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        @media (min-width: 768px) {
-            .container {
-                grid-template-columns: 340px 1fr;
-                align-items: start;
-            }
-        }
-
-        /* Card Styling */
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
-        h2 { margin: 0 0 10px 0; font-size: 1.1rem; }
-        p { margin: 0 0 15px 0; font-size: 0.9rem; opacity: 0.8; line-height: 1.4; }
-
-        /* Canvas Section */
-        .canvas-wrap {
-            position: relative;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-        
-        canvas {
-            background: #fff; /* Scene is always white paper */
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            cursor: crosshair;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            max-width: 100%;
+        .card-title {
+            margin: 0 0 15px 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            opacity: 0.8;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Visualization Section */
-        .viz-section {
+        /* Controls Grid */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .control-group {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 8px;
         }
 
-        .control-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-        }
-
-        /* Feature Strips */
-        .feature-group {
-            margin-bottom: 5px;
-        }
-        
         .label-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 4px;
+            color: var(--text);
+            opacity: 0.7;
         }
 
-        .strip-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        /* Form Elements */
+        select {
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card-bg);
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
         }
 
-        .strip-label {
-            width: 20px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* The grids of boxes */
-        .feature-strip {
-            display: flex;
-            height: 24px;
-            border: 1px solid var(--cell-border);
-            background: #000; /* Default background for gap checks */
-            flex-grow: 1;
-        }
-        
-        .cell {
-            flex: 1;
-            border-right: 1px solid rgba(128,128,128,0.2);
-            transition: background 0.1s;
-        }
-        .cell:last-child { border-right: none; }
-
-        /* Target Color Boxes */
-        .target-box {
-            width: 24px;
-            height: 24px;
-            border: 1px solid var(--cell-border);
-            margin-left: auto;
-        }
-
-        /* Metrics */
-        .metrics {
-            font-size: 0.85rem;
-            display: flex;
-            gap: 20px;
-            padding-top: 10px;
-            border-top: 1px solid var(--border-color);
-            margin-top: 10px;
-        }
-        
-        .metric-val { font-family: monospace; font-weight: bold; }
-
-        /* Custom input range */
         input[type=range] {
-            accent-color: var(--page-text);
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
         }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--text);
+            border: 2px solid var(--card-bg);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { background: var(--f1-color); }
+
+        button {
+            padding: 9px 16px;
+            background-color: var(--text);
+            color: var(--card-bg);
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        button:hover { opacity: 0.9; }
+        
+        button.secondary {
+            background-color: var(--axis-color);
+            color: white;
+        }
+
+        /* Visualization */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background: var(--card-bg); /* Matches card */
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-box {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-label { font-size: 11px; text-transform: uppercase; color: var(--axis-color); font-weight: 700; }
+        .stat-value { font-size: 16px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+        .stat-err { color: var(--f1-color); }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text);
+            opacity: 0.8;
+            flex-wrap: wrap;
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; user-select: none; }
+        .clickable { cursor: pointer; transition: opacity 0.2s; }
+        .clickable:hover { opacity: 0.8; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .line-swatch { width: 12px; height: 2px; }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Left: Scene Interaction -->
     <div class="card">
-        <h2>Input Domain</h2>
-        <p>Drag points <b>A</b> and <b>B</b>. Place them close to an edge to see how encoding helps resolve high frequencies.</p>
-        <div class="canvas-wrap">
-            <canvas id="sceneCanvas" width="300" height="300"></canvas>
+        <div class="controls-grid">
+            
+            <!-- Strategy Mixer -->
+            <div class="control-group" style="flex: 2;">
+                <div class="label-row">
+                    <span>Sample Allocation</span>
+                    <span id="mixLabel">50% Red / 50% Blue</span>
+                </div>
+                <input type="range" id="mixSlider" min="0" max="100" value="50">
+                <div class="label-row" style="font-size:10px; opacity:0.6; margin-top:2px;">
+                    <span>Only Red (p₁)</span>
+                    <span>Only Blue (p₂)</span>
+                </div>
+            </div>
+
+            <!-- Heuristic Selector -->
+            <div class="control-group" style="flex: 1;">
+                <div class="label-row">
+                    <span>Heuristic</span>
+                </div>
+                <select id="heuristicSelect">
+                    <option value="balance">Balance (β=1)</option>
+                    <option value="power">Power (β=2)</option>
+                    <option value="max">Maximum</option>
+                    <option value="naive">None (Naive Sum)</option>
+                </select>
+            </div>
+
+            <div class="control-group" style="flex: 0; display: flex; gap: 8px;">
+                <button onclick="generateSamples()" class="secondary">Resample</button>
+                <button onclick="randomizeFunctions()">Randomize Inputs</button>
+            </div>
         </div>
     </div>
 
-    <!-- Right: Encoding Visualization -->
-    <div class="card viz-section">
-        <div class="control-row">
-            <h2>Feature Vectors</h2>
-            <div class="slider-container">
-                <label>Freqs (L):</label>
-                <input type="range" id="freqSlider" min="1" max="10" value="5" oninput="updateSim()">
-                <span id="freqVal" style="width: 20px; text-align:right;">5</span>
+    <div class="card" style="padding:10px;">
+        <div class="card-title">Integrating Product: f₁(x) · f₂(x)</div>
+        
+        <div class="canvas-container" id="canvasWrapper">
+            <canvas id="mainCanvas"></canvas>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="stat-label">True Integral</div>
+                <div class="stat-value" id="valTrue">0.000</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">MIS Estimate</div>
+                <div class="stat-value" id="valEst">0.000</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Variance</div>
+                <div class="stat-value stat-err" id="valVar">0.000</div>
             </div>
         </div>
 
-        <!-- Raw Inputs -->
-        <div class="feature-group">
-            <div class="label-row">
-                <span>Raw Coordinates (x, y)</span>
-                <span>Target</span>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="line-swatch" style="background:var(--f1-color); height:3px;"></div> Input p₁(x)
             </div>
-            
-            <div class="strip-container">
-                <span class="strip-label" style="color: var(--accent-a)">A</span>
-                <div class="feature-strip" id="rawA"></div>
-                <div class="target-box" id="targetA"></div>
+            <div class="legend-item">
+                <div class="line-swatch" style="background:var(--f2-color); height:3px;"></div> Input p₂(x)
             </div>
-            <div style="height:4px"></div>
-            <div class="strip-container">
-                <span class="strip-label" style="color: var(--accent-b)">B</span>
-                <div class="feature-strip" id="rawB"></div>
-                <div class="target-box" id="targetB"></div>
+            <div class="legend-item clickable" id="legendProduct" onclick="toggleProduct()">
+                <div class="dot" style="background:var(--target-color); border-radius:2px;"></div> Product (Scaled) (Toggle)
             </div>
-        </div>
-
-        <!-- Positional Encoding -->
-        <div class="feature-group" style="margin-top: 15px;">
-            <div class="label-row">
-                <span>Positional Encoding (sin, cos)</span>
-            </div>
-            
-            <div class="strip-container">
-                <span class="strip-label" style="color: var(--accent-a)">A</span>
-                <div class="feature-strip" id="encA"></div>
-            </div>
-            <div style="height:4px"></div>
-            <div class="strip-container">
-                <span class="strip-label" style="color: var(--accent-b)">B</span>
-                <div class="feature-strip" id="encB"></div>
-            </div>
-        </div>
-
-        <div class="metrics">
-            <div>
-                Input Dist: <span id="distRaw" class="metric-val">0.00</span>
-            </div>
-            <div>
-                Encoded Dist: <span id="distEnc" class="metric-val">0.00</span>
+            <div class="legend-item">
+                <div class="dot" style="background:var(--pdf-color); opacity:0.5"></div> Effective PDF
             </div>
         </div>
     </div>
@@ -244,253 +285,357 @@
                 const isDark = brightness < 128;
                 
                 if (isDark) {
-                    document.documentElement.style.setProperty('--page-bg', '#1a1a1a');
-                    document.documentElement.style.setProperty('--page-text', '#e4e4e4');
+                    // Dark Mode
+                    document.documentElement.style.setProperty('--bg', '#1a1a1a');
                     document.documentElement.style.setProperty('--card-bg', '#2d2d2d');
-                    document.documentElement.style.setProperty('--border-color', '#404040');
-                    document.documentElement.style.setProperty('--cell-border', '#555');
-                    document.documentElement.style.setProperty('--grid-line', '#444');
+                    document.documentElement.style.setProperty('--text', '#e4e4e4');
+                    document.documentElement.style.setProperty('--border', '#404040');
+                    document.documentElement.style.setProperty('--target-color', '#e5e7eb'); // Light Gray for product
+                    document.documentElement.style.setProperty('--target-fill', 'rgba(255, 255, 255, 0.1)');
                 } else {
-                    document.documentElement.style.setProperty('--page-bg', '#ffffff');
-                    document.documentElement.style.setProperty('--page-text', '#212529');
-                    document.documentElement.style.setProperty('--card-bg', '#f8f9fa');
-                    document.documentElement.style.setProperty('--border-color', '#dee2e6');
-                    document.documentElement.style.setProperty('--cell-border', '#ccc');
-                    document.documentElement.style.setProperty('--grid-line', '#e0e0e0');
+                    // Light Mode
+                    document.documentElement.style.setProperty('--bg', '#f8f9fa');
+                    document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--text', '#374151');
+                    document.documentElement.style.setProperty('--border', '#e5e7eb');
+                    document.documentElement.style.setProperty('--target-color', '#1f2937'); // Dark Blue for product
+                    document.documentElement.style.setProperty('--target-fill', 'rgba(31, 41, 55, 0.1)');
                 }
+                
+                // Repaint canvas if theme changed
+                requestAnimationFrame(draw);
                 return isDark;
             }
-        } catch(e) {}
+        } catch(e) {
+            // Fallback or standalone mode, no error
+        }
         return false;
     }
     
-    let isDarkMode = detectTheme();
+    // Check for theme changes
     setInterval(() => detectTheme(), 1000);
+    detectTheme(); // Initial check
 
-    // --- Logic ---
-    const canvas = document.getElementById('sceneCanvas');
+    // --- Main Logic ---
+
+    const canvas = document.getElementById('mainCanvas');
     const ctx = canvas.getContext('2d');
-    const width = canvas.width;
-    const height = canvas.height;
+    
+    // UI Refs
+    const mixSlider = document.getElementById('mixSlider');
+    const mixLabel = document.getElementById('mixLabel');
+    const heuristicSel = document.getElementById('heuristicSelect');
+    const uiTrue = document.getElementById('valTrue');
+    const uiEst = document.getElementById('valEst');
+    const uiVar = document.getElementById('valVar');
+    const legendProduct = document.getElementById('legendProduct');
 
     // State
-    let points = [
-        { x: 0.40, y: 0.50, color: 'var(--accent-a)', label: 'A' },
-        { x: 0.42, y: 0.50, color: 'var(--accent-b)', label: 'B' }
-    ];
-    let draggingIdx = -1;
+    let f1_params = { mu: 0.3, sigma: 0.1 };
+    let f2_params = { mu: 0.7, sigma: 0.05 };
+    let showProduct = true;
+    
+    // Derived integrals for PDF normalization
+    let F1_INTEGRAL = 1; 
+    let F2_INTEGRAL = 1;
+    let TRUE_PRODUCT_INTEGRAL = 0;
 
-    // Draw background scene (Triangle & Circle)
-    function drawScene() {
-        // Clear
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, width, height);
+    let samples = [];
+    const TOTAL_SAMPLES = 60;
 
-        // Draw Grid (subtle)
-        ctx.strokeStyle = '#f0f0f0';
-        ctx.lineWidth = 1;
-        const step = 30;
+    // --- Gaussian Helper ---
+    function gaussian(x, mu, sigma) {
+        return Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2));
+    }
+
+    // --- Core Functions ---
+    
+    // Input 1 (Red)
+    function f1(x) {
+        return gaussian(x, f1_params.mu, f1_params.sigma);
+    }
+    
+    // Input 2 (Blue)
+    function f2(x) {
+        return gaussian(x, f2_params.mu, f2_params.sigma);
+    }
+
+    // Target (Black) = Product
+    function target(x) {
+        return f1(x) * f2(x);
+    }
+
+    // PDFs (Normalized inputs)
+    function p1(x) { return f1(x) / F1_INTEGRAL; }
+    function p2(x) { return f2(x) / F2_INTEGRAL; }
+
+    // --- Initialization ---
+
+    function randomizeFunctions() {
+        // Create an interesting scenario: 
+        // One broad function, one narrow function, overlapping or not.
+        
+        // F1: Usually broader (like cosine term or broad light)
+        f1_params.mu = 0.2 + Math.random() * 0.6;
+        f1_params.sigma = 0.1 + Math.random() * 0.15;
+
+        // F2: Usually sharper (like specular BRDF)
+        f2_params.mu = 0.2 + Math.random() * 0.6;
+        f2_params.sigma = 0.02 + Math.random() * 0.05;
+
+        calculateNormalizationConstants();
+        generateSamples();
+    }
+
+    function calculateNormalizationConstants() {
+        // Integrate f1, f2, and target numerically to get normalization factors
+        let s1 = 0, s2 = 0, st = 0;
+        const steps = 1000;
+        for(let i=0; i<steps; i++) {
+            const x = i/steps;
+            s1 += f1(x);
+            s2 += f2(x);
+            st += target(x);
+        }
+        F1_INTEGRAL = s1 / steps;
+        F2_INTEGRAL = s2 / steps;
+        TRUE_PRODUCT_INTEGRAL = st / steps; // dx = 1/steps approx
+
+        uiTrue.textContent = TRUE_PRODUCT_INTEGRAL.toExponential(3);
+    }
+
+    // --- Sampling & MIS ---
+
+    function generateSamples() {
+        samples = [];
+        const mix = parseInt(mixSlider.value);
+        
+        // Determine counts
+        const n1 = Math.round(TOTAL_SAMPLES * (100 - mix) / 100);
+        const n2 = TOTAL_SAMPLES - n1;
+        
+        mixLabel.textContent = `${n1} Red / ${n2} Blue`;
+
+        // 1. Sample from Strategy 1 (Red)
+        for(let i=0; i<n1; i++) {
+            const x = sampleGaussian(f1_params.mu, f1_params.sigma);
+            if(x >= 0 && x <= 1) {
+                samples.push({ x: x, strategy: 1 });
+            } else {
+                // Reject out of bounds (lazy handling for demo)
+                i--; 
+            }
+        }
+
+        // 2. Sample from Strategy 2 (Blue)
+        for(let i=0; i<n2; i++) {
+            const x = sampleGaussian(f2_params.mu, f2_params.sigma);
+            if(x >= 0 && x <= 1) {
+                samples.push({ x: x, strategy: 2 });
+            } else {
+                i--;
+            }
+        }
+
+        computeEstimates(n1, n2);
+        draw();
+    }
+
+    function sampleGaussian(mu, sigma) {
+        // Box-Muller transform
+        const u = 1 - Math.random();
+        const v = Math.random();
+        const z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+        return mu + z * sigma;
+    }
+
+    function computeEstimates(n1, n2) {
+        const heuristic = heuristicSel.value;
+        let sum = 0;
+        let sumSq = 0;
+
+        const contributions = samples.map(s => {
+            const x = s.x;
+            const pdf1 = p1(x);
+            const pdf2 = p2(x);
+            const val = target(x);
+            
+            let weight = 0;
+
+            if (heuristic === 'naive') {
+                if (s.strategy === 1) return (val / pdf1); 
+                if (s.strategy === 2) return (val / pdf2); 
+            }
+
+            const beta = (heuristic === 'power') ? 2 : 1;
+            
+            let c1 = n1 * pdf1;
+            let c2 = n2 * pdf2;
+            
+            if(heuristic === 'max') {
+                weight = (s.strategy === 1) ? (c1 >= c2 ? 1 : 0) : (c2 > c1 ? 1 : 0);
+            } else {
+                c1 = Math.pow(c1, beta);
+                c2 = Math.pow(c2, beta);
+                const sumC = c1 + c2;
+                weight = (s.strategy === 1) ? (c1 / sumC) : (c2 / sumC);
+            }
+            
+            const prob_generated = (s.strategy === 1) ? pdf1 : pdf2;
+            const count_generated = (s.strategy === 1) ? n1 : n2;
+            
+            if(count_generated === 0 || prob_generated === 0) return 0;
+
+            return (weight * val) / (count_generated * prob_generated);
+        });
+
+        const totalEst = contributions.reduce((a, b) => a + b, 0);
+        
+        uiEst.textContent = totalEst.toExponential(3);
+        
+        const diff = totalEst - TRUE_PRODUCT_INTEGRAL;
+        uiVar.textContent = (diff * diff).toExponential(3);
+    }
+
+    function toggleProduct() {
+        showProduct = !showProduct;
+        legendProduct.style.opacity = showProduct ? 1 : 0.4;
+        draw();
+    }
+
+    // --- Drawing ---
+
+    function getCssColor(varName) {
+        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    }
+
+    function draw() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = document.getElementById('canvasWrapper').getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+
+        const W = rect.width;
+        const H = rect.height;
+        const PAD = 40;
+        
+        // Grab current Theme Colors
+        const colF1 = getCssColor('--f1-color');
+        const colF2 = getCssColor('--f2-color');
+        const colPdf = getCssColor('--pdf-color');
+        const colTarget = getCssColor('--target-color');
+        const colTargetFill = getCssColor('--target-fill');
+        const colAxis = getCssColor('--axis-color');
+
+        ctx.clearRect(0,0,W,H);
+
+        // --- Auto-Scaling Logic ---
+        let maxPDF = 0;
+        let maxTarget = 0;
+        for(let i=0; i<=100; i++) {
+            const x = i/100;
+            maxPDF = Math.max(maxPDF, p1(x), p2(x));
+            maxTarget = Math.max(maxTarget, target(x));
+        }
+
+        const graphMax = maxPDF * 1.1;
+        const targetScale = maxTarget > 0 ? (graphMax * 0.8) / maxTarget : 1;
+
+        const mapX = x => PAD + x * (W - 2*PAD);
+        const mapY = y => (H - PAD) - (y / graphMax) * (H - 2*PAD);
+
+        // 1. Draw Effective PDF (Green Fill)
+        const n1 = parseInt(mixSlider.value); 
+        const n2 = 100 - n1;
+        
         ctx.beginPath();
-        for(let x=0; x<=width; x+=step) { ctx.moveTo(x,0); ctx.lineTo(x,height); }
-        for(let y=0; y<=height; y+=step) { ctx.moveTo(0,y); ctx.lineTo(width,y); }
+        ctx.moveTo(mapX(0), mapY(0));
+        for(let i=0; i<=100; i++) {
+            const x = i/100;
+            const pdf_val = (n1 * p1(x) + n2 * p2(x)) / 100;
+            ctx.lineTo(mapX(x), mapY(pdf_val)); 
+        }
+        ctx.lineTo(mapX(1), mapY(0));
+        // Use transparent green
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.15)'; 
+        ctx.fill();
+        ctx.strokeStyle = colPdf;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4,4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 2. Draw Target Product (Filled) - SCALED
+        if (showProduct) {
+            ctx.beginPath();
+            ctx.moveTo(mapX(0), mapY(0));
+            for(let i=0; i<=200; i++) {
+                const x = i/200;
+                ctx.lineTo(mapX(x), mapY(target(x) * targetScale));
+            }
+            ctx.lineTo(mapX(1), mapY(0));
+            ctx.fillStyle = colTargetFill;
+            ctx.fill();
+            ctx.strokeStyle = colTarget;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        // 3. Draw Input 1 (Red)
+        ctx.beginPath();
+        for(let i=0; i<=200; i++) {
+            const x = i/200;
+            ctx.lineTo(mapX(x), mapY(p1(x)));
+        }
+        ctx.strokeStyle = colF1;
+        ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw Shapes (The "Ground Truth")
-        // 1. Triangle
-        ctx.fillStyle = '#3498db'; // Blueish
+        // 4. Draw Input 2 (Blue)
         ctx.beginPath();
-        ctx.moveTo(100, 250);
-        ctx.lineTo(160, 80);
-        ctx.lineTo(220, 180);
-        ctx.fill();
+        for(let i=0; i<=200; i++) {
+            const x = i/200;
+            ctx.lineTo(mapX(x), mapY(p2(x)));
+        }
+        ctx.strokeStyle = colF2;
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        // 2. Circle
-        ctx.fillStyle = '#2ecc71'; // Greenish
-        ctx.beginPath();
-        ctx.arc(220, 200, 50, 0, Math.PI*2);
-        ctx.fill();
-
-        // Draw Points
-        points.forEach(p => {
-            const px = p.x * width;
-            const py = p.y * height;
+        // 5. Draw Samples
+        samples.forEach(s => {
+            const cx = mapX(s.x);
+            const cy = H - PAD + 8;
             
-            // Crosshair
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'black'; 
-            // X
             ctx.beginPath();
-            ctx.moveTo(px - 6, py - 6); ctx.lineTo(px + 6, py + 6);
-            ctx.moveTo(px + 6, py - 6); ctx.lineTo(px - 6, py + 6);
+            ctx.arc(cx, cy, 3, 0, Math.PI*2);
+            ctx.fillStyle = s.strategy === 1 ? colF1 : colF2;
+            ctx.fill();
+            
+            // tiny tick
+            ctx.beginPath();
+            ctx.moveTo(cx, cy-3);
+            ctx.lineTo(cx, cy-8);
+            ctx.strokeStyle = s.strategy === 1 ? colF1 : colF2;
             ctx.stroke();
-            
-            // Label
-            ctx.fillStyle = 'black';
-            ctx.font = 'bold 14px Arial';
-            ctx.fillText(p.label, px + 8, py - 8);
-        });
-    }
-
-    // Helper: Positional Encoding
-    // gamma(p) = [sin(2^0 pi p), cos(2^0 pi p), ..., sin(2^L-1 pi p), cos(2^L-1 pi p)]
-    function getEncoding(val, L) {
-        // Map 0..1 input to -1..1 for standard NeRF logic usually, 
-        // but simple 0..1 scaling works too. Let's stick to standard NeRF: p * PI * 2^k
-        // NeRF paper: sin(2^k * PI * p) where p is normalized to [-1, 1].
-        // Here our p is [0, 1]. Let's map to [-1, 1] first: v = p*2 - 1.
-        const v = val * 2 - 1; 
-        let enc = [];
-        for(let i=0; i<L; i++) {
-            const freq = Math.pow(2, i) * Math.PI;
-            enc.push(Math.sin(v * freq));
-            enc.push(Math.cos(v * freq));
-        }
-        return enc;
-    }
-
-    // Helper: Render a strip of values as grayscale boxes
-    function renderStrip(containerId, values) {
-        const el = document.getElementById(containerId);
-        el.innerHTML = '';
-        values.forEach(v => {
-            const div = document.createElement('div');
-            div.className = 'cell';
-            // Map -1..1 to 0..255 (Black..White)
-            // -1 -> 0 (black), 1 -> 255 (white)
-            const c = Math.floor((v + 1) / 2 * 255);
-            div.style.backgroundColor = `rgb(${c},${c},${c})`;
-            el.appendChild(div);
-        });
-    }
-
-    // Helper: Get color at position from canvas (Ground Truth)
-    function getTargetColor(x, y) {
-        const px = Math.floor(x * width);
-        const py = Math.floor(y * height);
-        const p = ctx.getImageData(px, py, 1, 1).data;
-        return `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
-    }
-
-    function updateSim() {
-        const L = parseInt(document.getElementById('freqSlider').value);
-        document.getElementById('freqVal').innerText = L;
-
-        // Redraw canvas to ensure clean state for color picking
-        drawScene();
-
-        // Process Points
-        let encodedVecs = [];
-        let rawVecs = [];
-
-        points.forEach((p, idx) => {
-            const suffix = idx === 0 ? 'A' : 'B';
-            
-            // 1. Render Raw (x, y) mapped to -1..1 for visualization consistency
-            const rawX = p.x * 2 - 1;
-            const rawY = p.y * 2 - 1;
-            renderStrip('raw' + suffix, [rawX, rawY]);
-            rawVecs.push([p.x, p.y]);
-
-            // 2. Render Encoded
-            // We concat Enc(x) and Enc(y)
-            const encX = getEncoding(p.x, L);
-            const encY = getEncoding(p.y, L);
-            const fullEnc = encX.concat(encY);
-            renderStrip('enc' + suffix, fullEnc);
-            encodedVecs.push(fullEnc);
-
-            // 3. Target Color
-            const col = getTargetColor(p.x, p.y);
-            document.getElementById('target' + suffix).style.backgroundColor = col;
         });
 
-        // Metrics
-        // Raw Distance (Euclidean in 0..1 space)
-        const dx = rawVecs[0][0] - rawVecs[1][0];
-        const dy = rawVecs[0][1] - rawVecs[1][1];
-        const rawDist = Math.sqrt(dx*dx + dy*dy);
-
-        // Encoded Distance (Normalized by length to keep scale relatable? 
-        // No, show the magnitude increase. Just Euclidean sum)
-        let sumSq = 0;
-        for(let i=0; i<encodedVecs[0].length; i++) {
-            const d = encodedVecs[0][i] - encodedVecs[1][i];
-            sumSq += d*d;
-        }
-        const encDist = Math.sqrt(sumSq);
-
-        document.getElementById('distRaw').innerText = rawDist.toFixed(4);
-        document.getElementById('distEnc').innerText = encDist.toFixed(4);
-        
-        // Visual check: If encoded dist > raw dist * 10, make it bold/green
-        document.getElementById('distEnc').style.color = encDist > rawDist * 5 ? '#27ae60' : 'inherit';
+        // Axes
+        ctx.beginPath();
+        ctx.moveTo(PAD, H-PAD);
+        ctx.lineTo(W-PAD, H-PAD);
+        ctx.strokeStyle = colAxis;
+        ctx.stroke();
     }
 
-    // --- Interaction ---
-    function getMousePos(evt) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: (evt.clientX - rect.left) / rect.width,
-            y: (evt.clientY - rect.top) / rect.height
-        };
-    }
+    // --- Events ---
+    mixSlider.addEventListener('input', generateSamples);
+    heuristicSel.addEventListener('change', generateSamples);
+    window.addEventListener('resize', draw);
 
-    canvas.addEventListener('mousedown', (e) => {
-        const pos = getMousePos(e);
-        // Find closest point
-        let minDist = 0.05; // threshold
-        let idx = -1;
-        points.forEach((p, i) => {
-            const dist = Math.sqrt(Math.pow(p.x - pos.x, 2) + Math.pow(p.y - pos.y, 2));
-            if (dist < minDist) {
-                minDist = dist;
-                idx = i;
-            }
-        });
-        if (idx !== -1) draggingIdx = idx;
-    });
-
-    window.addEventListener('mousemove', (e) => {
-        if (draggingIdx !== -1) {
-            const pos = getMousePos(e);
-            // Clamp
-            points[draggingIdx].x = Math.max(0, Math.min(1, pos.x));
-            points[draggingIdx].y = Math.max(0, Math.min(1, pos.y));
-            updateSim();
-        }
-    });
-
-    window.addEventListener('mouseup', () => {
-        draggingIdx = -1;
-    });
-    
-    // Touch support
-    canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // prevent scroll
-        const pos = getMousePos(e.touches[0]);
-        let minDist = 0.05;
-        let idx = -1;
-        points.forEach((p, i) => {
-            const dist = Math.sqrt(Math.pow(p.x - pos.x, 2) + Math.pow(p.y - pos.y, 2));
-            if (dist < minDist) { minDist = dist; idx = i; }
-        });
-        if (idx !== -1) draggingIdx = idx;
-    }, {passive: false});
-
-    window.addEventListener('touchmove', (e) => {
-        if (draggingIdx !== -1) {
-            e.preventDefault();
-            const pos = getMousePos(e.touches[0]);
-            points[draggingIdx].x = Math.max(0, Math.min(1, pos.x));
-            points[draggingIdx].y = Math.max(0, Math.min(1, pos.y));
-            updateSim();
-        }
-    }, {passive: false});
-
-    window.addEventListener('touchend', () => draggingIdx = -1);
-
-    // Init
-    updateSim();
+    // Start
+    randomizeFunctions();
 
 </script>
 

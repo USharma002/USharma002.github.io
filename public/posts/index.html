@@ -10,7 +10,7 @@
 <meta name="description" content="Posts - USharma Notes">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/posts/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.4caa312c75941eee3f9972f2fdbb5b5498402bd3b09db71a6a94827976a7e1a2.css" integrity="sha256-TKoxLHWUHu4/mXLy/btbVJhAK9OwnbcaapSCeXan4aI=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.c82d6753a20b47436c576e1a0f6f50f4b74a4165254dae0f771e7d1b1a9cc952.css" integrity="sha256-yC1nU6ILR0NsV24aD29Q9LdKQWUlTa4Pdx59GxqcyVI=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="entry-content">
     <p>An in-depth look at modern 3D reconstruction methods such as 3DGS and NeRF, comparing their architectures, strengths, and performance in diverse applications.</p>
   </div>
-  <footer class="entry-footer"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;56 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
+  <footer class="entry-footer"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;58 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
   <a class="entry-link" aria-label="post link to 3D Reconstruction with 3DGS, NeRF, and Their Variants" href="http://localhost:1313/posts/3d-reconstruction/"></a>
 </article>
 
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function() {
   <div class="entry-content">
     <p>Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing</p>
   </div>
-  <footer class="entry-footer"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;48 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
+  <footer class="entry-footer"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;51 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
   <a class="entry-link" aria-label="post link to A comprehensive look into the Neural Importance Sampling for Path Tracing" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/"></a>
 </article>
 
@@ -264,7 +264,77 @@ document.addEventListener("DOMContentLoaded", function() {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
         <path d="M12 6H0l6-6z" />
     </svg>
-</a>
+</a><script>
+document.addEventListener('DOMContentLoaded', function() {
+    const originalToc = document.querySelector('.toc');
+    const content = document.querySelector('.post-content');
+
+    if (originalToc && content) {
+        
+        const sidebarToc = originalToc.cloneNode(true);
+        sidebarToc.classList.add('sidebar-toc');
+        sidebarToc.classList.remove('toc');
+        document.body.appendChild(sidebarToc);
+
+        
+        const visibilityObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && window.scrollY > entry.boundingClientRect.top) {
+                    sidebarToc.classList.add('visible');
+                } else {
+                    sidebarToc.classList.remove('visible');
+                }
+            });
+        });
+        visibilityObserver.observe(originalToc);
+
+        
+        const headers = content.querySelectorAll('h1, h2, h3, h4');
+        const sidebarLinks = sidebarToc.querySelectorAll('a');
+        
+        
+        function clearActiveStates() {
+            sidebarToc.querySelectorAll('li').forEach(li => {
+                li.classList.remove('active');
+                li.classList.remove('has-active-child');
+            });
+        }
+
+        
+        const headerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = sidebarToc.querySelector(`a[href="#${id}"]`);
+
+                    if (activeLink) {
+                        clearActiveStates();
+                        
+                        
+                        let currentLi = activeLink.parentElement; 
+                        currentLi.classList.add('active');
+
+                        
+                        let parent = currentLi.parentElement; 
+                        while (parent) {
+                            if (parent.tagName === 'LI') {
+                                parent.classList.add('has-active-child');
+                            }
+                            if (parent.classList.contains('sidebar-toc')) break;
+                            parent = parent.parentElement;
+                        }
+                    }
+                }
+            });
+        }, {
+            rootMargin: '-10% 0px -80% 0px' 
+        });
+
+        headers.forEach(header => headerObserver.observe(header));
+    }
+});
+</script>
 
 <script>
     let menu = document.getElementById('menu')

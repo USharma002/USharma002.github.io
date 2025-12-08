@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Importance Sampling - Cosine Law</title>
+    <style>
+        :root {
+            /* Defaults (Light Mode) */
+            --bg: #f8f9fa;
+            --text: #374151;
+            --text-sub: #6b7280;
+            --accent: #e67e22;
+            --axis: #9ca3af;
+            --beam-core: rgba(255, 180, 0, 0.6);
+            --beam-fade: rgba(255, 180, 0, 0.05);
+            --bar-bg: #f3f4f6;
+            --bar-border: #d1d5db;
+        }
+
+        html, body { 
+            margin: 0; 
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevents scrollbars */
+            background-color: var(--bg); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Container is now just a wrapper for layout */
+        .container { 
+            position: relative;
+            width: 100%; 
+            height: 100%; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas { 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
+            cursor: crosshair; 
+        }
+        
+        .overlay { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            pointer-events: none; 
+            background: var(--bg); /* Match background so it looks transparent-ish or clean */
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            border: 1px solid var(--axis); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0.95;
+            transition: background 0.3s, border-color 0.3s;
+            z-index: 10;
+        }
+        
+        h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--text); font-weight: 700; }
+        .stat-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-sub); margin-bottom: 4px; gap: 25px; }
+        .val { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+        .highlight { color: var(--accent); }
+    </style>
+        <script>
+window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="overlay">
+        <h3>Lambert's Cosine Law</h3>
+        <div class="stat-row">
+            <span>Angle ($\theta$):</span>
+            <span class="val" id="dispAngle">0°</span>
+        </div>
+        <div class="stat-row">
+            <span>Intensity ($\cos \theta$):</span>
+            <span class="val highlight" id="dispCos">100%</span>
+        </div>
+        <div class="stat-row">
+            <span>Area Spread ($1/\cos$):</span>
+            <span class="val" id="dispArea">1.0x</span>
+        </div>
+    </div>
+    <canvas id="canvas"></canvas>
+</div>
+
+<script>
+    // --- Theme Detection ---
+    function detectTheme() {
+        try {
+            const parentBody = window.parent.document.body;
+            const style = window.getComputedStyle(parentBody);
+            const bgColor = style.backgroundColor;
+            const rgb = bgColor.match(/\d+/g);
+            
+            if (rgb) {
+                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+                const isDark = brightness < 128;
+                
+                if (isDark) {
+                    document.documentElement.style.setProperty('--bg', '#1a1a1a');
+                    document.documentElement.style.setProperty('--text', '#e5e7eb');
+                    document.documentElement.style.setProperty('--text-sub', '#9ca3af');
+                    document.documentElement.style.setProperty('--axis', '#525252');
+                    document.documentElement.style.setProperty('--bar-bg', '#333');
+                    document.documentElement.style.setProperty('--bar-border', '#444');
+                } else {
+                    document.documentElement.style.setProperty('--bg', '#ffffff'); /* Clean white for iframe */
+                    document.documentElement.style.setProperty('--text', '#374151');
+                    document.documentElement.style.setProperty('--text-sub', '#6b7280');
+                    document.documentElement.style.setProperty('--axis', '#d1d5db');
+                    document.documentElement.style.setProperty('--bar-bg', '#f3f4f6');
+                    document.documentElement.style.setProperty('--bar-border', '#d1d5db');
+                }
+                requestAnimationFrame(draw);
+            }
+        } catch(e) {}
+    }
+    setInterval(detectTheme, 1000);
+    detectTheme();
+
+    function getVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // --- Main Logic ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const elAngle = document.getElementById('dispAngle');
+    const elCos = document.getElementById('dispCos');
+    const elArea = document.getElementById('dispArea');
+
+    // State
+    let angle = -Math.PI / 4; 
+    
+    // Layout Variables (Calculated on Resize)
+    let cx, cy, radius;
+    const beamWidthBase = 45; 
+
+    function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        // Make canvas fill the window
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+        
+        // Recalculate layout based on new size
+        // We want the hemisphere roughly centered horizontally, and near the bottom
+        cx = window.innerWidth / 2 - 30; // Shift left slightly for bar space
+        cy = window.innerHeight * 0.85; 
+        
+        // Radius scales with window but clamped
+        radius = Math.min(window.innerWidth, window.innerHeight) * 0.45;
+        
+        draw();
+    }
+    window.addEventListener('resize', resize);
+    
+    // Initial call
+    resize();
+
+    function draw() {
+        if (!cx) return; // Wait for resize
+
+        const W = window.innerWidth;
+        const H = window.innerHeight;
+
+        // Theme Colors
+        const colText = getVar('--text');
+        const colSub = getVar('--text-sub');
+        const colAxis = getVar('--axis');
+        const colBarBg = getVar('--bar-bg');
+        const colBarBorder = getVar('--bar-border');
+
+        ctx.clearRect(0, 0, W+100, H+100);
+
+        // 1. Draw Surface Line
+        ctx.beginPath();
+        ctx.moveTo(cx - radius - 50, cy);
+        ctx.lineTo(cx + radius + 50, cy);
+        ctx.strokeStyle = colText;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 2. Draw Normal Reference
+        const normalH = radius * 0.6;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx, cy - normalH);
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = colAxis;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Label: N
+        ctx.fillStyle = colSub;
+        ctx.font = "bold 15px sans-serif";
+        ctx.textAlign = "center"; 
+        ctx.fillText("N", cx, cy - normalH - 10);
+        
+        // Arrowhead
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - normalH);
+        ctx.lineTo(cx - 5, cy - normalH + 8);
+        ctx.lineTo(cx + 5, cy - normalH + 8);
+        ctx.fill();
+
+        // Calculations
+        let renderAngle = angle;
+        if (renderAngle > 0) renderAngle = 0; 
+        if (renderAngle < -Math.PI) renderAngle = -Math.PI;
+
+        const theta = Math.abs(renderAngle - (-Math.PI/2));
+        const cosTheta = Math.max(0.001, Math.cos(theta)); 
+        
+        const lx = cx + Math.cos(renderAngle) * radius;
+        const ly = cy + Math.sin(renderAngle) * radius;
+
+        // 3. Draw Beam
+        const perpX = Math.cos(renderAngle + Math.PI/2);
+        const perpY = Math.sin(renderAngle + Math.PI/2);
+
+        const s1x = lx - perpX * (beamWidthBase/2);
+        const s1y = ly - perpY * (beamWidthBase/2);
+        const s2x = lx + perpX * (beamWidthBase/2);
+        const s2y = ly + perpY * (beamWidthBase/2);
+
+        const spreadWidth = beamWidthBase / cosTheta;
+        const visualSpread = Math.min(spreadWidth, radius * 2.5); 
+
+        const d1x = cx - visualSpread/2;
+        const d2x = cx + visualSpread/2;
+
+        const grad = ctx.createLinearGradient(lx, ly, cx, cy);
+        grad.addColorStop(0, getVar('--beam-core'));
+        grad.addColorStop(1, getVar('--beam-fade'));
+
+        ctx.beginPath();
+        ctx.moveTo(s1x, s1y);
+        ctx.lineTo(s2x, s2y);
+        ctx.lineTo(d2x, cy);
+        ctx.lineTo(d1x, cy);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // 4. Footprint
+        const intensityCol = `rgba(255, ${Math.floor(100 + (1-cosTheta)*155)}, 0, ${0.4 + cosTheta*0.6})`;
+        
+        ctx.fillStyle = intensityCol;
+        ctx.fillRect(d1x, cy - 3, visualSpread, 6); 
+        
+        ctx.strokeStyle = "rgba(230, 126, 34, 0.8)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(d1x, cy - 3, visualSpread, 6);
+
+        // 5. Bulb
+        ctx.beginPath();
+        ctx.arc(lx, ly, 11, 0, Math.PI*2);
+        ctx.fillStyle = "#f1c40f"; 
+        ctx.fill();
+        ctx.strokeStyle = "#f39c12";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 6. Semicircle Guide
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, Math.PI, 0); 
+        ctx.strokeStyle = colAxis;
+        ctx.globalAlpha = 0.3;
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+
+        // --- 7. Throughput Bar ---
+        const barX = cx + radius + 40; 
+        const barH = radius * 0.8;
+        const barY = cy - barH; 
+        const barW = 18;
+        
+        // Only draw if it fits
+        if (barX + 100 < W) {
+            // Bar Background
+            ctx.fillStyle = colBarBg;
+            ctx.fillRect(barX, barY, barW, barH);
+            ctx.strokeStyle = colBarBorder;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(barX, barY, barW, barH);
+
+            // Filled Level
+            const fillH = barH * cosTheta;
+            const currentY = barY + (barH - fillH);
+            
+            ctx.fillStyle = intensityCol;
+            ctx.fillRect(barX, currentY, barW, fillH);
+            
+            // Axis Labels
+            ctx.fillStyle = colSub;
+            ctx.font = "12px sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText("1.0", barX + 24, barY + 4); 
+            ctx.fillText("0.0", barX + 24, barY + barH); 
+            
+            // Dynamic Label (Left Side)
+            ctx.beginPath();
+            ctx.moveTo(barX, currentY);       
+            ctx.lineTo(barX - 7, currentY - 6); 
+            ctx.lineTo(barX - 7, currentY + 6); 
+            ctx.fillStyle = colText;
+            ctx.fill();
+
+            ctx.fillStyle = colText;
+            ctx.font = "bold 14px sans-serif";
+            ctx.textAlign = "right"; 
+            ctx.fillText(cosTheta.toFixed(2), barX - 12, currentY + 5);
+            
+            // Bar Title
+            ctx.save();
+            ctx.translate(barX + 45, barY + barH/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.textAlign = "center";
+            ctx.fillStyle = colSub;
+            ctx.font = "13px sans-serif";
+            ctx.fillText("Throughput (cos θ)", 0, 0);
+            ctx.restore();
+            ctx.textAlign = "left";
+        }
+
+        // HTML Update
+        const deg = Math.round(theta * (180/Math.PI));
+        elAngle.textContent = `${deg}°`;
+        elCos.textContent = `${(cosTheta * 100).toFixed(0)}%`;
+        elArea.textContent = `${(1/cosTheta).toFixed(2)}x`;
+    }
+
+    // Interactions
+    let isDragging = false;
+    function updateAngle(clientX, clientY) {
+        const dpr = window.devicePixelRatio || 1;
+        // Mouse positions relative to canvas
+        const x = clientX * dpr;
+        const y = clientY * dpr;
+
+        const dx = x - (cx * dpr); // cx is in logical pixels? No, cx is logical.
+        // Wait, canvas context was scaled by dpr. 
+        // So input coords should be logical pixels.
+        
+        // Correct logic:
+        const logicalX = clientX;
+        const logicalY = clientY;
+        
+        const dxL = logicalX - cx;
+        const dyL = logicalY - cy;
+        
+        let newAngle = Math.atan2(dyL, dxL);
+        if (newAngle > 0) newAngle = (Math.abs(newAngle) > Math.PI/2) ? -Math.PI : 0;
+        angle = newAngle;
+        draw();
+    }
+
+    canvas.addEventListener('mousedown', (e) => { isDragging = true; updateAngle(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', (e) => { if (isDragging) updateAngle(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    
+    canvas.addEventListener('touchstart', (e) => { isDragging = true; updateAngle(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }, {passive: false});
+    window.addEventListener('touchmove', (e) => { if (isDragging) updateAngle(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false});
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+</script>
+</body>
+</html>

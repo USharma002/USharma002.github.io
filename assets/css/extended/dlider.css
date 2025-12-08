@@ -1,0 +1,114 @@
+/* 1. Main Container */
+.dlider-container {
+    --percent: 50%;
+    position: relative;
+    width: 100%;
+    margin: 2rem 0;
+    user-select: none; 
+}
+
+/* 2. Grid Stack */
+.dlider-images {
+    display: grid;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Force everything into the same grid cell so they overlap perfectly */
+.dlider-images > * {
+    grid-area: 1 / 1; 
+}
+
+/* 3. The Images */
+.dlider-img-back {
+    /* This is the reference image. It takes up space naturally. */
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.dlider-img-front {
+    /* This sits ON TOP of the back image */
+    width: 100%;
+    height: auto;
+    display: block;
+    
+    /* THE FIX: instead of changing width, we clip the visibility */
+    /* inset(top right bottom left) */
+    /* We cut from the right side based on the slider position */
+    clip-path: inset(0 calc(100% - var(--percent)) 0 0);
+}
+
+/* 4. The Handle */
+.dlider-handle {
+    z-index: 20;
+    pointer-events: none;
+    position: relative;
+    /* Move the handle to the split point */
+    left: var(--percent); 
+    width: 0;
+    height: 100%;
+}
+
+.dlider-handle-line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: white;
+    transform: translateX(-50%);
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.dlider-handle-arrow {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Arrows inside the handle */
+.dlider-handle-arrow::before,
+.dlider-handle-arrow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #333;
+    border-right: 2px solid #333;
+}
+.dlider-handle-arrow::before {
+    left: 10px;
+    transform: translateY(-50%) rotate(-135deg); 
+}
+.dlider-handle-arrow::after {
+    right: 10px;
+    transform: translateY(-50%) rotate(45deg); 
+}
+
+/* 5. Input Range */
+.dlider-input {
+    z-index: 30;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: ew-resize;
+    margin: 0;
+}
+
+.dlider-caption {
+    text-align: center;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}

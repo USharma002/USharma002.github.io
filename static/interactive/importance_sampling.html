@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Importance Sampling</title>
+    <style>
+        :root {
+            /* Common Palette */
+            --primary: #2E86AB;    /* Blue for f(x) */
+            --secondary: #10b981;  /* Green for p(x) */
+            --accent: #ef4444;     /* Red for Samples */
+            
+            /* Light Mode Default */
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --border: #dee2e6;
+            --target-grid: #e5e5e5;
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Dark Mode Overrides (Hugo Theme Colors) */
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #e4e4e4;
+            --border: #404040;
+            --target-grid: #404040;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+            background: var(--theme);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 0px;
+            box-sizing: border-box;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card-title {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text); /* Changed from fixed gray to variable */
+            opacity: 0.8;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Controls Layout */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            opacity: 0.9;
+        }
+
+        /* Inputs */
+        input[type=range] {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 2px solid var(--card-bg);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        .btn-resample { background-color: var(--primary); }
+        .btn-resample:hover { filter: brightness(1.1); }
+
+        .btn-random { background-color: #6b7280; }
+        .btn-random:hover { background-color: #4b5563; }
+
+        /* Visualization Area */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Stats Panel */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border); /* gap color */
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 15px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .stat-item {
+            background: var(--card-bg);
+            padding: 12px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text);
+            opacity: 0.6;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--text);
+            opacity: 0.8;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+        <div class="controls-grid">
+            
+            <div class="control-group">
+                <div class="label-row">
+                    <span>Sampling Distribution PDF</span>
+                    <span id="sliderLabel" style="color: var(--primary)">Uniform</span>
+                </div>
+                <input type="range" id="pdfSlider" min="0" max="1" step="0.01" value="0">
+                <div style="display:flex; justify-content:space-between; font-size:11px; opacity:0.6;">
+                    <span>Uniform</span>
+                    <span>Perfect Fit</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-random" onclick="randomizeFunction()">Randomize Function</button>
+                <button class="btn-resample" onclick="generateSamples()">Resample Points</button>
+             </div>
+
+        </div>
+    </div>
+
+    <div class="card" style="padding: 10px;">
+        <div class="card-title">Monte Carlo Integration</div>
+        
+        <div class="canvas-container" id="canvasWrapper">
+            <canvas id="mainCanvas"></canvas>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-label">True Integral</div>
+                <div class="stat-value" id="valTrue">0.0000</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Estimated Value</div>
+                <div class="stat-value" id="valEst">0.0000</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Variance (Error)</div>
+                <div class="stat-value" id="valVar" style="color: var(--accent)">0.0000</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="dot" style="background: var(--primary)"></div> Target f(x)
+            </div>
+            <div class="legend-item">
+                <div class="dot" style="background: var(--secondary); opacity: 0.5"></div> Sampling p(x)
+            </div>
+            <div class="legend-item">
+                <div class="dot" style="background: var(--accent)"></div> Sample Points
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* =========================================
+       ROBUST THEME DETECTION ENGINE
+       ========================================= */
+    const ThemeEngine = {
+        init() {
+            // 1. Check URL Params (force override)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('theme')) {
+                this.setTheme(urlParams.get('theme') === 'dark');
+                return;
+            }
+
+            // 2. Setup System Preference Listener (OS level)
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            mediaQuery.addEventListener('change', e => this.setTheme(e.matches));
+            
+            // 3. Setup Parent Observer (for manual toggles on the website)
+            this.setupParentObserver();
+
+            // 4. Initial Check
+            this.detect();
+        },
+
+        detect() {
+            // Priority: 1. Parent Computed Style (most accurate for toggles) -> 2. System Pref
+            let isDark = false;
+            
+            // Try reading parent style (Cross-Origin safe try/catch)
+            try {
+                if (window.parent && window.parent.document) {
+                    const parentStyles = window.getComputedStyle(window.parent.document.body);
+                    const bgColor = parentStyles.backgroundColor;
+                    const rgb = bgColor.match(/\d+/g);
+                    if (rgb) {
+                        // Calculate brightness
+                        const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+                        isDark = brightness < 128;
+                    }
+                }
+            } catch (e) {
+                // Fallback to system preference if blocked by CORS
+                isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+
+            this.setTheme(isDark);
+        },
+
+        setupParentObserver() {
+            try {
+                // Watch for class changes on the parent <html> or <body>
+                if (window.parent && window.parent.document) {
+                    const observer = new MutationObserver(() => this.detect());
+                    observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+                    observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+                }
+            } catch(e) {
+                // CORS block - fall back to polling (less efficient but works)
+                setInterval(() => this.detect(), 2000);
+            }
+        },
+
+        setTheme(isDark) {
+            if (isDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+            }
+            // Trigger canvas redraw
+            if(window.draw) window.requestAnimationFrame(window.draw);
+        }
+    };
+
+    ThemeEngine.init();
+
+
+    /* =========================================
+       VISUALIZATION LOGIC
+       ========================================= */
+
+    // --- Configuration ---
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    const slider = document.getElementById('pdfSlider');
+    const sliderLabel = document.getElementById('sliderLabel');
+    
+    // UI Elements
+    const uiTrue = document.getElementById('valTrue');
+    const uiEst = document.getElementById('valEst');
+    const uiVar = document.getElementById('valVar');
+
+    // State
+    let gaussians = []; // Array of {mu, sigma, amp}
+    let TRUE_INTEGRAL = 0;
+    let MAX_Y = 1.0;
+    let samples = [];
+    const NUM_SAMPLES = 50;
+
+    // --- Math & Logic ---
+
+    // 1. Generate a random target function (Sum of Gaussians)
+    function randomizeFunction() {
+        gaussians = [];
+        const numPeaks = Math.floor(Math.random() * 3) + 2; // 2 to 4 peaks
+        
+        for(let i=0; i<numPeaks; i++) {
+            gaussians.push({
+                mu: 0.1 + Math.random() * 0.8,    // Keep peaks somewhat central
+                sigma: 0.03 + Math.random() * 0.1, // Varied widths
+                amp: 0.2 + Math.random() * 0.8     // Varied heights
+            });
+        }
+
+        // Calculate ground truth integration numerically
+        let sum = 0;
+        let maxVal = 0;
+        const steps = 2000;
+        for(let i=0; i<steps; i++) {
+            const x = i/steps;
+            const y = f(x);
+            sum += y * (1/steps);
+            if(y > maxVal) maxVal = y;
+        }
+        TRUE_INTEGRAL = sum;
+        MAX_Y = maxVal * 1.2; // Add padding for visualization
+        
+        uiTrue.textContent = TRUE_INTEGRAL.toFixed(4);
+        
+        // Trigger resampling for new function
+        generateSamples();
+    }
+
+    // The target function f(x)
+    function f(x) {
+        let y = 0.05; // Base floor
+        for(let g of gaussians) {
+            y += g.amp * Math.exp( -0.5 * Math.pow((x - g.mu)/g.sigma, 2) );
+        }
+        return y;
+    }
+
+    // The Sampling PDF p(x)
+    // Mixture: (1-alpha)*Uniform + alpha*PerfectPDF
+    function p(x, alpha) {
+        const p_uniform = 1.0;
+        // The perfect PDF is exactly f(x) normalized by the integral
+        const p_perfect = f(x) / TRUE_INTEGRAL;
+        return (1 - alpha) * p_uniform + alpha * p_perfect;
+    }
+
+    // --- Sampling ---
+
+    function generateSamples() {
+        samples = [];
+        const alpha = parseFloat(slider.value);
+        
+        // Update label text based on slider
+        if(alpha < 0.1) sliderLabel.textContent = "Mostly Uniform";
+        else if(alpha > 0.9) sliderLabel.textContent = "Scaled f(x)";
+        else sliderLabel.textContent = "Mixture";
+
+        for (let i = 0; i < NUM_SAMPLES; i++) {
+            let x;
+            
+            // Mixture Sampling Logic
+            if (Math.random() < alpha) {
+                // Sample from Scaled f(x) (using Rejection Sampling)
+                // We sample from f(x) directly, which corresponds to the perfect PDF
+                let accepted = false;
+                let safety = 0;
+                while(!accepted && safety < 1000) {
+                    safety++;
+                    const cx = Math.random();
+                    const cy = Math.random() * MAX_Y; // Upper bound
+                    if (cy < f(cx)) {
+                        x = cx;
+                        accepted = true;
+                    }
+                }
+                if(!accepted) x = Math.random(); // Fallback
+            } else {
+                // Sample from Uniform
+                x = Math.random();
+            }
+
+            // Monte Carlo Weight = f(x) / p(x)
+            const prob = p(x, alpha);
+            const weight = f(x) / prob;
+            
+            samples.push({ x, w: weight, p: prob });
+        }
+        
+        calcStats();
+        draw();
+    }
+
+    function calcStats() {
+        if (samples.length === 0) return;
+        
+        let sumW = 0;
+        let sumSq = 0;
+        
+        samples.forEach(s => {
+            sumW += s.w;
+            sumSq += (s.w * s.w);
+        });
+        
+        const mean = sumW / samples.length;
+        // Variance of the estimator (Standard Error squared)
+        // Var(Mean) = Var(X) / N
+        const sampleVar = (sumSq / samples.length) - (mean * mean);
+        const errorVar = sampleVar / samples.length; 
+
+        uiEst.textContent = mean.toFixed(4);
+        uiVar.textContent = sampleVar.toFixed(5);
+
+        // Visual coloring for accuracy
+        const diff = Math.abs(mean - TRUE_INTEGRAL);
+        uiEst.style.color = diff < 0.05 ? "var(--secondary)" : "var(--text)";
+    }
+
+    // --- Drawing ---
+
+    function draw() {
+        // Expose to window for ThemeEngine
+        window.draw = draw;
+
+        const dpr = window.devicePixelRatio || 1;
+        const rect = document.getElementById('canvasWrapper').getBoundingClientRect();
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+        
+        const W = rect.width;
+        const H = rect.height;
+        const PAD = 40;
+        
+        // Helper to get CSS vars
+        const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        const colorPrimary = getCssVar('--primary');
+        const colorText = getCssVar('--text');
+        const colorBorder = getCssVar('--border');
+        const colorGrid = getCssVar('--target-grid') || '#ccc';
+
+        ctx.clearRect(0, 0, W, H);
+
+        // Mapping functions
+        // X: [0, 1] -> [PAD, W-PAD]
+        // Y: [0, MAX_Y] -> [H-PAD, PAD]
+        const mapX = (val) => PAD + val * (W - 2*PAD);
+        const mapY = (val) => (H - PAD) - (val / MAX_Y) * (H - 2*PAD);
+
+        // 1. Draw PDF p(x) (Green Filled Area)
+        const alpha = parseFloat(slider.value);
+        ctx.beginPath();
+        ctx.moveTo(mapX(0), mapY(0));
+        
+        for(let i=0; i<=100; i++) {
+            const xVal = i/100;
+            const yVal = p(xVal, alpha) * TRUE_INTEGRAL; 
+            ctx.lineTo(mapX(xVal), mapY(yVal));
+        }
+        ctx.lineTo(mapX(1), mapY(0));
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.15)'; // Green low opacity
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 2. Draw Target f(x) (Blue Line)
+        ctx.beginPath();
+        for(let i=0; i<=200; i++) {
+            const xVal = i/200;
+            const yVal = f(xVal);
+            const cx = mapX(xVal);
+            const cy = mapY(yVal);
+            if(i===0) ctx.moveTo(cx, cy);
+            else ctx.lineTo(cx, cy);
+        }
+        ctx.strokeStyle = colorPrimary;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // 3. Draw Samples
+        samples.forEach(s => {
+            const cx = mapX(s.x);
+            const cy = H - PAD + 10; // Below axis
+            
+            // Dot
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, Math.PI*2);
+            ctx.fillStyle = '#ef4444'; // Always red for contrast
+            ctx.fill();
+
+            // Line projecting up to f(x)
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 4);
+            ctx.lineTo(cx, mapY(f(s.x)));
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        });
+
+        // 4. Draw Axes
+        ctx.beginPath();
+        ctx.moveTo(PAD, H - PAD);
+        ctx.lineTo(W - PAD, H - PAD); // X Axis
+        ctx.moveTo(PAD, H - PAD);
+        ctx.lineTo(PAD, PAD); // Y Axis
+        ctx.strokeStyle = colorGrid;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        
+        // Axis Labels
+        ctx.fillStyle = colorText;
+        ctx.globalAlpha = 0.6;
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('0', PAD, H - PAD + 25);
+        ctx.fillText('1', W - PAD, H - PAD + 25);
+        ctx.fillText('x', W/2, H - 10);
+        ctx.globalAlpha = 1.0;
+    }
+
+    // --- Init ---
+    window.addEventListener('resize', draw);
+    slider.addEventListener('input', generateSamples);
+
+    // Start
+    randomizeFunction();
+
+</script>
+
+</body>
+</html>

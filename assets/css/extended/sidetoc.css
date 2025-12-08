@@ -1,0 +1,185 @@
+/* =========================================
+   1. INLINE TOC (The Clean Look)
+   ========================================= */
+
+/* Hide default "Table of Contents" text and markers */
+.toc summary { 
+    cursor: pointer; 
+    list-style: none; 
+    font-size: 0; 
+}
+.toc summary::-webkit-details-marker, 
+.toc summary .details { 
+    display: none; 
+}
+
+/* Custom "Contents" Header */
+.toc summary::after {
+    content: "Contents";
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* List Styling */
+.toc ul { 
+    list-style-type: circle; /* Inline TOC already had bullets */
+    padding-left: 1.5rem; 
+}
+.toc li { 
+    margin-bottom: 0.5rem; 
+    color: #888; 
+}
+
+/* Link Styling */
+.toc a { 
+    color: #a0a0a0; 
+    text-decoration: none; 
+    transition: color 0.2s; 
+}
+
+/* Hover State */
+.toc a:hover { 
+    color: #5480f1; 
+    text-decoration: underline; 
+}
+
+/* Active State (Inline) - Bold and Blue */
+.toc a.active {
+    color: #5480f1 !important;
+    font-weight: bold !important;
+    text-decoration: underline;
+}
+
+/* =========================================
+   2. SIDEBAR TOC (Fixed + Accordion)
+   ========================================= */
+.sidebar-toc {
+    position: fixed;
+    top: 80px;
+    right: 0; 
+    width: 360px;
+    height: 85vh;
+    overflow-y: auto;
+    padding: 20px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    
+    /* Animation */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(50px);
+    transition: all 0.3s ease-in-out;
+    z-index: 100;
+}
+
+/* Show sidebar */
+.sidebar-toc.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Clean up Sidebar formatting */
+.sidebar-toc summary { display: none; }
+
+/* --- CHANGED SECTION START: Added Bullets --- */
+.sidebar-toc ul { 
+    list-style: disc; /* Use 'disc' for filled bullets */
+    padding-left: 1.5rem; /* Add padding so bullets are visible */
+    margin: 0; 
+}
+
+.sidebar-toc li { 
+    margin: 0; 
+    position: relative; 
+    /* Optional: Add a little spacing between bullet items */
+    margin-bottom: 5px; 
+}
+/* --- CHANGED SECTION END --- */
+
+/* --------------------------------------
+   ACCORDION LOGIC
+   -------------------------------------- */
+
+/* Hide sub-menus by default */
+.sidebar-toc ul ul {
+    display: none;
+    
+    /* Adjusted for nested bullets */
+    list-style: circle; /* Use 'circle' for nested items */
+    padding-left: 1.5rem; /* Space for the nested bullet */
+    margin-left: 0; /* Reset margin since we are using padding */
+    
+    /* Removed the border-left line as it usually conflicts visually with bullets */
+    /* border-left: 1px solid var(--border); */ 
+}
+
+/* Show sub-menu if parent is active */
+.sidebar-toc li.active > ul {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+/* Keep sub-menu open if a child is active */
+.sidebar-toc li.has-active-child > ul {
+    display: block;
+}
+
+/* --------------------------------------
+   SIDEBAR LINKS
+   -------------------------------------- */
+.sidebar-toc a {
+    display: inline-block; /* Changed to inline-block so it sits next to bullet */
+    color: var(--secondary);
+    text-decoration: none;
+    padding: 2px 0; /* Reduced top/bottom padding slightly */
+    transition: all 0.2s;
+    vertical-align: top;
+}
+
+.sidebar-toc a:hover {
+    color: var(--primary);
+}
+
+/* Active Section (Sidebar) - Bold and Blue */
+.sidebar-toc li.active > a {
+    color: #5480f1 !important;
+    font-weight: bold !important;
+}
+
+/* Optional: Make the parent section slightly distinct when inside a child */
+.sidebar-toc li.has-active-child > a {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------
+   RESPONSIVE (Prevent Overlap)
+   -------------------------------------- */
+
+/* Only show sidebar on very large screens */
+@media screen and (min-width: 1450px) {
+    .main {
+        transition: margin-right 0.3s;
+    }
+}
+
+/* Hide sidebar on smaller screens */
+@media screen and (max-width: 1449px) {
+    .sidebar-toc { 
+        display: none !important; 
+    }
+}
+
+.top-link{
+    z-index: 101;
+}

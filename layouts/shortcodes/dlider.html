@@ -1,0 +1,71 @@
+{{ $before := .Get "before" }}
+{{ $after := .Get "after" }}
+{{ $width := .Get "width" | default "100%" }}
+{{ $caption := .Get "caption" | default "Interactive Comparison" }}
+{{ $beforeLabel := .Get "beforeLabel" | default "Before" }}
+{{ $afterLabel := .Get "afterLabel" | default "After" }}
+
+<div class="dlider-container" id="dlider-{{ .Ordinal }}" 
+     data-before-label="{{ $beforeLabel }}" 
+     data-after-label="{{ $afterLabel }}"
+     style="width: {{ $width }}; max-width: 100%; margin: 2rem auto; position: relative;">
+
+    <!-- Floating RTX-style label -->
+    <div class="dlider-active-label"
+         style="
+            position:absolute;
+            top:10px; left:10px;
+            background:rgba(0,0,0,0.6);
+            color:white;
+            padding:6px 12px;
+            border-radius:4px;
+            font-size:0.85rem;
+            font-weight:600;
+            backdrop-filter: blur(4px);
+            z-index:10;
+        ">
+        {{ $beforeLabel }}
+    </div>
+
+    <div class="dlider-images">
+
+        <img src="{{ $after }}" alt="After" class="dlider-img-back">
+        <img src="{{ $before }}" alt="Before" class="dlider-img-front">
+
+        <div class="dlider-handle">
+            <div class="dlider-handle-arrow"></div>
+            <div class="dlider-handle-line"></div>
+        </div>
+
+        <input type="range" min="0" max="100" value="50" class="dlider-input"
+               oninput="updateDlider(this)" 
+               onchange="updateDlider(this)">
+    </div>
+    
+    {{ with $caption }}<div class="dlider-caption">{{ . }}</div>{{ end }}
+</div>
+
+<script>
+function updateDlider(input) {
+    const container = input.closest('.dlider-container');
+    const percent = input.value;
+    container.style.setProperty('--percent', percent + '%');
+
+    const labelElement = container.querySelector('.dlider-active-label');
+    const beforeLabel = container.dataset.beforeLabel;
+    const afterLabel = container.dataset.afterLabel;
+
+    // Update label (left side shows BEFORE at >50%, AFTER at <50%)
+    labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.dlider-container').forEach(container => {
+        container.style.setProperty('--percent', '50%');
+
+        const label = container.querySelector('.dlider-active-label');
+        const beforeLabel = container.dataset.beforeLabel;
+        label.textContent = beforeLabel;
+    });
+});
+</script>
