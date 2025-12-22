@@ -16,6 +16,8 @@ math: true
 This post is a work in progress and may be updated or expanded soon!
 </span>
 
+
+
 # Introduction to Rendering
 
 The goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.
@@ -27,7 +29,29 @@ We are going to look at the **Path Tracing** algorithm. What are differences bet
 I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.
 
 ## Assumptions
+- Light Travels in Straigh Lines (in a uniform medium
+- **Lambert's Cosine Law** (Incident angle $\theta$ dictates surface illumination)
+<iframe src="/interactive/cosine_forshortening.html"
+        width="100%"
+        height="430"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
 
+- Light is additive
+Size of light shource affects shadow softness
+- **Inverse Square Law** Intensidy decreases with distance form the souce 
+$$Intensity \propto \frac{1}{r^2}$$
+
+<iframe src="/interactive/inverse_square_law.html"
+        width="100%"
+        height="430"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+## Components
 Although there are many ways to write a ray tracer, all such systems simulate at least the following objects and phenomena:
 
 - **Cameras**: A camera model determines how and from where the scene is viewed, including how an image of the scene is recorded on a sensor. Many rendering systems generate viewing rays stating at the camera that are then traced into the scene to determine which objects are visible at each pixel.
@@ -50,6 +74,13 @@ caption="Ray r(t) and Ray-Triangle Intersection"
 width="80%" 
 >}}
 
+For the faster Ray-Triangle intersection, the BVH (Bounding Volumes Heirarchy) data-structure is usually used. A simplified visualization for it is given below: 
+{{< 
+fullscreen-iframe 
+id="rt_iframe" 
+src="/interactive/bvh.html" 
+height="430" 
+>}}
 
 - **Light Sources**: Without lighting, there would be little point in rendering a scene. A ray tracer must model the distribution of light throughout the scene, including not only the locations of the lights themselves but also the way in which they distribute their energy throughout space.
 
@@ -87,15 +118,6 @@ width="80%"
 >}}
 
 
-- **Lambert's Cosine Law**
-
-
-<iframe src="/interactive/cosine_forshortening.html"
-        width="100%"
-        height="430"
-        frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
-</iframe>
 
 
 ## The Rendering Equation
@@ -112,7 +134,7 @@ Where:
 
 - $L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).  
 - $L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).  
-- $f_r(x, \omega_i, \omega_o)$ - **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.  
+- $f_r(x, \omega_i, \omega_o)$ - **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.
 - $L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.  
 - $(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).  
 - $\Omega$ - hemisphere of directions above the surface.
@@ -126,7 +148,116 @@ Where:
 Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.
 
 
-### Alternate formualtions of the Rendering Equation
+## Alternate formualtions of the Rendering Equation
+
+
+### Classic Surface Rendering Equation
+First, this is the standard rendering equation we we'll see in most local path guiding papers. It picks a direction of contribution and intergrates over all the direction of contribution (upper hemisphere / sphere). For a given direction, the radiance already includes all visible surfaces along that ray in that direction, so no explicit visibility term is needed.
+
+$$
+L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} f_r(x, \omega_i, \omega_o)\; L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
+$$
+
+Where:
+
+- $L_o(x, \omega_o)$ - outgoing radiance from point $x$ toward direction $\omega_o$ (what the camera sees).  
+- $L_e(x, \omega_o)$ - emitted radiance from $x$ (non-zero if $x$ is a light source).  
+- $f_r(x, \omega_i, \omega_o)$ - **BRDF** (Bidirectional Reflectance Distribution Function): fraction of light from direction $\omega_i$ scattered into $\omega_o$.  
+- $L_i(x, \omega_i)$ - incoming radiance arriving at $x$ from direction $\omega_i$.  
+- $(\omega_i \cdot n)$ - cosine foreshortening term (angle between incoming direction and surface normal $n$).  
+- $\Omega$ - hemisphere of directions above the surface.
+
+
+### Surface Area (Geometry-Explicit) Rendering Equation
+This is the same formulation with change of variables the difference being instead of picking direction, we explicitly take the contribution of whole scene by integrating over all the points on surface of the scene. To make sure the occluded parts are not accidentally counted Visibility term is added and for making it consistent with lambert's cosine law, the geometry term is added.
+
+$$
+L_o(x, \omega_o) =
+L_e(x, \omega_o)
++
+\int_{A}
+f_r(x, \omega_i, \omega_o)\;
+L_o(y, -\omega_i)\;
+G(x,y)\;
+V(x,y)\;
+dA_y
+$$
+
+Where:
+
+- $A$ - set of all surfaces in the scene (integration domain).  
+- $y$ - surface point contributing light to $x$.  
+- $\omega_i$ - direction from $x$ to $y$.  
+- $L_o(y, -\omega_i)$ - outgoing radiance from $y$ toward $x$.  
+- $f_r(x, \omega_i, \omega_o)$ - BRDF at $x$.  
+- $G(x,y)$ - geometry term:
+  $$
+  G(x,y) = \frac{(\omega_i \cdot n_x)(-\omega_i \cdot n_y)}{\|x - y\|^2}
+  $$
+- $V(x,y)$ - visibility function (1 if $x$ and $y$ are mutually visible, 0 otherwise).  
+- $dA_y$ - differential surface area at $y$.
+
+### Operator Form of the Rendering Equation
+This, as the name suggests, treats the transport of light rays as operator. This formulation is useful for proofs of convergence, existence etc.
+
+$$
+L = L_e + \mathcal{K} L
+$$
+
+Where:
+
+- $L$ - radiance function over all surface points and directions.  
+- $L_e$ - emitted radiance.  
+- $\mathcal{K}$ - light transport operator defined by:
+  $$
+  (\mathcal{K}L)(x, \omega_o)
+  =\int_{\Omega}f_r(x, \omega_i, \omega_o)\;L_i(x, \omega_i)\;(\omega_i \cdot n)d\omega_i
+  $$
+- Integration domain - hemisphere of directions above the surface.
+
+This form emphasizes that global illumination is a fixed-point problem.
+
+
+### Path Integral Formulation of Light Transport
+This formulation integrates over the domain of all light transport paths. This let's us see the light transport as a contribution of different paths. This is very intuitive for the MC methods as it emphasies that different paths have different contribution and we are integrating over all possible path (or at least approximating that integral). This also makes is easy to see we can also work with "good" paths directly instead of choosing the ray direction in the classical one.
+
+$$
+I =
+\int_{\mathcal{P}}
+f(\bar{x})\;
+d\mu(\bar{x})
+$$
+
+Where:
+
+$$
+f(\bar{x}) =
+L_e(x_0)\;
+\prod_{i=1}^{k}
+f_r(x_i)\;
+G(x_{i-1}, x_i)\;
+V(x_{i-1}, x_i)
+$$
+
+And:
+
+- $\mathcal{P}$ - set of all possible light paths of all lengths
+  $$
+  \bar{x} = (x_0, x_1, \ldots, x_k)
+  $$
+  with vertices on surfaces or in volumes.  
+- $x_0$ - light source point.  
+- $x_k$ - point visible to the sensor.  
+- $f_r(x_i)$ - scattering function (BRDF/BSDF) at vertex $x_i$.  
+- $G(x_{i-1}, x_i)$ - geometry term between consecutive vertices.  
+- $V(x_{i-1}, x_i)$ - visibility term.  
+- $d\mu(\bar{x})$ - path-space measure (product of area, volume, and directional measures).
+
+
+### Operator
+
+We can see the recursive interaction of lught 
+
 
 <iframe src="/interactive/light_paths.html"
         width="100%"
@@ -902,7 +1033,7 @@ caption="Return combined radiance up the stack"
 width="100%" 
 >}}
 
-Repeat the above process for all pixels (Parallely as this is embarrassingly parallel) for some amount of **samples per pixel** (for anti aliasing as well)
+Repeat the above process for all pixels (parallely as this is embarrasingly parallel) for some amount of **samples per pixel**
 
 {{< 
 figure src="../../images/path_tracing/2spp.png"
@@ -911,6 +1042,52 @@ id="fig-2spp"
 caption="2 Samples Per Pixel"
 width="100%" 
 >}}
+
+### Path Tracing Steps Overview
+
+{{< step-slider animate="false" width="850px" >}}
+- image: "../../images/path_tracing/path-tracing/init_cam.png"
+  title: "Initialize Camera"
+  description: "Initialize the Scene objects, lights and camera"
+
+- image: "../../images/path_tracing/path-tracing/trace1.png"
+  title: "Trace Ray"
+  description: "Trace the primary ray through pixel into the scene"
+
+- image: "../../images/path_tracing/path-tracing/si1.png"
+  title: "Surface Intersection and Query BSDF"
+  description: "Intersect with the scene geometry and query the info like BSDF (blue) to get material property"
+
+- image: "../../images/path_tracing/path-tracing/trace2.png"
+  title: "Sample Next Ray Direction"
+  description: "Use PDF (according to BRDF or some other guiding one) to sample the next ray direction"
+
+- image: "../../images/path_tracing/path-tracing/si2.png"
+  title: "Surface Intersection and Query BSDF"
+  description: "The recursion stops once a single primitive remains in the volume."
+
+- image: "../../images/path_tracing/path-tracing/trace3.png"
+  title: "Sample Next Ray Direction"
+  description: "The recursion stops once a single primitive remains in the volume."
+
+- image: "../../images/path_tracing/path-tracing/trace3.png"
+  title: "Max Depth Reached / Stopping Criterion"
+  description: "Query the Light Emitted and backpropagate"
+
+- image: "../../images/path_tracing/path-tracing/back_1.png"
+  title: "Backpropagate the Radiance"
+  description: "Query the Light Emitted, add it to incoming radiance and backpropagate "
+
+- image: "../../images/path_tracing/path-tracing/back_2.png"
+  title: "Backpropagate the Radiance"
+  description: "Query the Light Emitted, add it to incoming radiance and backpropagate"
+
+- image: "../../images/path_tracing/path-tracing/back_3.png"
+  title: "Backpropagate the Radiance"
+  description: "Query the Light Emitted, add it to incoming radiance and backpropagate"
+{{< /step-slider >}}
+
+
 ### Interactive Ray Tracer Visualization
 {{< 
 fullscreen-iframe 

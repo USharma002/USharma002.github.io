@@ -1,0 +1,115 @@
+{{- $data := .Inner | transform.Unmarshal -}}
+{{- $animate := .Get "animate" | default "true" -}}
+{{- $width := .Get "width" | default "100%" -}}
+{{- $id := printf "step-slider-%d" .Ordinal -}}
+
+<div class="step-slider-container {{ if eq $animate "false" }}no-anim{{ end }}" 
+     id="{{ $id }}" 
+     style="width: {{ $width }};"
+     data-slides='{{ jsonify $data }}'>
+
+    <!-- Floating RTX Label -->
+    <div class="step-active-label">Step 1 / {{ len $data }}</div>
+
+    <!-- Navigation Buttons -->
+    <button class="step-nav btn-prev" onclick="moveSlide('{{ $id }}', -1)" disabled>&#10094;</button>
+    <button class="step-nav btn-next" onclick="moveSlide('{{ $id }}', 1)">&#10095;</button>
+
+    <div class="step-viewport">
+        <div class="step-wrapper" id="wrapper-{{ $id }}" style="--current-index: 0;">
+            {{ range $index, $item := $data }}
+            <div class="step-slide">
+                <img src="{{ $item.image | safeURL }}" alt="{{ $item.title }}">
+            </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <!-- Footer Area (Title + Desc) -->
+    <div class="step-footer">
+        <div class="step-title"></div>
+        <div class="step-description"></div>
+    </div>
+</div>
+
+<script>
+    // --- Hugo Theme Detection Inheritance ---
+    function detectSliderTheme() {
+        try {
+            const parentBody = window.parent.document.body;
+            const style = window.getComputedStyle(parentBody);
+            const bgColor = style.backgroundColor;
+            const rgb = bgColor.match(/\d+/g);
+            
+            if (rgb) {
+                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+                const isDark = brightness < 128;
+                const root = document.documentElement;
+                
+                if (isDark) {
+                    root.style.setProperty('--bg', '#1a1a1a');
+                    root.style.setProperty('--text', '#e5e7eb');
+                    root.style.setProperty('--text-sub', '#9ca3af');
+                    root.style.setProperty('--axis', '#525252');
+                } else {
+                    root.style.setProperty('--bg', '#ffffff');
+                    root.style.setProperty('--text', '#374151');
+                    root.style.setProperty('--text-sub', '#6b7280');
+                    root.style.setProperty('--axis', '#d1d5db');
+                }
+            }
+        } catch(e) {
+            // Fallback to light if parent is inaccessible
+            const root = document.documentElement;
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--axis', '#d1d5db');
+        }
+    }
+    setInterval(detectSliderTheme, 1000);
+    detectSliderTheme();
+
+    // --- Slider Logic ---
+    function moveSlide(containerId, direction) {
+        const container = document.getElementById(containerId);
+        const wrapper = document.getElementById('wrapper-' + containerId);
+        const slides = JSON.parse(container.dataset.slides);
+        let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+        
+        currentIndex += direction;
+        if (currentIndex >= 0 && currentIndex < slides.length) {
+            wrapper.style.setProperty('--current-index', currentIndex);
+            updateSliderUI(container, currentIndex);
+        }
+    }
+
+    function updateSliderUI(container, index) {
+        const slides = JSON.parse(container.dataset.slides);
+        const data = slides[index];
+        
+        const titleEl = container.querySelector('.step-title');
+        const descEl = container.querySelector('.step-description');
+        const labelEl = container.querySelector('.step-active-label');
+        
+        // Text Transition
+        titleEl.style.opacity = 0;
+        descEl.style.opacity = 0;
+        
+        setTimeout(() => {
+            titleEl.textContent = data.title || "";
+            descEl.textContent = data.description || "";
+            labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+            titleEl.style.opacity = 1;
+            descEl.style.opacity = 1;
+        }, 200);
+
+        // Update Button States
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+    }
+
+    // Initialize all sliders on page
+    window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.step-slider-container').forEach(c => updateSliderUI(c, 0));
+    });
+</script>

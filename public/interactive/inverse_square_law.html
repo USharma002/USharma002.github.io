@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inverse Square Law - Circular</title>
+    <style>
+        :root {
+            /* Defaults (Light Mode) */
+            --bg: #f8f9fa;
+            --text: #374151;
+            --text-sub: #6b7280;
+            --accent: #e67e22;
+            --axis: #9ca3af;
+            --beam-core: rgba(255, 180, 0, 0.6);
+            --beam-fade: rgba(255, 180, 0, 0.05);
+            --bar-bg: #f3f4f6;
+            --bar-border: #d1d5db;
+            --grid-line: rgba(0,0,0,0.1);
+        }
+
+        html, body { 
+            margin: 0; 
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container { 
+            position: relative;
+            width: 100%; 
+            height: 100%; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        canvas { 
+            display: block; 
+            width: 100%; 
+            height: 100%; 
+            cursor: grab;
+        }
+        canvas:active { cursor: grabbing; }
+        
+        .overlay { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            pointer-events: none; 
+            background: var(--bg);
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            border: 1px solid var(--axis); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0.95;
+            transition: background 0.3s, border-color 0.3s;
+            z-index: 10;
+        }
+        
+        h3 { margin: 0 0 8px 0; font-size: 16px; color: var(--text); font-weight: 700; }
+        .stat-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-sub); margin-bottom: 4px; gap: 25px; }
+        .val { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
+        .highlight { color: var(--accent); }
+    </style>
+        <script>
+window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="overlay">
+        <h3>Inverse Square Law (Radial)</h3>
+        <div class="stat-row">
+            <span>Radius ($r$):</span>
+            <span class="val" id="dispDist">1.00</span>
+        </div>
+        <div class="stat-row">
+            <span>Intensity Density ($1/r^2$):</span>
+            <span class="val highlight" id="dispInt">100%</span>
+        </div>
+        <div class="stat-row">
+            <span>Sector Area ($r^2$):</span>
+            <span class="val" id="dispArea">1.00x</span>
+        </div>
+    </div>
+    <canvas id="canvas"></canvas>
+</div>
+
+<script>
+    // --- Theme Detection ---
+    function detectTheme() {
+        try {
+            const parentBody = window.parent.document.body;
+            const style = window.getComputedStyle(parentBody);
+            const bgColor = style.backgroundColor;
+            const rgb = bgColor.match(/\d+/g);
+            
+            if (rgb) {
+                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+                const isDark = brightness < 128;
+                
+                if (isDark) {
+                    document.documentElement.style.setProperty('--bg', '#1a1a1a');
+                    document.documentElement.style.setProperty('--text', '#e5e7eb');
+                    document.documentElement.style.setProperty('--text-sub', '#9ca3af');
+                    document.documentElement.style.setProperty('--axis', '#525252');
+                    document.documentElement.style.setProperty('--bar-bg', '#333');
+                    document.documentElement.style.setProperty('--bar-border', '#444');
+                    document.documentElement.style.setProperty('--grid-line', 'rgba(255,255,255,0.1)');
+                } else {
+                    document.documentElement.style.setProperty('--bg', '#ffffff');
+                    document.documentElement.style.setProperty('--text', '#374151');
+                    document.documentElement.style.setProperty('--text-sub', '#6b7280');
+                    document.documentElement.style.setProperty('--axis', '#d1d5db');
+                    document.documentElement.style.setProperty('--bar-bg', '#f3f4f6');
+                    document.documentElement.style.setProperty('--bar-border', '#d1d5db');
+                    document.documentElement.style.setProperty('--grid-line', 'rgba(0,0,0,0.1)');
+                }
+                requestAnimationFrame(draw);
+            }
+        } catch(e) {}
+    }
+    setInterval(detectTheme, 1000);
+    detectTheme();
+
+    function getVar(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // --- Main Logic ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const elDist = document.getElementById('dispDist');
+    const elInt = document.getElementById('dispInt');
+    const elArea = document.getElementById('dispArea');
+
+    // State
+    let radiusUnits = 2.0; // r value (1.0 to max)
+    const minRUnits = 1.0;
+    let maxRUnits = 4.0;
+    
+    // Layout Variables
+    let cx, cy;
+    let pixelsPerUnit = 80; 
+
+    // Precompute some random "photon" offsets for the visualization slice
+    const numPhotons = 150;
+    const photonOffsets = [];
+    const sliceAngle = Math.PI / 6; // 30 degrees slice
+    for(let i=0; i<numPhotons; i++) {
+        // Random angle within the slice
+        const theta = (Math.random() - 0.5) * sliceAngle;
+        // Random radius fraction within the slice thickness (creates area effect)
+        // Using sqrt(random) for uniform area distribution in a circle sector
+        const rFrac = Math.sqrt(Math.random()); 
+        photonOffsets.push({theta, rFrac});
+    }
+
+    function resize() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.scale(dpr, dpr);
+        
+        cx = window.innerWidth / 2;
+        cy = window.innerHeight / 2;
+        
+        // Scale units so r=4 fits on screen
+        const minDimension = Math.min(window.innerWidth, window.innerHeight);
+        pixelsPerUnit = (minDimension * 0.4) / maxRUnits;
+        
+        draw();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function draw() {
+        if (!cx) return;
+
+        const W = window.innerWidth;
+        const H = window.innerHeight;
+
+        const colText = getVar('--text');
+        const colSub = getVar('--text-sub');
+        const colAxis = getVar('--axis');
+        const colGrid = getVar('--grid-line');
+        const colAccent = getVar('--accent');
+
+        ctx.clearRect(0, 0, W+100, H+100);
+
+        const r = Math.max(minRUnits, Math.min(maxRUnits, radiusUnits));
+        const intensity = 1 / (r * r);
+        const areaRel = r * r;
+        const currentPixelR = r * pixelsPerUnit;
+
+        // 1. Draw Reference Circles (Grid)
+        ctx.strokeStyle = colGrid;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        for(let i=1; i<=Math.floor(maxRUnits); i++) {
+            ctx.beginPath();
+            ctx.arc(cx, cy, i * pixelsPerUnit, 0, Math.PI*2);
+            ctx.stroke();
+            
+            // Labels
+            ctx.fillStyle = colSub;
+            ctx.font = "12px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(`r=${i}`, cx + i * pixelsPerUnit, cy + 4);
+        }
+        ctx.setLineDash([]);
+
+        // 2. Draw the "Visualization Slice" (Cone)
+        ctx.save();
+        ctx.translate(cx, cy);
+        
+        // The cone boundaries
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        const maxPixelR = maxRUnits * pixelsPerUnit;
+        ctx.lineTo(Math.cos(-sliceAngle/2)*maxPixelR, Math.sin(-sliceAngle/2)*maxPixelR);
+        ctx.moveTo(0,0);
+        ctx.lineTo(Math.cos(sliceAngle/2)*maxPixelR, Math.sin(sliceAngle/2)*maxPixelR);
+        ctx.strokeStyle = "rgba(255, 200, 0, 0.3)";
+        ctx.stroke();
+
+        // The active sector area (the "patch" that expands)
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.arc(0, 0, currentPixelR, -sliceAngle/2, sliceAngle/2);
+        ctx.closePath();
+        // Fill color gets more transparent as it gets bigger to simulate density loss
+        ctx.fillStyle = `rgba(255, 180, 0, ${0.1 + 0.4*intensity})`; 
+        ctx.fill();
+        ctx.strokeStyle = colAccent;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 3. Draw "Photons" (dots) inside the sector
+        // They spread out as r increases, showing density drop.
+        ctx.fillStyle = "#f1c40f"; // Bright yellow photons
+        photonOffsets.forEach(offset => {
+            // Position dots relative to the *current* radius boundary to show surface density
+            // We place them in a band *just inside* the current radius.
+            const photonR = currentPixelR * (0.9 + 0.1*offset.rFrac); 
+            const px = Math.cos(offset.theta) * photonR;
+            const py = Math.sin(offset.theta) * photonR;
+            
+            ctx.beginPath();
+            // Dot size scales slightly down with distance for perspective effect
+            const dotSize = 2 * (0.5 + 0.5*intensity); 
+            ctx.arc(px, py, dotSize, 0, Math.PI*2);
+            ctx.fill();
+        });
+        ctx.restore();
+
+        // 4. Draw The Source Center
+        ctx.beginPath();
+        ctx.arc(cx, cy, 12, 0, Math.PI*2);
+        ctx.fillStyle = "#f1c40f";
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = "#f39c12";
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // 5. Draw the Interactive Ring Handle
+        ctx.beginPath();
+        ctx.arc(cx, cy, currentPixelR, 0, Math.PI*2);
+        ctx.strokeStyle = colAccent;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Add a handle knob at the bottom
+        ctx.beginPath();
+        ctx.arc(cx, cy + currentPixelR, 6, 0, Math.PI*2);
+        ctx.fillStyle = colAccent;
+        ctx.fill();
+
+
+        // --- 6. Intensity Bar (Right side) ---
+        drawBar(W, cy, intensity);
+
+        // DOM Updates
+        elDist.textContent = r.toFixed(2);
+        elInt.textContent = `${(intensity * 100).toFixed(0)}%`;
+        elArea.textContent = `${areaRel.toFixed(2)}x`;
+    }
+
+    function drawBar(W, cy, intensity) {
+        const colText = getVar('--text');
+        const colSub = getVar('--text-sub');
+        const colAxis = getVar('--axis');
+        const colBarBg = getVar('--bar-bg');
+
+        const barX = W - 60;
+        const barH = 200;
+        const barY = cy - barH/2;
+        const barW = 16;
+
+        if (barX < cx + maxRUnits*pixelsPerUnit + 20) return; // Hide if overlaps
+
+        // Bar Background
+        ctx.fillStyle = colBarBg;
+        ctx.fillRect(barX, barY, barW, barH);
+        ctx.strokeStyle = colAxis;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(barX, barY, barW, barH);
+
+        // Filled Level
+        const fillH = barH * intensity;
+        const currentY = barY + (barH - fillH);
+        const intensityCol = `rgba(255, ${Math.floor(100 + intensity*155)}, 0, 0.8)`;
+        ctx.fillStyle = intensityCol;
+        ctx.fillRect(barX, currentY, barW, fillH);
+
+        // Labels
+        ctx.fillStyle = colSub;
+        ctx.font = "11px sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("100%", barX + 20, barY + 6); 
+        ctx.fillText("0%", barX + 20, barY + barH); 
+
+        // Indicator
+        ctx.beginPath();
+        ctx.moveTo(barX, currentY);        
+        ctx.lineTo(barX - 6, currentY - 5); 
+        ctx.lineTo(barX - 6, currentY + 5); 
+        ctx.fillStyle = colText;
+        ctx.fill();
+
+        // Title
+        ctx.save();
+        ctx.translate(barX + 40, cy);
+        ctx.rotate(-Math.PI/2);
+        ctx.textAlign = "center";
+        ctx.fillStyle = colSub;
+        ctx.font = "12px sans-serif";
+        ctx.fillText("Intensity Density", 0, 0);
+        ctx.restore();
+    }
+
+
+    // Interaction
+    let isDragging = false;
+    
+    function updatePos(clientX, clientY) {
+        const dpr = window.devicePixelRatio || 1;
+        const dx = clientX - cx;
+        const dy = clientY - cy;
+        const distPixels = Math.sqrt(dx*dx + dy*dy);
+        
+        let newRUnits = distPixels / pixelsPerUnit;
+        
+        // Clamp
+        if (newRUnits < minRUnits) newRUnits = minRUnits;
+        if (newRUnits > maxRUnits) newRUnits = maxRUnits;
+        
+        radiusUnits = newRUnits;
+        draw();
+    }
+
+    canvas.addEventListener('mousedown', (e) => { isDragging = true; updatePos(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', (e) => { if (isDragging) updatePos(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', () => { isDragging = false; });
+    
+    canvas.addEventListener('touchstart', (e) => { isDragging = true; updatePos(e.touches[0].clientX, e.touches[0].clientY); e.preventDefault(); }, {passive: false});
+    window.addEventListener('touchmove', (e) => { if (isDragging) updatePos(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false});
+    window.addEventListener('touchend', () => { isDragging = false; });
+
+</script>
+</body>
+</html>

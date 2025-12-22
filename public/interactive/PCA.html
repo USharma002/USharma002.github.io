@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive PCA Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h2 { margin-top: 0; }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px;
+            background-color: #f1f3f5;
+            border-radius: 6px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #0056b3; }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 600px; /* Square-ish aspect ratio */
+        }
+
+        .stats {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>PCA Reconstruction vs Original Data</h2>
+    
+    <div class="controls">
+        <button onclick="generateNewData()">Randomize Data</button>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="showPC" checked onchange="updatePlot()">
+            <label for="showPC">Show Principal Axis</label>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="showRecon" checked onchange="updatePlot()">
+            <label for="showRecon">Show Reconstruction (1D)</label>
+        </div>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="showErrors" onchange="updatePlot()">
+            <label for="showErrors">Show Projection Errors</label>
+        </div>
+    </div>
+
+    <div id="plot"></div>
+    <div class="stats" id="varianceInfo"></div>
+</div>
+
+<script>
+    // Global state
+    let X = []; // Original Data [N, 2]
+    let mean = [0, 0];
+    let eigenvectors = [];
+    let eigenvalues = [];
+
+    // Initialize
+    generateNewData();
+
+    function generateNewData() {
+        // Generate random correlated Gaussian data
+        const n_samples = 50;
+        const angle = Math.random() * Math.PI;
+        const scale_x = 1 + Math.random() * 3;
+        const scale_y = 0.5 + Math.random();
+        
+        // Rotation matrix
+        const c = Math.cos(angle);
+        const s = Math.sin(angle);
+        const R = [[c, -s], [s, c]];
+        
+        X = [];
+        for(let i=0; i<n_samples; i++) {
+            // Random point in PCA space
+            let u = (Math.random() - 0.5) * 4 * scale_x;
+            let v = (Math.random() - 0.5) * 2 * scale_y;
+            
+            // Rotate and translate
+            let x = u * c - v * s + (Math.random() - 0.5); // Add some translation
+            let y = u * s + v * c + (Math.random() - 0.5);
+            
+            X.push([x, y]);
+        }
+        
+        computePCA();
+        updatePlot();
+    }
+
+    function computePCA() {
+        const N = X.length;
+        
+        // 1. Compute Mean
+        let sumX = 0, sumY = 0;
+        for(let p of X) { sumX += p[0]; sumY += p[1]; }
+        mean = [sumX/N, sumY/N];
+
+        // 2. Center Data
+        let X_centered = X.map(p => [p[0] - mean[0], p[1] - mean[1]]);
+
+        // 3. Compute Covariance Matrix (2x2)
+        let xx = 0, xy = 0, yy = 0;
+        for(let p of X_centered) {
+            xx += p[0] * p[0];
+            xy += p[0] * p[1];
+            yy += p[1] * p[1];
+        }
+        xx /= (N-1); xy /= (N-1); yy /= (N-1);
+
+        // 4. Eigen decomposition for 2x2 matrix
+        // Matrix A = [[xx, xy], [xy, yy]]
+        // Characteristic eq: lambda^2 - Tr(A)lambda + Det(A) = 0
+        let trace = xx + yy;
+        let det = xx*yy - xy*xy;
+        let l1 = (trace + Math.sqrt(trace*trace - 4*det)) / 2;
+        let l2 = (trace - Math.sqrt(trace*trace - 4*det)) / 2;
+        
+        eigenvalues = [l1, l2];
+
+        // Eigenvectors
+        // For l1: (xx - l1)vx + xy*vy = 0  =>  vx = xy, vy = -(xx - l1)
+        // Note: handle edge case where xy is near 0
+        let v1, v2;
+        
+        if (Math.abs(xy) > 1e-10) {
+            v1 = [xy, l1 - xx];
+            v2 = [xy, l2 - xx];
+        } else {
+            v1 = [1, 0];
+            v2 = [0, 1];
+        }
+
+        // Normalize
+        const norm1 = Math.sqrt(v1[0]**2 + v1[1]**2);
+        v1 = [v1[0]/norm1, v1[1]/norm1];
+        
+        const norm2 = Math.sqrt(v2[0]**2 + v2[1]**2);
+        v2 = [v2[0]/norm2, v2[1]/norm2];
+
+        // Sort (usually l1 is larger, but just in case)
+        if(l1 < l2) {
+            eigenvalues = [l2, l1];
+            eigenvectors = [v2, v1];
+        } else {
+            eigenvectors = [v1, v2];
+        }
+    }
+
+    function updatePlot() {
+        const showPC = document.getElementById('showPC').checked;
+        const showRecon = document.getElementById('showRecon').checked;
+        const showErrors = document.getElementById('showErrors').checked;
+
+        // --- Data Preparation ---
+        const x_vals = X.map(p => p[0]);
+        const y_vals = X.map(p => p[1]);
+
+        // Reconstruct using only PC1
+        // Proj = (dot(p_centered, v1)) * v1 + mean
+        const pc1 = eigenvectors[0];
+        let reconstruction = X.map(p => {
+            let dx = p[0] - mean[0];
+            let dy = p[1] - mean[1];
+            let scalar = dx*pc1[0] + dy*pc1[1];
+            return [
+                scalar * pc1[0] + mean[0],
+                scalar * pc1[1] + mean[1]
+            ];
+        });
+
+        const rec_x = reconstruction.map(p => p[0]);
+        const rec_y = reconstruction.map(p => p[1]);
+
+        // --- Traces ---
+
+        let traces = [];
+
+        // 1. Projection Errors (Lines connecting original to reconstruction)
+        if (showErrors && showRecon) {
+            let errorLinesX = [];
+            let errorLinesY = [];
+            for(let i=0; i<X.length; i++) {
+                errorLinesX.push(X[i][0], reconstruction[i][0], null);
+                errorLinesY.push(X[i][1], reconstruction[i][1], null);
+            }
+            traces.push({
+                x: errorLinesX, y: errorLinesY,
+                mode: 'lines',
+                line: { color: 'rgba(0,0,0,0.2)', width: 1, dash: 'dot'},
+                hoverinfo: 'skip',
+                showlegend: false
+            });
+        }
+
+        // 2. Principal Axis Line
+        if (showPC) {
+            // Draw a line across the visible range
+            const scale = 5; 
+            traces.push({
+                x: [mean[0] - pc1[0]*scale, mean[0] + pc1[0]*scale],
+                y: [mean[1] - pc1[1]*scale, mean[1] + pc1[1]*scale],
+                mode: 'lines',
+                name: 'Principal Axis',
+                line: { color: 'black', width: 3 }
+            });
+        }
+
+        // 3. Original Data (Blue circles)
+        traces.push({
+            x: x_vals,
+            y: y_vals,
+            mode: 'markers',
+            type: 'scatter',
+            name: 'Original Data (X)',
+            marker: {
+                size: 10,
+                color: '#1f77b4',
+                line: { color: 'black', width: 1 }
+            }
+        });
+
+        // 4. Reconstruction (Orange circles)
+        if (showRecon) {
+            traces.push({
+                x: rec_x,
+                y: rec_y,
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Reconstruction (X̂)',
+                marker: {
+                    size: 10,
+                    color: '#ff7f0e',
+                    line: { color: 'black', width: 2 } // Thicker border as in image
+                }
+            });
+        }
+
+        // --- Layout ---
+        const layout = {
+            hovermode: 'closest',
+            showlegend: true,
+            legend: { x: 0.7, y: 1 },
+            xaxis: { 
+                scaleanchor: "y", 
+                scaleratio: 1, 
+                title: 'Feature 1',
+                zeroline: false 
+            },
+            yaxis: { 
+                title: 'Feature 2',
+                zeroline: false
+            },
+            margin: { t: 20, b: 40, l: 50, r: 20 },
+            dragmode: 'pan'
+        };
+
+        const config = { responsive: true, displayModeBar: false };
+
+        Plotly.newPlot('plot', traces, layout, config);
+
+        // Update stats text
+        const totalVar = eigenvalues[0] + eigenvalues[1];
+        const explained = (eigenvalues[0] / totalVar) * 100;
+        document.getElementById('varianceInfo').innerText = 
+            `PC1 explains ${explained.toFixed(2)}% of the variance.`;
+    }
+</script>
+
+</body>
+</html>

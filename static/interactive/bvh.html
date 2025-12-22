@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BVH Visualizer - Clean Integrated Theme</title>
+    <style>
+        :root {
+            /* Light Mode Defaults */
+            --bg: #f8f9fa;
+            --panel-bg: #ffffff;
+            --text: #374151;
+            --text-sub: #6b7280;
+            --border: #d1d5db;
+            --accent: #e67e22;
+            --accent-hover: #d35400;
+            --leaf: #10b981;
+            --node: #f39c12;
+            --split: #e74c3c;
+            --overlay-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Dark Mode Overrides (used if detection fails or via class) */
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --panel-bg: #262626;
+            --text: #f3f4f6;
+            --text-sub: #9ca3af;
+            --border: #444444;
+            --overlay-bg: rgba(38, 38, 38, 0.95);
+            --shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        html, body { 
+            margin: 0; padding: 0; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); color: var(--text); 
+            display: flex; height: 100vh; width: 100vw; overflow: hidden; font-size: 13px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Sidebar & Layout */
+        .sidebar { 
+            width: 240px; background: var(--panel-bg); border-right: 1px solid var(--border); 
+            display: flex; flex-direction: column; position: relative; 
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); flex-shrink: 0; 
+        }
+        .sidebar.closed { width: 0; border-right: none; }
+        .sidebar-content { 
+            width: 240px; padding: 18px; box-sizing: border-box; 
+            display: flex; flex-direction: column; gap: 14px; transition: opacity 0.2s; 
+        }
+        .sidebar.closed .sidebar-content { opacity: 0; pointer-events: none; }
+
+        .toggle-btn { 
+            position: absolute; right: -28px; top: 15px; width: 28px; height: 28px; 
+            background: var(--panel-bg); border: 1px solid var(--border); border-left: none; 
+            color: var(--text-sub); cursor: pointer; border-radius: 0 6px 6px 0; 
+            display: flex; align-items: center; justify-content: center; z-index: 100; 
+        }
+
+        .group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        input, select, button { 
+            padding: 8px; border-radius: 6px; border: 1px solid var(--border); 
+            background: var(--bg); color: var(--text); font-size: 12px; outline: none; 
+        }
+        button { cursor: pointer; font-weight: 600; }
+        button.primary { background: var(--accent); color: white; border: none; }
+        button.primary:hover { background: var(--accent-hover); }
+
+        /* Viewport & Canvas */
+        .viewport { flex-grow: 1; position: relative; overflow: hidden; }
+        canvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
+
+        /* Hierarchy Tree Panel */
+        #tree-panel { 
+            position: absolute; top: 15px; right: 15px; width: 260px; height: 320px; 
+            min-width: 160px; min-height: 120px; background: var(--overlay-bg); 
+            backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 8px; 
+            display: none; flex-direction: column; box-shadow: var(--shadow); z-index: 10; 
+            resize: both; overflow: hidden; 
+        }
+        #tree-panel.minimized { height: 36px !important; width: 160px !important; resize: none; } 
+        .tree-header { 
+            padding: 0 12px; height: 36px; background: rgba(0,0,0,0.03); 
+            border-bottom: 1px solid var(--border); cursor: move; font-size: 11px; font-weight: 700; 
+            display: flex; justify-content: space-between; align-items: center; user-select: none; color: var(--text-sub); 
+        }
+        #tree-svg { flex: 1; width: 100%; height: 100%; display: block; }
+
+        .status-card { 
+            position: absolute; bottom: 15px; left: 15px; background: var(--overlay-bg); 
+            padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); 
+            border-left: 3px solid var(--accent); font-size: 12px; pointer-events: none; 
+            box-shadow: var(--shadow); line-height: 1.4;
+        }
+
+        .t-dot { cursor: pointer; transition: r 0.2s; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+    <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    <div class="sidebar-content">
+        <h2 style="margin:0; font-size: 16px;">BVH Lab</h2>
+        
+        <div class="group">
+            <label>Scene Setup</label>
+            <div style="display: flex; gap: 5px;">
+                <input type="number" id="triCount" value="12" min="2" max="60" style="width: 50px;">
+                <button onclick="initScene()" style="flex:1;">Regenerate</button>
+            </div>
+        </div>
+
+        <div class="group">
+            <label>Heuristic</label>
+            <select id="heuristic">
+                <option value="midpoint">Spatial Midpoint</option>
+                <option value="median" selected>Object Median</option>
+                <option value="sah">SAH (Surface Area)</option>
+            </select>
+        </div>
+
+        <div class="group">
+            <label style="text-transform: none; display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" id="chkAnimate"> Animate Build
+            </label>
+            <button class="primary" onclick="startConstruction()">Construct BVH</button>
+            <div id="nav-controls" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-top: 5px; opacity: 0.5; pointer-events: none;">
+                <button onclick="stepPrev()">Prev</button>
+                <button id="playBtn" onclick="togglePlay()">Play</button>
+                <button onclick="stepNext()">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="viewport" id="viewport">
+    <canvas id="canvas"></canvas>
+    <div id="tree-panel">
+        <div class="tree-header" id="tree-drag-handle">
+            <span>HIERARCHY</span>
+            <span onclick="toggleTreeSize(event)" style="cursor:pointer; font-size:18px; width: 20px; text-align: center;">−</span>
+        </div>
+        <svg id="tree-svg"></svg>
+    </div>
+    <div class="status-card" id="status">Ready.</div>
+</div>
+
+<script>
+// --- Theme Detection (Hugo Inheritance) ---
+function detectTheme() {
+    try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+        if (rgb) {
+            const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+            const isDark = brightness < 128;
+            const html = document.documentElement;
+            if (isDark) {
+                html.setAttribute('data-theme', 'dark');
+                html.style.setProperty('--bg', '#1a1a1a');
+                html.style.setProperty('--panel-bg', '#262626');
+                html.style.setProperty('--text', '#e5e7eb');
+                html.style.setProperty('--text-sub', '#9ca3af');
+                html.style.setProperty('--border', '#444444');
+                html.style.setProperty('--overlay-bg', 'rgba(38, 38, 38, 0.95)');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                html.style.setProperty('--bg', '#f8f9fa');
+                html.style.setProperty('--panel-bg', '#ffffff');
+                html.style.setProperty('--text', '#374151');
+                html.style.setProperty('--text-sub', '#6b7280');
+                html.style.setProperty('--border', '#d1d5db');
+                html.style.setProperty('--overlay-bg', 'rgba(255, 255, 255, 0.95)');
+            }
+            if(typeof draw === 'function') draw();
+        }
+    } catch(e) {}
+}
+setInterval(detectTheme, 1000);
+detectTheme();
+
+// --- Core Math & Classes ---
+class Vector2 { constructor(x,y) { this.x=x; this.y=y; } }
+class AABB {
+    constructor() { this.min=new Vector2(Infinity,Infinity); this.max=new Vector2(-Infinity,-Infinity); }
+    expand(p) { this.min.x=Math.min(this.min.x,p.x); this.min.y=Math.min(this.min.y,p.y); this.max.x=Math.max(this.max.x,p.x); this.max.y=Math.max(this.max.y,p.y); }
+    expandBox(b) { if(b){this.expand(b.min); this.expand(b.max);} }
+    get area() { return Math.max(0, this.max.x - this.min.x) * Math.max(0, this.max.y - this.min.y); }
+}
+class Triangle {
+    constructor(id,p1,p2,p3) {
+        this.id=id; this.p1=p1; this.p2=p2; this.p3=p3;
+        this.bounds=new AABB(); this.bounds.expand(p1); this.bounds.expand(p2); this.bounds.expand(p3);
+        this.centroid=new Vector2((this.bounds.min.x+this.bounds.max.x)*0.5, (this.bounds.min.y+this.bounds.max.y)*0.5);
+    }
+}
+class BVHNode { constructor(id, d) { this.id=id; this.depth=d; this.aabb=new AABB(); this.left=null; this.right=null; this.triIndices=null; this.splitAxis=0; this.splitPos=0; }}
+
+// --- UI & Rendering State ---
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const viewport = document.getElementById('viewport');
+const treePanel = document.getElementById('tree-panel');
+let triangles = [], rootNode = null, buildSteps = [], currentStepIdx = -1, isPlaying = false;
+let hoveredTriIdx = -1, hoveredNodeId = -1, activePath = new Set(), dpr = window.devicePixelRatio || 1;
+
+// Layout Watchers
+const resizer = new ResizeObserver(() => {
+    canvas.width = viewport.clientWidth * dpr; canvas.height = viewport.clientHeight * dpr;
+    ctx.resetTransform(); ctx.scale(dpr, dpr);
+    draw(); if(rootNode) renderTreeSVG(); 
+});
+resizer.observe(viewport); resizer.observe(treePanel);
+
+function toggleMenu() { document.getElementById('sidebar').classList.toggle('closed'); }
+
+// Draggable Logic
+let isDragging = false;
+document.getElementById('tree-drag-handle').onmousedown = (e) => { if(e.target.tagName !== 'SPAN') { isDragging = true; e.preventDefault(); } };
+window.onmousemove = (e) => {
+    if (isDragging) {
+        treePanel.style.left = (treePanel.offsetLeft + e.movementX) + 'px';
+        treePanel.style.top = (treePanel.offsetTop + e.movementY) + 'px';
+        treePanel.style.right = 'auto';
+    }
+    handleHover(e);
+};
+window.onmouseup = () => isDragging = false;
+function toggleTreeSize(e) { e.stopPropagation(); const isMin = treePanel.classList.toggle('minimized'); e.target.textContent = isMin ? '+' : '−'; }
+
+// --- BVH Engine ---
+function initScene() {
+    const n = parseInt(document.getElementById('triCount').value); triangles = [];
+    const w = viewport.clientWidth, h = viewport.clientHeight;
+    for(let i=0; i<n; i++) {
+        const cx = 80 + Math.random()*(w-160), cy = 80 + Math.random()*(h-160);
+        const pts = []; for(let j=0; j<3; j++) pts.push(new Vector2(cx+(Math.random()-0.5)*70, cy+(Math.random()-0.5)*70));
+        triangles.push(new Triangle(i, pts[0], pts[1], pts[2]));
+    }
+    rootNode = null; buildSteps = []; currentStepIdx = -1; activePath.clear();
+    treePanel.style.display='none'; document.getElementById('nav-controls').style.opacity = '0.5';
+    draw();
+}
+
+function startConstruction() {
+    let nodeCounter = 0; buildSteps = []; isPlaying = false;
+    const heuristic = document.getElementById('heuristic').value;
+    rootNode = new BVHNode(nodeCounter++, 0);
+
+    const build = (node, indices) => {
+        indices.forEach(i => node.aabb.expandBox(triangles[i].bounds));
+        if (indices.length <= 1) { node.triIndices = indices; buildSteps.push({type:'leaf', node}); return; }
+
+        const w = node.aabb.max.x - node.aabb.min.x, h = node.aabb.max.y - node.aabb.min.y;
+        node.splitAxis = w > h ? 0 : 1;
+        const axis = node.splitAxis === 0 ? 'x' : 'y';
+        let splitIdx = Math.floor(indices.length/2);
+        
+        if (heuristic === 'midpoint') {
+            node.splitPos = (node.aabb.min[axis] + node.aabb.max[axis]) / 2;
+            indices.sort((a,b) => triangles[a].centroid[axis] - triangles[b].centroid[axis]);
+            splitIdx = indices.findIndex(idx => triangles[idx].centroid[axis] > node.splitPos);
+            if (splitIdx <= 0) splitIdx = Math.floor(indices.length/2);
+        } else if (heuristic === 'median') {
+            indices.sort((a,b) => triangles[a].centroid[axis] - triangles[b].centroid[axis]);
+            splitIdx = Math.floor(indices.length/2);
+            node.splitPos = triangles[indices[splitIdx]].centroid[axis];
+        } else { // SAH
+            indices.sort((a,b) => triangles[a].centroid[axis] - triangles[b].centroid[axis]);
+            let bestCost = Infinity, bestIdx = 1;
+            for (let i = 1; i < indices.length; i++) {
+                const bL = new AABB(), bR = new AABB();
+                for (let j = 0; j < i; j++) bL.expandBox(triangles[indices[j]].bounds);
+                for (let j = i; j < indices.length; j++) bR.expandBox(triangles[indices[j]].bounds);
+                const cost = (bL.area * i) + (bR.area * (indices.length - i));
+                if (cost < bestCost) { bestCost = cost; bestIdx = i; }
+            }
+            splitIdx = bestIdx;
+            node.splitPos = triangles[indices[splitIdx]].centroid[axis];
+        }
+
+        buildSteps.push({type:'plan', node});
+        node.left = new BVHNode(nodeCounter++, node.depth+1);
+        node.right = new BVHNode(nodeCounter++, node.depth+1);
+        buildSteps.push({type:'split', node, left:node.left, right:node.right});
+        build(node.left, indices.slice(0, splitIdx));
+        build(node.right, indices.slice(splitIdx));
+    };
+
+    build(rootNode, triangles.map((_,i)=>i));
+    
+    // UI Activation
+    treePanel.style.display = 'flex';
+    document.getElementById('nav-controls').style.opacity = '1';
+    document.getElementById('nav-controls').style.pointerEvents = 'auto';
+
+    // FIX: Jump to end if animation is not selected
+    if (document.getElementById('chkAnimate').checked) {
+        currentStepIdx = 0;
+        togglePlay(); 
+    } else {
+        currentStepIdx = buildSteps.length - 1;
+        updateStepUI();
+    }
+    renderTreeSVG();
+}
+
+// --- Rendering Logic ---
+function getVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const txt = getVar('--text'), acc = getVar('--accent'), spl = getVar('--split');
+
+    triangles.forEach((t, i) => {
+        ctx.beginPath(); ctx.moveTo(t.p1.x, t.p1.y); ctx.lineTo(t.p2.x, t.p2.y); ctx.lineTo(t.p3.x, t.p3.y); ctx.closePath();
+        const isHov = (i === hoveredTriIdx);
+        ctx.fillStyle = isHov ? acc : txt;
+        ctx.globalAlpha = isHov ? 0.5 : 0.08;
+        ctx.fill(); ctx.strokeStyle = txt; ctx.globalAlpha = 0.2; ctx.stroke();
+    });
+
+    if (rootNode && currentStepIdx !== -1) {
+        drawNode(rootNode);
+        const step = buildSteps[currentStepIdx];
+        if (step.type === 'plan') {
+            const n = step.node;
+            ctx.save(); ctx.beginPath(); ctx.setLineDash([5, 5]); ctx.strokeStyle = spl; ctx.lineWidth = 2;
+            if (n.splitAxis === 0) { ctx.moveTo(n.splitPos, n.aabb.min.y); ctx.lineTo(n.splitPos, n.aabb.max.y); } 
+            else { ctx.moveTo(n.aabb.min.x, n.splitPos); ctx.lineTo(n.aabb.max.x, n.splitPos); }
+            ctx.stroke(); ctx.restore();
+        }
+    }
+}
+
+function drawNode(n) {
+    if (!n || !isNodeVisible(n)) return;
+    const isStepActive = buildSteps[currentStepIdx].node.id === n.id;
+    const isHov = (n.id === hoveredNodeId) || activePath.has(n.id);
+
+    ctx.beginPath(); 
+    ctx.rect(n.aabb.min.x, n.aabb.min.y, n.aabb.max.x - n.aabb.min.x, n.aabb.max.y - n.aabb.min.y);
+
+    if (isHov) {
+        ctx.strokeStyle = getVar('--text'); ctx.lineWidth = 2.5; ctx.globalAlpha = 1;
+    } else if (isStepActive) {
+        ctx.strokeStyle = getVar('--accent'); ctx.lineWidth = 2; ctx.globalAlpha = 1;
+    } else {
+        ctx.strokeStyle = getVar('--text'); ctx.lineWidth = 1; ctx.globalAlpha = 0.15;
+    }
+    ctx.stroke(); ctx.globalAlpha = 1;
+    drawNode(n.left); drawNode(n.right);
+}
+
+function isNodeVisible(n) {
+    if (n.id === 0) return true;
+    for (let i=0; i<=currentStepIdx; i++) {
+        if (buildSteps[i].type === 'split' && (buildSteps[i].left.id === n.id || buildSteps[i].right.id === n.id)) return true;
+    }
+    return false;
+}
+
+// --- Interaction ---
+function handleHover(e) {
+    if (!rootNode) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    hoveredTriIdx = -1; activePath.clear();
+    const find = (n) => {
+        if (!n || !isNodeVisible(n)) return false;
+        if (mx < n.aabb.min.x || mx > n.aabb.max.x || my < n.aabb.min.y || my > n.aabb.max.y) return false;
+        let found = false;
+        if (n.triIndices) {
+            for (let idx of n.triIndices) {
+                const t = triangles[idx];
+                const area = (p1, p2, p3) => Math.abs((p1.x*(p2.y-p3.y)+p2.x*(p3.y-p1.y)+p3.x*(p1.y-p2.y))/2);
+                const a = area(t.p1, t.p2, t.p3), a1 = area({x:mx,y:my}, t.p2, t.p3), a2 = area(t.p1, {x:mx,y:my}, t.p3), a3 = area(t.p1, t.p2, {x:mx,y:my});
+                if (Math.abs(a - (a1+a2+a3)) < 0.1) { hoveredTriIdx = idx; found = true; }
+            }
+        }
+        if (find(n.left) || find(n.right) || found) { activePath.add(n.id); return true; }
+        return false;
+    };
+    find(rootNode); draw(); updateTreeHighlight();
+}
+
+function renderTreeSVG() {
+    const svg = document.getElementById('tree-svg'); svg.innerHTML = '';
+    const w = treePanel.clientWidth, h = treePanel.clientHeight;
+    const drawSVGNode = (n, x, y, step) => {
+        const nextY = y + (h / 12);
+        if (n.left) {
+            const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            l.setAttribute("x1", x); l.setAttribute("y1", y); l.setAttribute("x2", x-step); l.setAttribute("y2", nextY);
+            l.setAttribute("stroke", getVar('--border')); l.id = `l-${n.left.id}`;
+            svg.appendChild(l); drawSVGNode(n.left, x-step, nextY, step*0.5);
+        }
+        if (n.right) {
+            const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            l.setAttribute("x1", x); l.setAttribute("y1", y); l.setAttribute("x2", x+step); l.setAttribute("y2", nextY);
+            l.setAttribute("stroke", getVar('--border')); l.id = `l-${n.right.id}`;
+            svg.appendChild(l); drawSVGNode(n.right, x+step, nextY, step*0.5);
+        }
+        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 4);
+        c.setAttribute("fill", n.triIndices ? getVar('--leaf') : getVar('--node'));
+        c.setAttribute("class", "t-dot"); c.id = `d-${n.id}`;
+        c.onmouseenter = () => { hoveredNodeId = n.id; draw(); updateTreeHighlight(); };
+        c.onmouseleave = () => { hoveredNodeId = -1; draw(); updateTreeHighlight(); };
+        svg.appendChild(c);
+    };
+    drawSVGNode(rootNode, w/2, 25, w/4); updateTreeHighlight();
+}
+
+function updateTreeHighlight() {
+    document.querySelectorAll('.t-dot').forEach(d => {
+        const id = parseInt(d.id.split('-')[1]);
+        const visible = isNodeVisible({id});
+        d.style.opacity = visible ? "1" : "0.1";
+        const isHov = (id === hoveredNodeId) || activePath.has(id);
+        d.setAttribute("r", isHov ? "6" : "4");
+        d.setAttribute("stroke", isHov ? getVar('--accent') : "none");
+        d.setAttribute("stroke-width", "2");
+    });
+    document.querySelectorAll('line').forEach(l => {
+        const id = parseInt(l.id.split('-')[1]);
+        l.style.opacity = isNodeVisible({id}) ? "1" : "0.1";
+    });
+}
+
+function updateStepUI() {
+    if (currentStepIdx < 0) return;
+    const step = buildSteps[currentStepIdx];
+    document.getElementById('status').innerHTML = `<strong>Step ${currentStepIdx+1}/${buildSteps.length}</strong><br>Node: ${step.node.id} | Depth: ${step.node.depth}`;
+    draw(); updateTreeHighlight();
+}
+
+function stepNext() { if(currentStepIdx < buildSteps.length-1) { currentStepIdx++; updateStepUI(); } else isPlaying = false; }
+function stepPrev() { if(currentStepIdx > 0) { currentStepIdx--; updateStepUI(); } }
+function togglePlay() { 
+    isPlaying = !isPlaying; 
+    document.getElementById('playBtn').textContent = isPlaying ? "Pause" : "Play"; 
+    if(isPlaying) autoPlay(); 
+}
+function autoPlay() { if(isPlaying && currentStepIdx < buildSteps.length-1) { stepNext(); setTimeout(autoPlay, 150); } else { isPlaying=false; document.getElementById('playBtn').textContent="Play"; } }
+
+window.onload = initScene;
+</script>
+</body>
+</html>

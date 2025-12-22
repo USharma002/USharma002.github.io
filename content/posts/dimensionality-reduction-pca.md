@@ -478,6 +478,13 @@ width="70%"
 
 Notice in [Fig. 1](#fig-pca-projection) how the principal component captures the direction of maximum variance.
 
+<iframe src="/interactive/PCA.html"
+        width="100%"
+        height="1030"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
 ---
 
 **Bottom line:**  
