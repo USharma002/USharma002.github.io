@@ -3,113 +3,260 @@
 {{- $width := .Get "width" | default "100%" -}}
 {{- $id := printf "step-slider-%d" .Ordinal -}}
 
-<div class="step-slider-container {{ if eq $animate "false" }}no-anim{{ end }}" 
-     id="{{ $id }}" 
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+  /* --- Button pinning fix (buttons won't move when footer grows) --- */
+  #{{ $id }} .step-viewport{ position: relative; }
+  #{{ $id }} .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #{{ $id }} .step-nav.btn-prev{ left: 12px; }
+  #{{ $id }} .step-nav.btn-next{ right: 12px; }
+
+  /* Optional: stop viewport from changing height due to footer */
+  /* Adjust min-height to your image aspect/size */
+  /* #{{ $id }} .step-viewport{ min-height: 420px; } */
+
+  /* Optional highlight styles for \class{mj-current}{...} */
+  #{{ $id }} .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #{{ $id }} .mj-dim{ color: #9ca3af; }
+  #{{ $id }} .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container {{ if eq $animate "false" }}no-anim{{ end }}"
+     id="{{ $id }}"
      style="width: {{ $width }};"
      data-slides='{{ jsonify $data }}'>
 
-    <!-- Floating RTX Label -->
-    <div class="step-active-label">Step 1 / {{ len $data }}</div>
+  <!-- Floating Step Label -->
+  <div class="step-active-label">Step 1 / {{ len $data }}</div>
 
-    <!-- Navigation Buttons -->
-    <button class="step-nav btn-prev" onclick="moveSlide('{{ $id }}', -1)" disabled>&#10094;</button>
-    <button class="step-nav btn-next" onclick="moveSlide('{{ $id }}', 1)">&#10095;</button>
+  <div class="step-viewport">
+    <!-- Buttons moved INSIDE viewport so footer height doesn't affect them -->
+    <button class="step-nav btn-prev" onclick="moveSlide('{{ $id }}', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('{{ $id }}', 1)">❯</button>
 
-    <div class="step-viewport">
-        <div class="step-wrapper" id="wrapper-{{ $id }}" style="--current-index: 0;">
-            {{ range $index, $item := $data }}
-            <div class="step-slide">
-                <img src="{{ $item.image | safeURL }}" alt="{{ $item.title }}">
-            </div>
-            {{ end }}
-        </div>
+    <div class="step-wrapper" id="wrapper-{{ $id }}" style="--current-index: 0;">
+      {{ range $index, $item := $data }}
+      <div class="step-slide">
+        <img src="{{ $item.image | safeURL }}" alt="{{ $item.title }}">
+      </div>
+      {{ end }}
     </div>
+  </div>
 
-    <!-- Footer Area (Title + Desc) -->
-    <div class="step-footer">
-        <div class="step-title"></div>
-        <div class="step-description"></div>
-    </div>
+  <!-- Footer Area (Title + Desc) -->
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
 </div>
 
 <script>
-    // --- Hugo Theme Detection Inheritance ---
-    function detectSliderTheme() {
-        try {
-            const parentBody = window.parent.document.body;
-            const style = window.getComputedStyle(parentBody);
-            const bgColor = style.backgroundColor;
-            const rgb = bgColor.match(/\d+/g);
-            
-            if (rgb) {
-                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
-                const isDark = brightness < 128;
-                const root = document.documentElement;
-                
-                if (isDark) {
-                    root.style.setProperty('--bg', '#1a1a1a');
-                    root.style.setProperty('--text', '#e5e7eb');
-                    root.style.setProperty('--text-sub', '#9ca3af');
-                    root.style.setProperty('--axis', '#525252');
-                } else {
-                    root.style.setProperty('--bg', '#ffffff');
-                    root.style.setProperty('--text', '#374151');
-                    root.style.setProperty('--text-sub', '#6b7280');
-                    root.style.setProperty('--axis', '#d1d5db');
-                }
-            }
-        } catch(e) {
-            // Fallback to light if parent is inaccessible
-            const root = document.documentElement;
+(function () {
+  // -----------------------------
+  // Shared libs (load once)
+  // -----------------------------
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  // DOMPurify (optional)
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  // MathJax (load once) + enable \class via [tex]/html
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    // Must be set BEFORE MathJax script loads
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  // -----------------------------
+  // Install global functions once
+  // -----------------------------
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
             root.style.setProperty('--bg', '#ffffff');
             root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
             root.style.setProperty('--axis', '#d1d5db');
+          }
         }
-    }
-    setInterval(detectSliderTheme, 1000);
-    detectSliderTheme();
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
 
-    // --- Slider Logic ---
-    function moveSlide(containerId, direction) {
-        const container = document.getElementById(containerId);
-        const wrapper = document.getElementById('wrapper-' + containerId);
-        const slides = JSON.parse(container.dataset.slides);
-        let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
-        
-        currentIndex += direction;
-        if (currentIndex >= 0 && currentIndex < slides.length) {
-            wrapper.style.setProperty('--current-index', currentIndex);
-            updateSliderUI(container, currentIndex);
-        }
-    }
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
 
-    function updateSliderUI(container, index) {
-        const slides = JSON.parse(container.dataset.slides);
-        const data = slides[index];
-        
-        const titleEl = container.querySelector('.step-title');
-        const descEl = container.querySelector('.step-description');
-        const labelEl = container.querySelector('.step-active-label');
-        
-        // Text Transition
-        titleEl.style.opacity = 0;
-        descEl.style.opacity = 0;
-        
-        setTimeout(() => {
-            titleEl.textContent = data.title || "";
-            descEl.textContent = data.description || "";
-            labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
-            titleEl.style.opacity = 1;
-            descEl.style.opacity = 1;
-        }, 200);
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
 
-        // Update Button States
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        // sanitize (if DOMPurify is available)
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        // IMPORTANT: allow HTML so your <div class="eq-stack"> and \class highlighting work
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
         container.querySelector('.btn-prev').disabled = (index === 0);
         container.querySelector('.btn-next').disabled = (index === slides.length - 1);
-    }
 
-    // Initialize all sliders on page
-    window.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.step-slider-container').forEach(c => updateSliderUI(c, 0));
-    });
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        // Re-typeset only updated nodes (chain calls to avoid overlap)
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  // Init only this slider instance
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('{{ $id }}');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
 </script>

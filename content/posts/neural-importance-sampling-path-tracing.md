@@ -147,6 +147,113 @@ Where:
 
 Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.
 
+
+### Rendering Equation Visualization
+We can write this one big integral slightly differently as
+$$
+L(x\to v)=E_x+
+\int_{\Omega} f_r
+\left(
+  E_{x'}
+  +
+  \int_{\Omega'} f_r' \cdots \cos(\theta_{\omega'})\, d\omega'
+\right)
+\cos(\theta_{\omega})\, d\omega
+$$
+
+Which we can expand to get
+
+$$
+\begin{aligned}
+L(x\to v) &= E_x \\
+&\quad + \int_{\Omega} f_r\,E_{x'}\cos(\theta_{\omega})\,d\omega \\
+&\quad + \int_{\Omega} f_r \int_{\Omega'} f_r'\,E_{x''}\cos(\theta_{\omega'})\cos(\theta_{\omega})\,d\omega'\,d\omega \\
+&\quad + \int_{\Omega} f_r \int_{\Omega'} f_r' \int_{\Omega''} f_r''\,E_{x'''}\cos(\theta_{\omega''})\cos(\theta_{\omega'})\cos(\theta_{\omega})\,d\omega''\,d\omega'\,d\omega \\
+&\quad + \cdots
+\end{aligned}
+$$
+
+After expanding the rendering integra, we can easily visualize the components of the integral and how they contribute to the final image
+
+{{< step-slider animate="false" width="850px" >}}
+
+- image: "../../images/path_tracing/rendering_components/full.png"
+  title: "Incoming Radiance (Full Rendering Equation)"
+  description: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L(x\to v) &= E_x \\
+    &\quad + \int_{\Omega} f_r\,E_{x'}\,\cos(\theta_\omega)\,d\omega \\
+    &\quad + \int_{\Omega}\int_{\Omega'} f_r\,f_r'\,E_{x''}\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega'\,d\omega \\
+    &\quad + \int_{\Omega}\int_{\Omega'}\int_{\Omega''} f_r\,f_r'\,f_r''\,E_{x'''}\,\cos(\theta_{\omega''})\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega''\,d\omega'\,d\omega \\
+    &\quad + \cdots
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/1.png"
+  title: "Direction Radiance (Emitted Light)"
+  description: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L(x\to v) &= \class{mj-current}{E_x} \\
+    &\quad + \class{mj-dim}{\int_{\Omega} f_r\,E_{x'}\,\cos(\theta_\omega)\,d\omega} \\
+    &\quad + \class{mj-dim}{\int_{\Omega}\int_{\Omega'} f_r\,f_r'\,E_{x''}\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\int_{\Omega}\int_{\Omega'}\int_{\Omega''} f_r\,f_r'\,f_r''\,E_{x'''}\,\cos(\theta_{\omega''})\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega''\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\cdots}
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/2.jpg"
+  title: "Direct Radiance (Only from the bounce 1)"
+  description: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L(x\to v) &= \class{mj-dim}{E_x} \\
+    &\quad + \class{mj-current}{\int_{\Omega} f_r\,E_{x'}\,\cos(\theta_\omega)\,d\omega} \\
+    &\quad + \class{mj-dim}{\int_{\Omega}\int_{\Omega'} f_r\,f_r'\,E_{x''}\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\int_{\Omega}\int_{\Omega'}\int_{\Omega''} f_r\,f_r'\,f_r''\,E_{x'''}\,\cos(\theta_{\omega''})\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega''\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\cdots}
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/3.jpg"
+  title: "Indirect Radiance (Only from the bounce 2)"
+  description: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L(x\to v) &= \class{mj-dim}{E_x} \\
+    &\quad + \class{mj-dim}{\int_{\Omega} f_r\,E_{x'}\,\cos(\theta_\omega)\,d\omega} \\
+    &\quad + \class{mj-current}{\int_{\Omega}\int_{\Omega'} f_r\,f_r'\,E_{x''}\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\int_{\Omega}\int_{\Omega'}\int_{\Omega''} f_r\,f_r'\,f_r''\,E_{x'''}\,\cos(\theta_{\omega''})\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega''\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\cdots}
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/4.jpg"
+  title: "Indirect Radiance (Only from the bounce 3)"
+  description: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L(x\to v) &= \class{mj-dim}{E_x} \\
+    &\quad + \class{mj-dim}{\int_{\Omega} f_r\,E_{x'}\,\cos(\theta_\omega)\,d\omega} \\
+    &\quad + \class{mj-dim}{\int_{\Omega}\int_{\Omega'} f_r\,f_r'\,E_{x''}\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-current}{\int_{\Omega}\int_{\Omega'}\int_{\Omega''} f_r\,f_r'\,f_r''\,E_{x'''}\,\cos(\theta_{\omega''})\,\cos(\theta_{\omega'})\,\cos(\theta_\omega)\,d\omega''\,d\omega'\,d\omega} \\
+    &\quad + \class{mj-dim}{\cdots}
+    \end{aligned}
+    $$
+    </div>
+
+{{< /step-slider >}}
+
 ## Alternate formualtions of the Rendering Equation
 
 
@@ -200,21 +307,145 @@ Where:
 This, as the name suggests, treats the transport of light rays as operator. This formulation is useful for proofs of convergence, existence etc.
 
 $$
-L = L_e + \mathcal{K} L
+L = L_e + \mathcal{T} L
 $$
 
 Where:
 
 - $L$ - radiance function over all surface points and directions.  
 - $L_e$ - emitted radiance.  
-- $\mathcal{K}$ - light transport operator defined by:
+- $\mathcal{T}$ - light transport operator defined by:
   $$
-  (\mathcal{K}L)(x, \omega_o)
+  (\mathcal{T}L)(x, \omega_o)
   =\int_{\Omega}f_r(x, \omega_i, \omega_o)\;L_i(x, \omega_i)\;(\omega_i \cdot n)d\omega_i
   $$
 - Integration domain - hemisphere of directions above the surface.
 
 This form emphasizes that global illumination is a fixed-point problem.
+
+#### Solution operator
+For simplicity of notation $L_e = E$.
+Rearrange:
+
+$$L = E + \mathcal{T}L$$
+$$L - \mathcal{T}L = E$$
+$$(I - \mathcal{T})L = E$$
+
+So the formal solution is:
+
+$$
+L = (I - \mathcal{T})^{-1} E
+$$
+and $S$ is the solution operator
+$$S = (I - \mathcal{T})^{-1} E$$
+
+#### Neumann-series expansion
+
+Using the Neumann-series identity:
+
+$$
+(I-\mathcal{T} )^{-1} = I + \mathcal{T} + \mathcal{T}^2 + \mathcal{T}^3 + \cdots
+$$
+
+Substitute into the solution:
+
+$$
+\begin{aligned}
+L &= (I-\mathcal{T} )^{-1}E \\
+  &= (I + \mathcal{T}  + \mathcal{T} ^2 + \mathcal{T} ^3 + \cdots)\,E \\
+  &= E + \mathcal{T}E + \mathcal{T}^2E + \mathcal{T}^3E + \cdots
+\end{aligned}
+$$
+
+The following visualizes the individual components (similar to the one given in the rendering equation) but with appropriate operator formulation for clarity.
+
+{{< step-slider animate="false" width="850px" >}}
+
+- image: "../../images/path_tracing/rendering_components/operator/E.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L_e
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/operator/TE.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    \mathcal{T} L_e
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/operator/TTE.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    \mathcal{T}^2 L_e
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/operator/TTTE.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    \mathcal{T}^3 L_e
+    \end{aligned}
+    $$
+    </div>
+{{< /step-slider >}}
+
+
+The following visualizes the accumulation of individual components:
+{{< step-slider animate="false" width="850px" >}}
+
+- image: "../../images/path_tracing/rendering_components/operator/E.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L_e
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/operator/E_TE.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L_e + \mathcal{T} L_e
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/operator/E_TE_TTE.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L_e + \mathcal{T} L_e + \mathcal{T}^2 L_e
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/rendering_components/operator/E_TE_TTE_TTTE.jpg"
+  title: |
+    <div class="eq-stack">
+    $$
+    \begin{aligned}
+    L_e + \mathcal{T} L_e + \mathcal{T}^2 L_e + \mathcal{T}^3 L_e
+    \end{aligned}
+    $$
+    </div>
+{{< /step-slider >}}
 
 
 ### Path Integral Formulation of Light Transport
@@ -253,10 +484,9 @@ And:
 - $d\mu(\bar{x})$ - path-space measure (product of area, volume, and directional measures).
 
 
-### Operator
+#### Visualizing Different Paths
 
-We can see the recursive interaction of lught 
-
+We can see the interaction of light with Specular (S), Diffuse (D) objects. We can write all of the types of interaction of lights as regular expression $L(D | S)^*E$
 
 <iframe src="/interactive/light_paths.html"
         width="100%"
@@ -1857,7 +2087,7 @@ width="60%" >}}
 
 <iframe src="/interactive/vmf.html"
         width="100%"
-        height="412"
+        height="445"
         frameborder="0"
         style="border-radius:8px; min-width: 700px;">
 </iframe>

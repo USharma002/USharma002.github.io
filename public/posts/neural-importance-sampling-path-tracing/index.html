@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.98299b7a4cd2bfab8dd3cfa2fa4aa99b8abf069ec885e27311774b64a42e21c6.css" integrity="sha256-mCmbekzSv6uN08&#43;i&#43;kqpm4q/Bp7IheJzEXdLZKQuIcY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.41a3937677375690f9487a16732ed408fdc076ef0e1d92225d43dc8145d63d48.css" integrity="sha256-QaOTdnc3VpD5SHoWcy7UCP3Adu8OHZIiXUPcgUXWPUg=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;55 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;56 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -178,7 +178,9 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#the-rendering-equation" aria-label="The Rendering Equation">The Rendering Equation</a><ul>
                         
                 <li>
-                    <a href="#intuition" aria-label="Intuition">Intuition</a></li></ul>
+                    <a href="#intuition" aria-label="Intuition">Intuition</a></li>
+                <li>
+                    <a href="#rendering-equation-visualization" aria-label="Rendering Equation Visualization">Rendering Equation Visualization</a></li></ul>
                 </li>
                 <li>
                     <a href="#alternate-formualtions-of-the-rendering-equation" aria-label="Alternate formualtions of the Rendering Equation">Alternate formualtions of the Rendering Equation</a><ul>
@@ -188,11 +190,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#surface-area-geometry-explicit-rendering-equation" aria-label="Surface Area (Geometry-Explicit) Rendering Equation">Surface Area (Geometry-Explicit) Rendering Equation</a></li>
                 <li>
-                    <a href="#operator-form-of-the-rendering-equation" aria-label="Operator Form of the Rendering Equation">Operator Form of the Rendering Equation</a></li>
+                    <a href="#operator-form-of-the-rendering-equation" aria-label="Operator Form of the Rendering Equation">Operator Form of the Rendering Equation</a><ul>
+                        
                 <li>
-                    <a href="#path-integral-formulation-of-light-transport" aria-label="Path Integral Formulation of Light Transport">Path Integral Formulation of Light Transport</a></li>
+                    <a href="#solution-operator" aria-label="Solution operator">Solution operator</a></li>
                 <li>
-                    <a href="#operator" aria-label="Operator">Operator</a></li></ul>
+                    <a href="#neumann-series-expansion" aria-label="Neumann-series expansion">Neumann-series expansion</a></li></ul>
+                </li>
+                <li>
+                    <a href="#path-integral-formulation-of-light-transport" aria-label="Path Integral Formulation of Light Transport">Path Integral Formulation of Light Transport</a><ul>
+                        
+                <li>
+                    <a href="#visualizing-different-paths" aria-label="Visualizing Different Paths">Visualizing Different Paths</a></li></ul>
+                </li></ul>
                 </li>
                 <li>
                     <a href="#monte-carlo-basics" aria-label="Monte Carlo Basics">Monte Carlo Basics</a><ul>
@@ -771,124 +781,302 @@ $$<p>Where:</p>
 <li>Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.</li>
 </ul>
 <p>Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.</p>
-<div class="step-slider-container no-anim" 
-     id="step-slider-6" 
+<h3 id="rendering-equation-visualization">Rendering Equation Visualization<a hidden class="anchor" aria-hidden="true" href="#rendering-equation-visualization">#</a></h3>
+<p>We can write this one big integral slightly differently as
+</p>
+$$
+L(x\to v)=E_x+
+\int_{\Omega} f_r
+\left(
+  E_{x'}
+  +
+  \int_{\Omega'} f_r' \cdots \cos(\theta_{\omega'})\, d\omega'
+\right)
+\cos(\theta_{\omega})\, d\omega
+$$<p>Which we can expand to get</p>
+$$
+\begin{aligned}
+L(x\to v) &= E_x \\
+&\quad + \int_{\Omega} f_r\,E_{x'}\cos(\theta_{\omega})\,d\omega \\
+&\quad + \int_{\Omega} f_r \int_{\Omega'} f_r'\,E_{x''}\cos(\theta_{\omega'})\cos(\theta_{\omega})\,d\omega'\,d\omega \\
+&\quad + \int_{\Omega} f_r \int_{\Omega'} f_r' \int_{\Omega''} f_r''\,E_{x'''}\cos(\theta_{\omega''})\cos(\theta_{\omega'})\cos(\theta_{\omega})\,d\omega''\,d\omega'\,d\omega \\
+&\quad + \cdots
+\end{aligned}
+$$<p>After expanding the rendering integra, we can easily visualize the components of the integral and how they contribute to the final image</p>
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-6 .step-viewport{ position: relative; }
+  #step-slider-6 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-6 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-6 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-6 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-6 .mj-dim{ color: #9ca3af; }
+  #step-slider-6 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-6"
      style="width: 850px;"
-     data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e $$\\class{mj-current}{L_o(x,\\omega_o)}\n  =\n  \\class{mj-current}{L_e(x,\\omega_o)}\n  &#43;\n  \\class{mj-current}{\\int_{\\Omega^&#43;} f_r(x,\\omega_1,\\omega_o)\\,L_i(x,\\omega_1)\\,(\\omega_1\\cdot n)\\,d\\omega_1}$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/re_0.png&#34;,&#34;title&#34;:&#34;Rendering equation (0)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e $$\\class{mj-dim}{L_o(x,\\omega_o) = L_e(x,\\omega_o) &#43; \\int_{\\Omega^&#43;} f_r(x,\\omega_1,\\omega_o)\\,L_i(x,\\omega_1)\\,(\\omega_1\\cdot n)\\,d\\omega_1}$$ $$\\class{mj-current}{L_i(x,\\omega_1)}\n  =\n  \\class{mj-current}{L_e(x_1,-\\omega_1)}\n  &#43;\n  \\class{mj-current}{\\int_{\\Omega^&#43;} f_r(x_1,\\omega_2,-\\omega_1)\\,L_i(x_1,\\omega_2)\\,(\\omega_2\\cdot n_1)\\,d\\omega_2}$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/re_1.png&#34;,&#34;title&#34;:&#34;Expand once (1)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e $$\\class{mj-dim}{L_o(x,\\omega_o) = L_e(x,\\omega_o) &#43; \\int_{\\Omega^&#43;} f_r(x,\\omega_1,\\omega_o)\\,L_i(x,\\omega_1)\\,(\\omega_1\\cdot n)\\,d\\omega_1}$$ $$\\class{mj-dim}{L_i(x,\\omega_1) = L_e(x_1,-\\omega_1) &#43; \\int_{\\Omega^&#43;} f_r(x_1,\\omega_2,-\\omega_1)\\,L_i(x_1,\\omega_2)\\,(\\omega_2\\cdot n_1)\\,d\\omega_2}$$ $$\\class{mj-current}{L_i(x_1,\\omega_2)}\n  =\n  \\class{mj-current}{L_e(x_2,-\\omega_2)}\n  &#43;\n  \\class{mj-current}{\\int_{\\Omega^&#43;} f_r(x_2,\\omega_3,-\\omega_2)\\,L_i(x_2,\\omega_3)\\,(\\omega_3\\cdot n_2)\\,d\\omega_3}$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/re_2.png&#34;,&#34;title&#34;:&#34;Expand twice (2)&#34;}]'>
+     data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= E_x \\\\\n\u0026\\quad &#43; \\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega \\\\\n\u0026\\quad &#43; \\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega \\\\\n\u0026\\quad &#43; \\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega \\\\\n\u0026\\quad &#43; \\cdots\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/full.png&#34;,&#34;title&#34;:&#34;Incoming Radiance (Full Rendering Equation)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-current}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/1.png&#34;,&#34;title&#34;:&#34;Direction Radiance (Emitted Light)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-dim}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-current}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/2.jpg&#34;,&#34;title&#34;:&#34;Direct Radiance (Only from the bounce 1)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-dim}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-current}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/3.jpg&#34;,&#34;title&#34;:&#34;Indirect Radiance (Only from the bounce 2)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-dim}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-current}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/4.jpg&#34;,&#34;title&#34;:&#34;Indirect Radiance (Only from the bounce 3)&#34;}]'>
 
+  
+  <div class="step-active-label">Step 1 / 5</div>
+
+  <div class="step-viewport">
     
-    <div class="step-active-label">Step 1 / 3</div>
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-6', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-6', 1)">❯</button>
 
-    
-    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-6', -1)" disabled>&#10094;</button>
-    <button class="step-nav btn-next" onclick="moveSlide('step-slider-6', 1)">&#10095;</button>
-
-    <div class="step-viewport">
-        <div class="step-wrapper" id="wrapper-step-slider-6" style="--current-index: 0;">
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/re_0.png" alt="Rendering equation (0)">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/re_1.png" alt="Expand once (1)">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/re_2.png" alt="Expand twice (2)">
-            </div>
-            
-        </div>
+    <div class="step-wrapper" id="wrapper-step-slider-6" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/full.png" alt="Incoming Radiance (Full Rendering Equation)">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/1.png" alt="Direction Radiance (Emitted Light)">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/2.jpg" alt="Direct Radiance (Only from the bounce 1)">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/3.jpg" alt="Indirect Radiance (Only from the bounce 2)">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/4.jpg" alt="Indirect Radiance (Only from the bounce 3)">
+      </div>
+      
     </div>
+  </div>
 
-    
-    <div class="step-footer">
-        <div class="step-title"></div>
-        <div class="step-description"></div>
-    </div>
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
 </div>
 
 <script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
     
-    function detectSliderTheme() {
-        try {
-            const parentBody = window.parent.document.body;
-            const style = window.getComputedStyle(parentBody);
-            const bgColor = style.backgroundColor;
-            const rgb = bgColor.match(/\d+/g);
-            
-            if (rgb) {
-                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
-                const isDark = brightness < 128;
-                const root = document.documentElement;
-                
-                if (isDark) {
-                    root.style.setProperty('--bg', '#1a1a1a');
-                    root.style.setProperty('--text', '#e5e7eb');
-                    root.style.setProperty('--text-sub', '#9ca3af');
-                    root.style.setProperty('--axis', '#525252');
-                } else {
-                    root.style.setProperty('--bg', '#ffffff');
-                    root.style.setProperty('--text', '#374151');
-                    root.style.setProperty('--text-sub', '#6b7280');
-                    root.style.setProperty('--axis', '#d1d5db');
-                }
-            }
-        } catch(e) {
-            
-            const root = document.documentElement;
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
             root.style.setProperty('--bg', '#ffffff');
             root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
             root.style.setProperty('--axis', '#d1d5db');
+          }
         }
-    }
-    setInterval(detectSliderTheme, 1000);
-    detectSliderTheme();
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
 
-    
-    function moveSlide(containerId, direction) {
-        const container = document.getElementById(containerId);
-        const wrapper = document.getElementById('wrapper-' + containerId);
-        const slides = JSON.parse(container.dataset.slides);
-        let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
-        
-        currentIndex += direction;
-        if (currentIndex >= 0 && currentIndex < slides.length) {
-            wrapper.style.setProperty('--current-index', currentIndex);
-            updateSliderUI(container, currentIndex);
-        }
-    }
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
 
-    function updateSliderUI(container, index) {
-        const slides = JSON.parse(container.dataset.slides);
-        const data = slides[index];
-        
-        const titleEl = container.querySelector('.step-title');
-        const descEl = container.querySelector('.step-description');
-        const labelEl = container.querySelector('.step-active-label');
-        
-        
-        titleEl.style.opacity = 0;
-        descEl.style.opacity = 0;
-        
-        setTimeout(() => {
-            titleEl.textContent = data.title || "";
-            descEl.textContent = data.description || "";
-            labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
-            titleEl.style.opacity = 1;
-            descEl.style.opacity = 1;
-        }, 200);
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
 
         
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
         container.querySelector('.btn-prev').disabled = (index === 0);
         container.querySelector('.btn-next').disabled = (index === slides.length - 1);
-    }
 
-    
-    window.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.step-slider-container').forEach(c => updateSliderUI(c, 0));
-    });
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-6');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
 </script>
+
 <h2 id="alternate-formualtions-of-the-rendering-equation">Alternate formualtions of the Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#alternate-formualtions-of-the-rendering-equation">#</a></h2>
 <h3 id="classic-surface-rendering-equation">Classic Surface Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#classic-surface-rendering-equation">#</a></h3>
 <p>First, this is the standard rendering equation we we&rsquo;ll see in most local path guiding papers. It picks a direction of contribution and intergrates over all the direction of contribution (upper hemisphere / sphere). For a given direction, the radiance already includes all visible surfaces along that ray in that direction, so no explicit visibility term is needed.</p>
@@ -932,19 +1120,641 @@ $$
 <h3 id="operator-form-of-the-rendering-equation">Operator Form of the Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#operator-form-of-the-rendering-equation">#</a></h3>
 <p>This, as the name suggests, treats the transport of light rays as operator. This formulation is useful for proofs of convergence, existence etc.</p>
 $$
-L = L_e + \mathcal{K} L
+L = L_e + \mathcal{T} L
 $$<p>Where:</p>
 <ul>
 <li>$L$ - radiance function over all surface points and directions.</li>
 <li>$L_e$ - emitted radiance.</li>
-<li>$\mathcal{K}$ - light transport operator defined by:
+<li>$\mathcal{T}$ - light transport operator defined by:
 $$
-  (\mathcal{K}L)(x, \omega_o)
+  (\mathcal{T}L)(x, \omega_o)
   =\int_{\Omega}f_r(x, \omega_i, \omega_o)\;L_i(x, \omega_i)\;(\omega_i \cdot n)d\omega_i
   $$</li>
 <li>Integration domain - hemisphere of directions above the surface.</li>
 </ul>
 <p>This form emphasizes that global illumination is a fixed-point problem.</p>
+<h4 id="solution-operator">Solution operator<a hidden class="anchor" aria-hidden="true" href="#solution-operator">#</a></h4>
+<p>For simplicity of notation $L_e = E$.
+Rearrange:</p>
+$$L = E + \mathcal{T}L$$<p>
+</p>
+$$L - \mathcal{T}L = E$$<p>
+</p>
+$$(I - \mathcal{T})L = E$$<p>So the formal solution is:</p>
+$$
+L = (I - \mathcal{T})^{-1} E
+$$<p>
+and $S$ is the solution operator
+</p>
+$$S = (I - \mathcal{T})^{-1} E$$<h4 id="neumann-series-expansion">Neumann-series expansion<a hidden class="anchor" aria-hidden="true" href="#neumann-series-expansion">#</a></h4>
+<p>Using the Neumann-series identity:</p>
+$$
+(I-\mathcal{T} )^{-1} = I + \mathcal{T} + \mathcal{T}^2 + \mathcal{T}^3 + \cdots
+$$<p>Substitute into the solution:</p>
+$$
+\begin{aligned}
+L &= (I-\mathcal{T} )^{-1}E \\
+  &= (I + \mathcal{T}  + \mathcal{T} ^2 + \mathcal{T} ^3 + \cdots)\,E \\
+  &= E + \mathcal{T}E + \mathcal{T}^2E + \mathcal{T}^3E + \cdots
+\end{aligned}
+$$<p>The following visualizes the individual components (similar to the one given in the rendering equation) but with appropriate operator formulation for clarity.</p>
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-7 .step-viewport{ position: relative; }
+  #step-slider-7 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-7 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-7 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-7 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-7 .mj-dim{ color: #9ca3af; }
+  #step-slider-7 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-7"
+     style="width: 850px;"
+     data-slides='[{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/TE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\n\\mathcal{T} L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/TTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\n\\mathcal{T}^2 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/TTTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\n\\mathcal{T}^3 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;}]'>
+
+  
+  <div class="step-active-label">Step 1 / 4</div>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-7', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-7', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-7" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/E.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/TE.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+\mathcal{T} L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/TTE.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+\mathcal{T}^2 L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/TTTE.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+\mathcal{T}^3 L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-7');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
+<p>The following visualizes the accumulation of individual components:
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-8 .step-viewport{ position: relative; }
+  #step-slider-8 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-8 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-8 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-8 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-8 .mj-dim{ color: #9ca3af; }
+  #step-slider-8 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-8"
+     style="width: 850px;"
+     data-slides='[{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E_TE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e &#43; \\mathcal{T} L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E_TE_TTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e &#43; \\mathcal{T} L_e &#43; \\mathcal{T}^2 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E_TE_TTE_TTTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e &#43; \\mathcal{T} L_e &#43; \\mathcal{T}^2 L_e &#43; \\mathcal{T}^3 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;}]'>
+
+  
+  <div class="step-active-label">Step 1 / 4</div>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-8', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-8', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-8" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/E.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/E_TE.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+L_e &#43; \mathcal{T} L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/E_TE_TTE.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+L_e &#43; \mathcal{T} L_e &#43; \mathcal{T}^2 L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/rendering_components/operator/E_TE_TTE_TTTE.jpg" alt="&lt;div class=&#34;eq-stack&#34;&gt;
+$$
+\begin{aligned}
+L_e &#43; \mathcal{T} L_e &#43; \mathcal{T}^2 L_e &#43; \mathcal{T}^3 L_e
+\end{aligned}
+$$
+&lt;/div&gt;
+">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-8');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+</p>
 <h3 id="path-integral-formulation-of-light-transport">Path Integral Formulation of Light Transport<a hidden class="anchor" aria-hidden="true" href="#path-integral-formulation-of-light-transport">#</a></h3>
 <p>This formulation integrates over the domain of all light transport paths. This let&rsquo;s us see the light transport as a contribution of different paths. This is very intuitive for the MC methods as it emphasies that different paths have different contribution and we are integrating over all possible path (or at least approximating that integral). This also makes is easy to see we can also work with &ldquo;good&rdquo; paths directly instead of choosing the ray direction in the classical one.</p>
 $$
@@ -974,8 +1784,8 @@ with vertices on surfaces or in volumes.</li>
 <li>$V(x_{i-1}, x_i)$ - visibility term.</li>
 <li>$d\mu(\bar{x})$ - path-space measure (product of area, volume, and directional measures).</li>
 </ul>
-<h3 id="operator">Operator<a hidden class="anchor" aria-hidden="true" href="#operator">#</a></h3>
-<p>We can see the recursive interaction of lught</p>
+<h4 id="visualizing-different-paths">Visualizing Different Paths<a hidden class="anchor" aria-hidden="true" href="#visualizing-different-paths">#</a></h4>
+<p>We can see the interaction of light with Specular (S), Diffuse (D) objects. We can write all of the types of interaction of lights as regular expression $L(D | S)^*E$</p>
 <iframe src="/interactive/light_paths.html"
         width="100%"
         height="500"
@@ -1244,7 +2054,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
     
     
     
-    <div class="dlider-container" id="dlider-8" 
+    <div class="dlider-container" id="dlider-10" 
          data-before-label="Uniform Sampling" 
          data-after-label="Cosine Weighted Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1318,7 +2128,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
       
       
       
-      <div class="dlider-container" id="dlider-9" 
+      <div class="dlider-container" id="dlider-11" 
            data-before-label="Uniform Sampling" 
            data-after-label="Cosine Weighted Sampling"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1407,7 +2217,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
     
     
     
-    <div class="dlider-container" id="dlider-10" 
+    <div class="dlider-container" id="dlider-12" 
          data-before-label="Uniform Sampling" 
          data-after-label="Direct Light Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1481,7 +2291,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
       
       
       
-      <div class="dlider-container" id="dlider-11" 
+      <div class="dlider-container" id="dlider-13" 
            data-before-label="Uniform Sampling" 
            data-after-label="VNDF Sampling"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1581,7 +2391,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
     
     
     
-    <div class="dlider-container" id="dlider-12" 
+    <div class="dlider-container" id="dlider-14" 
          data-before-label="Uniform Sampling" 
          data-after-label="Cosine Weighted Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1655,7 +2465,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
       
       
       
-      <div class="dlider-container" id="dlider-13" 
+      <div class="dlider-container" id="dlider-15" 
            data-before-label="Cosine Weighted Sampling" 
            data-after-label="MIS"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1731,7 +2541,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
     
     
     
-    <div class="dlider-container" id="dlider-14" 
+    <div class="dlider-container" id="dlider-16" 
          data-before-label="Uniform Sampling" 
          data-after-label="Direct Light Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1805,7 +2615,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
       
       
       
-      <div class="dlider-container" id="dlider-15" 
+      <div class="dlider-container" id="dlider-17" 
            data-before-label="MIS Wrong" 
            data-after-label="MIS"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -1907,7 +2717,7 @@ $$<iframe src="/interactive/mis.html"
 
 
 
-<div class="dlider-container" id="dlider-16" 
+<div class="dlider-container" id="dlider-18" 
      data-before-label="Uniform Sampling" 
      data-after-label="MIS"
      style="width: 60%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -2243,152 +3053,300 @@ the light transport properties of the hit material. BSDF is a superset and the g
 
 
 <h3 id="path-tracing-steps-overview">Path Tracing Steps Overview<a hidden class="anchor" aria-hidden="true" href="#path-tracing-steps-overview">#</a></h3>
-<div class="step-slider-container no-anim" 
-     id="step-slider-30" 
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-32 .step-viewport{ position: relative; }
+  #step-slider-32 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-32 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-32 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-32 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-32 .mj-dim{ color: #9ca3af; }
+  #step-slider-32 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-32"
      style="width: 850px;"
      data-slides='[{&#34;description&#34;:&#34;Initialize the Scene objects, lights and camera&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/init_cam.png&#34;,&#34;title&#34;:&#34;Initialize Camera&#34;},{&#34;description&#34;:&#34;Trace the primary ray through pixel into the scene&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace1.png&#34;,&#34;title&#34;:&#34;Trace Ray&#34;},{&#34;description&#34;:&#34;Intersect with the scene geometry and query the info like BSDF (blue) to get material property&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/si1.png&#34;,&#34;title&#34;:&#34;Surface Intersection and Query BSDF&#34;},{&#34;description&#34;:&#34;Use PDF (according to BRDF or some other guiding one) to sample the next ray direction&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace2.png&#34;,&#34;title&#34;:&#34;Sample Next Ray Direction&#34;},{&#34;description&#34;:&#34;The recursion stops once a single primitive remains in the volume.&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/si2.png&#34;,&#34;title&#34;:&#34;Surface Intersection and Query BSDF&#34;},{&#34;description&#34;:&#34;The recursion stops once a single primitive remains in the volume.&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace3.png&#34;,&#34;title&#34;:&#34;Sample Next Ray Direction&#34;},{&#34;description&#34;:&#34;Query the Light Emitted and backpropagate&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace3.png&#34;,&#34;title&#34;:&#34;Max Depth Reached / Stopping Criterion&#34;},{&#34;description&#34;:&#34;Query the Light Emitted, add it to incoming radiance and backpropagate &#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/back_1.png&#34;,&#34;title&#34;:&#34;Backpropagate the Radiance&#34;},{&#34;description&#34;:&#34;Query the Light Emitted, add it to incoming radiance and backpropagate&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/back_2.png&#34;,&#34;title&#34;:&#34;Backpropagate the Radiance&#34;},{&#34;description&#34;:&#34;Query the Light Emitted, add it to incoming radiance and backpropagate&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/back_3.png&#34;,&#34;title&#34;:&#34;Backpropagate the Radiance&#34;}]'>
 
-    
-    <div class="step-active-label">Step 1 / 10</div>
+  
+  <div class="step-active-label">Step 1 / 10</div>
 
+  <div class="step-viewport">
     
-    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-30', -1)" disabled>&#10094;</button>
-    <button class="step-nav btn-next" onclick="moveSlide('step-slider-30', 1)">&#10095;</button>
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-32', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-32', 1)">❯</button>
 
-    <div class="step-viewport">
-        <div class="step-wrapper" id="wrapper-step-slider-30" style="--current-index: 0;">
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/init_cam.png" alt="Initialize Camera">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/trace1.png" alt="Trace Ray">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/si1.png" alt="Surface Intersection and Query BSDF">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/trace2.png" alt="Sample Next Ray Direction">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/si2.png" alt="Surface Intersection and Query BSDF">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/trace3.png" alt="Sample Next Ray Direction">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/trace3.png" alt="Max Depth Reached / Stopping Criterion">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/back_1.png" alt="Backpropagate the Radiance">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/back_2.png" alt="Backpropagate the Radiance">
-            </div>
-            
-            <div class="step-slide">
-                <img src="../../images/path_tracing/path-tracing/back_3.png" alt="Backpropagate the Radiance">
-            </div>
-            
-        </div>
+    <div class="step-wrapper" id="wrapper-step-slider-32" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/init_cam.png" alt="Initialize Camera">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/trace1.png" alt="Trace Ray">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/si1.png" alt="Surface Intersection and Query BSDF">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/trace2.png" alt="Sample Next Ray Direction">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/si2.png" alt="Surface Intersection and Query BSDF">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/trace3.png" alt="Sample Next Ray Direction">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/trace3.png" alt="Max Depth Reached / Stopping Criterion">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/back_1.png" alt="Backpropagate the Radiance">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/back_2.png" alt="Backpropagate the Radiance">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/path-tracing/back_3.png" alt="Backpropagate the Radiance">
+      </div>
+      
     </div>
+  </div>
 
-    
-    <div class="step-footer">
-        <div class="step-title"></div>
-        <div class="step-description"></div>
-    </div>
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
 </div>
 
 <script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
     
-    function detectSliderTheme() {
-        try {
-            const parentBody = window.parent.document.body;
-            const style = window.getComputedStyle(parentBody);
-            const bgColor = style.backgroundColor;
-            const rgb = bgColor.match(/\d+/g);
-            
-            if (rgb) {
-                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
-                const isDark = brightness < 128;
-                const root = document.documentElement;
-                
-                if (isDark) {
-                    root.style.setProperty('--bg', '#1a1a1a');
-                    root.style.setProperty('--text', '#e5e7eb');
-                    root.style.setProperty('--text-sub', '#9ca3af');
-                    root.style.setProperty('--axis', '#525252');
-                } else {
-                    root.style.setProperty('--bg', '#ffffff');
-                    root.style.setProperty('--text', '#374151');
-                    root.style.setProperty('--text-sub', '#6b7280');
-                    root.style.setProperty('--axis', '#d1d5db');
-                }
-            }
-        } catch(e) {
-            
-            const root = document.documentElement;
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
             root.style.setProperty('--bg', '#ffffff');
             root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
             root.style.setProperty('--axis', '#d1d5db');
+          }
         }
-    }
-    setInterval(detectSliderTheme, 1000);
-    detectSliderTheme();
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
 
-    
-    function moveSlide(containerId, direction) {
-        const container = document.getElementById(containerId);
-        const wrapper = document.getElementById('wrapper-' + containerId);
-        const slides = JSON.parse(container.dataset.slides);
-        let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
-        
-        currentIndex += direction;
-        if (currentIndex >= 0 && currentIndex < slides.length) {
-            wrapper.style.setProperty('--current-index', currentIndex);
-            updateSliderUI(container, currentIndex);
-        }
-    }
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
 
-    function updateSliderUI(container, index) {
-        const slides = JSON.parse(container.dataset.slides);
-        const data = slides[index];
-        
-        const titleEl = container.querySelector('.step-title');
-        const descEl = container.querySelector('.step-description');
-        const labelEl = container.querySelector('.step-active-label');
-        
-        
-        titleEl.style.opacity = 0;
-        descEl.style.opacity = 0;
-        
-        setTimeout(() => {
-            titleEl.textContent = data.title || "";
-            descEl.textContent = data.description || "";
-            labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
-            titleEl.style.opacity = 1;
-            descEl.style.opacity = 1;
-        }, 200);
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
 
         
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
         container.querySelector('.btn-prev').disabled = (index === 0);
         container.querySelector('.btn-next').disabled = (index === slides.length - 1);
-    }
 
-    
-    window.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.step-slider-container').forEach(c => updateSliderUI(c, 0));
-    });
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-32');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
 </script>
+
 <h3 id="interactive-ray-tracer-visualization">Interactive Ray Tracer Visualization<a hidden class="anchor" aria-hidden="true" href="#interactive-ray-tracer-visualization">#</a></h3>
 <style>
 .iframe-wrapper {
@@ -3083,7 +4041,7 @@ $$
 
 <iframe src="/interactive/vmf.html"
         width="100%"
-        height="412"
+        height="445"
         frameborder="0"
         style="border-radius:8px; min-width: 700px;">
 </iframe>

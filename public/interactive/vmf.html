@@ -1,429 +1,297 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vMF Widget (Synced)</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #e0e4e8;
-            font-family: 'Segoe UI', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>vMF Mix</title>
 
-        #vmf-widget {
-            width: 850px;
-            height: 420px;
-            background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            display: flex;
-            overflow: hidden;
-            border: 1px solid #333;
-        }
+<style>
+:root{
+  --bg:#f8f9fa; --panel:#fff; --text:#374151; --sub:#6b7280; --b:#d1d5db; --acc:#e67e22;
+  --ov:rgba(255,255,255,.92); --sh:0 10px 28px rgba(0,0,0,.14);
+  --card:rgba(0,0,0,.03); --cardb:rgba(0,0,0,.10);
 
-        #sidebar {
-            width: 170px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #333;
-            z-index: 10;
-        }
+  /* FIX: cell size depends on viewport, not sidebar width */
+  --cell: clamp(120px, 16vw, 170px);
+  --gap: 10px;
+  --gridw: calc(var(--cell) * 2 + var(--gap));
+}
+[data-theme="dark"]{
+  --bg:#1a1a1a; --panel:#262626; --text:#f3f4f6; --sub:#9ca3af; --b:#444;
+  --ov:rgba(38,38,38,.92); --sh:0 14px 40px rgba(0,0,0,.45);
+  --card:rgba(255,255,255,.04); --cardb:rgba(255,255,255,.12);
+}
+html,body{padding:0; margin:0;height:100%;background:var(--theme);color:var(--text);font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#app{height:100%;display:flex;justify-content:center;align-items:center;padding:4px;box-sizing:border-box}
+#widget{width:min(980px,100%);height:min(560px,100%);display:flex;background:var(--panel);border:1px solid var(--b);border-radius:12px;box-shadow:var(--sh);overflow:hidden}
 
-        h2 { 
-            margin: 0 0 12px 0; 
-            font-size: 1rem; 
-            color: #ff9f1c;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            border-bottom: 2px solid #ff9f1c;
-            padding-bottom: 6px;
-            display: inline-block;
-        }
-        
-        p { font-size: 0.7rem; color: #aaa; line-height: 1.5; margin-bottom: 10px; }
+/* Sidebar */
+#side{width:270px;flex:0 0 auto;border-right:1px solid var(--b);position:relative;transition:width .25s cubic-bezier(.4,0,.2,1)}
+#side.closed{width:0;border-right:none}
+#toggle{position:absolute;right:-30px;top:12px;width:30px;height:30px;border:1px solid var(--b);border-left:none;border-radius:0 10px 10px 0;background:var(--panel);color:var(--sub);cursor:pointer;z-index:5}
+#side .in{width:270px;box-sizing:border-box;padding:14px;display:flex;flex-direction:column;gap:10px;transition:opacity .15s}
+#side.closed .in{opacity:0;pointer-events:none}
+h2{margin:0;color:var(--acc);font-size:15px}
+p{margin:0;color:var(--sub);line-height:1.35}
+.box{background:var(--ov);border:1px solid var(--b);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:1fr 46px;gap:10px;align-items:center}
+label{display:flex;justify-content:space-between;gap:8px;color:var(--sub);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.btns{margin-top:auto;display:flex;gap:8px}
+button.action{flex:1;padding:10px;border-radius:10px;border:1px solid var(--b);background:var(--bg);color:var(--text);cursor:pointer;font-weight:800}
+button.primary{background:var(--acc);border-color:var(--acc);color:#111}
 
-        #viz-container {
-            flex-grow: 1;
-            display: flex;
-            padding: 20px;
-            gap: 20px;
-            background: #000;
-        }
+/* Viz */
+#viz{
+  flex:1;
+  min-width:0;
+  min-height:0;
+  display:flex;
+  gap:var(--gap);
+  padding:10px;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+.panel{position:relative;background:var(--card);border:1px solid var(--cardb);border-radius:12px;overflow:hidden;cursor:grab;min-width:0}
+.panel:active{cursor:grabbing}
 
-        #main-view-wrapper {
-            flex: 1.3;
-            position: relative;
-            background: #252525;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #444;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-            cursor: grab; /* Add cursor here since OrbitControls is gone */
-        }
-        #main-view-wrapper:active { cursor: grabbing; }
-        
-        #main-label {
-            position: absolute;
-            top: 10px; left: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            pointer-events: none;
-            color: #ff9f1c;
-            font-weight: 700;
-            text-transform: uppercase;
-            border: 1px solid rgba(255, 159, 28, 0.3);
-            z-index: 5;
-        }
+/* FIX: main expands when sidebar collapses */
+#main{flex:1 1 auto; min-width:0; min-height:0}
 
-        #grid-wrapper {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            align-content: center; 
-        }
+/* FIX: grid keeps constant size when sidebar collapses */
+#grid{
+  flex:0 0 var(--gridw);
+  width:var(--gridw);
+  min-width:var(--gridw);
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(2, var(--cell));
+  grid-auto-rows:var(--cell);
+  gap:var(--gap);
+  align-content:start;
+  justify-content:center;
+  overflow-y:auto;     /* prevents any overlap */
+  overflow-x:hidden;
+  padding-right:2px;
+  box-sizing:border-box;
+}
 
-        .sub-plot {
-            position: relative;
-            background: #252525;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid #444;
-            cursor: grab;
-            width: 100%;
-            aspect-ratio: 1 / 1; 
-        }
-        
-        .sub-plot:active { cursor: grabbing; }
-        
-        .sub-label {
-            position: absolute;
-            bottom: 3px; left: 3px;
-            font-size: 0.55rem;
-            color: rgba(255, 255, 255, 0.9);
-            background: rgba(0, 0, 0, 0.6);
-            padding: 1px 4px;
-            border-radius: 3px;
-            pointer-events: none;
-            font-family: monospace;
-        }
+/* each component box uses the fixed grid tracks */
+.badge{position:absolute;top:10px;left:10px;background:var(--ov);border:1px solid var(--b);border-radius:999px;padding:6px 10px;color:var(--acc);font-weight:900;font-size:11px;letter-spacing:.6px;text-transform:uppercase;pointer-events:none}
+.tag{position:absolute;bottom:8px;left:8px;background:var(--ov);border:1px solid var(--b);border-radius:999px;padding:2px 8px;color:var(--text);font-size:11px;pointer-events:none}
+canvas{display:block;width:100%;height:100%}
+</style>
 
-        canvas { display: block; width: 100%; height: 100%; }
-
-        #regen-btn {
-            margin-top: auto;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ddd;
-            border: 1px solid #444;
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-        
-        #regen-btn:hover {
-            background: #ff9f1c;
-            color: #111;
-            border-color: #ff9f1c;
-        }
-    </style>
-    
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
+</script>
 </head>
+
 <body>
+<div id="app">
+  <div id="widget">
+    <aside id="side">
+      <button id="toggle" title="Toggle">☰</button>
+      <div class="in">
+        <p>Drag any sphere to rotate all views. Sliders update weights (auto-normalized).</p>
 
-    <div id="vmf-widget">
-        <div id="sidebar">
-            <h2>vMF Mix</h2>
-            <p><strong>Interactive Mixture</strong><br>Von Mises-Fisher distribution on sphere.</p>
-            <p><strong>Main:</strong><br>Composite density.</p>
-            <p><strong>Grid (3x2):</strong><br>6 Components.<br>Border Color = Weight.</p>
-            <p style="color:#888; font-style:italic; margin-top:10px;">Drag <strong>any</strong> sphere to rotate all views synchronously.</p>
-            <button id="regen-btn" onclick="window.location.reload()">Regenerate</button>
+        <div class="box">
+          <label>Weights <span class="mono" id="sum">sum=1.00</span></label>
+          <div id="sliders" style="display:flex;flex-direction:column;gap:10px"></div>
         </div>
 
-        <div id="viz-container">
-            <div id="main-view-wrapper">
-                <div id="main-label">Mixture Model</div>
-            </div>
-            <div id="grid-wrapper"></div>
+        <div class="btns">
+          <button class="action" id="rand">Randomize</button>
+          <button class="action primary" id="reset">Reset</button>
         </div>
-    </div>
+      </div>
+    </aside>
 
-    <script type="module">
-        import * as THREE from 'three';
-        // Note: OrbitControls removed to ensure unified object rotation logic
+    <main id="viz">
+      <div class="panel" id="main"><div class="badge">Mixture</div></div>
+      <div id="grid"></div>
+    </main>
+  </div>
+</div>
 
-        // --- CONFIG ---
-        const N_COMPONENTS = 6; 
+<script type="module">
+import * as THREE from "three";
 
-        function generateMixture() {
-            const components = [];
-            let totalWeight = 0;
+const N=6, $=s=>document.querySelector(s);
+const side=$("#side");
+$("#toggle").onclick=()=>side.classList.toggle("closed");
 
-            for (let i = 0; i < N_COMPONENTS; i++) {
-                const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos(2 * Math.random() - 1);
-                const x = Math.sin(phi) * Math.cos(theta);
-                const y = Math.sin(phi) * Math.sin(theta);
-                const z = Math.cos(phi);
-                
-                const kappa = 5 + Math.random() * 45;
-                const w = Math.random();
-                totalWeight += w;
+// theme inherit
+const theme=()=>{try{
+  const b=window.getComputedStyle(window.parent.document.body).backgroundColor.match(/\d+/g);
+  if(!b) return;
+  const y=(+b[0]*299 + +b[1]*587 + +b[2]*114)/1000;
+  document.documentElement.setAttribute("data-theme", y<128 ? "dark":"light");
+}catch(e){}};
+setInterval(theme,1000); theme();
 
-                components.push({
-                    mu: new THREE.Vector3(x, y, z),
-                    kappa: kappa,
-                    weight: w
-                });
-            }
+// data
+const randComp=()=> {
+  const th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
+  return {mu:new THREE.Vector3(Math.sin(ph)*Math.cos(th),Math.sin(ph)*Math.sin(th),Math.cos(ph)),
+          kappa:5+Math.random()*45, weight:Math.random()};
+};
+const normalize=w=>{const s=w.reduce((a,b)=>a+b,0)||1; return w.map(v=>v/s);};
+let data=Array.from({length:N},randComp); data.forEach((c,i)=>c.idx=i);
+let baseW=normalize(data.map(c=>c.weight)); baseW.forEach((v,i)=>data[i].weight=v);
 
-            components.forEach(c => c.weight /= totalWeight);
-            return components;
-        }
+// shader
+const vs=`varying vec3 n; void main(){n=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
+const fs=`
+precision mediump float; varying vec3 n;
+#define MAX 6
+uniform vec3 mu[MAX]; uniform float k[MAX]; uniform float w[MAX];
+uniform int count; uniform int single;
+vec3 magma(float t){
+  t=clamp(t,0.,1.);
+  vec3 c0=vec3(.001,.001,.014), c1=vec3(.188,.043,.357), c2=vec3(.549,.094,.424),
+       c3=vec3(.988,.553,.255), c4=vec3(.996,.878,.545);
+  if(t<.25) return mix(c0,c1,t/.25);
+  if(t<.5)  return mix(c1,c2,(t-.25)/.25);
+  if(t<.75) return mix(c2,c3,(t-.5)/.25);
+  return mix(c3,c4,(t-.75)/.25);
+}
+void main(){
+  vec3 nn=normalize(n); float v=0.;
+  for(int i=0;i<MAX;i++){ if(i>=count) break;
+    float dp=dot(nn,mu[i]);
+    float inf=exp(k[i]*(dp-1.));
+    v += (single==1) ? inf : w[i]*inf;
+  }
+  float t=clamp(pow(v*0.6,0.45),0.,1.);
+  vec3 col=magma(t);
+  vec3 L=normalize(vec3(.5,1.,1.));
+  float diff=.4+.6*max(dot(nn,L),0.);
+  gl_FragColor=vec4(col*diff,1.);
+}`;
 
-        const mixtureData = generateMixture();
+class View {
+  constructor(el, isMain, idx){
+    this.el=el; this.isMain=isMain; this.idx=idx;
+    this.scene=new THREE.Scene();
+    this.cam=new THREE.PerspectiveCamera(40,1,.1,100);
+    this.cam.position.z=isMain?3.25:2.9;
+    this.r=new THREE.WebGLRenderer({antialias:true,alpha:true});
+    this.r.setPixelRatio(Math.min(devicePixelRatio,2));
+    el.appendChild(this.r.domElement);
 
-        // --- SHADER ---
-        const vertexShader = `
-            varying vec3 vNormal;
-            void main() {
-                vNormal = normal; 
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-            }
-        `;
+    const uni=this.makeUniforms();
+    this.mat=new THREE.ShaderMaterial({uniforms:uni,vertexShader:vs,fragmentShader:fs});
+    this.mesh=new THREE.Mesh(new THREE.SphereGeometry(1,40,40), this.mat);
+    if(isMain) this.mesh.scale.setScalar(.92);
+    this.scene.add(this.mesh);
 
-        const fragmentShader = `
-            precision mediump float;
-            varying vec3 vNormal;
-            
-            #define MAX_COMPS 6
-            uniform vec3 uMu[MAX_COMPS];
-            uniform float uKappa[MAX_COMPS];
-            uniform float uWeights[MAX_COMPS];
-            uniform int uCount;
-            uniform int uIsSingle;
-            
-            vec3 magmaMap(float t) {
-                t = clamp(t, 0.0, 1.0);
-                vec3 c0 = vec3(0.001, 0.001, 0.014); // Dark
-                vec3 c1 = vec3(0.188, 0.043, 0.357); // Purple
-                vec3 c2 = vec3(0.549, 0.094, 0.424); // Magenta
-                vec3 c3 = vec3(0.988, 0.553, 0.255); // Orange
-                vec3 c4 = vec3(0.996, 0.878, 0.545); // Yellow
-                
-                if (t < 0.25) return mix(c0, c1, t / 0.25);
-                if (t < 0.50) return mix(c1, c2, (t - 0.25) / 0.25);
-                if (t < 0.75) return mix(c2, c3, (t - 0.50) / 0.25);
-                return mix(c3, c4, (t - 0.75) / 0.25);
-            }
+    this.drag();
+    new ResizeObserver(()=>this.resize()).observe(el);
+    this.resize();
+  }
+  makeUniforms(){
+    const mu=[], k=[], w=[];
+    if(this.isMain){
+      data.forEach(c=>{mu.push(c.mu); k.push(c.kappa); w.push(c.weight);});
+    }else{
+      const c=data[this.idx];
+      mu.push(c.mu); k.push(c.kappa); w.push(c.weight);
+      for(let i=1;i<N;i++){mu.push(new THREE.Vector3(0,1,0)); k.push(1); w.push(0);}
+    }
+    return {mu:{value:mu}, k:{value:k}, w:{value:w}, count:{value:this.isMain?N:1}, single:{value:this.isMain?0:1}};
+  }
+  resize(){
+    const w=Math.max(10,this.el.clientWidth), h=Math.max(10,this.el.clientHeight);
+    this.cam.aspect=w/h; this.cam.updateProjectionMatrix();
+    this.r.setSize(w,h,false);
+  }
+  render(){ this.r.render(this.scene,this.cam); }
+  setRot(rot){ this.mesh.rotation.copy(rot); }
+  drag(){
+    let d=false, p={x:0,y:0};
+    const down=e=>{d=true;p={x:e.clientX,y:e.clientY};this.el.style.cursor="grabbing";};
+    const move=e=>{
+      if(!d) return;
+      const dx=e.clientX-p.x, dy=e.clientY-p.y;
+      this.mesh.rotation.y+=dx*0.015; this.mesh.rotation.x+=dy*0.015;
+      views.forEach(v=>v.setRot(this.mesh.rotation));
+      p={x:e.clientX,y:e.clientY};
+    };
+    const up=()=>{d=false;this.el.style.cursor="grab";};
+    this.r.domElement.addEventListener("mousedown",down);
+    window.addEventListener("mousemove",move);
+    window.addEventListener("mouseup",up);
+  }
+}
 
-            void main() {
-                vec3 n = normalize(vNormal);
-                float val = 0.0;
-                
-                for(int i = 0; i < MAX_COMPS; i++) {
-                    if(i >= uCount) break;
-                    float dotProd = dot(n, uMu[i]);
-                    float influence = exp(uKappa[i] * (dotProd - 1.0));
-                    
-                    if (uIsSingle == 1) val += influence;
-                    else val += uWeights[i] * influence;
-                }
+const main=$("#main"), grid=$("#grid"), sliders=$("#sliders"), sum=$("#sum");
+const mk=(t,c)=>Object.assign(document.createElement(t),c||{});
 
-                // Tone mapping
-                float intensity = clamp(pow(val * 0.6, 0.45), 0.0, 1.0);
-                vec3 color = magmaMap(intensity);
-                
-                vec3 lightDir = normalize(vec3(0.5, 1.0, 1.0));
-                float diff = 0.4 + 0.6 * max(dot(n, lightDir), 0.0);
-                
-                gl_FragColor = vec4(color * diff, 1.0);
-            }
-        `;
+// build grid
+grid.innerHTML="";
+const cells=data.map((c,i)=>{
+  const d=mk("div",{className:"panel sub"});
+  const tag=mk("div",{className:"tag mono"});
+  d.appendChild(tag); grid.appendChild(d);
+  return {d,tag,i};
+});
 
-        // --- SCENE CLASS ---
-        class VMFScene {
-            constructor(container, data, isMain = false, componentIndex = -1) {
-                this.container = container;
-                this.data = data;
-                this.isMain = isMain;
-                this.idx = componentIndex;
-                this.init();
-            }
+// init views
+const views=[];
+views.push(new View(main,true,-1));
+cells.forEach(x=>views.push(new View(x.d,false,x.i)));
 
-            init() {
-                this.scene = new THREE.Scene();
-                
-                // Ensure non-zero dims for initial calc
-                const width = Math.max(10, this.container.clientWidth);
-                const height = Math.max(10, this.container.clientHeight);
+function updateBorders(){
+  const max=Math.max(...data.map(c=>c.weight))||1;
+  cells.forEach(({d,tag,i})=>{
+    const w=data[i].weight, a=.30+(w/max)*.60;
+    d.style.border=`${1+(w/max)*3}px solid rgba(230,126,34,${a})`;
+    tag.textContent=`w:${w.toFixed(2)}`;
+  });
+  sum.textContent=`sum=${data.reduce((s,c)=>s+c.weight,0).toFixed(2)}`;
+  views[0].mat.uniforms.w.value = data.map(c=>c.weight);
+}
 
-                const aspect = width / height;
-                this.camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 100);
-                this.camera.position.z = 2.9;
+function rebuildSliders(){
+  sliders.innerHTML="";
+  data.forEach((c,i)=>{
+    const wrap=mk("div");
+    wrap.appendChild(mk("label",{innerHTML:`Comp ${i+1}<span class="mono">κ=${c.kappa.toFixed(0)}</span>`}));
+    const row=mk("div",{className:"row"});
+    const r=mk("input"); r.type="range"; r.min=0; r.max=1; r.step=0.001; r.value=c.weight;
+    const v=mk("div",{className:"mono",textContent:(+r.value).toFixed(2),style:"text-align:right"});
+    r.addEventListener("input",()=>{
+      v.textContent=(+r.value).toFixed(2);
+      const norm=normalize(data.map((cc,ii)=> ii===i? +r.value : +cc.__r.value));
+      norm.forEach((w,ii)=>{data[ii].weight=w; data[ii].__r.value=w; data[ii].__v.textContent=w.toFixed(2);});
+      updateBorders();
+    });
+    c.__r=r; c.__v=v;
+    row.append(r,v); wrap.appendChild(row); sliders.appendChild(wrap);
+  });
+}
 
-                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                this.renderer.setSize(width, height);
-                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-                this.container.appendChild(this.renderer.domElement);
+function loop(){ requestAnimationFrame(loop); views.forEach(v=>v.render()); }
+rebuildSliders(); updateBorders(); loop();
 
-                // Uniform Data Setup
-                const uMu = [], uKappa = [], uWeights = [];
-                if (this.isMain) {
-                    this.data.forEach(c => { uMu.push(c.mu); uKappa.push(c.kappa); uWeights.push(c.weight); });
-                } else {
-                    const c = this.data[this.idx];
-                    uMu.push(c.mu); uKappa.push(c.kappa); uWeights.push(c.weight);
-                    for(let k=1; k<N_COMPONENTS; k++) { uMu.push(new THREE.Vector3(0,1,0)); uKappa.push(1); uWeights.push(0); }
-                }
+$("#rand").onclick=()=>{
+  const w=data.map(c=>c.weight);
+  data=Array.from({length:N},(_,i)=>Object.assign(randComp(),{idx:i,weight:w[i]}));
+  views[0].mat.uniforms.mu.value = data.map(c=>c.mu);
+  views[0].mat.uniforms.k.value  = data.map(c=>c.kappa);
+  cells.forEach(({i},j)=>{
+    views[j+1].mat.uniforms.mu.value[0]=data[i].mu;
+    views[j+1].mat.uniforms.k.value[0]=data[i].kappa;
+  });
+  rebuildSliders(); updateBorders();
+};
 
-                const material = new THREE.ShaderMaterial({
-                    uniforms: {
-                        uMu: { value: uMu },
-                        uKappa: { value: uKappa },
-                        uWeights: { value: uWeights },
-                        uCount: { value: this.isMain ? N_COMPONENTS : 1 },
-                        uIsSingle: { value: this.isMain ? 0 : 1 }
-                    },
-                    vertexShader, fragmentShader
-                });
-
-                const geometry = new THREE.SphereGeometry(1, 40, 40);
-                this.sphere = new THREE.Mesh(geometry, material);
-                this.scene.add(this.sphere);
-
-                // Setup unified mouse rotation for ALL views (Main or Sub)
-                this.setupMouseRotation();
-                
-                // Layout adjustment
-                new ResizeObserver(() => this.handleResize()).observe(this.container);
-            }
-
-            setupMouseRotation() {
-                let isDragging = false;
-                let prev = { x: 0, y: 0 };
-                
-                const onDown = (e) => {
-                    isDragging = true;
-                    prev = { x: e.clientX, y: e.clientY };
-                    this.container.style.cursor = 'grabbing';
-                };
-                
-                const onMove = (e) => {
-                    if (!isDragging) return;
-                    const dx = e.clientX - prev.x;
-                    const dy = e.clientY - prev.y;
-                    
-                    // Rotate this sphere
-                    this.sphere.rotation.y += dx * 0.015;
-                    this.sphere.rotation.x += dy * 0.015;
-                    
-                    // SYNC Logic:
-                    // 1. Update all Grid Scenes
-                    if (window.vmfScenes) {
-                        window.vmfScenes.forEach(s => s.setRotation(this.sphere.rotation));
-                    }
-                    // 2. Update Main Scene (if this isn't the main scene)
-                    if (window.mainScene && this !== window.mainScene) {
-                        window.mainScene.setRotation(this.sphere.rotation);
-                    }
-                    
-                    prev = { x: e.clientX, y: e.clientY };
-                };
-                
-                const onUp = () => { isDragging = false; this.container.style.cursor = 'grab'; };
-
-                this.renderer.domElement.addEventListener('mousedown', onDown);
-                window.addEventListener('mousemove', onMove);
-                window.addEventListener('mouseup', onUp);
-            }
-
-            handleResize() {
-                const w = this.container.clientWidth;
-                const h = this.container.clientHeight;
-                if(w > 0 && h > 0) {
-                    this.camera.aspect = w / h;
-                    this.camera.updateProjectionMatrix();
-                    this.renderer.setSize(w, h);
-                }
-            }
-
-            render() {
-                this.renderer.render(this.scene, this.camera);
-            }
-            
-            setRotation(rot) {
-                // Directly copy rotation from the source
-                this.sphere.rotation.copy(rot);
-            }
-        }
-
-        // --- APP INIT ---
-        const mainWrapper = document.getElementById('main-view-wrapper');
-        const gridWrapper = document.getElementById('grid-wrapper');
-        const scenes = [];
-        window.vmfScenes = scenes;
-
-        const maxWeight = Math.max(...mixtureData.map(d => d.weight));
-
-        // 1. DOM Gen
-        const gridElements = mixtureData.map((comp, index) => {
-            const div = document.createElement('div');
-            div.className = 'sub-plot';
-            
-            const label = document.createElement('div');
-            label.className = 'sub-label';
-            label.innerHTML = `w:${comp.weight.toFixed(2)}`;
-            div.appendChild(label);
-
-            const normW = comp.weight / maxWeight;
-            const col = `rgba(255, 159, 28, ${0.4 + normW * 0.6})`;
-            div.style.border = `${1 + normW * 3}px solid ${col}`;
-            
-            gridWrapper.appendChild(div);
-            return { div, comp, index };
-        });
-
-        // 2. Post-Layout Init
-        setTimeout(() => {
-            const mainPlot = new VMFScene(mainWrapper, mixtureData, true);
-            window.mainScene = mainPlot;
-
-            gridElements.forEach(item => {
-                scenes.push(new VMFScene(item.div, mixtureData, false, item.index));
-            });
-
-            function animate() {
-                requestAnimationFrame(animate);
-                mainPlot.render();
-                scenes.forEach(s => s.render());
-            }
-            animate();
-            
-        }, 0);
-
-    </script>
+$("#reset").onclick=()=>{
+  const norm=normalize(baseW.slice());
+  norm.forEach((w,i)=>{data[i].weight=w; data[i].__r.value=w; data[i].__v.textContent=w.toFixed(2);});
+  updateBorders();
+};
+</script>
 </body>
 </html>
