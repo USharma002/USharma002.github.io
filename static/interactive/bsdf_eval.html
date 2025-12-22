@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BSDF Explorer (Cosine Theme + BSDF Rays)</title>
+  <script src="bsdf_data.js"></script>
+  <style>
+    :root{
+      --bg: #ffffff;
+      --panel: rgba(255,255,255,0.92);
+      --panelBorder: rgba(0,0,0,0.15);
+      --text: #111827;
+      --textSub: #6b7280;
+
+      --btn: #2563eb;
+      --btnHover: #1d4ed8;
+      --btnText: #ffffff;
+
+      --btn2: rgba(0,0,0,0.06);
+      --btn2Hover: rgba(0,0,0,0.10);
+      --btn2Text: #111827;
+
+      --accent: #e67e22;
+
+      --rayGlow: rgba(255, 60, 60, 0.45);
+      --grid: rgba(0,0,0,0.07);
+      --incident: rgba(230, 126, 34, 0.95);
+
+      --legend1: #000004;
+      --legend2: #51127c;
+      --legend3: #b63679;
+      --legend4: #fb8861;
+      --legend5: #fcfdbf;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    canvas:active { cursor: grabbing; }
+
+    /* Floating overlay menu, sphere-style */
+    .overlay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 320px;
+      max-width: 85vw;
+      background: var(--panel);
+      padding: 16px 16px 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--panelBorder);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 10;
+      max-height: 90vh;
+      overflow-y: auto;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.3s;
+    }
+    .overlay.hidden {
+      transform: translateX(-120%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 44px;
+      height: 44px;
+      background: var(--panel);
+      border: 1px solid var(--panelBorder);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 9;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: opacity 0.3s;
+    }
+    .toggle-btn.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .toggle-btn svg,
+    .close-icon svg {
+      fill: var(--textSub);
+    }
+
+    .close-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .close-icon:hover { opacity: 1; }
+
+    h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid rgba(127,127,127,0.25);
+      padding-bottom: 8px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--textSub);
+      margin-bottom: 5px;
+      margin-top: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      border: 1px solid rgba(127,127,127,0.35);
+      color: var(--text);
+      border-radius: 7px;
+      outline: none;
+      font-size: 13px;
+      box-sizing: border-box;
+    }
+
+/* Themed select to match panel */
+select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--panelBorder);
+  background-color: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+  box-sizing: border-box;
+  cursor: pointer;
+
+}
+
+/* On dark theme, arrow updates automatically via vars */
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(230,126,34,0.20);
+}
+
+/* Optional: make options use theme text/bg */
+select option {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 30px;
+      padding: 0 6px;
+      background: transparent;
+    }
+    input[type="range"]::-webkit-slider-runnable-track{
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(127,127,127,0.22);
+      border: 1px solid rgba(127,127,127,0.28);
+    }
+    input[type="range"]::-webkit-slider-thumb{
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid rgba(0,0,0,0.65);
+      margin-top: -6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    input[type="range"]::-moz-range-track{
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(127,127,127,0.22);
+      border: 1px solid rgba(127,127,127,0.28);
+    }
+    input[type="range"]::-moz-range-thumb{
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid rgba(0,0,0,0.65);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: var(--textSub);
+      margin-top: 4px;
+      gap: 18px;
+    }
+
+    .val { color: var(--text); }
+    .highlight { color: var(--accent); font-weight: 700; }
+
+    .legend {
+      height: 8px;
+      width: 100%;
+      background: linear-gradient(to right, var(--legend1), var(--legend2),
+                   var(--legend3), var(--legend4), var(--legend5));
+      border-radius: 999px;
+      margin-top: 6px;
+      border: 1px solid rgba(127,127,127,0.25);
+    }
+
+    button {
+      width: 100%;
+      padding: 9px;
+      border: none;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 7px;
+      letter-spacing: 1px;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.04s ease;
+    }
+    button:active { transform: translateY(1px); }
+
+    #sampleBtn { background: var(--btn); color: var(--btnText); }
+    #sampleBtn:hover { background: var(--btnHover); }
+
+    #sample10Btn { background: rgba(16,185,129,0.95); color: #06130c; }
+    #sample10Btn:hover { background: rgba(16,185,129,1); }
+
+    #clearBtn {
+      background: var(--btn2);
+      color: var(--btn2Text);
+      border: 1px solid rgba(127,127,127,0.35);
+    }
+    #clearBtn:hover { background: var(--btn2Hover); }
+
+    .hint {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(127,127,127,0.35);
+      font-size: 11px;
+      color: var(--textSub);
+      text-align: center;
+      font-style: italic;
+    }
+
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(127,127,127,0.35);
+      background: rgba(0,0,0,0.04);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Open button -->
+    <div class="toggle-btn" id="openBtn" onclick="toggleMenu(true)">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+      </svg>
+    </div>
+
+    <!-- Overlay panel -->
+    <div class="overlay" id="menu">
+      <div class="close-icon" onclick="toggleMenu(false)">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+      </div>
+
+      <h3>BSDF Explorer</h3>
+
+      <label>Material</label>
+      <select id="matSelect"></select>
+
+      <label>Incident Angle</label>
+      <input type="range" id="angleSlider" min="0" max="5" step="1" value="3">
+      <div class="stat-row">
+        <span>θᵢ:</span>
+        <span class="val highlight" id="angleVal">--</span>
+      </div>
+
+      <label>Slice Stats</label>
+      <div class="stat-row">
+        <span>Peak:</span>
+        <span class="val" id="peakVal">0.000</span>
+      </div>
+      <div class="legend"></div>
+
+      <label>Rays</label>
+      <button id="sampleBtn">Add 1 ray</button>
+      <button id="sample10Btn">Add 10 rays</button>
+      <button id="clearBtn">Clear</button>
+
+      <div class="stat-row">
+        <span>Rays:</span>
+        <span class="val highlight" id="rayCount">0</span>
+      </div>
+
+      <div class="hint">
+        Drag to orbit. Scroll to zoom. <span class="kbd">R</span> to clear. Use the menu button to hide controls.
+      </div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script>
+    // Theme detection
+    function detectTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+        if (!rgb) return;
+
+        const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+        const isDark = brightness < 128;
+
+        if (isDark) {
+          document.documentElement.style.setProperty('--bg', '#0b0b10');
+          document.documentElement.style.setProperty('--panel', 'rgba(15,15,20,0.95)');
+          document.documentElement.style.setProperty('--panelBorder', 'rgba(255,255,255,0.12)');
+          document.documentElement.style.setProperty('--text', '#e5e7eb');
+          document.documentElement.style.setProperty('--textSub', '#9ca3af');
+          document.documentElement.style.setProperty('--grid', 'rgba(255,255,255,0.07)');
+          document.documentElement.style.setProperty('--btn2', 'rgba(255,255,255,0.07)');
+          document.documentElement.style.setProperty('--btn2Hover', 'rgba(255,255,255,0.11)');
+          document.documentElement.style.setProperty('--btn2Text', '#e5e7eb');
+        } else {
+          document.documentElement.style.setProperty('--bg', '#ffffff');
+          document.documentElement.style.setProperty('--panel', 'rgba(255,255,255,0.92)');
+          document.documentElement.style.setProperty('--panelBorder', 'rgba(0,0,0,0.15)');
+          document.documentElement.style.setProperty('--text', '#111827');
+          document.documentElement.style.setProperty('--textSub', '#6b7280');
+          document.documentElement.style.setProperty('--grid', 'rgba(0,0,0,0.07)');
+          document.documentElement.style.setProperty('--btn2', 'rgba(0,0,0,0.06)');
+          document.documentElement.style.setProperty('--btn2Hover', 'rgba(0,0,0,0.10)');
+          document.documentElement.style.setProperty('--btn2Text', '#111827');
+        }
+      } catch(e) {}
+    }
+    detectTheme();
+    setInterval(detectTheme, 1000);
+
+    function toggleMenu(show) {
+      const menu = document.getElementById('menu');
+      const btn = document.getElementById('openBtn');
+      if (show) {
+        menu.classList.remove('hidden');
+        btn.classList.add('hidden');
+      } else {
+        menu.classList.add('hidden');
+        btn.classList.remove('hidden');
+      }
+    }
+    // start with menu open, hide hamburger
+    document.getElementById('openBtn').classList.add('hidden');
+
+    function getVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    const matSelect = document.getElementById('matSelect');
+    const angleSlider = document.getElementById('angleSlider');
+    const angleValEl = document.getElementById('angleVal');
+    const peakValEl = document.getElementById('peakVal');
+    const rayCountEl = document.getElementById('rayCount');
+
+    const CFG = {
+      meshAlpha: 0.86,
+      meshRes: 2,
+      fov: 900,
+      rayLen: 1.6
+    };
+
+    let dpr = window.devicePixelRatio || 1;
+    let canvasW = window.innerWidth;
+    let canvasH = window.innerHeight;
+
+    let currentMat = null;
+    let currentSlice = null;
+    let rays = [];
+
+    let camera = {
+      yaw: -0.55,
+      pitch: -0.62,
+      dist: 4.2,
+      yawVel: 0,
+      pitchVel: 0,
+      distVel: 0,
+      damping: 0.86
+    };
+
+    let hasLoggedFrame = false;
+
+    function getMagma(t) {
+      const data = [
+        [0,0,4],[20,11,54],[81,18,124],[130,37,129],
+        [182,54,121],[230,81,100],[251,136,97],
+        [254,191,139],[252,253,191]
+      ];
+      const idx = Math.max(0, Math.min(1, t)) * (data.length - 1);
+      const i = Math.floor(idx), f = idx - i;
+      if (i >= data.length - 1) return data[i];
+      const c1 = data[i], c2 = data[i+1];
+      return [
+        Math.round(c1[0] + f*(c2[0]-c1[0])),
+        Math.round(c1[1] + f*(c2[1]-c1[1])),
+        Math.round(c1[2] + f*(c2[2]-c1[2]))
+      ];
+    }
+
+    function patchDataFormat() {
+      let patched = 0;
+      Object.keys(BSDF_DATA || {}).forEach(matName => {
+        const mat = BSDF_DATA[matName];
+        if (!mat || !mat.slices) return;
+        Object.keys(mat.slices).forEach(angle => {
+          const slice = mat.slices[angle];
+          if (!slice) return;
+          const raw = slice.samples;
+          if (raw && raw.length > 0 && Array.isArray(raw[0]) && raw[0].length === 1) {
+            const fixed = [];
+            for (let i = 0; i < raw.length; i += 3) {
+              if (i + 2 < raw.length) fixed.push([ raw[i][0], raw[i+1][0], raw[i+2][0] ]);
+            }
+            slice.samples = fixed;
+            patched++;
+          }
+          if (slice.wi && Array.isArray(slice.wi) && slice.wi.length === 1 && slice.wi[0].length === 3) {
+            slice.wi = slice.wi[0];
+          }
+        });
+      });
+      if (patched) console.log("Patched slices:", patched);
+    }
+
+    const clamp01 = x => Math.max(0, Math.min(1, x));
+    const lerp = (a,b,t) => a + (b-a)*t;
+
+    const dot = (a,b) => a.x*b.x + a.y*b.y + a.z*b.z;
+    function normalize(v){
+      const l = Math.hypot(v.x, v.y, v.z) || 1;
+      return { x: v.x/l, y: v.y/l, z: v.z/l };
+    }
+    function reflect(v, n){
+      const d = dot(v,n);
+      return { x: v.x - 2*d*n.x, y: v.y - 2*d*n.y, z: v.z - 2*d*n.z };
+    }
+
+    function buildCDF(weights) {
+      const cdf = new Float64Array(weights.length);
+      let sum = 0;
+      for (let i=0;i<weights.length;i++) {
+        const w = weights[i] > 0 && isFinite(weights[i]) ? weights[i] : 0;
+        sum += w;
+        cdf[i] = sum;
+      }
+      if (sum <= 0) return null;
+      return { cdf, sum };
+    }
+
+    function sampleCDF(tbl) {
+      const r = Math.random() * tbl.sum;
+      let lo = 0, hi = tbl.cdf.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (tbl.cdf[mid] >= r) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
+    }
+
+    function dirFromThetaPhi(theta, phi) {
+      return {
+        x: Math.sin(theta) * Math.cos(phi),
+        y: Math.cos(theta),
+        z: Math.sin(theta) * Math.sin(phi),
+        theta, phi
+      };
+    }
+
+    function buildSliceSamplerEnergyTimesCos(slice) {
+      const grid = slice.grid;
+      if (!grid || !grid.length || !grid[0].length) return null;
+
+      const rows = grid.length;
+      const cols = grid[0].length;
+
+      const dTheta = (Math.PI * 0.5) / (rows - 1);
+      const dPhi = (2 * Math.PI) / (cols - 1);
+
+      const N = rows * cols;
+      const weights = new Float64Array(N);
+
+      for (let r = 0; r < rows; r++) {
+        const theta = (r / (rows - 1)) * (Math.PI * 0.5);
+        const sinTheta = Math.sin(theta);
+        const cosTheta = Math.cos(theta);
+        const base = r * cols;
+
+        for (let c = 0; c < cols; c++) {
+          let w = Math.max(0, grid[r][c]);
+          w *= (sinTheta * dTheta * dPhi) * cosTheta;
+          weights[base + c] = w;
+        }
+      }
+
+      const tbl = buildCDF(weights);
+      if (!tbl) return null;
+      return { tbl, rows, cols };
+    }
+
+    function sampleDirectionFromSampler(sampler) {
+      const { tbl, rows, cols } = sampler;
+      const idx = sampleCDF(tbl);
+      const r = (idx / cols) | 0;
+      const c = idx - r * cols;
+
+      const ur = (r + Math.random()) / (rows - 1);
+      const uc = (c + Math.random()) / (cols - 1);
+      const theta = ur * (Math.PI * 0.5);
+      const phi = uc * (2 * Math.PI);
+      return dirFromThetaPhi(theta, phi);
+    }
+
+    function project(p) {
+      let x = p.x * Math.cos(camera.yaw) - p.z * Math.sin(camera.yaw);
+      let zt = p.x * Math.sin(camera.yaw) + p.z * Math.cos(camera.yaw);
+
+      let y = p.y * Math.cos(camera.pitch) - zt * Math.sin(camera.pitch);
+      let z = p.y * Math.sin(camera.pitch) + zt * Math.cos(camera.pitch);
+
+      const depth = camera.dist + z;
+      const scale = CFG.fov / depth;
+      return {
+        x: (canvasW/2) + x * scale,
+        y: (canvasH/2) - y * scale,
+        z, scale
+      };
+    }
+
+    function getVert(r, c, rows, cols) {
+      const th = (r / (rows - 1)) * (Math.PI / 2);
+      const ph = (c / (cols - 1)) * 2 * Math.PI;
+      return project({ x: Math.sin(th)*Math.cos(ph), y: Math.cos(th), z: Math.sin(th)*Math.sin(ph) });
+    }
+
+    function drawGrid() {
+      const gridCol = getVar('--grid');
+      ctx.strokeStyle = gridCol;
+      ctx.lineWidth = 1;
+
+      for (let i = -1.5; i <= 1.5; i += 0.5) {
+        let p1 = project({x:i, y:0, z:-1.5});
+        let p2 = project({x:i, y:0, z: 1.5});
+        if (p1.scale > 0 && p2.scale > 0) {
+          ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+        }
+
+        let p3 = project({x:-1.5, y:0, z:i});
+        let p4 = project({x: 1.5, y:0, z:i});
+        if (p3.scale > 0 && p4.scale > 0) {
+          ctx.beginPath(); ctx.moveTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.stroke();
+        }
+      }
+    }
+
+    function drawArrow(p1, p2, col, weight) {
+      const s = project(p1), e = project(p2);
+      if (s.scale <= 0 || e.scale <= 0) return;
+
+      const headLen = 9 * (e.scale * 0.01);
+      const headWid = 5 * (e.scale * 0.01);
+
+      ctx.strokeStyle = col;
+      ctx.lineWidth = Math.max(0.8, weight * (s.scale * 0.008));
+      ctx.lineCap = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(e.x, e.y);
+      ctx.stroke();
+
+      const ang = Math.atan2(e.y - s.y, e.x - s.x);
+      const hx = e.x - headLen * Math.cos(ang);
+      const hy = e.y - headLen * Math.sin(ang);
+
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.moveTo(e.x, e.y);
+      ctx.lineTo(hx + headWid*Math.cos(ang + Math.PI/2), hy + headWid*Math.sin(ang + Math.PI/2));
+      ctx.lineTo(hx + headWid*Math.cos(ang - Math.PI/2), hy + headWid*Math.sin(ang - Math.PI/2));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawRay(ray) {
+      const origin = {x:0, y:0, z:0};
+      const tip3d = {x: ray.x * CFG.rayLen, y: ray.y * CFG.rayLen, z: ray.z * CFG.rayLen};
+
+      const pStart = project(origin);
+      const pEnd = project(tip3d);
+      if (pStart.scale <= 0 || pEnd.scale <= 0) return;
+
+      const w = clamp01(ray.w ?? 0.5);
+      const alpha = lerp(0.22, 0.85, w);
+      const width = lerp(0.75, 1.75, w) * (pStart.scale * 0.011);
+
+      ctx.save();
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = getVar('--rayGlow');
+
+      ctx.strokeStyle = `rgba(255, 25, 35, ${alpha})`;
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(pStart.x, pStart.y);
+      ctx.lineTo(pEnd.x, pEnd.y);
+      ctx.stroke();
+
+      ctx.shadowBlur = 0;
+      const ang = Math.atan2(pEnd.y - pStart.y, pEnd.x - pStart.x);
+      const headLen = (7 + 9*w);
+      const headWid = (3.5 + 4.5*w);
+
+      const hx = pEnd.x - headLen*Math.cos(ang);
+      const hy = pEnd.y - headLen*Math.sin(ang);
+
+      ctx.fillStyle = `rgba(255, 30, 40, ${alpha})`;
+      ctx.beginPath();
+      ctx.moveTo(pEnd.x, pEnd.y);
+      ctx.lineTo(hx + headWid*Math.cos(ang + Math.PI/2), hy + headWid*Math.sin(ang + Math.PI/2));
+      ctx.lineTo(hx + headWid*Math.cos(ang - Math.PI/2), hy + headWid*Math.sin(ang - Math.PI/2));
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = `rgba(255,255,255,${0.06 + 0.18*w})`;
+      ctx.beginPath();
+      ctx.arc(pEnd.x, pEnd.y, 1.6 + 2.1*w, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function computePerfectReflectionRay() {
+      const n = {x:0, y:1, z:0};
+      if (!currentSlice || !currentSlice.wi || currentSlice.wi.length < 3) {
+        return {x:0, y:1, z:0};
+      }
+      const wiV = normalize({ x: currentSlice.wi[0], y: currentSlice.wi[2], z: currentSlice.wi[1] });
+      const incoming = { x: -wiV.x, y: -wiV.y, z: -wiV.z };
+      let r = reflect(incoming, n);
+      r = normalize(r);
+      if (r.y < 0) r.y = -r.y;
+      return r;
+    }
+
+    function loop() {
+      camera.yaw += camera.yawVel;
+      camera.pitch += camera.pitchVel;
+      camera.dist = Math.max(1.7, Math.min(10, camera.dist + camera.distVel));
+
+      camera.yawVel *= camera.damping;
+      camera.pitchVel *= camera.damping;
+      camera.distVel *= 0.80;
+
+      camera.pitch = Math.max(-1.25, Math.min(0.85, camera.pitch));
+
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.fillStyle = getVar('--bg');
+      ctx.fillRect(0, 0, canvasW, canvasH);
+
+      if (!currentSlice) {
+        requestAnimationFrame(loop);
+        return;
+      }
+
+      drawGrid();
+
+      if (currentSlice.wi && currentSlice.wi.length >= 3) {
+        const wi = currentSlice.wi;
+        drawArrow(
+          {x: wi[0]*1.4, y: wi[2]*1.4, z: wi[1]*1.4},
+          {x:0,y:0,z:0},
+          getVar('--incident'),
+          2
+        );
+      }
+
+      const grid = currentSlice.grid;
+      const rows = grid.length;
+      const cols = grid[0].length;
+      const step = Math.max(1, CFG.meshRes);
+      const faces = [];
+
+      for (let r = 0; r < rows - step; r += step) {
+        const thetaMid = ((r + 0.5*step) / (rows - 1)) * (Math.PI/2);
+        const cosForeshorten = Math.cos(thetaMid);
+        for (let c = 0; c < cols; c += step) {
+          const p1 = getVert(r, c, rows, cols);
+          const p2 = getVert(r+step, c, rows, cols);
+          const p3 = getVert(r+step, (c+step)%cols, rows, cols);
+          const p4 = getVert(r, (c+step)%cols, rows, cols);
+
+          let eVal = (grid[r][c] + grid[r+step][c] + grid[r][(c+step)%cols]) / 3;
+          eVal = Math.max(0, eVal);
+          const themed = eVal * cosForeshorten;
+
+          const denom = (currentSlice.max || 1.0);
+          const norm = denom > 0 ? (themed / denom) : 0;
+
+          faces.push({
+            pts: [p1,p2,p3,p4],
+            z: (p1.z+p2.z+p3.z+p4.z) / 4,
+            val: Math.min(1, Math.sqrt(Math.max(0, norm)))
+          });
+        }
+      }
+
+      faces.sort((a,b)=> b.z - a.z);
+      for (let i=0;i<faces.length;i++) {
+        const f = faces[i];
+        if (f.pts[0].scale <= 0) continue;
+        const c = getMagma(f.val);
+
+        ctx.beginPath();
+        ctx.moveTo(f.pts[0].x, f.pts[0].y);
+        for (let j=1;j<f.pts.length;j++) ctx.lineTo(f.pts[j].x, f.pts[j].y);
+        ctx.closePath();
+
+        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]}, ${CFG.meshAlpha})`;
+        ctx.fill();
+
+        ctx.strokeStyle = `rgba(120, 120, 150, ${0.05 + f.val*0.20})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+
+      rayCountEl.textContent = rays.length;
+      for (let i=0;i<rays.length;i++) drawRay(rays[i]);
+      if (rays.length > 0 && !hasLoggedFrame) {
+        const r0 = rays[0];
+        const p0s = project({x:0,y:0,z:0});
+        const p0e = project({x:r0.x*CFG.rayLen, y:r0.y*CFG.rayLen, z:r0.z*CFG.rayLen});
+        console.log(`Ray0 screen: (${p0s.x.toFixed(0)},${p0s.y.toFixed(0)}) -> (${p0e.x.toFixed(0)},${p0e.y.toFixed(0)})`);
+        hasLoggedFrame = true;
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      canvasW = window.innerWidth;
+      canvasH = window.innerHeight;
+      canvas.width = Math.floor(canvasW * dpr);
+      canvas.height = Math.floor(canvasH * dpr);
+      hasLoggedFrame = false;
+    }
+
+    function loadMaterial(name) {
+      currentMat = BSDF_DATA[name];
+      updateSlice();
+    }
+
+    function updateSlice() {
+      if (!currentMat || !currentMat.slices) return;
+      const angles = Object.keys(currentMat.slices).map(Number).sort((a,b)=>a-b);
+
+      angleSlider.max = Math.max(0, angles.length - 1);
+      let idx = parseInt(angleSlider.value, 10);
+      if (!Number.isFinite(idx)) idx = 0;
+      idx = Math.max(0, Math.min(angles.length - 1, idx));
+      angleSlider.value = idx;
+
+      const angle = angles[idx];
+      currentSlice = currentMat.slices[angle];
+
+      angleValEl.textContent = angle + "°";
+      peakValEl.textContent = (currentSlice.max ?? 0).toFixed(3);
+
+      currentSlice._samplerEnergyCos = buildSliceSamplerEnergyTimesCos(currentSlice);
+      rays = [];
+      hasLoggedFrame = false;
+    }
+
+    function addSampleRay() {
+      if (!currentSlice) return;
+
+      if (currentSlice._samplerEnergyCos) {
+        let dir = sampleDirectionFromSampler(currentSlice._samplerEnergyCos);
+        if (!dir) return;
+        if (dir.y < 0) dir = computePerfectReflectionRay();
+        const w = clamp01(dir.y);
+        rays.push({ x: dir.x, y: dir.y, z: dir.z, w });
+        hasLoggedFrame = false;
+        return;
+      }
+
+      const pool = currentSlice.samples;
+      if (!pool || pool.length === 0) {
+        const r = computePerfectReflectionRay();
+        rays.push({ x:r.x, y:r.y, z:r.z, w: clamp01(r.y) });
+        hasLoggedFrame = false;
+        return;
+      }
+
+      let picked = null;
+      const tries = Math.min(pool.length, 24);
+      for (let k = 0; k < tries; k++) {
+        const s = pool[(Math.random() * pool.length) | 0];
+        if (!s || s.length < 3) continue;
+        let x = s[0], y = s[2], z = s[1];
+        const len = Math.hypot(x,y,z) || 1;
+        x /= len; y /= len; z /= len;
+        if (y >= 0) { picked = {x,y,z}; break; }
+      }
+      if (!picked) picked = computePerfectReflectionRay();
+      const w = clamp01(picked.y);
+      rays.push({ x: picked.x, y: picked.y, z: picked.z, w });
+      hasLoggedFrame = false;
+    }
+
+    function setupInteractions() {
+      let drag = false, lx = 0, ly = 0;
+
+      canvas.addEventListener('mousedown', e => {
+        drag = true; lx = e.clientX; ly = e.clientY;
+      });
+      window.addEventListener('mouseup', () => { drag = false; });
+
+      window.addEventListener('mousemove', e => {
+        if (!drag) return;
+        const dx = e.clientX - lx;
+        const dy = e.clientY - ly;
+        lx = e.clientX; ly = e.clientY;
+        camera.yawVel  += dx * 0.0009;
+        camera.pitchVel -= dy * 0.0009; // inverted vertical
+        hasLoggedFrame = false;
+      });
+
+      canvas.addEventListener('wheel', e => {
+        camera.distVel += e.deltaY * 0.0025;
+        e.preventDefault();
+        hasLoggedFrame = false;
+      }, { passive: false });
+
+      window.addEventListener('keydown', e => {
+        if (e.key.toLowerCase() === 'r') {
+          rays = [];
+          hasLoggedFrame = false;
+        }
+      });
+    }
+
+    function init() {
+      if (typeof BSDF_DATA === 'undefined') {
+        console.error("BSDF_DATA is undefined. Check bsdf_data.js import.");
+        return;
+      }
+
+      patchDataFormat();
+
+      const mats = Object.keys(BSDF_DATA);
+      for (let i=0;i<mats.length;i++) {
+        const opt = document.createElement('option');
+        opt.value = mats[i];
+        opt.textContent = mats[i];
+        matSelect.appendChild(opt);
+      }
+
+      matSelect.addEventListener('change', e => loadMaterial(e.target.value));
+      angleSlider.addEventListener('input', updateSlice);
+
+      document.getElementById('sampleBtn').addEventListener('click', () => addSampleRay());
+      document.getElementById('sample10Btn').addEventListener('click', () => { for (let i=0;i<10;i++) addSampleRay(); });
+      document.getElementById('clearBtn').addEventListener('click', () => { rays = []; hasLoggedFrame = false; });
+
+      if (mats.length > 0) {
+        loadMaterial(mats[0]);
+        angleSlider.value = Math.floor((parseInt(angleSlider.max, 10) || 0) / 2);
+        updateSlice();
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      setupInteractions();
+      requestAnimationFrame(loop);
+    }
+
+    if (typeof BSDF_DATA !== 'undefined') init();
+    else console.error("BSDF_DATA missing");
+  </script>
+</body>
+</html>

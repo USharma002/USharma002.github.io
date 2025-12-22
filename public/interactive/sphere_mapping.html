@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Corrected Sphere Mapping Visualizer</title>
+
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --text: #374151;
+      --text-sub: #6b7280;
+      --accent: #e67e22;
+      --border: #d1d5db;
+      --panel-bg: rgba(255, 255, 255, 0.95);
+      --grid-1: #e0e7ff;
+      --grid-2: #a5b4fc;
+      --highlight: #f59e0b;
+      --shadow: rgba(0,0,0,0.1);
+
+      color-scheme: light dark;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container { position: relative; width: 100%; height: 100%; }
+    canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    canvas:active { cursor: grabbing; }
+
+    .overlay {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 340px;
+      max-width: 85vw;
+      background: var(--panel-bg);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 10;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .overlay.hidden { transform: translateX(-120%); opacity: 0; pointer-events: none; }
+
+    .toggle-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 44px;
+      height: 44px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 9;
+      box-shadow: 0 4px 12px var(--shadow);
+      transition: opacity 0.3s;
+    }
+    .toggle-btn.hidden { opacity: 0; pointer-events: none; }
+    .toggle-btn svg, .close-icon svg { fill: var(--text); }
+
+    .close-icon {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+      padding: 4px;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .close-icon:hover { opacity: 1; }
+
+    h3 {
+      margin: 0 0 12px 0;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      margin-bottom: 5px;
+      margin-top: 12px;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    select {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background-color: var(--panel-bg);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(230,126,34,0.20);
+    }
+    select option { background-color: var(--bg); color: var(--text); }
+
+    .math-box {
+      background: rgba(0,0,0,0.04);
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 45px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 5px;
+      gap: 18px;
+    }
+    .val { font-family: "SF Mono","Menlo", monospace; font-weight: 600; color: var(--text); }
+    .highlight { color: var(--accent); }
+    .good { color: #10b981; }
+    .bad { color: #ef4444; }
+
+    .hint {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      font-size: 11px;
+      color: var(--text-sub);
+      text-align: center;
+      font-style: italic;
+    }
+
+    mjx-container { font-size: 110% !important; margin: 0 !important; }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' },
+      startup: { typeset: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="toggle-btn" id="openBtn" onclick="toggleMenu(true)">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path>
+      </svg>
+    </div>
+
+    <div class="overlay" id="menu">
+      <div class="close-icon" onclick="toggleMenu(false)">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
+        </svg>
+      </div>
+
+      <h3>Sampling Mapping</h3>
+
+      <label>Parameterization</label>
+      <select id="mapSelect">
+        <option value="cylindrical">Cylindrical (Area Preserving)</option>
+        <option value="uniform_hemi">Uniform Hemisphere (Area Preserving)</option>
+        <option value="equirect">Equirectangular (Lat-Long)</option>
+        <option value="cosine">Cosine-Weighted (Lambert)</option>
+        <option value="octa">Octahedral (G-Buffer)</option>
+      </select>
+
+      <label>Definition</label>
+      <div class="math-box" id="formulaContainer"></div>
+
+      <label>Inspection</label>
+      <div class="stat-row">
+        <span>Input UV:</span>
+        <span class="val" id="dispUV">-</span>
+      </div>
+      <div class="stat-row">
+        <span>Output (X,Y,Z):</span>
+        <span class="val highlight" id="dispXYZ">-</span>
+      </div>
+      <div class="stat-row">
+        <span>Jacobian (Norm):</span>
+        <span class="val" id="dispJac">-</span>
+      </div>
+      <div class="stat-row">
+        <span>Relative Stretch:</span>
+        <span class="val" id="dispRatio">-</span>
+      </div>
+
+      <div class="hint">Relative Stretch 1.0 = Perfectly Area Preserving</div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script>
+    // -------------------------
+    // Theme detection (from parent, like your reference)
+    // -------------------------
+    function getParentBgRGB() {
+      try {
+        const parentBody = window.parent && window.parent.document && window.parent.document.body;
+        if (!parentBody) return null;
+        const bg = window.getComputedStyle(parentBody).backgroundColor;
+        const rgb = bg && bg.match(/\d+/g);
+        if (!rgb || rgb.length < 3) return null;
+        return [parseInt(rgb[0],10), parseInt(rgb[1],10), parseInt(rgb[2],10)];
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function prefersDark() {
+      try { return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; }
+      catch (e) { return false; }
+    }
+
+    let lastIsDark = null;
+
+    function setTheme(isDark) {
+      const r = document.documentElement.style;
+
+      if (isDark) {
+        r.setProperty('--bg', '#1a1a1a');
+        r.setProperty('--panel-bg', 'rgba(30,30,30,0.90)');
+        r.setProperty('--text', '#e5e7eb');
+        r.setProperty('--text-sub', '#9ca3af');
+        r.setProperty('--border', '#444');
+        r.setProperty('--grid-1', '#1e1b4b');
+        r.setProperty('--grid-2', '#312e81');
+        r.setProperty('--shadow', 'rgba(0,0,0,0.5)');
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        r.setProperty('--bg', '#ffffff');
+        r.setProperty('--panel-bg', 'rgba(255,255,255,0.90)');
+        r.setProperty('--text', '#374151');
+        r.setProperty('--text-sub', '#6b7280');
+        r.setProperty('--border', '#d1d5db');
+        r.setProperty('--grid-1', '#e0e7ff');
+        r.setProperty('--grid-2', '#a5b4fc');
+        r.setProperty('--shadow', 'rgba(0,0,0,0.1)');
+        document.documentElement.style.colorScheme = 'light';
+      }
+
+      document.body.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+      document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+    }
+
+    function detectTheme() {
+      const rgb = getParentBgRGB();
+      let isDark;
+      if (rgb) {
+        const brightness = (rgb[0]*299 + rgb[1]*587 + rgb[2]*114) / 1000;
+        isDark = brightness < 128;
+      } else {
+        isDark = prefersDark();
+      }
+
+      if (lastIsDark === null || isDark !== lastIsDark) {
+        lastIsDark = isDark;
+        setTheme(isDark);
+        updateThemeCache();
+        rebuildUVOffscreen();
+        needsRedraw = true;
+      }
+    }
+
+    // -------------------------
+    // Menu
+    // -------------------------
+    function toggleMenu(show) {
+      const menu = document.getElementById('menu');
+      const btn = document.getElementById('openBtn');
+      if (show) { menu.classList.remove('hidden'); btn.classList.add('hidden'); }
+      else { menu.classList.add('hidden'); btn.classList.remove('hidden'); }
+      needsRedraw = true;
+    }
+    document.getElementById('openBtn').classList.add('hidden');
+
+    // -------------------------
+    // Helpers
+    // -------------------------
+    function getVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function parseHexColor(hex) {
+      // expects "#rrggbb"
+      const h = hex.trim();
+      if (!h || h[0] !== '#' || h.length !== 7) return {r: 128, g: 128, b: 128};
+      const n = parseInt(h.slice(1), 16);
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function mulColorRGB(c, intensity) {
+      const r = Math.min(255, Math.max(0, (c.r * intensity) | 0));
+      const g = Math.min(255, Math.max(0, (c.g * intensity) | 0));
+      const b = Math.min(255, Math.max(0, (c.b * intensity) | 0));
+      return `rgb(${r},${g},${b})`;
+    }
+
+    // -------------------------
+    // Mappings
+    // -------------------------
+    const PI = Math.PI;
+    const TWO_PI = Math.PI * 2;
+
+    const Mappings = {
+      cylindrical: {
+        tex: `$\\begin{aligned} z &= 1-2v \\\\ r &= \\sqrt{1-z^2} \\\\ \\phi &= 2\\pi u \\end{aligned}$`,
+        expectedArea: 4 * PI,
+        fn: (u, v) => {
+          const z = 1 - 2*v;
+          const r = Math.sqrt(Math.max(0, 1 - z*z));
+          const phi = TWO_PI * u;
+          return { x: r*Math.cos(phi), y: z, z: r*Math.sin(phi) };
+        }
+      },
+      uniform_hemi: {
+        tex: `$\\begin{aligned} \\cos\\theta &= v \\\\ \\sin\\theta &= \\sqrt{1-v^2} \\\\ \\phi &= 2\\pi u \\end{aligned}$`,
+        expectedArea: 2 * PI,
+        fn: (u, v) => {
+          const y = v;
+          const r = Math.sqrt(Math.max(0, 1 - y*y));
+          const phi = TWO_PI * u;
+          return { x: r*Math.cos(phi), y: y, z: r*Math.sin(phi) };
+        }
+      },
+      equirect: {
+        tex: `$\\begin{aligned} \\theta &= 2\\pi u \\\\ \\phi &= \\pi v \\\\ J &\\propto \\sin(\\phi) \\end{aligned}$`,
+        expectedArea: 4 * PI,
+        fn: (u, v) => {
+          const theta = u * TWO_PI;
+          const phi = v * PI;
+          return {
+            x: Math.sin(phi)*Math.cos(theta),
+            y: Math.cos(phi),
+            z: Math.sin(phi)*Math.sin(theta)
+          };
+        }
+      },
+      cosine: {
+        tex: `$\\begin{aligned} (x,z) &= \\text{Disk}(u,v) \\\\ y &= \\sqrt{1-x^2-z^2} \\\\ p(\\omega) &\\propto \\cos\\theta \\end{aligned}$`,
+        expectedArea: PI,
+        fn: (u, v) => {
+          let a = 2*u - 1;
+          let b = 2*v - 1;
+          let r, phi;
+
+          if (a === 0 && b === 0) {
+            r = 0; phi = 0;
+          } else if (a*a > b*b) {
+            r = a;
+            phi = (PI/4) * (b/a);
+          } else {
+            r = b;
+            phi = (PI/2) - (PI/4) * (a/b);
+          }
+
+          const x = r * Math.cos(phi);
+          const z = r * Math.sin(phi);
+          const y = Math.sqrt(Math.max(0, 1 - x*x - z*z));
+          return { x, y, z };
+        }
+      },
+      octa: {
+        tex: `$\\begin{aligned} |x|+|y|+|z| &= 1 \\\\ \\text{Wrap}(u,v) &\\to S^2 \\end{aligned}$`,
+        expectedArea: 4 * PI,
+        fn: (u, v) => {
+          let _u = u*2-1, _v = v*2-1;
+          let x = _u, z = _v;
+          let y = 1 - (Math.abs(x) + Math.abs(z));
+          if (y < 0) {
+            let t = x;
+            x = (1-Math.abs(z)) * Math.sign(t);
+            z = (1-Math.abs(t)) * Math.sign(z);
+          }
+          const l = Math.sqrt(x*x+y*y+z*z);
+          return { x: x/l, y: y/l, z: z/l };
+        }
+      }
+    };
+
+    // -------------------------
+    // Canvas + viewports
+    // -------------------------
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let vpL = {x:0,y:0,w:0,h:0};
+    let vpR = {x:0,y:0,w:0,h:0};
+
+    const GRID = 24; // keep this moderate for fill-rate
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+
+      if (W > 768) {
+        const s = Math.min(W/2, H) - 80;
+        vpL = { x: W*0.25 - s/2 + 20, y: (H-s)/2, w: s, h: s };
+        vpR = { x: W*0.75 - s/2,      y: (H-s)/2, w: s, h: s };
+      } else {
+        const s = Math.min(W, H/2) - 40;
+        vpL = { x: (W-s)/2, y: H*0.25 - s/2 + 40, w: s, h: s };
+        vpR = { x: (W-s)/2, y: H*0.75 - s/2 + 20, w: s, h: s };
+      }
+
+      rebuildUVOffscreen();
+      needsRedraw = true;
+    }
+    window.addEventListener('resize', resize);
+
+    // -------------------------
+    // Cached theme colors (avoid per-face parsing)
+    // -------------------------
+    let colGrid1 = {r:0,g:0,b:0};
+    let colGrid2 = {r:0,g:0,b:0};
+    let colHigh  = {r:0,g:0,b:0};
+    let colTextSub = '#6b7280';
+    let colText = '#374151';
+
+    function updateThemeCache() {
+      colGrid1 = parseHexColor(getVar('--grid-1'));
+      colGrid2 = parseHexColor(getVar('--grid-2'));
+      colHigh  = parseHexColor(getVar('--highlight'));
+      colTextSub = getVar('--text-sub');
+      colText = getVar('--text');
+    }
+
+    // -------------------------
+    // UV offscreen cache (checkerboard pre-render)
+    // -------------------------
+    const uvOff = document.createElement('canvas');
+    const uvCtx = uvOff.getContext('2d');
+
+    function rebuildUVOffscreen() {
+      if (!vpL.w) return;
+
+      // Offscreen at 1:1 logical pixels (cheap)
+      uvOff.width = Math.max(1, Math.floor(vpL.w));
+      uvOff.height = Math.max(1, Math.floor(vpL.h));
+
+      const cw = uvOff.width / GRID;
+      const ch = uvOff.height / GRID;
+
+      for (let i=0; i<GRID; i++) {
+        for (let j=0; j<GRID; j++) {
+          const base = ((i+j)&1) ? colGrid2 : colGrid1;
+          uvCtx.fillStyle = `rgb(${base.r},${base.g},${base.b})`;
+          // invert V visually (match your original)
+          const y = (GRID-1-j) * ch;
+          uvCtx.fillRect(i*cw, y, cw+1, ch+1);
+        }
+      }
+    }
+
+    // -------------------------
+    // Mesh cache (big optimization)
+    // - Recompute mapping/points/intensity only when mapping changes.
+    // - Per frame: project vertices + sort faces + draw.
+    // -------------------------
+    const idx = (i,j) => j*(GRID+1) + i;
+
+    let vertices = new Array((GRID+1)*(GRID+1));
+    let proj = new Array((GRID+1)*(GRID+1));
+    let faces = new Array(GRID*GRID);      // {i,j, a,b,c,d, intensity}
+    let faceOrder = new Array(GRID*GRID);  // indices sorted by z
+
+    const dot = (a,b) => a.x*b.x + a.y*b.y + a.z*b.z;
+    const len = v => Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+    const normalize = v => {
+      const l = len(v);
+      return l > 1e-6 ? {x:v.x/l, y:v.y/l, z:v.z/l} : {x:0,y:1,z:0};
+    };
+
+    const lightDir = normalize({x: 0.5, y: 0.8, z: 0.6});
+    const ka = 0.3, kd = 0.6, ks = 0.4, shininess = 30;
+    const Vfixed = {x:0, y:0, z:1};
+
+    function rebuildMesh() {
+      const key = document.getElementById('mapSelect').value;
+      const mapper = Mappings[key];
+
+      // vertices (GRID+1)^2
+      for (let j=0; j<=GRID; j++) {
+        const v = j / GRID;
+        for (let i=0; i<=GRID; i++) {
+          const u = i / GRID;
+          vertices[idx(i,j)] = mapper.fn(u, v);
+          proj[idx(i,j)] = {x:0,y:0,z:0};
+        }
+      }
+
+      // faces (GRID^2)
+      let f = 0;
+      for (let j=0; j<GRID; j++) {
+        for (let i=0; i<GRID; i++) {
+          const a = idx(i, j);
+          const b = idx(i+1, j);
+          const c = idx(i+1, j+1);
+          const d = idx(i, j+1);
+
+          const p00 = vertices[a], p10 = vertices[b], p11 = vertices[c], p01 = vertices[d];
+
+          // centroid normal (your preferred)
+          const center = {
+            x: (p00.x + p10.x + p11.x + p01.x) * 0.25,
+            y: (p00.y + p10.y + p11.y + p01.y) * 0.25,
+            z: (p00.z + p10.z + p11.z + p01.z) * 0.25
+          };
+
+          const N = normalize(center);
+          const LdotN = Math.max(0, dot(N, lightDir));
+
+          const R = {
+            x: 2*LdotN*N.x - lightDir.x,
+            y: 2*LdotN*N.y - lightDir.y,
+            z: 2*LdotN*N.z - lightDir.z
+          };
+          const specAngle = Math.max(0, dot(R, Vfixed));
+          const spec = Math.pow(specAngle, shininess);
+
+          const intensity = ka + kd*LdotN + ks*spec;
+
+          faces[f] = { i, j, a, b, c, d, intensity, z: 0 };
+          faceOrder[f] = f;
+          f++;
+        }
+      }
+
+      needsRedraw = true;
+    }
+
+    // -------------------------
+    // Projection (per frame)
+    // -------------------------
+    let cam = { yaw: 0.6, pitch: 0.4 };
+    let camTarget = { yaw: cam.yaw, pitch: cam.pitch };
+
+    function projectPoint(p, vp) {
+      let x = p.x, y = p.y, z = p.z;
+
+      // yaw
+      let x1 = x*Math.cos(cam.yaw) - z*Math.sin(cam.yaw);
+      let z1 = x*Math.sin(cam.yaw) + z*Math.cos(cam.yaw);
+
+      // pitch
+      let y2 = y*Math.cos(cam.pitch) - z1*Math.sin(cam.pitch);
+      let z2 = y*Math.sin(cam.pitch) + z1*Math.cos(cam.pitch);
+
+      const scale = vp.w * 0.35;
+      return {
+        x: vp.x + vp.w/2 + x1*scale,
+        y: vp.y + vp.h/2 - y2*scale,
+        z: z2
+      };
+    }
+
+    // -------------------------
+    // Drawing
+    // -------------------------
+    let hoverI = -1, hoverJ = -1;
+    let needsRedraw = true;
+
+    function drawAxes() {
+      const o = projectPoint({x:0,y:0,z:0}, vpR);
+      const axL = 1.1;
+      const px = projectPoint({x:axL,y:0,z:0}, vpR);
+      const py = projectPoint({x:0,y:axL,z:0}, vpR);
+      const pz = projectPoint({x:0,y:0,z:axL}, vpR);
+
+      ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(px.x,px.y);
+      ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.stroke();
+
+      ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(py.x,py.y);
+      ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 3; ctx.stroke();
+
+      ctx.beginPath(); ctx.moveTo(o.x,o.y); ctx.lineTo(pz.x,pz.y);
+      ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 3; ctx.stroke();
+    }
+
+    function draw() {
+      if (!vpL.w) return;
+
+      const W = window.innerWidth, H = window.innerHeight;
+      ctx.clearRect(0,0,W,H);
+
+      // UV cached background
+      if (uvOff.width > 0) {
+        ctx.drawImage(uvOff, vpL.x, vpL.y, vpL.w, vpL.h);
+      }
+
+      // UV hover highlight (single rect)
+      if (hoverI >= 0 && hoverJ >= 0) {
+        const cw = vpL.w / GRID;
+        const ch = vpL.h / GRID;
+        ctx.fillStyle = `rgb(${colHigh.r},${colHigh.g},${colHigh.b})`;
+        const y = vpL.y + (GRID-1-hoverJ) * ch;
+        ctx.fillRect(vpL.x + hoverI*cw, y, cw+1, ch+1);
+      }
+
+      // Project all vertices once
+      for (let j=0; j<=GRID; j++) {
+        for (let i=0; i<=GRID; i++) {
+          const id = idx(i,j);
+          proj[id] = projectPoint(vertices[id], vpR);
+        }
+      }
+
+      // Update face z + sort order
+      for (let k=0; k<faces.length; k++) {
+        const f = faces[k];
+        const pa = proj[f.a], pb = proj[f.b], pc = proj[f.c], pd = proj[f.d];
+        f.z = (pa.z + pb.z + pc.z + pd.z) * 0.25;
+      }
+      faceOrder.sort((u,v) => faces[v].z - faces[u].z);
+
+      // Draw faces
+      for (let oi=0; oi<faceOrder.length; oi++) {
+        const f = faces[faceOrder[oi]];
+        const pa = proj[f.a], pb = proj[f.b], pc = proj[f.c], pd = proj[f.d];
+
+        const isHover = (f.i === hoverI && f.j === hoverJ);
+        const base = isHover ? colHigh : (((f.i + f.j) & 1) ? colGrid2 : colGrid1);
+
+        // intensity clamp
+        const intensity = Math.min(1.4, Math.max(0.15, f.intensity));
+        ctx.fillStyle = mulColorRGB(base, intensity);
+
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.lineTo(pc.x, pc.y);
+        ctx.lineTo(pd.x, pd.y);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = isHover ? '#fff' : 'rgba(0,0,0,0.05)';
+        ctx.lineWidth = isHover ? 2 : 0.5;
+        ctx.stroke();
+      }
+
+      drawAxes();
+
+      // Labels
+      ctx.fillStyle = colTextSub;
+      ctx.font = "bold 12px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("TEXTURE SPACE (UV)", vpL.x + vpL.w/2, vpL.y - 10);
+      ctx.fillText("WORLD SPACE", vpR.x + vpR.w/2, vpR.y - 10);
+    }
+
+    // -------------------------
+    // Orbit interaction (snappy + inverted Y + inertia)
+    // -------------------------
+    let isOrbiting = false;
+    let lastX = 0, lastY = 0;
+    let velYaw = 0, velPitch = 0;
+
+    const ROTATE_SENS = 0.008;
+    const PITCH_MIN = -1.25;
+    const PITCH_MAX =  1.25;
+    const FOLLOW = 0.45;     // higher = snappier catch-up
+    const FRICTION = 0.86;   // lower = shorter coast
+    const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
+
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.clientX <= vpR.x) return;
+      isOrbiting = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      velYaw = 0;
+      velPitch = 0;
+      try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+      needsRedraw = true;
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (!isOrbiting) return;
+
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      const dYaw = dx * ROTATE_SENS;
+      const dPitch = -dy * ROTATE_SENS; // inverted
+
+      camTarget.yaw += dYaw;
+      camTarget.pitch = clamp(camTarget.pitch + dPitch, PITCH_MIN, PITCH_MAX);
+
+      // instant response while dragging
+      cam.yaw = camTarget.yaw;
+      cam.pitch = camTarget.pitch;
+
+      velYaw = dYaw;
+      velPitch = dPitch;
+
+      needsRedraw = true;
+    });
+
+    function endOrbit(e) {
+      isOrbiting = false;
+      try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+      needsRedraw = true;
+    }
+    canvas.addEventListener('pointerup', endOrbit);
+    canvas.addEventListener('pointercancel', endOrbit);
+
+    // -------------------------
+    // UV hover + stats (only update when cell changes)
+    // -------------------------
+    canvas.addEventListener('mousemove', (e) => {
+      if (isOrbiting) return;
+
+      const inUV =
+        e.clientX > vpL.x && e.clientX < vpL.x + vpL.w &&
+        e.clientY > vpL.y && e.clientY < vpL.y + vpL.h;
+
+      if (!inUV) return;
+
+      const u = (e.clientX - vpL.x) / vpL.w;
+      const v = 1.0 - (e.clientY - vpL.y) / vpL.h;
+
+      const i = Math.max(0, Math.min(GRID-1, (u * GRID) | 0));
+      const j = Math.max(0, Math.min(GRID-1, (v * GRID) | 0));
+
+      if (i !== hoverI || j !== hoverJ) {
+        hoverI = i;
+        hoverJ = j;
+
+        const key = document.getElementById('mapSelect').value;
+        const m = Mappings[key];
+        const p = m.fn(u, v);
+
+        const eps = 0.005;
+        const pu1 = m.fn(u - eps, v);
+        const pu2 = m.fn(u + eps, v);
+        const du = { x:(pu2.x - pu1.x)/(2*eps), y:(pu2.y - pu1.y)/(2*eps), z:(pu2.z - pu1.z)/(2*eps) };
+
+        const pv1 = m.fn(u, v - eps);
+        const pv2 = m.fn(u, v + eps);
+        const dv = { x:(pv2.x - pv1.x)/(2*eps), y:(pv2.y - pv1.y)/(2*eps), z:(pv2.z - pv1.z)/(2*eps) };
+
+        const cp = { x: du.y*dv.z - du.z*dv.y, y: du.z*dv.x - du.x*dv.z, z: du.x*dv.y - du.y*dv.x };
+        const area = Math.sqrt(cp.x*cp.x + cp.y*cp.y + cp.z*cp.z);
+
+        const ratio = area / m.expectedArea;
+        const isGood = Math.abs(ratio - 1.0) < 0.1;
+
+        document.getElementById('dispUV').textContent = `${u.toFixed(2)}, ${v.toFixed(2)}`;
+        document.getElementById('dispXYZ').textContent = `${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}`;
+        document.getElementById('dispJac').textContent = area.toFixed(2);
+
+        const elRatio = document.getElementById('dispRatio');
+        elRatio.textContent = ratio.toFixed(2) + "x";
+        elRatio.className = "val " + (isGood ? "good" : "bad");
+
+        needsRedraw = true;
+      }
+    });
+
+    // -------------------------
+    // MathJax + formula
+    // -------------------------
+    const sel = document.getElementById('mapSelect');
+
+    function setFormulaDOMOnly() {
+      const key = sel.value;
+      document.getElementById('formulaContainer').innerHTML = Mappings[key].tex;
+    }
+
+    function typesetFormula() {
+      const node = document.getElementById('formulaContainer');
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([node]);
+    }
+
+    function updateFormulaAndMesh() {
+      setFormulaDOMOnly();
+      typesetFormula();
+      rebuildMesh();
+    }
+    sel.addEventListener('change', () => {
+      updateFormulaAndMesh();
+      needsRedraw = true;
+    });
+
+    // -------------------------
+    // Animation loop: draw only when needed (big idle FPS win)
+    // -------------------------
+    function animate() {
+      detectTheme(); // cheap; only rebuilds on change
+
+      if (!isOrbiting) {
+        // inertia
+        if (Math.abs(velYaw) > 1e-5 || Math.abs(velPitch) > 1e-5) {
+          camTarget.yaw += velYaw;
+          camTarget.pitch = clamp(camTarget.pitch + velPitch, PITCH_MIN, PITCH_MAX);
+          velYaw *= FRICTION;
+          velPitch *= FRICTION;
+          needsRedraw = true;
+        } else {
+          velYaw = 0; velPitch = 0;
+        }
+
+        // follow target
+        const dyaw = camTarget.yaw - cam.yaw;
+        const dpitch = camTarget.pitch - cam.pitch;
+        if (Math.abs(dyaw) > 1e-5 || Math.abs(dpitch) > 1e-5) {
+          cam.yaw += dyaw * FOLLOW;
+          cam.pitch += dpitch * FOLLOW;
+          needsRedraw = true;
+        }
+      }
+
+      if (needsRedraw) {
+        needsRedraw = false;
+        draw();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // -------------------------
+    // Init
+    // -------------------------
+    setTimeout(() => {
+      detectTheme();
+      updateThemeCache();
+      resize();
+      rebuildMesh();
+
+      setFormulaDOMOnly();
+      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        MathJax.startup.promise.then(() => typesetFormula()).catch(() => {});
+      } else {
+        typesetFormula();
+      }
+
+      requestAnimationFrame(animate);
+    }, 60);
+  </script>
+</body>
+</html>

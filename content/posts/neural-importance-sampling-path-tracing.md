@@ -77,7 +77,7 @@ width="80%"
 For the faster Ray-Triangle intersection, the BVH (Bounding Volumes Heirarchy) data-structure is usually used. A simplified visualization for it is given below: 
 {{< 
 fullscreen-iframe 
-id="rt_iframe" 
+id="bvh" 
 src="/interactive/bvh.html" 
 height="430" 
 >}}
@@ -146,7 +146,6 @@ Where:
 - Exact analytic solutions are generally impossible for complex scenes; we therefore rely on numerical approximation.
 
 Path Tracing calculates an approximation for the rendering equation using Monte Carlo Integrals.
-
 
 ## Alternate formualtions of the Rendering Equation
 
@@ -974,7 +973,37 @@ width="100%"
 >}}
 
 
-Now that we know about the BxDF functions which define the material properties, we can look at how the Path Tracing is done.
+Now that we know about the BxDF functions which define the material properties, we can look at some example BSDF taken from Mitsuba renderer.
+
+{{< 
+figure src="../../images/path_tracing/bsdf/bsdf_overview.jpg"
+num="9"
+id="fig-bsdf-objects"
+caption="Schematic overview of the most important surface scattering models in Mitsuba 3. The arrows indicate possible outcomes of an interaction with a surface that has the respective model applied to it."
+width="100%" 
+>}}
+
+We can also visualize how they look on hemisphere by using the interactive visualization below. This visualization uses baked bsdf for some materials in the Mitsuba 3 over a hemisphere.
+
+{{< 
+fullscreen-iframe 
+id="bsdf-eval" 
+src="/interactive/bsdf_eval.html" 
+height="500" 
+>}}
+
+
+#### Mapping (Hemi)Sphere to Grid 
+
+As the distribition is on a sphere/hemispehre, when using some methods the hemipshere is mapped to a grid which is then predicted by the guiding method. The grid can be discrete/continuous based on methods, but some of the methods for converion are:
+
+{{< 
+fullscreen-iframe 
+id="sphere-mapping" 
+src="/interactive/sphere_mapping.html" 
+height="500" 
+>}}
+
 
 ### Path Tracing Algorithm Steps (Recursive)
 
