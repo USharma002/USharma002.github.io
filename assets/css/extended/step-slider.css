@@ -92,6 +92,15 @@
     transition: opacity 0.1s ease;
 }
 
-.mj-current { color: #fff; font-weight: 700; }
-.mj-dim { color: #9ca3af; }
-.eq-stack { color: #fff; } /* makes the “full.png slide” all white by default */
+:root{
+  --mj-current:#111827;
+  --mj-dim:#6b7280;
+  --eq-stack:#111827;
+}
+
+/* Apply if theme is on html OR body */
+html[data-theme="dark"], body[data-theme="dark"]{
+  --mj-current:#fff;
+  --mj-dim:#9ca3af;
+  --eq-stack:#fff;
+}

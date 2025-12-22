@@ -87,7 +87,7 @@ height="430"
 - **Visibility**: In order to know whether a given light deposits energy at a point on a surface, we must know whether there is an uninterrupted path from the point to the light source. Fortunately, this question is easy to answer in a ray tracer, since we can just construct the ray from the surface to the light, find the closest ray–object intersection, and compare the intersection distance to the light distance. 
 
 {{< 
-figure src="../../images/path_tracing/visibility.svg"
+figure src="../../images/path_tracing/visibility.png"
 num="3"
 id="fig-visibility"
 caption="Visibility"
@@ -97,7 +97,7 @@ width="80%"
 - **Light scattering at surfaces**:  Each object must provide a description of its appearance, including information about how light interacts with the object’s surface, as well as the nature of the reradiated (or scattered) light. Models for surface scattering are typically parameterized so that they can simulate a variety of appearances. 
 
 {{< 
-figure src="../../images/path_tracing/scattering.svg"
+figure src="../../images/path_tracing/scattering.png"
 num="4"
 id="fig-scattering"
 caption="Scattering"
@@ -255,7 +255,7 @@ After expanding the rendering integra, we can easily visualize the components of
 {{< /step-slider >}}
 
 ## Alternate formualtions of the Rendering Equation
-
+The following formulations can be found in [Eric Veach's PhD Thesis](https://graphics.stanford.edu/papers/veach_thesis/thesis.pdf), or [Tu Wien Rendering Course](https://www.cg.tuwien.ac.at/courses/Rendering/VU/2021S) which I have used as resources.
 
 ### Classic Surface Rendering Equation
 First, this is the standard rendering equation we we'll see in most local path guiding papers. It picks a direction of contribution and intergrates over all the direction of contribution (upper hemisphere / sphere). For a given direction, the radiance already includes all visible surfaces along that ray in that direction, so no explicit visibility term is needed.
@@ -495,6 +495,11 @@ We can see the interaction of light with Specular (S), Diffuse (D) objects. We c
         style="border-radius:8px; min-width: 700px;">
 </iframe>
 
+---
+
+The following sections contain the basics of probability required to knwo about how the Path Tracing is approximating the integral and ensuring the approximation is close enough to the actual solution. The sections are taken from  online version of [Intro to Probability, Statistics and Random Processes](https://www.probabilitycourse.com/)
+
+---
 
 ## Monte Carlo Basics
 
@@ -525,6 +530,7 @@ $$
 > is called the *probability* mass function (PMF) of $X$
 
 Thus, the PMF is a probability measure that gives us probabilities of the possible values for a random variable.
+
 
 ### Properties - Probability Mass Function (PMF)
 
@@ -1212,6 +1218,9 @@ id="fig-bsdf-objects"
 caption="Schematic overview of the most important surface scattering models in Mitsuba 3. The arrows indicate possible outcomes of an interaction with a surface that has the respective model applied to it."
 width="100%" 
 >}}
+
+More details on BSDF can be found on [Mitsuba 3 BSDF Plugins](https://mitsuba.readthedocs.io/en/stable/src/generated/plugins_bsdfs.html) or at [PBRT Reflection models](https://www.pbr-book.org/4ed/Reflection_Models).
+
 
 We can also visualize how they look on hemisphere by using the interactive visualization below. This visualization uses baked bsdf for some materials in the Mitsuba 3 over a hemisphere.
 
@@ -2805,3 +2814,5 @@ width="80%"
 14. TU Wien. *"Rendering (VU)."* Computer Graphics and Algorithms, Summer Semester 2020. [https://www.cg.tuwien.ac.at/courses/Rendering/VU.SS2020.html](https://www.cg.tuwien.ac.at/courses/Rendering/VU.SS2020.html).
 
 15. KAIST CS580: Advanced Topics in Computer Graphics. *"Neural Rendering."* Spring 2024. [https://mhsung.github.io/kaist-cs580-spring-2024/](https://mhsung.github.io/kaist-cs580-spring-2024/).
+
+16. Veach, Eric. Robust Monte Carlo Methods for Light Transport Simulation. PhD dissertation, Stanford University, December 1997. Available: [https://graphics.stanford.edu/papers/veach_thesis/thesis.pdf](https://graphics.stanford.edu/papers/veach_thesis/thesis.pdf)

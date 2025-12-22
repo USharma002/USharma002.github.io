@@ -2,6 +2,7 @@
    1. INLINE TOC (The Clean Look)
    ========================================= */
 
+   
 /* Hide default "Table of Contents" text and markers */
 .toc summary { 
     cursor: pointer; 
@@ -31,26 +32,6 @@
 .toc li { 
     margin-bottom: 0.5rem; 
     color: #888; 
-}
-
-/* Link Styling */
-.toc a { 
-    color: #a0a0a0; 
-    text-decoration: none; 
-    transition: color 0.2s; 
-}
-
-/* Hover State */
-.toc a:hover { 
-    color: #5480f1; 
-    text-decoration: underline; 
-}
-
-/* Active State (Inline) - Bold and Blue */
-.toc a.active {
-    color: #5480f1 !important;
-    font-weight: bold !important;
-    text-decoration: underline;
 }
 
 /* =========================================
