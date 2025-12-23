@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;57 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;59 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -248,23 +248,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#the-importance-sampling-principle" aria-label="The Importance Sampling Principle">The Importance Sampling Principle</a></li></ul>
                     
                 <li>
-                    <a href="#examples-using-a-pair-of-scenes" aria-label="Examples using a pair of scenes">Examples using a pair of scenes</a></li></ul>
-                </li>
-                <li>
-                    <a href="#product-function-integral" aria-label="Product Function Integral">Product Function Integral</a><ul>
-                        
-                <li>
-                    <a href="#mis-motivating-example" aria-label="MIS Motivating Example">MIS Motivating Example</a></li></ul>
-                </li>
-                <li>
-                    <a href="#multiple-importance-sampling-mis" aria-label="Multiple Importance Sampling (MIS)">Multiple Importance Sampling (MIS)</a><ul>
-                        
-                <li>
-                    <a href="#russian-roulette" aria-label="Russian Roulette">Russian Roulette</a><ul>
-                        
-                <li>
-                    <a href="#unbiasedness" aria-label="Unbiasedness">Unbiasedness</a></li></ul>
-                </li></ul>
+                    <a href="#what-are-we-sampling" aria-label="What are we sampling?">What are we sampling?</a></li></ul>
                 </li>
                 <li>
                     <a href="#path-tracing" aria-label="Path Tracing">Path Tracing</a><ul>
@@ -294,17 +278,41 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#how-it-matters-for-data-collection" aria-label="How it matters for data collection">How it matters for data collection</a></li></ul>
                 </li>
                 <li>
-                    <a href="#path-tracing-integrator-in-mitsuba" aria-label="Path Tracing Integrator in Mitsuba">Path Tracing Integrator in Mitsuba</a></li></ul>
+                    <a href="#path-tracing-integrator-in-mitsuba" aria-label="Path Tracing Integrator in Mitsuba">Path Tracing Integrator in Mitsuba</a></li>
+                <li>
+                    <a href="#how-to-sample-next-ray-direction" aria-label="How to sample Next Ray Direction?">How to sample Next Ray Direction?</a></li>
+                <li>
+                    <a href="#examples-using-a-pair-of-scenes" aria-label="Examples using a pair of scenes">Examples using a pair of scenes</a></li></ul>
+                </li>
+                <li>
+                    <a href="#product-function-integral" aria-label="Product Function Integral">Product Function Integral</a><ul>
+                        
+                <li>
+                    <a href="#mis-motivating-example" aria-label="MIS Motivating Example">MIS Motivating Example</a></li></ul>
+                </li>
+                <li>
+                    <a href="#multiple-importance-sampling-mis" aria-label="Multiple Importance Sampling (MIS)">Multiple Importance Sampling (MIS)</a><ul>
+                        
+                <li>
+                    <a href="#russian-roulette" aria-label="Russian Roulette">Russian Roulette</a><ul>
+                        
+                <li>
+                    <a href="#unbiasedness" aria-label="Unbiasedness">Unbiasedness</a></li></ul>
                 </li></ul>
                 </li>
                 <li>
-                    <a href="#a-look-at-the-neural-importance-sampling-techniques" aria-label="A look at the Neural Importance Sampling Techniques">A look at the Neural Importance Sampling Techniques</a><ul>
+                    <a href="#combining-multiple-paths" aria-label="Combining multiple Paths">Combining multiple Paths</a></li></ul>
+                </li>
+                <li>
+                    <a href="#a-look-at-the-importance-sampling-techniques" aria-label="A look at the Importance Sampling Techniques">A look at the Importance Sampling Techniques</a><ul>
                         
+                <li>
+                    <a href="#overview" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#neural-importance-sampling" aria-label="Neural Importance Sampling">Neural Importance Sampling</a><ul>
                         
                 <li>
-                    <a href="#overview" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-1" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#normalizing-flows-and-nice" aria-label="Normalizing Flows and NICE">Normalizing Flows and NICE</a></li>
                 <li>
@@ -346,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#real-time-neural-radiance-caching-for-path-tracing" aria-label="Real-time Neural Radiance Caching for Path Tracing">Real-time Neural Radiance Caching for Path Tracing</a><ul>
                         
                 <li>
-                    <a href="#overview-1" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-2" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#algorithm-design" aria-label="Algorithm Design">Algorithm Design</a><ul>
                         
@@ -370,7 +378,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#neural-parametric-mixtures-for-path-guiding" aria-label="Neural Parametric Mixtures for Path Guiding">Neural Parametric Mixtures for Path Guiding</a><ul>
                         
                 <li>
-                    <a href="#overview-2" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-3" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#von-misesfisher-distribution" aria-label="von Mises–Fisher Distribution">von Mises–Fisher Distribution</a></li>
                 <li>
@@ -398,7 +406,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians" aria-label="Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians">Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians</a><ul>
                         
                 <li>
-                    <a href="#overview-3" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-4" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#limitation" aria-label="Limitation">Limitation</a></li></ul>
                 </li>
@@ -406,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#neural-product-importance-sampling-via-warp-composition" aria-label="Neural Product Importance Sampling via Warp Composition">Neural Product Importance Sampling via Warp Composition</a><ul>
                         
                 <li>
-                    <a href="#overview-4" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-5" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#decomposing-the-product--and" aria-label="Decomposing the Product: $p_1$ and $p_2$">Decomposing the Product: $p_1$ and $p_2$</a><ul>
                         
@@ -452,7 +460,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#neural-path-guiding-with-distribution-factorization" aria-label="Neural Path Guiding with Distribution Factorization">Neural Path Guiding with Distribution Factorization</a><ul>
                         
                 <li>
-                    <a href="#overview-5" aria-label="Overview">Overview</a></li>
+                    <a href="#overview-6" aria-label="Overview">Overview</a></li>
                 <li>
                     <a href="#hemisphere-to-square-mapping" aria-label="Hemisphere-to-Square Mapping">Hemisphere-to-Square Mapping</a></li>
                 <li>
@@ -846,7 +854,7 @@ $$<p>After expanding the rendering integra, we can easily visualize the componen
 
 <div class="step-slider-container no-anim"
      id="step-slider-6"
-     style="width: 850px;"
+     style="width: 100%;"
      data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= E_x \\\\\n\u0026\\quad &#43; \\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega \\\\\n\u0026\\quad &#43; \\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega \\\\\n\u0026\\quad &#43; \\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega \\\\\n\u0026\\quad &#43; \\cdots\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/full.png&#34;,&#34;title&#34;:&#34;Incoming Radiance (Full Rendering Equation)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-current}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/1.png&#34;,&#34;title&#34;:&#34;Direction Radiance (Emitted Light)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-dim}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-current}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/2.jpg&#34;,&#34;title&#34;:&#34;Direct Radiance (Only from the bounce 1)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-dim}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-current}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/3.jpg&#34;,&#34;title&#34;:&#34;Indirect Radiance (Only from the bounce 2)&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL(x\\to v) \u0026= \\class{mj-dim}{E_x} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega} f_r\\,E_{x&#39;}\\,\\cos(\\theta_\\omega)\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\int_{\\Omega}\\int_{\\Omega&#39;} f_r\\,f_r&#39;\\,E_{x&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-current}{\\int_{\\Omega}\\int_{\\Omega&#39;}\\int_{\\Omega&#39;&#39;} f_r\\,f_r&#39;\\,f_r&#39;&#39;\\,E_{x&#39;&#39;&#39;}\\,\\cos(\\theta_{\\omega&#39;&#39;})\\,\\cos(\\theta_{\\omega&#39;})\\,\\cos(\\theta_\\omega)\\,d\\omega&#39;&#39;\\,d\\omega&#39;\\,d\\omega} \\\\\n\u0026\\quad &#43; \\class{mj-dim}{\\cdots}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/4.jpg&#34;,&#34;title&#34;:&#34;Indirect Radiance (Only from the bounce 3)&#34;}]'>
 
   
@@ -1202,7 +1210,7 @@ $$<p>The following visualizes the individual components (similar to the one give
 
 <div class="step-slider-container no-anim"
      id="step-slider-7"
-     style="width: 850px;"
+     style="width: 100%;"
      data-slides='[{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/TE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\n\\mathcal{T} L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/TTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\n\\mathcal{T}^2 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/TTTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\n\\mathcal{T}^3 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;}]'>
 
   
@@ -1501,7 +1509,7 @@ $$
 
 <div class="step-slider-container no-anim"
      id="step-slider-8"
-     style="width: 850px;"
+     style="width: 100%;"
      data-slides='[{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E_TE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e &#43; \\mathcal{T} L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E_TE_TTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e &#43; \\mathcal{T} L_e &#43; \\mathcal{T}^2 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;},{&#34;image&#34;:&#34;../../images/path_tracing/rendering_components/operator/E_TE_TTE_TTTE.jpg&#34;,&#34;title&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$$\n\\begin{aligned}\nL_e &#43; \\mathcal{T} L_e &#43; \\mathcal{T}^2 L_e &#43; \\mathcal{T}^3 L_e\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;}]'>
 
   
@@ -1775,7 +1783,10 @@ $$<p>And:</p>
 <ul>
 <li>$\mathcal{P}$ - set of all possible light paths of all lengths
 $$
-  \bar{x} = (x_0, x_1, \ldots, x_k)
+  \bar{x} = (x_0, x_1, \ldots, x_k) \in \mathcal{P_k}
+  $$
+$$
+  \mathcal{P} = \bigcup_{k=1}^{\infty} \mathcal{P_k}
   $$
 with vertices on surfaces or in volumes.</li>
 <li>$x_0$ - light source point.</li>
@@ -1785,6 +1796,13 @@ with vertices on surfaces or in volumes.</li>
 <li>$V(x_{i-1}, x_i)$ - visibility term.</li>
 <li>$d\mu(\bar{x})$ - path-space measure (product of area, volume, and directional measures).</li>
 </ul>
+<figure id="fig-paths" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/paths/paths.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
+      Sample paths from Path Space Contributing the the final Image
+    </figcaption></figure>
+
+
 <h4 id="visualizing-different-paths">Visualizing Different Paths<a hidden class="anchor" aria-hidden="true" href="#visualizing-different-paths">#</a></h4>
 <p>We can see the interaction of light with Specular (S), Diffuse (D) objects. We can write all of the types of interaction of lights as regular expression $L(D | S)^*E$</p>
 <iframe src="/interactive/light_paths.html"
@@ -2033,7 +2051,7 @@ $$
 $$<p>This is why <strong>importance sampling is so powerful</strong>: by choosing $p(x)$ wisely, we can dramatically reduce the number of samples needed to achieve a target accuracy.</p>
 <figure id="fig-importance-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/importance_sampling_graph.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
       Importance Sampling PDF
     </figcaption></figure>
 
@@ -2044,767 +2062,11 @@ $$<p>This is why <strong>importance sampling is so powerful</strong>: by choosin
         frameborder="0"
         style="border-radius:8px; min-width: 700px;">
 </iframe>
-<h3 id="examples-using-a-pair-of-scenes">Examples using a pair of scenes<a hidden class="anchor" aria-hidden="true" href="#examples-using-a-pair-of-scenes">#</a></h3>
-<p>I have used some renders from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">amazing blog</a> on Multiple Importance Sampling by <strong>Nikita Lisitsa</strong>.</p>
-<p>Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
-One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$)
-both rendered with 64 spp and uniform sampling as well as cosine weighted sampling:</p>
-<div style="display:flex; justify-content:center; gap:20px;">
-  <div style="flex:1; text-align:center;">
-    
-    
-    
-    
-    
-    
-    
-    <div class="dlider-container" id="dlider-10" 
-         data-before-label="Uniform Sampling" 
-         data-after-label="Cosine Weighted Sampling"
-         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-    
-        
-        <div class="dlider-active-label"
-             style="
-                position:absolute;
-                top:10px; left:10px;
-                background:rgba(0,0,0,0.6);
-                color:white;
-                padding:6px 12px;
-                border-radius:4px;
-                font-size:0.85rem;
-                font-weight:600;
-                backdrop-filter: blur(4px);
-                z-index:10;
-            ">
-            Uniform Sampling
-        </div>
-    
-        <div class="dlider-images">
-    
-            <img src="../../images/path_tracing/renders/diffuse-cosine-64.png" alt="After" class="dlider-img-back">
-            <img src="../../images/path_tracing/renders/diffuse-uniform-64.png" alt="Before" class="dlider-img-front">
-    
-            <div class="dlider-handle">
-                <div class="dlider-handle-arrow"></div>
-                <div class="dlider-handle-line"></div>
-            </div>
-    
-            <input type="range" min="0" max="100" value="50" class="dlider-input"
-                   oninput="updateDlider(this)" 
-                   onchange="updateDlider(this)">
-        </div>
-        
-        <div class="dlider-caption">Uniform Sampling vs. Cosine Weighted Sampling</div>
-    </div>
-    
-    <script>
-    function updateDlider(input) {
-        const container = input.closest('.dlider-container');
-        const percent = input.value;
-        container.style.setProperty('--percent', percent + '%');
-    
-        const labelElement = container.querySelector('.dlider-active-label');
-        const beforeLabel = container.dataset.beforeLabel;
-        const afterLabel = container.dataset.afterLabel;
-    
-        
-        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-    }
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.dlider-container').forEach(container => {
-            container.style.setProperty('--percent', '50%');
-    
-            const label = container.querySelector('.dlider-active-label');
-            const beforeLabel = container.dataset.beforeLabel;
-            label.textContent = beforeLabel;
-        });
-    });
-    </script>
-
-  </div>
-  <div style="flex:1; text-align:center;">
-      
-      
-      
-      
-      
-      
-      
-      <div class="dlider-container" id="dlider-11" 
-           data-before-label="Uniform Sampling" 
-           data-after-label="Cosine Weighted Sampling"
-           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-      
-          
-          <div class="dlider-active-label"
-               style="
-                  position:absolute;
-                  top:10px; left:10px;
-                  background:rgba(0,0,0,0.6);
-                  color:white;
-                  padding:6px 12px;
-                  border-radius:4px;
-                  font-size:0.85rem;
-                  font-weight:600;
-                  backdrop-filter: blur(4px);
-                  z-index:10;
-              ">
-              Uniform Sampling
-          </div>
-      
-          <div class="dlider-images">
-      
-              <img src="../../images/path_tracing/renders/metallic-cosine-64.png" alt="After" class="dlider-img-back">
-              <img src="../../images/path_tracing/renders/metallic-uniform-64.png" alt="Before" class="dlider-img-front">
-      
-              <div class="dlider-handle">
-                  <div class="dlider-handle-arrow"></div>
-                  <div class="dlider-handle-line"></div>
-              </div>
-      
-              <input type="range" min="0" max="100" value="50" class="dlider-input"
-                     oninput="updateDlider(this)" 
-                     onchange="updateDlider(this)">
-          </div>
-          
-          <div class="dlider-caption">Uniform Sampling vs. Cosine Weighted Sampling</div>
-      </div>
-      
-      <script>
-      function updateDlider(input) {
-          const container = input.closest('.dlider-container');
-          const percent = input.value;
-          container.style.setProperty('--percent', percent + '%');
-      
-          const labelElement = container.querySelector('.dlider-active-label');
-          const beforeLabel = container.dataset.beforeLabel;
-          const afterLabel = container.dataset.afterLabel;
-      
-          
-          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-      }
-      
-      document.addEventListener("DOMContentLoaded", function() {
-          document.querySelectorAll('.dlider-container').forEach(container => {
-              container.style.setProperty('--percent', '50%');
-      
-              const label = container.querySelector('.dlider-active-label');
-              const beforeLabel = container.dataset.beforeLabel;
-              label.textContent = beforeLabel;
-          });
-      });
-      </script>
-
-  </div>
-</div>
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-<p>However, it doesn&rsquo;t help much with the above scenes neither with the diffuse plane nor with the metallic surface. In these cases, both the uniform distribution and the cosine-weighted one poorly approximate the integrated function</p>
-<ul>
-<li>For the diffuse surface, they are good approximations of the BRDF term, but they poorly approximate the incoming light since the light comes only from a handful of directions pointing to the small sphere</li>
-<li>For the metallic surface, they are OK approximations of the incoming light (which now comes from a lot of directions, because the light source is quite big), but they are poor approximations of the BRDF term, which for nice polished metals wants to reflect light only in a certain direction, and not in a random one</li>
-</ul>
-<p>Thus, we can use the following sampling strategies for the scenes respectively:</p>
-<ul>
-<li>Send random directions directly to the light source! This is called direct light sampling, or light importance sampling, or just light sampling</li>
-<li>One thing we can do for the metallic plane is to figure out a distribution that sends more rays towards the direction of perfect reflection. This distribution is called VNDF</li>
-</ul>
-<div style="display:flex; justify-content:center; gap:20px;">
-  <div style="flex:1; text-align:center;">
-    
-    
-    
-    
-    
-    
-    
-    <div class="dlider-container" id="dlider-12" 
-         data-before-label="Uniform Sampling" 
-         data-after-label="Direct Light Sampling"
-         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-    
-        
-        <div class="dlider-active-label"
-             style="
-                position:absolute;
-                top:10px; left:10px;
-                background:rgba(0,0,0,0.6);
-                color:white;
-                padding:6px 12px;
-                border-radius:4px;
-                font-size:0.85rem;
-                font-weight:600;
-                backdrop-filter: blur(4px);
-                z-index:10;
-            ">
-            Uniform Sampling
-        </div>
-    
-        <div class="dlider-images">
-    
-            <img src="../../images/path_tracing/renders/diffuse-light-64.png" alt="After" class="dlider-img-back">
-            <img src="../../images/path_tracing/renders/diffuse-uniform-64.png" alt="Before" class="dlider-img-front">
-    
-            <div class="dlider-handle">
-                <div class="dlider-handle-arrow"></div>
-                <div class="dlider-handle-line"></div>
-            </div>
-    
-            <input type="range" min="0" max="100" value="50" class="dlider-input"
-                   oninput="updateDlider(this)" 
-                   onchange="updateDlider(this)">
-        </div>
-        
-        <div class="dlider-caption">Uniform Sampling vs. Direct Light Sampling</div>
-    </div>
-    
-    <script>
-    function updateDlider(input) {
-        const container = input.closest('.dlider-container');
-        const percent = input.value;
-        container.style.setProperty('--percent', percent + '%');
-    
-        const labelElement = container.querySelector('.dlider-active-label');
-        const beforeLabel = container.dataset.beforeLabel;
-        const afterLabel = container.dataset.afterLabel;
-    
-        
-        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-    }
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.dlider-container').forEach(container => {
-            container.style.setProperty('--percent', '50%');
-    
-            const label = container.querySelector('.dlider-active-label');
-            const beforeLabel = container.dataset.beforeLabel;
-            label.textContent = beforeLabel;
-        });
-    });
-    </script>
-
-  </div>
-  <div style="flex:1; text-align:center;">
-      
-      
-      
-      
-      
-      
-      
-      <div class="dlider-container" id="dlider-13" 
-           data-before-label="Uniform Sampling" 
-           data-after-label="VNDF Sampling"
-           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-      
-          
-          <div class="dlider-active-label"
-               style="
-                  position:absolute;
-                  top:10px; left:10px;
-                  background:rgba(0,0,0,0.6);
-                  color:white;
-                  padding:6px 12px;
-                  border-radius:4px;
-                  font-size:0.85rem;
-                  font-weight:600;
-                  backdrop-filter: blur(4px);
-                  z-index:10;
-              ">
-              Uniform Sampling
-          </div>
-      
-          <div class="dlider-images">
-      
-              <img src="../../images/path_tracing/renders/metallic-vndf-64.png" alt="After" class="dlider-img-back">
-              <img src="../../images/path_tracing/renders/metallic-uniform-64.png" alt="Before" class="dlider-img-front">
-      
-              <div class="dlider-handle">
-                  <div class="dlider-handle-arrow"></div>
-                  <div class="dlider-handle-line"></div>
-              </div>
-      
-              <input type="range" min="0" max="100" value="50" class="dlider-input"
-                     oninput="updateDlider(this)" 
-                     onchange="updateDlider(this)">
-          </div>
-          
-          <div class="dlider-caption">Uniform Sampling vs. VNDF Sampling</div>
-      </div>
-      
-      <script>
-      function updateDlider(input) {
-          const container = input.closest('.dlider-container');
-          const percent = input.value;
-          container.style.setProperty('--percent', percent + '%');
-      
-          const labelElement = container.querySelector('.dlider-active-label');
-          const beforeLabel = container.dataset.beforeLabel;
-          const afterLabel = container.dataset.afterLabel;
-      
-          
-          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-      }
-      
-      document.addEventListener("DOMContentLoaded", function() {
-          document.querySelectorAll('.dlider-container').forEach(container => {
-              container.style.setProperty('--percent', '50%');
-      
-              const label = container.querySelector('.dlider-active-label');
-              const beforeLabel = container.dataset.beforeLabel;
-              label.textContent = beforeLabel;
-          });
-      });
-      </script>
-
-  </div>
-</div>
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-<h2 id="product-function-integral">Product Function Integral<a hidden class="anchor" aria-hidden="true" href="#product-function-integral">#</a></h2>
-<p>We are frequently face with integrals that are product of two or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially common in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.</p>
-<p>To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:</p>
-<p>Sample using $p_a$, which gives estimator:</p>
-$$
-\frac{f(X)}{p_a(x)} = cf_b(X)
-$$<p>
-where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.</p>
-<p>Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator.</p>
-<h3 id="mis-motivating-example">MIS Motivating Example<a hidden class="anchor" aria-hidden="true" href="#mis-motivating-example">#</a></h3>
-<p>The following is a Cornell Box scene with all diffuse materials. The sampling is done in following ways</p>
-<ul>
-<li>Direct Light Sampling</li>
-<li>Cosine Weighted Sampling</li>
-<li>Direct Light Sampling</li>
-<li>MIS (Cosine Weighted + Direct Light Sampling)</li>
-</ul>
-<p>In the Cornell box scene, we have a lot of diffuse light spreading around the scene, and using just direction light sampling produces a wrong image. The reason is that the requirement $f(x)>0 \Rightarrow p(x)>0$ is not fulfilled for this distribution: there are a lot of directions with non-zero values of our integrated function (namely, the diffuse reflections of light by the objects in the scene), but the distribution only samples a certain subset of directions (those leading directly to a light source).</p>
-<p>So, we have a bunch of sampling strategies (i.e. a bunch of distributions), and each of them works in some cases and doesn&rsquo;t work in other cases.</p>
-<p>How can we combine several distributions at once? One obvious way would be to, say, each time we generate a sample, select one of the distributions at random and just use it in our calculations.</p>
-<p>For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair coin, and with probability 1/2 our estimator is either $\frac{f(X)}{p_1(X)}$ or $\frac{f(X)}{p_2(X)}$. Using cosine-weighted distribution for p1, and direct light sampling for p2, we get the <strong>Wrong MIS</strong> (given below).</p>
-<div style="display:flex; justify-content:center; gap:20px;">
-  <div style="flex:1; text-align:center;">
-    
-    
-    
-    
-    
-    
-    
-    <div class="dlider-container" id="dlider-14" 
-         data-before-label="Uniform Sampling" 
-         data-after-label="Cosine Weighted Sampling"
-         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-    
-        
-        <div class="dlider-active-label"
-             style="
-                position:absolute;
-                top:10px; left:10px;
-                background:rgba(0,0,0,0.6);
-                color:white;
-                padding:6px 12px;
-                border-radius:4px;
-                font-size:0.85rem;
-                font-weight:600;
-                backdrop-filter: blur(4px);
-                z-index:10;
-            ">
-            Uniform Sampling
-        </div>
-    
-        <div class="dlider-images">
-    
-            <img src="../../images/path_tracing/renders/box-cosine-64.png" alt="After" class="dlider-img-back">
-            <img src="../../images/path_tracing/renders/box-uniform-64.png" alt="Before" class="dlider-img-front">
-    
-            <div class="dlider-handle">
-                <div class="dlider-handle-arrow"></div>
-                <div class="dlider-handle-line"></div>
-            </div>
-    
-            <input type="range" min="0" max="100" value="50" class="dlider-input"
-                   oninput="updateDlider(this)" 
-                   onchange="updateDlider(this)">
-        </div>
-        
-        <div class="dlider-caption">Uniform Sampling vs. Cosine Weighted Sampling</div>
-    </div>
-    
-    <script>
-    function updateDlider(input) {
-        const container = input.closest('.dlider-container');
-        const percent = input.value;
-        container.style.setProperty('--percent', percent + '%');
-    
-        const labelElement = container.querySelector('.dlider-active-label');
-        const beforeLabel = container.dataset.beforeLabel;
-        const afterLabel = container.dataset.afterLabel;
-    
-        
-        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-    }
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.dlider-container').forEach(container => {
-            container.style.setProperty('--percent', '50%');
-    
-            const label = container.querySelector('.dlider-active-label');
-            const beforeLabel = container.dataset.beforeLabel;
-            label.textContent = beforeLabel;
-        });
-    });
-    </script>
-
-  </div>
-  <div style="flex:1; text-align:center;">
-      
-      
-      
-      
-      
-      
-      
-      <div class="dlider-container" id="dlider-15" 
-           data-before-label="Cosine Weighted Sampling" 
-           data-after-label="MIS"
-           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-      
-          
-          <div class="dlider-active-label"
-               style="
-                  position:absolute;
-                  top:10px; left:10px;
-                  background:rgba(0,0,0,0.6);
-                  color:white;
-                  padding:6px 12px;
-                  border-radius:4px;
-                  font-size:0.85rem;
-                  font-weight:600;
-                  backdrop-filter: blur(4px);
-                  z-index:10;
-              ">
-              Cosine Weighted Sampling
-          </div>
-      
-          <div class="dlider-images">
-      
-              <img src="../../images/path_tracing/renders/box-mis-64.png" alt="After" class="dlider-img-back">
-              <img src="../../images/path_tracing/renders/box-cosine-64.png" alt="Before" class="dlider-img-front">
-      
-              <div class="dlider-handle">
-                  <div class="dlider-handle-arrow"></div>
-                  <div class="dlider-handle-line"></div>
-              </div>
-      
-              <input type="range" min="0" max="100" value="50" class="dlider-input"
-                     oninput="updateDlider(this)" 
-                     onchange="updateDlider(this)">
-          </div>
-          
-          <div class="dlider-caption">Cosine Weighted Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)</div>
-      </div>
-      
-      <script>
-      function updateDlider(input) {
-          const container = input.closest('.dlider-container');
-          const percent = input.value;
-          container.style.setProperty('--percent', percent + '%');
-      
-          const labelElement = container.querySelector('.dlider-active-label');
-          const beforeLabel = container.dataset.beforeLabel;
-          const afterLabel = container.dataset.afterLabel;
-      
-          
-          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-      }
-      
-      document.addEventListener("DOMContentLoaded", function() {
-          document.querySelectorAll('.dlider-container').forEach(container => {
-              container.style.setProperty('--percent', '50%');
-      
-              const label = container.querySelector('.dlider-active-label');
-              const beforeLabel = container.dataset.beforeLabel;
-              label.textContent = beforeLabel;
-          });
-      });
-      </script>
-
-  </div>
-</div>
-<div style="display:flex; justify-content:center; gap:20px;">
-  <div style="flex:1; text-align:center;">
-    
-    
-    
-    
-    
-    
-    
-    <div class="dlider-container" id="dlider-16" 
-         data-before-label="Uniform Sampling" 
-         data-after-label="Direct Light Sampling"
-         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-    
-        
-        <div class="dlider-active-label"
-             style="
-                position:absolute;
-                top:10px; left:10px;
-                background:rgba(0,0,0,0.6);
-                color:white;
-                padding:6px 12px;
-                border-radius:4px;
-                font-size:0.85rem;
-                font-weight:600;
-                backdrop-filter: blur(4px);
-                z-index:10;
-            ">
-            Uniform Sampling
-        </div>
-    
-        <div class="dlider-images">
-    
-            <img src="../../images/path_tracing/renders/box-light-64.png" alt="After" class="dlider-img-back">
-            <img src="../../images/path_tracing/renders/box-uniform-64.png" alt="Before" class="dlider-img-front">
-    
-            <div class="dlider-handle">
-                <div class="dlider-handle-arrow"></div>
-                <div class="dlider-handle-line"></div>
-            </div>
-    
-            <input type="range" min="0" max="100" value="50" class="dlider-input"
-                   oninput="updateDlider(this)" 
-                   onchange="updateDlider(this)">
-        </div>
-        
-        <div class="dlider-caption">Uniform Sampling vs. Direct Light Sampling</div>
-    </div>
-    
-    <script>
-    function updateDlider(input) {
-        const container = input.closest('.dlider-container');
-        const percent = input.value;
-        container.style.setProperty('--percent', percent + '%');
-    
-        const labelElement = container.querySelector('.dlider-active-label');
-        const beforeLabel = container.dataset.beforeLabel;
-        const afterLabel = container.dataset.afterLabel;
-    
-        
-        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-    }
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll('.dlider-container').forEach(container => {
-            container.style.setProperty('--percent', '50%');
-    
-            const label = container.querySelector('.dlider-active-label');
-            const beforeLabel = container.dataset.beforeLabel;
-            label.textContent = beforeLabel;
-        });
-    });
-    </script>
-
-  </div>
-  <div style="flex:1; text-align:center;">
-      
-      
-      
-      
-      
-      
-      
-      <div class="dlider-container" id="dlider-17" 
-           data-before-label="MIS Wrong" 
-           data-after-label="MIS"
-           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
-      
-          
-          <div class="dlider-active-label"
-               style="
-                  position:absolute;
-                  top:10px; left:10px;
-                  background:rgba(0,0,0,0.6);
-                  color:white;
-                  padding:6px 12px;
-                  border-radius:4px;
-                  font-size:0.85rem;
-                  font-weight:600;
-                  backdrop-filter: blur(4px);
-                  z-index:10;
-              ">
-              MIS Wrong
-          </div>
-      
-          <div class="dlider-images">
-      
-              <img src="../../images/path_tracing/renders/box-mis-64.png" alt="After" class="dlider-img-back">
-              <img src="../../images/path_tracing/renders/box-mis-wrong-64.png" alt="Before" class="dlider-img-front">
-      
-              <div class="dlider-handle">
-                  <div class="dlider-handle-arrow"></div>
-                  <div class="dlider-handle-line"></div>
-              </div>
-      
-              <input type="range" min="0" max="100" value="50" class="dlider-input"
-                     oninput="updateDlider(this)" 
-                     onchange="updateDlider(this)">
-          </div>
-          
-          <div class="dlider-caption">MIS Wrong vs. MIS (Cosine Weighted and Direct Light Sampling)</div>
-      </div>
-      
-      <script>
-      function updateDlider(input) {
-          const container = input.closest('.dlider-container');
-          const percent = input.value;
-          container.style.setProperty('--percent', percent + '%');
-      
-          const labelElement = container.querySelector('.dlider-active-label');
-          const beforeLabel = container.dataset.beforeLabel;
-          const afterLabel = container.dataset.afterLabel;
-      
-          
-          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-      }
-      
-      document.addEventListener("DOMContentLoaded", function() {
-          document.querySelectorAll('.dlider-container').forEach(container => {
-              container.style.setProperty('--percent', '50%');
-      
-              const label = container.querySelector('.dlider-active-label');
-              const beforeLabel = container.dataset.beforeLabel;
-              label.textContent = beforeLabel;
-          });
-      });
-      </script>
-
-  </div>
-</div>
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-<p>To get a correct combination of these pdf we have Multiple Importance Sampling</p>
-<h2 id="multiple-importance-sampling-mis">Multiple Importance Sampling (MIS)<a hidden class="anchor" aria-hidden="true" href="#multiple-importance-sampling-mis">#</a></h2>
-<p>Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to-implement variance reduction technique</p>
-<p>The basic idea is that, when estimating an integral, we should draw samples from multiple sampling distributions, chosen in the hope that at least one of them will match the shape of the integrand reasonably well, even if we do not know which one this will be. MIS then provides a method to weight the samples from each technique that can eliminate large variance spikes due to mismatches between the integrand’s value and the sampling density.</p>
-<blockquote>
-<p><strong>Definition - Multiple Importance Sampling</strong></p>
-<p>With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
-</p>
-$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$<p>where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$</p>
-<p>More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
-</p>
-$$F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$</blockquote>
-<p>The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.</p>
-<p>In practice, a good choice for the weighting functions is given by the <strong>balance heuristic</strong>, which attempts to fulfill this goal by taking into account all the different ways that a sample could have been generated, rather than just the particular one that was used to do so. The balance heuristic’s weighting function for the th sampling technique is :</p>
-$$
-w_i(x) = \frac{n_ip_i(x)}{\sum_j n_j p_j(x)}
-$$<p>The <strong>power heuristic</strong> often reduces variance even further. For an exponent $\beta$, the power heuristic is</p>
-$$
-w_i(x) = \frac{(n_ip_i(x))^\beta}{\sum_j (n_j p_j(x))^\beta}
-$$<iframe src="/interactive/mis.html"
-        width="100%"
-        height="660"
-        frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
-</iframe>
-
-
-
-
-
-
-
-<div class="dlider-container" id="dlider-18" 
-     data-before-label="Uniform Sampling" 
-     data-after-label="MIS"
-     style="width: 60%; max-width: 100%; margin: 2rem auto; position: relative;">
-
-    
-    <div class="dlider-active-label"
-         style="
-            position:absolute;
-            top:10px; left:10px;
-            background:rgba(0,0,0,0.6);
-            color:white;
-            padding:6px 12px;
-            border-radius:4px;
-            font-size:0.85rem;
-            font-weight:600;
-            backdrop-filter: blur(4px);
-            z-index:10;
-        ">
-        Uniform Sampling
-    </div>
-
-    <div class="dlider-images">
-
-        <img src="../../images/path_tracing/renders/box-mis-64.png" alt="After" class="dlider-img-back">
-        <img src="../../images/path_tracing/renders/box-uniform-64.png" alt="Before" class="dlider-img-front">
-
-        <div class="dlider-handle">
-            <div class="dlider-handle-arrow"></div>
-            <div class="dlider-handle-line"></div>
-        </div>
-
-        <input type="range" min="0" max="100" value="50" class="dlider-input"
-               oninput="updateDlider(this)" 
-               onchange="updateDlider(this)">
-    </div>
-    
-    <div class="dlider-caption">Uniform Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)</div>
-</div>
-
-<script>
-function updateDlider(input) {
-    const container = input.closest('.dlider-container');
-    const percent = input.value;
-    container.style.setProperty('--percent', percent + '%');
-
-    const labelElement = container.querySelector('.dlider-active-label');
-    const beforeLabel = container.dataset.beforeLabel;
-    const afterLabel = container.dataset.afterLabel;
-
-    
-    labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll('.dlider-container').forEach(container => {
-        container.style.setProperty('--percent', '50%');
-
-        const label = container.querySelector('.dlider-active-label');
-        const beforeLabel = container.dataset.beforeLabel;
-        label.textContent = beforeLabel;
-    });
-});
-</script>
-
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-<h3 id="russian-roulette">Russian Roulette<a hidden class="anchor" aria-hidden="true" href="#russian-roulette">#</a></h3>
-<p>Russian roulette is a technique that can improve the efficiency of Monte Carlo estimates by skipping the evaluation of samples that would make a small contribution to the final result.</p>
-<p>Select a termination probability $q$. With probability $q$, skip evaluation and contribute $c = 0$. With probability $1-q$, evaluate and weight by $\frac{1}{1-q}$:</p>
-$$
-\boxed{
-\hat{I}_{RR} = 
-\begin{cases}
-0 & \text{with probability } q \\
-\frac{\hat{I}_{MC}}{1-q} & \text{with probability } 1-q
-\end{cases}
-}
-$$<h4 id="unbiasedness">Unbiasedness<a hidden class="anchor" aria-hidden="true" href="#unbiasedness">#</a></h4>
-$$
-\mathbb{E}[\hat{I}_{RR}] = q \cdot 0 + (1-q) \cdot \frac{1}{1-q} \mathbb{E}[\hat{I}_{MC}] = \mathbb{E}[\hat{I}_{MC}] = I
-$$<p>The estimator remains unbiased despite skipping samples.</p>
-<p>With these Monte Carlo foundations in place, let&rsquo;s examine how path tracing implements these concepts in practice.</p>
+<h3 id="what-are-we-sampling">What are we sampling?<a hidden class="anchor" aria-hidden="true" href="#what-are-we-sampling">#</a></h3>
+<p>Now we know the theory of the importance sampling, the question is what is the importance sampling PDF $p(x)$ when we are solving the rendering equation.
+Based on the <a href="/posts/neural-importance-sampling-path-tracing/#alternate-formualtions-of-the-rendering-equation">formulations of the rendering equation</a></p>
+<p>Using the Classic Surface Rendering Equation, we can use a PDF $p(x)$ on the next direction $\omega_i$. So we will be calculating the estimate of the rendering integral using the Monte Carlo Methods by sampling the next direction using this formulation.</p>
+<hr>
 <h2 id="path-tracing">Path Tracing<a hidden class="anchor" aria-hidden="true" href="#path-tracing">#</a></h2>
 <p><strong>Path Tracing</strong> is a rendering algorithm in computer graphics that simulates how light interacts with objects and participating media to generate realistic (physically plausible) images.This is conceptually a simple algorithm; it is based on following th path of a ray of light through a scene as it interacts with and bounces off objects in an environment.</p>
 <p>It is an unbiased estimate of the rendering equation:</p>
@@ -2828,7 +2090,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p>(Some tend to use the term BSDF simply as a category name covering the whole family of BxDF functions.)</p>
 <figure id="fig-bsdf-combined" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/BSDF_combined.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
       BTDF + BRDF Visualization (uniform for both here)
     </figcaption></figure>
 
@@ -2841,14 +2103,14 @@ the light transport properties of the hit material. BSDF is a superset and the g
 </ul>
 <figure id="fig-bsdf-types" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/BSDF.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
       Simple BSDF Visualization for Diffuse, Specular and Glossy Material
     </figcaption></figure>
 
 
 <figure id="fig-bsdf-objects" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/BSDF_object.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       Objects with BSDF for Diffuse, Specular and Glossy Material
     </figcaption></figure>
 
@@ -2856,7 +2118,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p>Now that we know about the BxDF functions which define the material properties, we can look at some example BSDF taken from Mitsuba renderer.</p>
 <figure id="fig-bsdf-objects" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/bsdf/bsdf_overview.jpg" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
       Schematic overview of the most important surface scattering models in Mitsuba 3. The arrows indicate possible outcomes of an interaction with a surface that has the respective model applied to it.
     </figcaption></figure>
 
@@ -2989,7 +2251,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p><strong>Generate camera ray</strong> through pixel using sensor
 <figure id="fig-init-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/init_cam.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       Initialize Scene and Generate Rays using Sensor
     </figcaption></figure>
 
@@ -2999,7 +2261,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p><strong>Trace ray</strong> into scene, find nearest intersection. <strong>(If miss: return background)</strong>.
 <figure id="fig-trace-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/trace.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       Trace Ray and Find Intersection (Base Case Check)
     </figcaption></figure>
 
@@ -3012,7 +2274,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p><strong>Sample BSDF</strong> to choose next direction and <strong>calculate Throughput (color)</strong>.
 <figure id="fig-surface-intersection" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/surface_intersection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       Query BSDF and calculate throughput (BSDF * Cos / PDF)
     </figcaption></figure>
 
@@ -3022,7 +2284,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p><strong>Recursive Call:</strong> Spawn new ray and call <code>Trace()</code> function for it.
 <figure id="fig-sample-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/sample_ray.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
       Spawn ray and recurse: <code>L_in = Trace(new_ray)</code>
     </figcaption></figure>
 
@@ -3032,7 +2294,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p><strong>Recursion Depth:</strong> The function continues calling itself until max depth or Russian Roulette termination.
 <figure id="fig-repeat" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/repeat.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       Recursion continues (Logic repeats for new ray)
     </figcaption></figure>
 
@@ -3042,7 +2304,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p><strong>Return Total Radiance:</strong> Add indirect light to local emission ($L_e + \text{Throughput} \times L_{in}$) and return result.
 <figure id="fig-final-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/final_ray.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       Return combined radiance up the stack
     </figcaption></figure>
 
@@ -3052,7 +2314,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p>Repeat the above process for all pixels (parallely as this is embarrasingly parallel) for some amount of <strong>samples per pixel</strong></p>
 <figure id="fig-2spp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/2spp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       2 Samples Per Pixel
     </figcaption></figure>
 
@@ -3073,35 +2335,35 @@ the light transport properties of the hit material. BSDF is a superset and the g
 
 <style>
    
-  #step-slider-32 .step-viewport{ position: relative; }
-  #step-slider-32 .step-nav{
+  #step-slider-24 .step-viewport{ position: relative; }
+  #step-slider-24 .step-nav{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
   }
-  #step-slider-32 .step-nav.btn-prev{ left: 12px; }
-  #step-slider-32 .step-nav.btn-next{ right: 12px; }
+  #step-slider-24 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-24 .step-nav.btn-next{ right: 12px; }
 
    
    
     
 
    
-  #step-slider-32 .mj-current{
+  #step-slider-24 .mj-current{
     color: #f97316;
     font-weight: 700;
     background: rgba(249,115,22,0.12);
     padding: 2px 6px;
     border-radius: 6px;
   }
-  #step-slider-32 .mj-dim{ color: #9ca3af; }
-  #step-slider-32 .eq-stack{ display: grid; gap: 10px; }
+  #step-slider-24 .mj-dim{ color: #9ca3af; }
+  #step-slider-24 .eq-stack{ display: grid; gap: 10px; }
 </style>
 
 <div class="step-slider-container no-anim"
-     id="step-slider-32"
-     style="width: 850px;"
+     id="step-slider-24"
+     style="width: 100%;"
      data-slides='[{&#34;description&#34;:&#34;Initialize the Scene objects, lights and camera&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/init_cam.png&#34;,&#34;title&#34;:&#34;Initialize Camera&#34;},{&#34;description&#34;:&#34;Trace the primary ray through pixel into the scene&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace1.png&#34;,&#34;title&#34;:&#34;Trace Ray&#34;},{&#34;description&#34;:&#34;Intersect with the scene geometry and query the info like BSDF (blue) to get material property&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/si1.png&#34;,&#34;title&#34;:&#34;Surface Intersection and Query BSDF&#34;},{&#34;description&#34;:&#34;Use PDF (according to BRDF or some other guiding one) to sample the next ray direction&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace2.png&#34;,&#34;title&#34;:&#34;Sample Next Ray Direction&#34;},{&#34;description&#34;:&#34;The recursion stops once a single primitive remains in the volume.&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/si2.png&#34;,&#34;title&#34;:&#34;Surface Intersection and Query BSDF&#34;},{&#34;description&#34;:&#34;The recursion stops once a single primitive remains in the volume.&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace3.png&#34;,&#34;title&#34;:&#34;Sample Next Ray Direction&#34;},{&#34;description&#34;:&#34;Query the Light Emitted and backpropagate&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/trace3.png&#34;,&#34;title&#34;:&#34;Max Depth Reached / Stopping Criterion&#34;},{&#34;description&#34;:&#34;Query the Light Emitted, add it to incoming radiance and backpropagate &#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/back_1.png&#34;,&#34;title&#34;:&#34;Backpropagate the Radiance&#34;},{&#34;description&#34;:&#34;Query the Light Emitted, add it to incoming radiance and backpropagate&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/back_2.png&#34;,&#34;title&#34;:&#34;Backpropagate the Radiance&#34;},{&#34;description&#34;:&#34;Query the Light Emitted, add it to incoming radiance and backpropagate&#34;,&#34;image&#34;:&#34;../../images/path_tracing/path-tracing/back_3.png&#34;,&#34;title&#34;:&#34;Backpropagate the Radiance&#34;}]'>
 
   
@@ -3109,10 +2371,10 @@ the light transport properties of the hit material. BSDF is a superset and the g
 
   <div class="step-viewport">
     
-    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-32', -1)" disabled>❮</button>
-    <button class="step-nav btn-next" onclick="moveSlide('step-slider-32', 1)">❯</button>
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-24', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-24', 1)">❯</button>
 
-    <div class="step-wrapper" id="wrapper-step-slider-32" style="--current-index: 0;">
+    <div class="step-wrapper" id="wrapper-step-slider-24" style="--current-index: 0;">
       
       <div class="step-slide">
         <img src="../../images/path_tracing/path-tracing/init_cam.png" alt="Initialize Camera">
@@ -3346,7 +2608,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 
   
   window.addEventListener('DOMContentLoaded', () => {
-    const c = document.getElementById('step-slider-32');
+    const c = document.getElementById('step-slider-24');
     if (c) window.updateSliderUI(c, 0);
   });
 })();
@@ -3415,21 +2677,21 @@ the light transport properties of the hit material. BSDF is a superset and the g
 <p>To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.</p>
 <figure id="fig-bathroom-ref" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/bathroom.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       Bathroom Scene Reference
     </figcaption></figure>
 
 
 <figure id="fig-bathroom-spp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/bathroom_spp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
       Bathroom Scene Rendered at different SPP
     </figcaption></figure>
 
 
 <figure id="fig-bathroom-depth" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/bathroom_depth.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
       Bathroom Scene Rendered at different depth
     </figcaption></figure>
 
@@ -3661,8 +2923,1398 @@ path vertex-an expensive additional computation step.</p>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">dr</span><span class="o">.</span><span class="n">neq</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">[])</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">mi</span><span class="o">.</span><span class="n">register_integrator</span><span class="p">(</span><span class="s2">&#34;integrator&#34;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">props</span><span class="p">:</span> <span class="n">Simple</span><span class="p">(</span><span class="n">props</span><span class="p">))</span>
-</span></span></code></pre></div><h1 id="a-look-at-the-neural-importance-sampling-techniques">A look at the Neural Importance Sampling Techniques<a hidden class="anchor" aria-hidden="true" href="#a-look-at-the-neural-importance-sampling-techniques">#</a></h1>
-<p>The techniques we&rsquo;ve covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.</p>
+</span></span></code></pre></div><h3 id="how-to-sample-next-ray-direction">How to sample Next Ray Direction?<a hidden class="anchor" aria-hidden="true" href="#how-to-sample-next-ray-direction">#</a></h3>
+<p>Now the above illustration was using the normalized (or approximation of normalized) BRDF Function as sampling.  But there can be different ways/PDFs in which we can sample the next ray depending on the scene. A rough example is given below:</p>
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-29 .step-viewport{ position: relative; }
+  #step-slider-29 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-29 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-29 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-29 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-29 .mj-dim{ color: #9ca3af; }
+  #step-slider-29 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-29"
+     style="width: 100%;"
+     data-slides='[{&#34;description&#34;:&#34;\u003cdiv\u003e\nOur scene consists of two \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight sources\u003c/span\u003e\u003c/b\u003e (yellow), a surface with a specific \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e (light blue lobe) representing the material property, and our chosen \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003esampling PDF\u003c/span\u003e\u003c/b\u003e (purple lobe) which dictates the direction of the next ray.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/scene_setup.png&#34;,&#34;title&#34;:&#34;Scene Setup&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nThe simplest strategy is \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eUniform Sampling\u003c/span\u003e\u003c/b\u003e. This defines a constant probability density $p(\\omega) = \\frac{1}{2\\pi}$ across the entire hemisphere $\\Omega$, completely ignoring \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elighting\u003c/span\u003e\u003c/b\u003e and \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003ematerial properties\u003c/span\u003e\u003c/b\u003e.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/uniform_pdf.png&#34;,&#34;title&#34;:&#34;Uniform Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nBut since \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eUniform Sampling\u003c/span\u003e\u003c/b\u003e ignores \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elighting\u003c/span\u003e\u003c/b\u003e and \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003ematerial properties\u003c/span\u003e\u003c/b\u003e, a lot of the samples are wasted\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/uniform_rays.png&#34;,&#34;title&#34;:&#34;Uniform Sampling Rays&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nWe can improve this using \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eDirect Light Sampling\u003c/span\u003e\u003c/b\u003e (Next Event Estimation) PDF. Here, the \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003ePDF\u003c/span\u003e\u003c/b\u003e is non-zero only in directions pointing toward the \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight sources\u003c/span\u003e\u003c/b\u003e, proportional to their power.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/diffuse_light_pdf.png&#34;,&#34;title&#34;:&#34;Direct Light Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\n\u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eDirect Light Sampling\u003c/span\u003e\u003c/b\u003e works exceptionally well for \u003cb\u003eDiffuse Materials\u003c/b\u003e. Since diffuse surfaces reflect light equally in all directions, hitting the \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight source\u003c/span\u003e\u003c/b\u003e is the only thing that matters for reducing variance.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/diffuse_light_rays.png&#34;,&#34;title&#34;:&#34;(Diffuse) Direct Light Sampling Rays&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nIf the material is \u003cb\u003eGlossy\u003c/b\u003e, the \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e becomes a narrow lobe. Even if we hit a \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight source\u003c/span\u003e\u003c/b\u003e, if that light isn&#39;t in the direction the material reflects, the contribution is multiplied by a near-zero \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e value.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_light_pdf.png&#34;,&#34;title&#34;:&#34;(Glossy) Direct Light Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nIn this glossy case, \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eDirect Light Sampling\u003c/span\u003e\u003c/b\u003e is actually inefficient. We are successfully hitting the \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elights\u003c/span\u003e\u003c/b\u003e, but those samples are \u003cb\u003ewasted\u003c/b\u003e because the material property prevents that light from reaching the camera.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_light_rays.png&#34;,&#34;title&#34;:&#34;(Glossy) Direct Light Sampling Rays&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nTo fix this, we use \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eBRDF Sampling\u003c/span\u003e\u003c/b\u003e. We align our \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003ePDF\u003c/span\u003e\u003c/b\u003e with the \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003ematerial&#39;s reflection lobe\u003c/span\u003e\u003c/b\u003e. This ensures we only sample directions where the surface is physically capable of reflecting radiance.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_brdf_pdf.png&#34;,&#34;title&#34;:&#34;(Glossy) BRDF Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nBy prioritizing directions where the \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e is large, we ensure that every ray we cast has a high potential to contribute to the final pixel color, significantly reducing \u003cb\u003evariance\u003c/b\u003e for glossy reflections.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_brdf_rays.png&#34;,&#34;title&#34;:&#34;(Glossy) BRDF Sampling Rays&#34;}]'>
+
+  
+  <div class="step-active-label">Step 1 / 9</div>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-29', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-29', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-29" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/scene_setup.png" alt="Scene Setup">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/uniform_pdf.png" alt="Uniform Sampling PDF">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/uniform_rays.png" alt="Uniform Sampling Rays">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/diffuse_light_pdf.png" alt="Direct Light Sampling PDF">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/diffuse_light_rays.png" alt="(Diffuse) Direct Light Sampling Rays">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/glossy_light_pdf.png" alt="(Glossy) Direct Light Sampling PDF">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/glossy_light_rays.png" alt="(Glossy) Direct Light Sampling Rays">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/glossy_brdf_pdf.png" alt="(Glossy) BRDF Sampling PDF">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/sampling/glossy_brdf_rays.png" alt="(Glossy) BRDF Sampling Rays">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-29');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
+<p>In the above example, we see that for different scene or materials, different kind of PDF $p(x)$ are better choice. The two used in above are</p>
+<div style="display:flex; justify-content:center; gap:20px;">
+  <div style="flex:1; text-align:center;">
+    <figure id="fig-coupling-layer" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/path_tracing/sampling/bsdf.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
+          Diffuse BRDF PDF (Cosine Weighted)
+        </figcaption></figure>
+    
+
+  </div>
+  <div style="flex:1; text-align:center;">
+    <figure id="fig-coupling-layer" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/path_tracing/sampling/nee.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
+          Next Event Estimation PDF
+        </figcaption></figure>
+    
+
+  </div>
+</div>
+<p>Now we can use these different sampling strategies, but the problem is for some parts of the scene one strategy is better whereas for other parts, the other strategy could be better. In case of the multiple sampling strategies, what to do?</p>
+<h3 id="examples-using-a-pair-of-scenes">Examples using a pair of scenes<a hidden class="anchor" aria-hidden="true" href="#examples-using-a-pair-of-scenes">#</a></h3>
+<p>I have used some renders from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">amazing blog</a> on Multiple Importance Sampling by <strong>Nikita Lisitsa</strong>.</p>
+<p>Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
+One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$)
+both rendered with 64 spp and uniform sampling as well as cosine weighted sampling:</p>
+<div style="display:flex; justify-content:center; gap:20px;">
+  <div style="flex:1; text-align:center;">
+    
+    
+    
+    
+    
+    
+    
+    <div class="dlider-container" id="dlider-32" 
+         data-before-label="Uniform Sampling" 
+         data-after-label="Cosine Weighted Sampling"
+         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+    
+        
+        <div class="dlider-active-label"
+             style="
+                position:absolute;
+                top:10px; left:10px;
+                background:rgba(0,0,0,0.6);
+                color:white;
+                padding:6px 12px;
+                border-radius:4px;
+                font-size:0.85rem;
+                font-weight:600;
+                backdrop-filter: blur(4px);
+                z-index:10;
+            ">
+            Uniform Sampling
+        </div>
+    
+        <div class="dlider-images">
+    
+            <img src="../../images/path_tracing/renders/diffuse-cosine-64.png" alt="After" class="dlider-img-back">
+            <img src="../../images/path_tracing/renders/diffuse-uniform-64.png" alt="Before" class="dlider-img-front">
+    
+            <div class="dlider-handle">
+                <div class="dlider-handle-arrow"></div>
+                <div class="dlider-handle-line"></div>
+            </div>
+    
+            <input type="range" min="0" max="100" value="50" class="dlider-input"
+                   oninput="updateDlider(this)" 
+                   onchange="updateDlider(this)">
+        </div>
+        
+        <div class="dlider-caption">Uniform Sampling vs. Cosine Weighted Sampling</div>
+    </div>
+    
+    <script>
+    function updateDlider(input) {
+        const container = input.closest('.dlider-container');
+        const percent = input.value;
+        container.style.setProperty('--percent', percent + '%');
+    
+        const labelElement = container.querySelector('.dlider-active-label');
+        const beforeLabel = container.dataset.beforeLabel;
+        const afterLabel = container.dataset.afterLabel;
+    
+        
+        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.dlider-container').forEach(container => {
+            container.style.setProperty('--percent', '50%');
+    
+            const label = container.querySelector('.dlider-active-label');
+            const beforeLabel = container.dataset.beforeLabel;
+            label.textContent = beforeLabel;
+        });
+    });
+    </script>
+
+  </div>
+  <div style="flex:1; text-align:center;">
+      
+      
+      
+      
+      
+      
+      
+      <div class="dlider-container" id="dlider-33" 
+           data-before-label="Uniform Sampling" 
+           data-after-label="Cosine Weighted Sampling"
+           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+      
+          
+          <div class="dlider-active-label"
+               style="
+                  position:absolute;
+                  top:10px; left:10px;
+                  background:rgba(0,0,0,0.6);
+                  color:white;
+                  padding:6px 12px;
+                  border-radius:4px;
+                  font-size:0.85rem;
+                  font-weight:600;
+                  backdrop-filter: blur(4px);
+                  z-index:10;
+              ">
+              Uniform Sampling
+          </div>
+      
+          <div class="dlider-images">
+      
+              <img src="../../images/path_tracing/renders/metallic-cosine-64.png" alt="After" class="dlider-img-back">
+              <img src="../../images/path_tracing/renders/metallic-uniform-64.png" alt="Before" class="dlider-img-front">
+      
+              <div class="dlider-handle">
+                  <div class="dlider-handle-arrow"></div>
+                  <div class="dlider-handle-line"></div>
+              </div>
+      
+              <input type="range" min="0" max="100" value="50" class="dlider-input"
+                     oninput="updateDlider(this)" 
+                     onchange="updateDlider(this)">
+          </div>
+          
+          <div class="dlider-caption">Uniform Sampling vs. Cosine Weighted Sampling</div>
+      </div>
+      
+      <script>
+      function updateDlider(input) {
+          const container = input.closest('.dlider-container');
+          const percent = input.value;
+          container.style.setProperty('--percent', percent + '%');
+      
+          const labelElement = container.querySelector('.dlider-active-label');
+          const beforeLabel = container.dataset.beforeLabel;
+          const afterLabel = container.dataset.afterLabel;
+      
+          
+          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+      }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll('.dlider-container').forEach(container => {
+              container.style.setProperty('--percent', '50%');
+      
+              const label = container.querySelector('.dlider-active-label');
+              const beforeLabel = container.dataset.beforeLabel;
+              label.textContent = beforeLabel;
+          });
+      });
+      </script>
+
+  </div>
+</div>
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+<p>However, it doesn&rsquo;t help much with the above scenes neither with the diffuse plane nor with the metallic surface. In these cases, both the uniform distribution and the cosine-weighted one poorly approximate the integrated function</p>
+<ul>
+<li>For the diffuse surface, they are good approximations of the BRDF term, but they poorly approximate the incoming light since the light comes only from a handful of directions pointing to the small sphere</li>
+<li>For the metallic surface, they are OK approximations of the incoming light (which now comes from a lot of directions, because the light source is quite big), but they are poor approximations of the BRDF term, which for nice polished metals wants to reflect light only in a certain direction, and not in a random one</li>
+</ul>
+<p>Thus, we can use the following sampling strategies for the scenes respectively:</p>
+<ul>
+<li>Send random directions directly to the light source! This is called direct light sampling, or light importance sampling, or just light sampling</li>
+<li>One thing we can do for the metallic plane is to figure out a distribution that sends more rays towards the direction of perfect reflection. This distribution is called VNDF</li>
+</ul>
+<div style="display:flex; justify-content:center; gap:20px;">
+  <div style="flex:1; text-align:center;">
+    
+    
+    
+    
+    
+    
+    
+    <div class="dlider-container" id="dlider-34" 
+         data-before-label="Uniform Sampling" 
+         data-after-label="Direct Light Sampling"
+         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+    
+        
+        <div class="dlider-active-label"
+             style="
+                position:absolute;
+                top:10px; left:10px;
+                background:rgba(0,0,0,0.6);
+                color:white;
+                padding:6px 12px;
+                border-radius:4px;
+                font-size:0.85rem;
+                font-weight:600;
+                backdrop-filter: blur(4px);
+                z-index:10;
+            ">
+            Uniform Sampling
+        </div>
+    
+        <div class="dlider-images">
+    
+            <img src="../../images/path_tracing/renders/diffuse-light-64.png" alt="After" class="dlider-img-back">
+            <img src="../../images/path_tracing/renders/diffuse-uniform-64.png" alt="Before" class="dlider-img-front">
+    
+            <div class="dlider-handle">
+                <div class="dlider-handle-arrow"></div>
+                <div class="dlider-handle-line"></div>
+            </div>
+    
+            <input type="range" min="0" max="100" value="50" class="dlider-input"
+                   oninput="updateDlider(this)" 
+                   onchange="updateDlider(this)">
+        </div>
+        
+        <div class="dlider-caption">Uniform Sampling vs. Direct Light Sampling</div>
+    </div>
+    
+    <script>
+    function updateDlider(input) {
+        const container = input.closest('.dlider-container');
+        const percent = input.value;
+        container.style.setProperty('--percent', percent + '%');
+    
+        const labelElement = container.querySelector('.dlider-active-label');
+        const beforeLabel = container.dataset.beforeLabel;
+        const afterLabel = container.dataset.afterLabel;
+    
+        
+        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.dlider-container').forEach(container => {
+            container.style.setProperty('--percent', '50%');
+    
+            const label = container.querySelector('.dlider-active-label');
+            const beforeLabel = container.dataset.beforeLabel;
+            label.textContent = beforeLabel;
+        });
+    });
+    </script>
+
+  </div>
+  <div style="flex:1; text-align:center;">
+      
+      
+      
+      
+      
+      
+      
+      <div class="dlider-container" id="dlider-35" 
+           data-before-label="Uniform Sampling" 
+           data-after-label="VNDF Sampling"
+           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+      
+          
+          <div class="dlider-active-label"
+               style="
+                  position:absolute;
+                  top:10px; left:10px;
+                  background:rgba(0,0,0,0.6);
+                  color:white;
+                  padding:6px 12px;
+                  border-radius:4px;
+                  font-size:0.85rem;
+                  font-weight:600;
+                  backdrop-filter: blur(4px);
+                  z-index:10;
+              ">
+              Uniform Sampling
+          </div>
+      
+          <div class="dlider-images">
+      
+              <img src="../../images/path_tracing/renders/metallic-vndf-64.png" alt="After" class="dlider-img-back">
+              <img src="../../images/path_tracing/renders/metallic-uniform-64.png" alt="Before" class="dlider-img-front">
+      
+              <div class="dlider-handle">
+                  <div class="dlider-handle-arrow"></div>
+                  <div class="dlider-handle-line"></div>
+              </div>
+      
+              <input type="range" min="0" max="100" value="50" class="dlider-input"
+                     oninput="updateDlider(this)" 
+                     onchange="updateDlider(this)">
+          </div>
+          
+          <div class="dlider-caption">Uniform Sampling vs. VNDF Sampling</div>
+      </div>
+      
+      <script>
+      function updateDlider(input) {
+          const container = input.closest('.dlider-container');
+          const percent = input.value;
+          container.style.setProperty('--percent', percent + '%');
+      
+          const labelElement = container.querySelector('.dlider-active-label');
+          const beforeLabel = container.dataset.beforeLabel;
+          const afterLabel = container.dataset.afterLabel;
+      
+          
+          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+      }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll('.dlider-container').forEach(container => {
+              container.style.setProperty('--percent', '50%');
+      
+              const label = container.querySelector('.dlider-active-label');
+              const beforeLabel = container.dataset.beforeLabel;
+              label.textContent = beforeLabel;
+          });
+      });
+      </script>
+
+  </div>
+</div>
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+<h2 id="product-function-integral">Product Function Integral<a hidden class="anchor" aria-hidden="true" href="#product-function-integral">#</a></h2>
+<p>We are frequently face with integrals that are product of two or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially common in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.</p>
+<p>To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:</p>
+<p>Sample using $p_a$, which gives estimator:</p>
+$$
+\frac{f(X)}{p_a(x)} = cf_b(X)
+$$<p>
+where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.</p>
+<p>Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator.</p>
+<h3 id="mis-motivating-example">MIS Motivating Example<a hidden class="anchor" aria-hidden="true" href="#mis-motivating-example">#</a></h3>
+<p>The following is a Cornell Box scene with all diffuse materials. The sampling is done in following ways</p>
+<ul>
+<li>Direct Light Sampling</li>
+<li>Cosine Weighted Sampling</li>
+<li>Direct Light Sampling</li>
+<li>MIS (Cosine Weighted + Direct Light Sampling)</li>
+</ul>
+<p>In the Cornell box scene, we have a lot of diffuse light spreading around the scene, and using just direction light sampling produces a wrong image. The reason is that the requirement $f(x)>0 \Rightarrow p(x)>0$ is not fulfilled for this distribution: there are a lot of directions with non-zero values of our integrated function (namely, the diffuse reflections of light by the objects in the scene), but the distribution only samples a certain subset of directions (those leading directly to a light source).</p>
+<p>So, we have a bunch of sampling strategies (i.e. a bunch of distributions), and each of them works in some cases and doesn&rsquo;t work in other cases.</p>
+<p>How can we combine several distributions at once? One obvious way would be to, say, each time we generate a sample, select one of the distributions at random and just use it in our calculations.</p>
+<p>For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair coin, and with probability 1/2 our estimator is either $\frac{f(X)}{p_1(X)}$ or $\frac{f(X)}{p_2(X)}$. Using cosine-weighted distribution for p1, and direct light sampling for p2, we get the <strong>Wrong MIS</strong> (given below).</p>
+<div style="display:flex; justify-content:center; gap:20px;">
+  <div style="flex:1; text-align:center;">
+    
+    
+    
+    
+    
+    
+    
+    <div class="dlider-container" id="dlider-36" 
+         data-before-label="Uniform Sampling" 
+         data-after-label="Cosine Weighted Sampling"
+         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+    
+        
+        <div class="dlider-active-label"
+             style="
+                position:absolute;
+                top:10px; left:10px;
+                background:rgba(0,0,0,0.6);
+                color:white;
+                padding:6px 12px;
+                border-radius:4px;
+                font-size:0.85rem;
+                font-weight:600;
+                backdrop-filter: blur(4px);
+                z-index:10;
+            ">
+            Uniform Sampling
+        </div>
+    
+        <div class="dlider-images">
+    
+            <img src="../../images/path_tracing/renders/box-cosine-64.png" alt="After" class="dlider-img-back">
+            <img src="../../images/path_tracing/renders/box-uniform-64.png" alt="Before" class="dlider-img-front">
+    
+            <div class="dlider-handle">
+                <div class="dlider-handle-arrow"></div>
+                <div class="dlider-handle-line"></div>
+            </div>
+    
+            <input type="range" min="0" max="100" value="50" class="dlider-input"
+                   oninput="updateDlider(this)" 
+                   onchange="updateDlider(this)">
+        </div>
+        
+        <div class="dlider-caption">Uniform Sampling vs. Cosine Weighted Sampling</div>
+    </div>
+    
+    <script>
+    function updateDlider(input) {
+        const container = input.closest('.dlider-container');
+        const percent = input.value;
+        container.style.setProperty('--percent', percent + '%');
+    
+        const labelElement = container.querySelector('.dlider-active-label');
+        const beforeLabel = container.dataset.beforeLabel;
+        const afterLabel = container.dataset.afterLabel;
+    
+        
+        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.dlider-container').forEach(container => {
+            container.style.setProperty('--percent', '50%');
+    
+            const label = container.querySelector('.dlider-active-label');
+            const beforeLabel = container.dataset.beforeLabel;
+            label.textContent = beforeLabel;
+        });
+    });
+    </script>
+
+  </div>
+  <div style="flex:1; text-align:center;">
+      
+      
+      
+      
+      
+      
+      
+      <div class="dlider-container" id="dlider-37" 
+           data-before-label="Cosine Weighted Sampling" 
+           data-after-label="MIS"
+           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+      
+          
+          <div class="dlider-active-label"
+               style="
+                  position:absolute;
+                  top:10px; left:10px;
+                  background:rgba(0,0,0,0.6);
+                  color:white;
+                  padding:6px 12px;
+                  border-radius:4px;
+                  font-size:0.85rem;
+                  font-weight:600;
+                  backdrop-filter: blur(4px);
+                  z-index:10;
+              ">
+              Cosine Weighted Sampling
+          </div>
+      
+          <div class="dlider-images">
+      
+              <img src="../../images/path_tracing/renders/box-mis-64.png" alt="After" class="dlider-img-back">
+              <img src="../../images/path_tracing/renders/box-cosine-64.png" alt="Before" class="dlider-img-front">
+      
+              <div class="dlider-handle">
+                  <div class="dlider-handle-arrow"></div>
+                  <div class="dlider-handle-line"></div>
+              </div>
+      
+              <input type="range" min="0" max="100" value="50" class="dlider-input"
+                     oninput="updateDlider(this)" 
+                     onchange="updateDlider(this)">
+          </div>
+          
+          <div class="dlider-caption">Cosine Weighted Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)</div>
+      </div>
+      
+      <script>
+      function updateDlider(input) {
+          const container = input.closest('.dlider-container');
+          const percent = input.value;
+          container.style.setProperty('--percent', percent + '%');
+      
+          const labelElement = container.querySelector('.dlider-active-label');
+          const beforeLabel = container.dataset.beforeLabel;
+          const afterLabel = container.dataset.afterLabel;
+      
+          
+          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+      }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll('.dlider-container').forEach(container => {
+              container.style.setProperty('--percent', '50%');
+      
+              const label = container.querySelector('.dlider-active-label');
+              const beforeLabel = container.dataset.beforeLabel;
+              label.textContent = beforeLabel;
+          });
+      });
+      </script>
+
+  </div>
+</div>
+<div style="display:flex; justify-content:center; gap:20px;">
+  <div style="flex:1; text-align:center;">
+    
+    
+    
+    
+    
+    
+    
+    <div class="dlider-container" id="dlider-38" 
+         data-before-label="Uniform Sampling" 
+         data-after-label="Direct Light Sampling"
+         style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+    
+        
+        <div class="dlider-active-label"
+             style="
+                position:absolute;
+                top:10px; left:10px;
+                background:rgba(0,0,0,0.6);
+                color:white;
+                padding:6px 12px;
+                border-radius:4px;
+                font-size:0.85rem;
+                font-weight:600;
+                backdrop-filter: blur(4px);
+                z-index:10;
+            ">
+            Uniform Sampling
+        </div>
+    
+        <div class="dlider-images">
+    
+            <img src="../../images/path_tracing/renders/box-light-64.png" alt="After" class="dlider-img-back">
+            <img src="../../images/path_tracing/renders/box-uniform-64.png" alt="Before" class="dlider-img-front">
+    
+            <div class="dlider-handle">
+                <div class="dlider-handle-arrow"></div>
+                <div class="dlider-handle-line"></div>
+            </div>
+    
+            <input type="range" min="0" max="100" value="50" class="dlider-input"
+                   oninput="updateDlider(this)" 
+                   onchange="updateDlider(this)">
+        </div>
+        
+        <div class="dlider-caption">Uniform Sampling vs. Direct Light Sampling</div>
+    </div>
+    
+    <script>
+    function updateDlider(input) {
+        const container = input.closest('.dlider-container');
+        const percent = input.value;
+        container.style.setProperty('--percent', percent + '%');
+    
+        const labelElement = container.querySelector('.dlider-active-label');
+        const beforeLabel = container.dataset.beforeLabel;
+        const afterLabel = container.dataset.afterLabel;
+    
+        
+        labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll('.dlider-container').forEach(container => {
+            container.style.setProperty('--percent', '50%');
+    
+            const label = container.querySelector('.dlider-active-label');
+            const beforeLabel = container.dataset.beforeLabel;
+            label.textContent = beforeLabel;
+        });
+    });
+    </script>
+
+  </div>
+  <div style="flex:1; text-align:center;">
+      
+      
+      
+      
+      
+      
+      
+      <div class="dlider-container" id="dlider-39" 
+           data-before-label="MIS Wrong" 
+           data-after-label="MIS"
+           style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
+      
+          
+          <div class="dlider-active-label"
+               style="
+                  position:absolute;
+                  top:10px; left:10px;
+                  background:rgba(0,0,0,0.6);
+                  color:white;
+                  padding:6px 12px;
+                  border-radius:4px;
+                  font-size:0.85rem;
+                  font-weight:600;
+                  backdrop-filter: blur(4px);
+                  z-index:10;
+              ">
+              MIS Wrong
+          </div>
+      
+          <div class="dlider-images">
+      
+              <img src="../../images/path_tracing/renders/box-mis-64.png" alt="After" class="dlider-img-back">
+              <img src="../../images/path_tracing/renders/box-mis-wrong-64.png" alt="Before" class="dlider-img-front">
+      
+              <div class="dlider-handle">
+                  <div class="dlider-handle-arrow"></div>
+                  <div class="dlider-handle-line"></div>
+              </div>
+      
+              <input type="range" min="0" max="100" value="50" class="dlider-input"
+                     oninput="updateDlider(this)" 
+                     onchange="updateDlider(this)">
+          </div>
+          
+          <div class="dlider-caption">MIS Wrong vs. MIS (Cosine Weighted and Direct Light Sampling)</div>
+      </div>
+      
+      <script>
+      function updateDlider(input) {
+          const container = input.closest('.dlider-container');
+          const percent = input.value;
+          container.style.setProperty('--percent', percent + '%');
+      
+          const labelElement = container.querySelector('.dlider-active-label');
+          const beforeLabel = container.dataset.beforeLabel;
+          const afterLabel = container.dataset.afterLabel;
+      
+          
+          labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+      }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll('.dlider-container').forEach(container => {
+              container.style.setProperty('--percent', '50%');
+      
+              const label = container.querySelector('.dlider-active-label');
+              const beforeLabel = container.dataset.beforeLabel;
+              label.textContent = beforeLabel;
+          });
+      });
+      </script>
+
+  </div>
+</div>
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+<p>To get a correct combination of these pdf we have Multiple Importance Sampling</p>
+<h2 id="multiple-importance-sampling-mis">Multiple Importance Sampling (MIS)<a hidden class="anchor" aria-hidden="true" href="#multiple-importance-sampling-mis">#</a></h2>
+<p>Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to-implement variance reduction technique</p>
+<p>The basic idea is that, when estimating an integral, we should draw samples from multiple sampling distributions, chosen in the hope that at least one of them will match the shape of the integrand reasonably well, even if we do not know which one this will be. MIS then provides a method to weight the samples from each technique that can eliminate large variance spikes due to mismatches between the integrand’s value and the sampling density.</p>
+<blockquote>
+<p><strong>Definition - Multiple Importance Sampling</strong></p>
+<p>With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
+</p>
+$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$<p>where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$</p>
+<p>More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
+</p>
+$$F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$</blockquote>
+<p>The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.</p>
+<p>In practice, a good choice for the weighting functions is given by the <strong>balance heuristic</strong>, which attempts to fulfill this goal by taking into account all the different ways that a sample could have been generated, rather than just the particular one that was used to do so. The balance heuristic’s weighting function for the th sampling technique is :</p>
+$$
+w_i(x) = \frac{n_ip_i(x)}{\sum_j n_j p_j(x)}
+$$<p>The <strong>power heuristic</strong> often reduces variance even further. For an exponent $\beta$, the power heuristic is</p>
+$$
+w_i(x) = \frac{(n_ip_i(x))^\beta}{\sum_j (n_j p_j(x))^\beta}
+$$<iframe src="/interactive/mis.html"
+        width="100%"
+        height="660"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+
+
+
+
+
+<div class="dlider-container" id="dlider-40" 
+     data-before-label="Uniform Sampling" 
+     data-after-label="MIS"
+     style="width: 60%; max-width: 100%; margin: 2rem auto; position: relative;">
+
+    
+    <div class="dlider-active-label"
+         style="
+            position:absolute;
+            top:10px; left:10px;
+            background:rgba(0,0,0,0.6);
+            color:white;
+            padding:6px 12px;
+            border-radius:4px;
+            font-size:0.85rem;
+            font-weight:600;
+            backdrop-filter: blur(4px);
+            z-index:10;
+        ">
+        Uniform Sampling
+    </div>
+
+    <div class="dlider-images">
+
+        <img src="../../images/path_tracing/renders/box-mis-64.png" alt="After" class="dlider-img-back">
+        <img src="../../images/path_tracing/renders/box-uniform-64.png" alt="Before" class="dlider-img-front">
+
+        <div class="dlider-handle">
+            <div class="dlider-handle-arrow"></div>
+            <div class="dlider-handle-line"></div>
+        </div>
+
+        <input type="range" min="0" max="100" value="50" class="dlider-input"
+               oninput="updateDlider(this)" 
+               onchange="updateDlider(this)">
+    </div>
+    
+    <div class="dlider-caption">Uniform Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)</div>
+</div>
+
+<script>
+function updateDlider(input) {
+    const container = input.closest('.dlider-container');
+    const percent = input.value;
+    container.style.setProperty('--percent', percent + '%');
+
+    const labelElement = container.querySelector('.dlider-active-label');
+    const beforeLabel = container.dataset.beforeLabel;
+    const afterLabel = container.dataset.afterLabel;
+
+    
+    labelElement.textContent = percent < 50 ? afterLabel : beforeLabel;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.dlider-container').forEach(container => {
+        container.style.setProperty('--percent', '50%');
+
+        const label = container.querySelector('.dlider-active-label');
+        const beforeLabel = container.dataset.beforeLabel;
+        label.textContent = beforeLabel;
+    });
+});
+</script>
+
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+<h3 id="russian-roulette">Russian Roulette<a hidden class="anchor" aria-hidden="true" href="#russian-roulette">#</a></h3>
+<p>Russian roulette is a technique that can improve the efficiency of Monte Carlo estimates by skipping the evaluation of samples that would make a small contribution to the final result.</p>
+<p>Select a termination probability $q$. With probability $q$, skip evaluation and contribute $c = 0$. With probability $1-q$, evaluate and weight by $\frac{1}{1-q}$:</p>
+$$
+\boxed{
+\hat{I}_{RR} = 
+\begin{cases}
+0 & \text{with probability } q \\
+\frac{\hat{I}_{MC}}{1-q} & \text{with probability } 1-q
+\end{cases}
+}
+$$<h4 id="unbiasedness">Unbiasedness<a hidden class="anchor" aria-hidden="true" href="#unbiasedness">#</a></h4>
+$$
+\mathbb{E}[\hat{I}_{RR}] = q \cdot 0 + (1-q) \cdot \frac{1}{1-q} \mathbb{E}[\hat{I}_{MC}] = \mathbb{E}[\hat{I}_{MC}] = I
+$$<p>The estimator remains unbiased despite skipping samples.</p>
+<p>With these Monte Carlo foundations in place, let&rsquo;s examine how path tracing implements these concepts in practice.</p>
+<h2 id="combining-multiple-paths">Combining multiple Paths<a hidden class="anchor" aria-hidden="true" href="#combining-multiple-paths">#</a></h2>
+<p>We now have looked at different methods of combining different samples. We can now look at the <a href="/posts/neural-importance-sampling-path-tracing/#path-integral-formulation-of-light-transport">path integral formulation</a> and look at individual path sinstead of the next direction. We can observe that we can construct paths using multiple techniques and also combine all of them as visualized below. I&rsquo;ve used the images from the <a href="https://graphics.cs.cmu.edu/courses/15-468/2024_spring">CMU 15-468: Physically Based Rendering and Advanced Image Synthesis</a> course webpage and can be referred for more details.</p>
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-41 .step-viewport{ position: relative; }
+  #step-slider-41 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-41 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-41 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-41 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-41 .mj-dim{ color: #9ca3af; }
+  #step-slider-41 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-41"
+     style="width: 100%;"
+     data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_0\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3|\\mathbf{x}_0\\mathbf{x}_1\\mathbf{x}_2)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/pt.png&#34;,&#34;title&#34;:&#34;Path Construction: Path Tracing without NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_0\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3) \\rlap{\\quad \\text{(assuming uniform area sampling)}}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/pt_nee.png&#34;,&#34;title&#34;:&#34;Path Construction: Path Tracing with NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0|\\mathbf{x}_3\\mathbf{x}_2\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_3\\mathbf{x}_2) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_3) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/lt.png&#34;,&#34;title&#34;:&#34;Path Construction: Light Tracing without NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0) \\rlap{\\quad \\text{(assuming uniform aperture sampling)}} \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_3\\mathbf{x}_2) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_3) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/lt_nee.png&#34;,&#34;title&#34;:&#34;Path Construction: Light Tracing with NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 1em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0)\\\\\n\u0026\\quad \\times p(\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/independent.png&#34;,&#34;title&#34;:&#34;Path Construction: Independent Path Vertices&#34;}]'>
+
+  
+  <div class="step-active-label">Step 1 / 5</div>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-41', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-41', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-41" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/paths/pt.png" alt="Path Construction: Path Tracing without NEE">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/paths/pt_nee.png" alt="Path Construction: Path Tracing with NEE">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/paths/lt.png" alt="Path Construction: Light Tracing without NEE">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/paths/lt_nee.png" alt="Path Construction: Light Tracing with NEE">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/paths/independent.png" alt="Path Construction: Independent Path Vertices">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-41');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
+<p>We have seen how individual paths are constructed using different techniques, we can combine all of them (using NEE at every vertex) and construct many paths using only a few vertices.</p>
+<figure id="fig-all-paths" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/paths/all_paths.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      All the Paths (NEE + Path Tracing + Light Tracing)
+    </figcaption></figure>
+
+
+<table>
+  <thead>
+      <tr>
+          <th>Symbol</th>
+          <th>Meaning</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$t$</td>
+          <td>Number of vertices on camera subpath</td>
+      </tr>
+      <tr>
+          <td>$s$</td>
+          <td>Number of vertices on light subpath</td>
+      </tr>
+      <tr>
+          <td>$ts$</td>
+          <td>Number of connections</td>
+      </tr>
+  </tbody>
+</table>
+<figure id="fig-all-combinations" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/path_tracing/paths/combination.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+      All combination of Paths (NEE + Path Tracing + Light Tracing)
+    </figcaption></figure>
+
+
+<h1 id="a-look-at-the-importance-sampling-techniques">A look at the Importance Sampling Techniques<a hidden class="anchor" aria-hidden="true" href="#a-look-at-the-importance-sampling-techniques">#</a></h1>
+<h2 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h2>
+<p>The techniques we&rsquo;ve covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. We used some examples like (BRDF, Direct Light Sampling, VNDF) but now we will take a look at some methods which try to <b>learn these distributions </b> using the samples generated suring rendering.</p>
+<p>Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.</p>
 <table>
   <thead>
       <tr>
@@ -3711,7 +4363,7 @@ path vertex-an expensive additional computation step.</p>
 </table>
 <p>While a lot more methods have emerged (not necessarily neural), I will add them once I read them in detail and the above papers are what I feel cover a good amount of methods over the years from foundational to recent methods.</p>
 <h2 id="neural-importance-sampling">Neural Importance Sampling<a hidden class="anchor" aria-hidden="true" href="#neural-importance-sampling">#</a></h2>
-<h3 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h3>
+<h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
 <p>Neural Importance Sampling (NIS) proposes to use deep neural networks for generating samples in Monte Carlo integration . The approach is based on Non-linear Independent Components Estimation (NICE), extended with novel coupling transforms and optimization strategies specifically designed for integration problems . The key innovation is learning expressive sampling densities $q(x;\theta)$ that closely match the integrand $f(x)$, thereby reducing estimation variance .</p>
 <p>Given an integral:</p>
 $$
@@ -3750,7 +4402,7 @@ x_B = C^{-1}(y_B; m(x_A)) = C^{-1}(y_B; m(y_A))
 $$<p>Since $C$ is separable by design, its Jacobian matrix is diagonal, making determinant computation tractable even in high dimensions . The complete transformation is obtained by compounding multiple coupling layers $\tilde{h} = h_L \circ \cdots \circ h_2 \circ h_1$, alternating which partition is transformed .</p>
 <figure id="fig-coupling-layer" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nis/couplin_layer.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       Coupling layer architecture showing partitioning and transformation
     </figcaption></figure>
 
@@ -3759,7 +4411,7 @@ $$<p>Since $C$ is separable by design, its Jacobian matrix is diagonal, making d
 <p>Instead of the affine (multiply-add) coupling transforms from prior work, Neural Importance Sampling introduces <strong>piecewise-polynomial coupling transforms</strong> with significantly greater modeling power .</p>
 <figure id="fig-pdf-generation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nis/pdf_gen.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       PDF generation using piecewise-polynomial coupling transforms
     </figcaption></figure>
 
@@ -3794,7 +4446,7 @@ C_i(x_i^B; W, V) = \frac{\alpha^2}{2}(V_{ib+1} - V_{ib})W_{ib} + \alpha V_{ib} W
 $$<p>Inverting this transform involves solving a quadratic equation, which can be done efficiently and robustly .</p>
 <figure id="fig-coupling-layer" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nis/predicted_pdf.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       Coupling layer architecture showing partitioning and transformation
     </figcaption></figure>
 
@@ -3875,13 +4527,13 @@ $$<p>where $c$ is the selection probability . The networks are optimized with re
 <p>The approach enables fast inference and efficient sample generation independently of integration domain dimensionality . Training converges rapidly, producing usable sampling distributions within seconds to minutes depending on scene complexity .</p>
 <figure id="fig-comparison" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nis/comparison.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       Visual comparison of different sampling strategies across training iterations
     </figcaption></figure>
 
 
 <h2 id="real-time-neural-radiance-caching-for-path-tracing">Real-time Neural Radiance Caching for Path Tracing<a hidden class="anchor" aria-hidden="true" href="#real-time-neural-radiance-caching-for-path-tracing">#</a></h2>
-<h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
+<h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
 <p>Real-time Neural Radiance Caching (NRC) is a method for accelerating path-traced global illumination by approximating the scattered radiance field using a neural network . The system handles fully dynamic scenes without assumptions about lighting, geometry, or materials . The core idea is to <strong>terminate paths early</strong> by querying a neural cache once the path spread becomes large enough to blur small inaccuracies in the cache approximation .</p>
 <p>The neural network approximates the scattered radiance $L_s(x,\omega)$, which represents the radiative energy leaving point $x$ in direction $\omega$ after being scattered at $x$ :</p>
 $$
@@ -3890,7 +4542,7 @@ $$<p>where $f_s$ is the BSDF, $L_i$ is the incident radiance, and $\theta_i$ is 
 <h3 id="algorithm-design">Algorithm Design<a hidden class="anchor" aria-hidden="true" href="#algorithm-design">#</a></h3>
 <figure id="fig-radiance-cache-png" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nrc/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
       Radiance cache visualization showing path termination
     </figcaption></figure>
 
@@ -3904,7 +4556,7 @@ a(x_1 \cdots x_n) = \left(\sum_{i=2}^{n} \frac{\|x_{i-1} - x_i\|^2}{p(\omega_i \
 $$<p>where $p$ is the BSDF sampling PDF and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x_i$ .</p>
 <figure id="fig-radiance-cache-termination" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nrc/radiance_cache_termination.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
       Path termination heuristic comparing path spread to primary vertex footprint
     </figcaption></figure>
 
@@ -3917,7 +4569,7 @@ $$<p>At the terminal vertex $x_k$, the neural radiance cache $\tilde{L}_s(x_k,\o
 <p>A small fraction (typically under 3%) of rendering paths are extended by a few vertices to form <strong>training paths</strong> . These longer paths are terminated using the same area-spread heuristic applied to the training suffix . The collected radiance estimates along all vertices of the training paths serve as reference values for updating the neural cache .</p>
 <figure id="fig-radiance-cache-training" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nrc/radiance_cache_training.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
       Training suffix extends rendering paths to collect radiance estimates
     </figcaption></figure>
 
@@ -3984,10 +4636,10 @@ $$
 \mathcal{L} = \frac{1}{N} \sum_{i=1}^{N} \|\tilde{L}_s(x_i, \omega_i) - L_{\text{target}}(x_i, \omega_i)\|^2
 $$<p>Four gradient descent steps are performed per frame on disjoint random subsets of training data to prevent overfitting . The high learning rate and multiple steps per frame enable rapid adaptation to dynamic scenes.</p>
 <h2 id="neural-parametric-mixtures-for-path-guiding">Neural Parametric Mixtures for Path Guiding<a hidden class="anchor" aria-hidden="true" href="#neural-parametric-mixtures-for-path-guiding">#</a></h2>
-<h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
+<h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
 <figure id="fig-npm-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/neuropara-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
       High-level illustration of Neural Parametric Mixtures (NPM). Spatially varying target distributions are encoded using a multi-resolution embedding. For a queried location $x$, (1) nearby grid features are interpolated and concatenated to form $G(x)$, which (2–3) is passed to a lightweight MLP to (4) decode vMF mixture parameters $\Theta$. (5) The resulting distribution guides importance sampling; the MC radiance estimate $\langle L_i(x,\omega_i)\rangle$ supplies the gradient $\nabla_\Theta D_{KL}$ for training.
     </figcaption></figure>
 
@@ -4004,16 +4656,16 @@ It is parameterized by:</p>
 </p>
 $$
 v(\omega \mid \mu,\kappa)= C_D(\kappa)\,\exp(\kappa\,\mu^\top \omega)
-$$<figure id="fig-29" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+$$<figure id="fig-34" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/vmf.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
       As $\kappa \to \infty$, the vMF distribution becomes a delta lobe around $\mu$.
     </figcaption></figure>
 
 
-<figure id="fig-30" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-35" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/vmf_3d.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
       3D vMF distribution used in NPM.
     </figcaption></figure>
 
@@ -4037,9 +4689,9 @@ $$
   \Theta = \{ (\lambda_k,\mu_k,\kappa_k) \}_{k=1}^K
   $$</li>
 </ul>
-<figure id="fig-31" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
+<figure id="fig-36" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/vmf_mixture.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
       vMF Mixture with $K=3$ components
     </figcaption></figure>
 
@@ -4058,9 +4710,9 @@ V(\omega_i\mid\Theta(x))
 \propto
 L_i(x,\omega_i).
 $$<p>Traditional path guiding uses kd-trees / octrees → discretization → <strong>parallax error</strong>.</p>
-<figure id="fig-32" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-37" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/parallax.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
       Parallax error in discretized guiding structures.
     </figcaption></figure>
 
@@ -4170,9 +4822,9 @@ G(x\mid\Phi_E)=
 \operatorname{bilinear}(x,V_\ell[x]),
 \qquad
 G:\mathbb{R}^3\to\mathbb{R}^{L\times F}.
-$$<figure id="fig-33" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:40%;scroll-margin-top:80px;">
+$$<figure id="fig-38" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:40%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/emb_interpolation.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
       Multi-resolution interpolation of $G(x)$.
     </figcaption></figure>
 
@@ -4183,9 +4835,9 @@ $$<figure id="fig-33" class="zoomable-figure" style="text-align:center;margin:2e
 $$
 \hat{\Theta}(x)=
 \mathrm{MLP}(G(x\mid\Phi_E)\mid\Phi_M).
-$$<figure id="fig-34" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+$$<figure id="fig-39" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/neuropara/decoding_parameters.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
       Decoding the vMF mixture parameters.
     </figcaption></figure>
 
@@ -4213,11 +4865,11 @@ $$<p>This aligns sampling with both the scattering function and the learned radi
 <li>The number of vMF components $K$ is fixed</li>
 </ul>
 <h2 id="online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians">Online Neural Path Guiding with Normalized Anisotropic Spherical Gaussians<a hidden class="anchor" aria-hidden="true" href="#online-neural-path-guiding-with-normalized-anisotropic-spherical-gaussians">#</a></h2>
-<h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
+<h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
 <p>Fixes the limitation of vMF Mixture bwing isotropic by using Spherical Gaussians.</p>
 <figure id="nasg" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/nasg/nasg.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
       PDF generation using piecewise-polynomial coupling transforms
     </figcaption></figure>
 
@@ -4230,12 +4882,12 @@ $$<p>This aligns sampling with both the scattering function and the learned radi
 <h2 id="neural-product-importance-sampling-via-warp-composition">Neural Product Importance Sampling via Warp Composition<a hidden class="anchor" aria-hidden="true" href="#neural-product-importance-sampling-via-warp-composition">#</a></h2>
 <figure id="fig-naive-fit" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/naive_fit.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
       Naively fitting a normalizing flow (NF) model to the product of a complex unconditioned density $p_1$ (image) and a simple conditioned density $p_2$ (Gaussian with parameterized mean $\mu$) yields a poor result. The model is tasked with simultaneously learning the intricate shape of $p_1$ <em>and</em> the variations in $\mu$. Instead, we apply a $p_1$ warp to the NF-model output, which drastically simplifies the shape of the distribution it needs to learn. The result is a near-perfect fit with an equal number of NF parameters
     </figcaption></figure>
 
 
-<h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
+<h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
 <p>Many rendering integrands take the form of a <em>product</em> of two functions:
 </p>
 $$
@@ -4256,7 +4908,7 @@ where</p>
 <p>The decomposition reduces complexity: the tail warp embeds all lighting structure once, and the head warp learns only how the material reshapes that distribution.</p>
 <figure id="fig-warp-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
       Given a shading condition, the model maps uniform points through two warps to produce samples distributed approximately proportionally to a target product density. The shape of intermediate density is coarse, similarly to a naive product fit, but leads to a precise fit when mapped through the tail warp.
     </figcaption></figure>
 
@@ -4317,7 +4969,7 @@ where</p>
 </ul>
 <figure id="fig-architecture" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/architecture.gif" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
       Architecture of warp composition. The head warp is a conditional spline flow (two coupling layers), and the tail warp is a large unconditional emitter flow. Their composition yields an efficient product sampler.
     </figcaption></figure>
 
@@ -4335,7 +4987,7 @@ where</p>
 <p>The head warp models the BRDF × cosine factor $p_2(\omega\mid c)$.</p>
 <figure id="fig-head-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/head_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
       Visualization of $p_2(\omega \mid c) \propto f_r(\omega_o,\omega)\cos\theta$ captured by the head warp. The conditional flow reshapes uniform samples according to material and shading.
     </figcaption></figure>
 
@@ -4362,7 +5014,7 @@ which the encoder converts into a latent vector $\ell$.</p>
 <p>The tail warp learns the mapping $x = C(y),$ such that $x$ follows the emitter distribution $p_1(\omega)$.</p>
 <figure id="fig-tail-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/tail_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
       Visualization of $p_1(\omega) \propto L(\omega)$ captured by the tail warp. The unconditional flow learns the environment-map density, including HDR lighting structure.
     </figcaption></figure>
 
@@ -4406,14 +5058,14 @@ $$p^*(\omega \mid c) \propto p_1(\omega) p_2(\omega\mid c).$$</li>
 </ul>
 <figure id="fig-product-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/product_warp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
       The composed mapping $T = C \circ h_\theta$ approximates the full product distribution $p^*(\omega \mid c)$. The figure shows how the head warp and tail warp contributions combine.
     </figcaption></figure>
 
 
 <figure id="fig-product-warp" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/warp_composition/all_warps.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
       All warps combined
     </figcaption></figure>
 
@@ -4446,7 +5098,7 @@ $$<h4 id="stabilization">Stabilization<a hidden class="anchor" aria-hidden="true
 <hr>
 <h2 id="neural-path-guiding-with-distribution-factorization">Neural Path Guiding with Distribution Factorization<a hidden class="anchor" aria-hidden="true" href="#neural-path-guiding-with-distribution-factorization">#</a></h2>
 <hr>
-<h3 id="overview-5">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-5">#</a></h3>
+<h3 id="overview-6">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-6">#</a></h3>
 <p>The goal of path guiding is to learn a sampling distribution that approximates the <strong>target distribution</strong>:
 </p>
 $$
@@ -4509,7 +5161,7 @@ $$<p>Through this representation, estimating the joint PDF boils down to predict
 <p>The paper sets $M_1 = 32$ and $M_2 = 16$. The reduction in resolution in the second dimension is due to the smaller angular range of $\epsilon_2$ corresponding to $\phi$ which is between 0 and $\pi$.</p>
 <figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/PDF_grid.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
       Discretized PDF
     </figcaption></figure>
 
@@ -4527,7 +5179,7 @@ $$
 $$<p>where $\mathbf{C}$ is the condition (different for marginal and conditional) and $M$ is the number of bins.</p>
 <figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/network_architecture.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 49.</span>
       MLP takes the condition $\mathcal{C}$ as the input and estimates an $M$ dimensional vector. We then apply softmax function to this vector and multiply each element by $M$ to obtain a vector containing the PDF estimate at discrete locations. We use this network to model the marginal and conditional distributions. Note that the we use $x$ and $ω_o$ as the condition when modeling the marginal distribution, but for the conditional one, we additionally pass the first dimension $\epsilon_1$ to the network. We use two separate networks to model the two distributions, but we follow the process illustrated in this figure in both cases.
     </figcaption></figure>
 
@@ -4550,7 +5202,7 @@ $$
 p_{\boldsymbol{\omega}}(\epsilon \mid \mathbf{C}) = \mathbf{v}[\lfloor\epsilon M\rfloor]
 $$<figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/nearest_neighbor.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 50.</span>
       Nearest Neighbor interpolation
     </figcaption></figure>
 
@@ -4564,14 +5216,14 @@ $$<p>
 where $m = \lfloor \epsilon M - 0.5 \rfloor$ and $\alpha = \epsilon M - m - 0.5$.</p>
 <figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/linear_interp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 51.</span>
       Linear Interpolation
     </figcaption></figure>
 
 
 <figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/interp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 52.</span>
       We demonstrate the PDF evaluation and sampling process for nearest neighbor and linear interpolation. To model the $1D$ distributions (marginal and conditional) our network first predicts a vector $v$ containing estimates of the PDF at discrete locations. To obtain the PDF at an arbitrary location, we either use the PDF estimate at the closest sample (top-left), or linearly interpolate between the two closest samples (top-right). Sampling is done by evaluating the inverse CDF at a randomly generated value $u$ with a uniform distribution. Note that the CDF for nearest neighbor interpolation is piecewise linear, while it is piecewise quadratic for linear interpolation.
     </figcaption></figure>
 
@@ -4615,7 +5267,7 @@ $$
 $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and uses a small MLP network that takes surface location and ray direction as input and estimates the corresponding radiance.</p>
 <figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/radiance_cache.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 53.</span>
       Computing the target distribution requires obtaining $L_r(x,\omega_o)$ and $L_i(x,\omega_i)$. We use a neural network that takes location and direction as the input and estimates the cached reflected radiance along that particular ray. By evaluating the network at the current $(x', \omega_o')$ and next $(x,\omega_i)$ intersection points, we obtain an estimate of the reflected Lr and incoming $L_i$ radiance. Note that here the incoming radiance at $x,\omega_i$ is equal to the reflected radiance at $x', \omega_o'$
     </figcaption></figure>
 
@@ -4629,7 +5281,7 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
 </ul>
 <figure id="fig-camera" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="../../images/path_tracing/distribution_factorization/df-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 49.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 54.</span>
       During path tracing, we generate samples using our guiding distribution $p_\Theta$ to increase the number of paths that reach light sources. These paths are then used to train our radiance caching $f_\Theta$. We leverage the cached radiance as a smoother objective to improve $p_\Theta$, which in turn is used on the next sample generation.
     </figcaption></figure>
 

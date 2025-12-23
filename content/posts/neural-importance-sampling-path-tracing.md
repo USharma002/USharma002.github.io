@@ -29,7 +29,7 @@ We are going to look at the **Path Tracing** algorithm. What are differences bet
 I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.
 
 ## Assumptions
-- Light Travels in Straigh Lines (in a uniform medium
+- Light Travels in Straight Lines (in a uniform medium
 - **Lambert's Cosine Law** (Incident angle $\theta$ dictates surface illumination)
 <iframe src="/interactive/cosine_forshortening.html"
         width="100%"
@@ -39,7 +39,7 @@ I found a decent explaination in Unity forums <a href="https://discussions.unity
 </iframe>
 
 - Light is additive
-Size of light shource affects shadow softness
+Size of light source affects shadow softness
 - **Inverse Square Law** Intensidy decreases with distance form the souce 
 $$Intensity \propto \frac{1}{r^2}$$
 
@@ -175,7 +175,7 @@ $$
 
 After expanding the rendering integra, we can easily visualize the components of the integral and how they contribute to the final image
 
-{{< step-slider animate="false" width="850px" >}}
+{{< step-slider animate="false" >}}
 
 - image: "../../images/path_tracing/rendering_components/full.png"
   title: "Incoming Radiance (Full Rendering Equation)"
@@ -359,7 +359,7 @@ $$
 
 The following visualizes the individual components (similar to the one given in the rendering equation) but with appropriate operator formulation for clarity.
 
-{{< step-slider animate="false" width="850px" >}}
+{{< step-slider animate="false" >}}
 
 - image: "../../images/path_tracing/rendering_components/operator/E.jpg"
   title: |
@@ -404,7 +404,7 @@ The following visualizes the individual components (similar to the one given in 
 
 
 The following visualizes the accumulation of individual components:
-{{< step-slider animate="false" width="850px" >}}
+{{< step-slider animate="false" >}}
 
 - image: "../../images/path_tracing/rendering_components/operator/E.jpg"
   title: |
@@ -473,7 +473,10 @@ And:
 
 - $\mathcal{P}$ - set of all possible light paths of all lengths
   $$
-  \bar{x} = (x_0, x_1, \ldots, x_k)
+  \bar{x} = (x_0, x_1, \ldots, x_k) \in \mathcal{P_k}
+  $$
+  $$
+  \mathcal{P} = \bigcup_{k=1}^{\infty} \mathcal{P_k}
   $$
   with vertices on surfaces or in volumes.  
 - $x_0$ - light source point.  
@@ -483,6 +486,13 @@ And:
 - $V(x_{i-1}, x_i)$ - visibility term.  
 - $d\mu(\bar{x})$ - path-space measure (product of area, volume, and directional measures).
 
+
+{{< 
+figure src="../../images/path_tracing/paths/paths.png"
+id="fig-paths"
+caption="Sample paths from Path Space Contributing the the final Image"
+width="80%" 
+>}}
 
 #### Visualizing Different Paths
 
@@ -910,249 +920,15 @@ width="100%"
         style="border-radius:8px; min-width: 700px;">
 </iframe>
 
-
-### Examples using a pair of scenes
-
-I have used some renders from this [amazing blog](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html) on Multiple Importance Sampling by **Nikita Lisitsa**.
-
-Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
-One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$) 
-both rendered with 64 spp and uniform sampling as well as cosine weighted sampling:
-
-<div style="display:flex; justify-content:center; gap:20px;">
-
-  <div style="flex:1; text-align:center;">
-    {{< dlider
-      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
-      after="../../images/path_tracing/renders/diffuse-cosine-64.png"
-      caption="Uniform Sampling vs. Cosine Weighted Sampling"
-      width="100%"
-      beforeLabel="Uniform Sampling"
-      afterLabel="Cosine Weighted Sampling"
-    >}}
-  </div>
-
-  <div style="flex:1; text-align:center;">
-      {{< dlider
-      before="../../images/path_tracing/renders/metallic-uniform-64.png"
-      after="../../images/path_tracing/renders/metallic-cosine-64.png"
-      caption="Uniform Sampling vs. Cosine Weighted Sampling"
-      width="100%"
-      beforeLabel="Uniform Sampling"
-      afterLabel="Cosine Weighted Sampling"
-    >}}
-  </div>
-
-</div>
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-
-However, it doesn't help much with the above scenes neither with the diffuse plane nor with the metallic surface. In these cases, both the uniform distribution and the cosine-weighted one poorly approximate the integrated function
-
-- For the diffuse surface, they are good approximations of the BRDF term, but they poorly approximate the incoming light since the light comes only from a handful of directions pointing to the small sphere 
-- For the metallic surface, they are OK approximations of the incoming light (which now comes from a lot of directions, because the light source is quite big), but they are poor approximations of the BRDF term, which for nice polished metals wants to reflect light only in a certain direction, and not in a random one
-
-Thus, we can use the following sampling strategies for the scenes respectively:
-- Send random directions directly to the light source! This is called direct light sampling, or light importance sampling, or just light sampling
-- One thing we can do for the metallic plane is to figure out a distribution that sends more rays towards the direction of perfect reflection. This distribution is called VNDF
-
-<div style="display:flex; justify-content:center; gap:20px;">
-  <div style="flex:1; text-align:center;">
-    {{< dlider
-      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
-      after="../../images/path_tracing/renders/diffuse-light-64.png"
-      caption="Uniform Sampling vs. Direct Light Sampling"
-      width="100%"
-      beforeLabel="Uniform Sampling"
-      afterLabel="Direct Light Sampling"
-    >}}
-  </div>
-  <div style="flex:1; text-align:center;">
-      {{< dlider
-      before="../../images/path_tracing/renders/metallic-uniform-64.png"
-      after="../../images/path_tracing/renders/metallic-vndf-64.png"
-      caption="Uniform Sampling vs. VNDF Sampling"
-      width="100%"
-      beforeLabel="Uniform Sampling"
-      afterLabel="VNDF Sampling"
-    >}}
-  </div>
-
-</div>
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-
-## Product Function Integral
-
-We are frequently face with integrals that are product of two or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially common in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.
-
-To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:
-
-Sample using $p_a$, which gives estimator:
-
-$$
-\frac{f(X)}{p_a(x)} = cf_b(X)
-$$
-where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.
-
-Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator. 
-
-### MIS Motivating Example
-
-The following is a Cornell Box scene with all diffuse materials. The sampling is done in following ways
-- Direct Light Sampling
-- Cosine Weighted Sampling
-- Direct Light Sampling
-- MIS (Cosine Weighted + Direct Light Sampling)
-
-In the Cornell box scene, we have a lot of diffuse light spreading around the scene, and using just direction light sampling produces a wrong image. The reason is that the requirement $f(x)>0 \Rightarrow p(x)>0$ is not fulfilled for this distribution: there are a lot of directions with non-zero values of our integrated function (namely, the diffuse reflections of light by the objects in the scene), but the distribution only samples a certain subset of directions (those leading directly to a light source).
-
-So, we have a bunch of sampling strategies (i.e. a bunch of distributions), and each of them works in some cases and doesn't work in other cases. 
-
-How can we combine several distributions at once? One obvious way would be to, say, each time we generate a sample, select one of the distributions at random and just use it in our calculations.
-
-For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair coin, and with probability 1/2 our estimator is either $\frac{f(X)}{p_1(X)}$ or $\frac{f(X)}{p_2(X)}$. Using cosine-weighted distribution for p1, and direct light sampling for p2, we get the **Wrong MIS** (given below).
-
-<div style="display:flex; justify-content:center; gap:20px;">
-
-  <div style="flex:1; text-align:center;">
-    {{< dlider
-      before="../../images/path_tracing/renders/box-uniform-64.png"
-      after="../../images/path_tracing/renders/box-cosine-64.png"
-      caption="Uniform Sampling vs. Cosine Weighted Sampling"
-      width="100%"
-      beforeLabel="Uniform Sampling"
-      afterLabel="Cosine Weighted Sampling"
-    >}}
-  </div>
-
-  <div style="flex:1; text-align:center;">
-      {{< dlider
-      before="../../images/path_tracing/renders/box-cosine-64.png"
-      after="../../images/path_tracing/renders/box-mis-64.png"
-      caption="Cosine Weighted Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
-      width="100%"
-      beforeLabel="Cosine Weighted Sampling"
-      afterLabel="MIS"
-    >}}
-
-  </div>
-
-</div>
-
-<div style="display:flex; justify-content:center; gap:20px;">
-
-  <div style="flex:1; text-align:center;">
-    {{< dlider
-      before="../../images/path_tracing/renders/box-uniform-64.png"
-      after="../../images/path_tracing/renders/box-light-64.png"
-      caption="Uniform Sampling vs. Direct Light Sampling"
-      width="100%"
-      beforeLabel="Uniform Sampling"
-      afterLabel="Direct Light Sampling"
-    >}}
-  </div>
-
-  <div style="flex:1; text-align:center;">
-      {{< dlider
-      before="../../images/path_tracing/renders/box-mis-wrong-64.png"
-      after="../../images/path_tracing/renders/box-mis-64.png"
-      caption="MIS Wrong vs. MIS (Cosine Weighted and Direct Light Sampling)"
-      width="100%"
-      beforeLabel="MIS Wrong"
-      afterLabel="MIS"
-    >}}
-
-  </div>
-
-</div>
-
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
+### What are we sampling?
+Now we know the theory of the importance sampling, the question is what is the importance sampling PDF $p(x)$ when we are solving the rendering equation.
+Based on the [formulations of the rendering equation](#alternate-formualtions-of-the-rendering-equation)
 
 
-To get a correct combination of these pdf we have Multiple Importance Sampling
-
-## Multiple Importance Sampling (MIS)
-
-Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to-implement variance reduction technique
-
-The basic idea is that, when estimating an integral, we should draw samples from multiple sampling distributions, chosen in the hope that at least one of them will match the shape of the integrand reasonably well, even if we do not know which one this will be. MIS then provides a method to weight the samples from each technique that can eliminate large variance spikes due to mismatches between the integrand’s value and the sampling density. 
-
-> **Definition - Multiple Importance Sampling**
-> 
-> With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
->$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$
->
->where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$
->
-> More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
-$$F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$
-
-The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.
-
-In practice, a good choice for the weighting functions is given by the **balance heuristic**, which attempts to fulfill this goal by taking into account all the different ways that a sample could have been generated, rather than just the particular one that was used to do so. The balance heuristic’s weighting function for the th sampling technique is :
-
-$$
-w_i(x) = \frac{n_ip_i(x)}{\sum_j n_j p_j(x)}
-$$
-
-The **power heuristic** often reduces variance even further. For an exponent $\beta$, the power heuristic is 
-
-$$
-w_i(x) = \frac{(n_ip_i(x))^\beta}{\sum_j (n_j p_j(x))^\beta}
-$$
+Using the Classic Surface Rendering Equation, we can use a PDF $p(x)$ on the next direction $\omega_i$. So we will be calculating the estimate of the rendering integral using the Monte Carlo Methods by sampling the next direction using this formulation. 
 
 
-<iframe src="/interactive/mis.html"
-        width="100%"
-        height="660"
-        frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
-</iframe>
-
-
-{{< dlider
-before="../../images/path_tracing/renders/box-uniform-64.png"
-after="../../images/path_tracing/renders/box-mis-64.png"
-caption="Uniform Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
-width="60%"
-beforeLabel="Uniform Sampling"
-afterLabel="MIS"
->}}
-
-<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
-  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
-</div>
-
-### Russian Roulette
-
-Russian roulette is a technique that can improve the efficiency of Monte Carlo estimates by skipping the evaluation of samples that would make a small contribution to the final result.
-
-Select a termination probability $q$. With probability $q$, skip evaluation and contribute $c = 0$. With probability $1-q$, evaluate and weight by $\frac{1}{1-q}$:
-
-$$
-\boxed{
-\hat{I}_{RR} = 
-\begin{cases}
-0 & \text{with probability } q \\
-\frac{\hat{I}_{MC}}{1-q} & \text{with probability } 1-q
-\end{cases}
-}
-$$
-
-#### Unbiasedness
-
-$$
-\mathbb{E}[\hat{I}_{RR}] = q \cdot 0 + (1-q) \cdot \frac{1}{1-q} \mathbb{E}[\hat{I}_{MC}] = \mathbb{E}[\hat{I}_{MC}] = I
-$$
-
-The estimator remains unbiased despite skipping samples.
-
-With these Monte Carlo foundations in place, let's examine how path tracing implements these concepts in practice.
+---
 
 ## Path Tracing
 
@@ -1313,7 +1089,7 @@ width="100%"
 
 ### Path Tracing Steps Overview
 
-{{< step-slider animate="false" width="850px" >}}
+{{< step-slider animate="false" >}}
 - image: "../../images/path_tracing/path-tracing/init_cam.png"
   title: "Initialize Camera"
   description: "Initialize the Scene objects, lights and camera"
@@ -1616,9 +1392,499 @@ class Simple(mi.SamplingIntegrator):
 mi.register_integrator("integrator", lambda props: Simple(props))
 ```
 
-# A look at the Neural Importance Sampling Techniques
 
-The techniques we've covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.
+### How to sample Next Ray Direction?
+Now the above illustration was using the normalized (or approximation of normalized) BRDF Function as sampling.  But there can be different ways/PDFs in which we can sample the next ray depending on the scene. A rough example is given below:
+
+{{< step-slider animate="false" >}}
+- image: "../../images/path_tracing/sampling/scene_setup.png"
+  title: "Scene Setup"
+  description: |
+    <div>
+    Our scene consists of two <b><span style="color:#ff9900">light sources</span></b> (yellow), a surface with a specific <b><span style="color:#007bff">BRDF</span></b> (light blue lobe) representing the material property, and our chosen <b><span style="color:#a020f0">sampling PDF</span></b> (purple lobe) which dictates the direction of the next ray.
+    </div>
+
+- image: "../../images/path_tracing/sampling/uniform_pdf.png"
+  title: "Uniform Sampling PDF"
+  description: |
+    <div>
+    The simplest strategy is <b><span style="color:#a020f0">Uniform Sampling</span></b>. This defines a constant probability density $p(\omega) = \frac{1}{2\pi}$ across the entire hemisphere $\Omega$, completely ignoring <b><span style="color:#ff9900">lighting</span></b> and <b><span style="color:#007bff">material properties</span></b>.
+    </div>
+
+- image: "../../images/path_tracing/sampling/uniform_rays.png"
+  title: "Uniform Sampling Rays"
+  description: |
+    <div>
+    But since <b><span style="color:#a020f0">Uniform Sampling</span></b> ignores <b><span style="color:#ff9900">lighting</span></b> and <b><span style="color:#007bff">material properties</span></b>, a lot of the samples are wasted
+    </div>
+    
+- image: "../../images/path_tracing/sampling/diffuse_light_pdf.png"
+  title: "Direct Light Sampling PDF"
+  description: |
+    <div>
+    We can improve this using <b><span style="color:#a020f0">Direct Light Sampling</span></b> (Next Event Estimation) PDF. Here, the <b><span style="color:#a020f0">PDF</span></b> is non-zero only in directions pointing toward the <b><span style="color:#ff9900">light sources</span></b>, proportional to their power.
+    </div>
+
+- image: "../../images/path_tracing/sampling/diffuse_light_rays.png"
+  title: "(Diffuse) Direct Light Sampling Rays"
+  description: |
+    <div>
+    <b><span style="color:#a020f0">Direct Light Sampling</span></b> works exceptionally well for <b>Diffuse Materials</b>. Since diffuse surfaces reflect light equally in all directions, hitting the <b><span style="color:#ff9900">light source</span></b> is the only thing that matters for reducing variance.
+    </div>
+
+- image: "../../images/path_tracing/sampling/glossy_light_pdf.png"
+  title: "(Glossy) Direct Light Sampling PDF"
+  description: |
+    <div>
+    If the material is <b>Glossy</b>, the <b><span style="color:#007bff">BRDF</span></b> becomes a narrow lobe. Even if we hit a <b><span style="color:#ff9900">light source</span></b>, if that light isn't in the direction the material reflects, the contribution is multiplied by a near-zero <b><span style="color:#007bff">BRDF</span></b> value.
+    </div>
+
+- image: "../../images/path_tracing/sampling/glossy_light_rays.png"
+  title: "(Glossy) Direct Light Sampling Rays"
+  description: |
+    <div>
+    In this glossy case, <b><span style="color:#a020f0">Direct Light Sampling</span></b> is actually inefficient. We are successfully hitting the <b><span style="color:#ff9900">lights</span></b>, but those samples are <b>wasted</b> because the material property prevents that light from reaching the camera.
+    </div>
+
+- image: "../../images/path_tracing/sampling/glossy_brdf_pdf.png"
+  title: "(Glossy) BRDF Sampling PDF"
+  description: |
+    <div>
+    To fix this, we use <b><span style="color:#a020f0">BRDF Sampling</span></b>. We align our <b><span style="color:#a020f0">PDF</span></b> with the <b><span style="color:#007bff">material's reflection lobe</span></b>. This ensures we only sample directions where the surface is physically capable of reflecting radiance.
+    </div>
+
+- image: "../../images/path_tracing/sampling/glossy_brdf_rays.png"
+  title: "(Glossy) BRDF Sampling Rays"
+  description: |
+    <div>
+    By prioritizing directions where the <b><span style="color:#007bff">BRDF</span></b> is large, we ensure that every ray we cast has a high potential to contribute to the final pixel color, significantly reducing <b>variance</b> for glossy reflections.
+    </div>
+
+{{< /step-slider >}}
+
+In the above example, we see that for different scene or materials, different kind of PDF $p(x)$ are better choice. The two used in above are 
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< 
+    figure src="../../images/path_tracing/sampling/bsdf.png"
+    id="fig-coupling-layer"
+    caption="Diffuse BRDF PDF (Cosine Weighted)"
+    width="100%" 
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+    {{< 
+    figure src="../../images/path_tracing/sampling/nee.png"
+    id="fig-coupling-layer"
+    caption="Next Event Estimation PDF"
+    width="100%" 
+    >}}
+  </div>
+
+</div>
+
+Now we can use these different sampling strategies, but the problem is for some parts of the scene one strategy is better whereas for other parts, the other strategy could be better. In case of the multiple sampling strategies, what to do?
+
+### Examples using a pair of scenes
+
+I have used some renders from this [amazing blog](https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html) on Multiple Importance Sampling by **Nikita Lisitsa**.
+
+Pair of scenes: one (one the left) with a diffuse plane and a small light source, another (on the right) with a metallic plane and a large light source.
+One simple choice that works for diffuse materials (such that $r=const$ is to ignore the $L_{in}$ part and use a distribution proportional to the dot product $(\omega_{in}\cdot n)$) 
+both rendered with 64 spp and uniform sampling as well as cosine weighted sampling:
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
+      after="../../images/path_tracing/renders/diffuse-cosine-64.png"
+      caption="Uniform Sampling vs. Cosine Weighted Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Cosine Weighted Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/metallic-uniform-64.png"
+      after="../../images/path_tracing/renders/metallic-cosine-64.png"
+      caption="Uniform Sampling vs. Cosine Weighted Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Cosine Weighted Sampling"
+    >}}
+  </div>
+
+</div>
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+
+However, it doesn't help much with the above scenes neither with the diffuse plane nor with the metallic surface. In these cases, both the uniform distribution and the cosine-weighted one poorly approximate the integrated function
+
+- For the diffuse surface, they are good approximations of the BRDF term, but they poorly approximate the incoming light since the light comes only from a handful of directions pointing to the small sphere 
+- For the metallic surface, they are OK approximations of the incoming light (which now comes from a lot of directions, because the light source is quite big), but they are poor approximations of the BRDF term, which for nice polished metals wants to reflect light only in a certain direction, and not in a random one
+
+Thus, we can use the following sampling strategies for the scenes respectively:
+- Send random directions directly to the light source! This is called direct light sampling, or light importance sampling, or just light sampling
+- One thing we can do for the metallic plane is to figure out a distribution that sends more rays towards the direction of perfect reflection. This distribution is called VNDF
+
+<div style="display:flex; justify-content:center; gap:20px;">
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
+      after="../../images/path_tracing/renders/diffuse-light-64.png"
+      caption="Uniform Sampling vs. Direct Light Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Direct Light Sampling"
+    >}}
+  </div>
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/metallic-uniform-64.png"
+      after="../../images/path_tracing/renders/metallic-vndf-64.png"
+      caption="Uniform Sampling vs. VNDF Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="VNDF Sampling"
+    >}}
+  </div>
+
+</div>
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+
+## Product Function Integral
+
+We are frequently face with integrals that are product of two or more functions: $\int f_a(x)f_b(x)dx$. It is often possible to derive separate sampling strategies for individual factors individually, though not one that is similar to their product. THis situation if especially common in the integrals involved with light transport, such as in the product BSDF, incident radiance and a cosine factor in the light transport equation.
+
+To understand the challenges involved with applying Monte Carlo to such products, assume for now the good fortune of having two sampling distributions $p_a$ and $p_b that match the distributions of $f_a$ and $f_b$ exactly  (In practice, this will not normally be the case). With Monte Carlo estimator, we have two options:
+
+Sample using $p_a$, which gives estimator:
+
+$$
+\frac{f(X)}{p_a(x)} = cf_b(X)
+$$
+where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_a(x)$. The variance of this estimator is proportional to the variance of $f_b$, which may itself be high. Conversely, we might sample form $p_b$, though doing so gives us an estimator with variance proportional to the variance of $f_a$, which may similarly be high. . In the more common case where the sampling distributions only approximately match one of the factors, the situation is usually even worse.
+
+Unfortunately, the obvious solution of taking some samples from each distribution and averaging the two estimators is not much better. Because variance is additive, once variance has crept into an estimator, we cannot eliminate it by adding it to another low-variance estimator. 
+
+### MIS Motivating Example
+
+The following is a Cornell Box scene with all diffuse materials. The sampling is done in following ways
+- Direct Light Sampling
+- Cosine Weighted Sampling
+- Direct Light Sampling
+- MIS (Cosine Weighted + Direct Light Sampling)
+
+In the Cornell box scene, we have a lot of diffuse light spreading around the scene, and using just direction light sampling produces a wrong image. The reason is that the requirement $f(x)>0 \Rightarrow p(x)>0$ is not fulfilled for this distribution: there are a lot of directions with non-zero values of our integrated function (namely, the diffuse reflections of light by the objects in the scene), but the distribution only samples a certain subset of directions (those leading directly to a light source).
+
+So, we have a bunch of sampling strategies (i.e. a bunch of distributions), and each of them works in some cases and doesn't work in other cases. 
+
+How can we combine several distributions at once? One obvious way would be to, say, each time we generate a sample, select one of the distributions at random and just use it in our calculations.
+
+For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair coin, and with probability 1/2 our estimator is either $\frac{f(X)}{p_1(X)}$ or $\frac{f(X)}{p_2(X)}$. Using cosine-weighted distribution for p1, and direct light sampling for p2, we get the **Wrong MIS** (given below).
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/box-uniform-64.png"
+      after="../../images/path_tracing/renders/box-cosine-64.png"
+      caption="Uniform Sampling vs. Cosine Weighted Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Cosine Weighted Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/box-cosine-64.png"
+      after="../../images/path_tracing/renders/box-mis-64.png"
+      caption="Cosine Weighted Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
+      width="100%"
+      beforeLabel="Cosine Weighted Sampling"
+      afterLabel="MIS"
+    >}}
+
+  </div>
+
+</div>
+
+<div style="display:flex; justify-content:center; gap:20px;">
+
+  <div style="flex:1; text-align:center;">
+    {{< dlider
+      before="../../images/path_tracing/renders/box-uniform-64.png"
+      after="../../images/path_tracing/renders/box-light-64.png"
+      caption="Uniform Sampling vs. Direct Light Sampling"
+      width="100%"
+      beforeLabel="Uniform Sampling"
+      afterLabel="Direct Light Sampling"
+    >}}
+  </div>
+
+  <div style="flex:1; text-align:center;">
+      {{< dlider
+      before="../../images/path_tracing/renders/box-mis-wrong-64.png"
+      after="../../images/path_tracing/renders/box-mis-64.png"
+      caption="MIS Wrong vs. MIS (Cosine Weighted and Direct Light Sampling)"
+      width="100%"
+      beforeLabel="MIS Wrong"
+      afterLabel="MIS"
+    >}}
+
+  </div>
+
+</div>
+
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+
+
+To get a correct combination of these pdf we have Multiple Importance Sampling
+
+## Multiple Importance Sampling (MIS)
+
+Multiple importance sampling (MIS) addresses exactly this issue, with an easy-to-implement variance reduction technique
+
+The basic idea is that, when estimating an integral, we should draw samples from multiple sampling distributions, chosen in the hope that at least one of them will match the shape of the integrand reasonably well, even if we do not know which one this will be. MIS then provides a method to weight the samples from each technique that can eliminate large variance spikes due to mismatches between the integrand’s value and the sampling density. 
+
+> **Definition - Multiple Importance Sampling**
+> 
+> With two sampling distributions $p_a$ and $p_b$ and a single sample taken from each one, $X\sim p_a$ and $Y\sim p_b$, the MIS Monte Carlo Estimator is defined as:
+>$$w_a(X)\frac{f(X)}{p_a(X)} + w_b(Y)\frac{f(Y)}{p_b(Y)}$$
+>
+>where $w_a$ and $w_b$ are weightin functions chosen such that the expected value of this estimator is the value of integral of $f(x)$
+>
+> More generally, given $n$ sampling distributions $p_i$ with $n_i$ samples $X_{i,j}$ taken from the $i$-th  distribution, the MIS Monte Carlo estimator is:
+$$F_n = \sum_{i=1}^{n}\frac{1}{n_i}\sum_{j=1}^{n_i}w_i(X_{i, j}) \frac{f(X_{i, j})}{p_i(X_{i, j})}$$
+
+The full set of conditions on the weighting functions for the estimator to be unbiased are that they sum to 1 when $f(x)\neq 0$, $\sum_{i=1}^{n}w_i(x)=1$ and that $w_i(x)=0$ if $p_i(x)=0$.
+
+In practice, a good choice for the weighting functions is given by the **balance heuristic**, which attempts to fulfill this goal by taking into account all the different ways that a sample could have been generated, rather than just the particular one that was used to do so. The balance heuristic’s weighting function for the th sampling technique is :
+
+$$
+w_i(x) = \frac{n_ip_i(x)}{\sum_j n_j p_j(x)}
+$$
+
+The **power heuristic** often reduces variance even further. For an exponent $\beta$, the power heuristic is 
+
+$$
+w_i(x) = \frac{(n_ip_i(x))^\beta}{\sum_j (n_j p_j(x))^\beta}
+$$
+
+
+<iframe src="/interactive/mis.html"
+        width="100%"
+        height="660"
+        frameborder="0"
+        style="border-radius:8px; min-width: 700px;">
+</iframe>
+
+
+{{< dlider
+before="../../images/path_tracing/renders/box-uniform-64.png"
+after="../../images/path_tracing/renders/box-mis-64.png"
+caption="Uniform Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
+width="60%"
+beforeLabel="Uniform Sampling"
+afterLabel="MIS"
+>}}
+
+<div style="text-align:center; font-size:0.9em; margin-bottom:20px; color:#666;">
+  Images by <a href="https://lisyarus.github.io">Nikita Lisitsa</a> from this <a href="https://lisyarus.github.io/blog/posts/multiple-importance-sampling.html">blog</a>
+</div>
+
+### Russian Roulette
+
+Russian roulette is a technique that can improve the efficiency of Monte Carlo estimates by skipping the evaluation of samples that would make a small contribution to the final result.
+
+Select a termination probability $q$. With probability $q$, skip evaluation and contribute $c = 0$. With probability $1-q$, evaluate and weight by $\frac{1}{1-q}$:
+
+$$
+\boxed{
+\hat{I}_{RR} = 
+\begin{cases}
+0 & \text{with probability } q \\
+\frac{\hat{I}_{MC}}{1-q} & \text{with probability } 1-q
+\end{cases}
+}
+$$
+
+#### Unbiasedness
+
+$$
+\mathbb{E}[\hat{I}_{RR}] = q \cdot 0 + (1-q) \cdot \frac{1}{1-q} \mathbb{E}[\hat{I}_{MC}] = \mathbb{E}[\hat{I}_{MC}] = I
+$$
+
+The estimator remains unbiased despite skipping samples.
+
+With these Monte Carlo foundations in place, let's examine how path tracing implements these concepts in practice.
+
+
+## Combining multiple Paths
+We now have looked at different methods of combining different samples. We can now look at the [path integral formulation](#path-integral-formulation-of-light-transport) and look at individual path sinstead of the next direction. We can observe that we can construct paths using multiple techniques and also combine all of them as visualized below. I've used the images from the [CMU 15-468: Physically Based Rendering and Advanced Image Synthesis](https://graphics.cs.cmu.edu/courses/15-468/2024_spring) course webpage and can be referred for more details.
+
+
+{{< step-slider animate="false" >}}
+- image: "../../images/path_tracing/paths/pt.png"
+  title: "Path Construction: Path Tracing without NEE"
+  description: |
+    <div class="eq-stack" style="font-size: 0.8em;">
+    <b>Path Probability Density (Joint PDF for Path Vertices):</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0, \mathbf{x}_1, \cdots, \mathbf{x}_{k-1}, \mathbf{x}_k)
+    \end{aligned}
+    $$
+    <b>Path Probability Density:</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0) \\
+    &\quad \times p(\mathbf{x}_1|\mathbf{x}_0) \\
+    &\quad \times p(\mathbf{x}_2|\mathbf{x}_0\mathbf{x}_1) \\
+    &\quad \times p(\mathbf{x}_3|\mathbf{x}_0\mathbf{x}_1\mathbf{x}_2)
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/paths/pt_nee.png"
+  title: "Path Construction: Path Tracing with NEE"
+  description: |
+    <div class="eq-stack" style="font-size: 0.8em;">
+    <b>Path Probability Density (Joint PDF for Path Vertices):</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0, \mathbf{x}_1, \cdots, \mathbf{x}_{k-1}, \mathbf{x}_k)
+    \end{aligned}
+    $$
+    <b>Path Probability Density:</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0) \\
+    &\quad \times p(\mathbf{x}_1|\mathbf{x}_0) \\
+    &\quad \times p(\mathbf{x}_2|\mathbf{x}_0\mathbf{x}_1) \\
+    &\quad \times p(\mathbf{x}_3) \rlap{\quad \text{(assuming uniform area sampling)}}
+    \end{aligned}
+    $$
+    </div>
+  
+- image: "../../images/path_tracing/paths/lt.png"
+  title: "Path Construction: Light Tracing without NEE"
+  description: |
+    <div class="eq-stack" style="font-size: 0.8em;">
+    <b>Path Probability Density (Joint PDF for Path Vertices):</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0, \mathbf{x}_1, \cdots, \mathbf{x}_{k-1}, \mathbf{x}_k)
+    \end{aligned}
+    $$
+    <b>Path Probability Density:</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0|\mathbf{x}_3\mathbf{x}_2\mathbf{x}_1) \\
+    &\quad \times p(\mathbf{x}_1|\mathbf{x}_3\mathbf{x}_2) \\
+    &\quad \times p(\mathbf{x}_2|\mathbf{x}_3) \\
+    &\quad \times p(\mathbf{x}_3)
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/paths/lt_nee.png"
+  title: "Path Construction: Light Tracing with NEE"
+  description: |
+    <div class="eq-stack" style="font-size: 0.8em;">
+    <b>Path Probability Density (Joint PDF for Path Vertices):</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0, \mathbf{x}_1, \cdots, \mathbf{x}_{k-1}, \mathbf{x}_k)
+    \end{aligned}
+    $$
+    <b>Path Probability Density:</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0) \rlap{\quad \text{(assuming uniform aperture sampling)}} \\
+    &\quad \times p(\mathbf{x}_1|\mathbf{x}_3\mathbf{x}_2) \\
+    &\quad \times p(\mathbf{x}_2|\mathbf{x}_3) \\
+    &\quad \times p(\mathbf{x}_3)
+    \end{aligned}
+    $$
+    </div>
+
+- image: "../../images/path_tracing/paths/independent.png"
+  title: "Path Construction: Independent Path Vertices"
+  description: |
+    <div class="eq-stack" style="font-size: 1em;">
+    <b>Path Probability Density (Joint PDF for Path Vertices):</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0, \mathbf{x}_1, \cdots, \mathbf{x}_{k-1}, \mathbf{x}_k)
+    \end{aligned}
+    $$
+    <b>Path Probability Density:</b>
+    $$
+    \Large
+    \begin{aligned}
+    p(\bar{\mathbf{x}}) &= p(\mathbf{x}_0)\\
+    &\quad \times p(\mathbf{x}_1) \\
+    &\quad \times p(\mathbf{x}_2) \\
+    &\quad \times p(\mathbf{x}_3)
+    \end{aligned}
+    $$
+    </div>
+  
+{{< /step-slider >}}
+
+We have seen how individual paths are constructed using different techniques, we can combine all of them (using NEE at every vertex) and construct many paths using only a few vertices.
+
+{{< 
+figure src="../../images/path_tracing/paths/all_paths.png"
+num="Y"
+id="fig-all-paths"
+caption="All the Paths (NEE + Path Tracing + Light Tracing)"
+width="100%" 
+>}}
+
+| Symbol | Meaning |
+|--------|---------|
+| $t$ | Number of vertices on camera subpath |
+| $s$ | Number of vertices on light subpath |
+| $ts$ | Number of connections |
+
+{{< 
+figure src="../../images/path_tracing/paths/combination.png"
+num="Y"
+id="fig-all-combinations"
+caption="All combination of Paths (NEE + Path Tracing + Light Tracing)"
+width="100%" 
+>}}
+
+# A look at the Importance Sampling Techniques
+
+## Overview
+The techniques we've covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. We used some examples like (BRDF, Direct Light Sampling, VNDF) but now we will take a look at some methods which try to <b>learn these distributions </b> using the samples generated during rendering.
+
+
+Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.
 
 | Paper | Venue |
 |--------|------|
