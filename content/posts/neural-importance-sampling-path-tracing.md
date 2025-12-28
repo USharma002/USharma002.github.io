@@ -1273,77 +1273,77 @@ The loop version materializes the infinite recursion by:
 #### Visualization of both recursive and iterative formulation
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/tracing/Slide17.png"
+- image: "../../images/path_tracing/tracing/Slide17.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide18.png"
+- image: "../../images/path_tracing/tracing/Slide18.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide19.png"
+- image: "../../images/path_tracing/tracing/Slide19.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide20.png"
+- image: "../../images/path_tracing/tracing/Slide20.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide21.png"
+- image: "../../images/path_tracing/tracing/Slide21.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide22.png"
+- image: "../../images/path_tracing/tracing/Slide22.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide23.png"
+- image: "../../images/path_tracing/tracing/Slide23.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide24.png"
+- image: "../../images/path_tracing/tracing/Slide24.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide25.png"
+- image: "../../images/path_tracing/tracing/Slide25.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide26.png"
+- image: "../../images/path_tracing/tracing/Slide26.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide27.png"
+- image: "../../images/path_tracing/tracing/Slide27.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 {{< /step-slider >}}
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/tracing/Slide28.png"
+- image: "../../images/path_tracing/tracing/Slide28.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide29.png"
+- image: "../../images/path_tracing/tracing/Slide29.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide30.png"
+- image: "../../images/path_tracing/tracing/Slide30.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide31.png"
+- image: "../../images/path_tracing/tracing/Slide31.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide32.png"
+- image: "../../images/path_tracing/tracing/Slide32.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide33.png"
+- image: "../../images/path_tracing/tracing/Slide33.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide34.png"
+- image: "../../images/path_tracing/tracing/Slide34.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 {{< /step-slider >}}
