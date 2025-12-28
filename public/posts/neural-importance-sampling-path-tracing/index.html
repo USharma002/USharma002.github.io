@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>A comprehensive look into the Neural Importance Sampling for Path Tracing | USharma Notes</title>
+<title>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing | USharma Notes</title>
 <meta name="keywords" content="Generative Modelling, Computer Graphics, Ray Tracing">
 <meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
 <meta name="author" content="Utkarsh Sharma">
@@ -152,12 +152,12 @@ document.addEventListener("DOMContentLoaded", function() {
   <header class="post-header">
     <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
-      A comprehensive look into the Neural Importance Sampling for Path Tracing
+      A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing
     </h1>
     <div class="post-description">
       Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;59 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-12-22 00:00:00 +0000 UTC'>December 22, 2025</span>&nbsp;·&nbsp;59 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -274,6 +274,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#loop-formulation" aria-label="Loop Formulation">Loop Formulation</a></li>
                 <li>
                     <a href="#equivalence" aria-label="Equivalence">Equivalence</a></li>
+                <li>
+                    <a href="#visualization-of-both-recursive-and-iterative-formulation" aria-label="Visualization of both recursive and iterative formulation">Visualization of both recursive and iterative formulation</a></li>
                 <li>
                     <a href="#how-it-matters-for-data-collection" aria-label="How it matters for data collection">How it matters for data collection</a></li></ul>
                 </li>
@@ -521,7 +523,7 @@ This post is a work in progress and may be updated or expanded soon!
 <p>I found a decent explaination in Unity forums <a href="https://discussions.unity.com/t/whats-the-difference-between-ray-tracing-and-path-tracing/801306">here</a> but I think of Ray Tracing as a general framework and Path Tracing a specialized way to do Ray Tracing.</p>
 <h2 id="assumptions">Assumptions<a hidden class="anchor" aria-hidden="true" href="#assumptions">#</a></h2>
 <ul>
-<li>Light Travels in Straigh Lines (in a uniform medium</li>
+<li>Light Travels in Straight Lines (in a uniform medium</li>
 <li><strong>Lambert&rsquo;s Cosine Law</strong> (Incident angle $\theta$ dictates surface illumination)</li>
 </ul>
 <iframe src="/interactive/cosine_forshortening.html"
@@ -532,7 +534,7 @@ This post is a work in progress and may be updated or expanded soon!
 </iframe>
 <ul>
 <li>Light is additive
-Size of light shource affects shadow softness</li>
+Size of light source affects shadow softness</li>
 <li><strong>Inverse Square Law</strong> Intensidy decreases with distance form the souce
 $$Intensity \propto \frac{1}{r^2}$$</li>
 </ul>
@@ -2816,6 +2818,587 @@ where $f^{(d)} = \prod_{k=0}^{d-1} \frac{f_r^{(k)}}{p_i^{(k)}}$</p>
 <li><strong>Accumulating</strong> $L_e$ contributions at each step (line 14)</li>
 <li><strong>Early termination</strong> via Russian roulette when $f \approx 0$</li>
 </ol>
+<h4 id="visualization-of-both-recursive-and-iterative-formulation">Visualization of both recursive and iterative formulation<a hidden class="anchor" aria-hidden="true" href="#visualization-of-both-recursive-and-iterative-formulation">#</a></h4>
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-29 .step-viewport{ position: relative; }
+  #step-slider-29 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-29 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-29 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-29 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-29 .mj-dim{ color: #9ca3af; }
+  #step-slider-29 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-29"
+     style="width: 100%;"
+     data-slides='[{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide17.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide18.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide19.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide20.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide21.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide22.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide23.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide24.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide25.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide26.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide27.png&#34;,&#34;title&#34;:&#34;Recursive Ray Tracing Formulation&#34;}]'>
+
+  
+  <div class="step-active-label">Step 1 / 11</div>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-29', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-29', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-29" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide17.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide18.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide19.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide20.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide21.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide22.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide23.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide24.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide25.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide26.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide27.png" alt="Recursive Ray Tracing Formulation">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-29');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
+<script>
+  window.MathJax = {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-30 .step-viewport{ position: relative; }
+  #step-slider-30 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-30 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-30 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-30 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-30 .mj-dim{ color: #9ca3af; }
+  #step-slider-30 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-30"
+     style="width: 100%;"
+     data-slides='[{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide28.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide29.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide30.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide31.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide32.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide33.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;},{&#34;description&#34;:&#34;&#34;,&#34;image&#34;:&#34;../../images/path_tracing/tracing/Slide34.png&#34;,&#34;title&#34;:&#34;Interative Ray Tracing Formulation&#34;}]'>
+
+  
+  <div class="step-active-label">Step 1 / 7</div>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-30', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-30', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-30" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide28.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide29.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide30.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide31.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide32.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide33.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/path_tracing/tracing/Slide34.png" alt="Interative Ray Tracing Formulation">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-30');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
 <h4 id="how-it-matters-for-data-collection">How it matters for data collection<a hidden class="anchor" aria-hidden="true" href="#how-it-matters-for-data-collection">#</a></h4>
 <p>The recursive formulation provides <strong>direct access to intermediate incoming
 radiance values at each intersection point along the path</strong>. When recursively
@@ -2940,34 +3523,34 @@ path vertex-an expensive additional computation step.</p>
 
 <style>
    
-  #step-slider-29 .step-viewport{ position: relative; }
-  #step-slider-29 .step-nav{
+  #step-slider-31 .step-viewport{ position: relative; }
+  #step-slider-31 .step-nav{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
   }
-  #step-slider-29 .step-nav.btn-prev{ left: 12px; }
-  #step-slider-29 .step-nav.btn-next{ right: 12px; }
+  #step-slider-31 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-31 .step-nav.btn-next{ right: 12px; }
 
    
    
     
 
    
-  #step-slider-29 .mj-current{
+  #step-slider-31 .mj-current{
     color: #f97316;
     font-weight: 700;
     background: rgba(249,115,22,0.12);
     padding: 2px 6px;
     border-radius: 6px;
   }
-  #step-slider-29 .mj-dim{ color: #9ca3af; }
-  #step-slider-29 .eq-stack{ display: grid; gap: 10px; }
+  #step-slider-31 .mj-dim{ color: #9ca3af; }
+  #step-slider-31 .eq-stack{ display: grid; gap: 10px; }
 </style>
 
 <div class="step-slider-container no-anim"
-     id="step-slider-29"
+     id="step-slider-31"
      style="width: 100%;"
      data-slides='[{&#34;description&#34;:&#34;\u003cdiv\u003e\nOur scene consists of two \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight sources\u003c/span\u003e\u003c/b\u003e (yellow), a surface with a specific \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e (light blue lobe) representing the material property, and our chosen \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003esampling PDF\u003c/span\u003e\u003c/b\u003e (purple lobe) which dictates the direction of the next ray.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/scene_setup.png&#34;,&#34;title&#34;:&#34;Scene Setup&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nThe simplest strategy is \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eUniform Sampling\u003c/span\u003e\u003c/b\u003e. This defines a constant probability density $p(\\omega) = \\frac{1}{2\\pi}$ across the entire hemisphere $\\Omega$, completely ignoring \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elighting\u003c/span\u003e\u003c/b\u003e and \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003ematerial properties\u003c/span\u003e\u003c/b\u003e.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/uniform_pdf.png&#34;,&#34;title&#34;:&#34;Uniform Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nBut since \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eUniform Sampling\u003c/span\u003e\u003c/b\u003e ignores \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elighting\u003c/span\u003e\u003c/b\u003e and \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003ematerial properties\u003c/span\u003e\u003c/b\u003e, a lot of the samples are wasted\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/uniform_rays.png&#34;,&#34;title&#34;:&#34;Uniform Sampling Rays&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nWe can improve this using \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eDirect Light Sampling\u003c/span\u003e\u003c/b\u003e (Next Event Estimation) PDF. Here, the \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003ePDF\u003c/span\u003e\u003c/b\u003e is non-zero only in directions pointing toward the \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight sources\u003c/span\u003e\u003c/b\u003e, proportional to their power.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/diffuse_light_pdf.png&#34;,&#34;title&#34;:&#34;Direct Light Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\n\u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eDirect Light Sampling\u003c/span\u003e\u003c/b\u003e works exceptionally well for \u003cb\u003eDiffuse Materials\u003c/b\u003e. Since diffuse surfaces reflect light equally in all directions, hitting the \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight source\u003c/span\u003e\u003c/b\u003e is the only thing that matters for reducing variance.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/diffuse_light_rays.png&#34;,&#34;title&#34;:&#34;(Diffuse) Direct Light Sampling Rays&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nIf the material is \u003cb\u003eGlossy\u003c/b\u003e, the \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e becomes a narrow lobe. Even if we hit a \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elight source\u003c/span\u003e\u003c/b\u003e, if that light isn&#39;t in the direction the material reflects, the contribution is multiplied by a near-zero \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e value.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_light_pdf.png&#34;,&#34;title&#34;:&#34;(Glossy) Direct Light Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nIn this glossy case, \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eDirect Light Sampling\u003c/span\u003e\u003c/b\u003e is actually inefficient. We are successfully hitting the \u003cb\u003e\u003cspan style=\&#34;color:#ff9900\&#34;\u003elights\u003c/span\u003e\u003c/b\u003e, but those samples are \u003cb\u003ewasted\u003c/b\u003e because the material property prevents that light from reaching the camera.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_light_rays.png&#34;,&#34;title&#34;:&#34;(Glossy) Direct Light Sampling Rays&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nTo fix this, we use \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003eBRDF Sampling\u003c/span\u003e\u003c/b\u003e. We align our \u003cb\u003e\u003cspan style=\&#34;color:#a020f0\&#34;\u003ePDF\u003c/span\u003e\u003c/b\u003e with the \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003ematerial&#39;s reflection lobe\u003c/span\u003e\u003c/b\u003e. This ensures we only sample directions where the surface is physically capable of reflecting radiance.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_brdf_pdf.png&#34;,&#34;title&#34;:&#34;(Glossy) BRDF Sampling PDF&#34;},{&#34;description&#34;:&#34;\u003cdiv\u003e\nBy prioritizing directions where the \u003cb\u003e\u003cspan style=\&#34;color:#007bff\&#34;\u003eBRDF\u003c/span\u003e\u003c/b\u003e is large, we ensure that every ray we cast has a high potential to contribute to the final pixel color, significantly reducing \u003cb\u003evariance\u003c/b\u003e for glossy reflections.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/sampling/glossy_brdf_rays.png&#34;,&#34;title&#34;:&#34;(Glossy) BRDF Sampling Rays&#34;}]'>
 
@@ -2976,10 +3559,10 @@ path vertex-an expensive additional computation step.</p>
 
   <div class="step-viewport">
     
-    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-29', -1)" disabled>❮</button>
-    <button class="step-nav btn-next" onclick="moveSlide('step-slider-29', 1)">❯</button>
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-31', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-31', 1)">❯</button>
 
-    <div class="step-wrapper" id="wrapper-step-slider-29" style="--current-index: 0;">
+    <div class="step-wrapper" id="wrapper-step-slider-31" style="--current-index: 0;">
       
       <div class="step-slide">
         <img src="../../images/path_tracing/sampling/scene_setup.png" alt="Scene Setup">
@@ -3209,7 +3792,7 @@ path vertex-an expensive additional computation step.</p>
 
   
   window.addEventListener('DOMContentLoaded', () => {
-    const c = document.getElementById('step-slider-29');
+    const c = document.getElementById('step-slider-31');
     if (c) window.updateSliderUI(c, 0);
   });
 })();
@@ -3251,7 +3834,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
     
     
     
-    <div class="dlider-container" id="dlider-32" 
+    <div class="dlider-container" id="dlider-34" 
          data-before-label="Uniform Sampling" 
          data-after-label="Cosine Weighted Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3325,7 +3908,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
       
       
       
-      <div class="dlider-container" id="dlider-33" 
+      <div class="dlider-container" id="dlider-35" 
            data-before-label="Uniform Sampling" 
            data-after-label="Cosine Weighted Sampling"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3414,7 +3997,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
     
     
     
-    <div class="dlider-container" id="dlider-34" 
+    <div class="dlider-container" id="dlider-36" 
          data-before-label="Uniform Sampling" 
          data-after-label="Direct Light Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3488,7 +4071,7 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
       
       
       
-      <div class="dlider-container" id="dlider-35" 
+      <div class="dlider-container" id="dlider-37" 
            data-before-label="Uniform Sampling" 
            data-after-label="VNDF Sampling"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3588,7 +4171,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
     
     
     
-    <div class="dlider-container" id="dlider-36" 
+    <div class="dlider-container" id="dlider-38" 
          data-before-label="Uniform Sampling" 
          data-after-label="Cosine Weighted Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3662,7 +4245,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
       
       
       
-      <div class="dlider-container" id="dlider-37" 
+      <div class="dlider-container" id="dlider-39" 
            data-before-label="Cosine Weighted Sampling" 
            data-after-label="MIS"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3738,7 +4321,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
     
     
     
-    <div class="dlider-container" id="dlider-38" 
+    <div class="dlider-container" id="dlider-40" 
          data-before-label="Uniform Sampling" 
          data-after-label="Direct Light Sampling"
          style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3812,7 +4395,7 @@ where $c$ is a constant equal to the integral of $f_a$, since $p_a(x) \propto f_
       
       
       
-      <div class="dlider-container" id="dlider-39" 
+      <div class="dlider-container" id="dlider-41" 
            data-before-label="MIS Wrong" 
            data-after-label="MIS"
            style="width: 100%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -3914,7 +4497,7 @@ $$<iframe src="/interactive/mis.html"
 
 
 
-<div class="dlider-container" id="dlider-40" 
+<div class="dlider-container" id="dlider-42" 
      data-before-label="Uniform Sampling" 
      data-after-label="MIS"
      style="width: 60%; max-width: 100%; margin: 2rem auto; position: relative;">
@@ -4015,34 +4598,34 @@ $$<p>The estimator remains unbiased despite skipping samples.</p>
 
 <style>
    
-  #step-slider-41 .step-viewport{ position: relative; }
-  #step-slider-41 .step-nav{
+  #step-slider-43 .step-viewport{ position: relative; }
+  #step-slider-43 .step-nav{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
   }
-  #step-slider-41 .step-nav.btn-prev{ left: 12px; }
-  #step-slider-41 .step-nav.btn-next{ right: 12px; }
+  #step-slider-43 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-43 .step-nav.btn-next{ right: 12px; }
 
    
    
     
 
    
-  #step-slider-41 .mj-current{
+  #step-slider-43 .mj-current{
     color: #f97316;
     font-weight: 700;
     background: rgba(249,115,22,0.12);
     padding: 2px 6px;
     border-radius: 6px;
   }
-  #step-slider-41 .mj-dim{ color: #9ca3af; }
-  #step-slider-41 .eq-stack{ display: grid; gap: 10px; }
+  #step-slider-43 .mj-dim{ color: #9ca3af; }
+  #step-slider-43 .eq-stack{ display: grid; gap: 10px; }
 </style>
 
 <div class="step-slider-container no-anim"
-     id="step-slider-41"
+     id="step-slider-43"
      style="width: 100%;"
      data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_0\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3|\\mathbf{x}_0\\mathbf{x}_1\\mathbf{x}_2)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/pt.png&#34;,&#34;title&#34;:&#34;Path Construction: Path Tracing without NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_0) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_0\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3) \\rlap{\\quad \\text{(assuming uniform area sampling)}}\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/pt_nee.png&#34;,&#34;title&#34;:&#34;Path Construction: Path Tracing with NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0|\\mathbf{x}_3\\mathbf{x}_2\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_3\\mathbf{x}_2) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_3) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/lt.png&#34;,&#34;title&#34;:&#34;Path Construction: Light Tracing without NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 0.8em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0) \\rlap{\\quad \\text{(assuming uniform aperture sampling)}} \\\\\n\u0026\\quad \\times p(\\mathbf{x}_1|\\mathbf{x}_3\\mathbf{x}_2) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2|\\mathbf{x}_3) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/lt_nee.png&#34;,&#34;title&#34;:&#34;Path Construction: Light Tracing with NEE&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34; style=\&#34;font-size: 1em;\&#34;\u003e\n\u003cb\u003ePath Probability Density (Joint PDF for Path Vertices):\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0, \\mathbf{x}_1, \\cdots, \\mathbf{x}_{k-1}, \\mathbf{x}_k)\n\\end{aligned}\n$$\n\u003cb\u003ePath Probability Density:\u003c/b\u003e\n$$\n\\Large\n\\begin{aligned}\np(\\bar{\\mathbf{x}}) \u0026= p(\\mathbf{x}_0)\\\\\n\u0026\\quad \\times p(\\mathbf{x}_1) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_2) \\\\\n\u0026\\quad \\times p(\\mathbf{x}_3)\n\\end{aligned}\n$$\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/path_tracing/paths/independent.png&#34;,&#34;title&#34;:&#34;Path Construction: Independent Path Vertices&#34;}]'>
 
@@ -4051,10 +4634,10 @@ $$<p>The estimator remains unbiased despite skipping samples.</p>
 
   <div class="step-viewport">
     
-    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-41', -1)" disabled>❮</button>
-    <button class="step-nav btn-next" onclick="moveSlide('step-slider-41', 1)">❯</button>
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-43', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-43', 1)">❯</button>
 
-    <div class="step-wrapper" id="wrapper-step-slider-41" style="--current-index: 0;">
+    <div class="step-wrapper" id="wrapper-step-slider-43" style="--current-index: 0;">
       
       <div class="step-slide">
         <img src="../../images/path_tracing/paths/pt.png" alt="Path Construction: Path Tracing without NEE">
@@ -4268,7 +4851,7 @@ $$<p>The estimator remains unbiased despite skipping samples.</p>
 
   
   window.addEventListener('DOMContentLoaded', () => {
-    const c = document.getElementById('step-slider-41');
+    const c = document.getElementById('step-slider-43');
     if (c) window.updateSliderUI(c, 0);
   });
 })();
@@ -4313,7 +4896,7 @@ $$<p>The estimator remains unbiased despite skipping samples.</p>
 
 <h1 id="a-look-at-the-importance-sampling-techniques">A look at the Importance Sampling Techniques<a hidden class="anchor" aria-hidden="true" href="#a-look-at-the-importance-sampling-techniques">#</a></h1>
 <h2 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h2>
-<p>The techniques we&rsquo;ve covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. We used some examples like (BRDF, Direct Light Sampling, VNDF) but now we will take a look at some methods which try to <b>learn these distributions </b> using the samples generated suring rendering.</p>
+<p>The techniques we&rsquo;ve covered (importance sampling, MIS, Russian roulette) all rely on choosing good sampling distributions. We used some examples like (BRDF, Direct Light Sampling, VNDF) but now we will take a look at some methods which try to <b>learn these distributions </b> using the samples generated during rendering.</p>
 <p>Neural methods learn these distributions from data, enabling near-optimal importance sampling in complex scenes. The papers below represent the evolution of this idea of choosing/designing $p(x)$ carefully.</p>
 <table>
   <thead>
@@ -5355,13 +5938,8 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
       <li><a href="http://localhost:1313/tags/ray-tracing/">Ray Tracing</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/bagging-boosting/">
+  <a class="prev" href="http://localhost:1313/posts/3d-reconstruction/">
     <span class="title">« Prev</span>
-    <br>
-    <span>Bagging and Boosting</span>
-  </a>
-  <a class="next" href="http://localhost:1313/posts/3d-reconstruction/">
-    <span class="title">Next »</span>
     <br>
     <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
   </a>

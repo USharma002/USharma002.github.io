@@ -1270,6 +1270,85 @@ The loop version materializes the infinite recursion by:
 2. **Accumulating** $L_e$ contributions at each step (line 14)
 3. **Early termination** via Russian roulette when $f \approx 0$
 
+#### Visualization of both recursive and iterative formulation
+
+{{< step-slider animate="false" >}}
+- image: "../../images/path_tracing/tracing/Slide17.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide18.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide19.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide20.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide21.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide22.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide23.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide24.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide25.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide26.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide27.png"
+  title: "Recursive Ray Tracing Formulation"
+  description: ""
+{{< /step-slider >}}
+
+{{< step-slider animate="false" >}}
+- image: "../../images/path_tracing/tracing/Slide28.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide29.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide30.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide31.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide32.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide33.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+
+- image: "../../images/path_tracing/tracing/Slide34.png"
+  title: "Interative Ray Tracing Formulation"
+  description: ""
+{{< /step-slider >}}
+
+
 #### How it matters for data collection
 The recursive formulation provides **direct access to intermediate incoming 
 radiance values at each intersection point along the path**. When recursively 
