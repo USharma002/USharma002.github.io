@@ -75,7 +75,7 @@ summary: "about"
 <section style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
   <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Projects</h3>
   
-  <!-- Project 1 -->
+  <!-- Neural Path Guiding -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/py-neural-path-guiding/blob/main/assets/app.png?raw=true" alt="Neural Path Guiding Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
@@ -90,12 +90,29 @@ summary: "about"
       <a href="https://github.com/USharma002/py-neural-path-guiding" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Project Link</a>
     </div>
   </div>
+
+  <!-- Signed Distance Field Explorer -->
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
+    <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+      <img src="../../images/about/sdf-explorer.png" alt="SDF Explorer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; background-color: #f0f0f0;">
+      <img src="../../images/about/sdf-explorer.gif" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+    </div>
+    <div>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer</h4>
+      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
+        An interactive web-based tool for exploring Signed Distance Fields (SDFs). 
+        Real-time visualization and manipulation of geometric primitives and operations using Raymarching.
+      </p>
+      <a href="https://usharma002.github.io/sdf-explorer/" target="_blank" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Live Demo</a>
+      <a href="https://github.com/USharma002/sdf-explorer" target="_blank" style="color: #0A66C2; text-decoration: none;">GitHub</a>
+    </div>
+  </div>
   
   <!-- Project 2 -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/VolPath/raw/main/icons/volpath.png" alt="Scalar Field Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="https://github.com/USharma002/VolPath/raw/main/icons/volpath.png" alt="Scalar Field GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="../../images/about/volpath.gif" alt="Scalar Field GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Scalar Field Reconstructor</h4>
@@ -110,7 +127,7 @@ summary: "about"
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/CUDA-PathTracer/blob/main/assets/cbox.png?raw=true" alt="CUDA PathTracer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="https://github.com/USharma002/CUDA-PathTracer/blob/main/assets/cbox.png?raw=true" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="../../images/about/cuda-pathtracer.gif" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">CUDA PathTracer</h4>
@@ -154,6 +171,8 @@ summary: "about"
     </div>
   </div>
 </section>
+
+
 
 <style>
 .project-img-hover:hover img:first-child {

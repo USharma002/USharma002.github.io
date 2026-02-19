@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Linear Regression with MLE and MAP | USharma Notes</title>
+<meta name="keywords" content="Linear Regression, MLE">
+<meta name="description" content="Linear Regression using MLE and MAP">
+<meta name="author" content="Utkarsh Sharma">
+<link rel="canonical" href="http://localhost:1313/posts/linear-regression-copy/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.cdb57d614f6da4b574ec4cfe07cdbb83095cd5fa0dac8c1e29081acc151ca5de.css" integrity="sha256-zbV9YU9tpLV07Ez&#43;B827gwlc1foNrIweKQgazBUcpd4=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/linear-regression-copy/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+  crossorigin="anonymous">
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+  crossorigin="anonymous"></script>
+
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  crossorigin="anonymous"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  renderMathInElement(document.body, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false }
+    ],
+    throwOnError: false
+  });
+});
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Linear Regression with MLE and MAP
+    </h1>
+    <div class="post-description">
+      Linear Regression using MLE and MAP
+    </div>
+    <div class="post-meta"><span title='2025-11-01 00:00:00 +0000 UTC'>November 1, 2025</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Utkarsh Sharma
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#linear-regression" aria-label="Linear Regression">Linear Regression</a><ul>
+                        
+                <li>
+                    <a href="#problem-formulation" aria-label="Problem Formulation">Problem Formulation</a></li>
+                <li>
+                    <a href="#parameters-estimation" aria-label="Parameters Estimation">Parameters Estimation</a></li>
+                <li>
+                    <a href="#estimating-with-mle" aria-label="Estimating with MLE">Estimating with MLE</a></li>
+                <li>
+                    <a href="#estimating-with-map" aria-label="Estimating with MAP">Estimating with MAP</a></li></ul>
+                </li>
+                <li>
+                    <a href="#summary" aria-label="Summary">Summary</a></li>
+                <li>
+                    <a href="#references" aria-label="References">References</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="linear-regression">Linear Regression<a hidden class="anchor" aria-hidden="true" href="#linear-regression">#</a></h2>
+<p>In <em>regression</em>, we aim to find a function $f$ that maps input $x\in \mathbb{R}^{D}$ to corresponding  function values $f(x)\in \mathbb{R}$. We assume we are given a set of training input data $\mathcal{D}=\lbrace x_1, ..., x_n\rbrace$ and corresponding noisy observations $y_n =f(x_n) + \epsilon$, where $\epsilon$ is an i.i.d. random variable that describes measurement/observation noise and potentially unmodeled process.</p>
+<p>We assume zero-mean Gaussian noise and our task is to find a function that not only models the training data, but generalizes well to predicting function values at input locations that are not part of the training data.</p>
+<h3 id="problem-formulation">Problem Formulation<a hidden class="anchor" aria-hidden="true" href="#problem-formulation">#</a></h3>
+<p>Here, $x\in \mathbb{R}^D$ are inputs and $y\in \mathbb{R}$ are noisy function values (targets). The functional relationship between $x$ and $y$ is given as
+</p>
+$$y = f(x) + \epsilon$$<p>where $\epsilon\sim \mathcal{N}(0, \sigma^2)$ is i.i.d. Gaussian measurement noise.</p>
+<p>Because of the presence of observation noise, we will adopt a probabilistic approach and explicitly model the noise using a likelihood function. More specifically, we consider a regression problem with likelihood function:
+</p>
+$$p(y|x) = \mathcal{N}(y \mid f(x), \sigma^2)$$<p>In <strong>Linear Regression</strong>, we consider the special case that the model parameters $\theta$ appear linearly in our model (Note that it is &ldquo;linear in the parameters&rdquo;).</p>
+$$p(y \mid x) = \mathcal{N}\big(y \mid f(x), \sigma^2\big)$$<p>
+</p>
+$$\Longleftrightarrow \quad y = x^\top \theta + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, \sigma^2)$$<p>where $\theta\in\mathbb{R}^D$ are the parameters we seek. The class of function described by this function are straight lines that pass through the origin. We can add a bias $b$ to the above equation to define an affine transformation instead of linear one to fix the issue or simply augment $x^0 = 1$ to features and $\theta_0=0$ in parameters to simulate that using above.</p>
+<h3 id="parameters-estimation">Parameters Estimation<a hidden class="anchor" aria-hidden="true" href="#parameters-estimation">#</a></h3>
+<p>Assuming we are given a <em>training set</em> $\mathcal{D} = \lbrace (x_1, y_1), ..., (x_N, y_N) \rbrace$ consisting of $N$ inputs $x_n \in \mathbb{R}^D$ and corresponding observations/targets $y_n\in \mathbb{R}, n=1, ...,N$. Note that $y_i$ and $y_j$ are conditionally independent given their respective inputs so the likelihood can we written as:</p>
+$$p(\mathcal{Y}\mid\mathcal{X}, \theta) = p(y_1,\dots, y_n|x_1, \dots, x_n)$$$$p(\mathcal{Y}\mid\mathcal{X}, \theta) = \prod_{n=1}^{N}p(y_n|x_n, \theta) = \prod_{n=1}^{N}\mathcal{N}(y_n\mid x_n^\top \theta, \sigma^2)$$<p>where we defined $\mathcal{X} = \lbrace x_1, \dots, x_N \rbrace$ and $\mathcal{Y} = \lbrace y_1, \dots, y_N \rbrace$ respectively. We can then use the parameter estimation to get an optimal estimate for parameters, $\theta^*$, for the linear regression model.</p>
+<h3 id="estimating-with-mle">Estimating with MLE<a hidden class="anchor" aria-hidden="true" href="#estimating-with-mle">#</a></h3>
+<p>To find the desired parameterss $\theta_{MLE}$ we can use maximum likelihood estimate. Intuitively, this means maximizing the predictive distribution of training data given the model parameters. We obtain the maximum likelihood parameters as:</p>
+$$\theta_{ML} = \arg\max_\theta p(\mathcal{Y}\mid\mathcal{X}, \theta)$$<p>It is easier to deal with the Negative Log Likelihood so we get the following optimization problem.</p>
+$$\theta_{ML} = \arg\min_\theta -\log p(\mathcal{Y}\mid\mathcal{X}, \theta)$$<p>We can use gradient descent to optimize but for this we have a closed form solution.</p>
+$$
+\begin{aligned}
+\theta_{\mathrm{ML}}
+&= \arg\max_{\theta} p(\mathcal{Y}\mid\mathcal{X},\theta) \\[6pt]
+&= \arg\max_{\theta} \prod_{i=1}^N p(y_i\mid x_i,\theta) \qquad \text{(independent examples)} \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \log p(y_i\mid x_i,\theta) \qquad \text{(log is monotonic)} \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \log \mathcal{N}(y_i \mid x_i^\top\theta, \sigma^2) \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \left[ \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \log\left(e^{-\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2}}\right) \right] \\[6pt]
+&= \arg\max_{\theta} \sum_{i=1}^N \left[ -\frac{(x_i^\top\theta - y_i)^2}{2\sigma^2} \right] \qquad \text{(constant term dropped)} \\[6pt]
+&= \arg\min_{\theta} \frac{1}{2\sigma^2}\sum_{i=1}^N (x_i^\top\theta - y_i)^2
+\end{aligned}
+$$<p>We can obtain a loss function as
+</p>
+$$
+\mathcal{L}(\theta) = \tfrac{1}{2\sigma^2}\sum_{i=1}^{N}(x_i^\top\theta - y_i)^2
+= \tfrac{1}{2\sigma^2}(y - X\theta)^\top(y - X\theta)
+= \tfrac{1}{2\sigma^2}\|y - X\theta\|^2
+$$$$
+\boxed{\mathcal{L}(\theta) = \tfrac{1}{2\sigma^2}\|y - X\theta\|^2
+}$$<p>where we defined <em>design matrix</em> $X = [x_1, \dots, x_N]^\top \in \mathbb{R}^{N\times D}$ as the collection of training inputs and $y = [y_1, \dots, y_n]^\top  \in \mathbb{R}^{N}$ as a collection of targets.</p>
+<p>We now have a concrete form of Negative Log Likelihood function we need to optimize. Since the function is quadratic, we can find unique global solution by computing the gradient of $\mathcal{L}$, setting it to $0$ and solving for $\theta$.</p>
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial\theta} 
+&= \frac{d}{d\theta}\!\left(\tfrac{1}{2\sigma^2}(y - X\theta)^\top(y - X\theta)\right) \\[6pt]
+&= \tfrac{1}{2\sigma^2}\frac{d}{d\theta}\!\left(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta\right) \\[6pt]
+&= \tfrac{1}{2\sigma^2}\big(-2X^\top y + 2X^\top X\theta\big) \\[6pt]
+&= -X^\top y + X^\top X\theta = 0\\
+&\Rightarrow X^\top X\theta = X^\top y \end{aligned}$$<p>Thus we get the closed form solution as :
+</p>
+$$\therefore \quad \boxed{\theta_{\text{MLE}} = (X^\top X)^{-1}X^\top y} $$<h3 id="estimating-with-map">Estimating with MAP<a hidden class="anchor" aria-hidden="true" href="#estimating-with-map">#</a></h3>
+<p>We now assume a prior for the model parameters $\theta$. The choice of the prior will affect which regularization term is added to the loss function.<br>
+For now, we will assume the following prior formulation:</p>
+$$
+\begin{aligned}
+\theta_{\text{MAP}}
+&= \arg\max_\theta \; P(\theta \mid y_1,x_1,\dots,y_N,x_N) \\[4pt]
+&= \arg\max_\theta \; P(y_1,x_1,\dots,y_N,x_N \mid \theta)\,P(\theta)
+\qquad\text{(Bayes' rule; denominator dropped)} \\[6pt]
+&= \arg\max_\theta \; \Big[\prod_{i=1}^N P(y_i,x_i \mid \theta)\Big] P(\theta) \\[6pt]
+&= \arg\max_\theta \; \Big[\prod_{i=1}^N P(y_i \mid x_i, \theta)\,P(x_i \mid \theta)\Big] P(\theta) \\[6pt]
+&= \arg\max_\theta \; \Big[\prod_{i=1}^N P(y_i \mid x_i, \theta)\,P(x_i)\Big] P(\theta)
+\qquad\text{(assume }P(x_i\mid \theta)=P(x_i)\text{)} \\[6pt]
+&= \arg\max_\theta \; \Big[\prod_{i=1}^N P(y_i \mid x_i, \theta)\Big] P(\theta) \\[6pt]
+&= \arg\max_\theta \; \sum_{i=1}^N \log P(y_i \mid x_i, \theta) + \log P(\theta)
+\qquad\text{(take log)}.
+\end{aligned}
+$$<p>Assume Gaussian likelihood $y_i \mid x_i,\theta \sim \mathcal{N}(x_i^\top \theta,\;\sigma^2)$
+and Gaussian prior $\theta \sim \mathcal{N}(0,\;\tau^2 I)$. Then</p>
+$$
+\begin{aligned}
+\theta_{\text{MAP}}
+&= \arg\max_\theta \; \sum_{i=1}^N \left[-\frac{(x_i^\top \theta - y_i)^2}{2\sigma^2}\right] 
+\;+\; \left[-\frac{\theta^\top \theta}{2\tau^2}\right] \;+\; \text{const} \\[6pt]
+&= \arg\min_\theta \; \frac{1}{2\sigma^2}\sum_{i=1}^N (x_i^\top \theta - y_i)^2 \;+\; \frac{1}{2\tau^2} \theta^\top \theta .
+\end{aligned}
+$$<p>Equivalently, dividing by $N$ and writing in empirical-risk form:</p>
+$$
+\begin{aligned}
+\theta_{\text{MAP}}
+&= \arg\min_\theta \; \frac{1}{N}\sum_{i=1}^N (x_i^\top \theta - y_i)^2 \;+\; \lambda \|\theta\|_2^2
+\end{aligned}
+$$<p>where $\lambda = \frac{\sigma^2}{N\,\tau^2}$</p>
+<p>We can also get the closed form solution for the MAP estimate as follows:
+</p>
+$$
+\begin{aligned}
+\mathcal{L}_{\text{MAP}}(\theta)
+&= \frac{1}{2\sigma^2}\|y - X\theta\|^2 + \frac{1}{2\tau^2}\|\theta\|^2 \\[6pt]
+&= \frac{1}{2\sigma^2}(y - X\theta)^\top(y - X\theta) + \frac{1}{2\tau^2}\theta^\top\theta \\[6pt]
+&= \frac{1}{2\sigma^2}(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta) + \frac{1}{2\tau^2}\theta^\top\theta
+\end{aligned}
+$$<p>Compute the gradient with respect to $ \theta $, we get:</p>
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} 
+&= \frac{1}{2\sigma^2}\frac{d}{d\theta}\left(y^\top y - 2y^\top X\theta + \theta^\top X^\top X\theta\right) + \frac{1}{2\tau^2}\frac{d}{d\theta}(\theta^\top\theta) \\[6pt]
+&= \frac{1}{2\sigma^2}(-2X^\top y + 2X^\top X\theta) + \frac{1}{2\tau^2}(2\theta) \\[6pt]
+&= \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta
+\end{aligned}
+$$<p>Set the gradient to zero:
+</p>
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}_{\text{MAP}}}{\partial\theta} &= 0 \\[6pt]
+\Rightarrow\quad \frac{1}{\sigma^2}(X^\top X\theta - X^\top y) + \frac{1}{\tau^2}\theta &= 0 \\[6pt]
+\Rightarrow\quad X^\top X\theta - X^\top y + \frac{\sigma^2}{\tau^2}\theta &= 0 \\[6pt]
+\Rightarrow\quad (X^\top X + \tfrac{\sigma^2}{\tau^2} I)\theta = X^\top y
+\end{aligned}
+$$<p>Thus we get the closed form solution as :</p>
+$$
+\therefore \quad \boxed{\theta_{\text{MAP}} = (X^\top X + \tfrac{\sigma^2}{\tau^2} I)^{-1}X^\top y}
+$$<p>Optional (empirical-risk form):</p>
+$$
+\begin{aligned}
+\mathcal{L}_{\text{MAP}}(\theta)
+&= \frac{1}{N}\sum_{i=1}^N (x_i^\top\theta - y_i)^2 + \lambda\|\theta\|_2^2, \\[4pt]
+\text{where}\quad \lambda &= \frac{\sigma^2}{N\tau^2}.
+\end{aligned}
+$$$$
+\Rightarrow\quad
+(\tfrac{X^\top X}{N} + \lambda I)\theta = \tfrac{X^\top y}{N}
+\quad\Rightarrow\quad
+\boxed{\theta_{\text{MAP}} = (X^\top X + \lambda I)^{-1}X^\top y}
+$$<hr>
+<hr>
+<h2 id="summary">Summary<a hidden class="anchor" aria-hidden="true" href="#summary">#</a></h2>
+<ul>
+<li>
+<p><strong>Ordinary Least Squares (OLS)</strong></p>
+<ul>
+<li>Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2$</li>
+<li>Regularization: None</li>
+<li>Closed form: $\displaystyle w = (X X^\top)^{-1} X y^\top$</li>
+</ul>
+</li>
+<li>
+<p><strong>Ridge Regression</strong></p>
+<ul>
+<li>Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2 + \lambda\|w\|_2^2$</li>
+<li>Regularization: $L_2$</li>
+<li>Closed form: $\displaystyle w = (X X^\top + \lambda I)^{-1} X y^\top$</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+<ol>
+<li>Deisenroth, M. P., Faisal, A. A., &amp; Ong, C. S. (2020). <em>Mathematics for Machine Learning</em>. Cambridge University Press.</li>
+<li>Bishop, C. M. (2006). <em>Pattern Recognition and Machine Learning</em>. Springer.</li>
+<li>Cornell University CS4780/5780: <em>Machine Learning for Intelligent Systems</em> Lecture Notes.</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/linear-regression/">Linear Regression</a></li>
+      <li><a href="http://localhost:1313/tags/mle/">MLE</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/linear-regression/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Linear Regression with MLE and MAP</span>
+  </a>
+  <a class="next" href="http://localhost:1313/posts/transformer-model/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Vision Transformer (ViT) - Architecture and Implementation</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script>
+document.addEventListener('DOMContentLoaded', function() {
+    const originalToc = document.querySelector('.toc');
+    const content = document.querySelector('.post-content');
+
+    if (originalToc && content) {
+        
+        const sidebarToc = originalToc.cloneNode(true);
+        sidebarToc.classList.add('sidebar-toc');
+        sidebarToc.classList.remove('toc');
+        document.body.appendChild(sidebarToc);
+
+        
+        const visibilityObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && window.scrollY > entry.boundingClientRect.top) {
+                    sidebarToc.classList.add('visible');
+                } else {
+                    sidebarToc.classList.remove('visible');
+                }
+            });
+        });
+        visibilityObserver.observe(originalToc);
+
+        
+        const headers = content.querySelectorAll('h1, h2, h3, h4');
+        const sidebarLinks = sidebarToc.querySelectorAll('a');
+        
+        
+        function clearActiveStates() {
+            sidebarToc.querySelectorAll('li').forEach(li => {
+                li.classList.remove('active');
+                li.classList.remove('has-active-child');
+            });
+        }
+
+        
+        const headerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = sidebarToc.querySelector(`a[href="#${id}"]`);
+
+                    if (activeLink) {
+                        clearActiveStates();
+                        
+                        
+                        let currentLi = activeLink.parentElement; 
+                        currentLi.classList.add('active');
+
+                        
+                        let parent = currentLi.parentElement; 
+                        while (parent) {
+                            if (parent.tagName === 'LI') {
+                                parent.classList.add('has-active-child');
+                            }
+                            if (parent.classList.contains('sidebar-toc')) break;
+                            parent = parent.parentElement;
+                        }
+                    }
+                }
+            });
+        }, {
+            rootMargin: '-10% 0px -80% 0px' 
+        });
+
+        headers.forEach(header => headerObserver.observe(header));
+    }
+});
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
