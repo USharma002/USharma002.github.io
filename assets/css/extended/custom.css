@@ -1,93 +1,280 @@
-/* Custom styles added to demo */
+/* ════════════════════════════════════════
+   PaperMod-compatible custom styles
+   NO global element overrides — all scoped
+   
+   NOTE: Reference uses html{font-size:62.5%} so 1rem=10px.
+   PaperMod uses default html font-size so 1rem=16px.
+   All sizes below use px to avoid confusion.
+   ════════════════════════════════════════ */
 
-.twitter-tweet {
-    margin: auto;
-}
+.twitter-tweet { margin: auto; }
+iframe { border-radius: var(--radius) !important; }
+.home-info ul { padding-inline-start: 20px; }
+.entry-cover img { border: 1px solid var(--border); }
+.first-entry { min-height: 120px !important; }
+html { scroll-behavior: smooth; }
 
-iframe {
-    border-radius: var(--radius) !important;
-}
-
-.home-info ul {
-    padding-inline-start: 20px;
-}
-
-.entry-cover img {
-    border: 1px solid var(--border);
-}
-
-.first-entry{
-    min-height: 120px !important;
-}
-
-.main{
+.main {
     max-width: calc(var(--main-width) + var(--gap) * 6);
 }
 
-/* Moderate bullet point indentation */
-.post-content ul,
-.post-content ol {
-    padding-left: 2.5em;
-}
-
-.post-content ul ul,
-.post-content ol ol,
-.post-content ul ol,
-.post-content ol ul {
-    padding-left: 2em;
-}
-
-/* Definition/Blockquote background shading */
-.post-content blockquote {
-    background-color: rgba(0, 0, 0, 0.03);
-    border-left: 4px solid var(--primary);
-    padding: 1em 1.5em;
-    margin: 1.5em 0;
-    border-radius: 6px;
-}
-
-/* Dark mode definition background */
-.dark .post-content blockquote,
-[data-theme="dark"] .post-content blockquote {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Smooth scrolling for figure references */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Style figure reference links */
+/* Figure reference links */
 a[href^="#fig-"] {
     color: var(--primary);
     font-weight: 500;
     text-decoration: none;
     border-bottom: 1px dotted var(--primary);
 }
-
 a[href^="#fig-"]:hover {
     border-bottom: 1px solid var(--primary);
 }
 
-
-
+/* Post main layout */
 :root {
-    --line-height:1.1em;
-    --post-width:960px;
+    --line-height: 1.1em;
+    --post-width: 960px;
     --monospace: monospace;
 }
 .main.post {
-    --main-width:880px;
+    --main-width: 880px;
     position: relative;
-	min-height: calc(100vh - var(--header-height) - var(--footer-height));
-	max-width: calc(var(--main-width) + var(--gap) * 2);
-	margin: auto;
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    max-width: calc(var(--main-width) + var(--gap) * 2);
+    margin: auto;
     margin-right: 50px;
-	padding: var(--content-gap)var(--gap)0;
+    padding: var(--content-gap) var(--gap) 0;
 }
 
+/* ════════════════════════════════════════
+   SCOPED POST CONTENT TYPOGRAPHY
+   SIGGRAPH research-paper-style spacing
+   ════════════════════════════════════════ */
+
 .post-content {
-	font-size: 16px;
-    line-height: 1.2em;
-	color: var(--content);
+    font-family: 'Merriweather', Georgia, serif !important;
+    font-weight: 300 !important;
+    font-size: 16px !important;
+    line-height: 1.65 !important;
+    color: var(--content);
+}
+
+/* ─── Headings — Lato, bold, SIGGRAPH-compact margins ─── */
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+    font-family: 'Lato', Helvetica, sans-serif !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+}
+
+.post-content h1 {
+    font-size: 28px !important;
+    line-height: 34px !important;
+    margin: 40px 0 16px !important;
+}
+.post-content h2 {
+    font-size: 24px !important;
+    line-height: 30px !important;
+    margin: 36px 0 14px !important;
+}
+.post-content h3 {
+    font-size: 21px !important;
+    line-height: 26px !important;
+    margin: 30px 0 12px !important;
+}
+.post-content h4 {
+    font-size: 19px !important;
+    line-height: 24px !important;
+    margin: 26px 0 10px !important;
+}
+.post-content h5 {
+    font-size: 17px !important;
+    line-height: 22px !important;
+    margin: 22px 0 8px !important;
+}
+.post-content h6 {
+    font-size: 16px !important;
+    line-height: 20px !important;
+    margin: 20px 0 8px !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .post-content h1 { font-size: 26px !important; line-height: 32px !important; }
+    .post-content h2 { font-size: 22px !important; line-height: 28px !important; }
+    .post-content h3 { font-size: 20px !important; line-height: 24px !important; }
+    .post-content h4 { font-size: 18px !important; line-height: 22px !important; }
+    .post-content h5 { font-size: 16px !important; line-height: 20px !important; }
+    .post-content h6 { font-size: 15px !important; line-height: 18px !important; }
+}
+
+/* Post title heading */
+.post-header h1.post-title {
+    font-family: 'Lato', Helvetica, sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 36px !important;
+    line-height: 42px !important;
+    margin: 0 0 4px !important;
+}
+@media only screen and (max-width: 768px) {
+    .post-header h1.post-title {
+        font-size: 30px !important;
+        line-height: 36px !important;
+    }
+}
+
+/* ─── Links ─── */
+.post-content a {
+    font-weight: 300 !important;
+    color: #1565c0 !important;
+    text-decoration: none !important;
+}
+.post-content a:focus,
+.post-content a:hover {
+    text-decoration: underline !important;
+}
+
+/* Strong/bold */
+.post-content b,
+.post-content strong {
+    font-weight: 700 !important;
+}
+
+/* ─── Paragraphs — tighter research-paper margins ─── */
+.post-content p {
+    text-align: justify !important;
+    text-justify: auto !important;
+    hyphens: auto !important;
+    margin: 12px 0 !important;
+}
+
+/* ─── Images — always centered ─── */
+.post-content img {
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+/* ─── Figures — centered with tight caption ─── */
+.post-content figure {
+    text-align: center !important;
+    margin: 20px auto !important;
+    padding: 0 !important;
+}
+.post-content figure img {
+    display: block !important;
+    margin: 0 auto !important;
+}
+.post-content figcaption,
+.post-content figcaption p {
+    text-align: center !important;
+    font-style: italic !important;
+    font-size: 14px !important;
+    margin: 6px 0 0 !important;
+    color: var(--secondary);
+}
+
+/* ─── Code — Source Code Pro ─── */
+.post-content code {
+    font-family: 'Source Code Pro', 'Lucida Console', monospace !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+}
+
+.post-content pre {
+    display: block !important;
+    font-family: 'Source Code Pro', 'Lucida Console', monospace !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    overflow-x: auto !important;
+    margin: 16px 0 !important;
+}
+
+.post-content pre code {
+    display: inline-block !important;
+    background-color: inherit !important;
+    color: inherit !important;
+}
+
+/* Highlight blocks */
+.post-content .highlight > div,
+.post-content .highlight > pre {
+    margin: 12px 0 !important;
+    padding: 10px !important;
+    border-radius: 6px !important;
+}
+
+/* ─── Blockquotes — definition-style panel ─── */
+.post-content blockquote {
+    border-left: 4px solid #d9d9de !important;
+    padding-left: 20px !important;
+    line-height: 1.5 !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
+    background-color: #f4f6fb !important;
+    border-radius: 10px !important;
+    padding-top: 14px !important;
+    padding-right: 20px !important;
+    padding-bottom: 14px !important;
+    margin: 18px 0 !important;
+}
+
+.dark .post-content blockquote,
+[data-theme="dark"] .post-content blockquote {
+    border-left-color: rgba(255, 255, 255, 0.85) !important;
+    background-color: #2a2d33 !important;
+}
+
+.post-content blockquote p:first-child strong {
+    display: block;
+    font-weight: 800 !important;
+    margin-bottom: 8px;
+}
+
+/* ─── Tables ─── */
+.post-content th,
+.post-content td {
+    padding: 10px 14px !important;
+}
+.post-content table {
+    border-collapse: collapse !important;
+    margin: 16px auto !important;
+}
+.post-content table td,
+.post-content table th {
+    border: 1px solid var(--border) !important;
+}
+
+/* ─── Lists — compact research-paper style ─── */
+.post-content ul,
+.post-content ol {
+    padding-left: 2em;
+    margin: 8px 0 !important;
+}
+.post-content ul ul,
+.post-content ol ol,
+.post-content ul ol,
+.post-content ol ul {
+    padding-left: 1.8em;
+    margin: 4px 0 !important;
+}
+.post-content li {
+    margin-bottom: 4px !important;
+}
+
+/* ─── Math blocks (KaTeX) — tighter spacing ─── */
+.post-content .katex-display {
+    margin: 14px 0 !important;
+}
+
+/* ─── Horizontal rules ─── */
+.post-content hr {
+    margin: 28px 0 !important;
+    border: none !important;
+    border-top: 1px solid var(--border) !important;
 }

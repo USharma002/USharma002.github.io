@@ -35,7 +35,7 @@ I found a decent explaination in Unity forums <a href="https://discussions.unity
         width="100%"
         height="430"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 - Light is additive
@@ -47,7 +47,7 @@ $$Intensity \propto \frac{1}{r^2}$$
         width="100%"
         height="430"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 
@@ -502,7 +502,7 @@ We can see the interaction of light with Specular (S), Diffuse (D) objects. We c
         width="100%"
         height="500"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 ---
@@ -676,7 +676,7 @@ where $X$ is a random variable drawn from distribution $p(x)$.
         width="100%"
         height="420"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 
@@ -917,7 +917,7 @@ width="100%"
         width="100%"
         height="670"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 ### What are we sampling?
@@ -1767,7 +1767,7 @@ $$
         width="100%"
         height="660"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 
@@ -2443,7 +2443,7 @@ width="60%" >}}
         width="100%"
         height="445"
         frameborder="0"
-        style="border-radius:8px; min-width: 700px;">
+        style="border-radius:8px;">
 </iframe>
 
 

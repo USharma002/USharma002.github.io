@@ -1,71 +1,115 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const originalToc = document.querySelector('.toc');
-    const content = document.querySelector('.post-content');
+    var tocEl = document.querySelector('.toc');
+    var content = document.querySelector('.post-content');
+    if (!tocEl || !content) return;
 
-    if (originalToc && content) {
-        // 1. Clone TOC
-        const sidebarToc = originalToc.cloneNode(true);
-        sidebarToc.classList.add('sidebar-toc');
-        sidebarToc.classList.remove('toc');
-        document.body.appendChild(sidebarToc);
+    // 1. Build sidebar TOC from the inline TOC's HTML
+    var sidebar = document.createElement('div');
+    sidebar.className = 'agn-sidetoc';
 
-        // 2. Observer for showing/hiding the Sidebar (Slide in/out)
-        const visibilityObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting && window.scrollY > entry.boundingClientRect.top) {
-                    sidebarToc.classList.add('visible');
-                } else {
-                    sidebarToc.classList.remove('visible');
-                }
-            });
+    // "Contents" label
+    var label = document.createElement('span');
+    label.className = 'agn-sidetoc-label';
+    label.textContent = 'Contents';
+    sidebar.appendChild(label);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.className = 'agn-sidetoc-links';
+    sidebar.appendChild(linksWrap);
+
+    // Clone the list content from PaperMod's TOC (inside .inner or details)
+    var inner = tocEl.querySelector('.inner');
+    if (inner) {
+        var lists = inner.querySelectorAll(':scope > ul, :scope > nav');
+        lists.forEach(function(el) {
+            linksWrap.appendChild(el.cloneNode(true));
         });
-        visibilityObserver.observe(originalToc);
+    }
 
-        // 3. Active Section Tracking (The Accordion Logic)
-        const headers = content.querySelectorAll('h1, h2, h3, h4');
-        const sidebarLinks = sidebarToc.querySelectorAll('a');
-        
-        // Helper: Clear all active classes
-        function clearActiveStates() {
-            sidebarToc.querySelectorAll('li').forEach(li => {
-                li.classList.remove('active');
-                li.classList.remove('has-active-child');
-            });
-        }
+    document.body.appendChild(sidebar);
 
-        // Create an observer to watch all headers
-        const headerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Get the ID of the header currently on screen
-                    const id = entry.target.getAttribute('id');
-                    const activeLink = sidebarToc.querySelector(`a[href="#${id}"]`);
+    // 2. Get all headings in post-content and all links in sidebar
+    var headers = Array.from(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
 
-                    if (activeLink) {
-                        clearActiveStates();
-                        
-                        // 1. Highlight the current LI
-                        let currentLi = activeLink.parentElement; // The <li>
-                        currentLi.classList.add('active');
+    // Hide all nested lists initially
+    var nestedUls = sidebar.querySelectorAll('ul ul');
+    for (var i = 0; i < nestedUls.length; i++) {
+        nestedUls[i].style.display = 'none';
+    }
 
-                        // 2. Walk up the tree to open parents
-                        let parent = currentLi.parentElement; // The <ul>
-                        while (parent) {
-                            if (parent.tagName === 'LI') {
-                                parent.classList.add('has-active-child');
+    // 3. Scroll handler — vanilla JS, lightweight
+    var ticking = false;
+
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(function() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var currentId = '';
+
+            // Find the last heading above the threshold (80px from top)
+            for (var i = 0; i < headers.length; i++) {
+                if (headers[i].getBoundingClientRect().top + scrollTop - 80 <= scrollTop) {
+                    currentId = headers[i].getAttribute('id');
+                }
+            }
+
+            // Early exit if same
+            var currentActive = sidebar.querySelector('a.active');
+            if (currentActive && currentActive.getAttribute('href') === '#' + currentId) {
+                ticking = false;
+                return;
+            }
+
+            // Clear all active/semi_active states
+            var actives = sidebar.querySelectorAll('a.active');
+            for (var j = 0; j < actives.length; j++) {
+                actives[j].classList.remove('active');
+                // Hide sibling ul
+                var sibUl = actives[j].parentElement.querySelector(':scope > ul');
+                if (sibUl) sibUl.style.display = 'none';
+            }
+            var semiActives = sidebar.querySelectorAll('a.semi_active');
+            for (var k = 0; k < semiActives.length; k++) {
+                semiActives[k].classList.remove('semi_active');
+                var sibUl2 = semiActives[k].parentElement.querySelector(':scope > ul');
+                if (sibUl2) sibUl2.style.display = 'none';
+            }
+
+            // Set active + parents
+            if (currentId) {
+                var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+                if (activeLink) {
+                    // Walk up the DOM tree
+                    var el = activeLink.parentElement; // <li>
+                    var depth = 0;
+                    while (el && !el.classList.contains('agn-sidetoc')) {
+                        if (el.tagName === 'LI') {
+                            var link = el.querySelector(':scope > a');
+                            if (link) {
+                                if (depth === 0) {
+                                    link.classList.add('active');
+                                } else {
+                                    link.classList.add('semi_active');
+                                }
+                                // Show child ul
+                                var childUl = el.querySelector(':scope > ul');
+                                if (childUl) childUl.style.display = 'block';
                             }
-                            if (parent.classList.contains('sidebar-toc')) break;
-                            parent = parent.parentElement;
+                            depth++;
                         }
+                        el = el.parentElement;
                     }
                 }
-            });
-        }, {
-            rootMargin: '-10% 0px -80% 0px' // Trigger when header is near the top
-        });
+            }
 
-        headers.forEach(header => headerObserver.observe(header));
+            ticking = false;
+        });
     }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); // Initial check
 });
 </script>

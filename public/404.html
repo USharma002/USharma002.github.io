@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/404.html">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.cdb57d614f6da4b574ec4cfe07cdbb83095cd5fa0dac8c1e29081acc151ca5de.css" integrity="sha256-zbV9YU9tpLV07Ez&#43;B827gwlc1foNrIweKQgazBUcpd4=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.e899a7048f63d43d2053bf3f9faee14530b151aa09575b54e04fb942fcf08092.css" integrity="sha256-6JmnBI9j1D0gU78/n67hRTCxUaoJV1tU4E&#43;5QvzwgJI=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -56,6 +56,9 @@
 
     </style>
 </noscript>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+
+
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
   crossorigin="anonymous">
@@ -165,73 +168,117 @@ document.addEventListener("DOMContentLoaded", function() {
     </svg>
 </a><script>
 document.addEventListener('DOMContentLoaded', function() {
-    const originalToc = document.querySelector('.toc');
-    const content = document.querySelector('.post-content');
+    var tocEl = document.querySelector('.toc');
+    var content = document.querySelector('.post-content');
+    if (!tocEl || !content) return;
 
-    if (originalToc && content) {
-        
-        const sidebarToc = originalToc.cloneNode(true);
-        sidebarToc.classList.add('sidebar-toc');
-        sidebarToc.classList.remove('toc');
-        document.body.appendChild(sidebarToc);
+    
+    var sidebar = document.createElement('div');
+    sidebar.className = 'agn-sidetoc';
 
-        
-        const visibilityObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting && window.scrollY > entry.boundingClientRect.top) {
-                    sidebarToc.classList.add('visible');
-                } else {
-                    sidebarToc.classList.remove('visible');
-                }
-            });
+    
+    var label = document.createElement('span');
+    label.className = 'agn-sidetoc-label';
+    label.textContent = 'Contents';
+    sidebar.appendChild(label);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.className = 'agn-sidetoc-links';
+    sidebar.appendChild(linksWrap);
+
+    
+    var inner = tocEl.querySelector('.inner');
+    if (inner) {
+        var lists = inner.querySelectorAll(':scope > ul, :scope > nav');
+        lists.forEach(function(el) {
+            linksWrap.appendChild(el.cloneNode(true));
         });
-        visibilityObserver.observe(originalToc);
+    }
 
-        
-        const headers = content.querySelectorAll('h1, h2, h3, h4');
-        const sidebarLinks = sidebarToc.querySelectorAll('a');
-        
-        
-        function clearActiveStates() {
-            sidebarToc.querySelectorAll('li').forEach(li => {
-                li.classList.remove('active');
-                li.classList.remove('has-active-child');
-            });
-        }
+    document.body.appendChild(sidebar);
 
-        
-        const headerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
+    
+    var headers = Array.from(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+
+    
+    var nestedUls = sidebar.querySelectorAll('ul ul');
+    for (var i = 0; i < nestedUls.length; i++) {
+        nestedUls[i].style.display = 'none';
+    }
+
+    
+    var ticking = false;
+
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(function() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var currentId = '';
+
+            
+            for (var i = 0; i < headers.length; i++) {
+                if (headers[i].getBoundingClientRect().top + scrollTop - 80 <= scrollTop) {
+                    currentId = headers[i].getAttribute('id');
+                }
+            }
+
+            
+            var currentActive = sidebar.querySelector('a.active');
+            if (currentActive && currentActive.getAttribute('href') === '#' + currentId) {
+                ticking = false;
+                return;
+            }
+
+            
+            var actives = sidebar.querySelectorAll('a.active');
+            for (var j = 0; j < actives.length; j++) {
+                actives[j].classList.remove('active');
+                
+                var sibUl = actives[j].parentElement.querySelector(':scope > ul');
+                if (sibUl) sibUl.style.display = 'none';
+            }
+            var semiActives = sidebar.querySelectorAll('a.semi_active');
+            for (var k = 0; k < semiActives.length; k++) {
+                semiActives[k].classList.remove('semi_active');
+                var sibUl2 = semiActives[k].parentElement.querySelector(':scope > ul');
+                if (sibUl2) sibUl2.style.display = 'none';
+            }
+
+            
+            if (currentId) {
+                var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+                if (activeLink) {
                     
-                    const id = entry.target.getAttribute('id');
-                    const activeLink = sidebarToc.querySelector(`a[href="#${id}"]`);
-
-                    if (activeLink) {
-                        clearActiveStates();
-                        
-                        
-                        let currentLi = activeLink.parentElement; 
-                        currentLi.classList.add('active');
-
-                        
-                        let parent = currentLi.parentElement; 
-                        while (parent) {
-                            if (parent.tagName === 'LI') {
-                                parent.classList.add('has-active-child');
+                    var el = activeLink.parentElement; 
+                    var depth = 0;
+                    while (el && !el.classList.contains('agn-sidetoc')) {
+                        if (el.tagName === 'LI') {
+                            var link = el.querySelector(':scope > a');
+                            if (link) {
+                                if (depth === 0) {
+                                    link.classList.add('active');
+                                } else {
+                                    link.classList.add('semi_active');
+                                }
+                                
+                                var childUl = el.querySelector(':scope > ul');
+                                if (childUl) childUl.style.display = 'block';
                             }
-                            if (parent.classList.contains('sidebar-toc')) break;
-                            parent = parent.parentElement;
+                            depth++;
                         }
+                        el = el.parentElement;
                     }
                 }
-            });
-        }, {
-            rootMargin: '-10% 0px -80% 0px' 
-        });
+            }
 
-        headers.forEach(header => headerObserver.observe(header));
+            ticking = false;
+        });
     }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); 
 });
 </script>
 
