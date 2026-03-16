@@ -106,9 +106,20 @@
     margin: 0;
 }
 
+.dlider-active-label {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--code-bg);
+}
+
 .dlider-caption {
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 0.35rem;
     color: #666;
     font-size: 0.9rem;
 }

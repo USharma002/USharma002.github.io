@@ -10,23 +10,6 @@
      data-after-label="{{ $afterLabel }}"
      style="width: {{ $width }}; max-width: 100%; margin: 2rem auto; position: relative;">
 
-    <!-- Floating RTX-style label -->
-    <div class="dlider-active-label"
-         style="
-            position:absolute;
-            top:10px; left:10px;
-            background:rgba(0,0,0,0.6);
-            color:white;
-            padding:6px 12px;
-            border-radius:4px;
-            font-size:0.85rem;
-            font-weight:600;
-            backdrop-filter: blur(4px);
-            z-index:10;
-        ">
-        {{ $beforeLabel }}
-    </div>
-
     <div class="dlider-images">
 
         <img src="{{ $after }}" alt="After" class="dlider-img-back">
@@ -41,6 +24,8 @@
                oninput="updateDlider(this)" 
                onchange="updateDlider(this)">
     </div>
+
+    <div class="dlider-active-label">{{ $beforeLabel }}</div>
     
     {{ with $caption }}<div class="dlider-caption">{{ . }}</div>{{ end }}
 </div>

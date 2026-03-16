@@ -49,9 +49,6 @@
      style="width: {{ $width }};"
      data-slides='{{ jsonify $data }}'>
 
-  <!-- Floating Step Label -->
-  <div class="step-active-label">Step 1 / {{ len $data }}</div>
-
   <div class="step-viewport">
     <!-- Buttons moved INSIDE viewport so footer height doesn't affect them -->
     <button class="step-nav btn-prev" onclick="moveSlide('{{ $id }}', -1)" disabled>❮</button>
@@ -68,6 +65,7 @@
 
   <!-- Footer Area (Title + Desc) -->
   <div class="step-footer">
+    <div class="step-active-label">Step 1 / {{ len $data }}</div>
     <div class="step-title"></div>
     <div class="step-description"></div>
   </div>

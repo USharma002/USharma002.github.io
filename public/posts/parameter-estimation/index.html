@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Parameter Estimation: From MLE to Full Bayesian Inference | USharma Notes</title>
 <meta name="keywords" content="Probability Estimation, MLE">
 <meta name="description" content="Maximum Likelihood, MAP and Bayesian Inference for probability estimation">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="https://USharma002.github.io/posts/parameter-estimation/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.b95710d30ffcdc425d4eb82c5b4bda8f9526a2380da9eaf96d555c92cbf6f849.css" integrity="sha256-uVcQ0w/83EJdTrgsW0vaj5UmojgNqer5bVVcksv2&#43;Ek=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://USharma002.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
+<link rel="canonical" href="http://localhost:1313/posts/parameter-estimation/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.40f95c2bcef20d5d99b5c94fd7264ce794523e3ee302180bf39727e207727bd4.css" integrity="sha256-QPlcK87yDV2ZtclP1yZM55RSPj7jAhgL85cn4gdye9Q=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/parameter-estimation/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/parameter-estimation/">
 <noscript>
     <style>
         #theme-toggle,
@@ -83,74 +83,6 @@ document.addEventListener("DOMContentLoaded", function() {
     throwOnError: false
   });
 });
-</script><meta property="og:url" content="https://USharma002.github.io/posts/parameter-estimation/">
-  <meta property="og:site_name" content="USharma Notes">
-  <meta property="og:title" content="Parameter Estimation: From MLE to Full Bayesian Inference">
-  <meta property="og:description" content="Maximum Likelihood, MAP and Bayesian Inference for probability estimation">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2025-10-30T00:00:00+00:00">
-    <meta property="article:modified_time" content="2025-10-30T00:00:00+00:00">
-    <meta property="article:tag" content="Probability Estimation">
-    <meta property="article:tag" content="MLE">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Parameter Estimation: From MLE to Full Bayesian Inference">
-<meta name="twitter:description" content="Maximum Likelihood, MAP and Bayesian Inference for probability estimation">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://USharma002.github.io/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Parameter Estimation: From MLE to Full Bayesian Inference",
-      "item": "https://USharma002.github.io/posts/parameter-estimation/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Parameter Estimation: From MLE to Full Bayesian Inference",
-  "name": "Parameter Estimation: From MLE to Full Bayesian Inference",
-  "description": "Maximum Likelihood, MAP and Bayesian Inference for probability estimation",
-  "keywords": [
-    "Probability Estimation", "MLE"
-  ],
-  "articleBody": "Estimating probabilities of data Suppose we have a coin and I want to know the probability of heads coming up when I throw it. One natural way to estimate this is to toss is $n$ (let’s say $n = 10$) times, collect the outcomes/data $\\mathcal{D}=\\{H, T, H, T, T, H, T, H, T, T\\}$ where we got $n_H=4$ heads and $n_T=6$ tails, so intuitively we can do following: $$P(H) = \\frac{n_H}{n_H + n_T}$$Can we derive th above more formally ?\nMaximum Likelihood Estimate The idea behind the maximum likelihood estimate (MLE) is to define a function of parameters that enable us to find a model that fits the data well.\nGiven observations $\\mathcal{D}=\\lbrace x_1,\\dots,x_n \\rbrace $ and for a family of probability densities $p(x\\mid \\theta)$ parametrized by $\\theta$, the likelihood of the data is given by $p(\\mathcal{D}\\mid \\theta)$. The MLE principle is to find a $\\hat{\\theta}$ that maximzes the likelihood of data, $p(\\mathcal{D}\\mid \\theta)$\n$$\\hat{\\theta}_{MLE} = \\arg\\max_{\\theta} p(\\mathcal{D}\\mid \\theta)$$Often is is easier to work with the $log$ likelihood, so the optimization problem is posed as minimization of Negative Log Likelihood (NLL).\n$$\\hat{\\theta}_{MLE} = \\arg\\min_{\\theta} -\\log p(\\mathcal{D}\\mid \\theta)$$Here we are doing the parameter estimation to find the best model that minimizes the Negative Log Likelihood.\nContinuing Example Coming back to the above example, We can model the coin toss as a Binomial experiment with probability of heads being the parameter $\\theta$. Thus the likelihood of data is given by:\n$$p(\\mathcal{D}\\mid \\theta) = {{n_H + n_T}\\choose {n_H}} \\theta^{n_H} (1 - \\theta)^{n_T}$$Plugging this in the MLE principle we get the following:\n$$\r\\begin{aligned}\r\\hat{\\theta}_{MLE} \u0026= \\arg\\min_{\\theta} -\\log p(\\mathcal{D}\\mid \\theta) \\\\\r\u0026= \\arg\\min_{\\theta} -\\log\\!\\left( {{n_H + n_T}\\choose {n_H}} \\theta^{n_H} (1 - \\theta)^{n_T} \\right) \\\\\r\u0026= \\arg\\min_{\\theta} -\\log {{n_H + n_T}\\choose {n_H}}\r- \\log \\theta^{n_H} - \\log(1 - \\theta)^{n_T} \\\\\r\u0026= \\arg\\min_{\\theta} -\\log {{n_H + n_T}\\choose {n_H}}\r- n_H \\log \\theta - n_T \\log(1 - \\theta)\r\\end{aligned}\r$$We can solve for $\\theta$ by taking derivative and equating with zero, we get:\n$$\\frac{n_H}{\\theta} = \\frac{n_T}{1-\\theta}\\Longrightarrow n_H - n_H\\theta = n_T\\theta\\Longrightarrow \\theta =\\frac{n_H}{n_H + n_T}$$We can check that $\\theta\\in[0,1]$\nObservations\nIf $n$ is large and model/distribution is correct (i.e., hypotheses class $\\mathcal{H}$ includes the true model), then MLE finds the true parameters. MLE can overfit the data if $n$ is small but works well when $n$ is large (Asymptotic consistency). If you do not have the correct model (and $n$ is small) then MLE can be terribly wrong! MLE follows the frequentist statistis view where $\\theta$ is a parameter so we can’t have prior information associated directly. Continuing Example: Coin toss with prior knowledge\nAssume we have a hunch that $\\theta$ is close to 0.5, but the sample size is small so you don’t trst the estimate. How can we fix this using the prior/knwoledge?\nSimple Fix: Add $m$ imaginary throws that would result in $\\theta'$ (e.g. $\\theta=0.5$). Add $m$ Heads and $m$ Tails to the data: $$\\hat\\theta = \\frac{n_H + m}{n_H + n_T + 2m}$$ The Bayesian Way Model $\\theta$ as a random variable, draw form a distribution $p(\\theta)$. Note that $\\theta$ is not a random variable associated with an even in a sample space. In frequentist statistics, this is forbidden but in Bayesian statiscs, we can specify a prior belief $p(\\theta)$ defining what values we believe $\\theta$ is likely to take on.\nNow, we can look at following: $$p(\\theta\\mid \\mathcal{D}) = \\frac{p(\\mathcal{D}\\mid \\theta)p(\\theta)}{p(\\mathcal{D})} $$ where\n$p(\\theta)$ us the prior distribution over the parameter(s) $\\theta$, before we see any data. $p(\\mathcal{D}\\mid \\theta)$ is the likelihood of the data given the parameter(s) $\\theta$ $p(\\theta\\mid \\mathcal{D})$ is the posterior distribution over the parameter(s) after we have observerd the data. A natural choice for the prior $p(\\theta)$ is the Beta distribution:\n$$p(\\theta) = \\frac{\\theta^{\\alpha - 1}(1-\\theta)^{\\beta - 1}}{B(\\alpha,\\beta)}$$where $B(\\alpha, \\beta) = \\frac{\\Gamma(\\alpha) \\Gamma(\\beta)}{\\Gamma(\\alpha + \\beta)}$ is the normalization constant. Note that here we only need a distribution over a singly binary random variable $\\theta$\nWhy is Beta distribution a good fit?\nit models probabilities ($\\theta\\in[0, 1]$) it is of the same distributional family as the binomial distribution (conjugate prior) $\\rightarrow$ the math will turn out nicely. So, we have distribution over $\\theta$, how can we estimate $\\theta$ ?\nMaximum a Posteriori Probaiblity (MAP) We can choose $\\hat\\theta$ to be the most likely $\\theta$ given the data MAP Principle: Find $\\hat\\theta$ that maximizes the posterior distribution $p(\\theta\\mid \\mathcal{D})$\n$$\\hat{\\theta}_{MAP} = \\arg\\max_{\\theta} p(\\theta\\mid \\mathcal{D})$$$$\\hat{\\theta}_{MAP} = \\arg\\max_{\\theta} \\frac{p(\\mathcal{D}\\mid \\theta)p(\\theta)}{p(\\mathcal{D})}$$Here $p(\\mathcal{D})$ is independent of $\\theta$ so we get:\n$$\\hat{\\theta}_{MAP} = \\arg\\min_{\\theta} -\\log p(\\mathcal{D}\\mid \\theta) - \\log p(\\theta)$$For the coin toss example, we assumed a Beta distribution, so we get the following:\n$$p(\\theta\\mid \\mathcal{D})\\propto p(\\mathcal{D}\\mid \\theta)p(\\theta) \\propto \\theta^{n_H + \\alpha - 1}(1 - \\theta)^{n_T + \\beta - 1}$$Thus we get the folowing: $$\r\\begin{aligned}\r\\hat{\\theta}_{MAP} \u0026= \\arg\\max_{\\theta} p(\\theta\\mid \\mathcal{D}) \\\\\r\u0026= \\arg\\max_{\\theta} \\frac{p(\\mathcal{D}\\mid \\theta)p(\\theta)}{p(\\mathcal{D})} \\\\\r\u0026= \\arg\\min_{\\theta} -[\\log p(\\mathcal{D}\\mid \\theta) + \\log p(\\theta)] \\\\\r\u0026= \\arg\\min_{\\theta} -[n_H\\log \\theta + n_T\\log(1-\\theta)\r+(\\alpha-1)\\log\\theta + (\\beta - 1)\\log(1-\\theta)] \\\\\r\u0026= \\arg\\min_{\\theta} -[(n_H + \\alpha - 1)\\log\\theta\r+ (n_T + \\beta - 1)\\log(1 - \\theta)] \\\\\r\u0026\\Longrightarrow \\hat{\\theta}_{MAP}\r= \\frac{n_H + \\alpha - 1}{n_H + n_T + \\alpha + \\beta - 2}\r\\end{aligned}\r$$ Some observation and properties:\nTHE MAP estimate is identical to MLE with extra $-\\log p(\\theta)$ when minimizing NLL. This term is independent of the data and penalizes if the parameters, θ deviate too much from what we believe is reasonable (as a regularizer) MAP is a great estimator if an accurate prior beleif is available (and mathematically tractable). If $n$ is small, MAP can be very wrong if prior beleif if wrong. “True” Bayesian Approach Both MLE and MAP are point estimators, i.e., in both cases we obtain a single-best value for $\\theta$ so that the key algorithmic problem is solving an optimization problem. Once these point estimates $\\theta^{\\star}$ are knwon, we use them to make predictions.\nFocusing solely on some static of the posterior distribution (such as the parameter $\\theta^{\\star}$ that maximizes the posterior) leads to loss of informtaion, which can be critical in a system that uses the prediction $p(x\\mid \\theta^{\\star})$ to make decisions. There is much more information in the $p(\\theta\\mid \\mathcal{D})$ and we are simply computing mode and throwing all other information away. A true Bayesian approach is to use the posterior predictive distribution directly to make prediction about the label $\\mathcal{Y}$ of a test sample with features $\\mathcal{X}$:\n$$p(\\mathcal{Y\\mid \\mathcal{D, X}}) = \\int_{\\theta}p(\\mathcal{Y}, \\theta\\mid \\mathcal{D}, \\mathcal{X})d\\theta = \\int_{\\theta}p(\\mathcal{Y}\\mid \\theta,\\mathcal{D}, \\mathcal{X})p(\\theta\\mid \\mathcal{D})d\\theta$$Unfortunately, the above is generally intractable in closed form and sampling techniques, such as Monte Carlo approximations, are used to approximate the distribution.\nThe coin toss examples is actually an exception for above. To make $predictions$ using $\\theta$, we can use:\n$$p(H\\mid \\mathcal{D}) = \\int_\\theta p(H, \\theta\\mid \\mathcal{D})d\\theta$$$$p(H\\mid \\mathcal{D}) = \\int_\\theta p(H \\mid \\theta, \\mathcal{D})p(\\theta\\mid \\mathcal{D})d\\theta$$$$p(H\\mid \\mathcal{D}) = \\int_\\theta \\theta(\\theta\\mid \\mathcal{D})d\\theta$$$$p(H\\mid \\mathcal{D}) = E[\\theta\\mid \\mathcal{D}]$$ $$=\\frac{n_H + \\alpha}{n_H + \\alpha + n_T + \\beta}$$Here, we assumed our data is drawn from Binomial Distribution so we could use the fact that $p(H\\mid \\mathcal{D}, \\theta) = p(H\\mid \\theta)$, in general this would not hold\nObservations:\nParameter estimation via MLE or MAP estimation yields a consistent point estimate $\\theta^\\star$ of the parameters, and the key computational problem to be solved is optimization. Bayesian inference yields a (posterior) distribution, and the key computational problem to be solved is integration. Bayesian inference gives us a principled way to incorporate prior knowledge, account for side information, and incorporate structural knowledge, all of which is not easily done in the context of parameter estimation. Moreover, the propagation of parameter uncertainty to the prediction can be valuable in decision-making systems for risk assessment and exploration in the context of data-efficient learning Latent-Variable Models In practice, it is sometimes useful to have additional latent variables $z$ (besides model parameters $\\theta$) as part of the model. These latent variables do not parameterize the model explicitly but may describe the data-generating process, thereby contributing to the interpretability of the model. They also often simplify the structure of the model and allow us to define simple and richer model structures.\nLearning in latent-variable models (at least via MLE) can be done in a principled way using the expectation maximization (EM) algorithm.\nSince latent-variable models allow use to define the process that generates data from parameters, let us have look at this generative process. We can get the distribution\n$$p(\\mathcal{D}\\mid z, \\theta)$$that allows us to generate data for any model parameters and latent variables.\nSince the likelihood function $p(\\mathcal{D}\\mid \\theta)$ is the predictive distribution of the data given model parameters, we need to marginalize out the latent variables.\n$$p(\\mathcal{D}\\mid \\theta) = \\int p(\\mathcal{D}\\mid z, \\theta)p(z)dz$$Note that the likelihood must not depend on the latent variables $z$, but it is only a function of data $\\mathcal{D}$ and model parameters $\\theta$.\nOne challenge we have in this latent-variable model is that likelihood $p(\\mathcal{D}\\mid \\theta)$ requires marginalization of the latent variables. Except when we choose a conjugate prior $p(z)$, the marginalization is not analytically tractable and we need to resort to approximations.\nSimilar to parameter posterios, we can compute a posterior on the latent variables according to\n$$p(z\\mid \\mathcal{D}) = \\frac{p(\\mathcal{D}\\mid z)p(z)}{p(\\mathcal{D})}, p(\\mathcal{D}\\mid z) = \\int p(\\mathcal{D}\\mid z, \\theta)p(\\theta)d\\theta$$A quantity that is easier to compute is the posterios distribution on the latent variables, but conditioned on the model parameters, i.e.,\n$$p(z\\mid \\mathcal{D}, \\theta) = \\frac{p(\\mathcal{D}\\mid z, \\theta)p(z)}{p(\\mathcal{D}\\mid \\theta)}$$We’ve now set up the framework for latent-variable models. While the marginalization in latent-variable models is generally intractable, the Expectation-Maximization (EM) algorithm provides a principled way to perform MLE in this setting. We’ll explore EM in detail with Gaussian Mixture Models in a future post\nReferences Deisenroth, M. P., Faisal, A. A., \u0026 Ong, C. S. (2020). Mathematics for Machine Learning. Cambridge University Press. Bishop, C. M. (2006). Pattern Recognition and Machine Learning. Springer. Cornell University CS4780/5780: Machine Learning for Intelligent Systems Lecture Notes. ",
-  "wordCount" : "1626",
-  "inLanguage": "en",
-  "datePublished": "2025-10-30T00:00:00Z",
-  "dateModified": "2025-10-30T00:00:00Z",
-  "author":[{
-    "@type": "Person",
-    "name": "Utkarsh Sharma"
-  }],
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://USharma002.github.io/posts/parameter-estimation/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "USharma Notes",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://USharma002.github.io/favicon.ico"
-    }
-  }
-}
 </script>
 </head>
 
@@ -169,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -195,22 +127,22 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
         <ul id="menu">
             <li>
-                <a href="https://USharma002.github.io/" title="Posts">
+                <a href="http://localhost:1313/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/archives/" title="Archive">
+                <a href="http://localhost:1313/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/tags/" title="Tags">
+                <a href="http://localhost:1313/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -221,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Parameter Estimation: From MLE to Full Bayesian Inference
     </h1>
@@ -381,16 +313,16 @@ $$p(z\mid \mathcal{D}, \theta) = \frac{p(\mathcal{D}\mid z, \theta)p(z)}{p(\math
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://USharma002.github.io/tags/probability-estimation/">Probability Estimation</a></li>
-      <li><a href="https://USharma002.github.io/tags/mle/">MLE</a></li>
+      <li><a href="http://localhost:1313/tags/probability-estimation/">Probability Estimation</a></li>
+      <li><a href="http://localhost:1313/tags/mle/">MLE</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="https://USharma002.github.io/posts/dimensionality-reduction-pca/">
+  <a class="prev" href="http://localhost:1313/posts/dimensionality-reduction-pca/">
     <span class="title">« Prev</span>
     <br>
     <span>Dimensionality Reduction using PCA</span>
   </a>
-  <a class="next" href="https://USharma002.github.io/posts/linear-regression/">
+  <a class="next" href="http://localhost:1313/posts/linear-regression/">
     <span class="title">Next »</span>
     <br>
     <span>Linear Regression with MLE and MAP</span>
@@ -402,7 +334,7 @@ $$p(z\mid \mathcal{D}, \theta) = \frac{p(\mathcal{D}\mid z, \theta)p(z)}{p(\math
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
 
     <span>
         Powered by
@@ -430,12 +362,16 @@ document.addEventListener('DOMContentLoaded', function() {
     label.textContent = 'Contents';
     sidebar.appendChild(label);
 
+    var linksWrap = document.createElement('div');
+    linksWrap.className = 'agn-sidetoc-links';
+    sidebar.appendChild(linksWrap);
+
     
     var inner = tocEl.querySelector('.inner');
     if (inner) {
         var lists = inner.querySelectorAll(':scope > ul, :scope > nav');
         lists.forEach(function(el) {
-            sidebar.appendChild(el.cloneNode(true));
+            linksWrap.appendChild(el.cloneNode(true));
         });
     }
 

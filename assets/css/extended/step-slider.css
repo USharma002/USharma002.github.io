@@ -7,6 +7,8 @@
 
 .step-slider-container {
     position: relative;
+    display: flex;
+    flex-direction: column;
     margin: 2.5rem auto;
     border: 1px solid var(--axis);
     border-radius: 12px;
@@ -20,15 +22,15 @@
 .step-slider-container.no-anim .step-wrapper { --transition-speed: 0s; }
 
 .step-active-label {
-    position: absolute; top: 15px; left: 15px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 6px 14px;
+    display: inline-block;
+    position: static;
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--text);
+    padding: 4px 10px;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 700;
-    backdrop-filter: blur(4px);
-    z-index: 10;
+    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -53,24 +55,41 @@
 .btn-next { right: 15px; }
 
 .step-viewport {
+    position: relative;
+    flex: 0 0 auto;
     width: 100%;
     overflow: hidden;
-    aspect-ratio: 16 / 9;
-    background: #000; /* Keeps images clean if they aren't exactly 16:9 */
+    background: #000;
 }
 
 .step-wrapper {
     display: flex;
-    height: 100%;
+    align-items: flex-start;
     transition: transform var(--transition-speed) var(--anim-curve);
     transform: translateX(calc(-100% * var(--current-index)));
 }
 
-.step-slide { min-width: 100%; height: 100%; }
-.step-slide img { width: 100%; height: 100%; object-fit: contain; }
+.step-slide {
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.step-slide img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: min(70vh, 760px);
+    display: block;
+    object-fit: contain;
+}
 
 /* Footer Styling */
 .step-footer {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
     padding: 22px 25px;
     background: var(--bg);
     border-top: 1px solid var(--axis);
