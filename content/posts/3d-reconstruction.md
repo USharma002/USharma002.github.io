@@ -1282,8 +1282,90 @@ width="100%"
 ### Algorithm: Optimization and Densification
 $w, h$: width and height of the training images
 
+<style>
+.paper-algorithm-wrap {
+    border: 1px solid var(--border, #d9d9d9);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0.8rem 0 1rem 0;
+    background: var(--entry, #ffffff);
+}
+
+.paper-algorithm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--border, #d9d9d9);
+    font-size: 0.88rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--theme, #f7f7f7) 96%, #000 4%);
+}
+
+.paper-algorithm {
+    width: 100%;
+    border-collapse: collapse !important;
+    counter-reset: algo-line;
+}
+
+.paper-algorithm tr {
+    border: none !important;
+}
+
+.paper-algorithm td {
+    border: none !important;
+    padding: 2px 0 !important;
+    vertical-align: top;
+    line-height: 1.45;
+    font-size: 0.95rem;
+}
+
+.paper-algorithm-auto tr {
+    counter-increment: algo-line;
+}
+
+.paper-algorithm-auto td:first-child {
+    text-align: left;
+    padding-left: 0.4rem !important;
+}
+
+.paper-algorithm-auto td:first-child::before {
+    content: counter(algo-line);
+    display: inline-block;
+    width: 2.6ch;
+    margin-right: 0.95rem;
+    text-align: right;
+    color: var(--secondary, #8b8b8b);
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.paper-algorithm td:last-child {
+    text-align: right;
+    color: var(--secondary, #8b8b8b);
+    white-space: nowrap;
+    padding-left: 0.75rem !important;
+}
+
+.paper-algorithm-manual .algo-ln {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+    color: var(--secondary, #8b8b8b);
+    padding-right: 12px !important;
+    user-select: none;
+}
+
+.paper-algorithm-manual .algo-content {
+    text-align: left;
+}
+</style>
+
 ---
-<table style="border: none !important; border-collapse: collapse !important; width: 100%;">
+<div class="paper-algorithm-wrap">
+<div class="paper-algorithm-header"><span>Algorithm 1</span><span>Optimization and Densification (3DGS)</span></div>
+<table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;">$M \leftarrow$ SfM Points</td>
 <td style="border: none !important; padding: 2px 0 !important; text-align: right;">▷ Positions</td>
@@ -1380,6 +1462,7 @@ $w, h$: width and height of the training images
 <td style="border: none !important; padding: 2px 0 !important;"></td>
 </tr>
 </table>
+</div>
 <hr>
 
 ### Training Loss
@@ -1983,30 +2066,9 @@ Gaussian unpooling occurs every 100 iterations, starting after iteration 500, al
 ### Algorithm: The training pipeline of FSGS
 ---
 
-<table style="border:none; border-collapse:collapse; width:100%; font-size:0.95rem;">
-    <style>
-        table, tr, td {
-    border: none !important;
-}
-        .algo-ln { 
-            color: #999; 
-            text-align: right; 
-            padding-right: 12px; 
-            user-select: none; 
-            width: 1%; 
-            white-space: nowrap; 
-            vertical-align: top;
-            border: none;
-        }
-        .algo-content {
-            text-align: left;
-            padding-bottom: 2px;
-            vertical-align: top;
-            border: none;
-            border:none; 
-            padding:2px 0;
-        }
-    </style>
+<div class="paper-algorithm-wrap">
+<div class="paper-algorithm-header"><span>Algorithm 2</span><span>FSGS Training Pipeline</span></div>
+<table class="paper-algorithm paper-algorithm-manual">
     <tr>
         <td class="algo-ln">1:</td>
         <td class="algo-content">
@@ -2142,6 +2204,7 @@ Gaussian unpooling occurs every 100 iterations, starting after iteration 500, al
         <td class="algo-content"><strong>end while</strong></td>
     </tr>
 </table>
+</div>
 
 
 ---

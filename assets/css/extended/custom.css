@@ -8,7 +8,30 @@
    ════════════════════════════════════════ */
 
 .twitter-tweet { margin: auto; }
-iframe { border-radius: var(--radius) !important; }
+
+/* Keep plain iframe embeds inside the content column and prevent overflow. */
+.post-content iframe,
+.page-content iframe,
+.archive iframe,
+.single iframe {
+    display: block;
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0 !important;
+    margin: 16px auto;
+    border: 0;
+    border-radius: var(--radius) !important;
+    box-sizing: border-box;
+}
+
+/* Preserve responsiveness when width/height attributes exist on iframe tags. */
+.post-content iframe[width],
+.page-content iframe[width],
+.archive iframe[width],
+.single iframe[width] {
+    width: 100% !important;
+}
+
 .home-info ul { padding-inline-start: 20px; }
 .entry-cover img { border: 1px solid var(--border); }
 .first-entry { min-height: 120px !important; }
@@ -238,17 +261,20 @@ a[href^="#fig-"]:hover {
 }
 
 /* ─── Tables ─── */
-.post-content th,
-.post-content td {
-    padding: 10px 14px !important;
-}
 .post-content table {
-    border-collapse: collapse !important;
-    margin: 16px auto !important;
+    margin-bottom: var(--content-gap) !important;
 }
-.post-content table td,
+
+.post-content table th,
+.post-content table:not(.highlighttable, .highlight table, .gist .highlight) td {
+    min-width: 80px;
+    padding: 8px 5px !important;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border) !important;
+}
+
 .post-content table th {
-    border: 1px solid var(--border) !important;
+    text-align: start;
 }
 
 /* ─── Lists — compact research-paper style ─── */

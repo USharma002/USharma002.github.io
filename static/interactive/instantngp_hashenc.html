@@ -20,13 +20,13 @@
         --tertiary-bg: #e9ecef;
         
         /* Accent Colors */
-        --level-0-color: #ef4444; /* Red for coarse level */
-        --level-1-color: #3b82f6; /* Blue for fine level */
+        --level-0-color: #ea8f9a; /* Pastel red for coarse level */
+        --level-1-color: #8ec5df; /* Pastel blue for fine level */
         --aux-color: #10b981; /* Green for auxiliary */
         
         /* Light variants */
-        --level-0-light: #fca5a5;
-        --level-1-light: #93c5fd;
+        --level-0-light: #f8d2d7;
+        --level-1-light: #d4ebf7;
         --aux-dark: #059669;
         
         /* UI Elements */
@@ -35,7 +35,7 @@
         --shadow: rgba(0,0,0,0.1);
         --highlight: rgba(255, 200, 0, 0.15);
         --canvas-bg: #ffffff;
-        --canvas-border: #333;
+        --canvas-border: #444;
         
         /* Text colors */
         --text-primary: #333;
@@ -54,13 +54,13 @@
             --tertiary-bg: #333333;
             
             /* Keep accent colors consistent for data vis */
-            --level-0-color: #ef4444;
-            --level-1-color: #3b82f6;
+            --level-0-color: #ea8f9a;
+            --level-1-color: #8ec5df;
             --aux-color: #10b981;
             
             /* Adjust light variants for dark mode */
-            --level-0-light: #7f1d1d;
-            --level-1-light: #1e3a8a;
+            --level-0-light: #5d2f35;
+            --level-1-light: #2c4a56;
             --aux-dark: #065f46;
             
             /* UI Elements */
@@ -80,9 +80,9 @@
 
     body {
         margin: 0;
-        padding: 0px;
+        padding: 0;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: var(--theme);
+        background: transparent;
         color: var(--page-text);
         transition: background 0.3s ease, color 0.3s ease;
     }
@@ -90,11 +90,11 @@
     .container {
         max-width: 900px;
         margin: 0 auto;
-        background: var(--card-bg);
-        padding: 20px;
-        border-radius: 6px;
-        border: 1px solid var(--card-border);
-        box-shadow: 0 1px 4px var(--shadow);
+        background: transparent;
+        padding: 10px 12px;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
         transition: background 0.3s ease, border-color 0.3s ease;
     }
 
@@ -387,6 +387,28 @@
         line-height: 1.6;
     }
 
+    .section-5 {
+        flex: 0 0 150px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 340px;
+        padding-top: 14px;
+    }
+
+    .mlp-title {
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .mlp-svg {
+        width: 150px;
+        height: 220px;
+    }
+
     /* --- Colors --- */
     .level-0 { color: var(--level-0-color); }
     .level-1 { color: var(--level-1-color); }
@@ -397,7 +419,7 @@
             flex-direction: column;
             align-items: stretch;
         }
-        .section-1, .section-23, .section-4 {
+        .section-1, .section-23, .section-4, .section-5 {
             flex: 1 1 auto;
         }
         .arrow {
@@ -428,7 +450,7 @@
                     <div><span class="level-0">●</span> N=4: wₓ=<span id="weights0x">0.00</span>, wᵧ=<span id="weights0y">0.00</span></div>
                     <div><span class="level-1">●</span> N=6: wₓ=<span id="weights1x">0.00</span>, wᵧ=<span id="weights1y">0.00</span></div>
                 </div>
-                <div class="step-label">(1) Hash vertices</div>
+                <div class="step-label">(1) Hashing of voxel vertices</div>
             </div>
 
             <div class="section-23">
@@ -472,7 +494,7 @@
 
                 <div class="step-label-group">
                     <div class="lookup-label">(2) Lookup</div>
-                    <div class="interp-label">(3) Interpolate</div>
+                    <div class="interp-label">(3) Linear interpolation</div>
                 </div>
             </div>
 
@@ -491,13 +513,165 @@
         <div style="color: var(--text-tertiary); font-size: 1rem; font-weight: 700;">+</div>
         <div style="color: var(--aux-color);">E</div>
     </div>
-    <div class="step-label" style="margin-top: 12px;">(4) Concat</div>
+    <div class="step-label" style="margin-top: 12px;">(4) Concatenation</div>
 </div>
+
+            <div class="arrow">→</div>
+
+            <div class="section-5" aria-label="Neural network stage">
+                <div class="mlp-title">m(y; Phi)</div>
+                <svg viewBox="0 0 150 260" class="mlp-svg" role="img" aria-label="Simple neural network diagram">
+                    <g stroke="var(--border-color)" stroke-width="1" opacity="0.55">
+                        <line x1="26" y1="38" x2="60" y2="22"></line>
+                        <line x1="26" y1="38" x2="60" y2="60"></line>
+                        <line x1="26" y1="78" x2="60" y2="22"></line>
+                        <line x1="26" y1="78" x2="60" y2="60"></line>
+                        <line x1="26" y1="118" x2="60" y2="98"></line>
+                        <line x1="26" y1="118" x2="60" y2="136"></line>
+                        <line x1="26" y1="158" x2="60" y2="98"></line>
+                        <line x1="26" y1="158" x2="60" y2="136"></line>
+
+                        <line x1="60" y1="22" x2="94" y2="38"></line>
+                        <line x1="60" y1="22" x2="94" y2="78"></line>
+                        <line x1="60" y1="60" x2="94" y2="38"></line>
+                        <line x1="60" y1="60" x2="94" y2="78"></line>
+                        <line x1="60" y1="98" x2="94" y2="118"></line>
+                        <line x1="60" y1="98" x2="94" y2="158"></line>
+                        <line x1="60" y1="136" x2="94" y2="118"></line>
+                        <line x1="60" y1="136" x2="94" y2="158"></line>
+
+                        <line x1="94" y1="38" x2="128" y2="98"></line>
+                        <line x1="94" y1="78" x2="128" y2="98"></line>
+                        <line x1="94" y1="118" x2="128" y2="98"></line>
+                        <line x1="94" y1="158" x2="128" y2="98"></line>
+                    </g>
+
+                    <g fill="var(--canvas-bg)" stroke="var(--text-tertiary)" stroke-width="2.2">
+                        <circle cx="26" cy="38" r="10"></circle>
+                        <circle cx="26" cy="78" r="10"></circle>
+                        <circle cx="26" cy="118" r="10"></circle>
+                        <circle cx="26" cy="158" r="10"></circle>
+
+                        <circle cx="60" cy="22" r="10"></circle>
+                        <circle cx="60" cy="60" r="10"></circle>
+                        <circle cx="60" cy="98" r="10"></circle>
+                        <circle cx="60" cy="136" r="10"></circle>
+
+                        <circle cx="94" cy="38" r="10"></circle>
+                        <circle cx="94" cy="78" r="10"></circle>
+                        <circle cx="94" cy="118" r="10"></circle>
+                        <circle cx="94" cy="158" r="10"></circle>
+
+                        <circle cx="128" cy="98" r="10"></circle>
+                    </g>
+                </svg>
+                <div class="step-label" style="margin-top: 8px;">(5) Neural network</div>
+            </div>
 
         </div>
     </div>
 
     <script>
+        // Keep iframe theme in sync with the parent Hugo page theme.
+        function setThemeVars(isDark, hostBackground) {
+            const root = document.documentElement.style;
+            const resolvedHostBg = hostBackground || (isDark ? '#1a1a1a' : '#f7f9fb');
+
+            root.setProperty('--page-bg', resolvedHostBg);
+            root.setProperty('--card-bg', 'transparent');
+            root.setProperty('--card-border', 'transparent');
+            root.setProperty('--shadow', 'transparent');
+
+            if (isDark) {
+                root.setProperty('--page-text', '#e5e5e5');
+                root.setProperty('--secondary-bg', '#2a2a2a');
+                root.setProperty('--tertiary-bg', '#333333');
+                root.setProperty('--level-0-light', '#5d2f35');
+                root.setProperty('--level-1-light', '#2c4a56');
+                root.setProperty('--aux-dark', '#065f46');
+                root.setProperty('--border-color', '#404040');
+                root.setProperty('--grid-line', '#333');
+                root.setProperty('--highlight', 'rgba(255, 200, 0, 0.25)');
+                root.setProperty('--canvas-bg', '#2a2a2a');
+                root.setProperty('--canvas-border', '#555');
+                root.setProperty('--text-primary', '#e5e5e5');
+                root.setProperty('--text-secondary', '#b0b0b0');
+                root.setProperty('--text-tertiary', '#999');
+            } else {
+                root.setProperty('--page-text', '#212529');
+                root.setProperty('--secondary-bg', '#f8f9fa');
+                root.setProperty('--tertiary-bg', '#e9ecef');
+                root.setProperty('--level-0-light', '#f8d2d7');
+                root.setProperty('--level-1-light', '#d4ebf7');
+                root.setProperty('--aux-dark', '#059669');
+                root.setProperty('--border-color', '#ccc');
+                root.setProperty('--grid-line', '#ddd');
+                root.setProperty('--highlight', 'rgba(255, 200, 0, 0.15)');
+                root.setProperty('--canvas-bg', '#ffffff');
+                root.setProperty('--canvas-border', '#333');
+                root.setProperty('--text-primary', '#333');
+                root.setProperty('--text-secondary', '#666');
+                root.setProperty('--text-tertiary', '#555');
+            }
+        }
+
+        function inferThemeFromParent() {
+            try {
+                if (window.parent && window.parent !== window && window.parent.document) {
+                    const parentBody = window.parent.document.body;
+                    if (parentBody) {
+                        const bgColor = window.getComputedStyle(parentBody).backgroundColor;
+                        const rgb = bgColor && bgColor.match(/\d+/g);
+                        if (rgb && rgb.length >= 3) {
+                            const brightness = (parseInt(rgb[0], 10) * 299 + parseInt(rgb[1], 10) * 587 + parseInt(rgb[2], 10) * 114) / 1000;
+                            return {
+                                isDark: brightness < 128,
+                                hostBackground: bgColor
+                            };
+                        }
+                    }
+                }
+            } catch (e) {
+                // Cross-origin restrictions: fallback below.
+            }
+            const isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            return {
+                isDark: isDark,
+                hostBackground: isDark ? '#1a1a1a' : '#f7f9fb'
+            };
+        }
+
+        function syncThemeFromParent() {
+            const theme = inferThemeFromParent();
+            setThemeVars(theme.isDark, theme.hostBackground);
+            update();
+        }
+
+        function setupThemeSync() {
+            try {
+                if (window.parent && window.parent !== window && window.parent.document) {
+                    const parentDoc = window.parent.document;
+                    const obsConfig = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
+
+                    if (parentDoc.documentElement) {
+                        new MutationObserver(syncThemeFromParent).observe(parentDoc.documentElement, obsConfig);
+                    }
+                    if (parentDoc.body) {
+                        new MutationObserver(syncThemeFromParent).observe(parentDoc.body, obsConfig);
+                    }
+                }
+            } catch (e) {
+                // Cross-origin restrictions: rely on media query + polling.
+            }
+
+            const darkMedia = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+            if (darkMedia && darkMedia.addEventListener) {
+                darkMedia.addEventListener('change', syncThemeFromParent);
+            }
+
+            setInterval(syncThemeFromParent, 1000);
+        }
+
         // --- Configuration ---
         const L = 2, F = 2, T = 8, N_min = 4, b = 1.5, E = 2, HASH_PRIME = 5;
         const N = [Math.floor(N_min * Math.pow(b, 0)), Math.floor(N_min * Math.pow(b, 1))];
@@ -582,7 +756,7 @@
 
         function drawCanvas() {
             ctx.clearRect(0, 0, 240, 240);
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim() || 'white';
             ctx.fillRect(0, 0, 240, 240);
 
             const data0 = getInterp(pos.x, pos.y, 0);
@@ -609,7 +783,7 @@
                     ctx.arc(c.i * step, c.j * step, 6, 0, Math.PI * 2);
                     ctx.fillStyle = color + ', 1)';
                     ctx.fill();
-                    ctx.fillStyle = 'white';
+                    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim() || 'white';
                     ctx.font = 'bold 8px Inter';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -623,7 +797,7 @@
             const px = pos.x * 240, py = (1 - pos.y) * 240;
             ctx.beginPath();
             ctx.arc(px, py, 5, 0, Math.PI * 2);
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || 'black';
             ctx.fill();
             ctx.font = 'bold 11px Inter';
             ctx.fillText('x', px - 12, py - 8);
@@ -633,7 +807,7 @@
 
         function drawInterpCanvas(ictx, data, level) {
             ictx.clearRect(0, 0, 100, 100);
-            ictx.fillStyle = 'white';
+            ictx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim() || 'white';
             ictx.fillRect(0, 0, 100, 100);
 
             const n = data.n, step = 100 / n;
@@ -669,7 +843,7 @@
                 ictx.arc(c.i * step, c.j * step, 4.5, 0, Math.PI * 2);
                 ictx.fillStyle = color + ', 1)';
                 ictx.fill();
-                ictx.fillStyle = 'white';
+                ictx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim() || 'white';
                 ictx.font = 'bold 7px Inter';
                 ictx.textAlign = 'center';
                 ictx.textBaseline = 'middle';
@@ -678,7 +852,7 @@
 
             ictx.beginPath();
             ictx.arc(px_interp, py_interp, 3, 0, Math.PI * 2);
-            ictx.fillStyle = 'black';
+            ictx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || 'black';
             ictx.fill();
         }
 
@@ -772,7 +946,8 @@
         window.addEventListener('touchmove', (e) => { if (isDragging) { e.preventDefault(); pos = getPos(e); update(); } }, { passive: false });
         window.addEventListener('touchend', () => isDragging = false);
 
-        update();
+        setupThemeSync();
+        syncThemeFromParent();
     </script>
 </body>
 </html>

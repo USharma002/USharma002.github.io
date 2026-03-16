@@ -285,8 +285,9 @@ width="100%"
 <iframe src="/interactive/bias_variance.html"
         width="100%"
         height="850"
+        data-aspect="900/850"
         frameborder="0"
-        style="border-radius:8px; min-width: 900px;">
+        style="border-radius:8px;">
 </iframe>
 
 ---

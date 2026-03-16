@@ -10,7 +10,7 @@
 <meta name="description" content="about">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/about/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.83004d34298731c2dfd8502603a9ba80a7060d930f216f32cd0f16359a0d4ae6.css" integrity="sha256-gwBNNCmHMcLf2FAmA6m6gKcGDZMPIW8yzQ8WNZoNSuY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.652a4a238a6ee79ea7ac1225a6bef811049e1e8ae2d76ef375cc34daa30fae49.css" integrity="sha256-ZSpKI4pu556nrBIlpr74EQSeHori127zdcw02qMPrkk=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -549,6 +549,180 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); 
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var iframes = document.querySelectorAll('.post-content iframe, .page-content iframe, .archive iframe, .single iframe');
+    if (!iframes.length) return;
+
+    function parsePositiveNumber(value) {
+        var n = Number(value);
+        return Number.isFinite(n) && n > 0 ? n : null;
+    }
+
+    function getHostBackgroundColor(iframe) {
+        var host = iframe.closest('.post-content, .page-content, .archive, .single') || document.body;
+        var color = getComputedStyle(host).backgroundColor;
+        if (!color || color === 'rgba(0, 0, 0, 0)' || color === 'transparent') {
+            color = getComputedStyle(document.body).backgroundColor;
+        }
+        return color || '#ffffff';
+    }
+
+    function shouldBlendIframe(iframe) {
+        var explicit = iframe.getAttribute('data-iframe-blend');
+        if (explicit === 'true') return true;
+        if (explicit === 'false') return false;
+
+        var src = (iframe.getAttribute('src') || '').toLowerCase();
+        return src.indexOf('/interactive/vmf.html') !== -1;
+    }
+
+    function harmonizeSameOriginIframe(iframe, doc) {
+        if (!doc || !doc.head) return;
+
+        var styleId = 'copilot-embedded-iframe-theme';
+        var existing = doc.getElementById(styleId);
+        if (!existing) {
+            existing = doc.createElement('style');
+            existing.id = styleId;
+            doc.head.appendChild(existing);
+        }
+
+        var bg = getHostBackgroundColor(iframe);
+        existing.textContent = [
+            'html, body {',
+            '  background: ' + bg + ' !important;',
+            '}',
+            'body {',
+            '  margin: 0;',
+            '}'
+        ].join('\n');
+    }
+
+    function getSameOriginDocument(iframe) {
+        try {
+            return iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document) || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function getSameOriginContentHeight(doc) {
+        if (!doc || !doc.documentElement) return null;
+
+        var body = doc.body;
+        var docHeight = Math.max(
+            doc.documentElement.scrollHeight || 0,
+            doc.documentElement.offsetHeight || 0,
+            doc.documentElement.clientHeight || 0,
+            body ? body.scrollHeight : 0,
+            body ? body.offsetHeight : 0,
+            body ? body.clientHeight : 0
+        );
+
+        return docHeight > 0 ? Math.round(docHeight) : null;
+    }
+
+    function computeAspectRatio(iframe) {
+        var cached = parsePositiveNumber(iframe.getAttribute('data-computed-aspect'));
+        if (cached) return cached;
+
+        var w = parsePositiveNumber(iframe.getAttribute('width'));
+        var h = parsePositiveNumber(iframe.getAttribute('height'));
+        if (w && h) return h / w;
+
+        var dataAspect = iframe.getAttribute('data-aspect');
+        if (dataAspect && dataAspect.indexOf('/') > -1) {
+            var parts = dataAspect.split('/');
+            var aw = parsePositiveNumber(parts[0]);
+            var ah = parsePositiveNumber(parts[1]);
+            if (aw && ah) return ah / aw;
+        }
+
+        
+        if (h) {
+            var currentWidth = iframe.clientWidth;
+            if (currentWidth > 0) {
+                var derived = h / currentWidth;
+                iframe.setAttribute('data-computed-aspect', String(derived));
+                return derived;
+            }
+        }
+
+        return 9 / 16;
+    }
+
+    function resizeIframe(iframe) {
+        var ratio = computeAspectRatio(iframe);
+        var width = iframe.clientWidth;
+        if (!width) return;
+
+        var fallbackHeight = Math.round(width * ratio);
+        var explicitHeight = parsePositiveNumber(iframe.getAttribute('height'));
+        if (explicitHeight) {
+            fallbackHeight = Math.max(fallbackHeight, Math.round(explicitHeight));
+        }
+
+        var targetHeight = fallbackHeight;
+        var isSameOrigin = false;
+
+        var doc = getSameOriginDocument(iframe);
+        if (doc) {
+            isSameOrigin = true;
+            if (shouldBlendIframe(iframe)) {
+                harmonizeSameOriginIframe(iframe, doc);
+            }
+            var contentHeight = getSameOriginContentHeight(doc);
+            if (contentHeight) {
+                targetHeight = contentHeight;
+            }
+        }
+
+        iframe.style.height = targetHeight + 'px';
+        iframe.setAttribute('scrolling', isSameOrigin ? 'no' : 'auto');
+    }
+
+    function resizeAllIframes() {
+        for (var i = 0; i < iframes.length; i++) {
+            resizeIframe(iframes[i]);
+        }
+    }
+
+    window.addEventListener('resize', resizeAllIframes, { passive: true });
+
+    var themeObserver = new MutationObserver(function() {
+        resizeAllIframes();
+    });
+
+    if (document.documentElement) {
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-theme']
+        });
+    }
+
+    if (document.body) {
+        themeObserver.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-theme']
+        });
+    }
+
+    for (var i = 0; i < iframes.length; i++) {
+        iframes[i].addEventListener('load', function() {
+            var frame = this;
+            resizeIframe(frame);
+
+            
+            setTimeout(function() { resizeIframe(frame); }, 250);
+            setTimeout(function() { resizeIframe(frame); }, 1000);
+        });
+    }
+
+    resizeAllIframes();
 });
 </script>
 
