@@ -8,7 +8,7 @@
 /* ════════════════════════════════════════
    AGN SIDEBAR TOC — 1:1 from AGraphicsGuyNotes
    Position: left:50% + margin-left:480px
-   Active color: #42a5f5 (blue)
+    Active color driven by --site-sidetoc-active-color
    ════════════════════════════════════════ */
 .agn-sidetoc {
     position: fixed;
@@ -46,7 +46,7 @@
     max-height: calc(100vh - 170px);
     overflow-y: auto;
     overflow-x: hidden;
-    border-left: 3px solid rgba(128, 128, 128, 0.4);
+    border-left: 3px solid var(--site-sidetoc-rail-color);
     padding-left: 16px;
     padding-right: 8px;
 }
@@ -64,17 +64,17 @@
     text-decoration: none !important;
 }
 
-/* Active = current section → #42a5f5 blue */
+/* Active = current section */
 .agn-sidetoc li a.active {
     font-weight: bold !important;
-    color: #42a5f5 !important;
+    color: var(--site-sidetoc-active-color) !important;
     filter: none !important;
 }
 
-/* Semi-active = parent of active → #42a5f5 blue, greyscaled */
+/* Semi-active = parent of active */
 .agn-sidetoc li a.semi_active {
     font-weight: bold !important;
-    color: #42a5f5 !important;
+    color: var(--site-sidetoc-active-color) !important;
     filter: grayscale(60%) !important;
 }
 
@@ -109,7 +109,7 @@
     width: 4px;
 }
 .agn-sidetoc-links::-webkit-scrollbar-thumb {
-    background: rgba(128, 128, 128, 0.3);
+    background: var(--site-sidetoc-scrollbar-color);
     border-radius: 2px;
 }
 

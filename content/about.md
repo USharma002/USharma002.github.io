@@ -18,20 +18,7 @@ summary: "about"
   <p style="font-size: 0.95rem; color: #666; margin-bottom: 0.75rem;">MTech @ CSA, <br>IISc Bangalore</p>
   
   <!-- CV Button -->
-  <a href="../CV/CV_Utkarsh_Sharma.pdf" 
-     style="display: inline-block; 
-            padding: 0.5rem 1.5rem; 
-            background-color: #0A66C2; 
-            color: white; 
-            text-decoration: none; 
-            border-radius: 6px; 
-            font-size: 0.9rem; 
-            font-weight: 500;
-            margin-top: 0.5rem;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
-     onmouseover="this.style.backgroundColor='#084d8f'" 
-     onmouseout="this.style.backgroundColor='#0A66C2'">
+  <a href="../CV/CV_Utkarsh_Sharma.pdf" class="cv-download-button">
     📄 View CV
   </a>
 </div>
@@ -63,7 +50,10 @@ summary: "about"
 <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
   <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2025</h4>
   <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.5rem;">
-    <strong>Favourite Game This Year:</strong> Expedition 33
+    <strong>Favourite Game This Year:</strong>
+    <button id="site-theme-toggle" type="button" class="favorite-game-toggle" aria-pressed="false" aria-label="Toggle cinematic site theme">
+      Expedition 33
+    </button>
   </p>
 </div>
 
@@ -87,7 +77,9 @@ summary: "about"
         Flexible research framework for experimenting with neural path guiding in Mitsuba 3 using Python.
         Includes GUI for PDF visualization, prototype integrators, and spherical sensor tools.
       </p>
-      <a href="https://github.com/USharma002/py-neural-path-guiding" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Project Link</a>
+      <div class="about-project-actions">
+        <a href="https://github.com/USharma002/py-neural-path-guiding" class="about-project-action" target="_blank">Project Link</a>
+      </div>
     </div>
   </div>
 
@@ -103,8 +95,10 @@ summary: "about"
         An interactive web-based tool for exploring Signed Distance Fields (SDFs). 
         Real-time visualization and manipulation of geometric primitives and operations using Raymarching.
       </p>
-      <a href="https://usharma002.github.io/sdf-explorer/" target="_blank" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Live Demo</a>
-      <a href="https://github.com/USharma002/sdf-explorer" target="_blank" style="color: #0A66C2; text-decoration: none;">GitHub</a>
+      <div class="about-project-actions">
+        <a href="https://usharma002.github.io/sdf-explorer/" target="_blank" class="about-project-action">Live Demo</a>
+        <a href="https://github.com/USharma002/sdf-explorer" target="_blank" class="about-project-action">GitHub</a>
+      </div>
     </div>
   </div>
   
@@ -119,7 +113,9 @@ summary: "about"
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
         A python application to load and visualize the scalar field point cloud data and resample it using interpolation, octree or neural network.
       </p>
-      <a href="https://github.com/USharma002/VolPath" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Project Link</a>
+      <div class="about-project-actions">
+        <a href="https://github.com/USharma002/VolPath" class="about-project-action" target="_blank">Project Link</a>
+      </div>
     </div>
   </div>
 
@@ -135,7 +131,9 @@ summary: "about"
         Research project for fast GPU-accelerated path tracing with CUDA.
         Includes experiments with custom guiding, radiosity, and interactive visual debugging.
       </p>
-      <a href="https://github.com/USharma002/CUDA-PathTracer" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Project Link</a>
+      <div class="about-project-actions">
+        <a href="https://github.com/USharma002/CUDA-PathTracer" class="about-project-action" target="_blank">Project Link</a>
+      </div>
     </div>
   </div>
 
@@ -152,7 +150,9 @@ summary: "about"
         Implementation and experiments with Vision Transformers for efficient scene understanding.
         <!-- <br><span style="font-style: italic; color: #888;">(Private repository, coming soon)</span> -->
       </p>
-      <a href="https://usharma002.github.io/posts/transformer-model/" style="color: #0A66C2; text-decoration: none; margin-right: 1rem;">Project Link</a>
+      <div class="about-project-actions">
+        <a href="https://usharma002.github.io/posts/transformer-model/" class="about-project-action">Project Link</a>
+      </div>
     </div>
   </div>
 
@@ -175,6 +175,30 @@ summary: "about"
 
 
 <style>
+.project-container {
+  display: flex !important;
+  gap: 2.25rem !important;
+  align-items: stretch !important;
+  margin-bottom: 2.8rem !important;
+}
+
+.project-container > div:last-child {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.project-container h4 {
+  margin: 0 0 0.6rem 0 !important;
+  line-height: 1.25;
+}
+
+.project-container p {
+  margin: 0.4rem 0 1rem 0 !important;
+}
+
 .project-img-hover:hover img:first-child {
   opacity: 0 !important;
 }
@@ -193,12 +217,12 @@ summary: "about"
   .project-container {
     display: flex !important;
     flex-direction: row !important;
-    gap: 2rem !important;
-    align-items: flex-start !important;
+    gap: 2.25rem !important;
+    align-items: stretch !important;
   }
   .project-img-hover {
-    width: 200px !important;
-    height: 150px !important;
+    width: 320px !important;
+    height: 200px !important;
   }
 }
 
@@ -211,14 +235,14 @@ summary: "about"
   .project-container {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1rem !important;
+    gap: 1.1rem !important;
     margin-bottom: 2rem !important;
   }
   
   .project-img-hover {
     width: 100% !important;
-    max-width: 200px !important;
-    height: 150px !important;
+    max-width: 320px !important;
+    height: 200px !important;
     margin: 0 auto !important;
   }
   
@@ -248,8 +272,8 @@ summary: "about"
   
   .project-img-hover {
     width: 100% !important;
-    max-width: 180px !important;
-    height: 135px !important;
+    max-width: 280px !important;
+    height: 176px !important;
   }
   
   h3 {

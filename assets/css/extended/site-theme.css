@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+/* ====== Shared accent tokens (used across custom + sidetoc styles) ====== */
+:root {
+  --site-link-color: #1565c0;
+  --site-link-hover-color: #0f4f97;
+  --site-link-hover-glow: rgba(21, 101, 192, 0.2);
+
+  --site-sidetoc-active-color: #42a5f5;
+  --site-sidetoc-rail-color: rgba(128, 128, 128, 0.4);
+  --site-sidetoc-scrollbar-color: rgba(128, 128, 128, 0.3);
+
+  --site-blockquote-border-color: #d9d9de;
+  --site-blockquote-bg: #f4f6fb;
+  --site-blockquote-dark-border-color: rgba(255, 255, 255, 0.85);
+  --site-blockquote-dark-bg: #2a2d33;
+
+  --site-cv-btn-bg: #0a66c2;
+  --site-cv-btn-bg-hover: #084d8f;
+  --site-cv-btn-text: #ffffff;
+  --site-cv-btn-border: transparent;
+  --site-cv-btn-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  --site-action-btn-bg: rgba(255, 255, 255, 0.7);
+  --site-action-btn-bg-hover: rgba(255, 255, 255, 0.98);
+  --site-action-btn-color: var(--site-link-color);
+  --site-action-btn-border: rgba(21, 101, 192, 0.45);
+  --site-action-btn-shadow: 0 1px 2px rgba(21, 101, 192, 0.08);
+}
+
+/* CV button style is variable-driven so themes can override it centrally. */
+.cv-download-button {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--site-cv-btn-border);
+  background-color: var(--site-cv-btn-bg);
+  color: var(--site-cv-btn-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: var(--site-cv-btn-shadow);
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.cv-download-button:hover,
+.cv-download-button:focus-visible {
+  background-color: var(--site-cv-btn-bg-hover);
+  color: var(--site-cv-btn-text);
+  text-decoration: none;
+}
+
+.cv-download-button:hover {
+  transform: translateY(-1px);
+}
+
+/* About page project actions styled as compact publication-style chips. */
+.about-project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.about-project-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--site-action-btn-border);
+  background: var(--site-action-btn-bg);
+  box-shadow: var(--site-action-btn-shadow);
+  color: var(--site-action-btn-color);
+  font-size: 0.84rem;
+  line-height: 1.1;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.about-project-action:hover,
+.about-project-action:focus-visible {
+  color: var(--site-link-hover-color);
+  background: var(--site-action-btn-bg-hover);
+  border-color: var(--site-link-hover-color);
+  text-shadow: 0 0 8px var(--site-link-hover-glow);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* ====== View Transitions overrides for Ripple Effect ====== */
+/* We use CSS Variables here to ensure 0-frame glitching */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  /* CSS-native animation prevents the 1-frame flash */
+  animation: theme-ripple 0.45s ease-out forwards;
+}
+
+@keyframes theme-ripple {
+  0% {
+    clip-path: circle(0px at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+  100% {
+    clip-path: circle(var(--ripple-r, 150vw) at var(--ripple-x, 50%) var(--ripple-y, 50%));
+  }
+}
+
+/* ====== Generic style for the game-name theme trigger button ====== */
+.favorite-game-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.45rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid #b89c62;
+  background: linear-gradient(170deg, #17120b, #0e0a06);
+  color: #e7d2a0;
+  font-family: "Cinzel", Georgia, serif;
+  letter-spacing: 0.03em;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.favorite-game-toggle:hover {
+  transform: translateY(-1px);
+  border-color: #dfc389;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.favorite-game-toggle.is-active {
+  border-color: #f4d58c;
+  color: #fff1cc;
+  box-shadow: 0 0 15px rgba(184, 156, 98, 0.5);
+}
+
+/* ====== EXPEDITION 33: CLAIR OBSCUR THEME ====== */
+body.site-theme-alt {
+  /* PaperMod tokens - adjusted for pitch black & gold */
+  --theme: #000000;
+  --entry: rgba(15, 15, 17, 0.65); /* Glassy/translucent */
+  --primary: #f0e6d2;
+  --secondary: #c2aa78;
+  --tertiary: #8a7b5e;
+  --content: #dcd0b8;
+  --hljs-bg: #0a0a0c;
+  --code-bg: #0d0d10;
+  --code-block-bg: #0a0a0c;
+  --border: rgba(194, 170, 120, 0.2);
+
+  /* Accent colors for links, SideTOC and callouts in Expedition style */
+  --site-link-color: #d4b881;
+  --site-link-hover-color: #fff1cc;
+  --site-link-hover-glow: rgba(212, 184, 129, 0.6);
+
+  --site-sidetoc-active-color: #d9be88;
+  --site-sidetoc-rail-color: rgba(194, 170, 120, 0.35);
+  --site-sidetoc-scrollbar-color: rgba(194, 170, 120, 0.3);
+
+  --site-blockquote-border-color: rgba(194, 170, 120, 0.72);
+  --site-blockquote-bg: rgba(20, 16, 11, 0.72);
+  --site-blockquote-dark-border-color: rgba(240, 214, 165, 0.85);
+  --site-blockquote-dark-bg: rgba(24, 18, 12, 0.82);
+
+  --site-cv-btn-bg: #2a2114;
+  --site-cv-btn-bg-hover: #3b2f1e;
+  --site-cv-btn-text: #f4e4bf;
+  --site-cv-btn-border: #9f8852;
+  --site-cv-btn-shadow: 0 8px 18px rgba(0, 0, 0, 0.42);
+
+  --site-action-btn-bg: rgba(28, 22, 14, 0.62);
+  --site-action-btn-bg-hover: rgba(40, 31, 19, 0.92);
+  --site-action-btn-color: #e7d3a6;
+  --site-action-btn-border: rgba(212, 184, 129, 0.52);
+  --site-action-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+
+  /* Menu-like typography tokens */
+  --site-menu-title-font: "Cinzel", Georgia, serif;
+  --site-menu-copy-font: "Cormorant Garamond", Georgia, serif;
+  --site-menu-title-gradient: linear-gradient(180deg, #f7f3ea 0%, #e2c993 56%, #a68442 100%);
+  --site-menu-title-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
+  --site-menu-text-color: #e1d4bc;
+  --site-menu-text-muted: #c8bcab;
+  --site-menu-text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+
+  /* Deep black background with subtle crimson vignette/glow */
+  background-color: #000000;
+  background-image: radial-gradient(circle at 50% 40%, rgba(55, 5, 10, 0.4) 0%, rgba(0, 0, 0, 1) 70%);
+  background-attachment: fixed;
+  color: var(--content);
+  min-height: 100vh;
+}
+
+/* Keep list views pure black */
+body.site-theme-alt.list {
+  background-color: #000000;
+}
+
+/* ====== Dynamic Particle System ====== */
+/* Anchored to the background, z-index -1 so it NEVER breaks SideToc or content */
+body.site-theme-alt::before,
+body.site-theme-alt::after {
+  content: "";
+  position: fixed;
+  top: -20vh; left: -20vw;
+  width: 140vw; height: 140vh;
+  pointer-events: none;
+  z-index: -1; 
+}
+
+/* Layer 1: Sharp, Glowing White & Gold Embers */
+body.site-theme-alt::before {
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, #ffffff 0%, transparent 100%),
+    radial-gradient(2px 2px at 80% 10%, #ffd700 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 60%, #ffffff 0%, transparent 100%),
+    radial-gradient(2.5px 2.5px at 70% 80%, #ffaa00 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 40%, #ffffff 0%, transparent 100%),
+    radial-gradient(2px 2px at 40% 90%, #ff4500 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 30%, #ffffff 0%, transparent 100%);
+  background-size: 150px 150px, 300px 300px, 200px 200px, 400px 400px, 120px 120px, 350px 350px, 100px 100px;
+  animation: floatUpAshes 30s linear infinite;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
+}
+
+/* Layer 2: Out-of-focus, Deep Blood-Red Bokeh / Smudges */
+body.site-theme-alt::after {
+  background-image:
+    radial-gradient(8px 8px at 20% 30%, rgba(180, 10, 20, 0.8) 0%, transparent 100%),
+    radial-gradient(12px 12px at 70% 20%, rgba(120, 5, 10, 0.7) 0%, transparent 100%),
+    radial-gradient(6px 6px at 40% 80%, rgba(200, 15, 30, 0.8) 0%, transparent 100%),
+    radial-gradient(14px 14px at 85% 65%, rgba(140, 0, 15, 0.6) 0%, transparent 100%),
+    radial-gradient(7px 7px at 10% 90%, rgba(220, 20, 30, 0.7) 0%, transparent 100%);
+  background-size: 350px 350px, 500px 500px, 280px 280px, 600px 600px, 400px 400px;
+  animation: floatUpPetals 40s linear infinite;
+  opacity: 0.85;
+  filter: blur(2.5px) drop-shadow(0 0 10px rgba(200, 10, 20, 0.6));
+}
+
+/* ====== Expedition 33 Metallic Typography ====== */
+body.site-theme-alt h1,
+body.site-theme-alt h2,
+body.site-theme-alt h3,
+body.site-theme-alt h4,
+body.site-theme-alt .logo a,
+body.site-theme-alt .post-title,
+body.site-theme-alt .archive-entry-title {
+  font-family: var(--site-menu-title-font);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+  /* Mimics the shiny silver-to-gold gradient of the game logo */
+  background: var(--site-menu-title-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(var(--site-menu-title-shadow));
+}
+
+body.site-theme-alt a { color: var(--site-link-color); transition: all 0.2s ease;}
+body.site-theme-alt a:hover { color: var(--site-link-hover-color); text-shadow: 0 0 10px var(--site-link-hover-glow); }
+
+body.site-theme-alt .nav a,
+body.site-theme-alt #menu a,
+body.site-theme-alt .post-meta,
+body.site-theme-alt .breadcrumbs,
+body.site-theme-alt .footer span,
+body.site-theme-alt .post-content p,
+body.site-theme-alt .post-content li,
+body.site-theme-alt .entry-content,
+body.site-theme-alt .entry-footer {
+  color: var(--site-menu-text-color);
+  text-shadow: var(--site-menu-text-shadow);
+}
+
+body.site-theme-alt .nav a,
+body.site-theme-alt #menu a,
+body.site-theme-alt .post-meta,
+body.site-theme-alt .breadcrumbs,
+body.site-theme-alt .footer span {
+  font-family: var(--site-menu-copy-font);
+  letter-spacing: 0.04em;
+}
+
+body.site-theme-alt .post-content p,
+body.site-theme-alt .post-content li,
+body.site-theme-alt .entry-content,
+body.site-theme-alt .entry-footer,
+body.site-theme-alt .project-container p {
+  color: var(--site-menu-text-muted) !important;
+}
+
+/* ====== Immersive Glassmorphism UI ====== */
+/* Makes panes semi-transparent so you can see the game particles behind your content */
+body.site-theme-alt .header,
+body.site-theme-alt .footer {
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: var(--border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+}
+
+body.site-theme-alt .post-entry,
+body.site-theme-alt .first-entry,
+body.site-theme-alt .archive-entry,
+body.site-theme-alt .toc,
+body.site-theme-alt .social-icons a,
+body.site-theme-alt .share-buttons,
+body.site-theme-alt .terms-tags a {
+  background: rgba(18, 18, 22, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 236, 194, 0.08);
+}
+
+body.site-theme-alt hr,
+body.site-theme-alt .post-meta,
+body.site-theme-alt .post-footer,
+body.site-theme-alt .paginav,
+body.site-theme-alt .breadcrumbs,
+body.site-theme-alt .archive-year-header {
+  border-color: var(--border);
+}
+
+/* Form / Buttons */
+body.site-theme-alt .button,
+body.site-theme-alt button,
+body.site-theme-alt #theme-toggle {
+  background: linear-gradient(160deg, #2a2114, #151108);
+  color: #f4e4bf;
+  border: 1px solid #9f8852;
+}
+
+body.site-theme-alt #theme-toggle svg,
+body.site-theme-alt .top-link svg {
+  fill: #ead6ac;
+}
+
+/* ====== Animations ====== */
+@keyframes floatUpAshes {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-30px, -40vh) rotate(5deg); }
+}
+
+@keyframes floatUpPetals {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(40px, -20vh) rotate(10deg); }
+  100% { transform: translate(-20px, -40vh) rotate(20deg); }
+}
+
+/* ====== Responsive overrides ====== */
+@media (max-width: 768px) {
+  body.site-theme-alt::before,
+  body.site-theme-alt::after {
+    opacity: 0.65;
+  }
+}
