@@ -14,6 +14,8 @@ math: true
 
 <span style="color:red;font-weight:700;font-size:1.05em">
 This post is a work in progress and may be updated or expanded soon!
+I will probably break this post into parts with specific part of Path Tracer  so it is easier to read.
+I will start from basics of Path Tracing along with Dr.Jit/Mitsuba code for future reference.
 </span>
 
 

@@ -1,31 +1,63 @@
 <!-- Google Fonts: Lato (headings), Merriweather (body), Source Code Pro (code) -->
-<link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+</noscript>
 
-<!-- KaTeX CSS -->
-<link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-  crossorigin="anonymous">
+<script defer src="/js/site-theme-toggle.js"></script>
 
-<!-- KaTeX JS -->
-<script defer
-  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
-  crossorigin="anonymous"></script>
+{{- if .Params.math }}
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    crossorigin="anonymous">
 
-<!-- KaTeX Auto-render -->
-<script defer
-  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  crossorigin="anonymous"></script>
+  <!-- KaTeX JS -->
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    crossorigin="anonymous"></script>
 
-<script src="/js/site-theme-toggle.js"></script>
+  <!-- KaTeX Auto-render -->
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  renderMathInElement(document.body, {
-    delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "$", right: "$", display: false }
-    ],
-    throwOnError: false
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof renderMathInElement !== "function") return;
+
+    var containers = document.querySelectorAll(".post-content, .page-content");
+    if (!containers.length) return;
+
+    function renderMath() {
+      for (var i = 0; i < containers.length; i++) {
+        var root = containers[i];
+        var text = root.textContent || "";
+        if (text.indexOf("$") === -1 && text.indexOf("\\(") === -1 && text.indexOf("\\[") === -1) {
+          continue;
+        }
+
+        renderMathInElement(root, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false,
+          ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+        });
+      }
+    }
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(renderMath, { timeout: 1200 });
+    } else {
+      window.setTimeout(renderMath, 0);
+    }
   });
-});
-</script>
+  </script>
+{{- end }}

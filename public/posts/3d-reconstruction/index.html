@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/3d-reconstruction/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.652a4a238a6ee79ea7ac1225a6bef811049e1e8ae2d76ef375cc34daa30fae49.css" integrity="sha256-ZSpKI4pu556nrBIlpr74EQSeHori127zdcw02qMPrkk=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45c08e5c637469078d1421940765a3a1af5903228e8b2bf252ab1684c78df8b2.css" integrity="sha256-RcCOXGN0aQeNFCGUB2Wjoa9ZAyKOiyvyUqsWhMeN&#43;LI=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -56,36 +56,66 @@
 
     </style>
 </noscript>
-<link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+</noscript>
 
+<script defer src="/js/site-theme-toggle.js"></script>
+  
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    crossorigin="anonymous">
 
-<link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-  crossorigin="anonymous">
+  
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    crossorigin="anonymous"></script>
 
+  
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"></script>
 
-<script defer
-  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
-  crossorigin="anonymous"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof renderMathInElement !== "function") return;
 
+    var containers = document.querySelectorAll(".post-content, .page-content");
+    if (!containers.length) return;
 
-<script defer
-  src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  crossorigin="anonymous"></script>
+    function renderMath() {
+      for (var i = 0; i < containers.length; i++) {
+        var root = containers[i];
+        var text = root.textContent || "";
+        if (text.indexOf("$") === -1 && text.indexOf("\\(") === -1 && text.indexOf("\\[") === -1) {
+          continue;
+        }
 
-<script src="/js/site-theme-toggle.js"></script>
+        renderMathInElement(root, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false,
+          ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+        });
+      }
+    }
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  renderMathInElement(document.body, {
-    delimiters: [
-      { left: "$$", right: "$$", display: true },
-      { left: "$", right: "$", display: false }
-    ],
-    throwOnError: false
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(renderMath, { timeout: 1200 });
+    } else {
+      window.setTimeout(renderMath, 0);
+    }
   });
-});
-</script>
+  </script>
+
 </head>
 
 <body class="" id="top">
@@ -205,12 +235,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 <li>
                     <a href="#interactive-simulation" aria-label="Interactive Simulation">Interactive Simulation</a></li></ul>
                 </li>
-                <li>
-                    <a href="#sfm" aria-label="SfM">SfM</a></li>
-                <li>
-                    <a href="#mpi" aria-label="MPI">MPI</a></li>
-                <li>
-                    <a href="#stereo-magnification" aria-label="Stereo Magnification">Stereo Magnification</a></li>
                 <li>
                     <a href="#volume-rendering" aria-label="Volume Rendering">Volume Rendering</a><ul>
                         
@@ -408,8 +432,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#complementary-supervision" aria-label="Complementary Supervision">Complementary Supervision</a></li></ul>
                 </li>
                 <li>
-                    <a href="#midas" aria-label="MiDAS">MiDAS</a></li>
-                <li>
                     <a href="#dust3r-geometric-3d-vision-made-easy" aria-label="DUSt3R: Geometric 3D Vision Made Easy">DUSt3R: Geometric 3D Vision Made Easy</a><ul>
                         
                 <li>
@@ -506,22 +528,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     <a href="#horn-schunck-smooth-flow" aria-label="Horn-Schunck (&ldquo;smooth&rdquo; flow)">Horn-Schunck (&ldquo;smooth&rdquo; flow)</a></li></ul>
                 </li>
                 <li>
-                    <a href="#nsff" aria-label="NSFF">NSFF</a></li>
-                <li>
-                    <a href="#raft" aria-label="RAFT">RAFT</a></li>
-                <li>
-                    <a href="#raft-derf" aria-label="RAFT DERF">RAFT DERF</a></li>
-                <li>
                     <a href="#4dgs" aria-label="4DGS">4DGS</a><ul>
                         
                 <li>
                     <a href="#overview-12" aria-label="Overview">Overview</a></li>
                 <li>
-                    <a href="#method-2" aria-label="Method">Method</a></li>
-                <li>
-                    <a href="#spatial-temporal-structure-encoder" aria-label="Spatial-Temporal Structure Encoder">Spatial-Temporal Structure Encoder</a></li>
-                <li>
-                    <a href="#dynamic-nerfs-with-deformation-fields" aria-label="Dynamic NeRFs with Deformation Fields">Dynamic NeRFs with Deformation Fields</a></li></ul>
+                    <a href="#method-2" aria-label="Method">Method</a></li></ul>
                 </li></ul>
                 </li>
                 <li>
@@ -532,9 +544,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         
                 <li>
                     <a href="#overview-13" aria-label="Overview">Overview</a></li></ul>
-                </li>
-                <li>
-                    <a href="#barf" aria-label="BARF">BARF</a></li></ul>
+                </li></ul>
                 </li>
                 <li>
                     <a href="#references" aria-label="References">References</a>
@@ -545,7 +555,7 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 
   <div class="post-content"><span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and may be updated or expanded soon!
+This post is a work in progress, or more specifically I will restructure this post in future so overlapping things can be handled with future posts
 </span>
 <h1 id="basics">Basics<a hidden class="anchor" aria-hidden="true" href="#basics">#</a></h1>
 <h2 id="camera-transformations">Camera Transformations<a hidden class="anchor" aria-hidden="true" href="#camera-transformations">#</a></h2>
@@ -728,15 +738,11 @@ $$<h3 id="interactive-simulation">Interactive Simulation<a hidden class="anchor"
         class="dark">
 </iframe>
 <hr>
-<h2 id="sfm">SfM<a hidden class="anchor" aria-hidden="true" href="#sfm">#</a></h2>
-<h2 id="mpi">MPI<a hidden class="anchor" aria-hidden="true" href="#mpi">#</a></h2>
-<h2 id="stereo-magnification">Stereo Magnification<a hidden class="anchor" aria-hidden="true" href="#stereo-magnification">#</a></h2>
-<hr>
 <h2 id="volume-rendering">Volume Rendering<a hidden class="anchor" aria-hidden="true" href="#volume-rendering">#</a></h2>
 <h3 id="the-physics-of-light-transport">The Physics of Light Transport<a hidden class="anchor" aria-hidden="true" href="#the-physics-of-light-transport">#</a></h3>
 <p>Unlike standard mesh rendering, where light bounces off a hard surface at a specific depth $z$, volume rendering assumes the scene is composed of particles that can <strong>emit</strong> and <strong>absorb</strong> light at any point in space (<strong>assuming no scattering</strong> of light).</p>
 <figure id="fig-1" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/voldev-cylinder2.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/voldev-cylinder2.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Light beam passing through a cylinder interacting with the medium in four different ways ( we will be assuming no scattering). <em>Image credit:</em> <a href='https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html' target='_blank'>Scratchapixel</a>.
     </figcaption></figure>
@@ -955,7 +961,7 @@ $$<p>Or compactly, defining the contribution weight $w_i = T_i \alpha_i$:</p>
 $$
 \hat{C}(\mathbf{r}) = \sum_{i=1}^{N} w_i \mathbf{c}_i
 $$<figure id="fig-2" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/vol_render_diagram.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/vol_render_diagram.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       Volume Rendering Intuition. A ray passes through samples. (A) Light is emitted at a sample. (B) It must pass through previous samples to reach the camera. If an earlier sample has high opacity (alpha), the transmittance (T) drops, shielding the camera from samples behind it. [AI Generated image :)]
     </figcaption></figure>
@@ -1005,7 +1011,7 @@ The weights sum to exactly <strong>1</strong> if and only if the remaining trans
 <h2 id="nerf">NeRF<a hidden class="anchor" aria-hidden="true" href="#nerf">#</a></h2>
 <h3 id="overview">Overview<a hidden class="anchor" aria-hidden="true" href="#overview">#</a></h3>
 <figure id="fig-3" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/nerf-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       NeRF Overview
     </figcaption></figure>
@@ -1033,7 +1039,7 @@ $$<ul>
 $$\gamma : \mathbb{R}\rightarrow \mathbb{R}^{2L}$$$$\gamma(p) = (\sin(2^0\pi p), \cos(2^0\pi p), \dots, \sin(2^{L - 1}\pi p), \cos(2^{L - 1}\pi p))$$<p>This function $\gamma(\cdot)$ is applied separately to each of the three coordinate values in $\mathbf{x}$ which are normalized to lie in $[-1, 1]$ and to the three components of the Cartesian viewing direction unit vector $\mathbf{d}$ (which by construction lie in $[-1, 1]$).</p>
 <p>A similar mapping is used in the popular Transformer architecture, where it is referred to as a positional encoding.</p>
 <figure id="fig-4" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/nerf-posenc.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/nerf-posenc.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Positional Encoding
     </figcaption></figure>
@@ -1072,7 +1078,7 @@ $$\hat{C}_c(\mathbf{r}) = \sum_{i=1}^{N_c} w_i c_i, \quad w_i = T_i (1 - \exp(-\
 $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) - C(\mathbf{r})\|_2^2 + \|\hat{C}_f(\mathbf{r}) - C(\mathbf{r})\|_2^2 \right]$$<p>where $\mathcal{R}$ is the set of rays in each batch, and $C(\mathbf{r})$, $\hat{C}_c(\mathbf{r})$ and $\hat{C}_f(\mathbf{r})$ are the ground truth, coarse volume predicted and fine volume predicted RGB colors for the ray $\mathbf{r}$ respectively.</p>
 <p>Note that even though the final rendering comes from $\hat{C}_f(\mathbf{r})$, we also minimize the loss of $\hat{C}_c(\mathbf{r})$ so that the weight distribution from the coarse network can be used to allocate samples in the fine network.</p>
 <figure id="fig-5" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/nerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/nerf-mlp.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       NeRF MLP Architecture
     </figcaption></figure>
@@ -1082,7 +1088,7 @@ $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) 
 <h2 id="plenoxels-radiance-fields-without-neural-networks">Plenoxels: Radiance Fields without Neural Networks<a hidden class="anchor" aria-hidden="true" href="#plenoxels-radiance-fields-without-neural-networks">#</a></h2>
 <h3 id="overview-1">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-1">#</a></h3>
 <figure id="fig-6" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/plenoxel-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/plenoxel-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       Plenoxels Overview
     </figcaption></figure>
@@ -1095,7 +1101,7 @@ $$\mathcal{L} = \sum_{\mathbf{r}\in \mathcal{R}} \left[ \|\hat{C}_c(\mathbf{r}) 
 <p>Uses spherical harmonic coefficients $\mathbf{k}$, rather than RGB values:</p>
 $$(\mathbf{k}, \sigma), \quad \mathbf{k} = (k^m_l)_{l: 0 \leq l \leq l_{max}}^{m: -l \leq m \leq l}$$<p>Each $k_l^m \in \mathbb{R}^{3}$ is a set of 3 coefficients corresponding to RGB components. In this setup, the view-dependent color $\mathbf{c}$ at a point $\mathbf{x}$ may be determined by querying the SH functions $Y_l^m:\mathbb{S}\rightarrow\mathbb{R}$ at desired viewing angle $\mathbf{d}$:</p>
 $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$<figure id="fig-7" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/spherical-harmonics.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/spherical-harmonics.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
       Spherical Harmonics
     </figcaption></figure>
@@ -1123,7 +1129,7 @@ $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.25s;
-  z-index: 10;  
+  z-index: 10;
 }
 .iframe-wrapper:hover .fullscreen-btn {
   opacity: 1;
@@ -1133,36 +1139,33 @@ $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_
 }
 </style>
 
-<div class="iframe-wrapper">
-  <button class="fullscreen-btn" onclick="goFullscreen('sh_2d_iframe')">⛶</button>
+<script>
+if (typeof goFullscreen !== 'function') {
+  function goFullscreen(elementId) {
+    var iframe = document.getElementById(elementId);
+    if (!iframe) return;
 
+    if (iframe.requestFullscreen) {
+      iframe.requestFullscreen();
+    } else if (iframe.webkitRequestFullscreen) {
+      iframe.webkitRequestFullscreen();
+    } else if (iframe.msRequestFullscreen) {
+      iframe.msRequestFullscreen();
+    }
+  }
+}
+</script><div class="iframe-wrapper">
+  <button class="fullscreen-btn" onclick="goFullscreen('sh_2d_iframe')" aria-label="Enter fullscreen">⛶</button>
   <iframe id="sh_2d_iframe"
           src="/interactive/sh.html"
+          title="Interactive content"
+          loading="lazy"
+          fetchpriority="low"
           allowfullscreen
           style="width:100%; height:500px; border:0 !important; border-radius:8px;">
   </iframe>
 </div>
 
-<script>
-  
-  if (typeof goFullscreen !== 'function') {
-    
-    
-    function goFullscreen(elementId) {
-      const iframe = document.getElementById(elementId);
-      
-      if (!iframe) return;
-
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {  
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {  
-        iframe.msRequestFullscreen();
-      }
-    }
-  }
-</script>
 <h3 id="interpolation">Interpolation<a hidden class="anchor" aria-hidden="true" href="#interpolation">#</a></h3>
 <p>So, each vertex of the grid has the SH coefficients and opacity $\sigma$.</p>
 <p>The opacity and color at each sample point along ray are computed by trilinear interpolation of opacity and harmonic coefficients stored at nearest 8 voxels.</p>
@@ -1170,7 +1173,7 @@ $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_
 <p>Achieves high resolution via coarse-to-fine strategy that begins with a dense grid at lower resolution, optimizes, prunes unnecessary voxels, refines the remaining voxels by subdividing each in half in each dimension, and continues optimizing.</p>
 <p>Voxel pruning is performed using the method from PlenOctrees <a href="">Paper here</a>, which applies a threshold to the maximum weight $T_i(1 - \exp(-\sigma_i \delta_i))$ of each voxel over all training ray (or, alternatively, to the density value in each voxel).</p>
 <figure id="fig-8" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/plenoctree.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/plenoctree.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
       Plenoctree Visualization
     </figcaption></figure>
@@ -1178,66 +1181,18 @@ $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_
 
 <p>Due to trilinear interpolation, naively pruning can adversely impact the color and density near surfaces since values at these points interpolate with the voxels in the immediate exterior. To solve this, they performed a dilation operation so that voxel is only pruned if both itself and its neighbors are deemed unoccupied.</p>
 <h3 id="interactive-plenoctree">Interactive PlenOctree<a hidden class="anchor" aria-hidden="true" href="#interactive-plenoctree">#</a></h3>
-<style>
-.iframe-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-.fullscreen-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 6px 10px;
-  font-size: 20px;
-  background: rgba(0,0,0,0.55);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.25s;
-  z-index: 10;  
-}
-.iframe-wrapper:hover .fullscreen-btn {
-  opacity: 1;
-}
-.fullscreen-btn:hover {
-  background: rgba(0,0,0,0.75);
-}
-</style>
-
 <div class="iframe-wrapper">
-  <button class="fullscreen-btn" onclick="goFullscreen('plenoctree_iframe')">⛶</button>
-
+  <button class="fullscreen-btn" onclick="goFullscreen('plenoctree_iframe')" aria-label="Enter fullscreen">⛶</button>
   <iframe id="plenoctree_iframe"
           src="/interactive/plenoctree.html"
+          title="Interactive content"
+          loading="lazy"
+          fetchpriority="low"
           allowfullscreen
           style="width:100%; height:600px; border:0 !important; border-radius:8px;">
   </iframe>
 </div>
 
-<script>
-  
-  if (typeof goFullscreen !== 'function') {
-    
-    
-    function goFullscreen(elementId) {
-      const iframe = document.getElementById(elementId);
-      
-      if (!iframe) return;
-
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {  
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {  
-        iframe.msRequestFullscreen();
-      }
-    }
-  }
-</script>
 <h3 id="optimization">Optimization<a hidden class="anchor" aria-hidden="true" href="#optimization">#</a></h3>
 <p>Optimize the voxel opacities and spherical harmonic coefficients with respect to the mean squared error (MSE) over rendered pixel colors with total variation (TV) regularization. Specifically, the loss is:</p>
 $$\mathcal{L} = \mathcal{L}_{recon} + \lambda_{TV}\mathcal{L}_{TV}$$<p>where these losses are defined as</p>
@@ -1247,7 +1202,7 @@ $$\mathcal{L}_{\text{recon}}= \frac{1}{|\mathcal{R}|} \sum_{\mathbf{r} \in \math
 <h2 id="tensorf">TensoRF<a hidden class="anchor" aria-hidden="true" href="#tensorf">#</a></h2>
 <h3 id="overview-2">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-2">#</a></h3>
 <figure id="fig-9" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/tensorf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/tensorf-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
       TensoRF (VM) reconstruction and rendering.
     </figcaption></figure>
@@ -1265,7 +1220,7 @@ $$
 $$<p>where $i, j, k$ denote the indices of the three modes.</p>
 <p>CP decomposition factorizes a tensor into multiple vectors, expressing multiple compact rank-one components. However, because of too high compactness, CP decomposition can require many components to model complex scenes, leading to high computational costs in radiance field reconstruction.</p>
 <figure id="fig-10" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/cp_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/cp_factorization.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       CP decomposition, which factorizes a tensor as a sum of vector outer products
     </figcaption></figure>
@@ -1278,7 +1233,7 @@ $$
 $$<p>where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3} \in \mathbb{R}^{I \times K}$, and $\mathbf{M}_r^{1,2} \in \mathbb{R}^{I \times J}$ are matrix factors for two (denoted by superscripts) of the three modes.</p>
 <p>For each component, we relax its two mode ranks to be arbitrarily large, while restricting the third mode to be rank-one; e.g., for component tensor $\mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3}$, its mode-1 rank is 1, and its mode-2 and mode-3 ranks can be arbitrary, depending on the rank of the matrix $\mathbf{M}_r^{2,3}$.</p>
 <figure id="fig-11" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/vm_factorization.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
       vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
@@ -1286,7 +1241,7 @@ $$<p>where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3}
 
 <h4 id="comparison">Comparison<a hidden class="anchor" aria-hidden="true" href="#comparison">#</a></h4>
 <figure id="fig-12" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products.
     </figcaption></figure>
@@ -1307,7 +1262,7 @@ $$
 \sigma, c = \mathcal{G}_{\sigma}(\mathbf{x}), \; \underbrace{\mathcal{S}(\mathcal{G}_{c}(\mathbf{x}), d)}_{\text{it can be MLP/SH}}
 $$<p>where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.</p>
 <figure id="fig-13" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization_full.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/cp_vm_factorization_full.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       TensoRF using CP decomposition and VM decomposition
     </figcaption></figure>
@@ -1331,7 +1286,7 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
 <h3 id="interpolation-1">Interpolation<a hidden class="anchor" aria-hidden="true" href="#interpolation-1">#</a></h3>
 <p>Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.</p>
 <figure id="scene-tensorf" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/tensorf_scene.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/tensorf_scene.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       Tensorf Scene Representation.
     </figcaption></figure>
@@ -1339,66 +1294,18 @@ $$<p>Note that we have $3R_{c}$ vectors $\mathbf{b}_{r}$ to match the total numb
 
 <hr>
 <h3 id="interactive-overview-of-tensorf">Interactive Overview of TensoRF<a hidden class="anchor" aria-hidden="true" href="#interactive-overview-of-tensorf">#</a></h3>
-<style>
-.iframe-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-.fullscreen-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 6px 10px;
-  font-size: 20px;
-  background: rgba(0,0,0,0.55);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.25s;
-  z-index: 10;  
-}
-.iframe-wrapper:hover .fullscreen-btn {
-  opacity: 1;
-}
-.fullscreen-btn:hover {
-  background: rgba(0,0,0,0.75);
-}
-</style>
-
 <div class="iframe-wrapper">
-  <button class="fullscreen-btn" onclick="goFullscreen('tensorf_iframe')">⛶</button>
-
+  <button class="fullscreen-btn" onclick="goFullscreen('tensorf_iframe')" aria-label="Enter fullscreen">⛶</button>
   <iframe id="tensorf_iframe"
           src="/interactive/tensorf.html"
+          title="Interactive content"
+          loading="lazy"
+          fetchpriority="low"
           allowfullscreen
           style="width:100%; height:600px; border:0 !important; border-radius:8px;">
   </iframe>
 </div>
 
-<script>
-  
-  if (typeof goFullscreen !== 'function') {
-    
-    
-    function goFullscreen(elementId) {
-      const iframe = document.getElementById(elementId);
-      
-      if (!iframe) return;
-
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {  
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {  
-        iframe.msRequestFullscreen();
-      }
-    }
-  }
-</script>
 <h3 id="rendering-process">Rendering Process<a hidden class="anchor" aria-hidden="true" href="#rendering-process">#</a></h3>
 <p>For a 3D point $\mathbf{x}$ and viewing direction $\mathbf{d}$:</p>
 <ol>
@@ -1435,7 +1342,7 @@ $$<p>TV regularization prevents overfitting and removes floaters/artifacts by en
 <h2 id="instant-ngp">Instant NGP<a hidden class="anchor" aria-hidden="true" href="#instant-ngp">#</a></h2>
 <h3 id="overview-3">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-3">#</a></h3>
 <figure id="fig-15" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/instant-ngp-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/instant-ngp-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
       Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)$\rightarrow$(4)$\rightarrow$(3) to update hash table features.
     </figcaption></figure>
@@ -1522,7 +1429,7 @@ $$<p>The dramatically smaller network (2 layers vs 8) is enabled by the expressi
 <h2 id="3dgs">3DGS<a hidden class="anchor" aria-hidden="true" href="#3dgs">#</a></h2>
 <h3 id="overview-4">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-4">#</a></h3>
 <figure id="fig-16" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/3dgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/3dgs-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       3DGS Overview
     </figcaption></figure>
@@ -1635,7 +1542,7 @@ $$
 </details></blockquote>
 <p>This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.</p>
 <figure id="fig-17" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/3dgs-projection.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/3dgs-projection.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       When projecting a Gaussian particle from 3D space onto the camera image plane, Monte Carlo sampling (left) provides the most accurate estimate but is costly to compute. EWA Splatting formulation used in approximates the projection function via linearization, which requires a dedicated Jacobian J for each camera model and leads to approximation errors with increasing distortion. Unscented Transform instead approximates the particle with Sigma points than can be projected exactly and from which the 2D conic can then be estimated.
     </figcaption></figure>
@@ -1665,7 +1572,7 @@ $$
 <li>Remove Gaussians that are excessively large in world space</li>
 </ul>
 <figure id="fig-18" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/3dgs_adc.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/3dgs_adc.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       Adaptive Density Control in 3DGS
     </figcaption></figure>
@@ -1674,86 +1581,6 @@ $$
 <hr>
 <h3 id="algorithm-optimization-and-densification">Algorithm: Optimization and Densification<a hidden class="anchor" aria-hidden="true" href="#algorithm-optimization-and-densification">#</a></h3>
 <p>$w, h$: width and height of the training images</p>
-<style>
-.paper-algorithm-wrap {
-    border: 1px solid var(--border, #d9d9d9);
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 0.8rem 0 1rem 0;
-    background: var(--entry, #ffffff);
-}
-
-.paper-algorithm-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.55rem 0.85rem;
-    border-bottom: 1px solid var(--border, #d9d9d9);
-    font-size: 0.88rem;
-    font-weight: 600;
-    background: color-mix(in srgb, var(--theme, #f7f7f7) 96%, #000 4%);
-}
-
-.paper-algorithm {
-    width: 100%;
-    border-collapse: collapse !important;
-    counter-reset: algo-line;
-}
-
-.paper-algorithm tr {
-    border: none !important;
-}
-
-.paper-algorithm td {
-    border: none !important;
-    padding: 2px 0 !important;
-    vertical-align: top;
-    line-height: 1.45;
-    font-size: 0.95rem;
-}
-
-.paper-algorithm-auto tr {
-    counter-increment: algo-line;
-}
-
-.paper-algorithm-auto td:first-child {
-    text-align: left;
-    padding-left: 0.4rem !important;
-}
-
-.paper-algorithm-auto td:first-child::before {
-    content: counter(algo-line);
-    display: inline-block;
-    width: 2.6ch;
-    margin-right: 0.95rem;
-    text-align: right;
-    color: var(--secondary, #8b8b8b);
-    font-variant-numeric: tabular-nums;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-.paper-algorithm td:last-child {
-    text-align: right;
-    color: var(--secondary, #8b8b8b);
-    white-space: nowrap;
-    padding-left: 0.75rem !important;
-}
-
-.paper-algorithm-manual .algo-ln {
-    width: 1%;
-    white-space: nowrap;
-    text-align: right;
-    color: var(--secondary, #8b8b8b);
-    padding-right: 12px !important;
-    user-select: none;
-}
-
-.paper-algorithm-manual .algo-content {
-    text-align: left;
-}
-</style>
-<hr>
 <div class="paper-algorithm-wrap">
 <div class="paper-algorithm-header"><span>Algorithm 1</span><span>Optimization and Densification (3DGS)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
@@ -1863,66 +1690,18 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <li><strong>D-SSIM</strong>: Structural similarity (captures perceptual quality)</li>
 </ul>
 <h3 id="interactive-gaussian-viewer">Interactive Gaussian Viewer<a hidden class="anchor" aria-hidden="true" href="#interactive-gaussian-viewer">#</a></h3>
-<style>
-.iframe-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-}
-.fullscreen-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 6px 10px;
-  font-size: 20px;
-  background: rgba(0,0,0,0.55);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.25s;
-  z-index: 10;  
-}
-.iframe-wrapper:hover .fullscreen-btn {
-  opacity: 1;
-}
-.fullscreen-btn:hover {
-  background: rgba(0,0,0,0.75);
-}
-</style>
-
 <div class="iframe-wrapper">
-  <button class="fullscreen-btn" onclick="goFullscreen('gaussian_viewer_iframe')">⛶</button>
-
+  <button class="fullscreen-btn" onclick="goFullscreen('gaussian_viewer_iframe')" aria-label="Enter fullscreen">⛶</button>
   <iframe id="gaussian_viewer_iframe"
           src="/interactive/gaussian_viewer.html"
+          title="Interactive content"
+          loading="lazy"
+          fetchpriority="low"
           allowfullscreen
           style="width:100%; height:600px; border:0 !important; border-radius:8px;">
   </iframe>
 </div>
 
-<script>
-  
-  if (typeof goFullscreen !== 'function') {
-    
-    
-    function goFullscreen(elementId) {
-      const iframe = document.getElementById(elementId);
-      
-      if (!iframe) return;
-
-      if (iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-      } else if (iframe.webkitRequestFullscreen) {  
-        iframe.webkitRequestFullscreen();
-      } else if (iframe.msRequestFullscreen) {  
-        iframe.msRequestFullscreen();
-      }
-    }
-  }
-</script>
 <hr>
 <h1 id="sparse-input">Sparse Input<a hidden class="anchor" aria-hidden="true" href="#sparse-input">#</a></h1>
 <h2 id="depth-supervised-nerf">Depth-supervised NeRF<a hidden class="anchor" aria-hidden="true" href="#depth-supervised-nerf">#</a></h2>
@@ -1931,7 +1710,7 @@ $$\mathcal{L} = (1 - \lambda)\mathcal{L}_1 + \lambda \mathcal{L}_{\text{D-SSIM}}
 <p><strong>Key idea</strong> Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as &ldquo;free&rdquo; depth super-
 vision during training:</p>
 <figure id="fig-19" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/ds-nerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/ds-nerf-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       Depth Supervised NeRF Overview
     </figcaption></figure>
@@ -1997,7 +1776,7 @@ $$<hr>
 <h2 id="vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields">ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields<a hidden class="anchor" aria-hidden="true" href="#vip-nerf-visibility-prior-for-sparse-input-neural-radiance-fields">#</a></h2>
 <h3 id="overview-6">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-6">#</a></h3>
 <figure id="fig-20" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/vipnerf-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
       <strong>Overview of ViP-NeRF architecture.</strong> Given the images from primary and secondary views, we estimate a visibility prior map in the primary view and use it to supervise the visibility of pixels as predicted by the NeRF. Specifically, we cast a ray through a randomly selected pixel in the primary view and sample 3D points along the ray. For every point ${\mathbf p}_i$, we use the NeRF MLPs to obtain its visibility in primary and secondary views, along with volume density $\sigma_i$ and color $\mathbf c_i$. Volume rendering outputs visibility $t'$ of the chosen pixel in the secondary view which is supervised by the visibility prior. $\mathcal{L}_v$ constrains the visibilities $\hat{T}_i$ output by network and $T_i$ computed using volume rendering to be consistent with each other.
     </figcaption></figure>
@@ -2016,7 +1795,7 @@ $$<hr>
 <h3 id="computing-visibility-prior-using-plane-sweep-volumes">Computing Visibility Prior using Plane Sweep Volumes<a hidden class="anchor" aria-hidden="true" href="#computing-visibility-prior-using-plane-sweep-volumes">#</a></h3>
 <p>ViP-NeRF estimates the visibility prior using <strong>plane sweep volumes (PSV)</strong> without requiring any pre-training:</p>
 <figure id="fig-21" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/vipnerf-psv.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-psv.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
       <strong>Visibility Prior Computation.</strong> The secondary view image is warped to the primary view at different depth planes to create a PSV. Error maps are computed by comparing warped images with the primary view. The minimum error across all planes is thresholded to obtain the visibility prior map. Regions with low error (white) indicate visibility in both views, while high error (black) indicates occlusion.
     </figcaption></figure>
@@ -2054,7 +1833,7 @@ $$\mathcal{L}_{\text{vip}}(q) = \max(\tau'(q) - t'(q), 0)$$<p>This loss is only 
   <tr>
     <td align="center" width="45%">
 <figure id="fig-22" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/vipnerf-naive.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-naive.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
       Computing $T'_i$ naively requiring $N^2$ MLP queries per pixel
     </figcaption></figure>
@@ -2063,7 +1842,7 @@ $$\mathcal{L}_{\text{vip}}(q) = \max(\tau'(q) - t'(q), 0)$$<p>This loss is only 
       </td>
     <td align="center" width="45%"> 
 <figure id="fig-23" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/vipnerf-mlp.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/vipnerf-mlp.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
       Reformulated the NeRF MLP
     </figcaption></figure>
@@ -2132,12 +1911,10 @@ $$\mathcal{L} = \lambda_1 \mathcal{L}_{\text{mse}} + \lambda_2 \mathcal{L}_{\tex
 </ul>
 <p>Ablation studies show that removing either prior degrades performance, confirming their complementary nature.</p>
 <hr>
-<h2 id="midas">MiDAS<a hidden class="anchor" aria-hidden="true" href="#midas">#</a></h2>
-<hr>
 <h2 id="dust3r-geometric-3d-vision-made-easy">DUSt3R: Geometric 3D Vision Made Easy<a hidden class="anchor" aria-hidden="true" href="#dust3r-geometric-3d-vision-made-easy">#</a></h2>
 <h3 id="overview-7">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-7">#</a></h3>
 <figure id="fig-24" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/dust3r-arch.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/dust3r-arch.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
       <strong>Architecture of the network $\mathcal{F}$.</strong> Two views of a scene $(I^1, I^2)$ are first encoded in a Siamese manner with a shared ViT encoder. The resulting token representations $F^1$ and $F^2$ are then passed to two transformer decoders that constantly exchange information via cross-attention. Finally, two regression heads output the two corresponding pointmaps and associated confidence maps. Importantly, the two pointmaps are expressed in the same coordinate frame of the first image $I^1$. The network $\mathcal{F}$ is trained using a simple regression loss
     </figcaption></figure>
@@ -2202,7 +1979,7 @@ $$<p>To avoid the trivial optimum where $\sigma_e = 0, \forall e \in \mathcal{E}
 <h2 id="instantsplat-sparse-view-3d-reconstruction-in-seconds">InstantSplat: Sparse-view 3D Reconstruction in Seconds<a hidden class="anchor" aria-hidden="true" href="#instantsplat-sparse-view-3d-reconstruction-in-seconds">#</a></h2>
 <h3 id="overview-8">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-8">#</a></h3>
 <figure id="fig-25" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/instantsplat-pipeline.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/instantsplat-pipeline.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
       InstantSplat Pipeline. Multi-view unposed captures. Initialization using a geometric foundation model followed by co-visibility pruning. Joint optimization of 3D Gaussians and camera poses.
     </figcaption></figure>
@@ -2272,7 +2049,7 @@ $$<p>Low-confidence points (e.g., sky, reflections) have higher learning rates t
 <h2 id="fsgs-real-time-few-shot-view-synthesis">FSGS: Real-Time Few-shot View Synthesis<a hidden class="anchor" aria-hidden="true" href="#fsgs-real-time-few-shot-view-synthesis">#</a></h2>
 <h3 id="overview-9">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-9">#</a></h3>
 <figure id="fig-26" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/fsgs-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/fsgs-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       <strong>FSGS Pipeline.</strong> 3D Gaussians are initialized from COLMAP, with a few images (<strong>black cameras</strong>). For the sparsely placed Gaussians, we propose densifying new Gaussians to enhance scene coverage by unpooling existing Gaussians into new ones, with properly initialized Gaussian attributes. Monocular depth priors, enhanced by sampling unobserved views (<strong>red cameras</strong>), guide the optimization of grown Gaussians towards a reasonable geometry. The final loss consists of a photometric loss term, and a geometric regularization term calculated as depth relative correspondence.
     </figcaption></figure>
@@ -2301,7 +2078,7 @@ $$<p><strong>Gaussian Unpooling Strategy:</strong></p>
 </ul>
 <p>This strategy encourages Gaussians to grow in representative locations and progressively fill observation gaps. The proximity graph is updated after each densification or pruning operation.</p>
 <figure id="fig-27" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/gaussian-unpooling.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/gaussian-unpooling.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       <strong>Gaussian Unpooling Illustration.</strong> We show a 2D toy case for visualizing Gaussian Unpooling with depth guidance, where the example 1D depth provides priors on the relative distance of the Gaussians from the viewing direction, guiding the Gaussian deformation toward a better solution.
     </figcaption></figure>
@@ -2342,7 +2119,6 @@ $$<p>where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This lo
 <p>Gaussian unpooling occurs every 100 iterations, starting after iteration 500, allowing the model to first stabilize before adding complexity.</p>
 <hr>
 <h3 id="algorithm-the-training-pipeline-of-fsgs">Algorithm: The training pipeline of FSGS<a hidden class="anchor" aria-hidden="true" href="#algorithm-the-training-pipeline-of-fsgs">#</a></h3>
-<hr>
 <div class="paper-algorithm-wrap">
 <div class="paper-algorithm-header"><span>Algorithm 2</span><span>FSGS Training Pipeline</span></div>
 <table class="paper-algorithm paper-algorithm-manual">
@@ -2489,7 +2265,7 @@ $$<p>where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This lo
 <p>A notable pattern is that disagreement increases significantly during <strong>densification</strong>, a phase in which new Gaussians are created but placed without strong geometric constraints. This randomness can introduce geometric errors in sparse-view 3DGS.</p>
 <p><strong>Key Point:</strong> Both <strong>point disagreement</strong> (differences in Gaussian positions) and <strong>rendering disagreement</strong> (differences in rendered appearance or depth) are typically <strong>negatively correlated</strong> with reconstruction accuracy.</p>
 <figure id="fig-28" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/corgs-pipeline.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/corgs-pipeline.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       Overview of CoR-GS. We train two 3D Gaussian radiance fields simultaneously and regularize them by suppressing point disagreement and rendering disagreement.
     </figcaption></figure>
@@ -2718,9 +2494,7 @@ E_s(i, j) = \frac{1}{4} \left[
 $$<p>In Horn-Schunck  optical flow we do the following:
 </p>
 $$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$<p>We can compute partial derivative, derive update equations (gradient decent)</p>
-<h2 id="nsff">NSFF<a hidden class="anchor" aria-hidden="true" href="#nsff">#</a></h2>
-<h2 id="raft">RAFT<a hidden class="anchor" aria-hidden="true" href="#raft">#</a></h2>
-<h2 id="raft-derf">RAFT DERF<a hidden class="anchor" aria-hidden="true" href="#raft-derf">#</a></h2>
+<hr>
 <h2 id="4dgs">4DGS<a hidden class="anchor" aria-hidden="true" href="#4dgs">#</a></h2>
 <p>All the dynamic NeRF algorithms can be formulated as:</p>
 <p>c, σ = M(x, d, t, λ)</p>
@@ -2756,14 +2530,12 @@ Gaussians fd = H(G, t). And the multi-head Gaussian deformation decoder D can de
 each 3D Gaussian’s deformation ∆G = D(f), then the deformed 3D Gaussians G
 ′
 can be introduced.</p>
-<h3 id="spatial-temporal-structure-encoder">Spatial-Temporal Structure Encoder<a hidden class="anchor" aria-hidden="true" href="#spatial-temporal-structure-encoder">#</a></h3>
-<h3 id="dynamic-nerfs-with-deformation-fields">Dynamic NeRFs with Deformation Fields<a hidden class="anchor" aria-hidden="true" href="#dynamic-nerfs-with-deformation-fields">#</a></h3>
 <hr>
 <h1 id="feedforward-and-barf">Feedforward and BARF<a hidden class="anchor" aria-hidden="true" href="#feedforward-and-barf">#</a></h1>
 <h2 id="pixel-splat">Pixel Splat<a hidden class="anchor" aria-hidden="true" href="#pixel-splat">#</a></h2>
 <h3 id="overview-13">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-13">#</a></h3>
 <figure id="fig-29" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/pixel-splat-overview.png" alt="" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="../../images/3dvis/pixel-splat-overview.png" alt="" loading="lazy" decoding="async" fetchpriority="auto" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       Proposed probabilistic prediction of pixel-aligned Gaussians
     </figcaption></figure>
@@ -2772,10 +2544,10 @@ can be introduced.</p>
 <p>For every pixel feature $F[u]$ in the input feature map, a neural network $f$ predicts Gaussian primitive parameters $\Sigma$ and $S$. Gaussian locations $\mu$ and opacities $\alpha$ are <strong>not</strong> predicted directly, since this would lead to local minima.</p>
 <p>Instead, $f$ predicts per-pixel discrete probability distributions over depths $p_{\phi}(z)$ parameterized by $\phi$. Sampling from this distribution yields the locations of the Gaussian primitives The opacity of each Gaussian is set to the probability of the sampled depth bucket. The final set of Gaussian primitives can then be rendered from novel views using the splatting algorithm. For brevity, we use $h$ to represent the function that computes depths from bucket indices.</p>
 <hr>
-<h2 id="barf">BARF<a hidden class="anchor" aria-hidden="true" href="#barf">#</a></h2>
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>
+<hr>
 <h1 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h1>
 <ol>
 <li>
@@ -2922,13 +2694,80 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(sidebar);
 
     
-    var headers = Array.from(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    if (!headers.length) return;
+
+    var headerOffsets = [];
+    var lastActiveId = '';
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
     for (var i = 0; i < nestedUls.length; i++) {
         nestedUls[i].style.display = 'none';
     }
+
+    function recomputeHeaderOffsets() {
+        headerOffsets = [];
+        for (var i = 0; i < headers.length; i++) {
+            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
+            headerOffsets.push(top);
+        }
+    }
+
+    function findActiveHeaderId(scrollTop) {
+        var lo = 0;
+        var hi = headerOffsets.length - 1;
+        var idx = -1;
+
+        while (lo <= hi) {
+            var mid = (lo + hi) >> 1;
+            if (headerOffsets[mid] <= scrollTop) {
+                idx = mid;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+
+        if (idx < 0) return '';
+        return headers[idx].getAttribute('id') || '';
+    }
+
+    function applyActiveState(currentId) {
+        if (currentId === lastActiveId) return;
+        lastActiveId = currentId;
+
+        
+        var highlighted = sidebar.querySelectorAll('a.active, a.semi_active');
+        for (var i = 0; i < highlighted.length; i++) {
+            highlighted[i].classList.remove('active', 'semi_active');
+            var oldChild = highlighted[i].parentElement.querySelector(':scope > ul');
+            if (oldChild) oldChild.style.display = 'none';
+        }
+
+        if (!currentId) return;
+
+        var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+        if (!activeLink) return;
+
+        
+        var el = activeLink.parentElement;
+        var depth = 0;
+        while (el && el !== sidebar) {
+            if (el.tagName === 'LI') {
+                var link = el.querySelector(':scope > a');
+                if (link) {
+                    link.classList.add(depth === 0 ? 'active' : 'semi_active');
+                    var childUl = el.querySelector(':scope > ul');
+                    if (childUl) childUl.style.display = 'block';
+                }
+                depth++;
+            }
+            el = el.parentElement;
+        }
+    }
+
+    recomputeHeaderOffsets();
 
     
     var ticking = false;
@@ -2939,68 +2778,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         requestAnimationFrame(function() {
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var currentId = '';
-
-            
-            for (var i = 0; i < headers.length; i++) {
-                if (headers[i].getBoundingClientRect().top + scrollTop - 80 <= scrollTop) {
-                    currentId = headers[i].getAttribute('id');
-                }
-            }
-
-            
-            var currentActive = sidebar.querySelector('a.active');
-            if (currentActive && currentActive.getAttribute('href') === '#' + currentId) {
-                ticking = false;
-                return;
-            }
-
-            
-            var actives = sidebar.querySelectorAll('a.active');
-            for (var j = 0; j < actives.length; j++) {
-                actives[j].classList.remove('active');
-                
-                var sibUl = actives[j].parentElement.querySelector(':scope > ul');
-                if (sibUl) sibUl.style.display = 'none';
-            }
-            var semiActives = sidebar.querySelectorAll('a.semi_active');
-            for (var k = 0; k < semiActives.length; k++) {
-                semiActives[k].classList.remove('semi_active');
-                var sibUl2 = semiActives[k].parentElement.querySelector(':scope > ul');
-                if (sibUl2) sibUl2.style.display = 'none';
-            }
-
-            
-            if (currentId) {
-                var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
-                if (activeLink) {
-                    
-                    var el = activeLink.parentElement; 
-                    var depth = 0;
-                    while (el && !el.classList.contains('agn-sidetoc')) {
-                        if (el.tagName === 'LI') {
-                            var link = el.querySelector(':scope > a');
-                            if (link) {
-                                if (depth === 0) {
-                                    link.classList.add('active');
-                                } else {
-                                    link.classList.add('semi_active');
-                                }
-                                
-                                var childUl = el.querySelector(':scope > ul');
-                                if (childUl) childUl.style.display = 'block';
-                            }
-                            depth++;
-                        }
-                        el = el.parentElement;
-                    }
-                }
-            }
-
+            var currentId = findActiveHeaderId(scrollTop);
+            applyActiveState(currentId);
             ticking = false;
         });
     }
 
+    window.addEventListener('resize', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    }, { passive: true });
+    window.addEventListener('load', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    });
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); 
 });
@@ -3010,6 +2801,15 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     var iframes = document.querySelectorAll('.post-content iframe, .page-content iframe, .archive iframe, .single iframe');
     if (!iframes.length) return;
+
+    for (var i = 0; i < iframes.length; i++) {
+        if (!iframes[i].hasAttribute('loading')) {
+            iframes[i].setAttribute('loading', 'lazy');
+        }
+        if (!iframes[i].hasAttribute('fetchpriority')) {
+            iframes[i].setAttribute('fetchpriority', 'low');
+        }
+    }
 
     function parsePositiveNumber(value) {
         var n = Number(value);
@@ -3139,16 +2939,35 @@ document.addEventListener('DOMContentLoaded', function() {
         iframe.setAttribute('scrolling', isSameOrigin ? 'no' : 'auto');
     }
 
-    function resizeAllIframes() {
+    function isNearViewport(iframe) {
+        var rect = iframe.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+        return rect.bottom >= -250 && rect.top <= vh + 1200;
+    }
+
+    function resizeVisibleIframes(force) {
         for (var i = 0; i < iframes.length; i++) {
-            resizeIframe(iframes[i]);
+            if (force || isNearViewport(iframes[i])) {
+                resizeIframe(iframes[i]);
+            }
         }
     }
 
-    window.addEventListener('resize', resizeAllIframes, { passive: true });
+    window.addEventListener('resize', function() { resizeVisibleIframes(true); }, { passive: true });
+
+    var scrollTicking = false;
+    function onScrollResize() {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(function() {
+            resizeVisibleIframes(false);
+            scrollTicking = false;
+        });
+    }
+    window.addEventListener('scroll', onScrollResize, { passive: true });
 
     var themeObserver = new MutationObserver(function() {
-        resizeAllIframes();
+        resizeVisibleIframes(false);
     });
 
     if (document.documentElement) {
@@ -3176,9 +2995,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    resizeAllIframes();
+    resizeVisibleIframes(false);
 });
 </script>
+
 
 <script>
     let menu = document.getElementById('menu')

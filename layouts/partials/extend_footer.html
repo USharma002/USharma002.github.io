@@ -30,7 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.appendChild(sidebar);
 
     // 2. Get all headings in post-content and all links in sidebar
-    var headers = Array.from(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    if (!headers.length) return;
+
+    var headerOffsets = [];
+    var lastActiveId = '';
 
     // Hide all nested lists initially
     var nestedUls = sidebar.querySelectorAll('ul ul');
@@ -38,7 +42,70 @@ document.addEventListener('DOMContentLoaded', function() {
         nestedUls[i].style.display = 'none';
     }
 
-    // 3. Scroll handler — vanilla JS, lightweight
+    function recomputeHeaderOffsets() {
+        headerOffsets = [];
+        for (var i = 0; i < headers.length; i++) {
+            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
+            headerOffsets.push(top);
+        }
+    }
+
+    function findActiveHeaderId(scrollTop) {
+        var lo = 0;
+        var hi = headerOffsets.length - 1;
+        var idx = -1;
+
+        while (lo <= hi) {
+            var mid = (lo + hi) >> 1;
+            if (headerOffsets[mid] <= scrollTop) {
+                idx = mid;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+
+        if (idx < 0) return '';
+        return headers[idx].getAttribute('id') || '';
+    }
+
+    function applyActiveState(currentId) {
+        if (currentId === lastActiveId) return;
+        lastActiveId = currentId;
+
+        // Clear old state.
+        var highlighted = sidebar.querySelectorAll('a.active, a.semi_active');
+        for (var i = 0; i < highlighted.length; i++) {
+            highlighted[i].classList.remove('active', 'semi_active');
+            var oldChild = highlighted[i].parentElement.querySelector(':scope > ul');
+            if (oldChild) oldChild.style.display = 'none';
+        }
+
+        if (!currentId) return;
+
+        var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+        if (!activeLink) return;
+
+        // Walk up and mark active parent chain.
+        var el = activeLink.parentElement;
+        var depth = 0;
+        while (el && el !== sidebar) {
+            if (el.tagName === 'LI') {
+                var link = el.querySelector(':scope > a');
+                if (link) {
+                    link.classList.add(depth === 0 ? 'active' : 'semi_active');
+                    var childUl = el.querySelector(':scope > ul');
+                    if (childUl) childUl.style.display = 'block';
+                }
+                depth++;
+            }
+            el = el.parentElement;
+        }
+    }
+
+    recomputeHeaderOffsets();
+
+    // 3. Scroll handler
     var ticking = false;
 
     function onScroll() {
@@ -47,68 +114,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         requestAnimationFrame(function() {
             var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var currentId = '';
-
-            // Find the last heading above the threshold (80px from top)
-            for (var i = 0; i < headers.length; i++) {
-                if (headers[i].getBoundingClientRect().top + scrollTop - 80 <= scrollTop) {
-                    currentId = headers[i].getAttribute('id');
-                }
-            }
-
-            // Early exit if same
-            var currentActive = sidebar.querySelector('a.active');
-            if (currentActive && currentActive.getAttribute('href') === '#' + currentId) {
-                ticking = false;
-                return;
-            }
-
-            // Clear all active/semi_active states
-            var actives = sidebar.querySelectorAll('a.active');
-            for (var j = 0; j < actives.length; j++) {
-                actives[j].classList.remove('active');
-                // Hide sibling ul
-                var sibUl = actives[j].parentElement.querySelector(':scope > ul');
-                if (sibUl) sibUl.style.display = 'none';
-            }
-            var semiActives = sidebar.querySelectorAll('a.semi_active');
-            for (var k = 0; k < semiActives.length; k++) {
-                semiActives[k].classList.remove('semi_active');
-                var sibUl2 = semiActives[k].parentElement.querySelector(':scope > ul');
-                if (sibUl2) sibUl2.style.display = 'none';
-            }
-
-            // Set active + parents
-            if (currentId) {
-                var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
-                if (activeLink) {
-                    // Walk up the DOM tree
-                    var el = activeLink.parentElement; // <li>
-                    var depth = 0;
-                    while (el && !el.classList.contains('agn-sidetoc')) {
-                        if (el.tagName === 'LI') {
-                            var link = el.querySelector(':scope > a');
-                            if (link) {
-                                if (depth === 0) {
-                                    link.classList.add('active');
-                                } else {
-                                    link.classList.add('semi_active');
-                                }
-                                // Show child ul
-                                var childUl = el.querySelector(':scope > ul');
-                                if (childUl) childUl.style.display = 'block';
-                            }
-                            depth++;
-                        }
-                        el = el.parentElement;
-                    }
-                }
-            }
-
+            var currentId = findActiveHeaderId(scrollTop);
+            applyActiveState(currentId);
             ticking = false;
         });
     }
 
+    window.addEventListener('resize', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    }, { passive: true });
+    window.addEventListener('load', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    });
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); // Initial check
 });
@@ -118,6 +137,15 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     var iframes = document.querySelectorAll('.post-content iframe, .page-content iframe, .archive iframe, .single iframe');
     if (!iframes.length) return;
+
+    for (var i = 0; i < iframes.length; i++) {
+        if (!iframes[i].hasAttribute('loading')) {
+            iframes[i].setAttribute('loading', 'lazy');
+        }
+        if (!iframes[i].hasAttribute('fetchpriority')) {
+            iframes[i].setAttribute('fetchpriority', 'low');
+        }
+    }
 
     function parsePositiveNumber(value) {
         var n = Number(value);
@@ -247,16 +275,35 @@ document.addEventListener('DOMContentLoaded', function() {
         iframe.setAttribute('scrolling', isSameOrigin ? 'no' : 'auto');
     }
 
-    function resizeAllIframes() {
+    function isNearViewport(iframe) {
+        var rect = iframe.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+        return rect.bottom >= -250 && rect.top <= vh + 1200;
+    }
+
+    function resizeVisibleIframes(force) {
         for (var i = 0; i < iframes.length; i++) {
-            resizeIframe(iframes[i]);
+            if (force || isNearViewport(iframes[i])) {
+                resizeIframe(iframes[i]);
+            }
         }
     }
 
-    window.addEventListener('resize', resizeAllIframes, { passive: true });
+    window.addEventListener('resize', function() { resizeVisibleIframes(true); }, { passive: true });
+
+    var scrollTicking = false;
+    function onScrollResize() {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(function() {
+            resizeVisibleIframes(false);
+            scrollTicking = false;
+        });
+    }
+    window.addEventListener('scroll', onScrollResize, { passive: true });
 
     var themeObserver = new MutationObserver(function() {
-        resizeAllIframes();
+        resizeVisibleIframes(false);
     });
 
     if (document.documentElement) {
@@ -284,6 +331,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    resizeAllIframes();
+    resizeVisibleIframes(false);
 });
 </script>

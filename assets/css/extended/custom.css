@@ -277,6 +277,87 @@ a[href^="#fig-"]:hover {
     text-align: start;
 }
 
+/* Algorithm blocks used across reconstruction posts */
+.post-content .paper-algorithm-wrap {
+    border: 1px solid var(--border, #d9d9d9);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0.8rem 0 1rem 0;
+    background: var(--entry, #ffffff);
+}
+
+.post-content .paper-algorithm-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--border, #d9d9d9);
+    font-size: 0.88rem;
+    font-weight: 600;
+    background: color-mix(in srgb, var(--theme, #f7f7f7) 96%, #000 4%);
+}
+
+.post-content .paper-algorithm {
+    width: 100%;
+    border-collapse: collapse !important;
+    counter-reset: algo-line;
+}
+
+.post-content .paper-algorithm tr {
+    border: none !important;
+}
+
+.post-content .paper-algorithm td {
+    min-width: 0 !important;
+    border: none !important;
+    padding: 2px 0 !important;
+    vertical-align: top;
+    line-height: 1.45;
+    font-size: 0.95rem;
+}
+
+.post-content .paper-algorithm-auto tr {
+    counter-increment: algo-line;
+}
+
+.post-content .paper-algorithm-auto td:first-child {
+    text-align: left;
+    padding-left: 0.4rem !important;
+}
+
+.post-content .paper-algorithm-auto td:first-child::before {
+    content: counter(algo-line);
+    display: inline-block;
+    width: 2.6ch;
+    margin-right: 0.95rem;
+    text-align: right;
+    color: var(--secondary, #8b8b8b);
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Apply right-column annotation style only to auto-numbered algorithm tables. */
+.post-content .paper-algorithm-auto td:last-child {
+    text-align: right;
+    color: var(--secondary, #8b8b8b);
+    white-space: nowrap;
+    padding-left: 0.75rem !important;
+}
+
+.post-content .paper-algorithm-manual .algo-ln {
+    width: 1%;
+    white-space: nowrap;
+    text-align: right;
+    color: var(--secondary, #8b8b8b);
+    padding-right: 12px !important;
+    user-select: none;
+}
+
+.post-content .paper-algorithm-manual .algo-content {
+    text-align: left;
+}
+
 /* ─── Lists — compact research-paper style ─── */
 .post-content ul,
 .post-content ol {

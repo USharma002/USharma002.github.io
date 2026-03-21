@@ -13,7 +13,7 @@ math: true
 ---
 
 <span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and may be updated or expanded soon!
+This post is a work in progress, or more specifically I will restructure this post in future so overlapping things can be handled with future posts
 </span>
 
 
@@ -267,12 +267,6 @@ $$
         style="border-radius:8px; min-width: 700px;"
         class="dark">
 </iframe>
-
----
-
-## SfM
-## MPI
-## Stereo Magnification
 
 ---
 
@@ -1282,87 +1276,6 @@ width="100%"
 ### Algorithm: Optimization and Densification
 $w, h$: width and height of the training images
 
-<style>
-.paper-algorithm-wrap {
-    border: 1px solid var(--border, #d9d9d9);
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 0.8rem 0 1rem 0;
-    background: var(--entry, #ffffff);
-}
-
-.paper-algorithm-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.55rem 0.85rem;
-    border-bottom: 1px solid var(--border, #d9d9d9);
-    font-size: 0.88rem;
-    font-weight: 600;
-    background: color-mix(in srgb, var(--theme, #f7f7f7) 96%, #000 4%);
-}
-
-.paper-algorithm {
-    width: 100%;
-    border-collapse: collapse !important;
-    counter-reset: algo-line;
-}
-
-.paper-algorithm tr {
-    border: none !important;
-}
-
-.paper-algorithm td {
-    border: none !important;
-    padding: 2px 0 !important;
-    vertical-align: top;
-    line-height: 1.45;
-    font-size: 0.95rem;
-}
-
-.paper-algorithm-auto tr {
-    counter-increment: algo-line;
-}
-
-.paper-algorithm-auto td:first-child {
-    text-align: left;
-    padding-left: 0.4rem !important;
-}
-
-.paper-algorithm-auto td:first-child::before {
-    content: counter(algo-line);
-    display: inline-block;
-    width: 2.6ch;
-    margin-right: 0.95rem;
-    text-align: right;
-    color: var(--secondary, #8b8b8b);
-    font-variant-numeric: tabular-nums;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-.paper-algorithm td:last-child {
-    text-align: right;
-    color: var(--secondary, #8b8b8b);
-    white-space: nowrap;
-    padding-left: 0.75rem !important;
-}
-
-.paper-algorithm-manual .algo-ln {
-    width: 1%;
-    white-space: nowrap;
-    text-align: right;
-    color: var(--secondary, #8b8b8b);
-    padding-right: 12px !important;
-    user-select: none;
-}
-
-.paper-algorithm-manual .algo-content {
-    text-align: left;
-}
-</style>
-
----
 <div class="paper-algorithm-wrap">
 <div class="paper-algorithm-header"><span>Algorithm 1</span><span>Optimization and Densification (3DGS)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
@@ -1754,10 +1667,6 @@ Ablation studies show that removing either prior degrades performance, confirmin
 
 ---
 
-## MiDAS
-
----
-
 ## DUSt3R: Geometric 3D Vision Made Easy
 
 ### Overview
@@ -2064,7 +1973,6 @@ Gaussian unpooling occurs every 100 iterations, starting after iteration 500, al
 
 ---
 ### Algorithm: The training pipeline of FSGS
----
 
 <div class="paper-algorithm-wrap">
 <div class="paper-algorithm-header"><span>Algorithm 2</span><span>FSGS Training Pipeline</span></div>
@@ -2517,9 +2425,9 @@ In Horn-Schunck  optical flow we do the following:
 $$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$
 
 We can compute partial derivative, derive update equations (gradient decent)
-## NSFF
-## RAFT
-## RAFT DERF
+
+---
+
 ## 4DGS
 All the dynamic NeRF algorithms can be formulated as:
 
@@ -2563,12 +2471,6 @@ each 3D Gaussian’s deformation ∆G = D(f), then the deformed 3D Gaussians G
 ′
 can be introduced.
 
-### Spatial-Temporal Structure Encoder
-
-
-
-### Dynamic NeRFs with Deformation Fields
-
 ---
 
 # Feedforward and BARF
@@ -2586,13 +2488,11 @@ For every pixel feature $F[u]$ in the input feature map, a neural network $f$ pr
 Instead, $f$ predicts per-pixel discrete probability distributions over depths $p_{\phi}(z)$ parameterized by $\phi$. Sampling from this distribution yields the locations of the Gaussian primitives The opacity of each Gaussian is set to the probability of the sampled depth bucket. The final set of Gaussian primitives can then be rendered from novel views using the splatting algorithm. For brevity, we use $h$ to represent the function that computes depths from bucket indices.
 
 ---
-
-## BARF
-
-
 <span style="color:crimson;font-weight:700">
 This post or widget may be updated further - more notes, findings, and background will appear here!
 </span>
+
+---
 
 # References
 
