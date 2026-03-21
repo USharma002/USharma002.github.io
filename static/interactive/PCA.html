@@ -5,320 +5,516 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive PCA Visualization</title>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+        :root {
+            --bg: #ffffff;
+            --panel: #f8f9fa;
+            --text: #1f2937;
+            --text-sub: #6b7280;
+            --border: #d1d5db;
+            --accent: #e67e22;
+            --pc1: #111827;
+            --pc2: #6b7280;
+            --point: #1f77b4;
+            --rec1: #ff7f0e;
+            --rec2: #2ca02c;
+            --error1: rgba(255, 127, 14, 0.70);
+            --error2: rgba(44, 160, 44, 0.62);
+            --plot-grid: #e5e7eb;
+            --plot-bg: #ffffff;
+        }
+
+        html, body {
             margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
 
-        .container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-        }
-
-        h2 { margin-top: 0; }
-        
-        .controls {
-            margin: 20px 0;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
+        .wrap {
+            width: 100%;
+            min-height: 100%;
+            height: auto;
+            display: grid;
+            grid-template-rows: auto auto minmax(620px, 1fr) auto;
+            gap: 8px;
             padding: 10px;
-            background-color: #f1f3f5;
-            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .title {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
         }
 
         button {
-            background-color: #007bff;
-            color: white;
+            background: var(--accent);
+            color: #fff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
         }
+        button:hover { filter: brightness(0.95); }
 
-        button:hover { background-color: #0056b3; }
-
-        .checkbox-group {
-            display: flex;
+        .check {
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
-            font-size: 14px;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text);
+            user-select: none;
         }
+        .check input { accent-color: var(--accent); }
 
         #plot {
             width: 100%;
-            height: 600px; /* Square-ish aspect ratio */
+            height: 100%;
+            min-height: 620px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--plot-bg);
         }
 
         .stats {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(120px, 1fr));
+            gap: 8px;
+            font-size: 12.5px;
+        }
+        .stat {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--panel);
+            padding: 8px 10px;
+            line-height: 1.35;
+            color: var(--text-sub);
+        }
+        .stat b {
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        @media (max-width: 760px) {
+            .stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+<div class="wrap">
+    <p class="title">PCA Reconstruction, Axes, and Error</p>
 
-<div class="container">
-    <h2>PCA Reconstruction vs Original Data</h2>
-    
     <div class="controls">
-        <button onclick="generateNewData()">Randomize Data</button>
-        
-        <div class="checkbox-group">
-            <input type="checkbox" id="showPC" checked onchange="updatePlot()">
-            <label for="showPC">Show Principal Axis</label>
-        </div>
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="showRecon" checked onchange="updatePlot()">
-            <label for="showRecon">Show Reconstruction (1D)</label>
-        </div>
-        
-        <div class="checkbox-group">
-            <input type="checkbox" id="showErrors" onchange="updatePlot()">
-            <label for="showErrors">Show Projection Errors</label>
-        </div>
+        <button id="regenBtn" type="button">Generate Random Points</button>
+        <label class="check"><input type="checkbox" id="showPC1" checked> Show PC1 Axis</label>
+        <label class="check"><input type="checkbox" id="showPC2" checked> Show PC2 Axis</label>
+        <label class="check"><input type="checkbox" id="showRec1" checked> Show PC1 Reconstruction</label>
+        <label class="check"><input type="checkbox" id="showRec2" checked> Show PC2 Reconstruction</label>
+        <label class="check"><input type="checkbox" id="showErr" checked> Show Error Segments</label>
     </div>
 
     <div id="plot"></div>
-    <div class="stats" id="varianceInfo"></div>
+
+    <div class="stats">
+        <div class="stat" id="varianceStat"></div>
+        <div class="stat" id="errorStat"></div>
+        <div class="stat" id="preserveStat"></div>
+    </div>
 </div>
 
 <script>
-    // Global state
-    let X = []; // Original Data [N, 2]
+    let X = [];
     let mean = [0, 0];
     let eigenvectors = [];
     let eigenvalues = [];
+    let recPC1 = [];
+    let recPC2 = [];
+    let axisLimit = 9.0;
 
-    // Initialize
-    generateNewData();
+    const controls = {
+        regenBtn: document.getElementById('regenBtn'),
+        showPC1: document.getElementById('showPC1'),
+        showPC2: document.getElementById('showPC2'),
+        showRec1: document.getElementById('showRec1'),
+        showRec2: document.getElementById('showRec2'),
+        showErr: document.getElementById('showErr')
+    };
+
+    function applyTheme(isDark) {
+        const root = document.documentElement.style;
+        if (isDark) {
+            root.setProperty('--bg', '#1a1a1a');
+            root.setProperty('--panel', '#252525');
+            root.setProperty('--text', '#e5e7eb');
+            root.setProperty('--text-sub', '#9ca3af');
+            root.setProperty('--border', '#3f3f46');
+            root.setProperty('--accent', '#e67e22');
+            root.setProperty('--pc1', '#f3f4f6');
+            root.setProperty('--pc2', '#a1a1aa');
+            root.setProperty('--plot-grid', '#3f3f46');
+            root.setProperty('--plot-bg', '#1f1f1f');
+        } else {
+            root.setProperty('--bg', '#ffffff');
+            root.setProperty('--panel', '#f8f9fa');
+            root.setProperty('--text', '#1f2937');
+            root.setProperty('--text-sub', '#6b7280');
+            root.setProperty('--border', '#d1d5db');
+            root.setProperty('--accent', '#e67e22');
+            root.setProperty('--pc1', '#111827');
+            root.setProperty('--pc2', '#6b7280');
+            root.setProperty('--plot-grid', '#e5e7eb');
+            root.setProperty('--plot-bg', '#ffffff');
+        }
+    }
+
+    function detectThemeFromParent() {
+        try {
+            const parentBody = window.parent.document.body;
+            const style = window.getComputedStyle(parentBody);
+            const rgb = (style.backgroundColor || '').match(/\d+/g);
+            if (!rgb || rgb.length < 3) return;
+            const b = (parseInt(rgb[0], 10) * 299 + parseInt(rgb[1], 10) * 587 + parseInt(rgb[2], 10) * 114) / 1000;
+            applyTheme(b < 128);
+            updatePlot();
+        } catch (e) {
+            // If cross-origin or unavailable, keep defaults.
+        }
+    }
+
+    function randn() {
+        const u1 = Math.max(1e-12, Math.random());
+        const u2 = Math.random();
+        return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    }
 
     function generateNewData() {
-        // Generate random correlated Gaussian data
-        const n_samples = 50;
+        const n = 70;
         const angle = Math.random() * Math.PI;
-        const scale_x = 1 + Math.random() * 3;
-        const scale_y = 0.5 + Math.random();
-        
-        // Rotation matrix
+        const sx = 2.3 + Math.random() * 1.8;
+        const sy = 1.0 + Math.random() * 1.2;
+        const tx = (Math.random() - 0.5) * 1.6;
+        const ty = (Math.random() - 0.5) * 1.6;
+
         const c = Math.cos(angle);
         const s = Math.sin(angle);
-        const R = [[c, -s], [s, c]];
-        
         X = [];
-        for(let i=0; i<n_samples; i++) {
-            // Random point in PCA space
-            let u = (Math.random() - 0.5) * 4 * scale_x;
-            let v = (Math.random() - 0.5) * 2 * scale_y;
-            
-            // Rotate and translate
-            let x = u * c - v * s + (Math.random() - 0.5); // Add some translation
-            let y = u * s + v * c + (Math.random() - 0.5);
-            
+        for (let i = 0; i < n; i++) {
+            const u = randn() * sx;
+            const v = randn() * sy;
+            const x = u * c - v * s + tx;
+            const y = u * s + v * c + ty;
             X.push([x, y]);
         }
-        
+
+        // Normalize spread so x/y range stays comparable across random draws.
+        let mx = 0, my = 0;
+        for (let i = 0; i < X.length; i++) {
+            mx += X[i][0];
+            my += X[i][1];
+        }
+        mx /= X.length;
+        my /= X.length;
+
+        let maxAbs = 1e-9;
+        for (let i = 0; i < X.length; i++) {
+            const cx = X[i][0] - mx;
+            const cy = X[i][1] - my;
+            maxAbs = Math.max(maxAbs, Math.abs(cx), Math.abs(cy));
+        }
+
+        const targetAbs = 6.2;
+        const scale = targetAbs / maxAbs;
+        for (let i = 0; i < X.length; i++) {
+            X[i][0] = (X[i][0] - mx) * scale + tx;
+            X[i][1] = (X[i][1] - my) * scale + ty;
+        }
+
         computePCA();
         updatePlot();
     }
 
     function computePCA() {
         const N = X.length;
-        
-        // 1. Compute Mean
         let sumX = 0, sumY = 0;
-        for(let p of X) { sumX += p[0]; sumY += p[1]; }
-        mean = [sumX/N, sumY/N];
+        for (const p of X) {
+            sumX += p[0];
+            sumY += p[1];
+        }
+        mean = [sumX / N, sumY / N];
 
-        // 2. Center Data
-        let X_centered = X.map(p => [p[0] - mean[0], p[1] - mean[1]]);
+        const centered = X.map(p => [p[0] - mean[0], p[1] - mean[1]]);
 
-        // 3. Compute Covariance Matrix (2x2)
         let xx = 0, xy = 0, yy = 0;
-        for(let p of X_centered) {
+        for (const p of centered) {
             xx += p[0] * p[0];
             xy += p[0] * p[1];
             yy += p[1] * p[1];
         }
-        xx /= (N-1); xy /= (N-1); yy /= (N-1);
+        xx /= (N - 1);
+        xy /= (N - 1);
+        yy /= (N - 1);
 
-        // 4. Eigen decomposition for 2x2 matrix
-        // Matrix A = [[xx, xy], [xy, yy]]
-        // Characteristic eq: lambda^2 - Tr(A)lambda + Det(A) = 0
-        let trace = xx + yy;
-        let det = xx*yy - xy*xy;
-        let l1 = (trace + Math.sqrt(trace*trace - 4*det)) / 2;
-        let l2 = (trace - Math.sqrt(trace*trace - 4*det)) / 2;
-        
-        eigenvalues = [l1, l2];
+        const trace = xx + yy;
+        const det = xx * yy - xy * xy;
+        const disc = Math.max(0, trace * trace - 4 * det);
+        const lA = (trace + Math.sqrt(disc)) / 2;
+        const lB = (trace - Math.sqrt(disc)) / 2;
 
-        // Eigenvectors
-        // For l1: (xx - l1)vx + xy*vy = 0  =>  vx = xy, vy = -(xx - l1)
-        // Note: handle edge case where xy is near 0
-        let v1, v2;
-        
-        if (Math.abs(xy) > 1e-10) {
-            v1 = [xy, l1 - xx];
-            v2 = [xy, l2 - xx];
-        } else {
-            v1 = [1, 0];
-            v2 = [0, 1];
+        function normalized(v) {
+            const n = Math.hypot(v[0], v[1]) || 1;
+            return [v[0] / n, v[1] / n];
         }
 
-        // Normalize
-        const norm1 = Math.sqrt(v1[0]**2 + v1[1]**2);
-        v1 = [v1[0]/norm1, v1[1]/norm1];
-        
-        const norm2 = Math.sqrt(v2[0]**2 + v2[1]**2);
-        v2 = [v2[0]/norm2, v2[1]/norm2];
-
-        // Sort (usually l1 is larger, but just in case)
-        if(l1 < l2) {
-            eigenvalues = [l2, l1];
-            eigenvectors = [v2, v1];
+        let vA, vB;
+        if (Math.abs(xy) > 1e-12) {
+            vA = normalized([xy, lA - xx]);
+            vB = normalized([xy, lB - xx]);
         } else {
-            eigenvectors = [v1, v2];
+            vA = xx >= yy ? [1, 0] : [0, 1];
+            vB = xx >= yy ? [0, 1] : [1, 0];
         }
+
+        if (lA >= lB) {
+            eigenvalues = [lA, lB];
+            eigenvectors = [vA, vB];
+        } else {
+            eigenvalues = [lB, lA];
+            eigenvectors = [vB, vA];
+        }
+
+        const pc1 = eigenvectors[0];
+        const pc2 = eigenvectors[1];
+        recPC1 = centered.map(p => {
+            const t = p[0] * pc1[0] + p[1] * pc1[1];
+            return [t * pc1[0] + mean[0], t * pc1[1] + mean[1]];
+        });
+        recPC2 = centered.map(p => {
+            const t = p[0] * pc2[0] + p[1] * pc2[1];
+            return [t * pc2[0] + mean[0], t * pc2[1] + mean[1]];
+        });
+    }
+
+    function computeMetrics() {
+        const n = X.length;
+        let mse1 = 0;
+        let mse2 = 0;
+        for (let i = 0; i < n; i++) {
+            const d1x = X[i][0] - recPC1[i][0];
+            const d1y = X[i][1] - recPC1[i][1];
+            mse1 += d1x * d1x + d1y * d1y;
+
+            const d2x = X[i][0] - recPC2[i][0];
+            const d2y = X[i][1] - recPC2[i][1];
+            mse2 += d2x * d2x + d2y * d2y;
+        }
+        mse1 /= n;
+        mse2 /= n;
+        const rmse1 = Math.sqrt(mse1);
+        const rmse2 = Math.sqrt(mse2);
+
+        const totalVar = Math.max(1e-12, eigenvalues[0] + eigenvalues[1]);
+        const keep1 = (eigenvalues[0] / totalVar) * 100;
+        const keep2 = (eigenvalues[1] / totalVar) * 100;
+        return { mse1, mse2, rmse1, rmse2, keep1, keep2, totalVar };
+    }
+
+    function axisTrace(vec, label, color) {
+        const scale = Math.sqrt((eigenvalues[0] + eigenvalues[1]) * 9.0);
+        return {
+            x: [mean[0] - vec[0] * scale, mean[0] + vec[0] * scale],
+            y: [mean[1] - vec[1] * scale, mean[1] + vec[1] * scale],
+            mode: 'lines',
+            name: label,
+            line: { color, width: 3 },
+            hovertemplate: `${label}<extra></extra>`
+        };
+    }
+
+    function errorTrace(pointsFrom, pointsTo, color, name) {
+        const ex = [];
+        const ey = [];
+        for (let i = 0; i < pointsFrom.length; i++) {
+            ex.push(pointsFrom[i][0], pointsTo[i][0], null);
+            ey.push(pointsFrom[i][1], pointsTo[i][1], null);
+        }
+        return {
+            x: ex,
+            y: ey,
+            mode: 'lines',
+            name,
+            line: { color, width: 1.7, dash: name.indexOf('PC1') !== -1 ? 'dash' : 'dot' },
+            hoverinfo: 'skip'
+        };
     }
 
     function updatePlot() {
-        const showPC = document.getElementById('showPC').checked;
-        const showRecon = document.getElementById('showRecon').checked;
-        const showErrors = document.getElementById('showErrors').checked;
+        if (!X.length) return;
 
-        // --- Data Preparation ---
-        const x_vals = X.map(p => p[0]);
-        const y_vals = X.map(p => p[1]);
+        const showPC1 = controls.showPC1.checked;
+        const showPC2 = controls.showPC2.checked;
+        const showRec1 = controls.showRec1.checked;
+        const showRec2 = controls.showRec2.checked;
+        const showErr = controls.showErr.checked;
 
-        // Reconstruct using only PC1
-        // Proj = (dot(p_centered, v1)) * v1 + mean
-        const pc1 = eigenvectors[0];
-        let reconstruction = X.map(p => {
-            let dx = p[0] - mean[0];
-            let dy = p[1] - mean[1];
-            let scalar = dx*pc1[0] + dy*pc1[1];
-            return [
-                scalar * pc1[0] + mean[0],
-                scalar * pc1[1] + mean[1]
-            ];
-        });
+        const p1 = eigenvectors[0];
+        const p2 = eigenvectors[1];
 
-        const rec_x = reconstruction.map(p => p[0]);
-        const rec_y = reconstruction.map(p => p[1]);
+        const traces = [];
+        const style = getComputedStyle(document.documentElement);
 
-        // --- Traces ---
-
-        let traces = [];
-
-        // 1. Projection Errors (Lines connecting original to reconstruction)
-        if (showErrors && showRecon) {
-            let errorLinesX = [];
-            let errorLinesY = [];
-            for(let i=0; i<X.length; i++) {
-                errorLinesX.push(X[i][0], reconstruction[i][0], null);
-                errorLinesY.push(X[i][1], reconstruction[i][1], null);
-            }
-            traces.push({
-                x: errorLinesX, y: errorLinesY,
-                mode: 'lines',
-                line: { color: 'rgba(0,0,0,0.2)', width: 1, dash: 'dot'},
-                hoverinfo: 'skip',
-                showlegend: false
-            });
+        if (showPC1) {
+            traces.push(axisTrace(p1, 'PC1 Axis', style.getPropertyValue('--pc1').trim()));
+        }
+        if (showPC2) {
+            traces.push(axisTrace(p2, 'PC2 Axis', style.getPropertyValue('--pc2').trim()));
         }
 
-        // 2. Principal Axis Line
-        if (showPC) {
-            // Draw a line across the visible range
-            const scale = 5; 
-            traces.push({
-                x: [mean[0] - pc1[0]*scale, mean[0] + pc1[0]*scale],
-                y: [mean[1] - pc1[1]*scale, mean[1] + pc1[1]*scale],
-                mode: 'lines',
-                name: 'Principal Axis',
-                line: { color: 'black', width: 3 }
-            });
-        }
-
-        // 3. Original Data (Blue circles)
         traces.push({
-            x: x_vals,
-            y: y_vals,
+            x: X.map(p => p[0]),
+            y: X.map(p => p[1]),
             mode: 'markers',
-            type: 'scatter',
-            name: 'Original Data (X)',
+            name: 'Original Data',
             marker: {
-                size: 10,
-                color: '#1f77b4',
-                line: { color: 'black', width: 1 }
+                size: 8,
+                color: style.getPropertyValue('--point').trim(),
+                line: { color: '#111', width: 1 }
             }
         });
 
-        // 4. Reconstruction (Orange circles)
-        if (showRecon) {
+        if (showRec1) {
             traces.push({
-                x: rec_x,
-                y: rec_y,
+                x: recPC1.map(p => p[0]),
+                y: recPC1.map(p => p[1]),
                 mode: 'markers',
-                type: 'scatter',
-                name: 'Reconstruction (X̂)',
+                name: 'Reconstruction on PC1',
                 marker: {
-                    size: 10,
-                    color: '#ff7f0e',
-                    line: { color: 'black', width: 2 } // Thicker border as in image
+                    size: 7,
+                    color: style.getPropertyValue('--rec1').trim(),
+                    line: { color: '#111', width: 1.3 },
+                    symbol: 'circle'
                 }
             });
         }
 
-        // --- Layout ---
+        if (showRec2) {
+            traces.push({
+                x: recPC2.map(p => p[0]),
+                y: recPC2.map(p => p[1]),
+                mode: 'markers',
+                name: 'Reconstruction on PC2',
+                marker: {
+                    size: 7,
+                    color: style.getPropertyValue('--rec2').trim(),
+                    line: { color: '#111', width: 1.3 },
+                    symbol: 'diamond'
+                }
+            });
+        }
+
+        if (showErr && showRec1) {
+            traces.push(errorTrace(X, recPC1, style.getPropertyValue('--error1').trim(), 'PC1 Error'));
+        }
+        if (showErr && showRec2) {
+            traces.push(errorTrace(X, recPC2, style.getPropertyValue('--error2').trim(), 'PC2 Error'));
+        }
+
+        let localMax = 0;
+        for (let i = 0; i < X.length; i++) {
+            localMax = Math.max(
+                localMax,
+                Math.abs(X[i][0]), Math.abs(X[i][1]),
+                Math.abs(recPC1[i][0]), Math.abs(recPC1[i][1]),
+                Math.abs(recPC2[i][0]), Math.abs(recPC2[i][1])
+            );
+        }
+        axisLimit = Math.max(8.0, Math.min(10.0, Math.ceil((localMax + 1.1) * 2) / 2));
+
         const layout = {
-            hovermode: 'closest',
-            showlegend: true,
-            legend: { x: 0.7, y: 1 },
-            xaxis: { 
-                scaleanchor: "y", 
-                scaleratio: 1, 
+            margin: { t: 16, b: 44, l: 52, r: 12 },
+            paper_bgcolor: style.getPropertyValue('--plot-bg').trim(),
+            plot_bgcolor: style.getPropertyValue('--plot-bg').trim(),
+            font: { color: style.getPropertyValue('--text').trim(), size: 12 },
+            xaxis: {
                 title: 'Feature 1',
-                zeroline: false 
+                zeroline: false,
+                gridcolor: style.getPropertyValue('--plot-grid').trim(),
+                linecolor: style.getPropertyValue('--border').trim(),
+                mirror: true,
+                scaleanchor: 'y',
+                scaleratio: 1,
+                range: [-axisLimit, axisLimit]
             },
-            yaxis: { 
+            yaxis: {
                 title: 'Feature 2',
-                zeroline: false
+                zeroline: false,
+                gridcolor: style.getPropertyValue('--plot-grid').trim(),
+                linecolor: style.getPropertyValue('--border').trim(),
+                mirror: true,
+                range: [-axisLimit, axisLimit]
             },
-            margin: { t: 20, b: 40, l: 50, r: 20 },
-            dragmode: 'pan'
+            legend: {
+                orientation: 'h',
+                y: 1.11,
+                x: 0,
+                bgcolor: 'rgba(0,0,0,0)'
+            },
+            hovermode: 'closest'
         };
 
-        const config = { responsive: true, displayModeBar: false };
+        Plotly.react('plot', traces, layout, { responsive: true, displayModeBar: false });
 
-        Plotly.newPlot('plot', traces, layout, config);
+        const m = computeMetrics();
+        document.getElementById('varianceStat').innerHTML =
+            `<b>Explained Variance</b><br>` +
+            `PC1: <b>${m.keep1.toFixed(2)}%</b><br>` +
+            `PC2: <b>${m.keep2.toFixed(2)}%</b>`;
 
-        // Update stats text
-        const totalVar = eigenvalues[0] + eigenvalues[1];
-        const explained = (eigenvalues[0] / totalVar) * 100;
-        document.getElementById('varianceInfo').innerText = 
-            `PC1 explains ${explained.toFixed(2)}% of the variance.`;
+        document.getElementById('errorStat').innerHTML =
+            `<b>Reconstruction Error</b><br>` +
+            `PC1 RMSE: <b>${m.rmse1.toFixed(4)}</b><br>` +
+            `PC2 RMSE: <b>${m.rmse2.toFixed(4)}</b>`;
+
+        document.getElementById('preserveStat').innerHTML =
+            `<b>Data Preserved (1D)</b><br>` +
+            `Along PC1: <b>${m.keep1.toFixed(2)}%</b><br>` +
+            `Along PC2: <b>${m.keep2.toFixed(2)}%</b>`;
     }
-</script>
 
+    controls.regenBtn.addEventListener('click', generateNewData);
+    controls.showPC1.addEventListener('change', updatePlot);
+    controls.showPC2.addEventListener('change', updatePlot);
+    controls.showRec1.addEventListener('change', updatePlot);
+    controls.showRec2.addEventListener('change', updatePlot);
+    controls.showErr.addEventListener('change', updatePlot);
+
+    detectThemeFromParent();
+    setInterval(detectThemeFromParent, 1000);
+    generateNewData();
+
+    window.addEventListener('resize', function() {
+        updatePlot();
+    }, { passive: true });
+</script>
 </body>
 </html>
