@@ -48,10 +48,16 @@ summary: "about"
     </div>
   
 <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
-  <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2025</h4>
-  <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.5rem;">
+  <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2026</h4>
+  <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.45rem;">
     <strong>Favourite Game This Year:</strong>
-    <button id="site-theme-toggle" type="button" class="favorite-game-toggle" aria-pressed="false" aria-label="Toggle cinematic site theme">
+    <button id="site-theme-toggle-requiem" type="button" class="favorite-game-toggle favorite-game-toggle--requiem" aria-pressed="false" aria-label="Apply Resident Evil Requiem site theme">
+      Resident Evil Requiem
+    </button>
+  </p>
+  <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.2rem;">
+    <strong>Favourite Last Year:</strong>
+    <button id="site-theme-toggle-expedition" type="button" class="favorite-game-toggle favorite-game-toggle--expedition" aria-pressed="false" aria-label="Apply Expedition 33 site theme">
       Expedition 33
     </button>
   </p>

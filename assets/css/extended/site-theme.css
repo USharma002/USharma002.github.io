@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap');
 
 /* ====== Shared accent tokens (used across custom + sidetoc styles) ====== */
 :root {
@@ -89,8 +89,7 @@
   text-decoration: none;
 }
 
-/* ====== View Transitions overrides for Ripple Effect ====== */
-/* We use CSS Variables here to ensure 0-frame glitching */
+/* ====== View transitions for ripple-based theme changes ====== */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
@@ -103,7 +102,6 @@
 
 ::view-transition-new(root) {
   z-index: 2;
-  /* CSS-native animation prevents the 1-frame flash */
   animation: theme-ripple 0.45s ease-out forwards;
 }
 
@@ -116,164 +114,478 @@
   }
 }
 
-/* ====== Generic style for the game-name theme trigger button ====== */
+/* ====== Game theme trigger buttons (separate skins) ====== */
 .favorite-game-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-left: 0.45rem;
-  padding: 0.12rem 0.55rem;
+  margin-top: 0.2rem;
+  padding: 0.16rem 0.64rem;
   border-radius: 999px;
-  border: 1px solid #b89c62;
-  background: linear-gradient(170deg, #17120b, #0e0a06);
-  color: #e7d2a0;
+  border: 1px solid transparent;
+  color: #f4f4f4;
   font-family: "Cinzel", Georgia, serif;
-  letter-spacing: 0.03em;
   font-size: 0.8rem;
   line-height: 1.35;
+  letter-spacing: 0.035em;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, filter 0.2s ease;
 }
 
 .favorite-game-toggle:hover {
   transform: translateY(-1px);
-  border-color: #dfc389;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.favorite-game-toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 .favorite-game-toggle.is-active {
-  border-color: #f4d58c;
-  color: #fff1cc;
-  box-shadow: 0 0 15px rgba(184, 156, 98, 0.5);
+  transform: translateY(-1px);
 }
 
-/* ====== EXPEDITION 33: CLAIR OBSCUR THEME ====== */
-body.site-theme-alt {
-  /* PaperMod tokens - adjusted for pitch black & gold */
-  --theme: #000000;
-  --entry: rgba(15, 15, 17, 0.65); /* Glassy/translucent */
-  --primary: #f0e6d2;
-  --secondary: #c2aa78;
-  --tertiary: #8a7b5e;
-  --content: #dcd0b8;
-  --hljs-bg: #0a0a0c;
-  --code-bg: #0d0d10;
-  --code-block-bg: #0a0a0c;
-  --border: rgba(194, 170, 120, 0.2);
+.favorite-game-toggle--expedition {
+  border-color: #bda069;
+  background: linear-gradient(168deg, #21180f, #0d0a08);
+  color: #e8d8b7;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
 
-  /* Accent colors for links, SideTOC and callouts in Expedition style */
-  --site-link-color: #d4b881;
-  --site-link-hover-color: #fff1cc;
-  --site-link-hover-glow: rgba(212, 184, 129, 0.6);
+.favorite-game-toggle--expedition:hover {
+  border-color: #ecd095;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
 
-  --site-sidetoc-active-color: #d9be88;
-  --site-sidetoc-rail-color: rgba(194, 170, 120, 0.35);
-  --site-sidetoc-scrollbar-color: rgba(194, 170, 120, 0.3);
+.favorite-game-toggle--expedition.is-active {
+  border-color: #f8d996;
+  color: #fff3d2;
+  box-shadow: 0 0 16px rgba(215, 176, 95, 0.58);
+}
 
-  --site-blockquote-border-color: rgba(194, 170, 120, 0.72);
-  --site-blockquote-bg: rgba(20, 16, 11, 0.72);
-  --site-blockquote-dark-border-color: rgba(240, 214, 165, 0.85);
-  --site-blockquote-dark-bg: rgba(24, 18, 12, 0.82);
+.favorite-game-toggle--requiem {
+  border-color: #6d1f1f;
+  background: linear-gradient(168deg, #1d0608, #070203);
+  color: #ffb5ad;
+  font-family: "Special Elite", "Courier New", Courier, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+}
 
-  --site-cv-btn-bg: #2a2114;
-  --site-cv-btn-bg-hover: #3b2f1e;
-  --site-cv-btn-text: #f4e4bf;
-  --site-cv-btn-border: #9f8852;
-  --site-cv-btn-shadow: 0 8px 18px rgba(0, 0, 0, 0.42);
+.favorite-game-toggle--requiem:hover {
+  border-color: #bb2f35;
+  color: #ffd5cf;
+  box-shadow: 0 6px 20px rgba(102, 14, 20, 0.5);
+}
 
-  --site-action-btn-bg: rgba(28, 22, 14, 0.62);
-  --site-action-btn-bg-hover: rgba(40, 31, 19, 0.92);
-  --site-action-btn-color: #e7d3a6;
-  --site-action-btn-border: rgba(212, 184, 129, 0.52);
-  --site-action-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+.favorite-game-toggle--requiem.is-active {
+  border-color: #ff5a62;
+  color: #ffe8e5;
+  box-shadow: 0 0 18px rgba(190, 32, 45, 0.62);
+}
 
-  /* Menu-like typography tokens */
-  --site-menu-title-font: "Cinzel", Georgia, serif;
-  --site-menu-copy-font: "Cormorant Garamond", Georgia, serif;
-  --site-menu-title-gradient: linear-gradient(180deg, #f7f3ea 0%, #e2c993 56%, #a68442 100%);
-  --site-menu-title-shadow: 0 4px 12px rgba(0, 0, 0, 0.9);
-  --site-menu-text-color: #e1d4bc;
-  --site-menu-text-muted: #c8bcab;
-  --site-menu-text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
-
-  /* Deep black background with subtle crimson vignette/glow */
-  background-color: #000000;
-  background-image: radial-gradient(circle at 50% 40%, rgba(55, 5, 10, 0.4) 0%, rgba(0, 0, 0, 1) 70%);
-  background-attachment: fixed;
-  color: var(--content);
+/* ====== Shared behavior for game themes ====== */
+body.expedition33-theme,
+body.site-theme-alt,
+body.resident-requiem-theme {
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  color: var(--content);
 }
 
-/* Keep list views pure black */
-body.site-theme-alt.list {
-  background-color: #000000;
-}
-
-/* ====== Dynamic Particle System ====== */
-/* Anchored to the background, z-index -1 so it NEVER breaks SideToc or content */
+body.expedition33-theme::before,
+body.expedition33-theme::after,
 body.site-theme-alt::before,
-body.site-theme-alt::after {
+body.site-theme-alt::after,
+body.resident-requiem-theme::before,
+body.resident-requiem-theme::after {
   content: "";
   position: fixed;
-  top: -20vh; left: -20vw;
-  width: 140vw; height: 140vh;
+  inset: -16vh -12vw;
   pointer-events: none;
-  z-index: -1; 
+  z-index: 0;
 }
 
-/* Layer 1: Sharp, Glowing White & Gold Embers */
+body.expedition33-theme .main,
+body.expedition33-theme .post-content,
+body.expedition33-theme .page-content,
+body.expedition33-theme .list,
+body.expedition33-theme .single,
+body.expedition33-theme .archive,
+body.expedition33-theme article,
+body.site-theme-alt .main,
+body.site-theme-alt .post-content,
+body.site-theme-alt .page-content,
+body.site-theme-alt .list,
+body.site-theme-alt .single,
+body.site-theme-alt .archive,
+body.site-theme-alt article,
+body.resident-requiem-theme .main,
+body.resident-requiem-theme .post-content,
+body.resident-requiem-theme .page-content,
+body.resident-requiem-theme .list,
+body.resident-requiem-theme .single,
+body.resident-requiem-theme .archive,
+body.resident-requiem-theme article {
+  position: relative;
+  z-index: 1;
+}
+
+body.expedition33-theme .header,
+body.expedition33-theme .footer,
+body.site-theme-alt .header,
+body.site-theme-alt .footer,
+body.resident-requiem-theme .header,
+body.resident-requiem-theme .footer {
+  position: relative;
+  z-index: 3;
+}
+
+/* ====== Expedition 33 (legacy alias: site-theme-alt) ====== */
+body.expedition33-theme,
+body.site-theme-alt {
+  --theme: #050608;
+  --entry: rgba(11, 15, 21, 0.74);
+  --primary: #f0e5d0;
+  --secondary: #c9b287;
+  --tertiary: #96866a;
+  --content: #ddd3c0;
+  --hljs-bg: #0d1118;
+  --code-bg: #0f141d;
+  --code-block-bg: #0c1118;
+  --border: rgba(206, 181, 129, 0.27);
+
+  --site-link-color: #e6c98f;
+  --site-link-hover-color: #fff0cb;
+  --site-link-hover-glow: rgba(230, 201, 143, 0.58);
+  --site-sidetoc-active-color: #e5cb97;
+  --site-sidetoc-rail-color: rgba(206, 181, 129, 0.42);
+  --site-sidetoc-scrollbar-color: rgba(206, 181, 129, 0.3);
+  --site-blockquote-border-color: rgba(216, 188, 130, 0.76);
+  --site-blockquote-bg: rgba(21, 17, 12, 0.72);
+  --site-blockquote-dark-border-color: rgba(240, 214, 165, 0.88);
+  --site-blockquote-dark-bg: rgba(25, 19, 12, 0.84);
+  --site-cv-btn-bg: #2c2215;
+  --site-cv-btn-bg-hover: #3a2f1f;
+  --site-cv-btn-text: #f4e6c4;
+  --site-cv-btn-border: #a68d55;
+  --site-cv-btn-shadow: 0 8px 18px rgba(0, 0, 0, 0.42);
+  --site-action-btn-bg: rgba(30, 23, 15, 0.64);
+  --site-action-btn-bg-hover: rgba(40, 30, 20, 0.94);
+  --site-action-btn-color: #ebd7ad;
+  --site-action-btn-border: rgba(226, 196, 138, 0.56);
+  --site-action-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+
+  --game-heading-font: "Cinzel", Georgia, serif;
+  --game-copy-font: "Cormorant Garamond", Georgia, serif;
+  --game-heading-gradient: linear-gradient(180deg, #fdf8ec 0%, #e6cc98 55%, #9f7c40 100%);
+  --game-heading-shadow: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.88));
+  --game-copy-color: #ded3bb;
+  --game-copy-muted: #c9bda8;
+  --game-copy-shadow: 0 1px 6px rgba(0, 0, 0, 0.58);
+  --game-header-bg: linear-gradient(180deg, rgba(7, 9, 12, 0.96), rgba(5, 6, 8, 0.84));
+  --game-card-bg: linear-gradient(175deg, rgba(18, 22, 30, 0.9), rgba(11, 14, 20, 0.92));
+  --game-card-border: var(--border);
+  --game-card-shadow: 0 14px 28px rgba(0, 0, 0, 0.28), inset 0 1px rgba(255, 236, 194, 0.08);
+  --game-button-bg: linear-gradient(160deg, #2a2114, #151108);
+  --game-button-border: #9f8852;
+  --game-button-text: #f4e4bf;
+
+  background-color: #040508;
+  background-image:
+    radial-gradient(1300px 680px at 50% -8%, rgba(145, 12, 46, 0.22), transparent 74%),
+    radial-gradient(900px 520px at 50% 118%, rgba(255, 255, 255, 0.05), transparent 78%),
+    linear-gradient(160deg, rgba(4, 5, 7, 0.94) 0%, rgba(5, 3, 6, 0.92) 40%, rgba(3, 4, 6, 0.96) 100%);
+  background-position: center top, center bottom, center center;
+  background-size: cover, cover, cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+body.expedition33-theme::before,
 body.site-theme-alt::before {
   background-image:
-    radial-gradient(1.5px 1.5px at 10% 20%, #ffffff 0%, transparent 100%),
-    radial-gradient(2px 2px at 80% 10%, #ffd700 0%, transparent 100%),
-    radial-gradient(1px 1px at 30% 60%, #ffffff 0%, transparent 100%),
-    radial-gradient(2.5px 2.5px at 70% 80%, #ffaa00 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 90% 40%, #ffffff 0%, transparent 100%),
-    radial-gradient(2px 2px at 40% 90%, #ff4500 0%, transparent 100%),
-    radial-gradient(1px 1px at 50% 30%, #ffffff 0%, transparent 100%);
-  background-size: 150px 150px, 300px 300px, 200px 200px, 400px 400px, 120px 120px, 350px 350px, 100px 100px;
-  animation: floatUpAshes 30s linear infinite;
-  opacity: 0.95;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
+    radial-gradient(8px 12px at 7% 6%, rgba(255, 250, 248, 0.72) 0 36%, transparent 44%),
+    radial-gradient(8px 12px at 16% 11%, rgba(255, 255, 255, 0.66) 0 35%, transparent 44%),
+    radial-gradient(9px 13px at 25% 4%, rgba(214, 40, 82, 0.78) 0 36%, transparent 45%),
+    radial-gradient(9px 14px at 37% 10%, rgba(255, 245, 241, 0.6) 0 34%, transparent 44%),
+    radial-gradient(9px 13px at 48% 5%, rgba(188, 25, 66, 0.84) 0 37%, transparent 46%),
+    radial-gradient(9px 13px at 58% 13%, rgba(252, 248, 246, 0.6) 0 35%, transparent 45%),
+    radial-gradient(10px 14px at 70% 8%, rgba(223, 49, 94, 0.8) 0 37%, transparent 46%),
+    radial-gradient(8px 12px at 83% 14%, rgba(255, 255, 255, 0.58) 0 35%, transparent 44%),
+    radial-gradient(9px 13px at 93% 6%, rgba(176, 22, 61, 0.78) 0 36%, transparent 45%),
+    radial-gradient(9px 13px at 14% 36%, rgba(193, 33, 72, 0.75) 0 36%, transparent 45%),
+    radial-gradient(8px 12px at 33% 31%, rgba(255, 245, 243, 0.52) 0 34%, transparent 43%),
+    radial-gradient(9px 13px at 52% 38%, rgba(214, 45, 83, 0.72) 0 36%, transparent 45%),
+    radial-gradient(8px 12px at 71% 34%, rgba(255, 250, 248, 0.48) 0 34%, transparent 43%),
+    radial-gradient(9px 13px at 89% 41%, rgba(202, 37, 75, 0.7) 0 36%, transparent 45%);
+  background-size:
+    300px 240px,
+    340px 270px,
+    390px 300px,
+    430px 330px,
+    470px 360px,
+    520px 390px,
+    560px 420px,
+    600px 450px,
+    640px 480px,
+    520px 390px,
+    580px 430px,
+    650px 470px,
+    700px 520px,
+    760px 560px;
+  animation: expeditionPetalsLayerA 21s linear infinite;
+  opacity: 0.76;
 }
 
-/* Layer 2: Out-of-focus, Deep Blood-Red Bokeh / Smudges */
+body.expedition33-theme::after,
 body.site-theme-alt::after {
   background-image:
-    radial-gradient(8px 8px at 20% 30%, rgba(180, 10, 20, 0.8) 0%, transparent 100%),
-    radial-gradient(12px 12px at 70% 20%, rgba(120, 5, 10, 0.7) 0%, transparent 100%),
-    radial-gradient(6px 6px at 40% 80%, rgba(200, 15, 30, 0.8) 0%, transparent 100%),
-    radial-gradient(14px 14px at 85% 65%, rgba(140, 0, 15, 0.6) 0%, transparent 100%),
-    radial-gradient(7px 7px at 10% 90%, rgba(220, 20, 30, 0.7) 0%, transparent 100%);
-  background-size: 350px 350px, 500px 500px, 280px 280px, 600px 600px, 400px 400px;
-  animation: floatUpPetals 40s linear infinite;
-  opacity: 0.85;
-  filter: blur(2.5px) drop-shadow(0 0 10px rgba(200, 10, 20, 0.6));
+    radial-gradient(11px 17px at 9% 1%, rgba(233, 52, 94, 0.78) 0 36%, transparent 46%),
+    radial-gradient(10px 16px at 22% 0%, rgba(255, 248, 246, 0.54) 0 34%, transparent 44%),
+    radial-gradient(11px 17px at 36% 4%, rgba(187, 27, 65, 0.82) 0 36%, transparent 46%),
+    radial-gradient(10px 16px at 49% 1%, rgba(255, 255, 255, 0.52) 0 34%, transparent 44%),
+    radial-gradient(11px 17px at 63% 5%, rgba(221, 47, 88, 0.8) 0 36%, transparent 46%),
+    radial-gradient(10px 16px at 76% 2%, rgba(255, 251, 250, 0.48) 0 34%, transparent 44%),
+    radial-gradient(11px 17px at 90% 4%, rgba(199, 33, 72, 0.78) 0 36%, transparent 46%),
+    radial-gradient(8px 12px at 14% 23%, rgba(255, 247, 245, 0.28) 0 35%, transparent 43%),
+    radial-gradient(8px 12px at 85% 20%, rgba(229, 56, 95, 0.32) 0 35%, transparent 43%);
+  background-size:
+    420px 300px,
+    470px 340px,
+    540px 390px,
+    600px 430px,
+    670px 470px,
+    740px 520px,
+    810px 560px,
+    530px 370px,
+    580px 420px;
+  animation: expeditionPetalsLayerB 29s linear infinite;
+  opacity: 0.66;
+  filter: blur(0.35px) drop-shadow(0 0 8px rgba(205, 28, 68, 0.42));
 }
 
-/* ====== Expedition 33 Metallic Typography ====== */
+/* ====== Resident Evil Requiem ====== */
+body.resident-requiem-theme {
+  --theme: #030202;
+  --entry: rgba(14, 8, 8, 0.78);
+  --primary: #f6edeb;
+  --secondary: #d06f70;
+  --tertiary: #8c6262;
+  --content: #d8cdcb;
+  --hljs-bg: #0b0708;
+  --code-bg: #10090a;
+  --code-block-bg: #0b0708;
+  --border: rgba(165, 49, 51, 0.35);
+
+  --site-link-color: #ff7f7f;
+  --site-link-hover-color: #ffd0cb;
+  --site-link-hover-glow: rgba(255, 95, 95, 0.58);
+  --site-sidetoc-active-color: #ff8d8d;
+  --site-sidetoc-rail-color: rgba(165, 49, 51, 0.44);
+  --site-sidetoc-scrollbar-color: rgba(165, 49, 51, 0.34);
+  --site-blockquote-border-color: rgba(187, 73, 73, 0.7);
+  --site-blockquote-bg: rgba(34, 11, 12, 0.74);
+  --site-blockquote-dark-border-color: rgba(224, 112, 112, 0.78);
+  --site-blockquote-dark-bg: rgba(30, 10, 11, 0.84);
+  --site-cv-btn-bg: #2a0f10;
+  --site-cv-btn-bg-hover: #461819;
+  --site-cv-btn-text: #ffe0dc;
+  --site-cv-btn-border: #8f3234;
+  --site-cv-btn-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+  --site-action-btn-bg: rgba(37, 13, 14, 0.74);
+  --site-action-btn-bg-hover: rgba(59, 20, 22, 0.94);
+  --site-action-btn-color: #ffb9b2;
+  --site-action-btn-border: rgba(175, 65, 67, 0.58);
+  --site-action-btn-shadow: 0 4px 12px rgba(0, 0, 0, 0.44);
+
+  --game-heading-font: "Special Elite", "Cinzel", Georgia, serif;
+  --game-copy-font: "Special Elite", "Courier New", Courier, monospace;
+  --game-heading-gradient: linear-gradient(180deg, #fff9f7 0%, #f6bbbb 52%, #d26969 100%);
+  --game-heading-shadow: drop-shadow(0 0 8px rgba(255, 65, 65, 0.35));
+  --game-copy-color: #d7cbca;
+  --game-copy-muted: #b4a5a5;
+  --game-copy-shadow: 0 1px 5px rgba(0, 0, 0, 0.64);
+  --game-header-bg: linear-gradient(180deg, rgba(9, 4, 5, 0.96), rgba(6, 3, 4, 0.84));
+  --game-card-bg: linear-gradient(175deg, rgba(24, 9, 10, 0.9), rgba(13, 6, 7, 0.93));
+  --game-card-border: var(--border);
+  --game-card-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 22px rgba(106, 16, 17, 0.17);
+  --game-button-bg: linear-gradient(160deg, #2d0b0d, #120405);
+  --game-button-border: #772629;
+  --game-button-text: #ffcccc;
+
+  background-color: #030202;
+  background-image:
+    linear-gradient(160deg, rgba(6, 2, 3, 0.94) 0%, rgba(18, 5, 7, 0.84) 54%, rgba(4, 2, 3, 0.97) 100%),
+    radial-gradient(980px 620px at 48% -5%, rgba(132, 22, 28, 0.34), transparent 68%),
+    radial-gradient(760px 460px at 50% 110%, rgba(58, 14, 17, 0.28), transparent 76%);
+  background-position: center center, center top, center bottom;
+  background-size: cover, cover, cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+body.resident-requiem-theme::before {
+  background-image:
+    repeating-linear-gradient(104deg, rgba(255, 255, 255, 0) 0 10px, rgba(243, 243, 243, 0.3) 10px 12px, rgba(255, 255, 255, 0) 12px 23px),
+    repeating-linear-gradient(103deg, rgba(255, 255, 255, 0) 0 16px, rgba(205, 66, 74, 0.22) 16px 17px, rgba(255, 255, 255, 0) 17px 34px),
+    linear-gradient(180deg, rgba(8, 5, 6, 0.18), rgba(8, 5, 6, 0.58));
+  background-size: 280px 280px, 420px 420px, 100% 100%;
+  animation: requiemRain 1.5s linear infinite;
+  opacity: 0.52;
+  filter: blur(0.2px);
+}
+
+body.resident-requiem-theme::after {
+  background-image:
+    radial-gradient(44vw 40vh at 12% 84%, rgba(58, 76, 56, 0.2), transparent 76%),
+    radial-gradient(50vw 48vh at 86% 12%, rgba(116, 20, 25, 0.24), transparent 78%),
+    radial-gradient(58vw 54vh at 48% 48%, rgba(15, 10, 12, 0.46), transparent 82%);
+  animation: requiemFog 19s ease-in-out infinite alternate;
+  opacity: 0.72;
+  filter: blur(9px);
+}
+
+/* ====== Expedition top-bar fractured lettering ====== */
+body.expedition33-theme .header .logo a,
+body.expedition33-theme .header #menu a,
+body.site-theme-alt .header .logo a,
+body.site-theme-alt .header #menu a {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  text-shadow:
+    0 0 7px rgba(255, 255, 255, 0.16),
+    0 0 12px rgba(206, 35, 78, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+body.expedition33-theme .header .logo a::before,
+body.expedition33-theme .header #menu a::before,
+body.site-theme-alt .header .logo a::before,
+body.site-theme-alt .header #menu a::before,
+body.expedition33-theme .header .logo a::after,
+body.expedition33-theme .header #menu a::after,
+body.site-theme-alt .header .logo a::after,
+body.site-theme-alt .header #menu a::after {
+  content: "";
+  position: absolute;
+  inset: -0.16em -0.22em;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body.expedition33-theme .header .logo a::before,
+body.expedition33-theme .header #menu a::before,
+body.site-theme-alt .header .logo a::before,
+body.site-theme-alt .header #menu a::before {
+  background:
+    linear-gradient(128deg,
+      transparent 0 20%,
+      rgba(255, 250, 248, 0.48) 20% 25%,
+      transparent 25% 43%,
+      rgba(220, 54, 94, 0.4) 43% 47%,
+      transparent 47% 72%,
+      rgba(255, 255, 255, 0.3) 72% 76%,
+      transparent 76% 100%);
+  opacity: 0.56;
+  mix-blend-mode: screen;
+  clip-path: polygon(0% 12%, 38% 0%, 61% 10%, 100% 4%, 92% 42%, 100% 66%, 73% 100%, 37% 90%, 0% 100%, 8% 54%);
+  animation: expeditionGlyphFragments 5.6s ease-in-out infinite alternate;
+}
+
+body.expedition33-theme .header .logo a::after,
+body.expedition33-theme .header #menu a::after,
+body.site-theme-alt .header .logo a::after,
+body.site-theme-alt .header #menu a::after {
+  background: repeating-linear-gradient(
+    112deg,
+    transparent 0 10px,
+    rgba(255, 255, 255, 0.18) 10px 12px,
+    transparent 12px 22px
+  );
+  opacity: 0.34;
+  filter: blur(0.42px);
+  clip-path: polygon(10% 8%, 48% 0%, 100% 18%, 90% 56%, 100% 96%, 55% 100%, 0% 82%, 6% 40%);
+  animation: expeditionGlyphFragmentsB 7.8s ease-in-out infinite alternate-reverse;
+}
+
+/* ====== Shared themed typography + components ====== */
+body.expedition33-theme h1,
+body.expedition33-theme h2,
+body.expedition33-theme h3,
+body.expedition33-theme h4,
+body.expedition33-theme .logo a,
+body.expedition33-theme .post-title,
+body.expedition33-theme .archive-entry-title,
 body.site-theme-alt h1,
 body.site-theme-alt h2,
 body.site-theme-alt h3,
 body.site-theme-alt h4,
 body.site-theme-alt .logo a,
 body.site-theme-alt .post-title,
-body.site-theme-alt .archive-entry-title {
-  font-family: var(--site-menu-title-font);
-  font-weight: 600;
-  letter-spacing: normal;
-  text-transform: none;
-  /* Mimics the shiny silver-to-gold gradient of the game logo */
-  background: var(--site-menu-title-gradient);
+body.site-theme-alt .archive-entry-title,
+body.resident-requiem-theme h1,
+body.resident-requiem-theme h2,
+body.resident-requiem-theme h3,
+body.resident-requiem-theme h4,
+body.resident-requiem-theme .logo a,
+body.resident-requiem-theme .post-title,
+body.resident-requiem-theme .archive-entry-title {
+  font-family: var(--game-heading-font);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--game-heading-gradient);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(var(--site-menu-title-shadow));
+  filter: var(--game-heading-shadow);
 }
 
-body.site-theme-alt a { color: var(--site-link-color); transition: all 0.2s ease;}
-body.site-theme-alt a:hover { color: var(--site-link-hover-color); text-shadow: 0 0 10px var(--site-link-hover-glow); }
+body.expedition33-theme a,
+body.site-theme-alt a,
+body.resident-requiem-theme a {
+  color: var(--site-link-color);
+  transition: all 0.2s ease;
+}
 
+body.expedition33-theme a:hover,
+body.site-theme-alt a:hover,
+body.resident-requiem-theme a:hover {
+  color: var(--site-link-hover-color);
+  text-shadow: 0 0 10px var(--site-link-hover-glow);
+}
+
+/* Resident Evil text glitch pulse on hover. */
+body.resident-requiem-theme h1:hover,
+body.resident-requiem-theme h2:hover,
+body.resident-requiem-theme h3:hover,
+body.resident-requiem-theme h4:hover,
+body.resident-requiem-theme .logo a:hover,
+body.resident-requiem-theme #menu a:hover,
+body.resident-requiem-theme .post-title:hover,
+body.resident-requiem-theme .archive-entry-title:hover,
+body.resident-requiem-theme .favorite-game-toggle--requiem:hover {
+  animation: requiemTextGlitch 320ms steps(2, end) 2;
+  text-shadow:
+    -1px 0 rgba(255, 78, 78, 0.86),
+    1px 0 rgba(194, 226, 255, 0.64),
+    0 0 10px rgba(255, 84, 84, 0.44);
+  filter: drop-shadow(0 0 8px rgba(255, 56, 56, 0.4));
+}
+
+body.expedition33-theme .nav a,
+body.expedition33-theme #menu a,
+body.expedition33-theme .post-meta,
+body.expedition33-theme .breadcrumbs,
+body.expedition33-theme .footer span,
+body.expedition33-theme .post-content p,
+body.expedition33-theme .post-content li,
+body.expedition33-theme .entry-content,
+body.expedition33-theme .entry-footer,
 body.site-theme-alt .nav a,
 body.site-theme-alt #menu a,
 body.site-theme-alt .post-meta,
@@ -282,92 +594,264 @@ body.site-theme-alt .footer span,
 body.site-theme-alt .post-content p,
 body.site-theme-alt .post-content li,
 body.site-theme-alt .entry-content,
-body.site-theme-alt .entry-footer {
-  color: var(--site-menu-text-color);
-  text-shadow: var(--site-menu-text-shadow);
+body.site-theme-alt .entry-footer,
+body.resident-requiem-theme .nav a,
+body.resident-requiem-theme #menu a,
+body.resident-requiem-theme .post-meta,
+body.resident-requiem-theme .breadcrumbs,
+body.resident-requiem-theme .footer span,
+body.resident-requiem-theme .post-content p,
+body.resident-requiem-theme .post-content li,
+body.resident-requiem-theme .entry-content,
+body.resident-requiem-theme .entry-footer {
+  color: var(--game-copy-color);
+  text-shadow: var(--game-copy-shadow);
 }
 
+body.expedition33-theme .nav a,
+body.expedition33-theme #menu a,
+body.expedition33-theme .post-meta,
+body.expedition33-theme .breadcrumbs,
+body.expedition33-theme .footer span,
 body.site-theme-alt .nav a,
 body.site-theme-alt #menu a,
 body.site-theme-alt .post-meta,
 body.site-theme-alt .breadcrumbs,
-body.site-theme-alt .footer span {
-  font-family: var(--site-menu-copy-font);
+body.site-theme-alt .footer span,
+body.resident-requiem-theme .nav a,
+body.resident-requiem-theme #menu a,
+body.resident-requiem-theme .post-meta,
+body.resident-requiem-theme .breadcrumbs,
+body.resident-requiem-theme .footer span {
+  font-family: var(--game-copy-font);
   letter-spacing: 0.04em;
 }
 
+body.expedition33-theme .post-content p,
+body.expedition33-theme .post-content li,
+body.expedition33-theme .entry-content,
+body.expedition33-theme .entry-footer,
+body.expedition33-theme .project-container p,
 body.site-theme-alt .post-content p,
 body.site-theme-alt .post-content li,
 body.site-theme-alt .entry-content,
 body.site-theme-alt .entry-footer,
-body.site-theme-alt .project-container p {
-  color: var(--site-menu-text-muted) !important;
+body.site-theme-alt .project-container p,
+body.resident-requiem-theme .post-content p,
+body.resident-requiem-theme .post-content li,
+body.resident-requiem-theme .entry-content,
+body.resident-requiem-theme .entry-footer,
+body.resident-requiem-theme .project-container p {
+  color: var(--game-copy-muted) !important;
 }
 
-/* ====== Immersive Glassmorphism UI ====== */
-/* Makes panes semi-transparent so you can see the game particles behind your content */
+body.expedition33-theme .header,
+body.expedition33-theme .footer,
 body.site-theme-alt .header,
-body.site-theme-alt .footer {
-  background: rgba(5, 5, 5, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-color: var(--border);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+body.site-theme-alt .footer,
+body.resident-requiem-theme .header,
+body.resident-requiem-theme .footer {
+  background: var(--game-header-bg);
+  border-color: var(--game-card-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.52);
 }
 
+body.expedition33-theme .post-entry,
+body.expedition33-theme .first-entry,
+body.expedition33-theme .archive-entry,
+body.expedition33-theme .toc,
+body.expedition33-theme .social-icons a,
+body.expedition33-theme .share-buttons,
+body.expedition33-theme .terms-tags a,
 body.site-theme-alt .post-entry,
 body.site-theme-alt .first-entry,
 body.site-theme-alt .archive-entry,
 body.site-theme-alt .toc,
 body.site-theme-alt .social-icons a,
 body.site-theme-alt .share-buttons,
-body.site-theme-alt .terms-tags a {
-  background: rgba(18, 18, 22, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--border);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 236, 194, 0.08);
+body.site-theme-alt .terms-tags a,
+body.resident-requiem-theme .post-entry,
+body.resident-requiem-theme .first-entry,
+body.resident-requiem-theme .archive-entry,
+body.resident-requiem-theme .toc,
+body.resident-requiem-theme .social-icons a,
+body.resident-requiem-theme .share-buttons,
+body.resident-requiem-theme .terms-tags a {
+  background: var(--game-card-bg);
+  border: 1px solid var(--game-card-border);
+  box-shadow: var(--game-card-shadow);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 
+body.expedition33-theme hr,
+body.expedition33-theme .post-meta,
+body.expedition33-theme .post-footer,
+body.expedition33-theme .paginav,
+body.expedition33-theme .breadcrumbs,
+body.expedition33-theme .archive-year-header,
 body.site-theme-alt hr,
 body.site-theme-alt .post-meta,
 body.site-theme-alt .post-footer,
 body.site-theme-alt .paginav,
 body.site-theme-alt .breadcrumbs,
-body.site-theme-alt .archive-year-header {
-  border-color: var(--border);
+body.site-theme-alt .archive-year-header,
+body.resident-requiem-theme hr,
+body.resident-requiem-theme .post-meta,
+body.resident-requiem-theme .post-footer,
+body.resident-requiem-theme .paginav,
+body.resident-requiem-theme .breadcrumbs,
+body.resident-requiem-theme .archive-year-header {
+  border-color: var(--game-card-border);
 }
 
-/* Form / Buttons */
+body.expedition33-theme .button,
+body.expedition33-theme button,
+body.expedition33-theme #theme-toggle,
 body.site-theme-alt .button,
 body.site-theme-alt button,
-body.site-theme-alt #theme-toggle {
-  background: linear-gradient(160deg, #2a2114, #151108);
-  color: #f4e4bf;
-  border: 1px solid #9f8852;
+body.site-theme-alt #theme-toggle,
+body.resident-requiem-theme .button,
+body.resident-requiem-theme button,
+body.resident-requiem-theme #theme-toggle {
+  background: var(--game-button-bg);
+  color: var(--game-button-text);
+  border: 1px solid var(--game-button-border);
 }
 
+body.expedition33-theme #theme-toggle svg,
+body.expedition33-theme .top-link svg,
 body.site-theme-alt #theme-toggle svg,
-body.site-theme-alt .top-link svg {
-  fill: #ead6ac;
+body.site-theme-alt .top-link svg,
+body.resident-requiem-theme #theme-toggle svg,
+body.resident-requiem-theme .top-link svg {
+  fill: var(--game-button-text);
 }
 
-/* ====== Animations ====== */
-@keyframes floatUpAshes {
-  0%   { transform: translate(0, 0) rotate(0deg); }
-  100% { transform: translate(-30px, -40vh) rotate(5deg); }
+/* ====== Motion ====== */
+@keyframes expeditionPetalsLayerA {
+  0% {
+    transform: translate3d(0, -8%, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(2.2%, 4%, 0) rotate(0.9deg);
+  }
+  100% {
+    transform: translate3d(-3.5%, 16%, 0) rotate(1.4deg);
+  }
 }
 
-@keyframes floatUpPetals {
-  0%   { transform: translate(0, 0) rotate(0deg); }
-  50%  { transform: translate(40px, -20vh) rotate(10deg); }
-  100% { transform: translate(-20px, -40vh) rotate(20deg); }
+@keyframes expeditionPetalsLayerB {
+  0% {
+    transform: translate3d(0, -12%, 0) rotate(0deg);
+  }
+  45% {
+    transform: translate3d(3.2%, 3%, 0) rotate(1.4deg);
+  }
+  100% {
+    transform: translate3d(-4.4%, 22%, 0) rotate(2.1deg);
+  }
 }
 
-/* ====== Responsive overrides ====== */
+@keyframes expeditionGlyphFragments {
+  0% {
+    transform: translate3d(-0.02em, 0, 0) rotate(-0.3deg);
+    opacity: 0.42;
+  }
+  45% {
+    transform: translate3d(0.03em, -0.03em, 0) rotate(0.55deg);
+    opacity: 0.62;
+  }
+  100% {
+    transform: translate3d(-0.04em, 0.03em, 0) rotate(-0.65deg);
+    opacity: 0.38;
+  }
+}
+
+@keyframes expeditionGlyphFragmentsB {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0.03em, -0.02em, 0) scale(1.01);
+  }
+  100% {
+    transform: translate3d(-0.03em, 0.02em, 0) scale(0.99);
+  }
+}
+
+@keyframes requiemRain {
+  0% {
+    background-position: 0 0, 30px 50px, center center;
+  }
+  100% {
+    background-position: 0 900px, 30px 980px, center center;
+  }
+}
+
+@keyframes requiemFog {
+  0% {
+    transform: translate(-2%, -2%) scale(1);
+  }
+  100% {
+    transform: translate(2%, 2%) scale(1.06);
+  }
+}
+
+@keyframes requiemTextGlitch {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-0.03em);
+  }
+  50% {
+    transform: translateX(0.03em);
+  }
+  75% {
+    transform: translateX(-0.02em);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* ====== Responsive tuning ====== */
 @media (max-width: 768px) {
+  body.expedition33-theme::before,
+  body.expedition33-theme::after,
   body.site-theme-alt::before,
-  body.site-theme-alt::after {
-    opacity: 0.65;
+  body.site-theme-alt::after,
+  body.resident-requiem-theme::before,
+  body.resident-requiem-theme::after {
+    opacity: 0.5;
+  }
+
+  body.expedition33-theme .header .logo a::before,
+  body.expedition33-theme .header #menu a::before,
+  body.site-theme-alt .header .logo a::before,
+  body.site-theme-alt .header #menu a::before,
+  body.expedition33-theme .header .logo a::after,
+  body.expedition33-theme .header #menu a::after,
+  body.site-theme-alt .header .logo a::after,
+  body.site-theme-alt .header #menu a::after {
+    opacity: 0.26;
+  }
+
+  body.expedition33-theme h1,
+  body.expedition33-theme h2,
+  body.expedition33-theme h3,
+  body.expedition33-theme h4,
+  body.site-theme-alt h1,
+  body.site-theme-alt h2,
+  body.site-theme-alt h3,
+  body.site-theme-alt h4,
+  body.resident-requiem-theme h1,
+  body.resident-requiem-theme h2,
+  body.resident-requiem-theme h3,
+  body.resident-requiem-theme h4 {
+    letter-spacing: 0.03em;
   }
 }

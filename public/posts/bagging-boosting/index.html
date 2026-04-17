@@ -1,100 +1,1023 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Bagging and Boosting | USharma Notes</title><meta name=keywords content="Bias-Variance,Model Generalization,Machine Learning"><meta name=description content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction"><meta name=author content="Utkarsh Sharma"><link rel=canonical href=https://USharma002.github.io/posts/bagging-boosting/><link crossorigin=anonymous href=/assets/css/stylesheet.45c08e5c637469078d1421940765a3a1af5903228e8b2bf252ab1684c78df8b2.css integrity="sha256-RcCOXGN0aQeNFCGUB2Wjoa9ZAyKOiyvyUqsWhMeN+LI=" rel="preload stylesheet" as=style><link rel=icon href=https://USharma002.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://USharma002.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://USharma002.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://USharma002.github.io/apple-touch-icon.png><link rel=mask-icon href=https://USharma002.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://USharma002.github.io/posts/bagging-boosting/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" onload='this.onload=null,this.rel="stylesheet"'><noscript><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel=stylesheet></noscript><script defer src=/js/site-theme-toggle.js></script><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js crossorigin=anonymous></script><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js crossorigin=anonymous></script><script>document.addEventListener("DOMContentLoaded",function(){if(typeof renderMathInElement!="function")return;var e=document.querySelectorAll(".post-content, .page-content");if(!e.length)return;function t(){for(var t,s,n=0;n<e.length;n++){if(s=e[n],t=s.textContent||"",t.indexOf("$")===-1&&t.indexOf("\\(")===-1&&t.indexOf("\\[")===-1)continue;renderMathInElement(s,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1}],throwOnError:!1,ignoredTags:["script","noscript","style","textarea","pre","code"]})}}"requestIdleCallback"in window?window.requestIdleCallback(t,{timeout:1200}):window.setTimeout(t,0)})</script><meta property="og:url" content="https://USharma002.github.io/posts/bagging-boosting/"><meta property="og:site_name" content="USharma Notes"><meta property="og:title" content="Bagging and Boosting"><meta property="og:description" content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-11-08T00:00:00+00:00"><meta property="article:modified_time" content="2025-11-08T00:00:00+00:00"><meta property="article:tag" content="Bias-Variance"><meta property="article:tag" content="Model Generalization"><meta property="article:tag" content="Machine Learning"><meta name=twitter:card content="summary"><meta name=twitter:title content="Bagging and Boosting"><meta name=twitter:description content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://USharma002.github.io/posts/"},{"@type":"ListItem","position":2,"name":"Bagging and Boosting","item":"https://USharma002.github.io/posts/bagging-boosting/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Bagging and Boosting","name":"Bagging and Boosting","description":"Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction","keywords":["Bias-Variance","Model Generalization","Machine Learning"],"articleBody":"Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction","wordCount":"1823","inLanguage":"en","datePublished":"2025-11-08T00:00:00Z","dateModified":"2025-11-08T00:00:00Z","author":[{"@type":"Person","name":"Utkarsh Sharma"}],"mainEntityOfPage":{"@type":"WebPage","@id":"https://USharma002.github.io/posts/bagging-boosting/"},"publisher":{"@type":"Organization","name":"USharma Notes","logo":{"@type":"ImageObject","url":"https://USharma002.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://USharma002.github.io/ accesskey=h title="USharma Notes (Alt + H)">USharma Notes</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://USharma002.github.io/ title=Posts><span>Posts</span></a></li><li><a href=https://USharma002.github.io/archives/ title=Archive><span>Archive</span></a></li><li><a href=https://USharma002.github.io/tags/ title=Tags><span>Tags</span></a></li><li><a href=https://USharma002.github.io/about/ title=About><span>About</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://USharma002.github.io/>Home</a>&nbsp;»&nbsp;<a href=https://USharma002.github.io/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">Bagging and Boosting</h1><div class=post-description>Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction</div><div class=post-meta><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma</div></header><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>Table of Contents</span></summary><div class=inner><ul><li><a href=#bias-variance-decomposition aria-label="Bias Variance Decomposition">Bias Variance Decomposition</a></li><li><a href=#reducing-variance aria-label="Reducing Variance">Reducing Variance</a><ul><ul><li><a href=#weak-law-of-large-numbers aria-label="Weak Law of Large Numbers">Weak Law of Large Numbers</a></li></ul><li><a href=#bagging-bootstrap-aggregating aria-label="Bagging (Bootstrap Aggregating)">Bagging (Bootstrap Aggregating)</a></li><li><a href=#analysis aria-label=Analysis>Analysis</a><ul><li><a href=#variance-of-bagged-estimator aria-label="Variance of Bagged Estimator">Variance of Bagged Estimator</a></li><li><a href=#derivation aria-label=Derivation>Derivation</a></li><li><a href=#large--approximation aria-label="Large-$n$ Approximation">Large-$n$ Approximation</a></li><li><a href=#intuition aria-label=Intuition>Intuition</a></li></ul></li><li><a href=#bagging-summary aria-label="Bagging Summary">Bagging Summary</a></li><li><a href=#advantages-of-bagging aria-label="Advantages of Bagging">Advantages of Bagging</a></li><li><a href=#random-forest aria-label="Random Forest">Random Forest</a><ul><li><a href=#algorithm aria-label=Algorithm>Algorithm</a></li><li><a href=#why-random-forests-work-so-well aria-label="Why Random Forests Work So Well">Why Random Forests Work So Well</a></li></ul></li></ul></li></ul></div></details></div><div class=post-content><span style=color:red;font-weight:700;font-size:1.05em>This post is a work in progress and may be updated or expanded soon!</span><h1 id=bias-variance-decomposition>Bias Variance Decomposition<a hidden class=anchor aria-hidden=true href=#bias-variance-decomposition>#</a></h1><p>Remember the Bias / Variance decomposition:</p>$$
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Bagging and Boosting | USharma Notes</title>
+<meta name="keywords" content="Bias-Variance, Model Generalization, Machine Learning">
+<meta name="description" content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction">
+<meta name="author" content="Utkarsh Sharma">
+<link rel="canonical" href="http://localhost:1313/posts/bagging-boosting/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.45c08e5c637469078d1421940765a3a1af5903228e8b2bf252ab1684c78df8b2.css" integrity="sha256-RcCOXGN0aQeNFCGUB2Wjoa9ZAyKOiyvyUqsWhMeN&#43;LI=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/bagging-boosting/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+</noscript>
+
+<script defer src="/js/site-theme-toggle.js"></script>
+  
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    crossorigin="anonymous">
+
+  
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    crossorigin="anonymous"></script>
+
+  
+  <script defer
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    crossorigin="anonymous"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof renderMathInElement !== "function") return;
+
+    var containers = document.querySelectorAll(".post-content, .page-content");
+    if (!containers.length) return;
+
+    function renderMath() {
+      for (var i = 0; i < containers.length; i++) {
+        var root = containers[i];
+        var text = root.textContent || "";
+        if (text.indexOf("$") === -1 && text.indexOf("\\(") === -1 && text.indexOf("\\[") === -1) {
+          continue;
+        }
+
+        renderMathInElement(root, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+          ],
+          throwOnError: false,
+          ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+        });
+      }
+    }
+
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(renderMath, { timeout: 1200 });
+    } else {
+      window.setTimeout(renderMath, 0);
+    }
+  });
+  </script>
+
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Bagging and Boosting
+    </h1>
+    <div class="post-description">
+      Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction
+    </div>
+    <div class="post-meta"><span title='2025-11-08 00:00:00 +0000 UTC'>November 8, 2025</span>&nbsp;·&nbsp;9 min&nbsp;·&nbsp;Utkarsh Sharma
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#bias-variance-decomposition" aria-label="Bias Variance Decomposition">Bias Variance Decomposition</a></li>
+                <li>
+                    <a href="#reducing-variance" aria-label="Reducing Variance">Reducing Variance</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#weak-law-of-large-numbers" aria-label="Weak Law of Large Numbers">Weak Law of Large Numbers</a></li></ul>
+                    
+                <li>
+                    <a href="#bagging-bootstrap-aggregating" aria-label="Bagging (Bootstrap Aggregating)">Bagging (Bootstrap Aggregating)</a></li>
+                <li>
+                    <a href="#analysis" aria-label="Analysis">Analysis</a><ul>
+                        
+                <li>
+                    <a href="#variance-of-bagged-estimator" aria-label="Variance of Bagged Estimator">Variance of Bagged Estimator</a></li>
+                <li>
+                    <a href="#derivation" aria-label="Derivation">Derivation</a></li>
+                <li>
+                    <a href="#large--approximation" aria-label="Large-$n$ Approximation">Large-$n$ Approximation</a></li>
+                <li>
+                    <a href="#intuition" aria-label="Intuition">Intuition</a></li></ul>
+                </li>
+                <li>
+                    <a href="#bagging-summary" aria-label="Bagging Summary">Bagging Summary</a></li>
+                <li>
+                    <a href="#advantages-of-bagging" aria-label="Advantages of Bagging">Advantages of Bagging</a></li>
+                <li>
+                    <a href="#random-forest" aria-label="Random Forest">Random Forest</a><ul>
+                        
+                <li>
+                    <a href="#algorithm" aria-label="Algorithm">Algorithm</a></li>
+                <li>
+                    <a href="#why-random-forests-work-so-well" aria-label="Why Random Forests Work So Well">Why Random Forests Work So Well</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><span style="color:red;font-weight:700;font-size:1.05em">
+This post is a work in progress and may be updated or expanded soon!
+</span>
+<h1 id="bias-variance-decomposition">Bias Variance Decomposition<a hidden class="anchor" aria-hidden="true" href="#bias-variance-decomposition">#</a></h1>
+<p>Remember the Bias / Variance decomposition:
+</p>
+$$
 \underbrace{\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2}
-$$<p>Out goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.</p><h1 id=reducing-variance>Reducing Variance<a hidden class=anchor aria-hidden=true href=#reducing-variance>#</a></h1><blockquote><h3 id=weak-law-of-large-numbers>Weak Law of Large Numbers<a hidden class=anchor aria-hidden=true href=#weak-law-of-large-numbers>#</a></h3><p>Given $X_1, X_2, \dots$ an infinite sequence of i.i.d. random variables with finite expected value</p>$$
-\mathbb{E}[X_1] = \mathbb{E}[X_2] = \dots = \mu < \infty,
-$$<p>the weak law of large numbers states:</p>$$
-\overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty.
-$$<details><summary style=cursor:pointer>Proof</summary><p>This proof uses the assumption of finite variance $\operatorname{Var}(X_i) = \sigma^2$ (for all $i$). The independence of the random variables implies no correlation between them, and we have:</p>$$
-\operatorname{Var}(\overline{X}_n) = \operatorname{Var}\Big(\frac{1}{n}(X_1 + \dots + X_n)\Big)
-= \frac{1}{n^2} \operatorname{Var}(X_1 + \dots + X_n)
-= \frac{n \sigma^2}{n}
+$$<p>Out goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.</p>
+<h1 id="reducing-variance">Reducing Variance<a hidden class="anchor" aria-hidden="true" href="#reducing-variance">#</a></h1>
+<blockquote>
+<h3 id="weak-law-of-large-numbers">Weak Law of Large Numbers<a hidden class="anchor" aria-hidden="true" href="#weak-law-of-large-numbers">#</a></h3>
+<p>Given $X_1, X_2, \dots$ an infinite sequence of i.i.d. random variables with finite expected value</p>
+$$
+ \mathbb{E}[X_1] = \mathbb{E}[X_2] = \dots = \mu < \infty,
+ $$<p>the weak law of large numbers states:</p>
+$$
+ \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty.
+ $$<details>
+<summary style="cursor: pointer;">Proof</summary>
+<p>This proof uses the assumption of finite variance $\operatorname{Var}(X_i) = \sigma^2$ (for all $i$). The independence of the random variables implies no correlation between them, and we have:</p>
+$$
+\operatorname{Var}(\overline{X}_n) = \operatorname{Var}\Big(\frac{1}{n}(X_1 + \dots + X_n)\Big) 
+= \frac{1}{n^2} \operatorname{Var}(X_1 + \dots + X_n) 
+= \frac{n \sigma^2}{n} 
 = \frac{\sigma^2}{n}.
-$$<p>The mean of the sample average is:</p>$$
+$$<p>The mean of the sample average is:</p>
+$$
 \mathbb{E}[\overline{X}_n] = \mu.
-$$<p>Using Chebyshev&rsquo;s inequality on $\overline{X}_n$ gives:</p>$$
+$$<p>Using Chebyshev&rsquo;s inequality on $\overline{X}_n$ gives:</p>
+$$
 \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) \le \frac{\sigma^2}{n \varepsilon^2}.
-$$<p>Equivalently:</p>$$
-\operatorname{P}\left(\left|\overline{X}_n - \mu\right| < \varepsilon\right)
-= 1 - \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right)
+$$<p>Equivalently:</p>
+$$
+\operatorname{P}\left(\left|\overline{X}_n - \mu\right| < \varepsilon\right) 
+= 1 - \operatorname{P}\left(\left|\overline{X}_n - \mu\right| \ge \varepsilon\right) 
 \ge 1 - \frac{\sigma^2}{n \varepsilon^2}.
-$$<p>As $n \to \infty$, the right-hand side approaches 1. By definition of convergence in probability:</p>$$
+$$<p>As $n \to \infty$, the right-hand side approaches 1. By definition of convergence in probability:</p>
+$$
 \overline{X}_n \ \overset{P}{\rightarrow} \ \mu \qquad \text{as } n \to \infty. \quad \blacksquare
-$$</details></blockquote><hr><p>Our goal is to reduce the variance term:
+$$</details></blockquote>
+<hr>
+<p>Our goal is to reduce the variance term:
 $
 \mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right].
-$</p><p>For this, we need that $h_D \to \bar{h}$.</p><p>Apply WLLN to predictors: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a predictor on each one, and average results:</p>$$
+$</p>
+<p>For this, we need that $h_D \to \bar{h}$.</p>
+<p>Apply WLLN to predictors: assume we have $m$ training sets $D_1, D_2, \dots, D_m$ drawn from $p^n$, train a predictor on each one, and average results:</p>
+$$
 \hat{h} = \frac{1}{m} \sum_{i=1}^m h_{D_i} \to \bar{h} \qquad \text{as } m \to \infty.
-$$<p>We refer to such an average of multiple predictors as an ensemble of predictors.</p><p><strong>Good news:</strong> If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e.</p>$$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$<p><strong>Problem:</strong> We don&rsquo;t have $m$ data sets $D1,\dots,D_m$, we only have $D$.</p><h2 id=bagging-bootstrap-aggregating>Bagging (Bootstrap Aggregating)<a hidden class=anchor aria-hidden=true href=#bagging-bootstrap-aggregating>#</a></h2><p>Simulate drawing from $p$ by drawing uniformly with replacement from the set $D$.
-i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training sample $(x_i,y_i)$ from $D$ uniformly at random. More formally,</p>$$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|.$$<p>We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.</p><p><strong>Bagged predictor:</strong></p>$$\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged predictor:</p>$$
+$$<p>We refer to such an average of multiple predictors as an ensemble of predictors.</p>
+<p><strong>Good news:</strong> If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e. </p>
+$$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$<p><strong>Problem:</strong> We don&rsquo;t have $m$ data sets $D1,\dots,D_m$, we only have $D$.</p>
+<h2 id="bagging-bootstrap-aggregating">Bagging (Bootstrap Aggregating)<a hidden class="anchor" aria-hidden="true" href="#bagging-bootstrap-aggregating">#</a></h2>
+<p>Simulate drawing from $p$ by drawing uniformly with replacement from the set $D$.
+i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training sample $(x_i,y_i)$ from $D$ uniformly at random. More formally,
+</p>
+$$q((x_i,y_i)\mid D)=\frac{1}{n} \quad \forall(x_i,y_i)\in D \text{ with } n=|D|.$$<p>We sample the set $D_i∼q^n$, i.e. $|D_i|=n$, and $D_i$ is picked with replacement from $q|D$.</p>
+<p><strong>Bagged predictor:</strong>  </p>
+$$\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged predictor:
+</p>
+$$
 \hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow \bar{h}
-$$<p>because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p><h2 id=analysis>Analysis<a hidden class=anchor aria-hidden=true href=#analysis>#</a></h2><p>Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let&rsquo;s ignore the label for now for simplicity)</p>$$
+$$<p>because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
+<h2 id="analysis">Analysis<a hidden class="anchor" aria-hidden="true" href="#analysis">#</a></h2>
+<p>Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let&rsquo;s ignore the label for now for simplicity)</p>
+$$
 \begin{equation*}
 \begin{aligned}
-q(X=x_i)&= \underbrace{{\sum_{k = 1}^{n}}{n\choose k}p_i^k(1-p_i)^{n-k}}_{\substack{\text{Probability that are}\\\text{k copies of $x_i$ in D}}} \underbrace{\frac{k}{n}}_\mathrm{\substack{\text{Probability}\\\text{pick one of}\\\text{these copies}}}\\
-&=\frac{1}{n}\underbrace{{\sum_{k = 1}^{n}}{n\choose k}p_i^k(1-p_i)^{n-k}k}_{\substack{\text{Expected value of}\\\text{Binomial Distribution}\\\text{with parameter $p_i$}\\\mathbb{E}[\mathbb{B}(p_i,n)]=np_i}}\\
-&=\frac{1}{n}np_i\\
-&=p_i\leftarrow\text{Each data set $D'_l$ is drawn from p, but not independently.}
-\end{aligned}
+    q(X=x_i)&= \underbrace{{\sum_{k = 1}^{n}}{n\choose k}p_i^k(1-p_i)^{n-k}}_{\substack{\text{Probability that are}\\\text{k copies of $x_i$ in D}}} \underbrace{\frac{k}{n}}_\mathrm{\substack{\text{Probability}\\\text{pick one of}\\\text{these copies}}}\\
+    &=\frac{1}{n}\underbrace{{\sum_{k = 1}^{n}}{n\choose k}p_i^k(1-p_i)^{n-k}k}_{\substack{\text{Expected value of}\\\text{Binomial Distribution}\\\text{with parameter $p_i$}\\\mathbb{E}[\mathbb{B}(p_i,n)]=np_i}}\\
+    &=\frac{1}{n}np_i\\
+    &=p_i\leftarrow\text{Each data set $D'_l$ is drawn from p, but not independently.}
+    \end{aligned}
 \end{equation*}
-$$<p>There is a simple intuitive argument why $p(X=x_i)=q(X=x_i)$.</p><p>So far we assumed that you draw $D$ from $p^n$ and then $q$ picks a sample from $D$. However, you don&rsquo;t have to do it in that order. You can also view sampling from $q$ in reverse order:</p><p>Consider that you first use $q$ to reserve a &ldquo;spot&rdquo; in $D$, i.e. a number from $1,\dots,n$ where $i$ means that you sampled the $i^{th}$ data point in $D$. So far you only have the slot, $i$, and you still need to fill it with a data point $(x_i,y_i)$. You do this by sampling $(x_i,y_i)$ from $p$. It is now obvious that which slot you picked doesn&rsquo;t really matter, so we have $q(X=x)=p(X=x)$.</p><hr><h3 id=variance-of-bagged-estimator>Variance of Bagged Estimator<a hidden class=anchor aria-hidden=true href=#variance-of-bagged-estimator>#</a></h3><p>The variance of the bagged estimator is:</p>$$Var(\hat{h}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$<p>If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:</p>$$Var(\hat{h}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$<blockquote><details><summary style=cursor:pointer>Proof</summary>$$
+$$<p>There is a simple intuitive argument why $p(X=x_i)=q(X=x_i)$.</p>
+<p>So far we assumed that you draw $D$ from $p^n$ and then $q$ picks a sample from $D$. However, you don&rsquo;t have to do it in that order. You can also view sampling from $q$ in reverse order:</p>
+<p>Consider that you first use $q$ to reserve a &ldquo;spot&rdquo; in $D$, i.e. a number from $1,\dots,n$ where $i$ means that you sampled the $i^{th}$ data point in $D$. So far you only have the slot, $i$, and you still need to fill it with a data point $(x_i,y_i)$. You do this by sampling $(x_i,y_i)$ from $p$. It is now obvious that which slot you picked doesn&rsquo;t really matter, so we have $q(X=x)=p(X=x)$.</p>
+<hr>
+<h3 id="variance-of-bagged-estimator">Variance of Bagged Estimator<a hidden class="anchor" aria-hidden="true" href="#variance-of-bagged-estimator">#</a></h3>
+<p>The variance of the bagged estimator is:</p>
+$$Var(\hat{h}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$<p>If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:</p>
+$$Var(\hat{h}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$<blockquote>
+<details>
+<summary style="cursor: pointer;">Proof</summary>
+$$
 \operatorname{Var}(\hat{h}(x)) = \operatorname{Var}\!\left(\frac{1}{m}\sum_{i=1}^m h_i(x)\right)
 = \frac{1}{m^2}\operatorname{Var}\!\left(\sum_{i=1}^m h_i(x)\right).
-$$<p>For any random variables,</p>$$
+$$<p>For any random variables,</p>
+$$
 \operatorname{Var}\!\left(\sum_{i=1}^m h_i\right) = \sum_{i=1}^m \operatorname{Var}(h_i) + \sum_{i \neq j} \operatorname{Cov}(h_i, h_j).
-$$<p>Plugging in our assumptions:</p><ul><li>$\sum_{i=1}^m \operatorname{Var}(h_i) = m\sigma^2$</li><li>There are $m(m-1)$ ordered pairs $(i,j)$ with $i \neq j$, and $\operatorname{Cov}(h_i, h_j) = \rho\sigma^2$ for all $i \neq j$</li></ul><p>Thus,</p>$$
-\operatorname{Var}\left(\sum_{i=1}^m h_i\right) = m\sigma^2 + m(m-1)\rho\sigma^2.$$<p>Now,</p>$$
+$$<p>Plugging in our assumptions:</p>
+<ul>
+<li>$\sum_{i=1}^m \operatorname{Var}(h_i) = m\sigma^2$</li>
+<li>There are $m(m-1)$ ordered pairs $(i,j)$ with $i \neq j$,    and $\operatorname{Cov}(h_i, h_j) = \rho\sigma^2$ for all $i \neq j$</li>
+</ul>
+<p>Thus,</p>
+$$
+\operatorname{Var}\left(\sum_{i=1}^m h_i\right) = m\sigma^2 + m(m-1)\rho\sigma^2.$$<p>Now,</p>
+$$
 \operatorname{Var}(\hat{h}(x))
 = \frac{1}{m^2} \big( m\sigma^2 + m(m-1)\rho\sigma^2 \big)
 = \sigma^2 \frac{1 + (m-1)\rho}{m}.
-$$<p>Rearrange to separate the correlated and averaging parts:</p>$$
+$$<p>Rearrange to separate the correlated and averaging parts:</p>
+$$
 \operatorname{Var}(\hat{h}(x)) = \rho\sigma^2 + \frac{1-\rho}{m}\sigma^2.
-$$<p>(Proof of equivalence: $\rho + \frac{1-\rho}{m} = \frac{\rho m + 1 - \rho}{m} = \frac{1 + (m - 1)\rho}{m}$.)</p></blockquote></details><p>Notice that we can have 3 cases here:</p><ul><li><p><strong>Models are Independent</strong>, in which case the variance is reduced by a factor of $m$ since $\rho = 0$</p></li><li><p><strong>Modela are not prefectly correlated</strong>, in which case the reduction depends on $\rho$</p></li><li><p><strong>Modela are prefectly correlated</strong>, so no variance reduction at all.</p></li></ul><p><strong>Why the models are not independent</strong><br>Even though the bootstrap sampling is random, the models $h_{D_i}$ are <strong>not independent</strong> because:</p><ul><li>All $D_i$ are sampled from the <strong>same original dataset $D$</strong>.</li><li>The models $h_{D_i}$ share <strong>overlapping data points</strong>, thus the resulting models $h_{D_i}$ are <strong>statistically dependent</strong>.</li></ul><p><strong>But how much data can we expect to be common among them?</strong></p><p>We have an original dataset $D$ of size $n$ (distinct items).<br>Two bootstrap samples $D_i$ and $D_j$ are drawn independently by sampling $n$ items <strong>with replacement</strong> from $D$.</p><p>Let</p>$$
+$$<p>(Proof of equivalence:  $\rho + \frac{1-\rho}{m} = \frac{\rho m + 1 - \rho}{m} = \frac{1 + (m - 1)\rho}{m}$.)</p></blockquote>
+</details>
+<p>Notice that we can have 3 cases here:</p>
+<ul>
+<li>
+<p><strong>Models are Independent</strong>, in which case the variance is reduced by a factor of $m$ since $\rho = 0$</p>
+</li>
+<li>
+<p><strong>Modela are not prefectly correlated</strong>, in which case the reduction depends on $\rho$</p>
+</li>
+<li>
+<p><strong>Modela are prefectly correlated</strong>, so no variance reduction at all.</p>
+</li>
+</ul>
+<p><strong>Why the models are not independent</strong><br>
+Even though the bootstrap sampling is random, the models $h_{D_i}$ are <strong>not independent</strong> because:</p>
+<ul>
+<li>All $D_i$ are sampled from the <strong>same original dataset $D$</strong>.</li>
+<li>The models $h_{D_i}$ share <strong>overlapping data points</strong>, thus the resulting models $h_{D_i}$ are <strong>statistically dependent</strong>.</li>
+</ul>
+<p><strong>But how much data can we expect to be common among them?</strong></p>
+<p>We have an original dataset $D$ of size $n$ (distinct items).<br>
+Two bootstrap samples $D_i$ and $D_j$ are drawn independently by sampling $n$ items <strong>with replacement</strong> from $D$.</p>
+<p>Let</p>
+$$
 S = |\text{unique}(D_i) \cap \text{unique}(D_j)|
-$$<p>be the number of <strong>distinct original items</strong> that appear in both bootstrap samples.<br>(This is the usual meaning of “intersection” in the bagging context.)</p><hr><h3 id=derivation>Derivation<a hidden class=anchor aria-hidden=true href=#derivation>#</a></h3><p>For a fixed original item $k$ (one of the $n$ items), let</p>$$
+$$<p>be the number of <strong>distinct original items</strong> that appear in both bootstrap samples.<br>
+(This is the usual meaning of “intersection” in the bagging context.)</p>
+<hr>
+<h3 id="derivation">Derivation<a hidden class="anchor" aria-hidden="true" href="#derivation">#</a></h3>
+<p>For a fixed original item $k$ (one of the $n$ items), let</p>
+$$
 I_k =
 \begin{cases}
 1 & \text{if item } k \text{ appears at least once in } D_i, \\
 0 & \text{otherwise.}
 \end{cases}
-$$<p>Similarly, define $J_k$ for $D_j$. Then</p>$$
+$$<p>Similarly, define $J_k$ for $D_j$. Then</p>
+$$
 S = \sum_{k=1}^{n} I_k J_k,
-$$<p>so by linearity of expectation,</p>$$
+$$<p>so by linearity of expectation,</p>
+$$
 \mathbb{E}[S] = \sum_{k=1}^{n} \Pr(I_k = 1 \text{ and } J_k = 1).
-$$<p>Because the two bootstrap draws are independent and symmetric across items,</p>$$
+$$<p>Because the two bootstrap draws are independent and symmetric across items,</p>
+$$
 \Pr(I_k = 1 \text{ and } J_k = 1)
 = \Pr(I_k = 1)\Pr(J_k = 1)
 = p^2,
-$$<p>where</p>$$
+$$<p>where</p>
+$$
 p = \Pr(\text{a given item appears at least once in one bootstrap sample})
-= 1 - \left(1 - \frac{1}{n}\right)^{n}.
-$$<p>Hence,</p>$$
+   = 1 - \left(1 - \frac{1}{n}\right)^{n}.
+$$<p>Hence,</p>
+$$
 \boxed{\mathbb{E}[\,|D_i \cap D_j|\,] = n \left( 1 - \left(1 - \frac{1}{n}\right)^{n} \right)^2.}
-$$<hr><h3 id=large--approximation>Large-$n$ Approximation<a hidden class=anchor aria-hidden=true href=#large--approximation>#</a></h3><p>As $n \to \infty$,</p>$$
+$$<hr>
+<h3 id="large--approximation">Large-$n$ Approximation<a hidden class="anchor" aria-hidden="true" href="#large--approximation">#</a></h3>
+<p>As $n \to \infty$,</p>
+$$
 \left(1 - \frac{1}{n}\right)^{n} \to e^{-1}.
-$$<p>Therefore,</p>$$
+$$<p>Therefore,</p>
+$$
 \mathbb{E}[\,|D_i \cap D_j|\,] \approx n (1 - e^{-1})^2
-\approx n (0.63212056)^2
-\approx 0.3996\,n.
-$$<p>So about <strong>40% of the original items (on average)</strong> appear in both bootstrap samples.</p><hr><h3 id=intuition>Intuition<a hidden class=anchor aria-hidden=true href=#intuition>#</a></h3><ul><li>Probability that an item appears in one bootstrap sample: $p \approx 0.632$</li><li>Probability that it appears in both: $p^2 \approx 0.3996$</li><li>Thus, two bootstrap samples share roughly <strong>$0.4n$</strong> distinct items on average.</li></ul><hr><h2 id=bagging-summary>Bagging Summary<a hidden class=anchor aria-hidden=true href=#bagging-summary>#</a></h2><p>You have a dataset $
-D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.</p><ol><li><p><strong>Create bootstrap samples</strong><br>You create $m$ bootstrap samples $D_1, \dots, D_m$, where each $D_i$ is sampled <strong>with replacement</strong> from $D$.</p><ul><li>Each $D_i$ has size $n$.</li><li>Some points may appear multiple times; some may be missing.</li></ul></li><li><p><strong>Train models</strong><br>You train a model $h_{D_i}$ on each bootstrap sample $D_i$.</p></li><li><p><strong>Compute the bagged predictor</strong><br>The bagged predictor is the average:</p>$$
-\hat{h} = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
-$$</li></ol><p>In practice larger $m$ results in a better ensemble, however at some point you will obtain <strong>diminishing returns</strong>. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier.</p><h2 id=advantages-of-bagging>Advantages of Bagging<a hidden class=anchor aria-hidden=true href=#advantages-of-bagging>#</a></h2><ul><li><p>Easy to implement</p></li><li><p>Reduces variance, so has a strong beneficial effect on high variance classifiers.</p></li><li><p>As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)</p></li><li><p>Bagging provides an unbiased estimate of the test error, which we refer to as the <strong>out-of-bag error</strong>. The idea is that each training point was not picked and all the data sets $D_k$. If we average the classifiers $h_k$ of all such data sets, we obtain a classifier (with a slightly smaller $m$) that was not trained on $(x_i, y_i)$ ever and it is therefore equivalent to a test sample. If we compute the error of all these classifiers, we obtain an estimate of the true test error. The beauty is that we can do this without reducing the training set. We just run bagging as it is intended and obtain this so called out-of-bag error for free.</p><p>More formally, for each training point $(x_i, y_i) \in D$
-let</p>$$
-S_i = \{k \mid (x_i, y_i) \notin D_k\}
-$$<ul><li>in other words $S_i$ is a set of all the training sets $D_k$, which do not contain $(x_k, y_k)$. Let the averaged classifier over all these data sets be</li></ul>$$
-\tilde{h}_i(x) = \frac{1}{|S_i|} \sum_{k \in S_i} h_k(x).
-$$<p>The out-of-bag error becomes simply the average error/loss that all these classifiers yield</p>$$
-\epsilon_{\text{OOB}} = \frac{1}{n} \sum_{(x_i, y_i) \in D} l(\tilde{h}_i(x_i), y_i).
-$$<p>This is an estimate of the test error, because for each training point we used the subset of classifiers that never saw that training point during training. If $m$ is sufficiently large, the fact that we take out some classifiers has no significant effect and the estimate is pretty reliable.</p></li></ul><h2 id=random-forest>Random Forest<a hidden class=anchor aria-hidden=true href=#random-forest>#</a></h2><p>One of the most famous and useful bagged algorithms is the <strong>Random Forest</strong>!<br>A Random Forest is essentially nothing else but <strong>bagged decision trees</strong>, with a slightly modified splitting criterion.</p><hr><h3 id=algorithm>Algorithm<a hidden class=anchor aria-hidden=true href=#algorithm>#</a></h3><ol><li><p><strong>Bootstrap Sampling</strong></p><p>Sample $m$ datasets $D_1, \dots, D_m$ from $D$ <strong>with replacement</strong>.</p></li><li><p><strong>Train Trees</strong></p><p>For each dataset $D_j$, train a <strong>full decision tree</strong> $h_j(\cdot)$ (i.e., with <code>max-depth = ∞</code>)<br>but with one small modification:</p><ul><li>Before each split, <strong>randomly subsample</strong> $k \le d$ features (without replacement),<br>and only consider these features for the split.</li><li>This additional randomness further <strong>increases the variance</strong> of the trees, making the ensemble more robust.</li></ul></li><li><p><strong>Aggregate Predictions</strong></p><p>The final classifier is given by:</p>$$
-h(x) = \frac{1}{m} \sum_{j=1}^{m} h_j(x)
-$$</li></ol><hr><h3 id=why-random-forests-work-so-well>Why Random Forests Work So Well<a hidden class=anchor aria-hidden=true href=#why-random-forests-work-so-well>#</a></h3><p>The Random Forest (RF) is one of the <strong>best, most popular, and easiest-to-use out-of-the-box classifiers</strong>.<br>There are two main reasons for this:</p><ol><li><p><strong>Few and Stable Hyperparameters</strong></p><ul><li><p>The RF only has two main hyperparameters: $m$ and $k$.</p></li><li><p>It is <strong>extremely insensitive</strong> to both of these.</p></li><li><p>A good rule of thumb for $k$ is:</p>$$
-k = \sqrt{d}
-$$<p>where $d$ denotes the number of features.</p></li><li><p>You can set $m$ as <strong>large as you can afford computationally</strong>.</p></li></ul></li><li><p><strong>Minimal Preprocessing Requirements</strong></p><p>Decision trees do not require much preprocessing.<br>Features can have <strong>different scales, magnitudes, or units</strong>, and trees will still perform well.</p></li></ol><span style=color:crimson;font-weight:700>This post or widget may be updated further - more notes, findings, and background will appear here!</span></div><footer class=post-footer><ul class=post-tags><li><a href=https://USharma002.github.io/tags/bias-variance/>Bias-Variance</a></li><li><a href=https://USharma002.github.io/tags/model-generalization/>Model Generalization</a></li><li><a href=https://USharma002.github.io/tags/machine-learning/>Machine Learning</a></li></ul><nav class=paginav><a class=prev href=https://USharma002.github.io/posts/bias-variance/><span class=title>« Prev</span><br><span>Bias–Variance Tradeoff</span>
-</a><a class=next href=https://USharma002.github.io/posts/3d-reconstruction/><span class=title>Next »</span><br><span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2026 <a href=https://USharma002.github.io/>USharma Notes</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>document.addEventListener("DOMContentLoaded",function(){var e,t,n,s,o,a,r,c,l,u,f,h=document.querySelector(".toc"),m=document.querySelector(".post-content");if(!h||!m)return;if(e=document.createElement("div"),e.className="agn-sidetoc",r=document.createElement("span"),r.className="agn-sidetoc-label",r.textContent="Contents",e.appendChild(r),s=document.createElement("div"),s.className="agn-sidetoc-links",e.appendChild(s),u=h.querySelector(".inner"),u&&(f=u.querySelectorAll(":scope > ul, :scope > nav"),f.forEach(function(e){s.appendChild(e.cloneNode(!0))})),document.body.appendChild(e),t=Array.prototype.slice.call(m.querySelectorAll("h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]")),!t.length)return;for(n=[],l="",c=e.querySelectorAll("ul ul"),o=0;o<c.length;o++)c[o].style.display="none";function d(){n=[];for(var s,e=0;e<t.length;e++)s=t[e].getBoundingClientRect().top+window.pageYOffset-80,n.push(s)}function p(e){for(var s,o=0,i=n.length-1,a=-1;o<=i;)s=o+i>>1,n[s]<=e?(a=s,o=s+1):i=s-1;return a<0?"":t[a].getAttribute("id")||""}function g(t){if(t===l)return;l=t;for(var n,i,a,r,c,d,o=e.querySelectorAll("a.active, a.semi_active"),s=0;s<o.length;s++)o[s].classList.remove("active","semi_active"),i=o[s].parentElement.querySelector(":scope > ul"),i&&(i.style.display="none");if(!t)return;if(a=e.querySelector('a[href="#'+t+'"]'),!a)return;for(n=a.parentElement,r=0;n&&n!==e;)n.tagName==="LI"&&(c=n.querySelector(":scope > a"),c&&(c.classList.add(r===0?"active":"semi_active"),d=n.querySelector(":scope > ul"),d&&(d.style.display="block")),r++),n=n.parentElement}d(),a=!1;function i(){if(a)return;a=!0,requestAnimationFrame(function(){var e=window.pageYOffset||document.documentElement.scrollTop,t=p(e);g(t),a=!1})}window.addEventListener("resize",function(){d(),i()},{passive:!0}),window.addEventListener("load",function(){d(),i()}),window.addEventListener("scroll",i,{passive:!0}),i()})</script><script>document.addEventListener("DOMContentLoaded",function(){var e,o,a,t=document.querySelectorAll(".post-content iframe, .page-content iframe, .archive iframe, .single iframe");if(!t.length)return;for(e=0;e<t.length;e++)t[e].hasAttribute("loading")||t[e].setAttribute("loading","lazy"),t[e].hasAttribute("fetchpriority")||t[e].setAttribute("fetchpriority","low");function n(e){var t=Number(e);return Number.isFinite(t)&&t>0?t:null}function r(e){var n=e.closest(".post-content, .page-content, .archive, .single")||document.body,t=getComputedStyle(n).backgroundColor;return(!t||t==="rgba(0, 0, 0, 0)"||t==="transparent")&&(t=getComputedStyle(document.body).backgroundColor),t||"#ffffff"}function f(e){var n,t=e.getAttribute("data-iframe-blend");return t==="true"||t!=="false"&&(n=(e.getAttribute("src")||"").toLowerCase(),n.indexOf("/interactive/vmf.html")!==-1)}function h(e,t){if(!t||!t.head)return;var o,s="copilot-embedded-iframe-theme",n=t.getElementById(s);n||(n=t.createElement("style"),n.id=s,t.head.appendChild(n)),o=r(e),n.textContent=["html, body {","  background: "+o+" !important;","}","body {","  margin: 0;","}"].join(`
-`)}function u(e){try{return e.contentDocument||e.contentWindow&&e.contentWindow.document||null}catch{return null}}function l(e){if(!e||!e.documentElement)return null;var t=e.body,n=Math.max(e.documentElement.scrollHeight||0,e.documentElement.offsetHeight||0,e.documentElement.clientHeight||0,t?t.scrollHeight:0,t?t.offsetHeight:0,t?t.clientHeight:0);return n>0?Math.round(n):null}function c(e){var t,s,o,i,a,r,c,l,d=n(e.getAttribute("data-computed-aspect"));return d||(o=n(e.getAttribute("width")),t=n(e.getAttribute("height")),o&&t?t/o:(s=e.getAttribute("data-aspect"),s&&s.indexOf("/")>-1&&(i=s.split("/"),a=n(i[0]),r=n(i[1]),a&&r)?r/a:t&&(c=e.clientWidth,c>0)?(l=t/c,e.setAttribute("data-computed-aspect",String(l)),l):9/16))}function s(e){var t,s,o,i,a,r,m=c(e),d=e.clientWidth;if(!d)return;t=Math.round(d*m),o=n(e.getAttribute("height")),o&&(t=Math.max(t,Math.round(o))),i=t,a=!1,s=u(e),s&&(a=!0,f(e)&&h(e,s),r=l(s),r&&(i=r)),e.style.height=i+"px",e.setAttribute("scrolling",a?"no":"auto")}function d(e){var t=e.getBoundingClientRect(),n=window.innerHeight||document.documentElement.clientHeight||0;return t.bottom>=-250&&t.top<=n+1200}function i(e){for(var n=0;n<t.length;n++)(e||d(t[n]))&&s(t[n])}window.addEventListener("resize",function(){i(!0)},{passive:!0}),o=!1;function m(){if(o)return;o=!0,requestAnimationFrame(function(){i(!1),o=!1})}window.addEventListener("scroll",m,{passive:!0}),a=new MutationObserver(function(){i(!1)}),document.documentElement&&a.observe(document.documentElement,{attributes:!0,attributeFilter:["class","style","data-theme"]}),document.body&&a.observe(document.body,{attributes:!0,attributeFilter:["class","style","data-theme"]});for(e=0;e<t.length;e++)t[e].addEventListener("load",function(){var e=this;s(e),setTimeout(function(){s(e)},250),setTimeout(function(){s(e)},1e3)});i(!1)})</script><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
+   \approx n (0.63212056)^2
+   \approx 0.3996\,n.
+$$<p>So about <strong>40% of the original items (on average)</strong> appear in both bootstrap samples.</p>
+<hr>
+<h3 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h3>
+<ul>
+<li>Probability that an item appears in one bootstrap sample: $p \approx 0.632$</li>
+<li>Probability that it appears in both: $p^2 \approx 0.3996$</li>
+<li>Thus, two bootstrap samples share roughly <strong>$0.4n$</strong> distinct items on average.</li>
+</ul>
+<hr>
+<h2 id="bagging-summary">Bagging Summary<a hidden class="anchor" aria-hidden="true" href="#bagging-summary">#</a></h2>
+<p>You have a dataset $
+D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.</p>
+<ol>
+<li>
+<p><strong>Create bootstrap samples</strong><br>
+You create $m$ bootstrap samples $D_1, \dots, D_m$, where each $D_i$ is sampled <strong>with replacement</strong> from $D$.</p>
+<ul>
+<li>Each $D_i$ has size $n$.</li>
+<li>Some points may appear multiple times; some may be missing.</li>
+</ul>
+</li>
+<li>
+<p><strong>Train models</strong><br>
+You train a model $h_{D_i}$ on each bootstrap sample $D_i$.</p>
+</li>
+<li>
+<p><strong>Compute the bagged predictor</strong><br>
+The bagged predictor is the average:</p>
+$$
+   \hat{h} = \frac{1}{m} \sum_{i=1}^{m} h_{D_i}.
+   $$</li>
+</ol>
+<p>In practice larger $m$ results in a better ensemble, however at some point you will obtain <strong>diminishing returns</strong>. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier.</p>
+<h2 id="advantages-of-bagging">Advantages of Bagging<a hidden class="anchor" aria-hidden="true" href="#advantages-of-bagging">#</a></h2>
+<ul>
+<li>
+<p>Easy to implement</p>
+</li>
+<li>
+<p>Reduces variance, so has a strong beneficial effect on high variance classifiers.</p>
+</li>
+<li>
+<p>As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)</p>
+</li>
+<li>
+<p>Bagging provides an unbiased estimate of the test error, which we refer to as the <strong>out-of-bag error</strong>. The idea is that each training point was not picked and all the data sets $D_k$. If we average the classifiers $h_k$ of all such data sets, we obtain a classifier (with a slightly smaller $m$) that was not trained on $(x_i, y_i)$ ever and it is therefore equivalent to a test sample. If we compute the error of all these classifiers, we obtain an estimate of the true test error. The beauty is that we can do this without reducing the training set. We just run bagging as it is intended and obtain this so called out-of-bag error for free.</p>
+<p>More formally, for each training point $(x_i, y_i) \in D$
+let</p>
+$$
+  S_i = \{k \mid (x_i, y_i) \notin D_k\}
+  $$<ul>
+<li>in other words $S_i$ is a set of all the training sets $D_k$, which do not contain $(x_k, y_k)$. Let the averaged classifier over all these data sets be</li>
+</ul>
+$$
+  \tilde{h}_i(x) = \frac{1}{|S_i|} \sum_{k \in S_i} h_k(x).
+  $$<p>The out-of-bag error becomes simply the average error/loss that all these classifiers yield</p>
+$$
+  \epsilon_{\text{OOB}} = \frac{1}{n} \sum_{(x_i, y_i) \in D} l(\tilde{h}_i(x_i), y_i).
+  $$<p>This is an estimate of the test error, because for each training point we used the subset of classifiers that never saw that training point during training. If $m$ is sufficiently large, the fact that we take out some classifiers has no significant effect and the estimate is pretty reliable.</p>
+</li>
+</ul>
+<h2 id="random-forest">Random Forest<a hidden class="anchor" aria-hidden="true" href="#random-forest">#</a></h2>
+<p>One of the most famous and useful bagged algorithms is the <strong>Random Forest</strong>!<br>
+A Random Forest is essentially nothing else but <strong>bagged decision trees</strong>, with a slightly modified splitting criterion.</p>
+<hr>
+<h3 id="algorithm">Algorithm<a hidden class="anchor" aria-hidden="true" href="#algorithm">#</a></h3>
+<ol>
+<li>
+<p><strong>Bootstrap Sampling</strong></p>
+<p>Sample $m$ datasets $D_1, \dots, D_m$ from $D$ <strong>with replacement</strong>.</p>
+</li>
+<li>
+<p><strong>Train Trees</strong></p>
+<p>For each dataset $D_j$, train a <strong>full decision tree</strong> $h_j(\cdot)$ (i.e., with <code>max-depth = ∞</code>)<br>
+but with one small modification:</p>
+<ul>
+<li>Before each split, <strong>randomly subsample</strong> $k \le d$ features (without replacement),<br>
+and only consider these features for the split.</li>
+<li>This additional randomness further <strong>increases the variance</strong> of the trees, making the ensemble more robust.</li>
+</ul>
+</li>
+<li>
+<p><strong>Aggregate Predictions</strong></p>
+<p>The final classifier is given by:</p>
+$$
+   h(x) = \frac{1}{m} \sum_{j=1}^{m} h_j(x)
+   $$</li>
+</ol>
+<hr>
+<h3 id="why-random-forests-work-so-well">Why Random Forests Work So Well<a hidden class="anchor" aria-hidden="true" href="#why-random-forests-work-so-well">#</a></h3>
+<p>The Random Forest (RF) is one of the <strong>best, most popular, and easiest-to-use out-of-the-box classifiers</strong>.<br>
+There are two main reasons for this:</p>
+<ol>
+<li>
+<p><strong>Few and Stable Hyperparameters</strong></p>
+<ul>
+<li>
+<p>The RF only has two main hyperparameters: $m$ and $k$.</p>
+</li>
+<li>
+<p>It is <strong>extremely insensitive</strong> to both of these.</p>
+</li>
+<li>
+<p>A good rule of thumb for $k$ is:</p>
+$$
+     k = \sqrt{d}
+     $$<p>where $d$ denotes the number of features.</p>
+</li>
+<li>
+<p>You can set $m$ as <strong>large as you can afford computationally</strong>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Minimal Preprocessing Requirements</strong></p>
+<p>Decision trees do not require much preprocessing.<br>
+Features can have <strong>different scales, magnitudes, or units</strong>, and trees will still perform well.</p>
+</li>
+</ol>
+<span style="color:crimson;font-weight:700">
+This post or widget may be updated further - more notes, findings, and background will appear here!
+</span>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/bias-variance/">Bias-Variance</a></li>
+      <li><a href="http://localhost:1313/tags/model-generalization/">Model Generalization</a></li>
+      <li><a href="http://localhost:1313/tags/machine-learning/">Machine Learning</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/bias-variance/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Bias–Variance Tradeoff</span>
+  </a>
+  <a class="next" href="http://localhost:1313/posts/3d-reconstruction/">
+    <span class="title">Next »</span>
+    <br>
+    <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tocEl = document.querySelector('.toc');
+    var content = document.querySelector('.post-content');
+    if (!tocEl || !content) return;
+
+    
+    var sidebar = document.createElement('div');
+    sidebar.className = 'agn-sidetoc';
+
+    
+    var label = document.createElement('span');
+    label.className = 'agn-sidetoc-label';
+    label.textContent = 'Contents';
+    sidebar.appendChild(label);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.className = 'agn-sidetoc-links';
+    sidebar.appendChild(linksWrap);
+
+    
+    var inner = tocEl.querySelector('.inner');
+    if (inner) {
+        var lists = inner.querySelectorAll(':scope > ul, :scope > nav');
+        lists.forEach(function(el) {
+            linksWrap.appendChild(el.cloneNode(true));
+        });
+    }
+
+    document.body.appendChild(sidebar);
+
+    
+    var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    if (!headers.length) return;
+
+    var headerOffsets = [];
+    var lastActiveId = '';
+
+    
+    var nestedUls = sidebar.querySelectorAll('ul ul');
+    for (var i = 0; i < nestedUls.length; i++) {
+        nestedUls[i].style.display = 'none';
+    }
+
+    function recomputeHeaderOffsets() {
+        headerOffsets = [];
+        for (var i = 0; i < headers.length; i++) {
+            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
+            headerOffsets.push(top);
+        }
+    }
+
+    function findActiveHeaderId(scrollTop) {
+        var lo = 0;
+        var hi = headerOffsets.length - 1;
+        var idx = -1;
+
+        while (lo <= hi) {
+            var mid = (lo + hi) >> 1;
+            if (headerOffsets[mid] <= scrollTop) {
+                idx = mid;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+
+        if (idx < 0) return '';
+        return headers[idx].getAttribute('id') || '';
+    }
+
+    function applyActiveState(currentId) {
+        if (currentId === lastActiveId) return;
+        lastActiveId = currentId;
+
+        
+        var highlighted = sidebar.querySelectorAll('a.active, a.semi_active');
+        for (var i = 0; i < highlighted.length; i++) {
+            highlighted[i].classList.remove('active', 'semi_active');
+            var oldChild = highlighted[i].parentElement.querySelector(':scope > ul');
+            if (oldChild) oldChild.style.display = 'none';
+        }
+
+        if (!currentId) return;
+
+        var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+        if (!activeLink) return;
+
+        
+        var el = activeLink.parentElement;
+        var depth = 0;
+        while (el && el !== sidebar) {
+            if (el.tagName === 'LI') {
+                var link = el.querySelector(':scope > a');
+                if (link) {
+                    link.classList.add(depth === 0 ? 'active' : 'semi_active');
+                    var childUl = el.querySelector(':scope > ul');
+                    if (childUl) childUl.style.display = 'block';
+                }
+                depth++;
+            }
+            el = el.parentElement;
+        }
+    }
+
+    recomputeHeaderOffsets();
+
+    
+    var ticking = false;
+
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(function() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var currentId = findActiveHeaderId(scrollTop);
+            applyActiveState(currentId);
+            ticking = false;
+        });
+    }
+
+    window.addEventListener('resize', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    }, { passive: true });
+    window.addEventListener('load', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); 
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var iframes = document.querySelectorAll('.post-content iframe, .page-content iframe, .archive iframe, .single iframe');
+    if (!iframes.length) return;
+
+    for (var i = 0; i < iframes.length; i++) {
+        if (!iframes[i].hasAttribute('loading')) {
+            iframes[i].setAttribute('loading', 'lazy');
+        }
+        if (!iframes[i].hasAttribute('fetchpriority')) {
+            iframes[i].setAttribute('fetchpriority', 'low');
+        }
+    }
+
+    function parsePositiveNumber(value) {
+        var n = Number(value);
+        return Number.isFinite(n) && n > 0 ? n : null;
+    }
+
+    function getHostBackgroundColor(iframe) {
+        var host = iframe.closest('.post-content, .page-content, .archive, .single') || document.body;
+        var color = getComputedStyle(host).backgroundColor;
+        if (!color || color === 'rgba(0, 0, 0, 0)' || color === 'transparent') {
+            color = getComputedStyle(document.body).backgroundColor;
+        }
+        return color || '#ffffff';
+    }
+
+    function shouldBlendIframe(iframe) {
+        var explicit = iframe.getAttribute('data-iframe-blend');
+        if (explicit === 'true') return true;
+        if (explicit === 'false') return false;
+
+        var src = (iframe.getAttribute('src') || '').toLowerCase();
+        return src.indexOf('/interactive/vmf.html') !== -1;
+    }
+
+    function harmonizeSameOriginIframe(iframe, doc) {
+        if (!doc || !doc.head) return;
+
+        var styleId = 'copilot-embedded-iframe-theme';
+        var existing = doc.getElementById(styleId);
+        if (!existing) {
+            existing = doc.createElement('style');
+            existing.id = styleId;
+            doc.head.appendChild(existing);
+        }
+
+        var bg = getHostBackgroundColor(iframe);
+        existing.textContent = [
+            'html, body {',
+            '  background: ' + bg + ' !important;',
+            '}',
+            'body {',
+            '  margin: 0;',
+            '}'
+        ].join('\n');
+    }
+
+    function getSameOriginDocument(iframe) {
+        try {
+            return iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document) || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function getSameOriginContentHeight(doc) {
+        if (!doc || !doc.documentElement) return null;
+
+        var body = doc.body;
+        var docHeight = Math.max(
+            doc.documentElement.scrollHeight || 0,
+            doc.documentElement.offsetHeight || 0,
+            doc.documentElement.clientHeight || 0,
+            body ? body.scrollHeight : 0,
+            body ? body.offsetHeight : 0,
+            body ? body.clientHeight : 0
+        );
+
+        return docHeight > 0 ? Math.round(docHeight) : null;
+    }
+
+    function computeAspectRatio(iframe) {
+        var cached = parsePositiveNumber(iframe.getAttribute('data-computed-aspect'));
+        if (cached) return cached;
+
+        var w = parsePositiveNumber(iframe.getAttribute('width'));
+        var h = parsePositiveNumber(iframe.getAttribute('height'));
+        if (w && h) return h / w;
+
+        var dataAspect = iframe.getAttribute('data-aspect');
+        if (dataAspect && dataAspect.indexOf('/') > -1) {
+            var parts = dataAspect.split('/');
+            var aw = parsePositiveNumber(parts[0]);
+            var ah = parsePositiveNumber(parts[1]);
+            if (aw && ah) return ah / aw;
+        }
+
+        
+        if (h) {
+            var currentWidth = iframe.clientWidth;
+            if (currentWidth > 0) {
+                var derived = h / currentWidth;
+                iframe.setAttribute('data-computed-aspect', String(derived));
+                return derived;
+            }
+        }
+
+        return 9 / 16;
+    }
+
+    function resizeIframe(iframe) {
+        var ratio = computeAspectRatio(iframe);
+        var width = iframe.clientWidth;
+        if (!width) return;
+
+        var fallbackHeight = Math.round(width * ratio);
+        var explicitHeight = parsePositiveNumber(iframe.getAttribute('height'));
+        if (explicitHeight) {
+            fallbackHeight = Math.max(fallbackHeight, Math.round(explicitHeight));
+        }
+
+        var targetHeight = fallbackHeight;
+        var isSameOrigin = false;
+
+        var doc = getSameOriginDocument(iframe);
+        if (doc) {
+            isSameOrigin = true;
+            if (shouldBlendIframe(iframe)) {
+                harmonizeSameOriginIframe(iframe, doc);
+            }
+            var contentHeight = getSameOriginContentHeight(doc);
+            if (contentHeight) {
+                targetHeight = contentHeight;
+            }
+        }
+
+        iframe.style.height = targetHeight + 'px';
+        iframe.setAttribute('scrolling', isSameOrigin ? 'no' : 'auto');
+    }
+
+    function isNearViewport(iframe) {
+        var rect = iframe.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+        return rect.bottom >= -250 && rect.top <= vh + 1200;
+    }
+
+    function resizeVisibleIframes(force) {
+        for (var i = 0; i < iframes.length; i++) {
+            if (force || isNearViewport(iframes[i])) {
+                resizeIframe(iframes[i]);
+            }
+        }
+    }
+
+    window.addEventListener('resize', function() { resizeVisibleIframes(true); }, { passive: true });
+
+    var scrollTicking = false;
+    function onScrollResize() {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(function() {
+            resizeVisibleIframes(false);
+            scrollTicking = false;
+        });
+    }
+    window.addEventListener('scroll', onScrollResize, { passive: true });
+
+    var themeObserver = new MutationObserver(function() {
+        resizeVisibleIframes(false);
+    });
+
+    if (document.documentElement) {
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-theme']
+        });
+    }
+
+    if (document.body) {
+        themeObserver.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-theme']
+        });
+    }
+
+    for (var i = 0; i < iframes.length; i++) {
+        iframes[i].addEventListener('load', function() {
+            var frame = this;
+            resizeIframe(frame);
+
+            
+            setTimeout(function() { resizeIframe(frame); }, 250);
+            setTimeout(function() { resizeIframe(frame); }, 1000);
+        });
+    }
+
+    resizeVisibleIframes(false);
+});
+</script>
+
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

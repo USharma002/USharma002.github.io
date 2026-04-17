@@ -943,7 +943,7 @@ L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} \boxed{f_r(x, \omega_i, \ome
 $$
 
 ### BxDF Functions
-The concept behind all BxDF functions could be described as a black box with the inputs being any two angles, one for incoming (incident) ray and the second one for the outgoing (reflected or transmitted) ray at a given point of the surface. The output of this black box is the value defining the ratio between the incoming and the outgoing light energy for the given couple of angles
+The concept behind all BxDF functions could be described as a black box with the inputs being two directions (which require four angles in total to define in 3D space, e.g., azimuth and elevation for both), one for the incoming (incident) ray and the second one for the outgoing (reflected or transmitted) ray at a given point of the surface. The output of this black box is the value defining the ratio between the incoming and the outgoing light energy for the given couple of angles
 
 
 - **(BSDF) Bidirectional Scattering Distribution Function** accounts for
@@ -1199,7 +1199,7 @@ function PATHTRACE(scene, ray, depth)
     end if
 
     Lₑ ← si.bsdf.emission(ωₒ)
-    (ωᵢ, fᵣ, p_ωᵢ) ← BSDF-SAMPLE(si.bsdf, ωₒ)
+    (ωᵢ, fᵣ, p_ωᵢ) ← BSDF-SAMPLE(si.bsdf, ωₒ) # function implicitly returns (fᵣ​ × ∣cosθ∣)
 
     next_ray ← RAY(si.p, ωᵢ)
     Lᵢ ← PATHTRACE(next_ray, depth + 1)
@@ -1237,7 +1237,7 @@ function PATHTRACE(scene, ray):
         Lₑ ← si.emission()
         L ← L + f * Lₑ   # accumulate emitted radiance
 
-        (ωᵢ, fᵣ, pᵢ) ← BSDF_SAMPLE(bsdf)
+        (ωᵢ, fᵣ, pᵢ) ← BSDF_SAMPLE(bsdf)   # function implicitly returns (fᵣ​ × ∣cosθ∣)
         if pᵢ == 0:
             break
 
@@ -3144,7 +3144,7 @@ width="80%"
 
 6. Müller, Thomas, Markus Gross, and Jan Novák. *"Neural Importance Sampling."* *ACM Transactions on Graphics (TOG)*, vol. 38, no. 6, p. 145, 2019. Presented at SIGGRAPH 2019.
 
-7. Bako, Steve, Samuli Laine, Tero Karras, Jaakko Lehtinen, and Pradeep Sen. *"Real-Time Neural Radiance Caching for Path Tracing."* *ACM Transactions on Graphics (TOG)*, vol. 40, no. 4, p. 36, 2021. Presented at SIGGRAPH 2021.
+7. Müller, Thomas, Fabrice Rousselle, Jan Novák, and Alexander Keller. *"Real-Time Neural Radiance Caching for Path Tracing."* *ACM Transactions on Graphics (TOG)*, vol. 40, no. 4, p. 36, 2021. Presented at SIGGRAPH 2021.
 
 8. Zeltner, Tim, Shlomi Steinberg, and Wenzel Jakob. *"Neural Parametric Mixtures for Path Guiding."* *ACM Transactions on Graphics (TOG)*, vol. 42, no. 4, p. 195, 2023. Presented at SIGGRAPH 2023.
 
