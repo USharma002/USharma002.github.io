@@ -51,9 +51,7 @@ summary: "about"
   <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2026</h4>
   <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.45rem;">
     <strong>Favourite Game This Year:</strong>
-    <button id="site-theme-toggle-requiem" type="button" class="favorite-game-toggle favorite-game-toggle--requiem" aria-pressed="false" aria-label="Apply Resident Evil Requiem site theme">
       Resident Evil Requiem
-    </button>
   </p>
   <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.2rem;">
     <strong>Favourite Last Year:</strong>

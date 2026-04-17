@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.45c08e5c637469078d1421940765a3a1af5903228e8b2bf252ab1684c78df8b2.css" integrity="sha256-RcCOXGN0aQeNFCGUB2Wjoa9ZAyKOiyvyUqsWhMeN&#43;LI=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.9f5ae003e53f208d3fe17399c5c080d851de827229dc315cd5bd384666adea08.css" integrity="sha256-n1rgA&#43;U/II0/4XOZxcCA2FHegnIp3DFc1b04Rmat6gg=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -2104,7 +2104,7 @@ Based on the <a href="/posts/neural-importance-sampling-path-tracing/#alternate-
 $$
 L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} \boxed{f_r(x, \omega_i, \omega_o)\;}L_i(x, \omega_i)\; (\omega_i \cdot n)\; d\omega_i
 $$<h3 id="bxdf-functions">BxDF Functions<a hidden class="anchor" aria-hidden="true" href="#bxdf-functions">#</a></h3>
-<p>The concept behind all BxDF functions could be described as a black box with the inputs being any two angles, one for incoming (incident) ray and the second one for the outgoing (reflected or transmitted) ray at a given point of the surface. The output of this black box is the value defining the ratio between the incoming and the outgoing light energy for the given couple of angles</p>
+<p>The concept behind all BxDF functions could be described as a black box with the inputs being two directions (which require four angles in total to define in 3D space, e.g., azimuth and elevation for both), one for the incoming (incident) ray and the second one for the outgoing (reflected or transmitted) ray at a given point of the surface. The output of this black box is the value defining the ratio between the incoming and the outgoing light energy for the given couple of angles</p>
 <ul>
 <li>
 <p><strong>(BSDF) Bidirectional Scattering Distribution Function</strong> accounts for
@@ -2637,7 +2637,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 </span></span><span class="line"><span class="cl">    end if
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    Lₑ ← si.bsdf.emission(ωₒ)
-</span></span><span class="line"><span class="cl">    (ωᵢ, fᵣ, p_ωᵢ) ← BSDF-SAMPLE(si.bsdf, ωₒ)
+</span></span><span class="line"><span class="cl">    (ωᵢ, fᵣ, p_ωᵢ) ← BSDF-SAMPLE(si.bsdf, ωₒ) # function implicitly returns (fᵣ​ × ∣cosθ∣)
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    next_ray ← RAY(si.p, ωᵢ)
 </span></span><span class="line"><span class="cl">    Lᵢ ← PATHTRACE(next_ray, depth + 1)
@@ -2671,7 +2671,7 @@ $$L_o^{(d)}(x, \omega_o) = L_e(x, \omega_o) + \frac{f_r(x, \omega_i, \omega_o) \
 </span></span><span class="line"><span class="cl">        <span class="na">Lₑ</span> <span class="err">←</span> <span class="na">si</span><span class="err">.</span><span class="na">emission</span><span class="err">()</span>
 </span></span><span class="line"><span class="cl">        <span class="na">L</span> <span class="err">←</span> <span class="na">L</span> <span class="err">+</span> <span class="na">f</span> <span class="err">*</span> <span class="na">Lₑ</span>   <span class="err">#</span> <span class="na">accumulate</span> <span class="na">emitted</span> <span class="na">radiance</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="err">(</span><span class="na">ωᵢ</span><span class="err">,</span> <span class="na">fᵣ</span><span class="err">,</span> <span class="na">pᵢ</span><span class="err">)</span> <span class="err">←</span> <span class="na">BSDF_SAMPLE</span><span class="err">(</span><span class="na">bsdf</span><span class="err">)</span>
+</span></span><span class="line"><span class="cl">        <span class="err">(</span><span class="na">ωᵢ</span><span class="err">,</span> <span class="na">fᵣ</span><span class="err">,</span> <span class="na">pᵢ</span><span class="err">)</span> <span class="err">←</span> <span class="na">BSDF_SAMPLE</span><span class="err">(</span><span class="na">bsdf</span><span class="err">)</span>   <span class="err">#</span> <span class="na">function</span> <span class="na">implicitly</span> <span class="na">returns</span> <span class="err">(</span><span class="na">fᵣ</span><span class="err">​</span> <span class="err">×</span> <span class="err">∣</span><span class="na">cosθ</span><span class="err">∣)</span>
 </span></span><span class="line"><span class="cl">        <span class="na">if</span> <span class="na">pᵢ </span><span class="o">=</span><span class="s">=</span> <span class="na">0:</span>
 </span></span><span class="line"><span class="cl">            <span class="na">break</span>
 </span></span><span class="line"><span class="cl">
@@ -5640,7 +5640,7 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
 <p>Müller, Thomas, Markus Gross, and Jan Novák. <em>&ldquo;Neural Importance Sampling.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 38, no. 6, p. 145, 2019. Presented at SIGGRAPH 2019.</p>
 </li>
 <li>
-<p>Bako, Steve, Samuli Laine, Tero Karras, Jaakko Lehtinen, and Pradeep Sen. <em>&ldquo;Real-Time Neural Radiance Caching for Path Tracing.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 40, no. 4, p. 36, 2021. Presented at SIGGRAPH 2021.</p>
+<p>Müller, Thomas, Fabrice Rousselle, Jan Novák, and Alexander Keller. <em>&ldquo;Real-Time Neural Radiance Caching for Path Tracing.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 40, no. 4, p. 36, 2021. Presented at SIGGRAPH 2021.</p>
 </li>
 <li>
 <p>Zeltner, Tim, Shlomi Steinberg, and Wenzel Jakob. <em>&ldquo;Neural Parametric Mixtures for Path Guiding.&rdquo;</em> <em>ACM Transactions on Graphics (TOG)</em>, vol. 42, no. 4, p. 195, 2023. Presented at SIGGRAPH 2023.</p>
