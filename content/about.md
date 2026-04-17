@@ -94,7 +94,7 @@ summary: "about"
       <img src="../../images/about/sdf-explorer.gif" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer</h4>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer (WIP)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
         An interactive web-based tool for exploring Signed Distance Fields (SDFs). 
         Real-time visualization and manipulation of geometric primitives and operations using Raymarching.
