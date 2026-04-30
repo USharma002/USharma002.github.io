@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Introduction to Rendering"
-date: "2026-05-01"
+date: "2026-04-01"
 description: "A gentle introduction to the 3D rendering pipeline — from geometric transformations to the pinhole camera shader."
 summary: "From the translation problem to the MVP matrix and a live raymarching shader, built from first principles."
 tags: ["Rendering", "Computer Graphics"]
