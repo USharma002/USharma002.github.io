@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Introduction to Differentiable Rendering"
-date: "2026-04-01"
+date: "2026-05-20"
 description: "An introduction to Differentiable rendering techniques for computer graphics and vision"
 summary: "Differentiable rendering techniques for computer graphics and vision"
 tags: ["Differentiable Rendering", "Computer Graphics"]
