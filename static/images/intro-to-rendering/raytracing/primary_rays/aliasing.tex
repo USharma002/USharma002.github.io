@@ -1,0 +1,30 @@
+\documentclass[varwidth=15cm, border=10pt]{standalone}
+\usepackage{graphicx}
+\usepackage{svg} % Required for \includesvg
+
+\begin{document}
+\sffamily
+\centering
+
+\begin{minipage}{0.3\linewidth}
+    \centering
+    \includesvg[width=\linewidth]{fig_a_vector.svg}
+    \par\vspace{8pt}
+    {\small Actual Geometry}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\linewidth}
+    \centering
+    \includesvg[width=\linewidth]{fig_b_aliased.svg}
+    \par\vspace{8pt}
+    {\small Aliased}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\linewidth}
+    \centering
+    \includesvg[width=\linewidth]{fig_c_antialiased.svg}
+    \par\vspace{8pt}
+    {\small Anti Aliased}
+\end{minipage}
+
+\end{document}

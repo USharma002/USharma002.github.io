@@ -1,0 +1,45 @@
+\documentclass[tikz, border=15pt]{standalone}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usetikzlibrary{calc, angles, quotes, arrows.meta}
+
+\begin{document}
+
+% ==========================================
+% IMAGE 1: y-z plane cross-section
+% ==========================================
+\begin{tikzpicture}[>=latex, font=\normalsize, line width=0.6pt]
+    % Dimensions
+    \def\L{7}    % Length of the frustum
+    \def\H{2.8}  % Half-height of the frustum
+
+    % 1. Axes
+    \draw[-latex] (0,0) -- (-2,0) node[left] {$z$};
+    \draw[-latex] (0,0) -- (0,2.5) node[above] {$y$};
+    \fill (0,0) circle (2.5pt);
+
+    % 2. Coordinates
+    \coordinate (O) at (0,0);
+    \coordinate (T) at (\L, \H);   % Top right
+    \coordinate (B) at (\L, -\H);  % Bottom right
+    \coordinate (M) at (\L, 0);    % Middle right
+
+    % 3. Frustum Lines and Labels
+    \draw (O) -- (T) node[right=2pt] {$y=a$};
+    \draw (O) -- (B) node[right=2pt] {$y=-a$};
+    \draw (T) -- (B);
+    
+    % Center line and distance 'e'
+    \draw (O) -- (M);
+    \node[above=2pt] at (\L/2, 0) {$f$};
+
+    % 4. Right Angle Marker
+    \draw (\L-0.3, 0) -- (\L-0.3, 0.3) -- (\L, 0.3);
+
+    % 5. Angles
+    \pic[draw, "$\frac{\beta}{2}$", angle eccentricity=1.4, angle radius=1.6cm] {angle = M--O--T};
+    \pic[draw, "$\frac{\beta}{2}$", angle eccentricity=1.4, angle radius=1.6cm] {angle = B--O--M};
+    
+\end{tikzpicture}
+
+\end{document}

@@ -12,52 +12,17 @@
 <script defer src="/js/site-theme-toggle.js"></script>
 
 {{- if .Params.math }}
-  <!-- KaTeX CSS -->
-  <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-    crossorigin="anonymous">
-
-  <!-- KaTeX JS -->
-  <script defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
-    crossorigin="anonymous"></script>
-
-  <!-- KaTeX Auto-render -->
-  <script defer
-    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-    crossorigin="anonymous"></script>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    if (typeof renderMathInElement !== "function") return;
-
-    var containers = document.querySelectorAll(".post-content, .page-content");
-    if (!containers.length) return;
-
-    function renderMath() {
-      for (var i = 0; i < containers.length; i++) {
-        var root = containers[i];
-        var text = root.textContent || "";
-        if (text.indexOf("$") === -1 && text.indexOf("\\(") === -1 && text.indexOf("\\[") === -1) {
-          continue;
-        }
-
-        renderMathInElement(root, {
-          delimiters: [
-            { left: "$$", right: "$$", display: true },
-            { left: "$", right: "$", display: false }
-          ],
-          throwOnError: false,
-          ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
-        });
-      }
+<!-- MathJax Configuration for Academic Equation Numbering -->
+<script>
+  window.MathJax = {
+    tex: {
+      // No 'loader' or 'packages' blocks needed anymore! The full bundle has everything enabled.
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      tags: 'ams' /* <--- THIS ENABLES \label and \eqref */
     }
-
-    if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(renderMath, { timeout: 1200 });
-    } else {
-      window.setTimeout(renderMath, 0);
-    }
-  });
-  </script>
+  };
+</script>
+<!-- Switched from tex-mml-chtml.js to tex-chtml-full.js -->
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
 {{- end }}

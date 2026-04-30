@@ -1,0 +1,203 @@
+\documentclass[tikz, border=15pt]{standalone}
+\usetikzlibrary{arrows.meta, decorations.pathreplacing}
+\usepackage{amsmath}
+
+\begin{document}
+
+\sffamily
+
+% Define standard axis colors
+\definecolor{colorX}{RGB}{239,68,68}       % Red
+\definecolor{colorY}{RGB}{34,197,94}       % Green
+\definecolor{cornerCol}{RGB}{30,58,138}    % Dark Blue for corner coordinates
+\definecolor{codeBG}{RGB}{235,242,248}     % Light gray-blue for code text background
+
+% Increase padding for the code background boxes
+\setlength{\fboxsep}{5pt}
+
+\begin{tikzpicture}[scale=1.4, >=Stealth]
+  
+  \def\spc{6.8} % <-- REDUCED from 8.5 for a much tighter horizontal layout
+
+  % Flow arrows between steps adjusted for the new spacing
+  \foreach \i in {0, 1, 2} {
+      \draw[-{Latex[length=3.5mm, width=3.5mm]}, line width=3.5pt, gray!30] 
+           (5.2 + \i*\spc, 2.5) -- (\spc - 0.4 + \i*\spc, 2.5);
+  }
+
+  % ==========================================
+  % STEP 1: Grid, Indices, Top-Left Dots for all cells
+  % ==========================================
+  \begin{scope}[shift={(0, 0)}]
+      % Grid
+      \draw[step=1, color=gray!50, thick] (0,0) grid (5,5);
+      \draw[thick, gray!80] (0,0) rectangle (5,5);
+
+      % Box Grid Ends Coordinates (Centered above/below corners to save horizontal space)
+      \node[anchor=south, font=\small, cornerCol] at (0, 5.1) {$(0, 0)$};
+      \node[anchor=south, font=\small, cornerCol] at (5, 5.1) {$(5, 0)$};
+      \node[anchor=north, font=\small, cornerCol] at (0, -0.1) {$(0, 5)$};
+      \node[anchor=north, font=\small, cornerCol] at (5, -0.1) {$(5, 5)$};
+
+      % Dots on the top-left of each cell + Indices
+      \foreach \ix in {0,...,4} {
+        \foreach \iy in {0,...,4} {
+          \pgfmathsetmacro{\rcol}{0.1 + 0.8*(\ix/4)}
+          \pgfmathsetmacro{\gcol}{0.1 + 0.8*(\iy/4)}
+          \definecolor{pcol}{rgb}{\rcol, \gcol, 0.2}
+          
+          \fill[pcol] (\ix, 5 - \iy) circle (3.5pt);
+          \node[color=black!80, font=\small, anchor=north west, inner sep=3pt] 
+               at (\ix, 5 - \iy) {(\ix, \iy)};
+        }
+      }
+      
+      % Label Below
+      \node[anchor=north, align=center] at (2.5, -1.2) {
+          \Large \textbf{Array Indices} \\[2mm]
+          % \colorbox{codeBG}{\large \texttt{ix = np.arange(W)}} \\[1mm]
+          % \colorbox{codeBG}{\large \texttt{iy = np.arange(H)}}
+      };
+  \end{scope}
+
+  % ==========================================
+  % STEP 2: Center Dots, Color mapped, Top-Left Axis (Y down), Braces
+  % ==========================================
+  \begin{scope}[shift={(\spc, 0)}]
+      % Grid
+      \draw[step=1, color=gray!50, thick] (0,0) grid (5,5);
+      \draw[thick, gray!80] (0,0) rectangle (5,5);
+
+      % Box Grid Ends Coordinates
+      \node[anchor=south, font=\small, cornerCol] at (0, 5.1) {$(0, 0)$};
+      \node[anchor=south, font=\small, cornerCol] at (5, 5.1) {$(1, 0)$};
+      \node[anchor=north, font=\small, cornerCol] at (0, -0.1) {$(0, 1)$};
+      \node[anchor=north, font=\small, cornerCol] at (5, -0.1) {$(1, 1)$};
+
+      % Top-Left Axis (Y points DOWN)
+      \draw[->, ultra thick, colorX] (0, 5) -- (1.5, 5) node[right, font=\Large] {$x$};
+      \draw[->, ultra thick, colorY] (0, 5) -- (0, 3.5) node[below, font=\Large] {$y$};
+
+      % Colored Dots at Center
+      \foreach \ix in {0,...,4} {
+        \foreach \iy in {0,...,4} {
+          \pgfmathsetmacro{\rcol}{0.1 + 0.8*(\ix/4)}
+          \pgfmathsetmacro{\gcol}{0.1 + 0.8*(\iy/4)}
+          \definecolor{pcol}{rgb}{\rcol, \gcol, 0.2}
+          \fill[pcol] (\ix + 0.5, 4.5 - \iy) circle (3.5pt);
+        }
+      }
+
+      % Braces showing 0.5 offset
+      \draw[decorate, decoration={brace, amplitude=5pt}, thick] 
+           (0, 5.2) -- (0.5, 5.2) node[midway, above=6pt, font=\normalsize] {$+0.5$};
+      \draw[decorate, decoration={brace, amplitude=5pt}, thick] 
+           (-0.2, 4.5) -- (-0.2, 5) node[midway, left=6pt, font=\normalsize] {$+0.5$};
+
+      % Label Below
+      \node[anchor=north, align=center] at (2.5, -1.2) {
+          \Large \textbf{Center \& Normalize} \\[2mm]
+          % \colorbox{codeBG}{\large \texttt{(np.arange(W) + 0.5) / W}} \\[1mm]
+          % \colorbox{codeBG}{\large \texttt{(np.arange(H) + 0.5) / H}}
+      };
+  \end{scope}
+
+  % ==========================================
+  % STEP 3: Flipped Y-Axis (Center, Y up), Scaled -1 to 1
+  % ==========================================
+  \begin{scope}[shift={(2*\spc, 0)}]
+      % Grid
+      \draw[step=1, color=gray!50, thick] (0,0) grid (5,5);
+      \draw[thick, gray!80] (0,0) rectangle (5,5);
+
+      % Box Grid Ends Coordinates
+      \node[anchor=south, font=\small, cornerCol] at (0, 5.1) {$(-1, 1)$};
+      \node[anchor=south, font=\small, cornerCol] at (5, 5.1) {$(1, 1)$};
+      \node[anchor=north, font=\small, cornerCol] at (0, -0.1) {$(-1, -1)$};
+      \node[anchor=north, font=\small, cornerCol] at (5, -0.1) {$(1, -1)$};
+
+      % Colored Dots and Indices
+      \foreach \ix in {0,...,4} {
+        \foreach \iy in {0,...,4} {
+          \pgfmathsetmacro{\rcol}{0.1 + 0.8*(\ix/4)}
+          \pgfmathsetmacro{\gcol}{0.1 + 0.8*((4 - \iy)/4)}
+          \definecolor{pcol}{rgb}{\rcol, \gcol, 0.2}
+          
+          \fill[pcol] (\ix + 0.5, 4.5 - \iy) circle (3.5pt);
+          \node[color=black!80, font=\small, anchor=north, inner sep=5pt] 
+               at (\ix + 0.5, 4.5 - \iy) {(\ix, \iy)};
+        }
+      }
+
+      % Unit vector Axes at Center (Y points UP)
+      \draw[->, ultra thick, colorX] (2.5, 2.5) -- (3.7, 2.5) node[right, font=\Large] {$x$};
+      \draw[->, ultra thick, colorY] (2.5, 2.5) -- (2.5, 3.7) node[above, font=\Large] {$y$};
+
+      % Scale Ticks for X axis (-1 to 1)
+      % \foreach \x/\lbl in {0/-1, 5/1} {
+      %    \draw[thick] (\x, 2.35) -- (\x, 2.65);
+      %    \node[font=\large, fill=white, inner sep=1.5pt] at (\x, 2.1) {\lbl};
+      % }
+
+      % Scale Ticks for Y axis (-1 to 1)
+      % \foreach \y/\lbl in {0/-1, 5/1} {
+      %    \draw[thick] (2.35, \y) -- (2.65, \y);
+      %    \node[font=\large, fill=white, inner sep=1.5pt] at (2.05, \y) {\lbl};
+      % }
+
+      % Label Below
+      \node[anchor=north, align=center] at (2.5, -1.2) {
+          \Large \textbf{NDC Space \& Flip Y} \\[2mm]
+          % \colorbox{codeBG}{\large \texttt{xs = (... ) * 2 - 1}} \\[1mm]
+          % \colorbox{codeBG}{\large \texttt{ys = (... ) * -2 + 1}}
+      };
+  \end{scope}
+
+  % ==========================================
+  % STEP 4: Scaling to Width and Height
+  % ==========================================
+  \begin{scope}[shift={(3*\spc, 0)}]
+      % Grid
+      \draw[step=1, color=gray!50, thick] (0,0) grid (5,5);
+      \draw[thick, gray!80] (0,0) rectangle (5,5);
+
+      % Box Grid Ends Coordinates
+      \node[anchor=south, font=\small, cornerCol] at (0, 5.1) {$(-\frac{\text{width}}{2}, \frac{\text{height}}{2})$};
+      \node[anchor=south, font=\small, cornerCol] at (5, 5.1) {$(\frac{\text{width}}{2}, \frac{\text{height}}{2})$};
+      \node[anchor=north, font=\small, cornerCol] at (0, -0.1) {$(-\frac{\text{width}}{2}, -\frac{\text{height}}{2})$};
+      \node[anchor=north, font=\small, cornerCol] at (5, -0.1) {$(\frac{\text{width}}{2}, -\frac{\text{height}}{2})$};
+
+      % Colored Dots and Indices
+      \foreach \ix in {0,...,4} {
+        \foreach \iy in {0,...,4} {
+          \pgfmathsetmacro{\rcol}{0.1 + 0.8*(\ix/4)}
+          \pgfmathsetmacro{\gcol}{0.1 + 0.8*((4 - \iy)/4)}
+          \definecolor{pcol}{rgb}{\rcol, \gcol, 0.2}
+          \fill[pcol] (\ix + 0.5, 4.5 - \iy) circle (4pt);
+          \node[color=black!80, font=\small, anchor=north, inner sep=5pt] 
+               at (\ix + 0.5, 4.5 - \iy) {(\ix, \iy)};
+        }
+      }
+
+      % Unit vector Axes at Center
+      \draw[->, ultra thick, colorX] (2.5, 2.5) -- (3.7, 2.5) node[right, font=\Large] {$x$};
+      \draw[->, ultra thick, colorY] (2.5, 2.5) -- (2.5, 3.7) node[above, font=\Large] {$y$};
+
+      % Dimension Braces
+      \draw[decorate, decoration={brace, amplitude=6pt, mirror}, thick] 
+           (0, -0.5) -- (5, -0.5) node[midway, below=10pt, font=\Large] {width};
+           
+      \draw[decorate, decoration={brace, amplitude=6pt, mirror}, thick] 
+           (5.5, 0) -- (5.5, 5) node[midway, right=10pt, font=\Large] {height};
+
+      % Label Below
+      \node[anchor=north, align=center] at (2.5, -1.2) {
+          \Large \textbf{Physical Space} \\[2mm]
+          % \colorbox{codeBG}{\large \texttt{px = xs * (width / 2)}} \\[1mm]
+          % \colorbox{codeBG}{\large \texttt{py = ys * (height / 2)}}
+      };
+  \end{scope}
+
+\end{tikzpicture}
+
+\end{document}

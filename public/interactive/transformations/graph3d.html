@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Transformation Widget</title>
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" crossorigin="anonymous"></script>
+
+<style>
+    :root {
+        --mafs-bg: transparent;
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-axis: rgba(0,0,0,0.8);
+        --mafs-text: #333;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --mafs-fg: #ffffff;
+            --mafs-grid: rgba(255,255,255,0.2);
+            --mafs-axis: rgba(255,255,255,0.8);
+            --mafs-text: #eee;
+        }
+    }
+
+    /* Force Light Mode if Parent says so */
+    .theme-light {
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-axis: rgba(0,0,0,0.8);
+        --mafs-text: #333;
+    }
+
+    /* Force Dark Mode if Parent says so */
+    .theme-dark {
+        --mafs-fg: #ffffff;
+        --mafs-grid: rgba(255,255,255,0.2);
+        --mafs-axis: rgba(255,255,255,0.8);
+        --mafs-text: #eee;
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--mafs-bg);
+        font-family: system-ui, sans-serif;
+        color: var(--mafs-text);
+    }
+
+    #matrix-container {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        pointer-events: none;
+    }
+
+    #matrix-title {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: var(--mafs-fg);
+    }
+
+    #phase-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--mafs-fg);
+        background: var(--mafs-bg);
+        padding: 4px 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Editable Matrix Style */
+    #custom-matrix {
+        display: none;
+        grid-template-columns: repeat(4, 40px);
+        gap: 6px;
+        padding: 6px 12px;
+        border-left: 2px solid var(--mafs-fg);
+        border-right: 2px solid var(--mafs-fg);
+        border-radius: 8px;
+        pointer-events: auto;
+        margin-top: 8px;
+    }
+
+    .matrix-input {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        background: color-mix(in srgb, var(--mafs-grid) 30%, transparent);
+        border: 1px solid transparent;
+        color: var(--mafs-fg);
+        font-size: 14px;
+        font-family: monospace;
+        border-radius: 4px;
+        padding: 6px 0;
+        transition: all 0.2s;
+    }
+    .matrix-input:hover { background: color-mix(in srgb, var(--mafs-grid) 60%, transparent); }
+    .matrix-input:focus { outline: none; border-color: #3b82f6; background: var(--mafs-bg); }
+
+    /* Hide spinners */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Column coloring */
+    .col-0 { color: #ef4444 !important; }
+    .col-1 { color: #22c55e !important; }
+    .col-2 { color: #3b82f6 !important; }
+    .col-3 { color: #a855f7 !important; } /* Purple for translation vector */
+
+    #custom-controls {
+        display: none;
+        margin-top: 12px;
+        gap: 8px;
+        pointer-events: auto;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        border: none;
+    }
+    .btn:hover { opacity: 0.8; }
+    .btn-apply { background: #3b82f6; color: white; }
+    .btn-reset { background: var(--mafs-grid); color: var(--mafs-fg); }
+
+    svg {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+    }
+
+    .face {
+        stroke: rgba(255,255,255,0.5); /* Edge highlights */
+        stroke-width: 0.02;
+        stroke-linejoin: round;
+    }
+
+    text.axis-label {
+        fill: var(--mafs-fg);
+        font-size: 0.4px;
+        font-style: italic;
+        font-weight: bold;
+        user-select: none;
+    }
+</style>
+</head>
+<body>
+
+<div id="matrix-container">
+    <div id="matrix-title"></div>
+    <div id="matrix-latex"></div>
+    
+    <div id="custom-matrix">
+        <input type="number" class="matrix-input col-0" id="m00" value="1" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m01" value="0" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m02" value="0" step="0.1">
+        <input type="number" class="matrix-input col-3" id="m03" value="0" step="0.1">
+        
+        <input type="number" class="matrix-input col-0" id="m10" value="0" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m11" value="1" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m12" value="0" step="0.1">
+        <input type="number" class="matrix-input col-3" id="m13" value="0" step="0.1">
+        
+        <input type="number" class="matrix-input col-0" id="m20" value="0" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m21" value="0" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m22" value="1" step="0.1">
+        <input type="number" class="matrix-input col-3" id="m23" value="0" step="0.1">
+
+        <input type="number" class="matrix-input col-0" id="m30" value="0" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m31" value="0" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m32" value="0" step="0.1">
+        <input type="number" class="matrix-input col-3" id="m33" value="1" step="0.1">
+    </div>
+
+    <div id="custom-controls">
+        <button class="btn btn-apply" id="btn-apply">Apply T</button>
+        <button class="btn btn-reset" id="btn-reset">Reset</button>
+    </div>
+</div>
+
+<div id="phase-container"></div>
+
+<svg id="canvas" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <marker id="arrow-end" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-axis)"/>
+        </marker>
+        <marker id="arrow-start" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+            <path d="M 10 0 L 0 5 L 10 10 z" fill="var(--mafs-axis)"/>
+        </marker>
+        <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/>
+        </marker>
+        <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+        </marker>
+    </defs>
+    
+    <!-- 3D Axes -->
+    <!-- X Axis -->
+    <path id="x-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-end="url(#arrow-end)" />
+    <!-- Y Axis -->
+    <path id="y-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-end="url(#arrow-end)" />
+    <!-- Z Axis -->
+    <path id="z-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-end="url(#arrow-end)" />
+    
+    <!-- Axes Labels -->
+    <text id="x-label" class="axis-label" dominant-baseline="middle">x</text>
+    <text id="y-label" class="axis-label" dominant-baseline="middle">y</text>
+    <text id="z-label" class="axis-label" dominant-baseline="middle">z</text>
+    
+    <!-- Faces of the cube (Will be sorted dynamically) -->
+    <g id="faces-group"></g>
+
+    <!-- Basis Vectors -->
+    <line id="x-vec" stroke="#ef4444" stroke-width="0.08" marker-end="url(#arrow-red)" />
+    <line id="y-vec" stroke="#22c55e" stroke-width="0.08" marker-end="url(#arrow-green)" />
+    <line id="z-vec" stroke="#3b82f6" stroke-width="0.08" marker-end="url(#arrow-blue)" />
+</svg>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type') || 'shear';
+
+    // Theme synchronization
+    function syncTheme() {
+        const theme = urlParams.get('theme');
+        if (theme) {
+            document.documentElement.className = `theme-${theme}`;
+            return;
+        }
+
+        try {
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || 
+                           window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {
+            // Fallback
+        }
+    }
+    syncTheme();
+    setInterval(syncTheme, 1000);
+
+    function resize() {
+        const svg = document.getElementById('canvas');
+        const aspect = window.innerWidth / window.innerHeight;
+        const height = 10;
+        const width = height * aspect;
+        const halfWidth = width / 2;
+        const halfHeight = height / 2;
+        
+        svg.setAttribute('viewBox', `${-halfWidth} ${-halfHeight} ${width} ${height}`);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Color definitions for KaTeX
+    const cX = "\\textcolor{#ef4444}";
+    const cY = "\\textcolor{#22c55e}";
+    const cZ = "\\textcolor{#3b82f6}";
+    const cT = "\\textcolor{#a855f7}";
+
+    const matrixMap = {
+        translation: { title: "3D Translation", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{0} & ${cZ}{0} & ${cT}{t_x} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{t_y} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{1} & ${cT}{t_z} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
+        scaling: { title: "3D Scaling", latex: `\\begin{bmatrix} ${cX}{s_x} & ${cY}{0} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{s_y} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{s_z} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
+        rotation: { title: "3D Rotation (Y-axis)", latex: `\\begin{bmatrix} ${cX}{\\cos\\theta} & ${cY}{0} & ${cZ}{\\sin\\theta} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{-\\sin\\theta} & ${cY}{0} & ${cZ}{\\cos\\theta} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
+        shear: { title: "3D Shear", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{sh_y} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{1} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
+        projective: { title: "3D Perspective", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{0} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{1} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{p_z} & ${cT}{1} \\end{bmatrix}` },
+        custom: { title: "Custom 4x4 Matrix", latex: "" }
+    };
+
+    const matrixInfo = matrixMap[type] || matrixMap['shear'];
+    document.getElementById('matrix-title').textContent = matrixInfo.title;
+
+    let customT = 0;
+    let targetT = 0;
+
+    if (type === 'custom') {
+        document.getElementById('custom-matrix').style.display = 'inline-grid';
+        document.getElementById('custom-controls').style.display = 'flex';
+        
+        document.getElementById('btn-apply').addEventListener('click', () => { targetT = 1; });
+        document.getElementById('btn-reset').addEventListener('click', () => { targetT = 0; });
+    } else {
+        window.onload = () => {
+            katex.render(matrixInfo.latex, document.getElementById('matrix-latex'), {
+                displayMode: true,
+                throwOnError: false
+            });
+        };
+    }
+
+    // Projection Function (Oblique/Cabinet Projection)
+    // Z goes down-left
+    function project(x, y, z) {
+        // Oblique angle: 30 degrees down from left.
+        // x_proj = x - z * cos(30) * factor
+        // y_proj = y - z * sin(30) * factor
+        const angle = 30 * Math.PI / 180;
+        const factor = 0.6;
+        let pX = x - z * Math.cos(angle) * factor;
+        let pY = y - z * Math.sin(angle) * factor;
+        
+        // Invert Y for SVG
+        return { x: pX, y: -pY, zOrig: z };
+    }
+
+    // Update Axes visually
+    const axScale = 4;
+    const origin2d = project(0, 0, 0);
+    const x2d = project(axScale, 0, 0);
+    const y2d = project(0, axScale, 0);
+    const z2d = project(0, 0, axScale);
+
+    document.getElementById('x-axis').setAttribute('d', `M ${project(-axScale,0,0).x} ${project(-axScale,0,0).y} L ${x2d.x} ${x2d.y}`);
+    document.getElementById('y-axis').setAttribute('d', `M ${project(0,-axScale,0).x} ${project(0,-axScale,0).y} L ${y2d.x} ${y2d.y}`);
+    document.getElementById('z-axis').setAttribute('d', `M ${project(0,0,-axScale).x} ${project(0,0,-axScale).y} L ${z2d.x} ${z2d.y}`);
+
+    document.getElementById('x-label').setAttribute('x', x2d.x + 0.3); document.getElementById('x-label').setAttribute('y', x2d.y);
+    document.getElementById('y-label').setAttribute('x', y2d.x); document.getElementById('y-label').setAttribute('y', y2d.y - 0.3);
+    document.getElementById('z-label').setAttribute('x', z2d.x - 0.3); document.getElementById('z-label').setAttribute('y', z2d.y + 0.3);
+
+    // Cube Geometry
+    const vertices = [
+        {x: -1, y: -1, z: -1}, // 0: bottom-left-back
+        {x:  1, y: -1, z: -1}, // 1: bottom-right-back
+        {x:  1, y:  1, z: -1}, // 2: top-right-back
+        {x: -1, y:  1, z: -1}, // 3: top-left-back
+        {x: -1, y: -1, z:  1}, // 4: bottom-left-front
+        {x:  1, y: -1, z:  1}, // 5: bottom-right-front
+        {x:  1, y:  1, z:  1}, // 6: top-right-front
+        {x: -1, y:  1, z:  1}  // 7: top-left-front
+    ];
+
+    const faceDefs = [
+        { indices: [0, 1, 2, 3] }, // Back
+        { indices: [4, 5, 6, 7] }, // Front
+        { indices: [0, 4, 7, 3] }, // Left
+        { indices: [1, 5, 6, 2] }, // Right
+        { indices: [3, 2, 6, 7] }, // Top
+        { indices: [0, 1, 5, 4] }  // Bottom
+    ];
+
+    const facesGroup = document.getElementById('faces-group');
+    const polygonEls = [];
+    for(let i=0; i<6; i++) {
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        p.setAttribute('class', 'face');
+        facesGroup.appendChild(p);
+        polygonEls.push(p);
+    }
+
+    // 4x4 Matrix Multiplication
+    function applyMatrix(p, m) {
+        let x = m[0]*p.x + m[1]*p.y + m[2]*p.z + m[3];
+        let y = m[4]*p.x + m[5]*p.y + m[6]*p.z + m[7];
+        let z = m[8]*p.x + m[9]*p.y + m[10]*p.z + m[11];
+        let w = m[12]*p.x + m[13]*p.y + m[14]*p.z + m[15];
+        return { x: x/w, y: y/w, z: z/w };
+    }
+
+    function getTransform(type, t) {
+        if (type === 'custom') {
+            const vals = [];
+            for(let i=0; i<4; i++) {
+                for(let j=0; j<4; j++) {
+                    vals.push(parseFloat(document.getElementById(`m${i}${j}`).value) || 0);
+                }
+            }
+            // Interpolate from Identity
+            const ident = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+            const result = [];
+            for(let i=0; i<16; i++) {
+                result.push(ident[i] + (vals[i] - ident[i]) * t);
+            }
+            return result;
+        }
+
+        // Default Identity
+        let m = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+
+        switch(type) {
+            case 'translation':
+                m[3] = 2 * t; m[7] = 1.5 * t; m[11] = 1 * t; break;
+            case 'scaling':
+                m[0] = 1 + 1.2 * t; m[5] = 1 + 0.5 * t; m[10] = 1 + 0.8 * t; break;
+            case 'rotation':
+                const a = 60 * Math.PI / 180 * t;
+                m[0] = Math.cos(a); m[2] = Math.sin(a);
+                m[8] = -Math.sin(a); m[10] = Math.cos(a);
+                break;
+            case 'shear':
+                m[1] = 1.5 * t; // Shear X along Y
+                break;
+            case 'projective':
+                m[14] = 0.2 * t; // Perspective Z
+                break;
+        }
+        return m;
+    }
+
+    function getShadingColor(v0, v1, v2) {
+        // Compute face normal (Cross Product)
+        let ux = v1.x - v0.x, uy = v1.y - v0.y, uz = v1.z - v0.z;
+        let vx = v2.x - v0.x, vy = v2.y - v0.y, vz = v2.z - v0.z;
+        
+        let nx = uy * vz - uz * vy;
+        let ny = uz * vx - ux * vz;
+        let nz = ux * vy - uy * vx;
+        
+        let len = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+        nx /= len; ny /= len; nz /= len;
+
+        // Light direction (from top-front-right)
+        let lx = 0.5, ly = 0.8, lz = 0.5; 
+        let llen = Math.sqrt(lx*lx + ly*ly + lz*lz);
+        lx /= llen; ly /= llen; lz /= llen;
+
+        let dot = nx * lx + ny * ly + nz * lz;
+        
+        // Base blue color for light shading: #a5d8f3
+        // Base blue color for dark shading: #1a9cc7
+        let intensity = Math.max(0.1, dot); // 0.1 to 1.0
+
+        // Map intensity to a beautiful blue
+        // Darkest: rgb(26, 156, 199)
+        // Lightest: rgb(165, 216, 243)
+        let r = Math.round(26 + (165 - 26) * intensity);
+        let g = Math.round(156 + (216 - 156) * intensity);
+        let b = Math.round(199 + (243 - 199) * intensity);
+
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function animate(time) {
+        const phaseLabel = document.getElementById('phase-container');
+        let t = 0;
+        
+        if (type === 'custom') {
+            customT += (targetT - customT) * 0.08;
+            t = customT;
+            if (typeof katex !== 'undefined') {
+                katex.render(targetT === 1 ? "\\text{Applying } T" : "\\text{Identity}", phaseLabel, { throwOnError: false });
+            }
+        } else {
+            const phaseRaw = Math.sin(time / 800);
+            t = (phaseRaw + 1) / 2;
+            const isForward = Math.cos(time / 800) > 0;
+            if (typeof katex !== 'undefined') {
+                katex.render(isForward ? "\\text{Applying } T" : "\\text{Applying } T^{-1}", phaseLabel, { throwOnError: false });
+            }
+        }
+
+        const matrix = getTransform(type, t);
+        const transformedVertices = vertices.map(v => applyMatrix(v, matrix));
+
+        // Painter's Algorithm: Sort faces by average Z-depth (after projection!)
+        // Wait, depth is based on the un-projected distance to the camera. 
+        // In our oblique projection, Z goes out of the screen (positive Z is towards us).
+        // Actually, Z goes down-left. High positive Z means closer to us. 
+        // So we sort ascending by Z (draw smallest Z first, highest Z last).
+        
+        const faceData = faceDefs.map((face, index) => {
+            const points3D = face.indices.map(i => transformedVertices[i]);
+            const avgZ = (points3D[0].z + points3D[1].z + points3D[2].z + points3D[3].z) / 4;
+            return { points3D, index, avgZ };
+        });
+
+        faceData.sort((a, b) => a.avgZ - b.avgZ);
+
+        // Render
+        faceData.forEach((data, order) => {
+            const p = polygonEls[order];
+            const p2d = data.points3D.map(v => project(v.x, v.y, v.z));
+            const pointsStr = p2d.map(p => `${p.x},${p.y}`).join(' ');
+            
+            p.setAttribute('points', pointsStr);
+            p.setAttribute('fill', getShadingColor(data.points3D[0], data.points3D[1], data.points3D[2]));
+        });
+
+        // Update Basis Vectors
+        const origin = applyMatrix({x: 0, y: 0, z: 0}, matrix);
+        const pX = applyMatrix({x: 1.1, y: 0, z: 0}, matrix);
+        const pY = applyMatrix({x: 0, y: 1.1, z: 0}, matrix);
+        const pZ = applyMatrix({x: 0, y: 0, z: 1.1}, matrix);
+
+        const o2d = project(origin.x, origin.y, origin.z);
+        const px2d = project(pX.x, pX.y, pX.z);
+        const py2d = project(pY.x, pY.y, pY.z);
+        const pz2d = project(pZ.x, pZ.y, pZ.z);
+
+        const xVec = document.getElementById('x-vec');
+        xVec.setAttribute('x1', o2d.x); xVec.setAttribute('y1', o2d.y);
+        xVec.setAttribute('x2', px2d.x); xVec.setAttribute('y2', px2d.y);
+
+        const yVec = document.getElementById('y-vec');
+        yVec.setAttribute('x1', o2d.x); yVec.setAttribute('y1', o2d.y);
+        yVec.setAttribute('x2', py2d.x); yVec.setAttribute('y2', py2d.y);
+
+        const zVec = document.getElementById('z-vec');
+        zVec.setAttribute('x1', o2d.x); zVec.setAttribute('y1', o2d.y);
+        zVec.setAttribute('x2', pz2d.x); zVec.setAttribute('y2', pz2d.y);
+        
+        requestAnimationFrame(animate);
+    }
+    
+    requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>

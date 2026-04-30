@@ -1,0 +1,198 @@
+{{ $id := delimit (shuffle (seq 1 9)) "" | md5 | truncate 8 "" }}
+{{ $rawCode := .Inner | htmlUnescape }}
+
+<style>
+/* Reset Hugo's syntax highlighter layout */
+#editor-{{ $id }} .highlight,
+#editor-{{ $id }} .chroma,
+#editor-{{ $id }} pre,
+#editor-{{ $id }} code {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    overflow: visible !important;
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+}
+
+/* Hide copy buttons injected by the theme */
+#editor-{{ $id }} .copy-code,
+#editor-{{ $id }} .chroma .copy-btn { 
+    display: none !important; 
+}
+</style>
+
+<div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
+    
+    <div class="glsl-code-panel-{{ $id }}" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-{{ $id }}" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;">
+            {{- highlight (trim $rawCode "\n\r") "glsl" "lineNos=false" -}}
+        </div>
+    </div>
+    
+    <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
+        <canvas id="glcanvas-{{ $id }}" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+    </div>
+</div>
+
+<!-- Textareas natively decode HTML entities securely, making them the safest way to store raw text -->
+<textarea id="fs-{{ $id }}" style="display: none;">{{ $rawCode }}</textarea>
+
+<script>
+(function() {
+    const canvas = document.getElementById('glcanvas-{{ $id }}');
+    const editor = document.getElementById('editor-{{ $id }}');
+    const gl = canvas.getContext('webgl2');
+    if (!gl) {
+        console.error('WebGL2 not supported');
+        return;
+    }
+
+    const vsSource = `#version 300 es
+    in vec4 aVertexPosition;
+    void main() {
+        gl_Position = aVertexPosition;
+    }`;
+
+    function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('Shader compile error:', gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+
+    let program = null;
+    let positionAttributeLocation = -1;
+    let resolutionUniformLocation = null;
+    let timeUniformLocation = null;
+    let mouseUniformLocation = null; // Added mouse uniform location
+    
+    let mouseX = 0.0;
+    let mouseY = 0.0;
+
+    // Track mouse movement over the canvas
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        // Invert Y axis because WebGL's origin is bottom-left, but DOM's is top-left
+        mouseY = rect.height - (e.clientY - rect.top); 
+    });
+
+    // Reset mouse coordinates when leaving the canvas
+    canvas.addEventListener('mouseleave', () => {
+        mouseX = 0.0;
+        mouseY = 0.0;
+    });
+
+    function buildProgram(fsSourceRaw) {
+        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSourceRaw);
+
+        if (!fragmentShader) {
+            if (vertexShader) gl.deleteShader(vertexShader);
+            return false;
+        }
+
+        const newProgram = gl.createProgram();
+        gl.attachShader(newProgram, vertexShader);
+        gl.attachShader(newProgram, fragmentShader);
+        gl.linkProgram(newProgram);
+
+        if (!gl.getProgramParameter(newProgram, gl.LINK_STATUS)) {
+            console.error('Program link error:', gl.getProgramInfoLog(newProgram));
+            gl.deleteShader(vertexShader);
+            gl.deleteShader(fragmentShader);
+            gl.deleteProgram(newProgram);
+            return false;
+        }
+
+        if (program) gl.deleteProgram(program);
+        program = newProgram;
+
+        positionAttributeLocation = gl.getAttribLocation(program, "aVertexPosition");
+        resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
+        timeUniformLocation = gl.getUniformLocation(program, "u_time");
+        mouseUniformLocation = gl.getUniformLocation(program, "u_mouse"); // Bind uniform
+
+        gl.deleteShader(vertexShader);
+        gl.deleteShader(fragmentShader);
+        return true;
+    }
+
+    // Pull the raw value from the textarea and sanitize non-breaking spaces (\u00A0)
+    const rawSource = document.getElementById('fs-{{ $id }}').value.trim();
+    const sanitizedInitialSource = rawSource.replace(/\u00A0/g, " ");
+    buildProgram(sanitizedInitialSource);
+
+    editor.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            document.execCommand('insertText', false, '    ');
+        }
+    });
+
+    editor.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+        document.execCommand('insertText', false, text);
+    });
+
+    editor.addEventListener('input', () => {
+        // Browsers love inserting non-breaking spaces into contenteditables. 
+        // We MUST sanitize them into real spaces or WebGL will crash.
+        const newSource = editor.innerText.trim().replace(/\u00A0/g, " ");
+        buildProgram(newSource);
+    });
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    const positions =[
+        -1.0,  1.0,
+         1.0,  1.0,
+        -1.0, -1.0,
+         1.0, -1.0,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    function render(time) {
+        if (!program) {
+            requestAnimationFrame(render);
+            return;
+        }
+
+        const displayWidth  = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+        if (canvas.width  !== displayWidth || canvas.height !== displayHeight) {
+            canvas.width  = displayWidth;
+            canvas.height = displayHeight;
+        }
+
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        
+        gl.useProgram(program);
+
+        gl.enableVertexAttribArray(positionAttributeLocation);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+        if (resolutionUniformLocation) gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
+        if (timeUniformLocation) gl.uniform1f(timeUniformLocation, time * 0.001);
+        if (mouseUniformLocation) gl.uniform2f(mouseUniformLocation, mouseX, mouseY); // Pass mouse to shader
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+})();
+</script>

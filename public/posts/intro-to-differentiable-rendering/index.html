@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Introduction to Differentiable Rendering | USharma Notes</title>
+<meta name="keywords" content="Differentiable Rendering, Computer Graphics">
+<meta name="description" content="An introduction to Differentiable rendering techniques for computer graphics and vision">
+<meta name="author" content="Utkarsh Sharma">
+<link rel="canonical" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.921ffc4d586674d42045f566929c986e2b5599a36ec73138b7313048f4e36648.css" integrity="sha256-kh/8TVhmdNQgRfVmkpyYbitVmaNuxzE4tzEwSPTjZkg=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+</noscript>
+
+<script defer src="/js/site-theme-toggle.js"></script>
+
+<script>
+  window.MathJax = {
+    tex: {
+      
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      tags: 'ams'  
+    }
+  };
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Introduction to Differentiable Rendering
+    </h1>
+    <div class="post-description">
+      An introduction to Differentiable rendering techniques for computer graphics and vision
+    </div>
+    <div class="post-meta"><span title='2026-04-26 00:00:00 +0000 UTC'>April 26, 2026</span>&nbsp;·&nbsp;31 min&nbsp;·&nbsp;Utkarsh Sharma
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#introduction-to-differentiable-rendering" aria-label="Introduction to Differentiable Rendering">Introduction to Differentiable Rendering</a><ul>
+                        
+                <li>
+                    <a href="#differentiation-methods" aria-label="Differentiation Methods">Differentiation Methods</a><ul>
+                        
+                <li>
+                    <a href="#finite-differences-and-simultaneous-perturbation" aria-label="Finite Differences and Simultaneous Perturbation">Finite Differences and Simultaneous Perturbation</a></li>
+                <li>
+                    <a href="#automatic-differentiation" aria-label="Automatic Differentiation">Automatic Differentiation</a><ul>
+                        
+                <li>
+                    <a href="#forward-mode-differentiation" aria-label="Forward-mode differentiation">Forward-mode differentiation</a></li>
+                <li>
+                    <a href="#forward-ad-code-example" aria-label="Forward AD code example">Forward AD code example</a></li>
+                <li>
+                    <a href="#reverse-mode-differentiation" aria-label="Reverse-mode differentiation">Reverse-mode differentiation</a></li>
+                <li>
+                    <a href="#backward-ad-code-example" aria-label="Backward AD code example">Backward AD code example</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#why-is-differentiable-rendering-difficult" aria-label="Why is Differentiable Rendering Difficult?">Why is Differentiable Rendering Difficult?</a><ul>
+                        
+                <li>
+                    <a href="#the-illegal-swap" aria-label="The Illegal Swap">The Illegal Swap</a></li>
+                <li>
+                    <a href="#example-1-distributional-parameters" aria-label="Example 1: Distributional Parameters">Example 1: Distributional Parameters</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Inconsistent (Biased)">Inconsistent (Biased)</a></li>
+                <li>
+                    <a href="#" aria-label="Consistent (Unbiased)">Consistent (Unbiased)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#example-2-discontinuities-the-visibility-problem" aria-label="Example 2: Discontinuities (The Visibility Problem)">Example 2: Discontinuities (The Visibility Problem)</a><ul>
+                        
+                <li>
+                    <a href="#" aria-label="Value Estimator">Value Estimator</a></li>
+                <li>
+                    <a href="#" aria-label="Derivative Estimator">Derivative Estimator</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#mathematical-preliminaries" aria-label="Mathematical Preliminaries">Mathematical Preliminaries</a><ul>
+                        
+                <li>
+                    <a href="#the-leibniz-integral-rule-1d" aria-label="The Leibniz Integral Rule (1D)">The Leibniz Integral Rule (1D)</a><ul>
+                        
+                <li>
+                    <a href="#part-1-constant-boundaries" aria-label="Part 1: Constant Boundaries">Part 1: Constant Boundaries</a></li>
+                <li>
+                    <a href="#part-2-variable-limits" aria-label="Part 2: Variable Limits">Part 2: Variable Limits</a></li></ul>
+                </li>
+                <li>
+                    <a href="#generalization-reynolds-transport-theorem-3d" aria-label="Generalization: Reynolds Transport Theorem (3D)">Generalization: Reynolds Transport Theorem (3D)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#motivating-example-differentiating-visibility" aria-label="Motivating Example: Differentiating Visibility">Motivating Example: Differentiating Visibility</a><ul>
+                        
+                <li>
+                    <a href="#code-for-the-above-example" aria-label="Code for the above example">Code for the above example</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#physics-based-differentiable-rendering-theory" aria-label="Physics-Based Differentiable Rendering Theory">Physics-Based Differentiable Rendering Theory</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><span style="color:red;font-weight:700;font-size:1.05em">
+This post is a work in progress and may be updated or expanded soon!
+</span>
+<span style="color:red;font-weight:700;font-size:1.05em">
+This post is a work in progress and is a separation of Monte Carlo Path Tracing from the original *Monte Carlo Path Tracing* post. The content is still being written and may contain inaccuracies or incomplete sections. Please check back later for the finalized version!
+</span>
+<h1 id="introduction-to-differentiable-rendering">Introduction to Differentiable Rendering<a hidden class="anchor" aria-hidden="true" href="#introduction-to-differentiable-rendering">#</a></h1>
+<p>The idea behind differentiable rendering is to compute gradients of the rendering process with respect to scene parameters, such as geometry, materials, and lighting. Having access to these gradients can allow us to pose rendering as an optimization problem, where we can optimize those parameters to minimize some loss function (like MSE between the render and ground truth image). This is useful when we want to reconstruct or match a scene from images, optimize geometry for some task, etc.</p>
+<p>But before we look at <strong>Differentiable Rendering</strong>, let&rsquo;s look at methods to calculate derivatives of a function. I will assume prior knowledge of Physically Based Rendering (PBR) and the rendering equation, so I won&rsquo;t go into details of those topics here. I have a post for that if interested.</p>
+<h2 id="differentiation-methods">Differentiation Methods<a hidden class="anchor" aria-hidden="true" href="#differentiation-methods">#</a></h2>
+<h3 id="finite-differences-and-simultaneous-perturbation">Finite Differences and Simultaneous Perturbation<a hidden class="anchor" aria-hidden="true" href="#finite-differences-and-simultaneous-perturbation">#</a></h3>
+<p>The simple gradient computation method is finite differences (FD). It numerically approximates the derivative of a scalar function $f:\mathbb{R}^n \to \mathbb{R}$ at a point $x$ as:</p>
+$$
+f'(x) \approx \frac{f(x + h) - f(x)}{h}
+$$<p>where $h$ is a small step size. A commonly used variant is the central difference method, which provides a better approximation:</p>
+$$
+f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}
+$$<div class="paper-fig-row">
+  <div>
+    <figure id="fig-finite-difference" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/diff-rendering/svgtex/finite-difference.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
+          (a) Finite Difference
+        </figcaption></figure>
+    
+    <style>
+        .zoom-overlay {
+          position: fixed;
+          inset: 0;
+          backdrop-filter: blur(8px);
+          background: rgba(0, 0, 0, 0.45);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+          padding: 2rem;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.25s ease;
+        }
+        .zoom-overlay.active {
+          opacity: 1;
+          pointer-events: auto;
+        }
+    
+        .zoom-overlay img {
+          width: 90vw;           
+          height: 75vh;          
+          object-fit: contain;   
+          
+          border-radius: 12px;
+          box-shadow: 0 0 0px rgba(0,0,0,0.45);
+          transform: scale(0.9);
+          transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .zoom-overlay.active img {
+          transform: scale(1);
+        }
+      </style>
+    
+    <div id="zoom-overlay" class="zoom-overlay">
+    <button id="zoom-close-btn"
+      style="
+        position:absolute;
+        top:20px;
+        right:20px;
+        background:rgba(0,0,0,0.55);
+        border:none;
+        color:white;
+        font-size:1.8rem;
+        line-height:1;
+        padding:0.2em 0.5em;
+        border-radius:6px;
+        cursor:pointer;
+        backdrop-filter:blur(4px);
+        -webkit-backdrop-filter:blur(4px);
+        transition:background 0.2s;
+      "
+      aria-label="Close image"
+    >&times;</button>
+      <div style="text-align:center;">
+        <img id="zoom-img" src="">
+        
+        <div id="zoom-caption"
+             style="margin-top:1em;
+               font-size:1em;
+               color:white;
+               background:rgba(0,0,0,0.65);
+               padding:0.5em 1em;
+               border-radius:6px;
+               max-width:90%;
+               margin-left:auto;
+               margin-right:auto;">
+        </div>
+    
+      </div>
+    </div>
+    
+    <script>
+    const overlay = document.getElementById('zoom-overlay');
+    const zoomImg = document.getElementById('zoom-img');
+    const zoomCaption = document.getElementById('zoom-caption');
+    
+    document.addEventListener('click', e => {
+      const img = e.target.closest('.zoomable-image');
+      if (img) {
+        zoomImg.src = img.src;
+    
+        
+        const figure = img.closest('figure');
+        const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+    
+        zoomCaption.innerHTML = caption;
+        overlay.classList.add('active');
+      } else if (e.target === overlay || e.target === zoomImg) {
+        overlay.classList.remove('active');
+      }
+    });
+    
+    document.getElementById('zoom-close-btn').addEventListener('click', () => {
+      overlay.classList.remove('active');
+    });
+    
+    document.addEventListener('keydown', e => {
+      if (e.key === "Escape") {
+        overlay.classList.remove('active');
+      }
+    });
+    
+    </script>
+  </div>
+  <div>
+    <figure id="fig-central-difference" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/diff-rendering/svgtex/central-difference.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
+          (b) Central Difference
+        </figcaption></figure>
+    
+
+  </div>
+</div>
+<p>Finite differences are biased as they evaluate a blurred version of the true derivative:</p>
+$$
+\frac{f(x + h) - f(x - h)}{2h} = \frac{1}{2h} \int_{-h}^{h} f'(x + t) dt = \int_{-\infty}^{\infty} K(t - x)f'(t) dt
+$$<p>where $K(t)$ is a kernel function that represents the blurring effect of the finite difference approximation.
+This blurring can cause the finite difference method to produce inaccurate gradients, especially when the function $f$ has high-frequency components or is not smooth. This effect becomes negligible as $h$ approaches zero. By progressively reducing the step size $h$ one can construct an unbiased  gradient estimator, but this comes at significant cost of evaluating the FD estimator many times.</p>
+<p>It is straightforward to apply finite differences to a renderer by generating the image once with the original and once with the perturbed parameter. When using a Monte Carlo renderer, the evaluation of $f$ will be noisy. If $f(x + h)$ and $f(x)$ are evaluated independently, the FD estimator requires an enormous number of Monte Carlo samples to converge. The issue can easily be resolved by using the same random number generator seed for both evaluations. The correlation of the two estimators then causes a significant part of the variance to cancel out.</p>
+<p>Fundamentally, the main problem of the finite differences is that they cannot scale to functions with many input parameters. For inverse rendering, we would need to render the image twice for <em>each</em> parameter ($f(x_1, ..., x_i, ...)$ and $f(x_1, ..., x_i + h, ...)$). This is completely impractical for most real use cases. An alternative is <em>simultaneous perturbation</em>, which is a stochastic estimator that estimates high-dimensional gradients by simultaneously offsetting all parameters.</p>
+<p>For $f: \mathbb{R}^n \to \mathbb{R}$, the simultaneous perturbation method estimates the gradient as:
+</p>
+$$
+\partial f(x) \approx \frac{f(x + h \cdot \Delta) - f(x - h \cdot \Delta)}{2h} \cdot \Delta^{-1}
+$$<p>where $\Delta$ is a random perturbation vector with entries drawn from a symmetric distribution (e.g., Bernoulli or Gaussian). This method requires only two function evaluations, regardless of the dimensionality of the input space, making it much more efficient for high-dimensional problems. However, it can introduce additional variance into the gradient estimates, which may require careful tuning of the step size $h$ and the distribution of $\Delta$ to achieve good convergence, thus harming optimization performance. This and related <em>derivative-free</em> optimization methods cannot compete with gradient descent using the true infinitesimal gradient.</p>
+<h3 id="automatic-differentiation">Automatic Differentiation<a hidden class="anchor" aria-hidden="true" href="#automatic-differentiation">#</a></h3>
+<p>Instead of finite differences or analytic gradients, we typically want to use some form of <em>automatic differentiation</em> (AD). These methods compute gradients automatically by leveraging the chain rule to decompose the derivative of a computation into a Jacobian product:
+</p>
+$$
+\partial_x g(f(\mathbf{x})) = J_g(f(\mathbf{x})) \cdot J_f(\mathbf{x}) = \partial_f g(f(\mathbf{x})) \cdot \partial_x f(\mathbf{x})
+$$<p>where $J_g(f(\mathbf{x}))$ is the Jacobian of $g$ evaluated at $f(\mathbf{x})$, and $J_f(\mathbf{x})$ is the Jacobian of $f$ evaluated at $\mathbf{x}$.</p>
+<figure id="fig-auto-diff-graph" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/auto-diff.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
+      Example computation graph corresponding to the expression $x^2 \operatorname{sin}(2xy)$. The edge weights are the derivative of the operation applied to the input node.
+    </figcaption></figure>
+
+
+<p>This principle enables scalable derivative computation that supports an arbitrary number of input variables. Automatic differentiation was initially introduced between the 1950s and 1970s, and then later gained significant traction thanks to its application to training neural networks. The following overview of AD discusses the basic principles and outlines some of the main constraints posed by the inverse rendering problem. A nice implementation of this concept by Andrej Karpathy can be found on YouTube <a href="https://www.youtube.com/watch?v=VMj-3S1tku0">here</a></p>
+<p><strong>Computation graphs</strong>. The central idea is to think of a given computation as a graph of operations. The individual operations are nodes and the derivatives of individual steps are assigned to the graph&rsquo;s edges. For example, consider the following expression:</p>
+$$
+\begin{equation}
+x^2 \operatorname{sin}(2xy) \label{eq:forward-mode}
+\end{equation}
+$$<p>In a computer program, we could implement the evaluation of this expression as a sequence of steps:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">e</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">d</span>
+</span></span></code></pre></div><p>The corresponding computation graph is shown in <a href="#fig-auto-diff-graph">Fig. <span class="auto-fig-ref" data-target="fig-auto-diff-graph"></span></a>. The weight of the edge $a \rightarrow b$ between nodes $a$ and $b$ is the derivative $\partial b /\partial a$. An implementation of AD can compute these edge weights during the forward computation. The forward computation will henceforth also be referred to as <em>primal</em> computation. Many quantities used in the edge weights are redundant with the primal computations. The stored weights then allow to efficiently compute variable gradients. The stored graph of operations is sometimes also referred to as a <em>tape</em> or <em>Wengert tape</em>.</p>
+<h4 id="forward-mode-differentiation">Forward-mode differentiation<a hidden class="anchor" aria-hidden="true" href="#forward-mode-differentiation">#</a></h4>
+<p><strong>Forward-mode differentiation.</strong> A key choice in AD algorithms is the <em>directionality</em> of the gradient computation. The stored computation graph can be traversed either in forward or reverse direction. If the computation has a single differentiable input variable, but many outputs, it is efficient to evaluate gradients from the variable to the output in the <em>forward</em> direction. Mathematically, the differentiation turns into a series of Jacobian Vector Products (JVP). For a function $f: \mathbb{R}^n \to \mathbb{R}^m$, the forward-mode AD computes the output gradient $\partial_{\mathbf{y}}$ as the product of the Jacobian $\mathbf{J}_f$ with the input gradient $\partial_{\mathbf{x}}$:
+</p>
+$$
+\partial_{\mathbf{y}} = \mathbf{J}_f \cdot \partial_{\mathbf{x}}
+$$<p>Here and in the following, we use $\delta$ to denote the vectors that are inputs and output of the Jacobian products.</p>
+<p>We can apply forward-mode AD to differentiate the output of Equation $\eqref{eq:forward-mode}$ with respect to the input variable $x$. We initialize the variable $\delta x = 1$ and then traverse the graph in <a href="#fig-auto-diff-graph">Fig. <span class="auto-fig-ref" data-target="fig-auto-diff-graph"></span></a> from left to right, in each step multiplying the derivative value by the stored edge weights. The interactive simulation below traces this process step-by-step:</p>
+<script>
+  window.MathJax = window.MathJax || {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-5 .step-viewport{ position: relative; }
+  #step-slider-5 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-5 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-5 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-5 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-5 .mj-dim{ color: #9ca3af; }
+  #step-slider-5 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-5"
+     style="width: 100%;"
+     data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\nWe start with input values $x=2, y=3$ and compute the forward pass.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-01svg.svg&#34;,&#34;title&#34;:&#34;Initialize Primal&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\nTo compute $\\frac{\\partial}{\\partial x}$, we seed the input gradient $\\nabla_x = 1.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-02svg.svg&#34;,&#34;title&#34;:&#34;Seed Gradient $\\nabla_x$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_x(2x) = \\nabla_x \\cdot 2 = 2.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-03svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_x(2x)$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_x(2xy) = \\nabla_x(2x) \\cdot y = 2 \\cdot 3 = 6.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-04svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_x(2xy)$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_x(\\sin) = \\nabla_x(2xy) \\cdot \\cos(2xy) = 6 \\cdot 0.84 = 5.06$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-05svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_x(\\sin(2xy))$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_x(x^2) = \\nabla_x \\cdot 2x = 1 \\cdot 4 = 4.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-06svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_x(x^2)$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_x(f) = \\nabla_x(x^2)\\sin &#43; x^2\\nabla_x(\\sin) = 4(-0.54) &#43; 4(5.06) = 18.11$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-07svg.svg&#34;,&#34;title&#34;:&#34;Final Output Gradient&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\nNow we repeat the process to find the gradient with respect to $y$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-08svg.svg&#34;,&#34;title&#34;:&#34;Reset for $\\nabla_y$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\nSet $\\nabla_y = 1.0$ and $\\nabla_x = 0.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-09svg.svg&#34;,&#34;title&#34;:&#34;Seed Gradient $\\nabla_y$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_y(2x) = 0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-10svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_y(2x)$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_y(2xy) = \\nabla_y(2x) \\cdot y &#43; 2x \\cdot \\nabla_y = 0 \\cdot 3 &#43; 4 \\cdot 1 = 4.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-11svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_y(2xy)$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_y(\\sin) = \\nabla_y(2xy) \\cdot \\cos(2xy) = 4 \\cdot 0.84 = 3.38$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-12svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_y(\\sin(2xy))$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_y(x^2) = 0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-13svg.svg&#34;,&#34;title&#34;:&#34;Compute $\\nabla_y(x^2)$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\nabla_y(f) = \\nabla_y(x^2)\\sin &#43; x^2\\nabla_y(\\sin) = 0 &#43; 4(3.38) = 13.50$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/forward_ad/step-14svg.svg&#34;,&#34;title&#34;:&#34;Final Output Gradient $\\nabla_y$&#34;}]'>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-5', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-5', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-5" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-01svg.svg" alt="Initialize Primal">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-02svg.svg" alt="Seed Gradient $\nabla_x$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-03svg.svg" alt="Compute $\nabla_x(2x)$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-04svg.svg" alt="Compute $\nabla_x(2xy)$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-05svg.svg" alt="Compute $\nabla_x(\sin(2xy))$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-06svg.svg" alt="Compute $\nabla_x(x^2)$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-07svg.svg" alt="Final Output Gradient">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-08svg.svg" alt="Reset for $\nabla_y$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-09svg.svg" alt="Seed Gradient $\nabla_y$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-10svg.svg" alt="Compute $\nabla_y(2x)$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-11svg.svg" alt="Compute $\nabla_y(2xy)$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-12svg.svg" alt="Compute $\nabla_y(\sin(2xy))$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-13svg.svg" alt="Compute $\nabla_y(x^2)$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/forward_ad/step-14svg.svg" alt="Final Output Gradient $\nabla_y$">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-active-label">Step 1 / 14</div>
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-5');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
+<p>In the end, the variable $\delta e$ contains the desired gradient $\partial e / \partial x$. Using the computation graph, we can differentiate an arbitrary sequence of elementary operations, without explicitly computing and storing the full Jacobian matrix $\mathbf{J}_f$. The computational cost of forward-mode AD is proportional to the number of input variables, which makes it efficient for functions with a small number of inputs and many outputs.</p>
+<p>Forward-mode differentiation can be formalized by using <em>dual numbers</em>. Similar to a complex number, a dual number $a + \epsilon b$ consists of a real part $a$ and a dual part $b$, where $\epsilon^2 = 0$. Hence, the product of two dual numbers is given by:
+</p>
+$$
+(a + \epsilon b)(c + \epsilon d) = ac + \epsilon (ad + bc).
+$$<p>
+For a function $f: \mathbb{R} \to \mathbb{R}$, we can use a Taylor expansion around $a$ to see that $f(a + \epsilon b) = f(a) + \epsilon b f'(a)$. All the higher-order terms contain a factor of $\epsilon^2$ and hence vanish. This means that the dual part of the result contains the desired derivative $b f'(a)$. By using dual numbers as inputs to a function, we can compute the function&rsquo;s output and its derivative simultaneously. This is the basis of forward-mode AD.</p>
+<p>The main issue with forward-mode differentiation is that the entire derivative computation needs to be carried out separately for <em>each</em> input variable. Similar to finite differences, this does not scale to the large number of input parameters for inverse rendering.</p>
+<h4 id="forward-ad-code-example">Forward AD code example<a hidden class="anchor" aria-hidden="true" href="#forward-ad-code-example">#</a></h4>
+<p>Here is the code for the above example:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">math</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Dual</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">dual</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">=</span> <span class="n">real</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">=</span> <span class="n">dual</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Handle addition with a normal scalar number</span>
+</span></span><span class="line"><span class="cl">        <span class="n">other_real</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">)</span> <span class="k">else</span> <span class="n">other</span>
+</span></span><span class="line"><span class="cl">        <span class="n">other_dual</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">dual</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">other_real</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">+</span> <span class="n">other_dual</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Handle multiplication with a normal scalar number</span>
+</span></span><span class="line"><span class="cl">        <span class="n">other_real</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">real</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">)</span> <span class="k">else</span> <span class="n">other</span>
+</span></span><span class="line"><span class="cl">        <span class="n">other_dual</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">dual</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Dual</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># (a + eb) * (c + ed) = (ac) + e(ad + bc)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">other_real</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">other_dual</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="n">other_real</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">dual</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Allows us to do 2 * Dual(...)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&#34;Dual(val=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">real</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, grad=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dual</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># We define a custom sine function using the dual number Taylor expansion:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># sin(a + eb) = sin(a) + eb * cos(a)</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">dual_sin</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Dual</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Dual</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">dual</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">real</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">Dual</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">dual</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="c1"># Seed the derivative here!</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">Dual</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">dual</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The forward pass</span>
+</span></span><span class="line"><span class="cl"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">dual_sin</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">e</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">c</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Result:&#34;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Output: Result: Dual(val=-2.1463, grad=18.1062)</span>
+</span></span></code></pre></div><h4 id="reverse-mode-differentiation">Reverse-mode differentiation<a hidden class="anchor" aria-hidden="true" href="#reverse-mode-differentiation">#</a></h4>
+<p><strong>Reverse-mode differentiation.</strong> The solution to the scaling limitation of forward-mode is to traverse the computation graph in reverse order. Given a sequence of operations, reverse-mode AD starts by evaluating the chain rule for the last operation and proceeds toward the inputs. Mathematically, this evaluates <strong>vector-Jacobian products (VJP)</strong> from the output end of the computation. For a function $f$, it evaluates:
+</p>
+$$
+\delta \mathbf{x} = \delta \mathbf{y}^T \mathbf{J}_f
+$$<p>
+The primary advantage is that the gradient computation no longer needs to be duplicated for each input variable. We can simultaneously compute gradients with respect to both $x$ and $y$ at almost no extra cost. This evaluation order is identical to the <strong>backpropagation</strong> algorithm used in deep learning.</p>
+<p>While conceptually simple, reverse-mode AD is generally more difficult to implement than forward-mode. Because it propagates gradients in the opposite order of the primal program, it requires storing the program state or edge weights of the computation graph in memory (often called a <em>Wengert tape</em>).</p>
+<p>A naïve implementation that doesn&rsquo;t store weights would require re-running the primal computation for every node, leading to quadratic complexity. Conversely, storing the entire graph can easily exceed system memory for complex simulations. The standard remedy is <strong>checkpointing</strong>, where the program state is only stored at a sparse set of points. Derivative terms are then recomputed locally between these checkpoints during the backward traversal. As we will see, even checkpointing is often insufficient for physically-based differentiable rendering, requiring more specialized solutions.</p>
+<script>
+  window.MathJax = window.MathJax || {
+    loader: { load: ['[tex]/html'] },
+    tex: {
+      packages: { '[+]': ['html'] },
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+
+<style>
+   
+  #step-slider-6 .step-viewport{ position: relative; }
+  #step-slider-6 .step-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+  }
+  #step-slider-6 .step-nav.btn-prev{ left: 12px; }
+  #step-slider-6 .step-nav.btn-next{ right: 12px; }
+
+   
+   
+    
+
+   
+  #step-slider-6 .mj-current{
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249,115,22,0.12);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  #step-slider-6 .mj-dim{ color: #9ca3af; }
+  #step-slider-6 .eq-stack{ display: grid; gap: 10px; }
+</style>
+
+<div class="step-slider-container no-anim"
+     id="step-slider-6"
+     style="width: 100%;"
+     data-slides='[{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\nWe first compute the primal result $e = -2.15$ in a forward pass.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/backward_ad/step-01svg.svg&#34;,&#34;title&#34;:&#34;Primal Result&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\nWe start by setting the adjoint of the output $\\bar{e} = 1.0$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/backward_ad/step-02svg.svg&#34;,&#34;title&#34;:&#34;Initialize Adjoint&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\bar{\\sin} = \\bar{e} \\cdot x^2 = 4.0$, and $\\bar{x^2} = \\bar{e} \\cdot \\sin = -0.54$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/backward_ad/step-03svg.svg&#34;,&#34;title&#34;:&#34;Backprop to $\\sin$ and $x^2$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\bar{2xy} = \\bar{\\sin} \\cdot \\cos(2xy) = 4 \\cdot 0.84 = 3.38$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/backward_ad/step-04svg.svg&#34;,&#34;title&#34;:&#34;Backprop to $2xy$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\bar{2x} = \\bar{2xy} \\cdot y = 10.08$, and $\\bar{y} = \\bar{2xy} \\cdot 2x = 13.50$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/backward_ad/step-05svg.svg&#34;,&#34;title&#34;:&#34;Backprop to $2x$ and $y$&#34;},{&#34;description&#34;:&#34;\u003cdiv class=\&#34;eq-stack\&#34;\u003e\n$\\bar{x} = \\bar{x^2} \\cdot 2x &#43; \\bar{2x} \\cdot 2 = (-0.54 \\cdot 4) &#43; (10.08 \\cdot 2) = 18.11$.\n\u003c/div\u003e\n&#34;,&#34;image&#34;:&#34;../../images/diff-rendering/svgtex/backward_ad/step-06svg.svg&#34;,&#34;title&#34;:&#34;Final Gradient for $x$&#34;}]'>
+
+  <div class="step-viewport">
+    
+    <button class="step-nav btn-prev" onclick="moveSlide('step-slider-6', -1)" disabled>❮</button>
+    <button class="step-nav btn-next" onclick="moveSlide('step-slider-6', 1)">❯</button>
+
+    <div class="step-wrapper" id="wrapper-step-slider-6" style="--current-index: 0;">
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/backward_ad/step-01svg.svg" alt="Primal Result">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/backward_ad/step-02svg.svg" alt="Initialize Adjoint">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/backward_ad/step-03svg.svg" alt="Backprop to $\sin$ and $x^2$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/backward_ad/step-04svg.svg" alt="Backprop to $2xy$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/backward_ad/step-05svg.svg" alt="Backprop to $2x$ and $y$">
+      </div>
+      
+      <div class="step-slide">
+        <img src="../../images/diff-rendering/svgtex/backward_ad/step-06svg.svg" alt="Final Gradient for $x$">
+      </div>
+      
+    </div>
+  </div>
+
+  
+  <div class="step-footer">
+    <div class="step-active-label">Step 1 / 6</div>
+    <div class="step-title"></div>
+    <div class="step-description"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  
+  
+  
+  window.__stepSliderLibs = window.__stepSliderLibs || {
+    dompurifyPromise: null,
+    mathjaxPromise: null,
+    mathjaxTypesetChain: Promise.resolve(),
+    globalsInstalled: false
+  };
+
+  function loadScriptOnce(globalVarName, src) {
+    return new Promise((resolve, reject) => {
+      if (globalVarName && window[globalVarName]) return resolve(true);
+
+      const existing = Array.from(document.scripts).find(s => s.src === src);
+      if (existing) {
+        let tries = 0;
+        const t = setInterval(() => {
+          tries++;
+          if (!globalVarName || window[globalVarName]) { clearInterval(t); resolve(true); }
+          else if (tries > 50) { clearInterval(t); resolve(false); }
+        }, 100);
+        return;
+      }
+
+      const s = document.createElement('script');
+      s.src = src;
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  
+  window.__stepSliderLibs.dompurifyPromise ||= loadScriptOnce(
+    'DOMPurify',
+    'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
+  ).catch(() => false);
+
+  
+  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    
+    window.MathJax = window.MathJax || {
+      loader: { load: ['[tex]/html'] },
+      tex: {
+        packages: { '[+]': ['html'] },
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']]
+      }
+    };
+
+    const ok = await loadScriptOnce(
+      'MathJax',
+      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+    ).catch(() => false);
+
+    if (ok && window.MathJax?.startup?.promise) {
+      try { await MathJax.startup.promise; } catch (e) {}
+    }
+    return !!window.MathJax;
+  })();
+
+  
+  
+  
+  if (!window.__stepSliderLibs.globalsInstalled) {
+    window.__stepSliderLibs.globalsInstalled = true;
+
+    window.detectSliderTheme = function detectSliderTheme() {
+      try {
+        const parentBody = window.parent.document.body;
+        const style = window.getComputedStyle(parentBody);
+        const bgColor = style.backgroundColor;
+        const rgb = bgColor.match(/\d+/g);
+
+        if (rgb) {
+          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
+          const isDark = brightness < 128;
+          const root = document.documentElement;
+
+          if (isDark) {
+            root.style.setProperty('--bg', '#1a1a1a');
+            root.style.setProperty('--text', '#e5e7eb');
+            root.style.setProperty('--text-sub', '#9ca3af');
+            root.style.setProperty('--axis', '#525252');
+          } else {
+            root.style.setProperty('--bg', '#ffffff');
+            root.style.setProperty('--text', '#374151');
+            root.style.setProperty('--text-sub', '#6b7280');
+            root.style.setProperty('--axis', '#d1d5db');
+          }
+        }
+      } catch (e) {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', '#ffffff');
+        root.style.setProperty('--text', '#374151');
+        root.style.setProperty('--axis', '#d1d5db');
+      }
+    };
+
+    setInterval(window.detectSliderTheme, 1000);
+    window.detectSliderTheme();
+
+    window.moveSlide = function moveSlide(containerId, direction) {
+      const container = document.getElementById(containerId);
+      const wrapper = document.getElementById('wrapper-' + containerId);
+      const slides = JSON.parse(container.dataset.slides);
+      let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
+
+      currentIndex += direction;
+      if (currentIndex >= 0 && currentIndex < slides.length) {
+        wrapper.style.setProperty('--current-index', currentIndex);
+        window.updateSliderUI(container, currentIndex);
+      }
+    };
+
+    window.updateSliderUI = async function updateSliderUI(container, index) {
+      const slides = JSON.parse(container.dataset.slides);
+      const data = slides[index] || {};
+
+      const titleEl = container.querySelector('.step-title');
+      const descEl  = container.querySelector('.step-description');
+      const labelEl = container.querySelector('.step-active-label');
+
+      titleEl.style.opacity = 0;
+      descEl.style.opacity = 0;
+
+      setTimeout(async () => {
+        const rawTitle = data.title || "";
+        const rawDesc  = data.description || "";
+
+        let safeTitle = rawTitle;
+        let safeDesc  = rawDesc;
+
+        
+        try {
+          await window.__stepSliderLibs.dompurifyPromise;
+          if (window.DOMPurify) {
+            const cfg = {
+              ALLOWED_TAGS: [
+                'div','span','br',
+                'b','strong','i','em','u',
+                'sub','sup','code','kbd','mark','small'
+              ],
+              ALLOWED_ATTR: ['style','class']
+            };
+            safeTitle = DOMPurify.sanitize(rawTitle, cfg);
+            safeDesc  = DOMPurify.sanitize(rawDesc, cfg);
+          }
+        } catch (e) {}
+
+        
+        titleEl.innerHTML = safeTitle;
+        descEl.innerHTML  = safeDesc;
+
+        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        container.querySelector('.btn-prev').disabled = (index === 0);
+        container.querySelector('.btn-next').disabled = (index === slides.length - 1);
+
+        titleEl.style.opacity = 1;
+        descEl.style.opacity = 1;
+
+        
+        try {
+          const ok = await window.__stepSliderLibs.mathjaxPromise;
+          if (ok && window.MathJax?.typesetPromise) {
+            window.__stepSliderLibs.mathjaxTypesetChain =
+              window.__stepSliderLibs.mathjaxTypesetChain.then(() =>
+                MathJax.typesetPromise([titleEl, descEl])
+              );
+            await window.__stepSliderLibs.mathjaxTypesetChain;
+          }
+        } catch (e) {}
+      }, 200);
+    };
+  }
+
+  
+  window.addEventListener('DOMContentLoaded', () => {
+    const c = document.getElementById('step-slider-6');
+    if (c) window.updateSliderUI(c, 0);
+  });
+})();
+</script>
+
+<h4 id="backward-ad-code-example">Backward AD code example<a hidden class="anchor" aria-hidden="true" href="#backward-ad-code-example">#</a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">math</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Var</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">_children</span><span class="o">=</span><span class="p">()):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Store the edges of the DAG</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_prev</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">_children</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_backward</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">other</span> <span class="o">=</span> <span class="n">other</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Var</span><span class="p">)</span> <span class="k">else</span> <span class="n">Var</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Pass (self, other) as children to the new output node</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">def</span> <span class="nf">_backward</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">other</span><span class="o">.</span><span class="n">val</span> <span class="o">*</span> <span class="n">out</span><span class="o">.</span><span class="n">grad</span>
+</span></span><span class="line"><span class="cl">            <span class="n">other</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">*</span> <span class="n">out</span><span class="o">.</span><span class="n">grad</span>
+</span></span><span class="line"><span class="cl">        <span class="n">out</span><span class="o">.</span><span class="n">_backward</span> <span class="o">=</span> <span class="n">_backward</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">out</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span> <span class="o">*</span> <span class="n">other</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 1. Topological sort using DFS</span>
+</span></span><span class="line"><span class="cl">        <span class="n">topo</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="k">def</span> <span class="nf">build_topo</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">_prev</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">build_topo</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">topo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">        <span class="n">build_topo</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 2. Seed the output gradient</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="mf">1.0</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1"># 3. Apply chain rule to the sorted graph in reverse</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">topo</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">node</span><span class="o">.</span><span class="n">_backward</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&#34;Var(val=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, grad=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">grad</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">)&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">var_sin</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># Pass (x,) as the child</span>
+</span></span><span class="line"><span class="cl">    <span class="n">out</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">val</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,))</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_backward</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="n">x</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">val</span><span class="p">)</span> <span class="o">*</span> <span class="n">out</span><span class="o">.</span><span class="n">grad</span>
+</span></span><span class="line"><span class="cl">    <span class="n">out</span><span class="o">.</span><span class="n">_backward</span> <span class="o">=</span> <span class="n">_backward</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">out</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Forward pass builds the DAG automatically in the background</span>
+</span></span><span class="line"><span class="cl"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">y</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">var_sin</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</span></span><span class="line"><span class="cl"><span class="n">e</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">c</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># A single call handles the DFS and the entire backward pass</span>
+</span></span><span class="line"><span class="cl"><span class="n">e</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Result e:&#34;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Grad x:&#34;</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Grad y:&#34;</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Output:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Result e: Var(val=-2.1463, grad=1.0000)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Grad x: Var(val=2.0000, grad=18.1062)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Grad y: Var(val=3.0000, grad=13.5016)</span>
+</span></span></code></pre></div><h2 id="why-is-differentiable-rendering-difficult">Why is Differentiable Rendering Difficult?<a hidden class="anchor" aria-hidden="true" href="#why-is-differentiable-rendering-difficult">#</a></h2>
+<p>While Automatic Differentiation (AD) is a powerful tool for optimizing mathematical functions, it faces a fundamental challenge when applied to rendering. In many cases, <strong>symbolically differentiating a Monte Carlo estimator path tracer does not always work.</strong></p>
+<p>As stated in the SIGGRAPH 2020 course notes on Physically Based Differentiable Rendering:</p>
+<blockquote>
+<p><em>&ldquo;The problem arises when we try to differentiate an integral whose integrand is discontinuous, or when the sampling process depends on the parameters we are optimizing.&rdquo;</em></p></blockquote>
+<h3 id="the-illegal-swap">The Illegal Swap<a hidden class="anchor" aria-hidden="true" href="#the-illegal-swap">#</a></h3>
+<p>The core of the issue lies in the interchange of the derivative and the integral. In calculus, we often assume that:
+</p>
+$$\frac{d}{dp}\int f(x,p)\,dx = \int \frac{\partial f}{\partial p}(x,p)\,dx$$<p>However, this &ldquo;Leibniz rule&rdquo; (switching the order of differentiation and integration) is only valid when $f$ is <strong>continuous</strong> with respect to $p$. In rendering, this condition is frequently violated due to <strong>visibility</strong>—when an object moves, it creates a discontinuity (an edge) where the color jumps from one value to another.</p>
+<h3 id="example-1-distributional-parameters">Example 1: Distributional Parameters<a hidden class="anchor" aria-hidden="true" href="#example-1-distributional-parameters">#</a></h3>
+<p>A common pitfall in differentiable rendering is the inconsistent treatment of the sampling process and the PDF differentiation. To illustrate this, consider estimating the derivative of an integral over an infinite domain.</p>
+<div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; align-items: start; margin: 2rem 0; border: 1px solid var(--border); border-radius: 12px; background: var(--code-bg); padding: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15); overflow: hidden;">
+<div>
+<h4 style="margin-top: 0; color: #ff6b6b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">Inconsistent (Biased)</h4>
+<p style="font-size: 0.82rem; margin: 0 0 0.5rem;">Estimate \(\displaystyle\frac{d}{d\lambda} \int_0^\infty f(\lambda, x)\, dx = \int_0^\infty \frac{\partial f}{\partial \lambda}(\lambda, x)\, dx\)</p>
+<p style="font-size: 0.82rem; margin: 0.75rem 0 0.4rem;">(Single-sample) Monte Carlo estimator:</p>
+<ul style="font-size: 0.82rem; margin: 0; padding-left: 1.2rem;">
+<li>Draw \(x \sim \text{Exp}[\lambda]\) &nbsp;<span style="color: #888; font-size: 0.78rem;">\(x\) has zero gradient</span></li>
+<li>\(f' \leftarrow \frac{\partial f}{\partial \lambda}(\lambda, x)\)</li>
+<li>\(p \leftarrow \lambda e^{-\lambda x}\) &nbsp;<span style="color: #888; font-size: 0.78rem;">\(p\) is NOT differentiated</span></li>
+<li><strong>Return \(f'/p\)</strong></li>
+</ul>
+</div>
+<div style="width: 1px; background: var(--border); align-self: stretch;"></div>
+<div>
+<h4 style="margin-top: 0; color: var(--secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">Consistent (Unbiased)</h4>
+<p style="font-size: 0.82rem; margin: 0 0 0.5rem;">Estimate \(\displaystyle\frac{d}{d\lambda} \int_0^\infty f(\lambda, x)\, dx = \int_0^1 \frac{\partial}{\partial \lambda} \frac{f(\lambda, x)}{\lambda \xi}\, d\xi\)</p>
+<p style="font-size: 0.82rem; margin: 0.75rem 0 0.4rem;">(Single-sample) Monte Carlo estimator:</p>
+<ul style="font-size: 0.82rem; margin: 0; padding-left: 1.2rem;">
+<li>Draw \(\xi \sim U[0,1)\)</li>
+<li>\(x \leftarrow -\log(\xi)/\lambda\) &nbsp;<span style="color: #888; font-size: 0.78rem;">\(x\) has nonzero gradient</span></li>
+<li>\(f \leftarrow f(\lambda, x)\)</li>
+<li>\(p \leftarrow \lambda e^{-\lambda x}\) &nbsp;<span style="color: #888; font-size: 0.78rem;"># \(p = \lambda\xi\)</span></li>
+<li><strong>Return \(\partial(f/p)/\partial\lambda\)</strong> &nbsp;<span style="color: #888; font-size: 0.78rem;">\(f\) and \(p\) both differentiated</span></li>
+</ul>
+</div>
+</div>
+<div style="margin: 0 auto 2rem; padding: 0.75rem 1.25rem; border: 2px solid var(--border); border-radius: 8px; text-align: center; max-width: 460px; font-size: 0.9rem;">
+Whether to differentiate the <em>sampling</em> and the <em>pdf</em> should be <strong>consistent</strong>!
+</div>
+<p><strong>What goes wrong in the biased case?</strong> Think of $\lambda$ as controlling the shape of the exponential distribution we sample from. When we draw $x \sim \text{Exp}[\lambda]$ and then ask &ldquo;how does $f$ change with $\lambda$?&rdquo;, we are only asking how the <em>value</em> of $f$ changes — completely ignoring the fact that the <em>sample location</em> $x$ itself shifts when $\lambda$ changes. It is like measuring how your shadow changes in length while pretending your body did not move. The consistent approach fixes this by reparameterizing: instead of sampling $x$ directly, we draw a raw uniform $\xi$ and transform it into $x = -\log(\xi)/\lambda$. Now $x$ explicitly depends on $\lambda$, so AD correctly accounts for both how $f$ changes <em>and</em> how the sample location moves.</p>
+<hr>
+<h3 id="example-2-discontinuities-the-visibility-problem">Example 2: Discontinuities (The Visibility Problem)<a hidden class="anchor" aria-hidden="true" href="#example-2-discontinuities-the-visibility-problem">#</a></h3>
+<p>For discontinuous integrands, the fundamental challenge is that the derivative and the integral cannot simply be swapped. Standard Monte Carlo sampling &ldquo;misses&rdquo; the boundary contribution entirely.</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; align-items: start; margin: 2rem 0; border: 1px solid var(--border); border-radius: 12px; background: var(--code-bg); padding: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15); overflow: hidden;">
+<div>
+<h4 style="margin-top: 0; color: var(--secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">Value Estimator</h4>
+<p style="font-size: 0.82rem; margin: 0 0 0.5rem;">Estimate \(\displaystyle\int_0^1 (x < p\ ?\ 1 : 0.5)\ dx,\quad 0 < p < 1\)</p>
+<p style="font-size: 0.82rem; margin: 0.5rem 0 0.4rem;">(Single-sample) Monte Carlo estimator:</p>
+<ul style="font-size: 0.82rem; margin: 0; padding-left: 1.2rem;">
+<li>Draw \(X \sim U[0, 1)\)</li>
+<li><strong>Return</strong> \(X < p\ ?\ 1 : 0.5\)</li>
+</ul>
+<div style="margin-top: 1rem; padding: 0.75rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+<strong style="display: block; margin-bottom: 0.3rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08rem;">Ground-truth:</strong>
+<p style="font-size: 0.82rem; margin: 0;">\(\displaystyle\int_0^1 (x < p\ ?\ 1 : 0.5)\ dx = \int_0^p dx + \int_p^1 0.5\, dx = \frac{1+p}{2}\)</p>
+</div>
+</div>
+<div>
+<h4 style="margin-top: 0; color: #ff6b6b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.75rem;">Derivative Estimator</h4>
+<p style="font-size: 0.82rem; margin: 0 0 0.5rem;">Estimate \(\displaystyle\frac{d}{dp}\int_0^1 (x < p\ ?\ 1 : 0.5)\ dx\)</p>
+<p style="font-size: 0.82rem; margin: 0.5rem 0 0.4rem;">(Single-sample) Monte Carlo estimator:</p>
+<ul style="font-size: 0.82rem; margin: 0; padding-left: 1.2rem;">
+<li>Draw \(X \sim U[0, 1)\)</li>
+<li><strong>Return</strong> \(\frac{d}{dp}(X < p\ ?\ 1 : 0.5)\) &nbsp;<span style="color: #ff6b6b;">Zero! (constant)</span></li>
+</ul>
+<div style="margin-top: 1rem; padding: 0.75rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+<strong style="display: block; margin-bottom: 0.3rem; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08rem;">Ground-truth:</strong>
+<p style="font-size: 0.82rem; margin: 0;">\(\displaystyle\frac{d}{dp} \int_0^1 (x < p\ ?\ 1 : 0.5)\ dx = \frac{d}{dp}\frac{1+p}{2} = \frac{1}{2}\)</p>
+</div>
+</div>
+</div>
+<p><strong>What goes wrong?</strong> The function $f(x, p) = (x < p\ ?\ 1 : 0.5)$ is a step function — constant everywhere <em>except</em> at the single point $x = p$, where it jumps. Any random sample $X$ almost surely lands away from that jump, where the derivative with respect to $p$ is exactly zero. The gradient information lives entirely at the moving boundary $x = p$, which has probability zero of being hit. So our estimator confidently returns zero — every single time — while the true answer is $1/2$.</p>
+<p>This is precisely the visibility problem in rendering: when a surface edge moves, the boundary between lit and shadowed regions shifts, but standard path tracing samples almost never land exactly on an edge. The gradient signal is invisible to naïve AD.</p>
+<h2 id="mathematical-preliminaries">Mathematical Preliminaries<a hidden class="anchor" aria-hidden="true" href="#mathematical-preliminaries">#</a></h2>
+<h3 id="the-leibniz-integral-rule-1d">The Leibniz Integral Rule (1D)<a hidden class="anchor" aria-hidden="true" href="#the-leibniz-integral-rule-1d">#</a></h3>
+<p>The Leibniz rule provides the formula for differentiating an integral whose limits, as well as its integrand, depend on a parameter $p$. For a 1D integral of the form $I(p) = \int_{a(p)}^{b(p)} f(x, p) dx$, the derivative is:</p>
+$$\frac{d}{dp} \int_{a(p)}^{b(p)} f(x, p) dx = \underbrace{{\color{#00d1b2}\int_{a(p)}^{b(p)} \frac{\partial f}{\partial p}(x, p) dx}}_{\text{Interior Term}} + \underbrace{{\color{#4facfe}f(b(p), p) \frac{db}{dp}} - {\color{#ff6b6b}f(a(p), p) \frac{da}{dp}}}_{\text{Boundary Term}}$$<figure id="fig-leibniz-visual" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/leibniz-visual.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
+      Visual decomposition of the Leibniz Integral Rule into interior and boundary components.
+    </figcaption></figure>
+
+
+<blockquote>
+<details>
+<summary style="cursor: pointer;">Proof</summary>
+<p>We can derive the general Leibniz rule in two steps: first by assuming constant boundaries, and then generalizing to variable boundaries using the multivariable chain rule.</p>
+<h4 id="part-1-constant-boundaries">Part 1: Constant Boundaries<a hidden class="anchor" aria-hidden="true" href="#part-1-constant-boundaries">#</a></h4>
+<p>Consider an integral where the limits $a$ and $b$ are constant. We want to find the derivative:
+</p>
+$$\frac{d}{dt} \int_a^b f(t, x) dx$$<figure id="fig-leibniz-constant" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/leibniz-constant.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
+      Visualization of the integral changing with variable $t$ with constant integration limits $a$ and $b$.
+    </figcaption></figure>
+
+
+<p><strong>Step 1: Expand using the Taylor series</strong>
+We approximate $f(t+\Delta t, x)$ as $f(t, x) + {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t}$:
+</p>
+$$\frac{\int_a^b \left( f(t, x) + {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t} \right) dx - \int_a^b f(t, x) dx}{\Delta t}$$<p>
+<figure id="fig-leibniz-constant-components" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/leibniz-constant-components.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
+      The difference in the area by evaluating $f(t+\Delta t, x) - f(t, x)$ across the integration interval with change $\Delta t$.
+    </figcaption></figure>
+
+
+<strong>Step 2: Cancel the original function terms</strong>
+The &ldquo;old&rdquo; area $\int f dx$ cancels out with the negative term:
+</p>
+$$\frac{\cancel{\int_a^b f(t, x) dx} + \int_a^b {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t} dx - \cancel{\int_a^b f(t, x) dx}}{\Delta t}$$<p><strong>Step 3: Cancel the time step $\Delta t$</strong>
+The $\Delta t$ in the numerator and denominator eliminate each other:
+</p>
+$$\frac{\int_a^b {\color{#00d1b2}\frac{\partial f}{\partial t}\cancel{\Delta t}} dx}{\cancel{\Delta t}} \implies \int_a^b {\color{#00d1b2}\frac{\partial f}{\partial t}} dx$$<p><strong>Result (Part 1):</strong>
+For constant boundaries, the derivative of the integral is simply the integral of the derivative:
+</p>
+$$\frac{d}{dt} \int_a^b f(t, x) dx = \int_a^b {\color{#00d1b2}\frac{\partial f}{\partial t}} dx$$<h4 id="part-2-variable-limits">Part 2: Variable Limits<a hidden class="anchor" aria-hidden="true" href="#part-2-variable-limits">#</a></h4>
+<p>Now consider the general case where boundaries depend on time: $I(t) = \int_{a(t)}^{b(t)} f(t, x) dx$.
+<figure id="fig-leibniz-dependent-proof" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/leibniz-dependent.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
+      Visualization of the area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$
+    </figcaption></figure>
+
+</p>
+<p><strong>Step 1: Decompose the integration domain</strong>
+We split the &ldquo;new&rdquo; integral $\int_{a+da}^{b+db}$ into the interior $[a,b]$ and the boundary changes:
+</p>
+$$\frac{{\color{#00d1b2}\int_a^b (f + \frac{\partial f}{\partial t}\Delta t) dx} - {\color{#ff6b6b}\int_a^{a + a'\Delta t} (f + \frac{\partial f}{\partial t}\Delta t) dx} + {\color{#4facfe}\int_b^{b + b'\Delta t} (f + \frac{\partial f}{\partial t}\Delta t) dx} - \int_a^b f dx}{\Delta t}$$<p>
+<figure id="fig-leibniz-dependent-components" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/leibniz-dependent-components.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
+      The difference in area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$.
+    </figcaption></figure>
+
+</p>
+<p><strong>Step 2: Discard higher-order terms ($O(\Delta t^2)$)</strong>
+Terms like $\int \frac{\partial f}{\partial t} \Delta t dx$ in the boundary segments (which have width $\approx \Delta t$) become $\Delta t^2$ and vanish:
+</p>
+$$\frac{\int_a^b f dx + {\color{#00d1b2}\int_a^b \frac{\partial f}{\partial t}\Delta t dx} - {\color{#ff6b6b}\int_a^{a + a'\Delta t} f dx} + {\color{#4facfe}\int_b^{b + b'\Delta t} f dx} - \int_a^b f dx}{\Delta t}$$<p><strong>Step 3: Cancel original function and evaluate boundaries</strong>
+Using the Fundamental Theorem of Calculus (or Mean Value Theorem), the boundary integrals become $f(t, a) a'\Delta t$ and $f(t, b) b'\Delta t$:
+</p>
+$$\frac{\cancel{\int_a^b f dx} + {\color{#00d1b2}\int_a^b \frac{\partial f}{\partial t}\Delta t dx} - {\color{#ff6b6b}f(t, a)a'\Delta t} + {\color{#4facfe}f(t, b)b'\Delta t} - \cancel{\int_a^b f dx}}{\Delta t}$$<p><strong>Step 4: Final Cancellation of $\Delta t$</strong>
+</p>
+$$\frac{{\color{#00d1b2}\int_a^b \frac{\partial f}{\partial t}\cancel{\Delta t} dx} - {\color{#ff6b6b}f(t, a)a'\cancel{\Delta t}} + {\color{#4facfe}f(t, b)b'\cancel{\Delta t}}}{\cancel{\Delta t}}$$<p><strong>Result (Part 2):</strong>
+For variable boundaries, the derivative of the integral includes the boundary movement terms:
+</p>
+$$\frac{dI}{dt} = {\color{#00d1b2}\int_a^b \frac{\partial f}{\partial t} dx} + {\color{#4facfe}f(t, b) \frac{db}{dt}} - {\color{#ff6b6b}f(t, a) \frac{da}{dt}}$$<p><strong>Final Result:</strong>
+Combining both parts, we arrive at the general Leibniz Integral Rule (1D):
+</p>
+$$\boxed{\frac{d}{dp} \int_{a(p)}^{b(p)} f(x, p) dx = \underbrace{{\color{#00d1b2}\int_{a(p)}^{b(p)} \frac{\partial f}{\partial p}(x, p) dx}}_{\text{Interior Term}} + \underbrace{{\color{#4facfe}f(b(p), p) \frac{db}{dp}} - {\color{#ff6b6b}f(a(p), p) \frac{da}{dp}}}_{\text{Boundary Term}}}$$</details></blockquote>
+<h3 id="generalization-reynolds-transport-theorem-3d">Generalization: Reynolds Transport Theorem (3D)<a hidden class="anchor" aria-hidden="true" href="#generalization-reynolds-transport-theorem-3d">#</a></h3>
+<p>In computer graphics, we deal with 2D images and 3D scenes. The 1D Leibniz rule generalizes to
+higher dimensions via the <strong>Reynolds Transport Theorem</strong>. For an integral over a moving domain
+$X(p)$ with a potentially discontinuous integrand, the derivative is:</p>
+$$
+\begin{equation}
+\partial_p \int_{X(p)} f(\mathbf{x}, p)\, d\mathbf{x} = \underbrace{{\color{#0f85a5}\int_{X(p)} \partial_p f(\mathbf{x}, p)\, d\mathbf{x}}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Gamma(p)} \Delta f(\mathbf{x}, p)\, \langle \partial_p \mathbf{x},\, \mathbf{n} \rangle\, d\mathbf{x}}}_{\text{Boundary derivative}} \label{reynolds-transport-theorem}
+\end{equation}
+$$<p>Where:</p>
+<ul>
+<li>$X(p)$ is the <strong>integration domain</strong>, which moves as $p$ changes.</li>
+<li>$\Gamma(p)$ is the <strong>full boundary</strong> — the union of the external boundary $\partial X(p)$ and
+any internal surfaces where $f$ is discontinuous (e.g. silhouette edges of objects).</li>
+<li>$\mathbf{n}$ is the outward-facing unit <strong>normal</strong> at each point on $\Gamma$.</li>
+<li>$\partial_p \mathbf{x}$ is the <strong>velocity</strong> of the boundary — how fast each boundary point moves
+as $p$ changes.</li>
+<li>$\Delta f(\mathbf{x}, p) = f^-(\mathbf{x}) - f^+(\mathbf{x})$ is the <strong>jump</strong> in $f$ across
+$\Gamma$, where $f^-$ and $f^+$ are the one-sided limits approaching from each side along
+$\mathbf{n}$.</li>
+</ul>
+<p>Note that for points on $\Gamma$ where $f$ is actually continuous, $\Delta f = 0$ and they
+contribute nothing to the boundary integral — so it is safe to include more boundary points than
+strictly necessary. This matters in practice: when rendering, we do not always know in advance
+which edges are true silhouettes, so we can include all triangle edges and let the $\Delta f$
+term naturally zero out the non-contributing ones.</p>
+<p>This is the key formula for differentiable rendering. It tells us that to get the correct gradient,
+we must supplement our standard interior integration (ordinary path tracing, differentiated) with a
+<strong>boundary sampling</strong> pass that explicitly integrates over the silhouette edges of objects — the
+locations where the rendered color jumps as geometry moves.</p>
+<p>Continuing <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>, let&rsquo;s see how this
+resolves the failure of naïve AD. The function is:</p>
+$$
+I(p) = \int_0^1 f(x, p)\, dx, \quad \text{where } f(x, p) = \begin{cases} 1 & \text{if } x < p \\ 0.5 & \text{if } x > p \end{cases}
+$$<figure id="fig-step-function-example" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/step-function-example.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
+      Visualization of the step function $f(x, p)$ with a discontinuity at $x = p$.
+    </figcaption></figure>
+
+
+<p>The discontinuity is at $x = p$, so $\Gamma = \{p\}$, $\langle \partial_p x, \mathbf{n} \rangle = 1$,
+and the jump is $\Delta f = f^-(p) - f^+(p) = 1 - 0.5 = 0.5$. Applying the 1D Leibniz rule:</p>
+$$
+\begin{aligned}
+\frac{dI}{dp} &= \underbrace{\int_0^1 \partial_p f\, dx}_{\text{Interior}} + \underbrace{\Delta f(\mathbf{x}, p)\, \langle \partial_p x,\, \mathbf{n} \rangle}_{\text{Boundary}} \\
+&= \int_0^1 0\, dx + [f^-(p) - f^+(p)] \cdot 1 \\
+&= 0 + [1 - 0.5] \cdot 1 \\
+&= 0.5
+\end{aligned}
+$$<p>This matches the analytic derivative of $I(p) = 0.5p + 0.5$, confirming $\frac{dI}{dp} = 0.5$.
+Unlike naïve AD — which returns zero by only seeing the interior term — the Leibniz rule correctly
+captures the contribution of the moving discontinuity by explicitly accounting for the jump
+$\Delta f$ at the boundary.</p>
+<h2 id="motivating-example-differentiating-visibility">Motivating Example: Differentiating Visibility<a hidden class="anchor" aria-hidden="true" href="#motivating-example-differentiating-visibility">#</a></h2>
+<p>In this section, we will work on a simplified problem with rendering two $2D$ triangles with constant colors. The two triangles can occlude each other. In this case our scene parameters are the 6 triangle vertices ($12$ numbers) and the colors of 2 triangles ($6$ real numbers).. Given these 18 total numbers as a vector $\mathbf{\pi}$, where we denote the vertices parameters as $\mathbf{\pi}_v$ and color parameters as $\mathbf{\pi}_c$, we want to generate an image $I(\pi)$ and compute a loss function $\mathcal{L}(I(\pi))$ (e.g., comparing the image with a target, or feeding the image to a neural network classifier). Our goal is to compute the gradient $\nabla_{\pi} \mathcal{L}(I(\pi))$ so that we can minimize the loss using gradient-based optimization.</p>
+<figure id="fig-triangle-a" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/triangles/fig_a_vector.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
+      The image of the triangles with constant colors (or at least how the imaging function $m(x, y; \mathbf{\pi})$ looks)
+    </figcaption></figure>
+
+
+<p>Before we talk about gradients, we need to discuss how the image $I$ is defined. How do we generate an image from two triangles? We can imagine that the two triangles define an underlying <em>imaging function</em> $m(x, y; \mathbf{\pi})$ that maps continuous $2D$ coordinates $(x, y)$ to a RGB color, depending on which triangle coordinate hits. However, an image is a discrete 2D grid. How do we go from the imaging function $m$ to the image $I$? A naive approach is to evaluate the $m$ at the center of the pixel. This approach is prone to <em>aliasing</em> which causes issues including jagged edges, temporal flickering, Moire patterns, etc and breaking up fine details.</p>
+<figure id="fig-triangle-b" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/triangles/fig_b_aliased.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
+      The image formed when imaging function $m(x, y; \mathbf{\pi})$ is evaluated only at the center. We can see the aliasing artifact (jagged edges)
+    </figcaption></figure>
+
+
+<p>From the signal processing perspective, we are <em>sampling</em> this 2D domain with a discrete image, where the sampling rate is determined by the imaging function. Since the image function $m$ is discontinuous, it has energy at all frequencies and is not bandlimited. Therefore, as long as we are evaluating at the center of the pixels, we will suffer from the aliasing problem no matter how large we select the resolution. To resolve the aliasing issue, we need to remove the high-frequency energy from the imaging function $m$. This is done by convolving the imaging function with a low-pass filter. For each pixel $I_i$, we evaluate an integral centered around the pixel center $(x_i, y_i)$:</p>
+$$
+I_i = \int \int k(x, y)m(x_i, + x, y_i + y; \mathbf{\pi}) dx dy = \int \int f(x, y; \mathbf{\pi}) dx dy,
+$$<p>
+where $k(x, y)$ is the <em>kernel</em> (or <em>filter</em>) and $f(x, y; \mathbf{\pi}) = k(x, y)m(x_i, + x, y_i + y; \mathbf{\pi})$ is the rendering integrand.</p>
+<p>Intuitively, to remove the artifacts introduced by aliasing, instead of only sampling the center at each pixel, we evaluate the weighted average color over an area.</p>
+<figure id="fig-triangle-c" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/triangles/fig_c_antialiased.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
+      The image formed when imaging function $m(x, y; \mathbf{\pi})$ is evaluated only at the center. We can see the aliasing artifact (jagged edges)
+    </figcaption></figure>
+
+
+<p>The selection of $k$ is not something we will discuss but PBRT book has a section on this.</p>
+<p>Most renderers, whether real-time, offline, physics-based, differentiable or not, need to deal with the aliasing issue. Most of them solve the anti-aliasing integral using numerical solution by evaluating the imaging function at various locations, a process often called <em>discretization</em>:
+</p>
+$$
+\begin{equation}
+I_i \approx \frac{1}{N}\sum_{j=1}^N f(x_j, y_j; \mathbf{\pi}) \label{eq:discretization}
+\end{equation}
+$$<p>
+where $(x_j, y_j)$ are various sampling locations within the $i$-th pixel. The naive approach of evaluating at pixel center can also be seen as a (poor) approximation to the integral by setting $N = 1$ and $x_0 = y_0 = 0.5$.</p>
+<p>We say a discretization is <strong>consistent</strong> if the discretization converges to the integral, i.e., $lim_{N\rightarrow \infty} \frac{1}{N} \sum_{j=1}^N f(x_j, y_j; \mathbf{\pi}) = I_i$. The choice of the sample $x_j, y_j$ does not need to be stochastic. Nevertheless, if we are randomly sampling $x_j, y_j$ using the probabilistic distribution, we say a discretization is <strong>unbiased</strong> if the expectation is the same as the integral, i.e., $\mathbb{E}[f(x_j, y_j)] = I_i$.</p>
+<p>In fact the integrals do not just come under the case of aliasing but we can model motion blur as an integration over time during the camera shutter is open, defocus blur for non-pinhole cameras as an integration over the aperture area. Given an area light, we compute the radiance that goes from the light source to the camera by integrating over the area of the light source. Kajiya showed that we can model global illumination as an recursive integral, by integrating each 3D point in the scene recursively.</p>
+<p>Remember that our goal is to compute the gradient of the image $I$ that contains the two triangles, over some scalar loss function $L$, that is, $\nabla_{\pi} \mathcal{L}(\mathbf{I}(\mathbf{\pi}))$. Using the chain rule, we know that for each component $\pi \in \mathbb{R}$ in the parameter vector $\mathbf{\pi}$:</p>
+$$
+\frac{\partial}{\partial \mathbf{\pi}} \mathcal{L}(\mathbf{I}(\mathbf{\pi})) = \sum_i \frac{\partial \mathcal{L}}{\partial I_i} \cdot \frac{\partial I_i}{\partial \mathbf{\pi}} 
+$$<p>where $\frac{\partial \mathcal{L}}{\partial I_i}$ is the partial derivative of the loss function with respect to the $i$-th pixel, and $\frac{\partial I_i}{\partial \mathbf{\pi}}$ is the partial derivative of the $i$-th pixel with respect to the parameters. To be more concrete, if our loss function is the sum of pixel-wise squared difference with another target image $\hat{I}$, that is,
+</p>
+$$
+\mathcal{L} = \left( \hat{I}(\mathbf{\pi}) - I(\mathbf{\pi}) \right)^2.
+$$<p>then the gradient is</p>
+$$
+\nabla_{\pi} \mathcal{L} = \sum_i 2 \left( I(\mathbf{\pi}) - \hat{I}(\mathbf{\pi}) \right) \nabla_{\pi} I_i(\mathbf{\pi})
+$$<p>where $\nabla_{\pi} I_i(\mathbf{\pi})$ is the partial derivative of the $i$-th pixel with respect to the parameters. Now we want to compute the derivative of a pixel color with respect to the scene parameters $\mathbf{\pi}$.</p>
+<figure id="fig-triangle-c" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/triangles/2.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
+      Triangles with the dotted circle for the pixel support. We want to compute the derivative of the pixel color with respect to the triangle vertex positions.
+    </figcaption></figure>
+
+
+<p>A common misconception of the non-differentiability of rendering is that the derivative $\partial I_i (\mathbf{\pi}) / \partial \pi$ is discontinuous and not differentiable. However, recall that $I_i$ is an integral that evaluates the average color within the filter support. Therefore, the movement of the triangle vertices will in fact lead to continuous and differentiable changes to the average color. <strong>The integrand of rendering is discontinuous and not differentiable, but the integral is actually differentiable!</strong> Importantly, we did not make rendering an integration problem to make it differentiable. Instead, rendering is an integration problem in the first place. All the approaches in any rendering methods, real-time or offline, are different approximations or discretizations of the rendering integral.</p>
+<p>How do we compute the derivatives of an integral? Recall that we wanted to compute the integral numerically (Equation $\eqref{eq:discretization}$). Unfortunately, we cannot just automatically differentiate the numerical integrator as we saw in the <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>. For the vertex position parameters, the numerical integrator will always evaluate to 0.</p>
+<figure id="fig-triangle-c" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/triangles/5.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
+      Sampling at yellow points will give 0 derivative as there is no local change around that point. But we can see that changing the position of blue triangle will change the average color of pixel and that change is continuous.
+    </figcaption></figure>
+
+
+<p>However, the derivative of the integral with respect to a vertex position parameter $\mathbf{\pi}_v$ is not 0.</p>
+$$
+\frac{\partial}{\partial \pi} I_i(\mathbf{\pi}) = \frac{\partial}{\partial \pi} \iint f(x, y; \mathbf{\pi}) dx dy \neq \frac{1}{N}\sum_{j=1}^{N}\frac{\partial f(x_j, y_j; \mathbf{\pi})}{\partial \pi} = 0
+$$<p>In general, the discretization and the gradient operator do not commute for discontinuous integrands. This is because the derivatives are measuring local changes, and the uniform discretization has zero chance of detecting the local changes around discontinuities (the sample will need to be on the edge which has probability 0). We can take a look at the <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a> to see that we need to explicitly sample at the boundary to detect the change.</p>
+<figure id="fig-triangle-c" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/triangles/6.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
+      Purple points represent sampling explicitly at the edges. This will capture the change in the pixel and thus will give us correct gradient
+    </figcaption></figure>
+
+
+<p>In general, we will need to evaluate Reynold&rsquo;s Transport Theorem (Equation $\eqref{reynolds-transport-theorem}$) for this problem:</p>
+<figure id="fig-reynolds-theorem" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/triangles/8.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
+      The Reynolds Transport Theorem decomposed into interior and boundary derivatives.
+    </figcaption></figure>
+
+
+<p>To intuitively understand the boundary derivative, we can visualize it as calculating the volume of an <strong>infinitesimal boundary wedge</strong> created by the movement of an edge.</p>
+<p>For every point on a silhouette edge, as the parameter $p$ changes, the edge sweeps out a small parallelogram. The boundary integral accumulates these infinitesimal volumes along the entire discontinuity contour.</p>
+<p>We can decompose the integrand into three intuitive geometric components:</p>
+<ol>
+<li><strong>Height ($f_- - f_+$):</strong> The difference in pixel color (or radiance) between the two sides of the edge (e.g., transitioning from the occluded blue background to the moving red foreground).</li>
+<li><strong>Width ($n \cdot v$):</strong> The distance the edge moves, projected along the normal direction $n$. Movement parallel to the edge simply slides along the boundary and doesn&rsquo;t change the area; only perpendicular movement contributes to the derivative!</li>
+<li><strong>Length ($dt$ or $d\pi$):</strong> The differential line segment along the boundary contour itself.</li>
+</ol>
+<p>Thus the boundary integral becomes:</p>
+$$
+\int_{\partial \Omega} (f(p^-) - f(p^+)) \, (\mathbf{n} \cdot \mathbf{v}) \, dt
+$$<p>which can also be approximated with Monte Carlo sampling.</p>
+<figure id="fig-boundary-volume" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="../../images/diff-rendering/svgtex/triangles/9.svg" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
+      The Infinitesimal Boundary Volume. For each point on the boundary, we compute its 2D movement $v$ with respect to the differentiating parameter. This movement is projected onto the normal direction $n$ to yield the normal movement speed $n \cdot v$. This projection accounts for the infinitesimal width of the swept area, allowing us to properly measure the infinitesimal area changes at the boundary. Multiplying this projected width by the differential edge segment $dt$ (length) and the color jump (height) calculates the exact boundary derivative contribution.
+    </figcaption></figure>
+
+
+<h3 id="code-for-the-above-example">Code for the above example<a hidden class="anchor" aria-hidden="true" href="#code-for-the-above-example">#</a></h3>
+<p>The following code is adapted from SIGGRAPH 2020 Course.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">TriangleMesh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>  <span class="c1"># (N, 2) vertices</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>      <span class="c1"># (M, 3) face indices</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>      <span class="c1"># (M, 3) per-face RGB</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">raytrace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Uses the half-plane test: a point is inside a triangle if it&#39;s
+</span></span></span><span class="line"><span class="cl"><span class="s2">    on the same side of all three edges.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">indices</span><span class="p">)):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Extract the current triangle</span>
+</span></span><span class="line"><span class="cl">        <span class="n">idx</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Edge normals (2D perpendicular: normal of (dx,dy) = (-dy, dx))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">def</span> <span class="nf">normal_2d</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Get edge normals for all edges of triangles</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n01</span> <span class="o">=</span> <span class="n">normal_2d</span><span class="p">(</span><span class="n">v1</span> <span class="o">-</span> <span class="n">v0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n12</span> <span class="o">=</span> <span class="n">normal_2d</span><span class="p">(</span><span class="n">v2</span> <span class="o">-</span> <span class="n">v1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n20</span> <span class="o">=</span> <span class="n">normal_2d</span><span class="p">(</span><span class="n">v0</span> <span class="o">-</span> <span class="n">v2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Find in which side pos is for each edge </span>
+</span></span><span class="line"><span class="cl">        <span class="n">side01</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">v0</span><span class="p">,</span> <span class="n">n01</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">side12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">v1</span><span class="p">,</span> <span class="n">n12</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">side20</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pos</span> <span class="o">-</span> <span class="n">v2</span><span class="p">,</span> <span class="n">n20</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># if it is on same side for all edges, then it is inside (since this is 2D)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">side01</span> <span class="ow">and</span> <span class="n">side12</span> <span class="ow">and</span> <span class="n">side20</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">side01</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">side12</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">side20</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">mesh</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># background</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">spp</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Forward pass: render the mesh into an image.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>    <span class="c1"># setup the (H, W, 3) buffer for RGB image</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sqrt_spp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">spp</span><span class="p">))</span> <span class="c1"># grid cells for stratified sampling</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># For each pixel</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># for each grid cell</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sqrt_spp</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="n">dx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sqrt_spp</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                    <span class="c1"># Offset the position within the pixel</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">xoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())</span> <span class="o">/</span> <span class="n">sqrt_spp</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">yoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">dy</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())</span> <span class="o">/</span> <span class="n">sqrt_spp</span>
+</span></span><span class="line"><span class="cl">                    
+</span></span><span class="line"><span class="cl">                    <span class="c1"># compute the color at that position</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">+</span> <span class="n">xoff</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">yoff</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">color</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">raytrace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">img</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="n">color</span> <span class="o">/</span> <span class="n">spp</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">img</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">compute_interior_derivatives</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">adjoint</span><span class="p">,</span> <span class="n">spp</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Interior derivatives: ∂Loss/∂color.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    Standard AD works here because color changes are continuous.
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span> <span class="o">=</span> <span class="n">adjoint</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sqrt_spp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">spp</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">d_colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">colors</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># For each pixel</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">img_h</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">img_w</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="c1"># For each grid cell</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">dy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sqrt_spp</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="k">for</span> <span class="n">dx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sqrt_spp</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                    <span class="c1"># Find the position within the cell within pixel</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">xoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())</span> <span class="o">/</span> <span class="n">sqrt_spp</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">yoff</span> <span class="o">=</span> <span class="p">(</span><span class="n">dy</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())</span> <span class="o">/</span> <span class="n">sqrt_spp</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                    <span class="c1"># compute the gradient at that position</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">+</span> <span class="n">xoff</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">yoff</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">_</span><span class="p">,</span> <span class="n">hit_idx</span> <span class="o">=</span> <span class="n">raytrace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="n">hit_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                        <span class="n">d_colors</span><span class="p">[</span><span class="n">hit_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">adjoint</span><span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span> <span class="o">/</span> <span class="n">spp</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">d_colors</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">collect_edges</span><span class="p">(</span><span class="n">mesh</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Collect unique edges.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span> <span class="c1"># Stores edges as tuples (u, v)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">mesh</span><span class="o">.</span><span class="n">indices</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="nb">min</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="nb">min</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">edges</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="nb">min</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># [(u, v) ...]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">build_edge_sampler</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">edges</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Build CDF for importance-sampling edges by length.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">lengths</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># Store the lengths of the edges</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">v0_id</span><span class="p">,</span> <span class="n">v1_id</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">v1_id</span><span class="p">]</span> <span class="o">-</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">v0_id</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Use the edge lengths as weight for PDF and construct CDF</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pmf</span> <span class="o">=</span> <span class="n">lengths</span> <span class="o">/</span> <span class="n">lengths</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">pmf</span><span class="p">)])</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">pmf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">lengths</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">compute_edge_derivatives</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">adjoint</span><span class="p">,</span> <span class="n">n_edge_samples</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;∂Loss/∂vertices via Reynolds Transport Theorem.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># Extract unique edges and build CDF for sampling</span>
+</span></span><span class="line"><span class="cl">    <span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span> <span class="o">=</span> <span class="n">adjoint</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">edges</span> <span class="o">=</span> <span class="n">collect_edges</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pmf</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">lengths</span> <span class="o">=</span> <span class="n">build_edge_sampler</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">d_vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">screen_dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">screen_dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">img_h</span><span class="p">,</span> <span class="n">img_w</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_edge_samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 1. Pick an edge (importance sampling by length)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="n">edge_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">edge_id</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 2. Pick a point on the edge</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v0</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v1</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>   <span class="c1"># t in [0, 1]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">p</span> <span class="o">=</span> <span class="n">v0</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">v1</span> <span class="o">-</span> <span class="n">v0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">xi</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">yi</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">xi</span> <span class="o">&gt;=</span> <span class="n">img_w</span> <span class="ow">or</span> <span class="n">yi</span> <span class="o">&gt;=</span> <span class="n">img_h</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">continue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 3. Sample both sides of the edge (the &#34;jump&#34; / discontinuity)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">edge_dir</span> <span class="o">=</span> <span class="p">(</span><span class="n">v1</span> <span class="o">-</span> <span class="n">v0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span> <span class="o">-</span> <span class="n">v0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">edge_dir</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">edge_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>  <span class="c1"># outward normal</span>
+</span></span><span class="line"><span class="cl">        <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-3</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">color_in</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">raytrace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">p</span> <span class="o">-</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">color_out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">raytrace</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">p</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># 4. Compute gradient contribution (Reynolds Transport Theorem)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pdf</span> <span class="o">=</span> <span class="n">pmf</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span> <span class="o">/</span> <span class="n">lengths</span><span class="p">[</span><span class="n">edge_id</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">        <span class="n">weight</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">pdf</span> <span class="o">*</span> <span class="n">n_edge_samples</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">color_diff</span> <span class="o">=</span> <span class="n">color_in</span> <span class="o">-</span> <span class="n">color_out</span>  <span class="c1"># the jump Δf</span>
+</span></span><span class="line"><span class="cl">        <span class="n">adj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">color_diff</span><span class="p">,</span> <span class="n">adjoint</span><span class="p">[</span><span class="n">yi</span><span class="p">,</span> <span class="n">xi</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># dp/dv0 = (1-t), dp/dv1 = t  (from p = v0 + t*(v1-v0))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d_v0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">adj</span> <span class="o">*</span> <span class="n">weight</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d_v1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span> <span class="o">*</span> <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="o">*</span> <span class="n">adj</span> <span class="o">*</span> <span class="n">weight</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">d_vertices</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">+=</span> <span class="n">d_v0</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d_vertices</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">+=</span> <span class="n">d_v1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1"># Screen-space derivatives</span>
+</span></span><span class="line"><span class="cl">        <span class="n">screen_dx</span><span class="p">[</span><span class="n">yi</span><span class="p">,</span> <span class="n">xi</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">color_diff</span> <span class="o">*</span> <span class="n">weight</span>
+</span></span><span class="line"><span class="cl">        <span class="n">screen_dy</span><span class="p">[</span><span class="n">yi</span><span class="p">,</span> <span class="n">xi</span><span class="p">]</span> <span class="o">+=</span> <span class="o">-</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">color_diff</span> <span class="o">*</span> <span class="n">weight</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">d_vertices</span><span class="p">,</span> <span class="n">screen_dx</span><span class="p">,</span> <span class="n">screen_dy</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 1. Scene setup</span>
+</span></span><span class="line"><span class="cl"><span class="n">c_blue</span> <span class="o">=</span><span class="p">[</span><span class="mi">15</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span> <span class="mi">133</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span> <span class="mi">165</span><span class="o">/</span><span class="mi">255</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">c_red</span>  <span class="o">=</span><span class="p">[</span><span class="mi">187</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span> <span class="mi">37</span><span class="o">/</span><span class="mi">255</span><span class="p">,</span> <span class="mi">66</span><span class="o">/</span><span class="mi">255</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">scale</span> <span class="o">=</span> <span class="mf">2.0</span>
+</span></span><span class="line"><span class="cl"><span class="n">mesh</span> <span class="o">=</span> <span class="n">TriangleMesh</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># Tri 0 (Red)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">],[</span><span class="mf">26.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">31.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">],</span> 
+</span></span><span class="line"><span class="cl">        <span class="c1"># Tri 1 (Blue)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">],[</span><span class="mf">16.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">],</span>  
+</span></span><span class="line"><span class="cl">    <span class="p">])</span> <span class="o">*</span> <span class="n">scale</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">indices</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">colors</span> <span class="o">=</span><span class="p">[</span><span class="n">c_red</span><span class="p">,</span> <span class="n">c_blue</span><span class="p">]</span> 
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Window setup</span>
+</span></span><span class="line"><span class="cl"><span class="n">W</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">spp</span> <span class="o">=</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">4</span> 
+</span></span><span class="line"><span class="cl"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">48</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2. Forward Pass</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Rendering...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">img</span> <span class="o">=</span> <span class="n">render</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">spp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. Backward Pass (Interior: ∂I/∂color)</span>
+</span></span><span class="line"><span class="cl"><span class="n">adjoint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># Uniform adjoint to pull gradients</span>
+</span></span><span class="line"><span class="cl"><span class="n">d_colors</span> <span class="o">=</span> <span class="n">compute_interior_derivatives</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">adjoint</span><span class="p">,</span> <span class="n">spp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4. Backward Pass (Edges: ∂I/∂vertex via boundary sampling)</span>
+</span></span><span class="line"><span class="cl"><span class="n">d_verts</span><span class="p">,</span> <span class="n">screen_dx</span><span class="p">,</span> <span class="n">screen_dy</span> <span class="o">=</span> <span class="n">compute_edge_derivatives</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">adjoint</span><span class="p">,</span> <span class="n">n_edge_samples</span><span class="o">=</span><span class="n">W</span><span class="o">*</span><span class="n">H</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s2">&#34;</span><span class="se">\n</span><span class="s2">Vertex Gradients (d_verts):&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">d_verts</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Output:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Vertex Gradients (d_verts):</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># [[ -4.2248   2.533 ]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  [  7.4785 -18.8305]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  [ 13.7454  13.4763]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  [-21.0542   4.3572]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  [  0.4232 -20.9386]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#  [  2.0691  19.6481]]</span>
+</span></span></code></pre></div><div class="paper-fig-row">
+    <figure id="fig-triangle-forward" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/diff-rendering/triangles/1_forward_render.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
+          Forward Render Output
+        </figcaption></figure>
+    
+
+    <figure id="fig-triangle-pos" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/diff-rendering/triangles/2_positive_gradient.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
+          Positive Gradients
+        </figcaption></figure>
+    
+
+    <figure id="fig-triangle-neg" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image" src="../../images/diff-rendering/triangles/3_negative_gradient.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
+          Negative Gradients
+        </figcaption></figure>
+    
+
+</div>
+<h1 id="physics-based-differentiable-rendering-theory">Physics-Based Differentiable Rendering Theory<a hidden class="anchor" aria-hidden="true" href="#physics-based-differentiable-rendering-theory">#</a></h1>
+<p>The previous sections demonstrated how to differentiate the rendering integral with respect to geometry parameters using the Reynolds Transport Theorem. However, fully leveraging the power of physics-based differentiable rendering requires us to differentiate with respect to <strong>material parameters</strong> (e.g., albedo, roughness) and <strong>illumination parameters</strong> (e.g., position, intensity of light sources).</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/differentiable-rendering/">Differentiable Rendering</a></li>
+      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tocEl = document.querySelector('.toc');
+    var content = document.querySelector('.post-content');
+    if (!tocEl || !content) return;
+
+    
+    var sidebar = document.createElement('div');
+    sidebar.className = 'agn-sidetoc';
+
+    
+    var label = document.createElement('span');
+    label.className = 'agn-sidetoc-label';
+    label.textContent = 'Contents';
+    sidebar.appendChild(label);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.className = 'agn-sidetoc-links';
+    sidebar.appendChild(linksWrap);
+
+    
+    var inner = tocEl.querySelector('.inner');
+    if (inner) {
+        var lists = inner.querySelectorAll(':scope > ul, :scope > nav');
+        lists.forEach(function(el) {
+            linksWrap.appendChild(el.cloneNode(true));
+        });
+    }
+
+    document.body.appendChild(sidebar);
+
+    
+    var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    if (!headers.length) return;
+
+    var headerOffsets = [];
+    var lastActiveId = '';
+
+    
+    var nestedUls = sidebar.querySelectorAll('ul ul');
+    for (var i = 0; i < nestedUls.length; i++) {
+        nestedUls[i].style.display = 'none';
+    }
+
+    function recomputeHeaderOffsets() {
+        headerOffsets = [];
+        for (var i = 0; i < headers.length; i++) {
+            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
+            headerOffsets.push(top);
+        }
+    }
+
+    function findActiveHeaderId(scrollTop) {
+        var lo = 0;
+        var hi = headerOffsets.length - 1;
+        var idx = -1;
+
+        while (lo <= hi) {
+            var mid = (lo + hi) >> 1;
+            if (headerOffsets[mid] <= scrollTop) {
+                idx = mid;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+
+        if (idx < 0) return '';
+        return headers[idx].getAttribute('id') || '';
+    }
+
+    function applyActiveState(currentId) {
+        if (currentId === lastActiveId) return;
+        lastActiveId = currentId;
+
+        
+        var highlighted = sidebar.querySelectorAll('a.active, a.semi_active');
+        for (var i = 0; i < highlighted.length; i++) {
+            highlighted[i].classList.remove('active', 'semi_active');
+            var oldChild = highlighted[i].parentElement.querySelector(':scope > ul');
+            if (oldChild) oldChild.style.display = 'none';
+        }
+
+        if (!currentId) return;
+
+        var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+        if (!activeLink) return;
+
+        
+        var el = activeLink.parentElement;
+        var depth = 0;
+        while (el && el !== sidebar) {
+            if (el.tagName === 'LI') {
+                var link = el.querySelector(':scope > a');
+                if (link) {
+                    link.classList.add(depth === 0 ? 'active' : 'semi_active');
+                    var childUl = el.querySelector(':scope > ul');
+                    if (childUl) childUl.style.display = 'block';
+                }
+                depth++;
+            }
+            el = el.parentElement;
+        }
+    }
+
+    recomputeHeaderOffsets();
+
+    
+    var ticking = false;
+
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(function() {
+            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            var currentId = findActiveHeaderId(scrollTop);
+            applyActiveState(currentId);
+            ticking = false;
+        });
+    }
+
+    window.addEventListener('resize', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    }, { passive: true });
+    window.addEventListener('load', function() {
+        recomputeHeaderOffsets();
+        onScroll();
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll(); 
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var iframes = document.querySelectorAll('.post-content iframe, .page-content iframe, .archive iframe, .single iframe');
+    if (!iframes.length) return;
+
+    for (var i = 0; i < iframes.length; i++) {
+        if (!iframes[i].hasAttribute('loading')) {
+            iframes[i].setAttribute('loading', 'lazy');
+        }
+        if (!iframes[i].hasAttribute('fetchpriority')) {
+            iframes[i].setAttribute('fetchpriority', 'low');
+        }
+    }
+
+    function parsePositiveNumber(value) {
+        var n = Number(value);
+        return Number.isFinite(n) && n > 0 ? n : null;
+    }
+
+    function getHostBackgroundColor(iframe) {
+        var host = iframe.closest('.post-content, .page-content, .archive, .single') || document.body;
+        var color = getComputedStyle(host).backgroundColor;
+        if (!color || color === 'rgba(0, 0, 0, 0)' || color === 'transparent') {
+            color = getComputedStyle(document.body).backgroundColor;
+        }
+        return color || '#ffffff';
+    }
+
+    function shouldBlendIframe(iframe) {
+        var explicit = iframe.getAttribute('data-iframe-blend');
+        if (explicit === 'true') return true;
+        if (explicit === 'false') return false;
+
+        var src = (iframe.getAttribute('src') || '').toLowerCase();
+        return src.indexOf('/interactive/vmf.html') !== -1;
+    }
+
+    function harmonizeSameOriginIframe(iframe, doc) {
+        if (!doc || !doc.head) return;
+
+        var styleId = 'copilot-embedded-iframe-theme';
+        var existing = doc.getElementById(styleId);
+        if (!existing) {
+            existing = doc.createElement('style');
+            existing.id = styleId;
+            doc.head.appendChild(existing);
+        }
+
+        var bg = getHostBackgroundColor(iframe);
+        existing.textContent = [
+            'html, body {',
+            '  background: ' + bg + ' !important;',
+            '}',
+            'body {',
+            '  margin: 0;',
+            '}'
+        ].join('\n');
+    }
+
+    function getSameOriginDocument(iframe) {
+        try {
+            return iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document) || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function getSameOriginContentHeight(doc) {
+        if (!doc || !doc.documentElement) return null;
+
+        var body = doc.body;
+        var docHeight = Math.max(
+            doc.documentElement.scrollHeight || 0,
+            doc.documentElement.offsetHeight || 0,
+            doc.documentElement.clientHeight || 0,
+            body ? body.scrollHeight : 0,
+            body ? body.offsetHeight : 0,
+            body ? body.clientHeight : 0
+        );
+
+        return docHeight > 0 ? Math.round(docHeight) : null;
+    }
+
+    function computeAspectRatio(iframe) {
+        var cached = parsePositiveNumber(iframe.getAttribute('data-computed-aspect'));
+        if (cached) return cached;
+
+        var w = parsePositiveNumber(iframe.getAttribute('width'));
+        var h = parsePositiveNumber(iframe.getAttribute('height'));
+        if (w && h) return h / w;
+
+        var dataAspect = iframe.getAttribute('data-aspect');
+        if (dataAspect && dataAspect.indexOf('/') > -1) {
+            var parts = dataAspect.split('/');
+            var aw = parsePositiveNumber(parts[0]);
+            var ah = parsePositiveNumber(parts[1]);
+            if (aw && ah) return ah / aw;
+        }
+
+        
+        if (h) {
+            var currentWidth = iframe.clientWidth;
+            if (currentWidth > 0) {
+                var derived = h / currentWidth;
+                iframe.setAttribute('data-computed-aspect', String(derived));
+                return derived;
+            }
+        }
+
+        return 9 / 16;
+    }
+
+    function resizeIframe(iframe) {
+        var ratio = computeAspectRatio(iframe);
+        var width = iframe.clientWidth;
+        if (!width) return;
+
+        var fallbackHeight = Math.round(width * ratio);
+        var explicitHeight = parsePositiveNumber(iframe.getAttribute('height'));
+        if (explicitHeight) {
+            fallbackHeight = Math.max(fallbackHeight, Math.round(explicitHeight));
+        }
+
+        var targetHeight = fallbackHeight;
+        var isSameOrigin = false;
+
+        var doc = getSameOriginDocument(iframe);
+        if (doc) {
+            isSameOrigin = true;
+            if (shouldBlendIframe(iframe)) {
+                harmonizeSameOriginIframe(iframe, doc);
+            }
+            var contentHeight = getSameOriginContentHeight(doc);
+            if (contentHeight) {
+                targetHeight = contentHeight;
+            }
+        }
+
+        iframe.style.height = targetHeight + 'px';
+        iframe.setAttribute('scrolling', isSameOrigin ? 'no' : 'auto');
+    }
+
+    function isNearViewport(iframe) {
+        var rect = iframe.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight || 0;
+        return rect.bottom >= -250 && rect.top <= vh + 1200;
+    }
+
+    function resizeVisibleIframes(force) {
+        for (var i = 0; i < iframes.length; i++) {
+            if (force || isNearViewport(iframes[i])) {
+                resizeIframe(iframes[i]);
+            }
+        }
+    }
+
+    window.addEventListener('resize', function() { resizeVisibleIframes(true); }, { passive: true });
+
+    var scrollTicking = false;
+    function onScrollResize() {
+        if (scrollTicking) return;
+        scrollTicking = true;
+        requestAnimationFrame(function() {
+            resizeVisibleIframes(false);
+            scrollTicking = false;
+        });
+    }
+    window.addEventListener('scroll', onScrollResize, { passive: true });
+
+    var themeObserver = new MutationObserver(function() {
+        resizeVisibleIframes(false);
+    });
+
+    if (document.documentElement) {
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-theme']
+        });
+    }
+
+    if (document.body) {
+        themeObserver.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class', 'style', 'data-theme']
+        });
+    }
+
+    for (var i = 0; i < iframes.length; i++) {
+        iframes[i].addEventListener('load', function() {
+            var frame = this;
+            resizeIframe(frame);
+
+            
+            setTimeout(function() { resizeIframe(frame); }, 250);
+            setTimeout(function() { resizeIframe(frame); }, 1000);
+        });
+    }
+
+    resizeVisibleIframes(false);
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    
+    var figures = document.querySelectorAll("figure[id]");
+    var figMap = {};
+    figures.forEach(function(fig, index) {
+        figMap[fig.id] = index + 1;
+    });
+
+    
+    var refs = document.querySelectorAll(".auto-fig-ref");
+    refs.forEach(function(ref) {
+        var targetId = ref.getAttribute("data-target");
+        if (figMap[targetId]) {
+            ref.textContent = figMap[targetId];
+        } else {
+            ref.textContent = "??"; 
+            ref.style.color = "red";
+        }
+    });
+});
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

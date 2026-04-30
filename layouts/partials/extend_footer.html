@@ -334,3 +334,26 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeVisibleIframes(false);
 });
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // 1. Map all figures on the page to their natural order
+    var figures = document.querySelectorAll("figure[id]");
+    var figMap = {};
+    figures.forEach(function(fig, index) {
+        figMap[fig.id] = index + 1;
+    });
+
+    // 2. Find all figure references and inject the correct number
+    var refs = document.querySelectorAll(".auto-fig-ref");
+    refs.forEach(function(ref) {
+        var targetId = ref.getAttribute("data-target");
+        if (figMap[targetId]) {
+            ref.textContent = figMap[targetId];
+        } else {
+            ref.textContent = "??"; // Shows if you have a typo in the ID
+            ref.style.color = "red";
+        }
+    });
+});
+</script>

@@ -4,11 +4,11 @@
 {{- $id := printf "step-slider-%d" .Ordinal -}}
 
 <script>
-  window.MathJax = {
+  window.MathJax = window.MathJax || {
     loader: { load: ['[tex]/html'] },
     tex: {
       packages: { '[+]': ['html'] },
-      inlineMath: [['\\(', '\\)']],
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
       displayMath: [['$$','$$'], ['\\[', '\\]']]
     }
   };
@@ -120,7 +120,7 @@
       loader: { load: ['[tex]/html'] },
       tex: {
         packages: { '[+]': ['html'] },
-        inlineMath: [['\\(', '\\)']],
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
         displayMath: [['$$','$$'], ['\\[', '\\]']]
       }
     };

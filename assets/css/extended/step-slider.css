@@ -13,8 +13,8 @@
     border: 1px solid var(--axis);
     border-radius: 12px;
     overflow: hidden;
-    background: var(--bg);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background: transparent; /* Changed from var(--bg) for seamless feel */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
@@ -59,7 +59,7 @@
     flex: 0 0 auto;
     width: 100%;
     overflow: hidden;
-    background: #000;
+    background: transparent;
 }
 
 .step-wrapper {
@@ -77,12 +77,17 @@
 }
 
 .step-slide img {
-    width: auto;
+    width: 100%;
     max-width: 100%;
     height: auto;
-    max-height: min(70vh, 760px);
     display: block;
     object-fit: contain;
+    /* Boost brightness in dark mode to ensure light-gray lines are visible after inversion */
+    transition: filter 0.3s ease;
+}
+
+.dark .step-slide img {
+    filter: invert(1) hue-rotate(180deg) brightness(1.6) contrast(1.1) !important;
 }
 
 /* Footer Styling */
@@ -91,7 +96,7 @@
     z-index: 1;
     flex: 0 0 auto;
     padding: 22px 25px;
-    background: var(--bg);
+    background: transparent;
     border-top: 1px solid var(--axis);
     min-height: 100px;
 }

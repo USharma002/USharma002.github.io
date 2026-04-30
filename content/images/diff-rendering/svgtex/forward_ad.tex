@@ -1,0 +1,134 @@
+\documentclass[aspectratio=169]{beamer}
+\setbeamertemplate{navigation symbols}{}
+\usefonttheme{professionalfonts}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\tikzset{
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}%
+  }
+}
+
+\begin{document}
+
+% ==========================================
+% SEQUENCE 1: GRADIENT WITH RESPECT TO X
+% ==========================================
+\begin{frame}[plain]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=1.5cm and 1.8cm,
+    base/.style={draw, rounded corners=3pt, inner sep=6pt, minimum width=1.5cm, align=center, font=\small},
+    uncomp/.style={draw=gray!30, fill=white, text=gray!30},
+    freed/.style={draw=gray!50, fill=gray!5, text=gray!50, dashed},
+    in active/.style={draw=black, thick, fill=orange!20, text=black},
+    op active/.style={draw=black, thick, fill=gray!15, text=black},
+    out active/.style={draw=black, thick, fill=blue!15, text=black},
+    arrow/.style={draw=gray!30, thick, >={Stealth[scale=1.2]}},
+    active arrow/.style={draw=black, thick, >={Stealth[scale=1.3]}},
+    lbl uncomp/.style={text=gray!30},
+    lbl active/.style={text=red, font=\bfseries}
+]
+
+\node[base, alt=<1>{uncomp}{}, alt=<2-5>{in active}{}, alt=<6->{freed}{}]
+    (x) {$x$ \\ $v=2.00$ \\ \textcolor<2,3,6>{red}{$\nabla_x=1.00$}};
+
+\node[base, alt=<1>{uncomp}{}, alt=<2-3>{in active}{}, alt=<4->{freed}{},
+    below=2.5cm of x]
+    (y) {$y$ \\ $v=3.00$ \\ \textcolor<2,4>{red}{$\nabla_x=0.00$}};
+
+\node[base, alt=<1-5>{uncomp}{}, alt=<6>{op active}{}, alt=<7->{freed}{},
+    above right=1cm and 1.5cm of x]
+    (x2) {$x^2$ \\ $v=4.00$ \\ \textcolor<6,7>{red}{$\nabla_x=4.00$}};
+
+\node[base, alt=<1-2>{uncomp}{}, alt=<3>{op active}{}, alt=<4->{freed}{},
+    right=of x]
+    (2x) {$2x$ \\ $v=4.00$ \\ \textcolor<3,4>{red}{$\nabla_x=2.00$}};
+
+\node[base, alt=<1-3>{uncomp}{}, alt=<4>{op active}{}, alt=<5->{freed}{},
+    right=of 2x]
+    (2xy) {$2xy$ \\ $v=12.00$ \\ \textcolor<4,5>{red}{$\nabla_x=6.00$}};
+
+\node[base, alt=<1-4>{uncomp}{}, alt=<5-6>{op active}{}, alt=<7->{freed}{},
+    right=of 2xy]
+    (sin) {$\sin(2xy)$ \\ $v=-0.54$ \\ \textcolor<5,7>{red}{$\nabla_x=5.06$}};
+
+\node[base, alt=<1-6>{uncomp}{}, alt=<7->{out active}{},
+    right=of sin]
+    (final) {$x^2 \sin(2xy)$ \\ $v=-2.15$ \\ \textcolor<7>{red}{$\nabla_x=18.11$}};
+
+\draw[->, alt=<6>{active arrow}{arrow}] (x) -- node[midway, above left, alt=<6>{lbl active}{lbl uncomp}] {$2x$} (x2);
+\draw[->, alt=<3>{active arrow}{arrow}] (x) -- node[midway, above, alt=<3>{lbl active}{lbl uncomp}] {$2$} (2x);
+\draw[->, alt=<4>{active arrow}{arrow}] (2x) -- node[midway, above, alt=<4>{lbl active}{lbl uncomp}] {$y$} (2xy);
+\draw[->, alt=<4>{active arrow}{arrow}] (y) -| node[pos=0.25, above, alt=<4>{lbl active}{lbl uncomp}] {$2x$} (2xy);
+\draw[->, alt=<5>{active arrow}{arrow}] (2xy) -- node[midway, above, alt=<5>{lbl active}{lbl uncomp}] {$\cos(2xy)$} (sin);
+\draw[->, alt=<7>{active arrow}{arrow}] (sin) -- node[midway, above, alt=<7>{lbl active}{lbl uncomp}] {$x^2$} (final);
+\draw[->, alt=<7>{active arrow}{arrow}] (x2) -| node[pos=0.25, above, alt=<7>{lbl active}{lbl uncomp}] {$\sin(2xy)$} (final);
+
+\end{tikzpicture}%
+}
+\end{frame}
+
+
+% ==========================================
+% SEQUENCE 2: GRADIENT WITH RESPECT TO Y
+% ==========================================
+\begin{frame}[plain]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=1.5cm and 1.8cm,
+    base/.style={draw, rounded corners=3pt, inner sep=6pt, minimum width=1.5cm, align=center, font=\small},
+    uncomp/.style={draw=gray!30, fill=white, text=gray!30},
+    freed/.style={draw=gray!50, fill=gray!5, text=gray!50, dashed},
+    in active/.style={draw=black, thick, fill=orange!20, text=black},
+    op active/.style={draw=black, thick, fill=gray!15, text=black},
+    out active/.style={draw=black, thick, fill=blue!15, text=black},
+    arrow/.style={draw=gray!30, thick, >={Stealth[scale=1.2]}},
+    active arrow/.style={draw=black, thick, >={Stealth[scale=1.3]}},
+    lbl uncomp/.style={text=gray!30},
+    lbl active/.style={text=red, font=\bfseries}
+]
+
+\node[base, alt=<1>{uncomp}{}, alt=<2-5>{in active}{}, alt=<6->{freed}{}]
+    (x) {$x$ \\ $v=2.00$ \\ \textcolor<2,3,6>{red}{$\nabla_y=0.00$}};
+
+\node[base, alt=<1>{uncomp}{}, alt=<2-3>{in active}{}, alt=<4->{freed}{},
+    below=2.5cm of x]
+    (y) {$y$ \\ $v=3.00$ \\ \textcolor<2,4>{red}{$\nabla_y=1.00$}};
+
+\node[base, alt=<1-5>{uncomp}{}, alt=<6>{op active}{}, alt=<7->{freed}{},
+    above right=1cm and 1.5cm of x]
+    (x2) {$x^2$ \\ $v=4.00$ \\ \textcolor<6,7>{red}{$\nabla_y=0.00$}};
+
+\node[base, alt=<1-2>{uncomp}{}, alt=<3>{op active}{}, alt=<4->{freed}{},
+    right=of x]
+    (2x) {$2x$ \\ $v=4.00$ \\ \textcolor<3,4>{red}{$\nabla_y=0.00$}};
+
+\node[base, alt=<1-3>{uncomp}{}, alt=<4>{op active}{}, alt=<5->{freed}{},
+    right=of 2x]
+    (2xy) {$2xy$ \\ $v=12.00$ \\ \textcolor<4,5>{red}{$\nabla_y=4.00$}};
+
+\node[base, alt=<1-4>{uncomp}{}, alt=<5-6>{op active}{}, alt=<7->{freed}{},
+    right=of 2xy]
+    (sin) {$\sin(2xy)$ \\ $v=-0.54$ \\ \textcolor<5,7>{red}{$\nabla_y=3.38$}};
+
+\node[base, alt=<1-6>{uncomp}{}, alt=<7->{out active}{},
+    right=of sin]
+    (final) {$x^2 \sin(2xy)$ \\ $v=-2.15$ \\ \textcolor<7>{red}{$\nabla_y=13.50$}};
+
+\draw[->, alt=<6>{active arrow}{arrow}] (x) -- node[midway, above left, alt=<6>{lbl active}{lbl uncomp}] {$2x$} (x2);
+\draw[->, alt=<3>{active arrow}{arrow}] (x) -- node[midway, above, alt=<3>{lbl active}{lbl uncomp}] {$2$} (2x);
+\draw[->, alt=<4>{active arrow}{arrow}] (2x) -- node[midway, above, alt=<4>{lbl active}{lbl uncomp}] {$y$} (2xy);
+\draw[->, alt=<4>{active arrow}{arrow}] (y) -| node[pos=0.25, above, alt=<4>{lbl active}{lbl uncomp}] {$2x$} (2xy);
+\draw[->, alt=<5>{active arrow}{arrow}] (2xy) -- node[midway, above, alt=<5>{lbl active}{lbl uncomp}] {$\cos(2xy)$} (sin);
+\draw[->, alt=<7>{active arrow}{arrow}] (sin) -- node[midway, above, alt=<7>{lbl active}{lbl uncomp}] {$x^2$} (final);
+\draw[->, alt=<7>{active arrow}{arrow}] (x2) -| node[pos=0.25, above, alt=<7>{lbl active}{lbl uncomp}] {$\sin(2xy)$} (final);
+
+\end{tikzpicture}%
+}
+\end{frame}
+
+\end{document}

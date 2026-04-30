@@ -1,0 +1,152 @@
+\documentclass{article}
+\usepackage[margin=0.5cm]{geometry}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usetikzlibrary{decorations.pathreplacing, angles, quotes}
+
+\begin{document}
+\pagestyle{empty}
+\centering
+
+% Define custom colors
+\definecolor{axisred}{RGB}{220, 20, 60}
+\definecolor{axisgreen}{RGB}{46, 139, 87}
+\definecolor{axisblue}{RGB}{0, 0, 255}
+\definecolor{lightzaxis}{RGB}{180, 200, 255}
+\definecolor{frustumgray}{RGB}{240, 240, 240}
+
+\vspace*{\fill}
+
+% ==========================================
+% DIAGRAM 1: Z-Y PLANE (Side View)
+% ==========================================
+\begin{tikzpicture}[scale=1.5, font=\sffamily]
+    % Frustum shape
+    \fill[frustumgray, opacity=0.4] (3, 1.5) -- (7, 3.5) -- (7, -3.5) -- (3, -1.5) -- cycle;
+    
+    % Frustum outlines
+    \draw[black!60, thin] (3, 1.5) -- (7, 3.5);
+    \draw[black!60, thin] (3, -1.5) -- (7, -3.5);
+    \draw[black!60, thin] (7, -3.5) -- (7, 3.5);
+
+    % Near plane
+    \draw[line width=2.5pt] (3, -1.5) -- (3, 1.5);
+    
+    % Z-axis depth labels
+    \node[left, font=\large\bfseries] at (2.9, -0.2) {-n};
+    \node[right, font=\large\bfseries] at (7.1, -0.2) {-f};
+
+    % -Z axis line
+    \coordinate (ZaxisEnd) at (8,0);
+    \draw[lightzaxis, ->, >=stealth, line width=0.8pt] (0,0) -- (ZaxisEnd) node[right, text=black, font=\large\bfseries] {-Z};
+
+    % Coordinates
+    \coordinate (Origin) at (0,0);
+    \coordinate (Pe) at (5, 1.2);         
+    \coordinate (Pp) at (3, 0.72);
+    \coordinate (PeProjZ) at (5, 0);
+
+    % Projection lines
+    \draw[dashed, black!40] (Pe) -- (Origin);
+    \draw[->, >=stealth, black!50, line width=1pt] (Pe) -- (Pp);
+    \draw[dotted, black!50, thick] (Pe) -- (PeProjZ); % Line to Z-axis
+
+    % Braces
+    % 1. Origin to near plane (distance n)
+    \draw[decorate, decoration={brace, amplitude=6pt, mirror}, thick] 
+        (0, -0.15) -- (3, -0.15) node[midway, below=8pt, font=\large] {$n$};
+    
+    % 2. Z-axis projection to the point (distance y_e)
+    \draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick] 
+        (PeProjZ)++(0,0.05) -- ++(0, 1.1) node[midway, right=6pt, font=\large] {$y_e$};
+
+    % Angle Theta
+    \pic [draw, thick, ->, "$\theta$", angle eccentricity=1.3, angle radius=1.5cm, font=\large] 
+        {angle = ZaxisEnd--Origin--Pe};
+
+    % Coordinate dots
+    \fill[black!60] (Origin) circle (2.5pt);
+    \fill[black!60] (Pe) circle (2.5pt);
+    \fill[black!60] (Pp) circle (2.5pt);
+    \fill[black!60] (PeProjZ) circle (1.5pt);
+
+    % +Y and +Z Axes
+    \draw[axisgreen, ->, >=stealth, line width=2pt] (Origin) -- (0, 1.5) node[above, text=black, font=\large\bfseries] {+Y};
+    \draw[axisblue, ->, >=stealth, line width=2pt] (Origin) -- (-1.5, 0) node[above, text=black, font=\large\bfseries] {+Z};
+
+    % Labels
+    \node[below left] at (0, 0) {(0,0,0)};
+    \node[above right, font=\large] at (4.7, 1.3) {$(x_e, y_e, z_e)$};
+    \node[below right, font=\large] at (3.0, 0.7) {$(x_p, -\frac{n}{z_e}y_e, -n)$};
+\end{tikzpicture}
+
+\vspace*{\fill}
+\newpage
+\vspace*{\fill}
+
+% ==========================================
+% DIAGRAM 2: Z-X PLANE (Top-Down View)
+% ==========================================
+\begin{tikzpicture}[scale=1.5, font=\sffamily]
+    % Frustum shape
+    \fill[frustumgray, opacity=0.4] (3, 1.5) -- (7, 3.5) -- (7, -3.5) -- (3, -1.5) -- cycle;
+    
+    % Frustum outlines
+    \draw[black!60, thin] (3, 1.5) -- (7, 3.5);
+    \draw[black!60, thin] (3, -1.5) -- (7, -3.5);
+    \draw[black!60, thin] (7, -3.5) -- (7, 3.5);
+
+    % Near plane
+    \draw[line width=2.5pt] (3, -1.5) -- (3, 1.5);
+    
+    % Z-axis depth labels
+    \node[left, font=\large\bfseries] at (2.9, -0.2) {-n};
+    \node[right, font=\large\bfseries] at (7.1, -0.2) {-f};
+
+    % -Z axis line
+    \coordinate (ZaxisEnd) at (8,0);
+    \draw[lightzaxis, ->, >=stealth, line width=0.8pt] (0,0) -- (ZaxisEnd) node[right, text=black, font=\large\bfseries] {-Z};
+
+    % Coordinates
+    \coordinate (Origin) at (0,0);
+    \coordinate (Pe) at (5, 1.2);         
+    \coordinate (Pp) at (3, 0.72);
+    \coordinate (PeProjZ) at (5, 0);
+
+    % Projection lines
+    \draw[dashed, black!40] (Pe) -- (Origin);
+    \draw[->, >=stealth, black!50, line width=1pt] (Pe) -- (Pp);
+    \draw[dotted, black!50, thick] (Pe) -- (PeProjZ); % Line to Z-axis
+
+    % Braces
+    % 1. Origin to near plane (distance n)
+    % \draw[decorate, decoration={brace, amplitude=6pt, mirror}, thick] 
+    %     (0, -0.15) -- (3, -0.15) node[midway, below=8pt, font=\large] {$n$};
+    
+    % 2. Z-axis projection to the point (distance x_e)
+    % \draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick] 
+    %     (PeProjZ)++(0,0.05) -- ++(0, 1.1) node[midway, right=6pt, font=\large] {$x_e$};
+
+    % Angle Theta
+    \pic [draw, thick, ->, "$\theta$", angle eccentricity=1.3, angle radius=1.5cm, font=\large] 
+        {angle = ZaxisEnd--Origin--Pe};
+
+    % Coordinate dots
+    \fill[black!60] (Origin) circle (2.5pt);
+    \fill[black!60] (Pe) circle (2.5pt);
+    \fill[black!60] (Pp) circle (2.5pt);
+    \fill[black!60] (PeProjZ) circle (1.5pt);
+
+    % +X (pointing down) and +Z Axes
+    \draw[axisred, ->, >=stealth, line width=2pt] (Origin) -- (0, -1.5) node[below, text=black, font=\large\bfseries] {+X};
+    \draw[axisblue, ->, >=stealth, line width=2pt] (Origin) -- (-1.5, 0) node[above, text=black, font=\large\bfseries] {+Z};
+
+    % Labels
+    \node[below left] at (0, 0) {(0,0,0)};
+    \node[above right, font=\large] at (4.7, 1.3) {$(x_e, y_e, z_e)$};
+    \node[below right, font=\large] at (3.0, 0.7) {$(-\frac{n}{z_e}x_e, y_p, -n)$};
+\end{tikzpicture}
+
+\vspace*{\fill}
+
+\end{document} 

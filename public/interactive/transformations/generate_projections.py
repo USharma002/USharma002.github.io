@@ -1,0 +1,376 @@
+import os
+import re
+
+base_path = r'd:\USharma002.github.io\static\interactive\transformations'
+with open(os.path.join(base_path, 'view_space.html'), 'r', encoding='utf-8') as f:
+    content = f.read()
+
+# Extract object arrays
+bunny_v = re.search(r'const bunnyVertices = (\[.*?\]);', content, re.DOTALL).group(1)
+bunny_f = re.search(r'const bunnyFaces = (\[.*?\]);', content, re.DOTALL).group(1)
+
+html_template = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{{{TITLE}}}}</title>
+<style>
+    :root {{ --mafs-bg: transparent; --mafs-fg: #000000; --mafs-grid: rgba(0,0,0,0.15); --mafs-axis: rgba(0,0,0,0.8); --mafs-text: #333; }}
+    .theme-light {{ --mafs-fg: #000000; --mafs-grid: rgba(0,0,0,0.15); --mafs-axis: rgba(0,0,0,0.8); --mafs-text: #333; }}
+    .theme-dark {{ --mafs-fg: #ffffff; --mafs-grid: rgba(255,255,255,0.2); --mafs-axis: rgba(255,255,255,0.8); --mafs-text: #eee; }}
+    body {{ margin: 0; overflow: hidden; background-color: var(--mafs-bg); font-family: system-ui, sans-serif; color: var(--mafs-text); display: flex; flex-direction: column; height: 100vh; }}
+    .controls {{ display: flex; justify-content: center; gap: 10px; padding: 15px; background: var(--mafs-bg); border-bottom: 1px solid var(--mafs-grid); }}
+    button {{ background: var(--mafs-bg); color: var(--mafs-fg); border: 1px solid var(--mafs-grid); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }}
+    button:hover {{ background: var(--mafs-grid); }}
+    button.active {{ background: #3b82f6; color: #ffffff; border-color: #3b82f6; }}
+    .container {{ width: 100%; flex: 1; position: relative; }}
+    .label {{ position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; font-weight: 600; font-size: 16px; color: var(--mafs-fg); pointer-events: none; }}
+    svg {{ width: 100%; height: 100%; display: block; }}
+    .face {{ stroke: rgba(255,255,255,0.5); stroke-width: 0.01; stroke-linejoin: round; }}
+    .face.camera {{ stroke: #333; stroke-width: 0.02; }}
+    .frustum-line {{ stroke: #ef4444; stroke-width: 0.04; stroke-linejoin: round; fill: none; }}
+    text.axis-label {{ fill: var(--mafs-fg); font-size: 0.4px; font-style: italic; font-weight: bold; }}
+</style>
+</head>
+<body>
+<div class="controls">
+    <button onclick="setState(0)" id="btn-0" class="active">View Space</button>
+    <button onclick="setState(1)" id="btn-1">Apply {{{{PROJECTION_TYPE}}}} Projection</button>
+</div>
+<div class="container">
+    <svg id="canvas" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <marker id="arrow-x" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+            </marker>
+            <marker id="arrow-y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/>
+            </marker>
+            <marker id="arrow-z" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+            </marker>
+        </defs>
+        <g class="grid-group"></g>
+        <g class="axes-group"></g>
+        <g class="mesh-group"></g>
+        <g class="frustum-group"></g>
+    </svg>
+    <div class="label" id="status-label">View Space</div>
+</div>
+<script>
+    function syncTheme() {{
+        try {{
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        }} catch (e) {{}}
+    }}
+    syncTheme();
+    setInterval(syncTheme, 1000);
+
+    let animProgress = 0;
+    let animTarget = 0;
+    let isAnimating = false;
+
+    function setState(state) {{
+        document.querySelectorAll('button').forEach((b, i) => b.className = i === state ? 'active' : '');
+        animTarget = state;
+        document.getElementById('status-label').textContent = state === 0 ? "View Space" : "Homogeneous Clip Space ({{{{PROJECTION_TYPE}}}})";
+        if (!isAnimating) {{ isAnimating = true; requestAnimationFrame(animate); }}
+    }}
+
+    function animate() {{
+        let diff = animTarget - animProgress;
+        if (Math.abs(diff) < 0.01) {{ animProgress = animTarget; isAnimating = false; }}
+        else {{ animProgress += diff * 0.08; requestAnimationFrame(animate); }}
+        renderAll();
+    }}
+
+    let globalViewX = 30 * Math.PI / 180;
+    let globalViewY = -45 * Math.PI / 180;
+    let isDragging = false, lastMouseX = 0, lastMouseY = 0;
+    const bindMouse = (ev1, ev2, ev3) => {{
+        window.addEventListener(ev1, e => {{ isDragging = true; lastMouseX = e.clientX || e.touches[0].clientX; lastMouseY = e.clientY || e.touches[0].clientY; }});
+        window.addEventListener(ev2, e => {{
+            if(isDragging) {{
+                const cx = e.clientX || e.touches[0].clientX, cy = e.clientY || e.touches[0].clientY;
+                globalViewY -= (cx - lastMouseX) * 0.01; globalViewX -= (cy - lastMouseY) * 0.01;
+                globalViewX = Math.max(-Math.PI/2, Math.min(Math.PI/2, globalViewX));
+                lastMouseX = cx; lastMouseY = cy; renderAll();
+            }}
+        }});
+        window.addEventListener(ev3, () => {{ isDragging = false; }});
+    }};
+    bindMouse('mousedown', 'mousemove', 'mouseup'); bindMouse('touchstart', 'touchmove', 'touchend');
+    window.addEventListener('mouseleave', () => {{ isDragging = false; }});
+
+    function project(x, y, z) {{
+        let x1 = x * Math.cos(globalViewY) - z * Math.sin(globalViewY);
+        let z1 = x * Math.sin(globalViewY) + z * Math.cos(globalViewY);
+        let y1 = y * Math.cos(globalViewX) - z1 * Math.sin(globalViewX);
+        let z2 = y * Math.sin(globalViewX) + z1 * Math.cos(globalViewX);
+        return {{ x: x1, y: -y1, z: z2 }};
+    }}
+
+    const cubeVertices = [{{x:-1,y:-1,z:-1}},{{x:1,y:-1,z:-1}},{{x:1,y:1,z:-1}},{{x:-1,y:1,z:-1}},{{x:-1,y:-1,z:1}},{{x:1,y:-1,z:1}},{{x:1,y:1,z:1}},{{x:-1,y:1,z:1}}];
+    const cubeFaces = [[4,5,6,7],[5,1,2,6],[1,0,3,2],[0,4,7,3],[7,6,2,3],[0,1,5,4]];
+    const pyramidVertices = [{{x:0,y:1,z:0}},{{x:1,y:-1,z:1}},{{x:-1,y:-1,z:1}},{{x:-1,y:-1,z:-1}},{{x:1,y:-1,z:-1}}];
+    const pyramidFaces = [[0,1,2],[0,2,3],[0,3,4],[0,4,1],[2,1,4,3]];
+    const bunnyVertices = {bunny_v};
+    const bunnyFaces = {bunny_f};
+    const cameraVertices = [
+        {{x: -0.5, y: -0.4, z: -0.5}}, {{x: 0.5, y: -0.4, z: -0.5}}, {{x: 0.5, y: 0.4, z: -0.5}}, {{x: -0.5, y: 0.4, z: -0.5}},
+        {{x: -0.5, y: -0.4, z: 0.5}}, {{x: 0.5, y: -0.4, z: 0.5}}, {{x: 0.5, y: 0.4, z: 0.5}}, {{x: -0.5, y: 0.4, z: 0.5}},
+        {{x: -0.2, y: -0.2, z: -0.5}}, {{x: 0.2, y: -0.2, z: -0.5}}, {{x: 0.2, y: 0.2, z: -0.5}}, {{x: -0.2, y: 0.2, z: -0.5}},
+        {{x: -0.4, y: -0.4, z: -1.0}}, {{x: 0.4, y: -0.4, z: -1.0}}, {{x: 0.4, y: 0.4, z: -1.0}}, {{x: -0.4, y: 0.4, z: -1.0}}
+    ];
+    const cameraFaces = [
+        [0, 1, 2, 3], [4, 5, 6, 7], [0, 4, 7, 3], [1, 5, 6, 2], [3, 2, 6, 7], [0, 1, 5, 4],
+        [8, 9, 13, 12], [9, 10, 14, 13], [10, 11, 15, 14], [11, 8, 12, 15]
+    ];
+
+    const worldTransforms = {{
+        cube: {{ s: 1.5, rX: 0, rY: 0, rZ: 0, tX: 0, tY: 1.5, tZ: 0 }},
+        pyramid: {{ s: 1.5, rX: 0, rY: -Math.PI/6, rZ: 0, tX: 4, tY: 1.5, tZ: -1 }},
+        bunny: {{ s: 1.8, rX: 0, rY: Math.PI/4, rZ: 0, tX: 0, tY: 6.0, tZ: 0 }}
+    }};
+
+    const camTarget = {{ s: 1.2, rX: -Math.PI/8, rY: Math.PI/6, rZ: 0, tX: -4, tY: 5.5, tZ: 5 }};
+
+    function applyBaseTransform(v, t) {{
+        let x = v.x * t.s, y = v.y * t.s, z = v.z * t.s;
+        let y1 = y * Math.cos(t.rX) - z * Math.sin(t.rX);
+        let z1 = y * Math.sin(t.rX) + z * Math.cos(t.rX);
+        let x2 = x * Math.cos(t.rY) - z1 * Math.sin(t.rY);
+        let z2 = x * Math.sin(t.rY) + z1 * Math.cos(t.rY);
+        let x3 = x2 * Math.cos(t.rZ) - y1 * Math.sin(t.rZ);
+        let y3 = x2 * Math.sin(t.rZ) + y1 * Math.cos(t.rZ);
+        return {{ x: x3 + t.tX, y: y3 + t.tY, z: z2 + t.tZ }};
+    }}
+
+    function getViewSpace(v) {{
+        let x = v.x - camTarget.tX;
+        let y = v.y - camTarget.tY;
+        let z = v.z - camTarget.tZ;
+        let invRy = -camTarget.rY;
+        let invRx = -camTarget.rX;
+        let x1 = x * Math.cos(invRy) - z * Math.sin(invRy);
+        let z1 = x * Math.sin(invRy) + z * Math.cos(invRy);
+        let y2 = y * Math.cos(invRx) - z1 * Math.sin(invRx);
+        let z2 = y * Math.sin(invRx) + z1 * Math.cos(invRx);
+        return {{ x: x1, y: y2, z: z2 }};
+    }}
+
+    {{{{PROJECTION_FUNCTIONS}}}}
+
+    function getShadingColor(nx, ny, nz, type) {{
+        let lx = 0.5, ly = 0.8, lz = 0.5; 
+        let llen = Math.sqrt(lx*lx + ly*ly + lz*lz);
+        lx /= llen; ly /= llen; lz /= llen;
+        let dot = Math.max(0.1, nx * lx + ny * ly + nz * lz);
+        
+        let r, g, b;
+        if (type === 'cube') {{ r = Math.round(50 + (239 - 50) * dot); g = Math.round(20 + (68 - 20) * dot); b = Math.round(20 + (68 - 20) * dot); }}
+        else if (type === 'pyramid') {{ r = Math.round(20 + (34 - 20) * dot); g = Math.round(50 + (197 - 50) * dot); b = Math.round(20 + (94 - 20) * dot); }}
+        else if (type === 'bunny') {{ r = Math.round(26 + (165 - 26) * dot); g = Math.round(156 + (216 - 156) * dot); b = Math.round(199 + (243 - 199) * dot); }}
+        else if (type === 'camera') {{ r = Math.round(30 + (80 - 30) * dot); g = Math.round(30 + (80 - 30) * dot); b = Math.round(30 + (80 - 30) * dot); }}
+        return `rgb(${{r}}, ${{g}}, ${{b}})`;
+    }}
+
+    const svg = document.getElementById('canvas');
+    function resize() {{
+        const aspect = svg.clientWidth / svg.clientHeight;
+        const height = 16;
+        const width = height * aspect;
+        svg.setAttribute('viewBox', `${{-width/2}} ${{-height/2}} ${{width}} ${{height}}`);
+        renderAll();
+    }}
+    window.addEventListener('resize', resize);
+
+    {{{{FRUSTUM_SETUP}}}}
+
+    function renderAll() {{
+        const meshGroup = svg.querySelector('.mesh-group');
+        const frustumGroup = svg.querySelector('.frustum-group');
+        const axesGroup = svg.querySelector('.axes-group');
+        const gridGroup = svg.querySelector('.grid-group');
+        
+        meshGroup.innerHTML = ''; frustumGroup.innerHTML = ''; axesGroup.innerHTML = ''; gridGroup.innerHTML = '';
+
+        // Draw Grid
+        const gridLines = [];
+        const gridSize = 10;
+        const step = 2;
+        for(let i = -gridSize; i <= gridSize; i+=step) {{
+            let v1 = {{x: i, y: 0, z: -gridSize}};
+            let v2 = {{x: i, y: 0, z: gridSize}};
+            gridLines.push({{p1: project(v1.x, v1.y, v1.z), p2: project(v2.x, v2.y, v2.z)}});
+            
+            let v3 = {{x: -gridSize, y: 0, z: i}};
+            let v4 = {{x: gridSize, y: 0, z: i}};
+            gridLines.push({{p1: project(v3.x, v3.y, v3.z), p2: project(v4.x, v4.y, v4.z)}});
+        }}
+        gridLines.forEach(line => {{
+            const el = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            el.setAttribute('x1', line.p1.x); el.setAttribute('y1', line.p1.y);
+            el.setAttribute('x2', line.p2.x); el.setAttribute('y2', line.p2.y);
+            el.setAttribute('stroke', 'var(--mafs-grid)');
+            el.setAttribute('stroke-width', '0.04');
+            gridGroup.appendChild(el);
+        }});
+
+        // Draw Axes
+        const axScale = 5;
+        const colors = {{ x: '#ef4444', y: '#22c55e', z: '#3b82f6' }};
+        const pts = [
+            {{v: {{x:axScale, y:0, z:0}}, l: 'x'}},
+            {{v: {{x:0, y:axScale, z:0}}, l: 'y'}},
+            {{v: {{x:0, y:0, z:axScale}}, l: 'z'}}
+        ];
+        pts.forEach(p => {{
+            const origin = project(0, 0, 0);
+            const target = project(p.v.x, p.v.y, p.v.z);
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute('x1', origin.x); line.setAttribute('y1', origin.y);
+            line.setAttribute('x2', target.x); line.setAttribute('y2', target.y);
+            line.setAttribute('stroke', colors[p.l]);
+            line.setAttribute('stroke-width', '0.08');
+            line.setAttribute('marker-end', `url(#arrow-${{p.l}})`);
+            axesGroup.appendChild(line);
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute('x', target.x + 0.3); text.setAttribute('y', target.y + 0.3);
+            text.setAttribute('class', 'axis-label');
+            text.setAttribute('style', `fill: ${{colors[p.l]}}`);
+            text.textContent = p.l.toUpperCase();
+            axesGroup.appendChild(text);
+        }});
+
+        let renderFaces = [];
+        const allData = [
+            {{ type: 'cube', v: cubeVertices, f: cubeFaces }},
+            {{ type: 'pyramid', v: pyramidVertices, f: pyramidFaces }},
+            {{ type: 'bunny', v: bunnyVertices, f: bunnyFaces }},
+            {{ type: 'camera', v: cameraVertices, f: cameraFaces, isStatic: true }}
+        ];
+
+        allData.forEach(obj => {{
+            let tBase = worldTransforms[obj.type] || {{}};
+            obj.f.forEach(face => {{
+                let pts3d = face.map(i => {{
+                    if (obj.isStatic) {{
+                        let s = tBase.s || 1.0;
+                        return {{x: obj.v[i].x * s, y: obj.v[i].y * s, z: obj.v[i].z * s}};
+                    }}
+                    let vWorld = applyBaseTransform(obj.v[i], tBase);
+                    let vView = getViewSpace(vWorld);
+                    let vTarget = getTarget(vView);
+                    return {{
+                        x: vView.x * (1 - animProgress) + vTarget.x * animProgress,
+                        y: vView.y * (1 - animProgress) + vTarget.y * animProgress,
+                        z: vView.z * (1 - animProgress) + vTarget.z * animProgress
+                    }};
+                }});
+                
+                let v0 = pts3d[0], v1 = pts3d[1], v2 = pts3d[2];
+                let ux = v1.x - v0.x, uy = v1.y - v0.y, uz = v1.z - v0.z;
+                let vx = v2.x - v0.x, vy = v2.y - v0.y, vz = v2.z - v0.z;
+                let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+                let len = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+                let color = getShadingColor(nx/len, ny/len, nz/len, obj.type);
+                
+                let p2d = pts3d.map(p => project(p.x, p.y, p.z));
+                let avgZ = p2d.reduce((sum, p) => sum + p.z, 0) / p2d.length;
+                let cross = (p2d[1].x - p2d[0].x)*(p2d[2].y - p2d[0].y) - (p2d[1].y - p2d[0].y)*(p2d[2].x - p2d[0].x);
+                let isBackfacing = (obj.type === 'camera') ? false : ((obj.type === 'bunny' || obj.type === 'cube') ? cross > 0 : cross < 0);
+                
+                renderFaces.push({{ p2d, avgZ, color, isBackfacing, type: obj.type }});
+            }});
+        }});
+
+        renderFaces.sort((a, b) => a.avgZ - b.avgZ);
+        renderFaces.forEach(data => {{
+            if (data.isBackfacing) return;
+            const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+            poly.setAttribute('class', data.type === 'camera' ? 'face camera' : 'face');
+            poly.setAttribute('points', data.p2d.map(p => `${{p.x}},${{p.y}}`).join(' '));
+            poly.setAttribute('fill', data.color);
+            meshGroup.appendChild(poly);
+        }});
+
+        frustumEdges.forEach(edge => {{
+            let v1View = frustumVerts[edge[0]];
+            let v2View = frustumVerts[edge[1]];
+            let v1T = getTarget(v1View);
+            let v2T = getTarget(v2View);
+
+            let v1 = {{
+                x: v1View.x * (1 - animProgress) + v1T.x * animProgress,
+                y: v1View.y * (1 - animProgress) + v1T.y * animProgress,
+                z: v1View.z * (1 - animProgress) + v1T.z * animProgress
+            }};
+            let v2 = {{
+                x: v2View.x * (1 - animProgress) + v2T.x * animProgress,
+                y: v2View.y * (1 - animProgress) + v2T.y * animProgress,
+                z: v2View.z * (1 - animProgress) + v2T.z * animProgress
+            }};
+
+            let p1 = project(v1.x, v1.y, v1.z);
+            let p2 = project(v2.x, v2.y, v2.z);
+
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute('class', 'frustum-line');
+            line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
+            line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
+            frustumGroup.appendChild(line);
+        }});
+    }}
+    setTimeout(resize, 0);
+</script>
+</body>
+</html>"""
+
+ortho_funcs = """
+    function getTarget(v) {
+        let xNdc = v.x / 6;
+        let yNdc = v.y / 5;
+        let zNdc = (v.z - (-3)) / (-10) * 2 - 1;
+        let zTarget = -8 - 6 * zNdc;
+        return { x: 6 * xNdc, y: 6 * yNdc, z: zTarget };
+    }
+"""
+ortho_frustum = """
+    const frustumVerts = [
+        {x: -6, y: -5, z: -3}, {x: 6, y: -5, z: -3}, {x: 6, y: 5, z: -3}, {x: -6, y: 5, z: -3},
+        {x: -6, y: -5, z: -13}, {x: 6, y: -5, z: -13}, {x: 6, y: 5, z: -13}, {x: -6, y: 5, z: -13}
+    ];
+    const frustumEdges = [ [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7] ];
+"""
+
+persp_funcs = """
+    function getTarget(v) {
+        let z = Math.min(v.z, -0.01); 
+        let tanFov = Math.tan(30 * Math.PI / 180);
+        let xNdc = v.x / (-z * tanFov);
+        let yNdc = v.y / (-z * tanFov);
+        let zNdc = 1.6 + 7.8 / z;
+        let zTarget = -8 - 6 * zNdc;
+        return { x: 6 * xNdc, y: 6 * yNdc, z: zTarget };
+    }
+"""
+persp_frustum = """
+    const tanFov = Math.tan(30 * Math.PI / 180);
+    const n = -3, f = -13;
+    const nW = -n * tanFov, fW = -f * tanFov;
+    const frustumVerts = [
+        {x: -nW, y: -nW, z: n}, {x: nW, y: -nW, z: n}, {x: nW, y: nW, z: n}, {x: -nW, y: nW, z: n},
+        {x: -fW, y: -fW, z: f}, {x: fW, y: -fW, z: f}, {x: fW, y: fW, z: f}, {x: -fW, y: fW, z: f}
+    ];
+    const frustumEdges = [ [0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7] ];
+"""
+
+with open(os.path.join(base_path, 'orthographic_projection.html'), 'w', encoding='utf-8') as f:
+    f.write(html_template.replace('{{TITLE}}', 'Orthographic Projection').replace('{{PROJECTION_TYPE}}', 'Orthographic').replace('{{PROJECTION_FUNCTIONS}}', ortho_funcs).replace('{{FRUSTUM_SETUP}}', ortho_frustum))
+
+with open(os.path.join(base_path, 'perspective_projection.html'), 'w', encoding='utf-8') as f:
+    f.write(html_template.replace('{{TITLE}}', 'Perspective Projection').replace('{{PROJECTION_TYPE}}', 'Perspective').replace('{{PROJECTION_FUNCTIONS}}', persp_funcs).replace('{{FRUSTUM_SETUP}}', persp_frustum))

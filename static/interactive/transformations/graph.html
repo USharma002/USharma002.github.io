@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformation Widget</title>
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" crossorigin="anonymous"></script>
+
+<style>
+    :root {
+        --mafs-bg: transparent;
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-axis: rgba(0,0,0,0.8);
+        --mafs-blue: #0066ff;
+        --mafs-blue-fill: rgba(0, 102, 255, 0.15);
+        --mafs-red: #ef4444;
+        --mafs-green: #22c55e;
+        --mafs-text: #333;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --mafs-fg: #ffffff;
+            --mafs-grid: rgba(255,255,255,0.2);
+            --mafs-axis: rgba(255,255,255,0.8);
+            --mafs-blue: #3b82f6;
+            --mafs-blue-fill: rgba(59, 130, 246, 0.2);
+            --mafs-red: #f87171;
+            --mafs-green: #4ade80;
+            --mafs-text: #eee;
+        }
+    }
+
+    /* Force Light Mode if Parent says so */
+    .theme-light {
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-axis: rgba(0,0,0,0.8);
+        --mafs-blue: #0066ff;
+        --mafs-blue-fill: rgba(0, 102, 255, 0.15);
+        --mafs-red: #ef4444;
+        --mafs-green: #22c55e;
+        --mafs-text: #333;
+    }
+
+    /* Force Dark Mode if Parent says so */
+    .theme-dark {
+        --mafs-fg: #ffffff;
+        --mafs-grid: rgba(255,255,255,0.2);
+        --mafs-axis: rgba(255,255,255,0.8);
+        --mafs-blue: #3b82f6;
+        --mafs-blue-fill: rgba(59, 130, 246, 0.2);
+        --mafs-red: #f87171;
+        --mafs-green: #4ade80;
+        --mafs-text: #eee;
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--mafs-bg);
+        font-family: system-ui, sans-serif;
+        color: var(--mafs-text);
+    }
+
+    #matrix-container {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        pointer-events: none;
+    }
+
+    #matrix-title {
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 4px;
+        color: var(--mafs-fg);
+    }
+
+    #phase-container {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--mafs-fg);
+        background: var(--mafs-bg);
+        padding: 4px 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Editable Matrix Style */
+    #custom-matrix {
+        display: none;
+        grid-template-columns: repeat(3, 45px);
+        gap: 6px;
+        padding: 6px 12px;
+        border-left: 2px solid var(--mafs-fg);
+        border-right: 2px solid var(--mafs-fg);
+        border-radius: 8px; /* Creates bracket-like curve */
+        pointer-events: auto; /* Allow interaction */
+        margin-top: 8px;
+    }
+
+    .matrix-input {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        background: color-mix(in srgb, var(--mafs-grid) 30%, transparent);
+        border: 1px solid transparent;
+        color: var(--mafs-fg);
+        font-size: 15px;
+        font-family: monospace;
+        border-radius: 4px;
+        padding: 6px 0;
+        transition: all 0.2s;
+    }
+    .matrix-input:hover { background: color-mix(in srgb, var(--mafs-grid) 60%, transparent); }
+    .matrix-input:focus { outline: none; border-color: var(--mafs-blue); background: var(--mafs-bg); }
+
+    /* Hide spinners */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Column coloring */
+    .col-0 { color: var(--mafs-red) !important; }
+    .col-1 { color: var(--mafs-green) !important; }
+    .col-2 { color: var(--mafs-blue) !important; }
+
+    #custom-controls {
+        display: none;
+        margin-top: 12px;
+        gap: 8px;
+        pointer-events: auto;
+    }
+
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        border: none;
+    }
+    .btn:hover { opacity: 0.8; }
+    .btn-apply { background: var(--mafs-blue); color: white; }
+    .btn-reset { background: var(--mafs-grid); color: var(--mafs-fg); }
+
+    svg {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+    }
+
+    .base-shape {
+        fill: transparent;
+        stroke: var(--mafs-axis);
+        stroke-width: 0.05;
+        stroke-dasharray: 0.1 0.1;
+    }
+
+    .transformed-shape {
+        fill: var(--mafs-blue-fill);
+        stroke: var(--mafs-blue);
+        stroke-width: 0.08;
+        stroke-linejoin: round;
+    }
+
+    .point-node {
+        fill: var(--mafs-blue);
+        stroke: var(--mafs-bg);
+        stroke-width: 0.05;
+    }
+
+    text.axis-label {
+        fill: var(--mafs-fg);
+        font-size: 0.5px;
+        font-style: italic;
+        font-weight: bold;
+        user-select: none;
+    }
+</style>
+</head>
+<body>
+
+<div id="matrix-container">
+    <div id="matrix-title"></div>
+    <div id="matrix-latex"></div>
+    
+    <div id="custom-matrix">
+        <input type="number" class="matrix-input col-0" id="m00" value="1" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m01" value="0" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m02" value="0" step="0.1">
+        
+        <input type="number" class="matrix-input col-0" id="m10" value="0" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m11" value="1" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m12" value="0" step="0.1">
+        
+        <input type="number" class="matrix-input col-0" id="m20" value="0" step="0.1">
+        <input type="number" class="matrix-input col-1" id="m21" value="0" step="0.1">
+        <input type="number" class="matrix-input col-2" id="m22" value="1" step="0.1">
+    </div>
+
+    <div id="custom-controls">
+        <button class="btn btn-apply" id="btn-apply">Apply T</button>
+        <button class="btn btn-reset" id="btn-reset">Reset</button>
+    </div>
+</div>
+
+<div id="phase-container"></div>
+
+<svg id="canvas" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse" x="4" y="4">
+            <path d="M 1 0 L 0 0 0 1" fill="none" stroke="var(--mafs-grid)" stroke-width="0.03" />
+        </pattern>
+        <!-- Standard Arrow -->
+        <marker id="arrow-end" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-axis)"/>
+        </marker>
+        <marker id="arrow-start" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 10 0 L 0 5 L 10 10 z" fill="var(--mafs-axis)"/>
+        </marker>
+        <!-- Basis Vector Arrows -->
+        <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-red)"/>
+        </marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-green)"/>
+        </marker>
+    </defs>
+    
+    <rect x="-20" y="-20" width="40" height="40" fill="url(#grid)" />
+    
+    <!-- Axes with double arrows -->
+    <path id="x-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+    <path id="y-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
+    
+    <!-- Axes Labels -->
+    <text id="x-label" class="axis-label" dominant-baseline="middle">x</text>
+    <text id="y-label" class="axis-label" dominant-baseline="middle">y</text>
+    
+    <!-- Polygons -->
+    <polygon id="base" class="base-shape" />
+    <polygon id="transformed" class="transformed-shape" />
+    
+    <!-- Nodes (Mafs style) -->
+    <g id="nodes"></g>
+
+    <!-- Basis Vectors -->
+    <line id="x-vec" x1="0" y1="0" x2="1" y2="0" stroke="var(--mafs-red)" stroke-width="0.06" marker-end="url(#arrow-red)" />
+    <line id="y-vec" x1="0" y1="0" x2="0" y2="-1" stroke="var(--mafs-green)" stroke-width="0.06" marker-end="url(#arrow-green)" />
+</svg>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type') || 'translation';
+
+    // Theme synchronization
+    function syncTheme() {
+        const theme = urlParams.get('theme');
+        if (theme) {
+            document.documentElement.className = `theme-${theme}`;
+            return;
+        }
+
+        try {
+            // Check parent's theme class (common in Hugo themes like PaperMod)
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || 
+                           window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {
+            // Fallback to system preference if cross-origin
+        }
+    }
+    syncTheme();
+    setInterval(syncTheme, 1000); // Check for theme toggles
+
+    function resize() {
+        const svg = document.getElementById('canvas');
+        const aspect = window.innerWidth / window.innerHeight;
+        // Fix Y to exactly -4 to 4 (height = 8). X scales with aspect ratio.
+        const width = 8 * aspect;
+        const halfWidth = width / 2;
+        
+        svg.setAttribute('viewBox', `${-halfWidth} -4 ${width} 8`);
+        
+        document.getElementById('x-axis').setAttribute('d', `M ${-halfWidth + 0.2} 0 L ${halfWidth - 0.2} 0`);
+        document.getElementById('y-axis').setAttribute('d', `M 0 -3.8 L 0 3.8`);
+        
+        document.getElementById('x-label').setAttribute('x', halfWidth - 0.5);
+        document.getElementById('x-label').setAttribute('y', 0.3);
+        
+        document.getElementById('y-label').setAttribute('x', -0.3);
+        document.getElementById('y-label').setAttribute('y', -3.5);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Color definitions for KaTeX
+    const cX = "\\textcolor{#ef4444}";
+    const cY = "\\textcolor{#22c55e}";
+    const cT = "\\textcolor{#3b82f6}";
+
+    const matrixMap = {
+        translation: { title: "Translation Matrix", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{0} & ${cT}{t_x} \\\\ ${cX}{0} & ${cY}{1} & ${cT}{t_y} \\\\ ${cX}{0} & ${cY}{0} & ${cT}{1} \\end{bmatrix}` },
+        scaling: { title: "Scaling Matrix", latex: `\\begin{bmatrix} ${cX}{s_x} & ${cY}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{s_y} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cT}{1} \\end{bmatrix}` },
+        euclidean: { title: "Euclidean Matrix", latex: `\\begin{bmatrix} ${cX}{\\cos\\theta} & ${cY}{-\\sin\\theta} & ${cT}{0} \\\\ ${cX}{\\sin\\theta} & ${cY}{\\cos\\theta} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cT}{1} \\end{bmatrix}` },
+        similarity: { title: "Similarity Matrix", latex: `\\begin{bmatrix} ${cX}{s\\cos\\theta} & ${cY}{-s\\sin\\theta} & ${cT}{0} \\\\ ${cX}{s\\sin\\theta} & ${cY}{s\\cos\\theta} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cT}{1} \\end{bmatrix}` },
+        affine: { title: "Affine Matrix", latex: `\\begin{bmatrix} ${cX}{a} & ${cY}{b} & ${cT}{0} \\\\ ${cX}{c} & ${cY}{d} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cT}{1} \\end{bmatrix}` },
+        projective: { title: "Projective Matrix", latex: `\\begin{bmatrix} ${cX}{a} & ${cY}{b} & ${cT}{c} \\\\ ${cX}{d} & ${cY}{e} & ${cT}{f} \\\\ ${cX}{g} & ${cY}{h} & ${cT}{1} \\end{bmatrix}` },
+        custom: { title: "Custom Matrix", latex: "" }
+    };
+
+    const matrixInfo = matrixMap[type] || matrixMap['translation'];
+    document.getElementById('matrix-title').textContent = matrixInfo.title;
+
+    let customT = 0;
+    let targetT = 0;
+
+    if (type === 'custom') {
+        document.getElementById('custom-matrix').style.display = 'inline-grid';
+        document.getElementById('custom-controls').style.display = 'flex';
+        
+        document.getElementById('btn-apply').addEventListener('click', () => { targetT = 1; });
+        document.getElementById('btn-reset').addEventListener('click', () => { targetT = 0; });
+    } else {
+        window.onload = () => {
+            katex.render(matrixInfo.latex, document.getElementById('matrix-latex'), {
+                displayMode: true,
+                throwOnError: false
+            });
+        };
+    }
+
+    // Base Square points (scaled for 8x8 grid)
+    const basePoints = [
+        {x: 1.0, y: 1.0},
+        {x: -1.0, y: 1.0},
+        {x: -1.0, y: -1.0},
+        {x: 1.0, y: -1.0}
+    ];
+
+    const basePoly = document.getElementById('base');
+    const transformedPoly = document.getElementById('transformed');
+    const nodesGroup = document.getElementById('nodes');
+    const xVec = document.getElementById('x-vec');
+    const yVec = document.getElementById('y-vec');
+
+    function pointsToString(pts) {
+        return pts.map(p => `${p.x},${-p.y}`).join(' ');
+    }
+
+    basePoly.setAttribute('points', pointsToString(basePoints));
+
+    const nodes = basePoints.map(() => {
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("r", "0.15");
+        circle.setAttribute("class", "point-node");
+        nodesGroup.appendChild(circle);
+        return circle;
+    });
+
+    function getTransform(type, t) {
+        if (type === 'custom') {
+            // Read matrix directly from user inputs and interpolate from Identity
+            let m00 = parseFloat(document.getElementById('m00').value) || 0;
+            let m01 = parseFloat(document.getElementById('m01').value) || 0;
+            let m02 = parseFloat(document.getElementById('m02').value) || 0;
+            let m10 = parseFloat(document.getElementById('m10').value) || 0;
+            let m11 = parseFloat(document.getElementById('m11').value) || 0;
+            let m12 = parseFloat(document.getElementById('m12').value) || 0;
+            let m20 = parseFloat(document.getElementById('m20').value) || 0;
+            let m21 = parseFloat(document.getElementById('m21').value) || 0;
+            let m22 = parseFloat(document.getElementById('m22').value) || 1;
+
+            // Interpolate from Identity
+            let i00 = 1 + (m00 - 1) * t, i01 = m01 * t, i02 = m02 * t;
+            let i10 = m10 * t, i11 = 1 + (m11 - 1) * t, i12 = m12 * t;
+            let i20 = m20 * t, i21 = m21 * t, i22 = 1 + (m22 - 1) * t;
+
+            return function(p) {
+                let rx = i00 * p.x + i01 * p.y + i02;
+                let ry = i10 * p.x + i11 * p.y + i12;
+                let w = i20 * p.x + i21 * p.y + i22;
+                return { x: rx/w, y: ry/w };
+            }
+        }
+
+        let tx = 0, ty = 0, angle = 0, sx = 1, sy = 1, shx = 0, px = 0, py = 0;
+        switch(type) {
+            case 'translation':
+                tx = 2 * t; ty = 1.5 * t; break;
+            case 'scaling':
+                sx = 1 + 1.2 * t; sy = 1 + 0.5 * t; break;
+            case 'euclidean':
+                angle = 60 * Math.PI / 180 * t; break;
+            case 'similarity':
+                angle = 45 * Math.PI / 180 * t; sx = 1 - 0.4 * t; sy = sx; break;
+            case 'affine':
+                sx = 1 + 0.4 * t; sy = 1 - 0.2 * t; shx = 0.6 * t; break;
+            case 'projective':
+                px = 0.1 * t; py = 0.05 * t; break;
+        }
+
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+
+        return function(p) {
+            let x = p.x; let y = p.y;
+            x *= sx; y *= sy; x += y * shx;
+            let rx = x * cos - y * sin; let ry = x * sin + y * cos;
+            rx += tx; ry += ty;
+            let w = 1 + px * p.x + py * p.y; 
+            return { x: rx/w, y: ry/w };
+        }
+    }
+
+    function animate(time) {
+        const phaseLabel = document.getElementById('phase-container');
+        let t = 0;
+        
+        if (type === 'custom') {
+            customT += (targetT - customT) * 0.08; // Smooth interpolation
+            t = customT;
+            
+            if (typeof katex !== 'undefined') {
+                if (targetT === 1) {
+                    katex.render("\\text{Applying } T", phaseLabel, { throwOnError: false });
+                } else {
+                    katex.render("\\text{Identity}", phaseLabel, { throwOnError: false });
+                }
+            }
+        } else {
+            const phaseRaw = Math.sin(time / 800);
+            t = (phaseRaw + 1) / 2;
+            const isForward = Math.cos(time / 800) > 0;
+            
+            if (typeof katex !== 'undefined') {
+                katex.render(isForward ? "\\text{Applying } T" : "\\text{Applying } T^{-1}", phaseLabel, { throwOnError: false });
+            }
+        }
+
+        const transform = getTransform(type, t);
+        const newPoints = basePoints.map(transform);
+        
+        transformedPoly.setAttribute('points', pointsToString(newPoints));
+        
+        newPoints.forEach((p, i) => {
+            nodes[i].setAttribute('cx', p.x);
+            nodes[i].setAttribute('cy', -p.y);
+        });
+
+        // Transform Basis Vectors (X vector is (1,0), Y vector is (0,1))
+        const pX = transform({x: 1, y: 0});
+        const pY = transform({x: 0, y: 1});
+        const origin = transform({x: 0, y: 0});
+
+        xVec.setAttribute('x1', origin.x);
+        xVec.setAttribute('y1', -origin.y);
+        xVec.setAttribute('x2', pX.x);
+        xVec.setAttribute('y2', -pX.y);
+
+        yVec.setAttribute('x1', origin.x);
+        yVec.setAttribute('y1', -origin.y);
+        yVec.setAttribute('x2', pY.x);
+        yVec.setAttribute('y2', -pY.y);
+        
+        requestAnimationFrame(animate);
+    }
+    
+    requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>

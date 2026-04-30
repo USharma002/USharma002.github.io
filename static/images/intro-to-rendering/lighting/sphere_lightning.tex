@@ -1,0 +1,30 @@
+\documentclass[varwidth=15cm, border=10pt]{standalone}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\begin{document}
+\sffamily
+\centering
+
+\begin{minipage}{0.3\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{amb.png}
+    \par\vspace{5pt}
+    {\small Ambient only}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{diff.png}
+    \par\vspace{5pt}
+    {\small Ambient + Diffuse}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{diffspec.png}
+    \par\vspace{5pt}
+    {\small Ambient + Diffuse + Specular}
+\end{minipage}
+
+\end{document}

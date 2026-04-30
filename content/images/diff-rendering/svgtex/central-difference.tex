@@ -1,0 +1,51 @@
+\documentclass[tikz, border=10pt]{standalone}
+\usetikzlibrary{calc}
+
+\begin{document}
+\begin{tikzpicture}[
+    scale=2.0,
+    important line/.style={thick},
+    dashed line/.style={dashed, thin, gray},
+    every node/.style={font=\small},
+    triangle fill/.style={fill=green, fill opacity=0.2}, % Translucent fill
+    triangle stroke/.style={green!60!black, thick}
+]
+    % Axes
+    \draw[->] (-0.2,0) -- (4,0) node[right] {$x$};
+    \draw[->] (0,-0.2) -- (0,3) node[above] {$f(x)$};
+
+    % Curve
+    \draw[important line, blue] plot[domain=0.5:3.5, samples=100] (\x, {0.15*\x*\x + 0.1*\x + 0.2});
+    
+    % Definitions
+    \def\xval{2.0}
+    \def\hval{1.0}
+    \def\xmhval{1.0}
+    \def\xphval{3.0}
+    \pgfmathsetmacro{\fxmh}{0.15*\xmhval*\xmhval + 0.1*\xmhval + 0.2}
+    \pgfmathsetmacro{\fxph}{0.15*\xphval*\xphval + 0.1*\xphval + 0.2}
+
+    \coordinate (P) at (\xmhval, \fxmh);
+    \coordinate (Q) at (\xphval, \fxmh);
+    \coordinate (R) at (\xphval, \fxph);
+
+    % Translucent Triangle
+    \fill[triangle fill] (P) -- (Q) -- (R) -- cycle;
+    \draw[triangle stroke] (P) -- (Q);
+    \draw[triangle stroke] (Q) -- (R);
+    \draw[triangle stroke, dashed] (R) -- (P);
+
+    % Adjusted Labels
+    \path (P) -- (Q) node[midway, below, green!60!black] {$2h$};
+    \path (Q) -- (R) node[midway, right, green!60!black] {$f(x+h) - f(x-h)$};
+    
+    % Moved slope text to the left and up
+    \node[green!60!black, anchor=south east, xshift=-0.1cm, yshift=0.1cm] at (R) {Slope: $\frac{f(x+h)-f(x-h)}{2h}$};
+
+    % Projections
+    \draw[dashed line] (\xmhval,0) node[below] {$x-h$} -- (P);
+    \draw[dashed line] (\xphval,0) node[below] {$x+h$} -- (R);
+    \draw[dashed line] (0,\fxmh) node[left] {$f(x-h)$} -- (P);
+    \draw[dashed line] (0,\fxph) node[left] {$f(x+h)$} -- (R);
+\end{tikzpicture}
+\end{document}

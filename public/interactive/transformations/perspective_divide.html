@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perspective Divide – Z-Buffer Precision</title>
+<style>
+    :root { --mafs-bg: transparent; --mafs-fg: #000; --mafs-grid: rgba(0,0,0,0.15); --mafs-text: #333; }
+    .theme-light { --mafs-fg: #000; --mafs-grid: rgba(0,0,0,0.15); --mafs-text: #333; }
+    .theme-dark  { --mafs-fg: #fff; --mafs-grid: rgba(255,255,255,0.2); --mafs-text: #eee; }
+    body { margin: 0; overflow: hidden; background: var(--mafs-bg); font-family: system-ui, sans-serif; color: var(--mafs-text); display: flex; flex-direction: column; height: 100vh; cursor: grab; touch-action: none; user-select: none; }
+    body:active { cursor: grabbing; }
+    .controls { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 15px; background: var(--mafs-bg); border-bottom: 1px solid var(--mafs-grid); }
+    button { background: var(--mafs-bg); color: var(--mafs-fg); border: 1px solid var(--mafs-grid); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+    button:hover { background: var(--mafs-grid); }
+    button.active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+    .container { width: 100%; flex: 1; position: relative; }
+    .label { position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; font-weight: 600; font-size: 16px; color: var(--mafs-fg); pointer-events: none; }
+    svg { width: 100%; height: 100%; display: block; }
+    .face { stroke-linejoin: round; }
+    text.axis-label { fill: var(--mafs-fg); font-size: 0.4px; font-weight: bold; user-select: none; }
+    
+    /* Styles for the highlighted plane labels */
+    text.highlight-label { 
+        font-size: 0.5px; 
+        font-weight: 700; 
+        user-select: none; 
+        pointer-events: none; 
+        paint-order: stroke fill; 
+        stroke: var(--mafs-bg); /* Text outline matches background to ensure readability over grid lines */
+        stroke-width: 0.2px; 
+    }
+</style>
+</head>
+<body>
+<div class="controls">
+    <button onclick="setState(0)" class="active">View Space (Linear Z)</button>
+    <button onclick="setState(1)">NDC (Nonlinear Depth)</button>
+</div>
+<div class="container">
+    <svg id="canvas" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <marker id="arrow-x" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/></marker>
+            <marker id="arrow-y" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e"/></marker>
+            <marker id="arrow-z" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/></marker>
+        </defs>
+        <g class="grid-group"></g>
+        <g class="mesh-group"></g>
+        <g class="frustum-group"></g>
+        <g class="axes-group"></g>
+    </svg>
+    <div class="label" id="status-label">View Space: 5 Evenly Spaced Depth Planes</div>
+</div>
+<script>
+    function syncTheme() {
+        try {
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {}
+    }
+    syncTheme(); setInterval(syncTheme, 1000);
+
+    let animProgress = 0, animTarget = 0, isAnimating = false;
+
+    function setState(state) {
+        document.querySelectorAll('button').forEach((b, i) => b.className = i === state ? 'active' : '');
+        animTarget = state;
+        document.getElementById('status-label').textContent = state === 0
+            ? "View Space: 5 Evenly Spaced Depth Planes"
+            : "NDC: Far depths are compressed";
+        if (!isAnimating) { isAnimating = true; requestAnimationFrame(animate); }
+    }
+
+    function animate() {
+        let diff = animTarget - animProgress;
+        if (Math.abs(diff) < 0.005) { animProgress = animTarget; isAnimating = false; }
+        else { animProgress += diff * 0.04; requestAnimationFrame(animate); }
+        renderAll();
+    }
+
+    let globalViewX = 15 * Math.PI / 180;
+    let globalViewY = -60 * Math.PI / 180;
+    let isDragging = false, lastMouseX = 0, lastMouseY = 0;
+
+    const bindMouse = (ev1, ev2, ev3) => {
+        window.addEventListener(ev1, e => { isDragging = true; let t = e.touches ? e.touches[0] : e; lastMouseX = t.clientX; lastMouseY = t.clientY; });
+        window.addEventListener(ev2, e => {
+            if (isDragging) {
+                let t = e.touches ? e.touches[0] : e;
+                globalViewY -= (t.clientX - lastMouseX) * 0.01;
+                globalViewX -= (t.clientY - lastMouseY) * 0.01;
+                globalViewX = Math.max(-Math.PI/2, Math.min(Math.PI/2, globalViewX));
+                lastMouseX = t.clientX; lastMouseY = t.clientY; renderAll();
+            }
+        });
+        window.addEventListener(ev3, () => { isDragging = false; });
+    };
+    bindMouse('mousedown', 'mousemove', 'mouseup');
+    bindMouse('touchstart', 'touchmove', 'touchend');
+    window.addEventListener('mouseleave', () => { isDragging = false; });
+
+    function project(x, y, z) {
+        let x1 = x * Math.cos(globalViewY) - z * Math.sin(globalViewY);
+        let z1 = x * Math.sin(globalViewY) + z * Math.cos(globalViewY);
+        let y1 = y * Math.cos(globalViewX) - z1 * Math.sin(globalViewX);
+        let z2 = y * Math.sin(globalViewX) + z1 * Math.cos(globalViewX);
+        return { x: x1, y: -y1, z: z2 };
+    }
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    const n = 2, f = 10;
+    const A = -(f+n)/(f-n);   // -1.5
+    const B = -2*f*n/(f-n);   // -5.0
+
+    function getTarget(v) {
+        let w = Math.max(0.01, -v.z);
+        let xNdc = v.x / w;
+        let yNdc = v.y / w;
+        let zNdc = (A * v.z + B) / w;
+        // Map NDC [-1, 1] to visual space [1, -1] so -1 (near) is closer to camera
+        return { x: xNdc, y: yNdc, z: zNdc };
+    }
+
+    const zPlanes =[
+        { z: -2,  color: 'rgba(239, 68, 68, 0.75)', name: 'Near Plane' }, // Named highlight
+        { z: -4,  color: 'rgba(249, 115, 22, 0.75)' },
+        { z: -6,  color: 'rgba(234, 179, 8, 0.75)' },
+        { z: -8,  color: 'rgba(34, 197, 94, 0.75)' },
+        { z: -10, color: 'rgba(59, 130, 246, 0.75)', name: 'Far Plane' }  // Named highlight
+    ];
+
+    const frustumVerts =[
+        {x:-n,y:-n,z:-n},{x:n,y:-n,z:-n},{x:n,y:n,z:-n},{x:-n,y:n,z:-n},
+        {x:-f,y:-f,z:-f},{x:f,y:-f,z:-f},{x:f,y:f,z:-f},{x:-f,y:f,z:-f}
+    ];
+    const frustumEdges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+
+    const svg = document.getElementById('canvas');
+    function updateViewBox() {
+        const aspect = svg.clientWidth / svg.clientHeight;
+        const height = 18 * (1 - animProgress) + 4 * animProgress;
+        const width = height * aspect;
+        svg.setAttribute('viewBox', `${-width/2} ${-height/2} ${width} ${height}`);
+    }
+    function resize() { updateViewBox(); renderAll(); }
+    window.addEventListener('resize', resize);
+
+    function renderAll() {
+        const meshGroup = svg.querySelector('.mesh-group');
+        const frustumGroup = svg.querySelector('.frustum-group');
+        const axesGroup = svg.querySelector('.axes-group');
+        const gridGroup = svg.querySelector('.grid-group');
+        meshGroup.innerHTML = ''; frustumGroup.innerHTML = ''; axesGroup.innerHTML = ''; gridGroup.innerHTML = '';
+        updateViewBox();
+
+        // Grid
+        const gridSize = 10, step = 2;
+        for (let i = -gridSize; i <= gridSize; i += step) {[{a:{x:i,y:0,z:-gridSize},b:{x:i,y:0,z:gridSize}},{a:{x:-gridSize,y:0,z:i},b:{x:gridSize,y:0,z:i}}].forEach(({a,b}) => {
+                let p1 = project(a.x,a.y,a.z), p2 = project(b.x,b.y,b.z);
+                let el = document.createElementNS("http://www.w3.org/2000/svg","line");
+                el.setAttribute('x1',p1.x); el.setAttribute('y1',p1.y);
+                el.setAttribute('x2',p2.x); el.setAttribute('y2',p2.y);
+                el.setAttribute('stroke','var(--mafs-grid)'); el.setAttribute('stroke-width','0.04');
+                gridGroup.appendChild(el);
+            });
+        }
+
+        let renderFaces =[];
+        zPlanes.forEach(plane => {
+            let hw = -plane.z;
+            let viewPts =[{x:-hw, y:-hw, z:plane.z}, {x:hw, y:-hw, z:plane.z}, {x:hw, y:hw, z:plane.z}, {x:-hw, y:hw, z:plane.z}];
+            let pts3d = viewPts.map(v => {
+                let tgt = getTarget(v);
+                return { x: lerp(v.x, tgt.x, animProgress), y: lerp(v.y, tgt.y, animProgress), z: lerp(v.z, tgt.z, animProgress) };
+            });
+            let p2d = pts3d.map(p => project(p.x, p.y, p.z));
+            let avgZ = p2d.reduce((s,p) => s+p.z, 0) / 4;
+            
+            renderFaces.push({ 
+                p2d, avgZ, color: plane.color, type: 'plane', isBackfacing: false, 
+                name: plane.name, labelPos: pts3d[2], isHighlight: !!plane.name // Track highlights
+            });
+        });
+
+        frustumEdges.forEach(([a,b]) => {
+            let va = frustumVerts[a], vb = frustumVerts[b];
+            let ta = getTarget(va), tb = getTarget(vb);
+            let pa = { x: lerp(va.x, ta.x, animProgress), y: lerp(va.y, ta.y, animProgress), z: lerp(va.z, ta.z, animProgress) };
+            let pb = { x: lerp(vb.x, tb.x, animProgress), y: lerp(vb.y, tb.y, animProgress), z: lerp(vb.z, tb.z, animProgress) };
+            let p1 = project(pa.x, pa.y, pa.z), p2 = project(pb.x, pb.y, pb.z);
+            let line = document.createElementNS("http://www.w3.org/2000/svg","line");
+            line.setAttribute('x1',p1.x); line.setAttribute('y1',p1.y); line.setAttribute('x2',p2.x); line.setAttribute('y2',p2.y);
+            line.setAttribute('stroke','rgba(245,158,11,0.5)'); line.setAttribute('stroke-width','0.04');
+            line.setAttribute('stroke-dasharray','0.2 0.1');
+            frustumGroup.appendChild(line);
+        });
+
+        renderFaces.sort((a, b) => a.avgZ - b.avgZ);
+        renderFaces.forEach(data => {
+            if (data.isBackfacing) return;
+            const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
+            poly.setAttribute('class','face');
+            poly.setAttribute('points', data.p2d.map(p=>`${p.x},${p.y}`).join(' '));
+            poly.setAttribute('fill', data.color);
+            
+            // Emphasize the highlight planes with solid borders
+            if (data.isHighlight) {
+                poly.setAttribute('stroke', data.color.replace(/[\d.]+\)$/,'1)')); // solid version of color
+                poly.setAttribute('stroke-width', '0.06');
+            } else {
+                poly.setAttribute('stroke', 'rgba(0,0,0,0.15)');
+                poly.setAttribute('stroke-width', '0.02');
+            }
+            meshGroup.appendChild(poly);
+            
+            // Draw clean labels for Near & Far plane
+            if (data.name) {
+                let lp = project(data.labelPos.x, data.labelPos.y, data.labelPos.z);
+                let text = document.createElementNS("http://www.w3.org/2000/svg","text");
+                text.setAttribute('x', lp.x + 0.15); 
+                text.setAttribute('y', lp.y - 0.15);
+                text.setAttribute('class', 'highlight-label'); 
+                text.setAttribute('fill', data.color.replace(/[\d.]+\)$/,'1)'));
+                text.textContent = data.name;
+                meshGroup.appendChild(text);
+            }
+        });
+
+        const axScale = 5;
+        const colors = { x: '#ef4444', y: '#22c55e', z: '#3b82f6' };[{v:{x:axScale,y:0,z:0},l:'x'},{v:{x:0,y:axScale,z:0},l:'y'},{v:{x:0,y:0,z:axScale},l:'z'}].forEach(p => {
+            let o = project(0,0,0), t = project(p.v.x, p.v.y, p.v.z);
+            let line = document.createElementNS("http://www.w3.org/2000/svg","line");
+            line.setAttribute('x1',o.x); line.setAttribute('y1',o.y); line.setAttribute('x2',t.x); line.setAttribute('y2',t.y);
+            line.setAttribute('stroke',colors[p.l]); line.setAttribute('stroke-width','0.08');
+            line.setAttribute('marker-end',`url(#arrow-${p.l})`);
+            axesGroup.appendChild(line);
+            let text = document.createElementNS("http://www.w3.org/2000/svg","text");
+            text.setAttribute('x', t.x+0.3); text.setAttribute('y', t.y+0.3);
+            text.setAttribute('class','axis-label'); text.setAttribute('style',`fill:${colors[p.l]}`);
+            text.textContent = p.l.toUpperCase();
+            axesGroup.appendChild(text);
+        });
+    }
+    setTimeout(resize, 0);
+</script>
+</body>
+</html>
