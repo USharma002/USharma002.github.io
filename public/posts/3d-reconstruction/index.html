@@ -156,7 +156,7 @@
     <div class="post-description">
       Exploring 3D scene reconstruction techniques using 3D Gaussian Splatting (3DGS), Neural Radiance Fields (NeRF), and their variants across different scenarios.
     </div>
-    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;58 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2025-11-22 00:00:00 +0000 UTC'>November 22, 2025</span>&nbsp;·&nbsp;51 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -467,50 +467,6 @@
                 </li></ul>
                 </li>
                 <li>
-                    <a href="#dynamic-scenes" aria-label="Dynamic Scenes">Dynamic Scenes</a><ul>
-                        
-                <li>
-                    <a href="#optical-flow" aria-label="Optical Flow">Optical Flow</a><ul>
-                        
-                <li>
-                    <a href="#overview-11" aria-label="Overview">Overview</a></li>
-                <li>
-                    <a href="#computing-optical-flow" aria-label="Computing Optical Flow">Computing Optical Flow</a></li>
-                <li>
-                    <a href="#brightness-constancy-assumption" aria-label="Brightness constancy assumption">Brightness constancy assumption</a></li>
-                <li>
-                    <a href="#small-motion-assumption" aria-label="Small motion assumption">Small motion assumption</a></li>
-                <li>
-                    <a href="#lucaskanade-constant-flow" aria-label="Lucas–Kanade (&ldquo;constant&rdquo; flow)">Lucas–Kanade (&ldquo;constant&rdquo; flow)</a><ul>
-                        
-                <li>
-                    <a href="#implications" aria-label="Implications">Implications</a></li>
-                <li>
-                    <a href="#problem" aria-label="Problem">Problem</a></li></ul>
-                </li>
-                <li>
-                    <a href="#horn-schunck-smooth-flow" aria-label="Horn-Schunck (&ldquo;smooth&rdquo; flow)">Horn-Schunck (&ldquo;smooth&rdquo; flow)</a></li></ul>
-                </li>
-                <li>
-                    <a href="#4dgs" aria-label="4DGS">4DGS</a><ul>
-                        
-                <li>
-                    <a href="#overview-12" aria-label="Overview">Overview</a></li>
-                <li>
-                    <a href="#method-2" aria-label="Method">Method</a></li></ul>
-                </li></ul>
-                </li>
-                <li>
-                    <a href="#feedforward-and-barf" aria-label="Feedforward and BARF">Feedforward and BARF</a><ul>
-                        
-                <li>
-                    <a href="#pixel-splat" aria-label="Pixel Splat">Pixel Splat</a><ul>
-                        
-                <li>
-                    <a href="#overview-13" aria-label="Overview">Overview</a></li></ul>
-                </li></ul>
-                </li>
-                <li>
                     <a href="#references" aria-label="References">References</a>
                 </li>
             </ul>
@@ -518,10 +474,7 @@
     </details>
 </div>
 
-  <div class="post-content"><span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress, or more specifically I will restructure this post in future so overlapping things can be handled with future posts
-</span>
-<h1 id="basics">Basics<a hidden class="anchor" aria-hidden="true" href="#basics">#</a></h1>
+  <div class="post-content"><h1 id="basics">Basics<a hidden class="anchor" aria-hidden="true" href="#basics">#</a></h1>
 <h2 id="camera-transformations">Camera Transformations<a hidden class="anchor" aria-hidden="true" href="#camera-transformations">#</a></h2>
 <p>To map a 3D world point to the image, we use two steps:</p>
 <ol>
@@ -2321,197 +2274,6 @@ $$
 \lambda_p \mathcal{R}_{pcolor}, \qquad
 \lambda_p = 1.0.
 $$<hr>
-<h1 id="dynamic-scenes">Dynamic Scenes<a hidden class="anchor" aria-hidden="true" href="#dynamic-scenes">#</a></h1>
-<h2 id="optical-flow">Optical Flow<a hidden class="anchor" aria-hidden="true" href="#optical-flow">#</a></h2>
-<h3 id="overview-11">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-11">#</a></h3>
-<p>Given a video, optical flow is defined as a $2D$ vector field describing the apparent movement of each pixel due to relative motion between the camera (observer) and the scene (objects, surfaces, edges). The camera or the scene or both
-may be moving</p>
-<h3 id="computing-optical-flow">Computing Optical Flow<a hidden class="anchor" aria-hidden="true" href="#computing-optical-flow">#</a></h3>
-<p>We define a video as an ordered sequence of frames captured over time. $I(x, y, t)$, a function of both space and time, represents the intensity of pixel $(x, y)$ in the frame at time t. In dense optical flow, at every time t and for every pixel $(x, y)$, we want to compute the apparent velocity of the pixel in both the $x$-axis and $y$-axis, given by
-</p>
-$$ u(x, y, t) = \frac{\Delta x}{\Delta t}$$<p>
-</p>
-$$ v(x, y, t) = \frac{\Delta y}{\Delta t}$$<p>The optical flow vector for each pixel is then given as $\mathbf{u} = [u, v]^{\top}$ .</p>
-<h3 id="brightness-constancy-assumption">Brightness constancy assumption<a hidden class="anchor" aria-hidden="true" href="#brightness-constancy-assumption">#</a></h3>
-<p>From the brightness constancy assumption, we can assume that the apparent intensity in the image plane for the same object does not change across different frames.
-We can define this as for a pixel that moved $\Delta x$ and $\Delta y$ in the $x$ and $y$ directions between times $t$ to $t + \Delta t$.</p>
-$$I(x, y, t) = I(x + \Delta x, y + \Delta y, t + \Delta t) $$<p>One common simplification is to use $\Delta t = 1$ (consecutive frames), such that the velocities are equivalent to the displacements $u = \Delta x$ and $v = \Delta y$ so can then obtain $I(x, y, t) = I(x + u, y + u, t + 1)$.</p>
-<h3 id="small-motion-assumption">Small motion assumption<a hidden class="anchor" aria-hidden="true" href="#small-motion-assumption">#</a></h3>
-<p>We assume the motion $(\Delta t, \Delta y)$ is small from frame to frame. This allows us to linearize $I$ with a first-order Taylor series expansion as:
-</p>
-$$
-\begin{aligned}
-I(x+\Delta x,\, y+\Delta y,\, t+\Delta t)
-&= I(x,y,t)+ \frac{\partial I}{\partial x}\,\Delta x+ \frac{\partial I}{\partial y}\,\Delta y+ \frac{\partial I}{\partial t}\,\Delta t+ \ldots \\[6pt]
-&\approx
-I(x,y,t)+ \frac{\partial I}{\partial x}\,\Delta x+ \frac{\partial I}{\partial y}\,\Delta y+ \frac{\partial I}{\partial t}\,\Delta t.
-\end{aligned}
-$$<p>The $\dots$ represents the higher-order terms in the Taylor series expansion which we subsequently truncate out in the next line. Substituting the result into the brightness constancy assumption, we arrive at the <strong>optical flow constraint equation</strong>:</p>
-$$
-\begin{aligned}
-0 
-&= \frac{\partial I}{\partial x}\,\Delta x + \frac{\partial I}{\partial y}\,\Delta y+ \frac{\partial I}{\partial t}\,\Delta t \\[6pt]
-&= \frac{\partial I}{\partial x}\,\frac{\Delta x}{\Delta t}+ \frac{\partial I}{\partial y}\,\frac{\Delta y}{\Delta t}+ \frac{\partial I}{\partial t} \\[6pt]
-&= I_x\,u + I_y\,v + I_t
-\end{aligned}
-$$<p>Here, $I_x$, $I_y$, and $I_t$ denote spatial and temporal derivatives, and  $u = \frac{\Delta x}{\Delta t}$, $v = \frac{\Delta y}{\Delta t}$ are the optical flow components.</p>
-$$
--I_t = I_x u + I_y v
-      = \nabla I^\top \mathbf{u}
-      = \nabla I \cdot \vec{\mathbf{u}},
-$$<p>where $\nabla I = (I_x, I_y)$ and $\mathbf{u} = (u, v)$.</p>
-<p>We recognize this as a linear system in the form of $A x = b$.<br>
-The spatial image gradient is</p>
-$$
-\nabla I = 
-\begin{bmatrix}
-I_x \\[4pt]
-I_y
-\end{bmatrix}
-\in \mathbb{R}^{2\times 1},
-$$<p>and the unknown optical flow vector is</p>
-$$
-\mathbf{u} =
-\begin{bmatrix}
-u \\[4pt]
-v
-\end{bmatrix}
-\in \mathbb{R}^{2\times 1}.
-$$<p>However, since $\nabla I$ is a <em>fat</em> matrix in the equation</p>
-$$
-I_x u + I_y v = -I_t,
-$$<p>the system is <strong>under-constrained</strong>: one equation with two unknowns. Thus, the brightness constancy constraint reduces the degrees of freedom from two to one, leaving infinitely many $(u, v)$ pairs that satisfy the equation.</p>
-<h3 id="lucaskanade-constant-flow">Lucas–Kanade (&ldquo;constant&rdquo; flow)<a hidden class="anchor" aria-hidden="true" href="#lucaskanade-constant-flow">#</a></h3>
-<p>Contraint: Flow over a small patch should be the same</p>
-<p>Assume that the surrounding patch (e.g., a $5\times5$ window) has <strong>constant flow</strong>.<br>
-Then each pixel $p_i$ in the patch contributes one optical flow constraint:</p>
-$$
-I_x(p_i)\,u \;+\; I_y(p_i)\,v \;=\; -I_t(p_i),
-\qquad i = 1,\dots,25.
-$$<p>This gives <strong>25 equations</strong> for the two unknowns $u$ and $v$.</p>
-<p>In matrix form:</p>
-$$
-\begin{bmatrix}
-I_x(p_1) & I_y(p_1) \\
-I_x(p_2) & I_y(p_2) \\
-\vdots   & \vdots   \\
-I_x(p_{25}) & I_y(p_{25})
-\end{bmatrix}
-\begin{bmatrix}
-u \\ v
-\end{bmatrix}=-
-\begin{bmatrix}
-I_t(p_1) \\
-I_t(p_2) \\
-\vdots \\
-I_t(p_{25})
-\end{bmatrix}.
-$$<p>Or compactly:</p>
-$$
-A\,\mathbf{u} = \mathbf{b},
-$$<p>where</p>
-<ul>
-<li>$A\in\mathbb{R}^{25\times 2}$ contains spatial gradients $(I_x, I_y)$,</li>
-<li>$\mathbf{u}\in\mathbb{R}^{2\times 1}$ is the optical flow vector,</li>
-<li>$\mathbf{b}\in\mathbb{R}^{25\times 1}$ contains the temporal derivatives $-I_t$.</li>
-</ul>
-<p>This overdetermined system is solved in the least-squares sense:</p>
-$$
-\mathbf{u} = (A^\top A)^{-1} A^\top \mathbf{b}.
-$$<p>The normal equations for Lucas–Kanade come from the matrix</p>
-$$
-A^TA = \begin{bmatrix}
-\displaystyle \sum_{p \in P} I_x^2 &
-\displaystyle \sum_{p \in P} I_x I_y \\[10pt]
-\displaystyle \sum_{p \in P} I_y I_x &
-\displaystyle \sum_{p \in P} I_y^2
-\end{bmatrix}.
-$$<p><strong>Harris Corner Detector!</strong></p>
-<p>The Harris matrix (also called the second-moment or structure tensor) which is exactly the same matrix that appears in the Lucas–Kanade optical flow formulation.</p>
-<h4 id="implications">Implications<a hidden class="anchor" aria-hidden="true" href="#implications">#</a></h4>
-<ul>
-<li>Corners are when $\lambda_1$, $\lambda_2$ are big; this is also when Lucas-Kanade optical flow works best</li>
-<li>Corners are regions with two different directions of
-gradient (at least)</li>
-<li>Corners are good places to compute flow</li>
-</ul>
-<h4 id="problem">Problem<a hidden class="anchor" aria-hidden="true" href="#problem">#</a></h4>
-<p>What happens if the image patch contains only a single edge or line?
-We can only recover the component of the optical flow that is perpendicular to the edge (parallel to the spatial image gradient). Motion parallel to the edge itself is ambiguous and cannot be recovered mathematically from local gradients alone. This is the <strong>aperture problem</strong>.
-Want patches with different gradients (like corners) to avoid the aperture problem.</p>
-<h3 id="horn-schunck-smooth-flow">Horn-Schunck (&ldquo;smooth&rdquo; flow)<a hidden class="anchor" aria-hidden="true" href="#horn-schunck-smooth-flow">#</a></h3>
-<p>Contraint: Flow of neighboring pixels should be smooth</p>
-<p>The optical flow has the following objective funcitons</p>
-<p><strong>Brightness Constance Assumption</strong>
-</p>
-$$
-E_d(i, j)=\left( I_x\,u_{ij} + I_y\,v_{ij} + I_t \right)^2
-$$<p><strong>Smooth Motion Assumption</strong>
-</p>
-$$
-E_s(i, j) = \frac{1}{4} \left[
-(u_{ij} - u_{i+1,j})^2 +
-(u_{ij} - u_{i,j+1})^2 +
-(v_{ij} - v_{i+1,j})^2 +
-(v_{ij} - v_{i,j+1})^2
-\right]
-$$<p>In Horn-Schunck  optical flow we do the following:
-</p>
-$$\min_{u, v}\sum_{ij}\left[ E_d(i, j) + \lambda E_s(i, j) \right]$$<p>We can compute partial derivative, derive update equations (gradient decent)</p>
-<hr>
-<h2 id="4dgs">4DGS<a hidden class="anchor" aria-hidden="true" href="#4dgs">#</a></h2>
-<p>All the dynamic NeRF algorithms can be formulated as:</p>
-<p>c, σ = M(x, d, t, λ)</p>
-<p>where M is a mapping that maps 8D space (x, d, t, λ) to
-4D space (c, σ). x reveals to the spatial point, and λ is the
-optional input as used to build topological and appearance
-changes, and d stands for view-dependency.</p>
-<p>all the deformation NeRF based
-methods estimate the world-to-canonical mapping by a
-deformation network ϕt : (x, t) → ∆x. Then a network is
-introduced to compute volume density and view-dependent
-RGB color from each ray. The formula for rendering can be
-expressed as:
-c, σ = NeRF(x + ∆x, d, λ),
-λ is a
-frame-dependent code to model the topological and appearance change</p>
-<h3 id="overview-12">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-12">#</a></h3>
-<p>compute
-the canonical-to-world mapping directly at time t using
-a Gaussian deformation field network F, and differential
-splatting follows. This enables the capability of computing backward flow and tracking for 3D Gaussians</p>
-<h3 id="method-2">Method<a hidden class="anchor" aria-hidden="true" href="#method-2">#</a></h3>
-<p>given a view matrix M = [R, T], timestamp t, our 4D Gaussian splatting framework includes 3D
-Gaussians G and Gaussian deformation field network F.
-Then a novel-view image ˆI is rendered by differential splatting [63] S following ˆI = S(M, G
-′
-), where  G
-′ = ∆G + G.</p>
-<p>Specifically, the deformation of 3D Gaussians ∆G is introduced by the Gaussian deformation field network ∆G =
-F(G, t), in which the spatial-temporal structure encoder H
-can encode both the temporal and spatial features of 3D
-Gaussians fd = H(G, t). And the multi-head Gaussian deformation decoder D can decode the features and predict
-each 3D Gaussian’s deformation ∆G = D(f), then the deformed 3D Gaussians G
-′
-can be introduced.</p>
-<hr>
-<h1 id="feedforward-and-barf">Feedforward and BARF<a hidden class="anchor" aria-hidden="true" href="#feedforward-and-barf">#</a></h1>
-<h2 id="pixel-splat">Pixel Splat<a hidden class="anchor" aria-hidden="true" href="#pixel-splat">#</a></h2>
-<h3 id="overview-13">Overview<a hidden class="anchor" aria-hidden="true" href="#overview-13">#</a></h3>
-<figure id="fig-29" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="../../images/3dvis/pixel-splat-overview.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
-      Proposed probabilistic prediction of pixel-aligned Gaussians
-    </figcaption></figure>
-
-
-<p>For every pixel feature $F[u]$ in the input feature map, a neural network $f$ predicts Gaussian primitive parameters $\Sigma$ and $S$. Gaussian locations $\mu$ and opacities $\alpha$ are <strong>not</strong> predicted directly, since this would lead to local minima.</p>
-<p>Instead, $f$ predicts per-pixel discrete probability distributions over depths $p_{\phi}(z)$ parameterized by $\phi$. Sampling from this distribution yields the locations of the Gaussian primitives The opacity of each Gaussian is set to the probability of the sampled depth bucket. The final set of Gaussian primitives can then be rendered from novel views using the splatting algorithm. For brevity, we use $h$ to represent the function that computes depths from bucket indices.</p>
-<hr>
-<span style="color:crimson;font-weight:700">
-This post or widget may be updated further - more notes, findings, and background will appear here!
-</span>
-<hr>
 <h1 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h1>
 <ol>
 <li>
