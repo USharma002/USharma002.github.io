@@ -51,7 +51,7 @@ Although there are many ways to write a ray tracer, all such systems simulate at
 - **Cameras**: A camera model determines how and from where the scene is viewed, including how an image of the scene is recorded on a sensor. Many rendering systems generate viewing rays stating at the camera that are then traced into the scene to determine which objects are visible at each pixel.
 
 {{< 
-figure src="../../images/path_tracing/camera.png"
+figure src="/images/path_tracing/camera.png"
 num="1"
 id="fig-camera"
 caption="Camera/Sensor/Eye"
@@ -61,7 +61,7 @@ width="30%"
 - **Ray-object inetrsections**: We must be able to tell precisely where a given ray intersects a given geometric object. In addition, we need to determine certain properties of the object at the intersection point, such as a surface normal or its material.
 
 {{< 
-figure src="../../images/path_tracing/ray.png"
+figure src="/images/path_tracing/ray.png"
 num="2"
 id="fig-ray-triangle"
 caption="Ray r(t) and Ray-Triangle Intersection"
@@ -81,7 +81,7 @@ height="430"
 - **Visibility**: In order to know whether a given light deposits energy at a point on a surface, we must know whether there is an uninterrupted path from the point to the light source. Fortunately, this question is easy to answer in a ray tracer, since we can just construct the ray from the surface to the light, find the closest ray–object intersection, and compare the intersection distance to the light distance. 
 
 {{< 
-figure src="../../images/path_tracing/visibility.png"
+figure src="/images/path_tracing/visibility.png"
 num="3"
 id="fig-visibility"
 caption="Visibility"
@@ -91,7 +91,7 @@ width="80%"
 - **Light scattering at surfaces**:  Each object must provide a description of its appearance, including information about how light interacts with the object’s surface, as well as the nature of the reradiated (or scattered) light. Models for surface scattering are typically parameterized so that they can simulate a variety of appearances. 
 
 {{< 
-figure src="../../images/path_tracing/scattering.png"
+figure src="/images/path_tracing/scattering.png"
 num="4"
 id="fig-scattering"
 caption="Scattering"
@@ -104,7 +104,7 @@ width="80%"
 - **Ray propagation**:  We need to know what happens to the light traveling along a ray as it passes through space. If we are rendering a scene in a vacuum, light energy remains constant along a ray. Although true vacuums are unusual on Earth, they are a reasonable approximation for many environments. More sophisticated models are available for tracing rays through fog, smoke, the Earth’s atmosphere, and so on. 
 
 {{< 
-figure src="../../images/path_tracing/path_tracing.png"
+figure src="/images/path_tracing/path_tracing.png"
 num="5"
 id="fig-path-tracing-overview"
 caption="Path Tracing Overview"
@@ -171,7 +171,7 @@ After expanding the rendering integra, we can easily visualize the components of
 
 {{< step-slider animate="false" >}}
 
-- image: "../../images/path_tracing/rendering_components/full.png"
+- image: "/images/path_tracing/rendering_components/full.png"
   title: "Incoming Radiance (Full Rendering Equation)"
   description: |
     <div class="eq-stack">
@@ -186,7 +186,7 @@ After expanding the rendering integra, we can easily visualize the components of
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/1.png"
+- image: "/images/path_tracing/rendering_components/1.png"
   title: "Direction Radiance (Emitted Light)"
   description: |
     <div class="eq-stack">
@@ -201,7 +201,7 @@ After expanding the rendering integra, we can easily visualize the components of
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/2.jpg"
+- image: "/images/path_tracing/rendering_components/2.jpg"
   title: "Direct Radiance (Only from the bounce 1)"
   description: |
     <div class="eq-stack">
@@ -216,7 +216,7 @@ After expanding the rendering integra, we can easily visualize the components of
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/3.jpg"
+- image: "/images/path_tracing/rendering_components/3.jpg"
   title: "Indirect Radiance (Only from the bounce 2)"
   description: |
     <div class="eq-stack">
@@ -231,7 +231,7 @@ After expanding the rendering integra, we can easily visualize the components of
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/4.jpg"
+- image: "/images/path_tracing/rendering_components/4.jpg"
   title: "Indirect Radiance (Only from the bounce 3)"
   description: |
     <div class="eq-stack">
@@ -355,7 +355,7 @@ The following visualizes the individual components (similar to the one given in 
 
 {{< step-slider animate="false" >}}
 
-- image: "../../images/path_tracing/rendering_components/operator/E.jpg"
+- image: "/images/path_tracing/rendering_components/operator/E.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -365,7 +365,7 @@ The following visualizes the individual components (similar to the one given in 
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/operator/TE.jpg"
+- image: "/images/path_tracing/rendering_components/operator/TE.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -375,7 +375,7 @@ The following visualizes the individual components (similar to the one given in 
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/operator/TTE.jpg"
+- image: "/images/path_tracing/rendering_components/operator/TTE.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -385,7 +385,7 @@ The following visualizes the individual components (similar to the one given in 
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/operator/TTTE.jpg"
+- image: "/images/path_tracing/rendering_components/operator/TTTE.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -400,7 +400,7 @@ The following visualizes the individual components (similar to the one given in 
 The following visualizes the accumulation of individual components:
 {{< step-slider animate="false" >}}
 
-- image: "../../images/path_tracing/rendering_components/operator/E.jpg"
+- image: "/images/path_tracing/rendering_components/operator/E.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -410,7 +410,7 @@ The following visualizes the accumulation of individual components:
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/operator/E_TE.jpg"
+- image: "/images/path_tracing/rendering_components/operator/E_TE.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -420,7 +420,7 @@ The following visualizes the accumulation of individual components:
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/operator/E_TE_TTE.jpg"
+- image: "/images/path_tracing/rendering_components/operator/E_TE_TTE.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -430,7 +430,7 @@ The following visualizes the accumulation of individual components:
     $$
     </div>
 
-- image: "../../images/path_tracing/rendering_components/operator/E_TE_TTE_TTTE.jpg"
+- image: "/images/path_tracing/rendering_components/operator/E_TE_TTE_TTTE.jpg"
   title: |
     <div class="eq-stack">
     $$
@@ -482,7 +482,7 @@ And:
 
 
 {{< 
-figure src="../../images/path_tracing/paths/paths.png"
+figure src="/images/path_tracing/paths/paths.png"
 id="fig-paths"
 caption="Sample paths from Path Space Contributing the the final Image"
 width="80%" 
@@ -900,7 +900,7 @@ $$
 This is why **importance sampling is so powerful**: by choosing $p(x)$ wisely, we can dramatically reduce the number of samples needed to achieve a target accuracy.
 
 {{< 
-figure src="../../images/path_tracing/importance_sampling_graph.png"
+figure src="/images/path_tracing/importance_sampling_graph.png"
 num="6"
 id="fig-importance-sampling"
 caption="Importance Sampling PDF"
@@ -949,7 +949,7 @@ the light transport properties of the hit material. BSDF is a superset and the g
 (Some tend to use the term BSDF simply as a category name covering the whole family of BxDF functions.)
 
 {{< 
-figure src="../../images/path_tracing/BSDF_combined.png"
+figure src="/images/path_tracing/BSDF_combined.png"
 num="7"
 id="fig-bsdf-combined"
 caption="BTDF + BRDF Visualization (uniform for both here)"
@@ -963,7 +963,7 @@ We usually distinguish three basic material types:
 - Glossy (mixture of the other two, specular highlights)
 
 {{< 
-figure src="../../images/path_tracing/BSDF.png"
+figure src="/images/path_tracing/BSDF.png"
 num="8"
 id="fig-bsdf-types"
 caption="Simple BSDF Visualization for Diffuse, Specular and Glossy Material"
@@ -971,7 +971,7 @@ width="100%"
 >}}
 
 {{< 
-figure src="../../images/path_tracing/BSDF_object.png"
+figure src="/images/path_tracing/BSDF_object.png"
 num="9"
 id="fig-bsdf-objects"
 caption="Objects with BSDF for Diffuse, Specular and Glossy Material"
@@ -982,7 +982,7 @@ width="100%"
 Now that we know about the BxDF functions which define the material properties, we can look at some example BSDF taken from Mitsuba renderer.
 
 {{< 
-figure src="../../images/path_tracing/bsdf/bsdf_overview.jpg"
+figure src="/images/path_tracing/bsdf/bsdf_overview.jpg"
 num="9"
 id="fig-bsdf-objects"
 caption="Schematic overview of the most important surface scattering models in Mitsuba 3. The arrows indicate possible outcomes of an interaction with a surface that has the respective model applied to it."
@@ -1018,7 +1018,7 @@ height="500"
 
 1. **Generate camera ray** through pixel using sensor
 {{< 
-figure src="../../images/path_tracing/init_cam.png"
+figure src="/images/path_tracing/init_cam.png"
 num="10"
 id="fig-init-camera"
 caption="Initialize Scene and Generate Rays using Sensor"
@@ -1027,7 +1027,7 @@ width="100%"
 
 2. **Trace ray** into scene, find nearest intersection. **(If miss: return background)**.
 {{< 
-figure src="../../images/path_tracing/trace.png"
+figure src="/images/path_tracing/trace.png"
 num="11"
 id="fig-trace-ray"
 caption="Trace Ray and Find Intersection (Base Case Check)"
@@ -1037,7 +1037,7 @@ width="100%"
 3. **Initialize Radiance ($L$)** with surface emission ($L_e$) and Direct Light (NEE).
 4. **Sample BSDF** to choose next direction and **calculate Throughput (color)**.
 {{< 
-figure src="../../images/path_tracing/surface_intersection.png"
+figure src="/images/path_tracing/surface_intersection.png"
 num="12"
 id="fig-surface-intersection"
 caption="Query BSDF and calculate throughput (BSDF * Cos / PDF)"
@@ -1046,7 +1046,7 @@ width="100%"
 
 5. **Recursive Call:** Spawn new ray and call `Trace()` function for it.
 {{< 
-figure src="../../images/path_tracing/sample_ray.png"
+figure src="/images/path_tracing/sample_ray.png"
 num="13"
 id="fig-sample-ray"
 caption="Spawn ray and recurse: `L_in = Trace(new_ray)`"
@@ -1055,7 +1055,7 @@ width="100%"
 
 6. **Recursion Depth:** The function continues calling itself until max depth or Russian Roulette termination.
 {{< 
-figure src="../../images/path_tracing/repeat.png"
+figure src="/images/path_tracing/repeat.png"
 num="14"
 id="fig-repeat"
 caption="Recursion continues (Logic repeats for new ray)"
@@ -1064,7 +1064,7 @@ width="100%"
 
 7. **Return Total Radiance:** Add indirect light to local emission ($L_e + \text{Throughput} \times L_{in}$) and return result.
 {{< 
-figure src="../../images/path_tracing/final_ray.png"
+figure src="/images/path_tracing/final_ray.png"
 num="15"
 id="fig-final-ray"
 caption="Return combined radiance up the stack"
@@ -1074,7 +1074,7 @@ width="100%"
 Repeat the above process for all pixels (parallely as this is embarrasingly parallel) for some amount of **samples per pixel**
 
 {{< 
-figure src="../../images/path_tracing/2spp.png"
+figure src="/images/path_tracing/2spp.png"
 num="16"
 id="fig-2spp"
 caption="2 Samples Per Pixel"
@@ -1084,43 +1084,43 @@ width="100%"
 ### Path Tracing Steps Overview
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/path-tracing/init_cam.png"
+- image: "/images/path_tracing/path-tracing/init_cam.png"
   title: "Initialize Camera"
   description: "Initialize the Scene objects, lights and camera"
 
-- image: "../../images/path_tracing/path-tracing/trace1.png"
+- image: "/images/path_tracing/path-tracing/trace1.png"
   title: "Trace Ray"
   description: "Trace the primary ray through pixel into the scene"
 
-- image: "../../images/path_tracing/path-tracing/si1.png"
+- image: "/images/path_tracing/path-tracing/si1.png"
   title: "Surface Intersection and Query BSDF"
   description: "Intersect with the scene geometry and query the info like BSDF (blue) to get material property"
 
-- image: "../../images/path_tracing/path-tracing/trace2.png"
+- image: "/images/path_tracing/path-tracing/trace2.png"
   title: "Sample Next Ray Direction"
   description: "Use PDF (according to BRDF or some other guiding one) to sample the next ray direction"
 
-- image: "../../images/path_tracing/path-tracing/si2.png"
+- image: "/images/path_tracing/path-tracing/si2.png"
   title: "Surface Intersection and Query BSDF"
   description: "The recursion stops once a single primitive remains in the volume."
 
-- image: "../../images/path_tracing/path-tracing/trace3.png"
+- image: "/images/path_tracing/path-tracing/trace3.png"
   title: "Sample Next Ray Direction"
   description: "The recursion stops once a single primitive remains in the volume."
 
-- image: "../../images/path_tracing/path-tracing/trace3.png"
+- image: "/images/path_tracing/path-tracing/trace3.png"
   title: "Max Depth Reached / Stopping Criterion"
   description: "Query the Light Emitted and backpropagate"
 
-- image: "../../images/path_tracing/path-tracing/back_1.png"
+- image: "/images/path_tracing/path-tracing/back_1.png"
   title: "Backpropagate the Radiance"
   description: "Query the Light Emitted, add it to incoming radiance and backpropagate "
 
-- image: "../../images/path_tracing/path-tracing/back_2.png"
+- image: "/images/path_tracing/path-tracing/back_2.png"
   title: "Backpropagate the Radiance"
   description: "Query the Light Emitted, add it to incoming radiance and backpropagate"
 
-- image: "../../images/path_tracing/path-tracing/back_3.png"
+- image: "/images/path_tracing/path-tracing/back_3.png"
   title: "Backpropagate the Radiance"
   description: "Query the Light Emitted, add it to incoming radiance and backpropagate"
 {{< /step-slider >}}
@@ -1137,7 +1137,7 @@ height="800"
 To show a real example, we can see the effects of Max Depth and Samples per pixes in the renders below. All of them are rendered using the PBRT renderer.
 
 {{< 
-figure src="../../images/path_tracing/bathroom.png"
+figure src="/images/path_tracing/bathroom.png"
 num="17"
 id="fig-bathroom-ref"
 caption="Bathroom Scene Reference"
@@ -1147,7 +1147,7 @@ width="80%"
 
 
 {{< 
-figure src="../../images/path_tracing/bathroom_spp.png"
+figure src="/images/path_tracing/bathroom_spp.png"
 num="18"
 id="fig-bathroom-spp"
 caption="Bathroom Scene Rendered at different SPP"
@@ -1155,7 +1155,7 @@ width="100%"
 >}}
 
 {{< 
-figure src="../../images/path_tracing/bathroom_depth.png"
+figure src="/images/path_tracing/bathroom_depth.png"
 num="19"
 id="fig-bathroom-depth"
 caption="Bathroom Scene Rendered at different depth"
@@ -1267,77 +1267,77 @@ The loop version materializes the infinite recursion by:
 #### Visualization of both recursive and iterative formulation
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/tracing/Slide17.PNG"
+- image: "/images/path_tracing/tracing/Slide17.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide18.PNG"
+- image: "/images/path_tracing/tracing/Slide18.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide19.PNG"
+- image: "/images/path_tracing/tracing/Slide19.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide20.PNG"
+- image: "/images/path_tracing/tracing/Slide20.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide21.PNG"
+- image: "/images/path_tracing/tracing/Slide21.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide22.PNG"
+- image: "/images/path_tracing/tracing/Slide22.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide23.PNG"
+- image: "/images/path_tracing/tracing/Slide23.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide24.PNG"
+- image: "/images/path_tracing/tracing/Slide24.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide25.PNG"
+- image: "/images/path_tracing/tracing/Slide25.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide26.PNG"
+- image: "/images/path_tracing/tracing/Slide26.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide27.PNG"
+- image: "/images/path_tracing/tracing/Slide27.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
 {{< /step-slider >}}
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/tracing/Slide28.PNG"
+- image: "/images/path_tracing/tracing/Slide28.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide29.PNG"
+- image: "/images/path_tracing/tracing/Slide29.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide30.PNG"
+- image: "/images/path_tracing/tracing/Slide30.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide31.PNG"
+- image: "/images/path_tracing/tracing/Slide31.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide32.PNG"
+- image: "/images/path_tracing/tracing/Slide32.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide33.PNG"
+- image: "/images/path_tracing/tracing/Slide33.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 
-- image: "../../images/path_tracing/tracing/Slide34.PNG"
+- image: "/images/path_tracing/tracing/Slide34.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
 {{< /step-slider >}}
@@ -1470,63 +1470,63 @@ mi.register_integrator("integrator", lambda props: Simple(props))
 Now the above illustration was using the normalized (or approximation of normalized) BRDF Function as sampling.  But there can be different ways/PDFs in which we can sample the next ray depending on the scene. A rough example is given below:
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/sampling/scene_setup.png"
+- image: "/images/path_tracing/sampling/scene_setup.png"
   title: "Scene Setup"
   description: |
     <div>
     Our scene consists of two <b><span style="color:#ff9900">light sources</span></b> (yellow), a surface with a specific <b><span style="color:#007bff">BRDF</span></b> (light blue lobe) representing the material property, and our chosen <b><span style="color:#a020f0">sampling PDF</span></b> (purple lobe) which dictates the direction of the next ray.
     </div>
 
-- image: "../../images/path_tracing/sampling/uniform_pdf.png"
+- image: "/images/path_tracing/sampling/uniform_pdf.png"
   title: "Uniform Sampling PDF"
   description: |
     <div>
     The simplest strategy is <b><span style="color:#a020f0">Uniform Sampling</span></b>. This defines a constant probability density $p(\omega) = \frac{1}{2\pi}$ across the entire hemisphere $\Omega$, completely ignoring <b><span style="color:#ff9900">lighting</span></b> and <b><span style="color:#007bff">material properties</span></b>.
     </div>
 
-- image: "../../images/path_tracing/sampling/uniform_rays.png"
+- image: "/images/path_tracing/sampling/uniform_rays.png"
   title: "Uniform Sampling Rays"
   description: |
     <div>
     But since <b><span style="color:#a020f0">Uniform Sampling</span></b> ignores <b><span style="color:#ff9900">lighting</span></b> and <b><span style="color:#007bff">material properties</span></b>, a lot of the samples are wasted
     </div>
     
-- image: "../../images/path_tracing/sampling/diffuse_light_pdf.png"
+- image: "/images/path_tracing/sampling/diffuse_light_pdf.png"
   title: "Direct Light Sampling PDF"
   description: |
     <div>
     We can improve this using <b><span style="color:#a020f0">Direct Light Sampling</span></b> (Next Event Estimation) PDF. Here, the <b><span style="color:#a020f0">PDF</span></b> is non-zero only in directions pointing toward the <b><span style="color:#ff9900">light sources</span></b>, proportional to their power.
     </div>
 
-- image: "../../images/path_tracing/sampling/diffuse_light_rays.png"
+- image: "/images/path_tracing/sampling/diffuse_light_rays.png"
   title: "(Diffuse) Direct Light Sampling Rays"
   description: |
     <div>
     <b><span style="color:#a020f0">Direct Light Sampling</span></b> works exceptionally well for <b>Diffuse Materials</b>. Since diffuse surfaces reflect light equally in all directions, hitting the <b><span style="color:#ff9900">light source</span></b> is the only thing that matters for reducing variance.
     </div>
 
-- image: "../../images/path_tracing/sampling/glossy_light_pdf.png"
+- image: "/images/path_tracing/sampling/glossy_light_pdf.png"
   title: "(Glossy) Direct Light Sampling PDF"
   description: |
     <div>
     If the material is <b>Glossy</b>, the <b><span style="color:#007bff">BRDF</span></b> becomes a narrow lobe. Even if we hit a <b><span style="color:#ff9900">light source</span></b>, if that light isn't in the direction the material reflects, the contribution is multiplied by a near-zero <b><span style="color:#007bff">BRDF</span></b> value.
     </div>
 
-- image: "../../images/path_tracing/sampling/glossy_light_rays.png"
+- image: "/images/path_tracing/sampling/glossy_light_rays.png"
   title: "(Glossy) Direct Light Sampling Rays"
   description: |
     <div>
     In this glossy case, <b><span style="color:#a020f0">Direct Light Sampling</span></b> is actually inefficient. We are successfully hitting the <b><span style="color:#ff9900">lights</span></b>, but those samples are <b>wasted</b> because the material property prevents that light from reaching the camera.
     </div>
 
-- image: "../../images/path_tracing/sampling/glossy_brdf_pdf.png"
+- image: "/images/path_tracing/sampling/glossy_brdf_pdf.png"
   title: "(Glossy) BRDF Sampling PDF"
   description: |
     <div>
     To fix this, we use <b><span style="color:#a020f0">BRDF Sampling</span></b>. We align our <b><span style="color:#a020f0">PDF</span></b> with the <b><span style="color:#007bff">material's reflection lobe</span></b>. This ensures we only sample directions where the surface is physically capable of reflecting radiance.
     </div>
 
-- image: "../../images/path_tracing/sampling/glossy_brdf_rays.png"
+- image: "/images/path_tracing/sampling/glossy_brdf_rays.png"
   title: "(Glossy) BRDF Sampling Rays"
   description: |
     <div>
@@ -1541,7 +1541,7 @@ In the above example, we see that for different scene or materials, different ki
 
   <div style="flex:1; text-align:center;">
     {{< 
-    figure src="../../images/path_tracing/sampling/bsdf.png"
+    figure src="/images/path_tracing/sampling/bsdf.png"
     id="fig-coupling-layer"
     caption="Diffuse BRDF PDF (Cosine Weighted)"
     width="100%" 
@@ -1550,7 +1550,7 @@ In the above example, we see that for different scene or materials, different ki
 
   <div style="flex:1; text-align:center;">
     {{< 
-    figure src="../../images/path_tracing/sampling/nee.png"
+    figure src="/images/path_tracing/sampling/nee.png"
     id="fig-coupling-layer"
     caption="Next Event Estimation PDF"
     width="100%" 
@@ -1573,8 +1573,8 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
 
   <div style="flex:1; text-align:center;">
     {{< dlider
-      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
-      after="../../images/path_tracing/renders/diffuse-cosine-64.png"
+      before="/images/path_tracing/renders/diffuse-uniform-64.png"
+      after="/images/path_tracing/renders/diffuse-cosine-64.png"
       caption="Uniform Sampling vs. Cosine Weighted Sampling"
       width="100%"
       beforeLabel="Uniform Sampling"
@@ -1584,8 +1584,8 @@ both rendered with 64 spp and uniform sampling as well as cosine weighted sampli
 
   <div style="flex:1; text-align:center;">
       {{< dlider
-      before="../../images/path_tracing/renders/metallic-uniform-64.png"
-      after="../../images/path_tracing/renders/metallic-cosine-64.png"
+      before="/images/path_tracing/renders/metallic-uniform-64.png"
+      after="/images/path_tracing/renders/metallic-cosine-64.png"
       caption="Uniform Sampling vs. Cosine Weighted Sampling"
       width="100%"
       beforeLabel="Uniform Sampling"
@@ -1610,8 +1610,8 @@ Thus, we can use the following sampling strategies for the scenes respectively:
 <div style="display:flex; justify-content:center; gap:20px;">
   <div style="flex:1; text-align:center;">
     {{< dlider
-      before="../../images/path_tracing/renders/diffuse-uniform-64.png"
-      after="../../images/path_tracing/renders/diffuse-light-64.png"
+      before="/images/path_tracing/renders/diffuse-uniform-64.png"
+      after="/images/path_tracing/renders/diffuse-light-64.png"
       caption="Uniform Sampling vs. Direct Light Sampling"
       width="100%"
       beforeLabel="Uniform Sampling"
@@ -1620,8 +1620,8 @@ Thus, we can use the following sampling strategies for the scenes respectively:
   </div>
   <div style="flex:1; text-align:center;">
       {{< dlider
-      before="../../images/path_tracing/renders/metallic-uniform-64.png"
-      after="../../images/path_tracing/renders/metallic-vndf-64.png"
+      before="/images/path_tracing/renders/metallic-uniform-64.png"
+      after="/images/path_tracing/renders/metallic-vndf-64.png"
       caption="Uniform Sampling vs. VNDF Sampling"
       width="100%"
       beforeLabel="Uniform Sampling"
@@ -1669,8 +1669,8 @@ For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair 
 
   <div style="flex:1; text-align:center;">
     {{< dlider
-      before="../../images/path_tracing/renders/box-uniform-64.png"
-      after="../../images/path_tracing/renders/box-cosine-64.png"
+      before="/images/path_tracing/renders/box-uniform-64.png"
+      after="/images/path_tracing/renders/box-cosine-64.png"
       caption="Uniform Sampling vs. Cosine Weighted Sampling"
       width="100%"
       beforeLabel="Uniform Sampling"
@@ -1680,8 +1680,8 @@ For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair 
 
   <div style="flex:1; text-align:center;">
       {{< dlider
-      before="../../images/path_tracing/renders/box-cosine-64.png"
-      after="../../images/path_tracing/renders/box-mis-64.png"
+      before="/images/path_tracing/renders/box-cosine-64.png"
+      after="/images/path_tracing/renders/box-mis-64.png"
       caption="Cosine Weighted Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
       width="100%"
       beforeLabel="Cosine Weighted Sampling"
@@ -1696,8 +1696,8 @@ For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair 
 
   <div style="flex:1; text-align:center;">
     {{< dlider
-      before="../../images/path_tracing/renders/box-uniform-64.png"
-      after="../../images/path_tracing/renders/box-light-64.png"
+      before="/images/path_tracing/renders/box-uniform-64.png"
+      after="/images/path_tracing/renders/box-light-64.png"
       caption="Uniform Sampling vs. Direct Light Sampling"
       width="100%"
       beforeLabel="Uniform Sampling"
@@ -1707,8 +1707,8 @@ For example, if we have two distributions $p_1(x)$ and $p_2(x)$, we flip a fair 
 
   <div style="flex:1; text-align:center;">
       {{< dlider
-      before="../../images/path_tracing/renders/box-mis-wrong-64.png"
-      after="../../images/path_tracing/renders/box-mis-64.png"
+      before="/images/path_tracing/renders/box-mis-wrong-64.png"
+      after="/images/path_tracing/renders/box-mis-64.png"
       caption="MIS Wrong vs. MIS (Cosine Weighted and Direct Light Sampling)"
       width="100%"
       beforeLabel="MIS Wrong"
@@ -1766,8 +1766,8 @@ $$
 
 
 {{< dlider
-before="../../images/path_tracing/renders/box-uniform-64.png"
-after="../../images/path_tracing/renders/box-mis-64.png"
+before="/images/path_tracing/renders/box-uniform-64.png"
+after="/images/path_tracing/renders/box-mis-64.png"
 caption="Uniform Sampling vs. MIS (Cosine Weighted and Direct Light Sampling)"
 width="60%"
 beforeLabel="Uniform Sampling"
@@ -1810,7 +1810,7 @@ We now have looked at different methods of combining different samples. We can n
 
 
 {{< step-slider animate="false" >}}
-- image: "../../images/path_tracing/paths/pt.png"
+- image: "/images/path_tracing/paths/pt.png"
   title: "Path Construction: Path Tracing without NEE"
   description: |
     <div class="eq-stack" style="font-size: 0.8em;">
@@ -1833,7 +1833,7 @@ We now have looked at different methods of combining different samples. We can n
     $$
     </div>
 
-- image: "../../images/path_tracing/paths/pt_nee.png"
+- image: "/images/path_tracing/paths/pt_nee.png"
   title: "Path Construction: Path Tracing with NEE"
   description: |
     <div class="eq-stack" style="font-size: 0.8em;">
@@ -1856,7 +1856,7 @@ We now have looked at different methods of combining different samples. We can n
     $$
     </div>
   
-- image: "../../images/path_tracing/paths/lt.png"
+- image: "/images/path_tracing/paths/lt.png"
   title: "Path Construction: Light Tracing without NEE"
   description: |
     <div class="eq-stack" style="font-size: 0.8em;">
@@ -1879,7 +1879,7 @@ We now have looked at different methods of combining different samples. We can n
     $$
     </div>
 
-- image: "../../images/path_tracing/paths/lt_nee.png"
+- image: "/images/path_tracing/paths/lt_nee.png"
   title: "Path Construction: Light Tracing with NEE"
   description: |
     <div class="eq-stack" style="font-size: 0.8em;">
@@ -1902,7 +1902,7 @@ We now have looked at different methods of combining different samples. We can n
     $$
     </div>
 
-- image: "../../images/path_tracing/paths/independent.png"
+- image: "/images/path_tracing/paths/independent.png"
   title: "Path Construction: Independent Path Vertices"
   description: |
     <div class="eq-stack" style="font-size: 1em;">
@@ -1930,7 +1930,7 @@ We now have looked at different methods of combining different samples. We can n
 We have seen how individual paths are constructed using different techniques, we can combine all of them (using NEE at every vertex) and construct many paths using only a few vertices.
 
 {{< 
-figure src="../../images/path_tracing/paths/all_paths.png"
+figure src="/images/path_tracing/paths/all_paths.png"
 num="Y"
 id="fig-all-paths"
 caption="All the Paths (NEE + Path Tracing + Light Tracing)"
@@ -1944,7 +1944,7 @@ width="100%"
 | $ts$ | Number of connections |
 
 {{< 
-figure src="../../images/path_tracing/paths/combination.png"
+figure src="/images/path_tracing/paths/combination.png"
 num="Y"
 id="fig-all-combinations"
 caption="All combination of Paths (NEE + Path Tracing + Light Tracing)"
@@ -2045,7 +2045,7 @@ $$
 Since $C$ is separable by design, its Jacobian matrix is diagonal, making determinant computation tractable even in high dimensions . The complete transformation is obtained by compounding multiple coupling layers $\tilde{h} = h_L \circ \cdots \circ h_2 \circ h_1$, alternating which partition is transformed .
 
 {{< 
-figure src="../../images/path_tracing/nis/couplin_layer.png"
+figure src="/images/path_tracing/nis/couplin_layer.png"
 num="Y"
 id="fig-coupling-layer"
 caption="Coupling layer architecture showing partitioning and transformation"
@@ -2058,7 +2058,7 @@ width="80%"
 Instead of the affine (multiply-add) coupling transforms from prior work, Neural Importance Sampling introduces **piecewise-polynomial coupling transforms** with significantly greater modeling power .
 
 {{< 
-figure src="../../images/path_tracing/nis/pdf_gen.png"
+figure src="/images/path_tracing/nis/pdf_gen.png"
 num="Y+1"
 id="fig-pdf-generation"
 caption="PDF generation using piecewise-polynomial coupling transforms"
@@ -2123,7 +2123,7 @@ $$
 Inverting this transform involves solving a quadratic equation, which can be done efficiently and robustly .
 
 {{< 
-figure src="../../images/path_tracing/nis/predicted_pdf.png"
+figure src="/images/path_tracing/nis/predicted_pdf.png"
 id="fig-coupling-layer"
 caption="Coupling layer architecture showing partitioning and transformation"
 width="80%" 
@@ -2250,7 +2250,7 @@ The approach enables fast inference and efficient sample generation independentl
 
 
 {{< 
-figure src="../../images/path_tracing/nis/comparison.png"
+figure src="/images/path_tracing/nis/comparison.png"
 num="Y+3"
 id="fig-comparison"
 caption="Visual comparison of different sampling strategies across training iterations"
@@ -2275,7 +2275,7 @@ where $f_s$ is the BSDF, $L_i$ is the incident radiance, and $\theta_i$ is the a
 ### Algorithm Design
 
 {{< 
-figure src="../../images/path_tracing/nrc/radiance_cache.png"
+figure src="/images/path_tracing/nrc/radiance_cache.png"
 num="X"
 id="fig-radiance-cache-png"
 caption="Radiance cache visualization showing path termination"
@@ -2297,7 +2297,7 @@ $$
 where $p$ is the BSDF sampling PDF and $\theta_i$ is the angle between $\omega_i$ and the surface normal at $x_i$ .
 
 {{< 
-figure src="../../images/path_tracing/nrc/radiance_cache_termination.png"
+figure src="/images/path_tracing/nrc/radiance_cache_termination.png"
 num="X+1"
 id="fig-radiance-cache-termination"
 caption="Path termination heuristic comparing path spread to primary vertex footprint"
@@ -2317,7 +2317,7 @@ At the terminal vertex $x_k$, the neural radiance cache $\tilde{L}_s(x_k,\omega_
 A small fraction (typically under 3%) of rendering paths are extended by a few vertices to form **training paths** . These longer paths are terminated using the same area-spread heuristic applied to the training suffix . The collected radiance estimates along all vertices of the training paths serve as reference values for updating the neural cache .
 
 {{< 
-figure src="../../images/path_tracing/nrc/radiance_cache_training.png"
+figure src="/images/path_tracing/nrc/radiance_cache_training.png"
 num="X+2"
 id="fig-radiance-cache-training"
 caption="Training suffix extends rendering paths to collect radiance estimates"
@@ -2377,7 +2377,7 @@ Four gradient descent steps are performed per frame on disjoint random subsets o
 
 ### Overview
 {{< 
-figure src="../../images/path_tracing/neuropara/neuropara-overview.png"
+figure src="/images/path_tracing/neuropara/neuropara-overview.png"
 num="1"
 id="fig-npm-overview"
 caption="High-level illustration of Neural Parametric Mixtures (NPM). Spatially varying target distributions are encoded using a multi-resolution embedding. For a queried location $x$, (1) nearby grid features are interpolated and concatenated to form $G(x)$, which (2–3) is passed to a lightweight MLP to (4) decode vMF mixture parameters $\Theta$. (5) The resulting distribution guides importance sampling; the MC radiance estimate $\langle L_i(x,\omega_i)\rangle$ supplies the gradient $\nabla_\Theta D_{KL}$ for training."
@@ -2399,10 +2399,10 @@ $$
 v(\omega \mid \mu,\kappa)= C_D(\kappa)\,\exp(\kappa\,\mu^\top \omega)
 $$
 
-{{< figure src="../../images/path_tracing/neuropara/vmf.png" num="2"
+{{< figure src="/images/path_tracing/neuropara/vmf.png" num="2"
 caption="As $\kappa \to \infty$, the vMF distribution becomes a delta lobe around $\mu$." width="100%" >}}
 
-{{< figure src="../../images/path_tracing/neuropara/vmf_3d.png" num="3"
+{{< figure src="/images/path_tracing/neuropara/vmf_3d.png" num="3"
 caption="3D vMF distribution used in NPM." width="100%" >}}
 
 ---
@@ -2429,7 +2429,7 @@ Mixture parameters:
   \Theta = \{ (\lambda_k,\mu_k,\kappa_k) \}_{k=1}^K
   $$
 
-{{< figure src="../../images/path_tracing/neuropara/vmf_mixture.png" num="3"
+{{< figure src="/images/path_tracing/neuropara/vmf_mixture.png" num="3"
 caption="vMF Mixture with $K=3$ components" 
 width="60%" >}}
 
@@ -2455,7 +2455,7 @@ $$
 
 Traditional path guiding uses kd-trees / octrees → discretization → **parallax error**.
 
-{{< figure src="../../images/path_tracing/neuropara/parallax.png" num="4"
+{{< figure src="/images/path_tracing/neuropara/parallax.png" num="4"
 caption="Parallax error in discretized guiding structures." width="100%" >}}
 
 NPM instead learns a **continuous implicit function**:
@@ -2564,7 +2564,7 @@ G(x\mid\Phi_E)=
 G:\mathbb{R}^3\to\mathbb{R}^{L\times F}.
 $$
 
-{{< figure src="../../images/path_tracing/neuropara/emb_interpolation.png"
+{{< figure src="/images/path_tracing/neuropara/emb_interpolation.png"
 num="5"
 caption="Multi-resolution interpolation of $G(x)$."
 width="40%" >}}
@@ -2580,7 +2580,7 @@ $$
 \mathrm{MLP}(G(x\mid\Phi_E)\mid\Phi_M).
 $$
 
-{{< figure src="../../images/path_tracing/neuropara/decoding_parameters.png"
+{{< figure src="/images/path_tracing/neuropara/decoding_parameters.png"
 num="6"
 caption="Decoding the vMF mixture parameters."
 width="100%" >}}
@@ -2621,7 +2621,7 @@ This aligns sampling with both the scattering function and the learned radiance.
 Fixes the limitation of vMF Mixture bwing isotropic by using Spherical Gaussians.
 
 {{< 
-figure src="../../images/path_tracing/nasg/nasg.png"
+figure src="/images/path_tracing/nasg/nasg.png"
 id="nasg"
 caption="PDF generation using piecewise-polynomial coupling transforms"
 width="100%" 
@@ -2634,7 +2634,7 @@ width="100%"
 ## Neural Product Importance Sampling via Warp Composition
 
 {{<
-figure src="../../images/path_tracing/warp_composition/naive_fit.png"
+figure src="/images/path_tracing/warp_composition/naive_fit.png"
 num="2"
 id="fig-naive-fit"
 caption="Naively fitting a normalizing flow (NF) model to the product of a complex unconditioned density $p_1$ (image) and a simple conditioned density $p_2$ (Gaussian with parameterized mean $\mu$) yields a poor result. The model is tasked with simultaneously learning the intricate shape of $p_1$ *and* the variations in $\mu$. Instead, we apply a $p_1$ warp to the NF-model output, which drastically simplifies the shape of the distribution it needs to learn. The result is a near-perfect fit with an equal number of NF parameters"
@@ -2662,7 +2662,7 @@ This method learns a sampler for the *product distribution* via a **neural warp 
 The decomposition reduces complexity: the tail warp embeds all lighting structure once, and the head warp learns only how the material reshapes that distribution.
 
 {{<
-figure src="../../images/path_tracing/warp_composition/overview.png"
+figure src="/images/path_tracing/warp_composition/overview.png"
 num="1"
 id="fig-warp-overview"
 caption=" Given a shading condition, the model maps uniform points through two warps to produce samples distributed approximately proportionally to a target product density. The shape of intermediate density is coarse, similarly to a naive product fit, but leads to a precise fit when mapped through the tail warp."
@@ -2724,7 +2724,7 @@ where
 - $T_{\text{tail}} = C$ is the unconditional tail warp.
 
 {{<
-figure src="../../images/path_tracing/warp_composition/architecture.gif"
+figure src="/images/path_tracing/warp_composition/architecture.gif"
 num="5"
 id="fig-architecture"
 caption="Architecture of warp composition. The head warp is a conditional spline flow (two coupling layers), and the tail warp is a large unconditional emitter flow. Their composition yields an efficient product sampler."
@@ -2746,7 +2746,7 @@ The two warps handle different parts of the product.
 The head warp models the BRDF × cosine factor $p_2(\omega\mid c)$.
 
 {{<
-figure src="../../images/path_tracing/warp_composition/head_warp.png"
+figure src="/images/path_tracing/warp_composition/head_warp.png"
 num="3"
 id="fig-head-warp"
 caption="Visualization of $p_2(\omega \mid c) \propto f_r(\omega_o,\omega)\cos\theta$ captured by the head warp. The conditional flow reshapes uniform samples according to material and shading."
@@ -2778,7 +2778,7 @@ The head warp is intentionally **compact** because $p_2$ is low-frequency and sm
 The tail warp learns the mapping $x = C(y),$ such that $x$ follows the emitter distribution $p_1(\omega)$.
 
 {{<
-figure src="../../images/path_tracing/warp_composition/tail_warp.png"
+figure src="/images/path_tracing/warp_composition/tail_warp.png"
 num="2"
 id="fig-tail-warp"
 caption="Visualization of $p_1(\omega) \propto L(\omega)$ captured by the tail warp. The unconditional flow learns the environment-map density, including HDR lighting structure."
@@ -2824,7 +2824,7 @@ $$
 
 
 {{<
-figure src="../../images/path_tracing/warp_composition/product_warp.png"
+figure src="/images/path_tracing/warp_composition/product_warp.png"
 num="4"
 id="fig-product-warp"
 caption="The composed mapping $T = C \circ h_\theta$ approximates the full product distribution $p^*(\omega \mid c)$. The figure shows how the head warp and tail warp contributions combine."
@@ -2833,7 +2833,7 @@ width="50%"
 
 
 {{<
-figure src="../../images/path_tracing/warp_composition/all_warps.png"
+figure src="/images/path_tracing/warp_composition/all_warps.png"
 num="4"
 id="fig-product-warp"
 caption="All warps combined"
@@ -2952,7 +2952,7 @@ The PDF at an arbitrary location can then be obtained by interpolating the estim
 The paper sets $M_1 = 32$ and $M_2 = 16$. The reduction in resolution in the second dimension is due to the smaller angular range of $\epsilon_2$ corresponding to $\phi$ which is between 0 and $\pi$.
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/PDF_grid.png"
+figure src="/images/path_tracing/distribution_factorization/PDF_grid.png"
 num="1"
 id="fig-camera"
 caption="Discretized PDF"
@@ -2973,7 +2973,7 @@ $$
 where $\mathbf{C}$ is the condition (different for marginal and conditional) and $M$ is the number of bins.
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/network_architecture.png"
+figure src="/images/path_tracing/distribution_factorization/network_architecture.png"
 num="1"
 id="fig-camera"
 caption="MLP takes the condition $\mathcal{C}$ as the input and estimates an $M$ dimensional vector. We then apply softmax function to this vector and multiply each element by $M$ to obtain a vector containing the PDF estimate at discrete locations. We use this network to model the marginal and conditional distributions. Note that the we use $x$ and $ω_o$ as the condition when modeling the marginal distribution, but for the conditional one, we additionally pass the first dimension $\epsilon_1$ to the network. We use two separate networks to model the two distributions, but we follow the process illustrated in this figure in both cases."
@@ -3003,7 +3003,7 @@ p_{\boldsymbol{\omega}}(\epsilon \mid \mathbf{C}) = \mathbf{v}[\lfloor\epsilon M
 $$
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/nearest_neighbor.png"
+figure src="/images/path_tracing/distribution_factorization/nearest_neighbor.png"
 num="1"
 id="fig-camera"
 caption="Nearest Neighbor interpolation"
@@ -3018,7 +3018,7 @@ $$
 where $m = \lfloor \epsilon M - 0.5 \rfloor$ and $\alpha = \epsilon M - m - 0.5$.
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/linear_interp.png"
+figure src="/images/path_tracing/distribution_factorization/linear_interp.png"
 num="1"
 id="fig-camera"
 caption="Linear Interpolation"
@@ -3027,7 +3027,7 @@ width="50%"
 
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/interp.png"
+figure src="/images/path_tracing/distribution_factorization/interp.png"
 num="1"
 id="fig-camera"
 caption="We demonstrate the PDF evaluation and sampling process for nearest neighbor and linear interpolation. To model the $1D$ distributions (marginal and conditional) our network first predicts a vector $v$ containing estimates of the PDF at discrete locations. To obtain the PDF at an arbitrary location, we either use the PDF estimate at the closest sample (top-left), or linearly interpolate between the two closest samples (top-right). Sampling is done by evaluating the inverse CDF at a randomly generated value $u$ with a uniform distribution. Note that the CDF for nearest neighbor interpolation is piecewise linear, while it is piecewise quadratic for linear interpolation."
@@ -3088,7 +3088,7 @@ $$
 The radiance caching approach follows Neural Radiance Caching (NRC) and uses a small MLP network that takes surface location and ray direction as input and estimates the corresponding radiance.
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/radiance_cache.png"
+figure src="/images/path_tracing/distribution_factorization/radiance_cache.png"
 num="1"
 id="fig-camera"
 caption="Computing the target distribution requires obtaining $L_r(x,\omega_o)$ and $L_i(x,\omega_i)$. We use a neural network that takes location and direction as the input and estimates the cached reflected radiance along that particular ray. By evaluating the network at the current $(x', \omega_o')$ and next $(x,\omega_i)$ intersection points, we obtain an estimate of the reflected Lr and incoming $L_i$ radiance. Note that here the incoming radiance at $x,\omega_i$ is equal to the reflected radiance at $x', \omega_o'$"
@@ -3105,7 +3105,7 @@ width="80%"
 - 70% of paths are guided using the learned method, 30% use BSDF sampling for exploration
 
 {{< 
-figure src="../../images/path_tracing/distribution_factorization/df-overview.png"
+figure src="/images/path_tracing/distribution_factorization/df-overview.png"
 num="1"
 id="fig-camera"
 caption=" During path tracing, we generate samples using our guiding distribution $p_\Theta$ to increase the number of paths that reach light sources. These paths are then used to train our radiance caching $f_\Theta$. We leverage the cached radiance as a smoother objective to improve $p_\Theta$, which in turn is used on the next sample generation."

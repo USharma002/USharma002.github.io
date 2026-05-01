@@ -11,14 +11,14 @@ summary: "about"
 <!-- Profile Section -->
 <div style="flex: 0 0 200px; text-align: center;">
   <img 
-    src="../../images/about/profile-face.jpg" 
+    src="/images/about/profile-face.jpg"
     alt="Utkarsh Sharma" 
     style="width: 160px; height: 160px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin: 0 auto;">
   <h2 style="margin-top: 1rem; font-size: 1.4rem;">Utkarsh Sharma</h2>
   <p style="font-size: 0.95rem; color: #666; margin-bottom: 0.75rem;">MTech @ CSA, <br>IISc Bangalore</p>
   
   <!-- CV Button -->
-  <a href="../CV/CV_Utkarsh_Sharma.pdf" class="cv-download-button">
+  <a href="/CV/CV_Utkarsh_Sharma.pdf" class="cv-download-button">
     📄 View CV
   </a>
 </div>
@@ -90,8 +90,8 @@ summary: "about"
   <!-- Signed Distance Field Explorer -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="../../images/about/sdf-explorer.png" alt="SDF Explorer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; background-color: #f0f0f0;">
-      <img src="../../images/about/sdf-explorer.gif" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/sdf-explorer.png" alt="SDF Explorer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; background-color: #f0f0f0;">
+      <img src="/images/about/sdf-explorer.gif" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer (WIP)</h4>
@@ -110,7 +110,7 @@ summary: "about"
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/VolPath/raw/main/icons/volpath.png" alt="Scalar Field Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="../../images/about/volpath.gif" alt="Scalar Field GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/volpath.gif" alt="Scalar Field GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Scalar Field Reconstructor</h4>
@@ -127,7 +127,7 @@ summary: "about"
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/CUDA-PathTracer/blob/main/assets/cbox.png?raw=true" alt="CUDA PathTracer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="../../images/about/cuda-pathtracer.gif" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/cuda-pathtracer.gif" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">CUDA PathTracer</h4>

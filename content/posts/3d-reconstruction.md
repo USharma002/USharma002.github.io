@@ -212,7 +212,7 @@ $$
 Unlike standard mesh rendering, where light bounces off a hard surface at a specific depth $z$, volume rendering assumes the scene is composed of particles that can **emit** and **absorb** light at any point in space (**assuming no scattering** of light).
 
 {{< figure 
-    src="../../images/3dvis/voldev-cylinder2.png"
+    src="/images/3dvis/voldev-cylinder2.png"
     num="18"
     width="100%"
     caption="Light beam passing through a cylinder interacting with the medium in four different ways ( we will be assuming no scattering). <em>Image credit:</em> <a href='https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html' target='_blank'>Scratchapixel</a>."
@@ -375,7 +375,7 @@ $$
 \hat{C}(\mathbf{r}) = \sum_{i=1}^{N} w_i \mathbf{c}_i
 $$
 
-{{< figure src="../../images/3dvis/vol_render_diagram.png"
+{{< figure src="/images/3dvis/vol_render_diagram.png"
 num="18"
 caption="Volume Rendering Intuition. A ray passes through samples. (A) Light is emitted at a sample. (B) It must pass through previous samples to reach the camera. If an earlier sample has high opacity (alpha), the transmittance (T) drops, shielding the camera from samples behind it. [AI Generated image :)]"
 width="100%" 
@@ -447,7 +447,7 @@ The weights sum to exactly **1** if and only if the remaining transmittance $T_{
 
 ### Overview
 
-{{< figure src="../../images/3dvis/nerf-overview.png"
+{{< figure src="/images/3dvis/nerf-overview.png"
 num="1"
 caption="NeRF Overview"
 width="100%" 
@@ -486,7 +486,7 @@ This function $\gamma(\cdot)$ is applied separately to each of the three coordin
 
 A similar mapping is used in the popular Transformer architecture, where it is referred to as a positional encoding.
 
-{{< figure src="../../images/3dvis/nerf-posenc.png"
+{{< figure src="/images/3dvis/nerf-posenc.png"
 num="9"
 caption="Positional Encoding"
 width="80%" 
@@ -611,7 +611,7 @@ where $\mathcal{R}$ is the set of rays in each batch, and $C(\mathbf{r})$, $\hat
 
 Note that even though the final rendering comes from $\hat{C}_f(\mathbf{r})$, we also minimize the loss of $\hat{C}_c(\mathbf{r})$ so that the weight distribution from the coarse network can be used to allocate samples in the fine network.
 
-{{< figure src="../../images/3dvis/nerf-mlp.png"
+{{< figure src="/images/3dvis/nerf-mlp.png"
 num="2"
 caption="NeRF MLP Architecture"
 width="100%" 
@@ -622,7 +622,7 @@ width="100%"
 ## Plenoxels: Radiance Fields without Neural Networks
 
 ### Overview
-{{< figure src="../../images/3dvis/plenoxel-overview.png"
+{{< figure src="/images/3dvis/plenoxel-overview.png"
 num="3"
 caption="Plenoxels Overview"
 width="100%" 
@@ -644,7 +644,7 @@ Each $k_l^m \in \mathbb{R}^{3}$ is a set of 3 coefficients corresponding to RGB 
 
 $$c(\mathbf{x}, \mathbf{d}; \mathbf{k}) = \sigma\left( \sum_{l=0}^{l_{max}}\sum_{m=-l}^{l} k_l^m Y_l^m(\mathbf{d}) \right)$$
 
-{{< figure src="../../images/3dvis/spherical-harmonics.png"
+{{< figure src="/images/3dvis/spherical-harmonics.png"
 num="4"
 caption="Spherical Harmonics"
 width="60%" 
@@ -673,7 +673,7 @@ Achieves high resolution via coarse-to-fine strategy that begins with a dense gr
 
 Voxel pruning is performed using the method from PlenOctrees [Paper here](), which applies a threshold to the maximum weight $T_i(1 - \exp(-\sigma_i \delta_i))$ of each voxel over all training ray (or, alternatively, to the density value in each voxel). 
 
-{{< figure src="../../images/3dvis/plenoctree.png"
+{{< figure src="/images/3dvis/plenoctree.png"
 num="5"
 caption="Plenoctree Visualization"
 width="60%" 
@@ -712,7 +712,7 @@ Plenoxels achieves **significantly faster training** than NeRF while maintaining
 
 ### Overview
 
-{{< figure src="../../images/3dvis/tensorf-overview.png"
+{{< figure src="/images/3dvis/tensorf-overview.png"
 num="6"
 caption="TensoRF (VM) reconstruction and rendering."
 width="100%" 
@@ -742,7 +742,7 @@ where $i, j, k$ denote the indices of the three modes.
 CP decomposition factorizes a tensor into multiple vectors, expressing multiple compact rank-one components. However, because of too high compactness, CP decomposition can require many components to model complex scenes, leading to high computational costs in radiance field reconstruction.
 
 
-{{< figure src="../../images/3dvis/cp_factorization.png"
+{{< figure src="/images/3dvis/cp_factorization.png"
 num="7"
 caption="CP decomposition, which factorizes a tensor as a sum of vector outer products"
 width="60%" 
@@ -760,14 +760,14 @@ where $\mathbf{M}_r^{2,3} \in \mathbb{R}^{J \times K}$, $\mathbf{M}_r^{1,3} \in 
 
 For each component, we relax its two mode ranks to be arbitrarily large, while restricting the third mode to be rank-one; e.g., for component tensor $\mathbf{v}_r^{1} \circ \mathbf{M}_r^{2,3}$, its mode-1 rank is 1, and its mode-2 and mode-3 ranks can be arbitrary, depending on the rank of the matrix $\mathbf{M}_r^{2,3}$.
 
-{{< figure src="../../images/3dvis/vm_factorization.png"
+{{< figure src="/images/3dvis/vm_factorization.png"
 num="7"
 caption="vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products."
 width="100%" 
 >}}
 
 #### Comparison
-{{< figure src="../../images/3dvis/cp_vm_factorization.png"
+{{< figure src="/images/3dvis/cp_vm_factorization.png"
 num="7"
 caption="Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products."
 width="100%" 
@@ -801,7 +801,7 @@ $$
 
 where $\mathcal{G}_{\sigma}(\mathbf{x})$, $\mathcal{G}_{c}(\mathbf{x})$ represent the trilinearly interpolated features from the two grids at location $\mathbf{x}$. We model $\mathcal{G}_{\sigma}$ and $\mathcal{G}_{c}$ as factorized tensors.
 
-{{< figure src="../../images/3dvis/cp_vm_factorization_full.png"
+{{< figure src="/images/3dvis/cp_vm_factorization_full.png"
 caption="TensoRF using CP decomposition and VM decomposition"
 width="100%" 
 >}}
@@ -840,7 +840,7 @@ By stacking all $\mathbf{b}_{r}$ as columns together, we have a $P \times 3R_{c}
 
 Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.
 
-{{< figure src="../../images/3dvis/tensorf_scene.png"
+{{< figure src="/images/3dvis/tensorf_scene.png"
 num="8"
 id="scene-tensorf"
 caption="Tensorf Scene Representation."
@@ -898,7 +898,7 @@ TV regularization prevents overfitting and removes floaters/artifacts by enforci
 
 ### Overview
 
-{{< figure src="../../images/3dvis/instant-ngp-overview.png"
+{{< figure src="/images/3dvis/instant-ngp-overview.png"
 num="9"
 caption="Multiresolution hash encoding: (1) Input coordinate $\mathbf{x}$ identifies surrounding voxels at $L$ resolution levels; (2) Corner coordinates are hashed to lookup $F$-dimensional features from tables $\theta_l$; (3) Features are linearly interpolated within each voxel; (4) Interpolated features from all levels are concatenated with auxiliary inputs $\xi$ to form $\mathbf{y} \in \mathbb{R}^{LF+E}$; (5) MLP processes $\mathbf{y}$ to produce final output. Gradients backpropagate through (5)$\rightarrow$(4)$\rightarrow$(3) to update hash table features."
 width="100%" 
@@ -1036,7 +1036,7 @@ Total trainable parameters (encoding + MLP) is still much smaller than original 
 ## 3DGS
 
 ### Overview
-{{< figure src="../../images/3dvis/3dgs-overview.png"
+{{< figure src="/images/3dvis/3dgs-overview.png"
 num="10"
 caption="3DGS Overview"
 width="100%" 
@@ -1231,7 +1231,7 @@ where:
 
 This EWA (Elliptical Weighted Average) splatting ensures Gaussians remain elliptical after projection.
 
-{{< figure src="../../images/3dvis/3dgs-projection.png"
+{{< figure src="/images/3dvis/3dgs-projection.png"
 num="9"
 caption="When projecting a Gaussian particle from 3D space onto the camera image plane, Monte Carlo sampling (left) provides the most accurate estimate but is costly to compute. EWA Splatting formulation used in approximates the projection function via linearization, which requires a dedicated Jacobian J for each camera model and leads to approximation errors with increasing distortion. Unscented Transform instead approximates the particle with Sigma points than can be projected exactly and from which the 2D conic can then be estimated."
 width="100%" 
@@ -1264,7 +1264,7 @@ Gaussians are removed to maintain efficiency:
 - Reset opacity to near-zero every $K$ iterations (typically 3000 iterations) to force re-optimization
 - Remove Gaussians that are excessively large in world space
 
-{{< figure src="../../images/3dvis/3dgs_adc.png"
+{{< figure src="/images/3dvis/3dgs_adc.png"
 num="11"
 caption="Adaptive Density Control in 3DGS"
 width="100%" 
@@ -1409,7 +1409,7 @@ A commonly observed failure mode of Neural Radiance Field (NeRF) is fitting inco
 **Key idea** Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as "free" depth super-
 vision during training: 
 
-{{< figure src="../../images/3dvis/ds-nerf-overview.png"
+{{< figure src="/images/3dvis/ds-nerf-overview.png"
 num="1"
 caption="Depth Supervised NeRF Overview"
 width="100%" 
@@ -1508,7 +1508,7 @@ $$
 
 ### Overview
 
-{{< figure src="../../images/3dvis/vipnerf-overview.png"
+{{< figure src="/images/3dvis/vipnerf-overview.png"
 num="16"
 caption="**Overview of ViP-NeRF architecture.** Given the images from primary and secondary views, we estimate a visibility prior map in the primary view and use it to supervise the visibility of pixels as predicted by the NeRF. Specifically, we cast a ray through a randomly selected pixel in the primary view and sample 3D points along the ray. For every point ${\mathbf p}_i$, we use the NeRF MLPs to obtain its visibility in primary and secondary views, along with volume density $\sigma_i$ and color $\mathbf c_i$. Volume rendering outputs visibility $t'$ of the chosen pixel in the secondary view which is supervised by the visibility prior. $\mathcal{L}_v$ constrains the visibilities $\hat{T}_i$ output by network and $T_i$ computed using volume rendering to be consistent with each other."
 width="100%" 
@@ -1532,7 +1532,7 @@ This visibility information relates to the **relative depth** of scene objects -
 
 ViP-NeRF estimates the visibility prior using **plane sweep volumes (PSV)** without requiring any pre-training:
 
-{{< figure src="../../images/3dvis/vipnerf-psv.png"
+{{< figure src="/images/3dvis/vipnerf-psv.png"
 num="17"
 caption="**Visibility Prior Computation.** The secondary view image is warped to the primary view at different depth planes to create a PSV. Error maps are computed by comparing warped images with the primary view. The minimum error across all planes is thresholded to obtain the visibility prior map. Regions with low error (white) indicate visibility in both views, while high error (black) indicates occlusion."
 width="100%" 
@@ -1579,14 +1579,14 @@ This loss is only applied when $\tau'(q) = 1$ (pixel is reliably visible), avoid
 <table align="center">
   <tr>
     <td align="center" width="45%">
-{{< figure src="../../images/3dvis/vipnerf-naive.png"
+{{< figure src="/images/3dvis/vipnerf-naive.png"
 num="17"
 caption="Computing $T'_i$ naively requiring $N^2$ MLP queries per pixel "
 width="60%" 
 >}}
       </td>
     <td align="center" width="45%"> 
-{{< figure src="../../images/3dvis/vipnerf-mlp.png"
+{{< figure src="/images/3dvis/vipnerf-mlp.png"
 num="17"
 caption="Reformulated the NeRF MLP"
 width="100%" 
@@ -1670,7 +1670,7 @@ Ablation studies show that removing either prior degrades performance, confirmin
 
 ### Overview
 
-{{< figure src="../../images/3dvis/dust3r-arch.png"
+{{< figure src="/images/3dvis/dust3r-arch.png"
 num="13"
 caption="**Architecture of the network $\mathcal{F}$.** Two views of a scene $(I^1, I^2)$ are first encoded in a Siamese manner with a shared ViT encoder. The resulting token representations $F^1$ and $F^2$ are then passed to two transformer decoders that constantly exchange information via cross-attention. Finally, two regression heads output the two corresponding pointmaps and associated confidence maps. Importantly, the two pointmaps are expressed in the same coordinate frame of the first image $I^1$. The network $\mathcal{F}$ is trained using a simple regression loss"
 width="100%" 
@@ -1758,7 +1758,7 @@ From the predicted pointmaps, various geometric quantities can be straightforwar
 
 ### Overview
 
-{{< figure src="../../images/3dvis/instantsplat-pipeline.png"
+{{< figure src="/images/3dvis/instantsplat-pipeline.png"
 num="14"
 caption="InstantSplat Pipeline. Multi-view unposed captures. Initialization using a geometric foundation model followed by co-visibility pruning. Joint optimization of 3D Gaussians and camera poses."
 width="100%" 
@@ -1863,7 +1863,7 @@ This approach allows InstantSplat to reconstruct scenes in $\approx 7.5$ seconds
 
 ### Overview
 
-{{< figure src="../../images/3dvis/fsgs-overview.png"
+{{< figure src="/images/3dvis/fsgs-overview.png"
 num="12"
 caption="**FSGS Pipeline.** 3D Gaussians are initialized from COLMAP, with a few images (**black cameras**). For the sparsely placed Gaussians, we propose densifying new Gaussians to enhance scene coverage by unpooling existing Gaussians into new ones, with properly initialized Gaussian attributes. Monocular depth priors, enhanced by sampling unobserved views (**red cameras**), guide the optimization of grown Gaussians towards a reasonable geometry. The final loss consists of a photometric loss term, and a geometric regularization term calculated as depth relative correspondence."
 width="100%" 
@@ -1905,7 +1905,7 @@ For each new Gaussian:
 
 This strategy encourages Gaussians to grow in representative locations and progressively fill observation gaps. The proximity graph is updated after each densification or pruning operation.
 
-{{< figure src="../../images/3dvis/gaussian-unpooling.png"
+{{< figure src="/images/3dvis/gaussian-unpooling.png"
 num="15"
 caption="**Gaussian Unpooling Illustration.** We show a 2D toy case for visualizing Gaussian Unpooling with depth guidance, where the example 1D depth provides priors on the relative distance of the Gaussians from the viewing direction, guiding the Gaussian deformation toward a better solution."
 width="60%" 
@@ -2126,7 +2126,7 @@ A notable pattern is that disagreement increases significantly during **densific
 
 **Key Point:** Both **point disagreement** (differences in Gaussian positions) and **rendering disagreement** (differences in rendered appearance or depth) are typically **negatively correlated** with reconstruction accuracy.
 
-{{< figure src="../../images/3dvis/corgs-pipeline.png"
+{{< figure src="/images/3dvis/corgs-pipeline.png"
 num="1"
 caption="Overview of CoR-GS. We train two 3D Gaussian radiance fields simultaneously and regularize them by suppressing point disagreement and rendering disagreement."
 width="100%" 

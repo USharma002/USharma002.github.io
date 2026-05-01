@@ -16,7 +16,7 @@ math: true
 
 It uses encoder-decoder structure where both encoder block and decoder block have an attention mechanism.
 
-{{< figure src="../../images/transformer/transformer_architecture.svg"
+{{< figure src="/images/transformer/transformer_architecture.svg"
 num="1"
 caption="Transformer Architecture"
 width="50%" 
@@ -30,7 +30,7 @@ $$X\in\mathbb{R}^{T \times d_{model}}$$
 As an example, we have $d_{model}=768$ and a sequence length $T=9$, for the following:
 
 {{< 
-figure src="../../images/transformer/input_embedding.png"
+figure src="/images/transformer/input_embedding.png"
 num="2"
 id="fig-input-embedding"
 caption="Input embeddings showing 9 tokens each with 768-dimensional vectors"
@@ -85,7 +85,7 @@ plt.show()
 ```
 
 {{< 
-figure src="../../images/transformer/pos_encoding.png"
+figure src="/images/transformer/pos_encoding.png"
 num="3"
 id="fig-pos-encoding"
 caption="Positional Encoding visualization for d_model=768 and T = 100"
@@ -114,7 +114,7 @@ What queries to use, how the key and value vectors are defined and what score fu
 The example assumes $T=9$, $h = 12$ and $d_{model}=768$ thus making $d_v = d_k = \frac{d_{model}}{h} = 64$
 
 {{< 
-figure src="../../images/transformer/QK.png"
+figure src="/images/transformer/QK.png"
 num="4"
 id="fig-qk-projection"
 caption="Query, key projections showing dimensions through attention computation"
@@ -166,7 +166,7 @@ q_T^{\top}k_1 & q_T^{\top}k_2 & \cdots & q_T^{\top}k_T
 $$
 
 {{< 
-figure src="../../images/transformer/attention_score.png"
+figure src="/images/transformer/attention_score.png"
 num="5"
 id="fig-attention-score"
 caption="Attention score matrix visualization showing query-key dot products with heatmap"
@@ -183,7 +183,7 @@ $$
 
 
 {{< 
-figure src="../../images/transformer/QKV.png"
+figure src="/images/transformer/QKV.png"
 num="6"
 id="fig-qkv-flow"
 caption="Scaled dot-product attention computation flow with softmax and value multiplication"
@@ -202,7 +202,7 @@ If we do not scale down variance back to $\sim\sigma^2$, the softmax over the lo
 The visualization of the Scaled Dot Product attention is given below. The **masking step is optional** and makes the score $-\infty$ for top right of the attention matrix during training to stop the model from "cheating" by looking at the next token (future) in the Decoder.
 
 {{< 
-figure src="../../images/transformer/attention_head_output.png"
+figure src="/images/transformer/attention_head_output.png"
 num="7"
 id="fig-attention-head-output"
 caption="Attention Head Output"
@@ -212,7 +212,7 @@ width="100%"
 
 <br>
 {{< 
-figure src="../../images/transformer/sdpa.svg"
+figure src="/images/transformer/sdpa.svg"
 num="8"
 id="fig-sdpa-graph"
 caption="Scaled Dot Product Attention Computation Graph"
@@ -267,14 +267,14 @@ We refer to this as Multi-Head Attention layer with the learnable parameters:
   <tr>
     <td align="center" width="45%">
       {{< 
-      figure src="../../images/transformer/attention_head.png"
+      figure src="/images/transformer/attention_head.png"
       num="9"
       id="fig-single-head"
       caption="Single attention head — queries, keys, values projections"
       width="100%" 
       >}}
       </td>
-    <td align="center" width="45%"> {{< figure src="../../images/transformer/multihead.png"
+    <td align="center" width="45%"> {{< figure src="/images/transformer/multihead.png"
           num="10"
           id="fig-multihead"
           caption="Multi-head attention — parallel heads and concatenation"
@@ -286,7 +286,7 @@ We refer to this as Multi-Head Attention layer with the learnable parameters:
 One more thing to note, since we have used $d_k = d_v = d_{model}/h$, the reduced dimension of each head reduces the total computational cost and makes it similar to that of single-head attention with full dimensionality. Also, if for $h$ heads if we concatenate the output of dimension $T \times hd_v$, we get the $T\times d_{model}$ again.
 
 {{< 
-figure src="../../images/transformer/layer_out.png"
+figure src="/images/transformer/layer_out.png"
 num="11"
 id="fig-layer-concat"
 caption="Concatenating the output from all heads and then projecting it for FFN input"
@@ -296,7 +296,7 @@ width="65%"
 <br>
 
 {{< 
-figure src="../../images/transformer/mha.svg"
+figure src="/images/transformer/mha.svg"
 num="12"
 id="fig-mha-graph"
 caption="Multi Head Attention Computation Graph"
@@ -437,7 +437,7 @@ Now that we’ve covered most of the concepts on the encoder side, we basically 
 The encoder start by processing the input sequence. The output of the top encoder is then transformed into a set of attention vectors $K$ and $V$. These are to be used by each decoder in its "encoder-decoder attention"/Cross Attention layer which helps the decoder focus on appropriate places in the input sequence. 
 
 {{< 
-figure src="../../images/transformer/transformer_decoding_2.gif"
+figure src="/images/transformer/transformer_decoding_2.gif"
 num="13"
 id="fig-decoding"
 caption="After finishing the encoding phase, we begin the decoding phase. Each step in the decoding phase outputs an element from the output sequence"
@@ -457,7 +457,7 @@ This is what the paper "An Image is Worth 16x16 Words: Transformers for Image Re
 Each of thise patches is considered to be a "word"/"token" and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.
 
 {{< 
-figure src="../../images/transformer/vit.gif"
+figure src="/images/transformer/vit.gif"
 num="14"
 id="fig-vit-animation"
 caption="GIF visualization of the architecture (figure credit - [Phil Wang](https://github.com/lucidrains/vit-pytorch/blob/main/images/vit.gif))"
@@ -503,7 +503,7 @@ class LearnablePositionalEmbedding(nn.Module):
 We use the Pre-Layer Normalization version of the Transformer blocks proposed by <a href="http://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf">Ruibin Xiong et al.</a> in 2020. The idea is to apply Layer Normalization not in between residual blocks, but instead as a first layer in the residual blocks. This reorganization of the layers supports better gradient flow and removes the necessity of a warm-up stage. A visualization of the difference between the standard Post-LN and the Pre-LN version is shown below.
 
 {{< 
-figure src="../../images/transformer/pre_layer_norm.svg"
+figure src="/images/transformer/pre_layer_norm.svg"
 num="15"
 id="fig-pre-layer-norm"
 caption="Pre-Layer Normalization vs Post-Layer Normalization"
@@ -587,7 +587,7 @@ I trained the above ViT on STL10 Images using the following hyperparams:
 | Test Accuracy | 59.51% |
 
 {{< 
-figure src="../../images/transformer/training_curves.png"
+figure src="/images/transformer/training_curves.png"
 num="16"
 id="fig-training-curves"
 caption="Training Curve for 50 Epochs"
@@ -597,7 +597,7 @@ width="100%"
 And after training I stored the attention calculated and then overlayed them on the image and got the following visualization:
 
 {{< 
-figure src="../../images/transformer/attention_4x4.png"
+figure src="/images/transformer/attention_4x4.png"
 num="17"
 id="fig-attention-viz"
 caption="Attention visualization overlayed on the corresponding STL10 Images"
@@ -623,7 +623,7 @@ Note:
 - When ```mask=None```, this behaves as standard self-attention (suitable for parallel reconstruction).
 
 {{< 
-figure src="../../images/transformer/attention_comparison.png"
+figure src="/images/transformer/attention_comparison.png"
 num="17"
 id="fig-attention-viz"
 caption="Masked Self Attention"
@@ -732,7 +732,7 @@ Putting everything together in a decoder block. The architecture follows the sta
 - **Cross-Attention** - Attend to encoder features
 - **Feed-Forward Network** - Process the combined information
 
-{{< figure src="../../images/transformer/transformer_architecture.svg"
+{{< figure src="/images/transformer/transformer_architecture.svg"
 num="1"
 caption="Transformer Architecture"
 width="50%" 

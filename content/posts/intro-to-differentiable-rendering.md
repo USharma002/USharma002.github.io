@@ -37,10 +37,10 @@ $$
 
 <div class="paper-fig-row">
   <div>
-    {{< figure src="../../images/diff-rendering/svgtex/finite-difference.svg" id="fig-finite-difference" caption="(a) Finite Difference" width="100%" >}}
+    {{< figure src="/images/diff-rendering/svgtex/finite-difference.svg" id="fig-finite-difference" caption="(a) Finite Difference" width="100%" >}}
   </div>
   <div>
-    {{< figure src="../../images/diff-rendering/svgtex/central-difference.svg" id="fig-central-difference" caption="(b) Central Difference" width="100%" >}}
+    {{< figure src="/images/diff-rendering/svgtex/central-difference.svg" id="fig-central-difference" caption="(b) Central Difference" width="100%" >}}
   </div>
 </div>
 
@@ -75,7 +75,7 @@ $$
 where $J_g(f(\mathbf{x}))$ is the Jacobian of $g$ evaluated at $f(\mathbf{x})$, and $J_f(\mathbf{x})$ is the Jacobian of $f$ evaluated at $\mathbf{x}$.
 
 {{< 
-figure src="../../images/diff-rendering/svgtex/auto-diff.svg"
+figure src="/images/diff-rendering/svgtex/auto-diff.svg"
 id="fig-auto-diff-graph"
 caption="Example computation graph corresponding to the expression $x^2 \operatorname{sin}(2xy)$. The edge weights are the derivative of the operation applied to the input node."
 width="100%" 
@@ -115,98 +115,98 @@ We can apply forward-mode AD to differentiate the output of Equation $\eqref{eq:
 
 {{< step-slider animate="false" >}}
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-01svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-01svg.svg"
   title: "Initialize Primal"
   description: |
     <div class="eq-stack">
     We start with input values $x=2, y=3$ and compute the forward pass.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-02svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-02svg.svg"
   title: 'Seed Gradient $\nabla_x$'
   description: |
     <div class="eq-stack">
     To compute $\frac{\partial}{\partial x}$, we seed the input gradient $\nabla_x = 1.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-03svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-03svg.svg"
   title: 'Compute $\nabla_x(2x)$'
   description: |
     <div class="eq-stack">
     $\nabla_x(2x) = \nabla_x \cdot 2 = 2.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-04svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-04svg.svg"
   title: 'Compute $\nabla_x(2xy)$'
   description: |
     <div class="eq-stack">
     $\nabla_x(2xy) = \nabla_x(2x) \cdot y = 2 \cdot 3 = 6.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-05svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-05svg.svg"
   title: 'Compute $\nabla_x(\sin(2xy))$'
   description: |
     <div class="eq-stack">
     $\nabla_x(\sin) = \nabla_x(2xy) \cdot \cos(2xy) = 6 \cdot 0.84 = 5.06$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-06svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-06svg.svg"
   title: 'Compute $\nabla_x(x^2)$'
   description: |
     <div class="eq-stack">
     $\nabla_x(x^2) = \nabla_x \cdot 2x = 1 \cdot 4 = 4.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-07svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-07svg.svg"
   title: "Final Output Gradient"
   description: |
     <div class="eq-stack">
     $\nabla_x(f) = \nabla_x(x^2)\sin + x^2\nabla_x(\sin) = 4(-0.54) + 4(5.06) = 18.11$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-08svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-08svg.svg"
   title: 'Reset for $\nabla_y$'
   description: |
     <div class="eq-stack">
     Now we repeat the process to find the gradient with respect to $y$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-09svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-09svg.svg"
   title: 'Seed Gradient $\nabla_y$'
   description: |
     <div class="eq-stack">
     Set $\nabla_y = 1.0$ and $\nabla_x = 0.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-10svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-10svg.svg"
   title: 'Compute $\nabla_y(2x)$'
   description: |
     <div class="eq-stack">
     $\nabla_y(2x) = 0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-11svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-11svg.svg"
   title: 'Compute $\nabla_y(2xy)$'
   description: |
     <div class="eq-stack">
     $\nabla_y(2xy) = \nabla_y(2x) \cdot y + 2x \cdot \nabla_y = 0 \cdot 3 + 4 \cdot 1 = 4.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-12svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-12svg.svg"
   title: 'Compute $\nabla_y(\sin(2xy))$'
   description: |
     <div class="eq-stack">
     $\nabla_y(\sin) = \nabla_y(2xy) \cdot \cos(2xy) = 4 \cdot 0.84 = 3.38$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-13svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-13svg.svg"
   title: 'Compute $\nabla_y(x^2)$'
   description: |
     <div class="eq-stack">
     $\nabla_y(x^2) = 0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/forward_ad/step-14svg.svg"
+- image: "/images/diff-rendering/svgtex/forward_ad/step-14svg.svg"
   title: 'Final Output Gradient $\nabla_y$'
   description: |
     <div class="eq-stack">
@@ -295,42 +295,42 @@ A naïve implementation that doesn't store weights would require re-running the 
 
 {{< step-slider animate="false" >}}
 
-- image: "../../images/diff-rendering/svgtex/backward_ad/step-01svg.svg"
+- image: "/images/diff-rendering/svgtex/backward_ad/step-01svg.svg"
   title: "Primal Result"
   description: |
     <div class="eq-stack">
     We first compute the primal result $e = -2.15$ in a forward pass.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/backward_ad/step-02svg.svg"
+- image: "/images/diff-rendering/svgtex/backward_ad/step-02svg.svg"
   title: "Initialize Adjoint"
   description: |
     <div class="eq-stack">
     We start by setting the adjoint of the output $\bar{e} = 1.0$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/backward_ad/step-03svg.svg"
+- image: "/images/diff-rendering/svgtex/backward_ad/step-03svg.svg"
   title: 'Backprop to $\sin$ and $x^2$'
   description: |
     <div class="eq-stack">
     $\bar{\sin} = \bar{e} \cdot x^2 = 4.0$, and $\bar{x^2} = \bar{e} \cdot \sin = -0.54$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/backward_ad/step-04svg.svg"
+- image: "/images/diff-rendering/svgtex/backward_ad/step-04svg.svg"
   title: "Backprop to $2xy$"
   description: |
     <div class="eq-stack">
     $\bar{2xy} = \bar{\sin} \cdot \cos(2xy) = 4 \cdot 0.84 = 3.38$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/backward_ad/step-05svg.svg"
+- image: "/images/diff-rendering/svgtex/backward_ad/step-05svg.svg"
   title: "Backprop to $2x$ and $y$"
   description: |
     <div class="eq-stack">
     $\bar{2x} = \bar{2xy} \cdot y = 10.08$, and $\bar{y} = \bar{2xy} \cdot 2x = 13.50$.
     </div>
 
-- image: "../../images/diff-rendering/svgtex/backward_ad/step-06svg.svg"
+- image: "/images/diff-rendering/svgtex/backward_ad/step-06svg.svg"
   title: "Final Gradient for $x$"
   description: |
     <div class="eq-stack">
@@ -538,7 +538,7 @@ The Leibniz rule provides the formula for differentiating an integral whose limi
 
 $$\frac{d}{dp} \int_{a(p)}^{b(p)} f(x, p) dx = \underbrace{{\color{#00d1b2}\int_{a(p)}^{b(p)} \frac{\partial f}{\partial p}(x, p) dx}}_{\text{Interior Term}} + \underbrace{{\color{#4facfe}f(b(p), p) \frac{db}{dp}} - {\color{#ff6b6b}f(a(p), p) \frac{da}{dp}}}_{\text{Boundary Term}}$$
 
-{{< figure src="../../images/diff-rendering/svgtex/leibniz-visual.svg" id="fig-leibniz-visual" caption="Visual decomposition of the Leibniz Integral Rule into interior and boundary components." width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/leibniz-visual.svg" id="fig-leibniz-visual" caption="Visual decomposition of the Leibniz Integral Rule into interior and boundary components." width="100%" >}}
 
 > <details>
 > <summary style="cursor: pointer;">Proof</summary>
@@ -549,12 +549,12 @@ $$\frac{d}{dp} \int_{a(p)}^{b(p)} f(x, p) dx = \underbrace{{\color{#00d1b2}\int_
 > Consider an integral where the limits $a$ and $b$ are constant. We want to find the derivative:
 > $$\frac{d}{dt} \int_a^b f(t, x) dx$$
 >
-> {{< figure src="../../images/diff-rendering/svgtex/leibniz-constant.svg" id="fig-leibniz-constant" caption="Visualization of the integral changing with variable $t$ with constant integration limits $a$ and $b$." width="100%" >}}
+> {{< figure src="/images/diff-rendering/svgtex/leibniz-constant.svg" id="fig-leibniz-constant" caption="Visualization of the integral changing with variable $t$ with constant integration limits $a$ and $b$." width="100%" >}}
 > 
 > **Step 1: Expand using the Taylor series**
 > We approximate $f(t+\Delta t, x)$ as $f(t, x) + {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t}$:
 > $$\frac{\int_a^b \left( f(t, x) + {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t} \right) dx - \int_a^b f(t, x) dx}{\Delta t}$$
-> {{< figure src="../../images/diff-rendering/svgtex/leibniz-constant-components.svg" id="fig-leibniz-constant-components" caption="The difference in the area by evaluating $f(t+\Delta t, x) - f(t, x)$ across the integration interval with change $\Delta t$." width="100%" >}}
+> {{< figure src="/images/diff-rendering/svgtex/leibniz-constant-components.svg" id="fig-leibniz-constant-components" caption="The difference in the area by evaluating $f(t+\Delta t, x) - f(t, x)$ across the integration interval with change $\Delta t$." width="100%" >}}
 > **Step 2: Cancel the original function terms**
 > The "old" area $\int f dx$ cancels out with the negative term:
 > $$\frac{\cancel{\int_a^b f(t, x) dx} + \int_a^b {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t} dx - \cancel{\int_a^b f(t, x) dx}}{\Delta t}$$
@@ -569,12 +569,12 @@ $$\frac{d}{dp} \int_{a(p)}^{b(p)} f(x, p) dx = \underbrace{{\color{#00d1b2}\int_
 >
 > #### Part 2: Variable Limits
 > Now consider the general case where boundaries depend on time: $I(t) = \int_{a(t)}^{b(t)} f(t, x) dx$.
-> {{< figure src="../../images/diff-rendering/svgtex/leibniz-dependent.svg" id="fig-leibniz-dependent-proof" caption="Visualization of the area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$" width="100%" >}}
+> {{< figure src="/images/diff-rendering/svgtex/leibniz-dependent.svg" id="fig-leibniz-dependent-proof" caption="Visualization of the area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$" width="100%" >}}
 >
 > **Step 1: Decompose the integration domain**
 > We split the "new" integral $\int_{a+da}^{b+db}$ into the interior $[a,b]$ and the boundary changes:
 > $$\frac{{\color{#00d1b2}\int_a^b (f + \frac{\partial f}{\partial t}\Delta t) dx} - {\color{#ff6b6b}\int_a^{a + a'\Delta t} (f + \frac{\partial f}{\partial t}\Delta t) dx} + {\color{#4facfe}\int_b^{b + b'\Delta t} (f + \frac{\partial f}{\partial t}\Delta t) dx} - \int_a^b f dx}{\Delta t}$$
-> {{< figure src="../../images/diff-rendering/svgtex/leibniz-dependent-components.svg" id="fig-leibniz-dependent-components" caption="The difference in area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$." width="100%" >}}
+> {{< figure src="/images/diff-rendering/svgtex/leibniz-dependent-components.svg" id="fig-leibniz-dependent-components" caption="The difference in area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$." width="100%" >}}
 >
 > **Step 2: Discard higher-order terms ($O(\Delta t^2)$)**
 > Terms like $\int \frac{\partial f}{\partial t} \Delta t dx$ in the boundary segments (which have width $\approx \Delta t$) become $\Delta t^2$ and vanish:
@@ -638,7 +638,7 @@ $$
 I(p) = \int_0^1 f(x, p)\, dx, \quad \text{where } f(x, p) = \begin{cases} 1 & \text{if } x < p \\ 0.5 & \text{if } x > p \end{cases}
 $$
 
-{{< figure src="../../images/diff-rendering/svgtex/step-function-example.svg" id="fig-step-function-example" caption="Visualization of the step function $f(x, p)$ with a discontinuity at $x = p$." width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/step-function-example.svg" id="fig-step-function-example" caption="Visualization of the step function $f(x, p)$ with a discontinuity at $x = p$." width="100%" >}}
 
 The discontinuity is at $x = p$, so $\Gamma = \{p\}$, $\langle \partial_p x, \mathbf{n} \rangle = 1$,
 and the jump is $\Delta f = f^-(p) - f^+(p) = 1 - 0.5 = 0.5$. Applying the 1D Leibniz rule:
@@ -661,11 +661,11 @@ $\Delta f$ at the boundary.
 
 In this section, we will work on a simplified problem with rendering two $2D$ triangles with constant colors. The two triangles can occlude each other. In this case our scene parameters are the 6 triangle vertices ($12$ numbers) and the colors of 2 triangles ($6$ real numbers).. Given these 18 total numbers as a vector $\mathbf{\pi}$, where we denote the vertices parameters as $\mathbf{\pi}_v$ and color parameters as $\mathbf{\pi}_c$, we want to generate an image $I(\pi)$ and compute a loss function $\mathcal{L}(I(\pi))$ (e.g., comparing the image with a target, or feeding the image to a neural network classifier). Our goal is to compute the gradient $\nabla_{\pi} \mathcal{L}(I(\pi))$ so that we can minimize the loss using gradient-based optimization.
 
-{{< figure src="../../images/diff-rendering/triangles/fig_a_vector.svg" id="fig-triangle-a" caption="The image of the triangles with constant colors (or at least how the imaging function $m(x, y; \mathbf{\pi})$ looks)" width="100%" >}}
+{{< figure src="/images/diff-rendering/triangles/fig_a_vector.svg" id="fig-triangle-a" caption="The image of the triangles with constant colors (or at least how the imaging function $m(x, y; \mathbf{\pi})$ looks)" width="100%" >}}
 
 Before we talk about gradients, we need to discuss how the image $I$ is defined. How do we generate an image from two triangles? We can imagine that the two triangles define an underlying *imaging function* $m(x, y; \mathbf{\pi})$ that maps continuous $2D$ coordinates $(x, y)$ to a RGB color, depending on which triangle coordinate hits. However, an image is a discrete 2D grid. How do we go from the imaging function $m$ to the image $I$? A naive approach is to evaluate the $m$ at the center of the pixel. This approach is prone to *aliasing* which causes issues including jagged edges, temporal flickering, Moire patterns, etc and breaking up fine details.
 
-{{< figure src="../../images/diff-rendering/triangles/fig_b_aliased.svg" id="fig-triangle-b" caption="The image formed when imaging function $m(x, y; \mathbf{\pi})$ is evaluated only at the center. We can see the aliasing artifact (jagged edges)" width="100%" >}}
+{{< figure src="/images/diff-rendering/triangles/fig_b_aliased.svg" id="fig-triangle-b" caption="The image formed when imaging function $m(x, y; \mathbf{\pi})$ is evaluated only at the center. We can see the aliasing artifact (jagged edges)" width="100%" >}}
 
 From the signal processing perspective, we are *sampling* this 2D domain with a discrete image, where the sampling rate is determined by the imaging function. Since the image function $m$ is discontinuous, it has energy at all frequencies and is not bandlimited. Therefore, as long as we are evaluating at the center of the pixels, we will suffer from the aliasing problem no matter how large we select the resolution. To resolve the aliasing issue, we need to remove the high-frequency energy from the imaging function $m$. This is done by convolving the imaging function with a low-pass filter. For each pixel $I_i$, we evaluate an integral centered around the pixel center $(x_i, y_i)$:
 
@@ -677,7 +677,7 @@ where $k(x, y)$ is the *kernel* (or *filter*) and $f(x, y; \mathbf{\pi}) = k(x, 
 
 Intuitively, to remove the artifacts introduced by aliasing, instead of only sampling the center at each pixel, we evaluate the weighted average color over an area.
 
-{{< figure src="../../images/diff-rendering/triangles/fig_c_antialiased.svg" id="fig-triangle-c" caption="The image formed when imaging function $m(x, y; \mathbf{\pi})$ is evaluated only at the center. We can see the aliasing artifact (jagged edges)" width="100%" >}}
+{{< figure src="/images/diff-rendering/triangles/fig_c_antialiased.svg" id="fig-triangle-c" caption="The image formed when imaging function $m(x, y; \mathbf{\pi})$ is evaluated only at the center. We can see the aliasing artifact (jagged edges)" width="100%" >}}
 
 The selection of $k$ is not something we will discuss but PBRT book has a section on this. 
 
@@ -712,13 +712,13 @@ $$
 
 where $\nabla_{\pi} I_i(\mathbf{\pi})$ is the partial derivative of the $i$-th pixel with respect to the parameters. Now we want to compute the derivative of a pixel color with respect to the scene parameters $\mathbf{\pi}$. 
 
-{{< figure src="../../images/diff-rendering/svgtex/triangles/2.svg" id="fig-triangle-c" caption="Triangles with the dotted circle for the pixel support. We want to compute the derivative of the pixel color with respect to the triangle vertex positions." width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/triangles/2.svg" id="fig-triangle-c" caption="Triangles with the dotted circle for the pixel support. We want to compute the derivative of the pixel color with respect to the triangle vertex positions." width="100%" >}}
 
 A common misconception of the non-differentiability of rendering is that the derivative $\partial I_i (\mathbf{\pi}) / \partial \pi$ is discontinuous and not differentiable. However, recall that $I_i$ is an integral that evaluates the average color within the filter support. Therefore, the movement of the triangle vertices will in fact lead to continuous and differentiable changes to the average color. **The integrand of rendering is discontinuous and not differentiable, but the integral is actually differentiable!** Importantly, we did not make rendering an integration problem to make it differentiable. Instead, rendering is an integration problem in the first place. All the approaches in any rendering methods, real-time or offline, are different approximations or discretizations of the rendering integral.
 
 How do we compute the derivatives of an integral? Recall that we wanted to compute the integral numerically (Equation $\eqref{eq:discretization}$). Unfortunately, we cannot just automatically differentiate the numerical integrator as we saw in the [Example 2](#example-2-discontinuities-the-visibility-problem). For the vertex position parameters, the numerical integrator will always evaluate to 0. 
 
-{{< figure src="../../images/diff-rendering/svgtex/triangles/5.svg" id="fig-triangle-c" caption="Sampling at yellow points will give 0 derivative as there is no local change around that point. But we can see that changing the position of blue triangle will change the average color of pixel and that change is continuous." width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/triangles/5.svg" id="fig-triangle-c" caption="Sampling at yellow points will give 0 derivative as there is no local change around that point. But we can see that changing the position of blue triangle will change the average color of pixel and that change is continuous." width="100%" >}}
 
 However, the derivative of the integral with respect to a vertex position parameter $\mathbf{\pi}_v$ is not 0.
 
@@ -728,11 +728,11 @@ $$
 
 In general, the discretization and the gradient operator do not commute for discontinuous integrands. This is because the derivatives are measuring local changes, and the uniform discretization has zero chance of detecting the local changes around discontinuities (the sample will need to be on the edge which has probability 0). We can take a look at the [Example 2](#example-2-discontinuities-the-visibility-problem) to see that we need to explicitly sample at the boundary to detect the change. 
 
-{{< figure src="../../images/diff-rendering/svgtex/triangles/6.svg" id="fig-triangle-c" caption="Purple points represent sampling explicitly at the edges. This will capture the change in the pixel and thus will give us correct gradient" width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/triangles/6.svg" id="fig-triangle-c" caption="Purple points represent sampling explicitly at the edges. This will capture the change in the pixel and thus will give us correct gradient" width="100%" >}}
 
 In general, we will need to evaluate Reynold's Transport Theorem (Equation $\eqref{reynolds-transport-theorem}$) for this problem:
 
-{{< figure src="../../images/diff-rendering/svgtex/triangles/8.svg" id="fig-reynolds-theorem" caption="The Reynolds Transport Theorem decomposed into interior and boundary derivatives." width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/triangles/8.svg" id="fig-reynolds-theorem" caption="The Reynolds Transport Theorem decomposed into interior and boundary derivatives." width="100%" >}}
 
 
 To intuitively understand the boundary derivative, we can visualize it as calculating the volume of an **infinitesimal boundary wedge** created by the movement of an edge.
@@ -752,7 +752,7 @@ $$
 
 which can also be approximated with Monte Carlo sampling.
 
-{{< figure src="../../images/diff-rendering/svgtex/triangles/9.svg" id="fig-boundary-volume" caption="The Infinitesimal Boundary Volume. For each point on the boundary, we compute its 2D movement $v$ with respect to the differentiating parameter. This movement is projected onto the normal direction $n$ to yield the normal movement speed $n \cdot v$. This projection accounts for the infinitesimal width of the swept area, allowing us to properly measure the infinitesimal area changes at the boundary. Multiplying this projected width by the differential edge segment $dt$ (length) and the color jump (height) calculates the exact boundary derivative contribution." width="100%" >}}
+{{< figure src="/images/diff-rendering/svgtex/triangles/9.svg" id="fig-boundary-volume" caption="The Infinitesimal Boundary Volume. For each point on the boundary, we compute its 2D movement $v$ with respect to the differentiating parameter. This movement is projected onto the normal direction $n$ to yield the normal movement speed $n \cdot v$. This projection accounts for the infinitesimal width of the swept area, allowing us to properly measure the infinitesimal area changes at the boundary. Multiplying this projected width by the differential edge segment $dt$ (length) and the color jump (height) calculates the exact boundary derivative contribution." width="100%" >}}
 
 
 ### Code for the above example
@@ -980,9 +980,9 @@ print(np.round(d_verts, 4))
 ```
 
 <div class="paper-fig-row">
-    {{< figure src="../../images/diff-rendering/triangles/1_forward_render.png" caption="Forward Render Output" id="fig-triangle-forward" width="100%">}}
-    {{< figure src="../../images/diff-rendering/triangles/2_positive_gradient.png" caption="Positive Gradients" id="fig-triangle-pos" width="100%" >}}
-    {{< figure src="../../images/diff-rendering/triangles/3_negative_gradient.png" caption="Negative Gradients" id="fig-triangle-neg" width="100%" >}}
+    {{< figure src="/images/diff-rendering/triangles/1_forward_render.png" caption="Forward Render Output" id="fig-triangle-forward" width="100%">}}
+    {{< figure src="/images/diff-rendering/triangles/2_positive_gradient.png" caption="Positive Gradients" id="fig-triangle-pos" width="100%" >}}
+    {{< figure src="/images/diff-rendering/triangles/3_negative_gradient.png" caption="Negative Gradients" id="fig-triangle-neg" width="100%" >}}
 </div>
 
 # Physics-Based Differentiable Rendering Theory

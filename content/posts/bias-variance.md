@@ -52,7 +52,7 @@ We can create a graphical visualization of bias and variance using a bulls-eye d
 We can plot four different cases representing combinations of both high and low bias and variance.
 
 {{< 
-figure src="../../images/bias-variance/bias_variance_bulls_eye.png"
+figure src="/images/bias-variance/bias_variance_bulls_eye.png"
 num="1"
 id="fig-bulls-eye"
 caption="Bias and variance visualized using a bulls-eye diagram: Each dot is a model trained on a random dataset. High bias: far from target center. High variance: scattered dots. Low bias and variance: tight cluster near center."
@@ -60,7 +60,7 @@ width="70%"
 >}}
 
 {{< 
-figure src="../../images/bias-variance/bias_variance_model_complexity.png"
+figure src="/images/bias-variance/bias_variance_model_complexity.png"
 num="2"
 id="fig-complexity"
 caption="How bias and variance change with model complexity. Low-complexity (left): high bias, low variance. High-complexity (right): low bias, high variance — a classic overfitting/underfitting curve."
@@ -260,7 +260,7 @@ f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
 $$
 
 {{< 
-figure src="../../images/bias-variance/true_function.png" 
+figure src="/images/bias-variance/true_function.png"
 num="3" 
 id="fig-true-function"
 caption="True underlying cubic function used for bias-variance experiments. Models attempt to recover this from noisy training data."
@@ -268,7 +268,7 @@ width="70%"
 >}}
 
 {{< 
-figure src="../../images/bias-variance/polynomial_degrees.png"
+figure src="/images/bias-variance/polynomial_degrees.png"
 num="4"
 id="fig-poly-degrees"
 caption="Polynomial regression fits for varying degrees. Underfitting for low degree; overfitting and oscillations for very high degree."
@@ -323,7 +323,7 @@ width="100%"
 - **Variance increases modestly** for low degrees, but explodes as the condition number becomes large ($\gtrsim 10^9$).
 
 {{< 
-figure src="../../images/bias-variance/bias_variance_stacked.png"
+figure src="/images/bias-variance/bias_variance_stacked.png"
 num="5"
 id="fig-bias-variance-unregularized"
 caption="Stacked bar chart of bias, variance, and irreducible error for polynomial regression with no regularization (α=0)."
@@ -356,7 +356,7 @@ width="100%"
 - **Bias increases only minimally**, a small price for much lower variance at high degrees.
 
 {{< 
-figure src="../../images/bias-variance/bias_variance_stacked_regularized.png"
+figure src="/images/bias-variance/bias_variance_stacked_regularized.png"
 num="6"
 id="fig-bias-variance-regularized"
 caption="Stacked bar chart of bias, variance, and irreducible error for polynomial regression with adaptive regularization (α = 0.1 × degree)."
