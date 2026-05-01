@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Introduction to Differentiable Rendering"
-date: "2026-05-20"
+date: "2026-05-29"
 description: "An introduction to Differentiable rendering techniques for computer graphics and vision"
 summary: "Differentiable rendering techniques for computer graphics and vision"
 tags: ["Differentiable Rendering", "Computer Graphics"]
@@ -11,16 +11,6 @@ ShowToc: true
 TocOpen: true
 math: true
 ---
-
-
-<span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and may be updated or expanded soon!
-</span>
-
-<span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and is a separation of Monte Carlo Path Tracing from the original *Monte Carlo Path Tracing* post. The content is still being written and may contain inaccuracies or incomplete sections. Please check back later for the finalized version!
-</span>
-
 
 # Introduction to Differentiable Rendering
 

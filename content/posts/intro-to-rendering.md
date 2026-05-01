@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Introduction to Rendering"
-date: "2026-05-08"
+date: "2026-04-30"
 description: "A gentle introduction to the 3D rendering pipeline — from geometric transformations to the pinhole camera shader."
 summary: "From the translation problem to the MVP matrix and a live raymarching shader, built from first principles."
 tags: ["Rendering", "Computer Graphics"]
@@ -1457,27 +1457,107 @@ void main() {
 
 ## Shading Models
 
-Intersection tells us *where* the ray hit. Shading tells us *what color* that hit should be.
+Intersection algorithms tell us *where* the ray hit and *which way* the surface is facing. Shading models tell us *what color* that hit should be.
 
-**Lambertian diffuse** models a matte surface:
+Before we can color a pixel, we have to model how light interacts with materials. When a beam of light strikes a surface, part of its energy is absorbed and part is scattered. The physical truth of this interaction is described by radiometry and the **Rendering Equation**:
+
+$$ L_o(\mathbf{x}, \boldsymbol{\omega}_o) = L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{S^2} L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) (\mathbf{n} \cdot \boldsymbol{\omega}_i) \, d\boldsymbol{\omega}_i $$
+
+Here, the outgoing radiance $L_o$ toward the viewer is the sum of emitted light $L_e$ and the integral of incoming light $L_i$ bouncing off the surface. The term $f_s$ is the **Bidirectional Reflectance Distribution Function (BRDF)**, which dictates exactly how light scatters based on material properties, and the dot product $(\mathbf{n} \cdot \boldsymbol{\omega}_i)$ is Lambert's cosine law accounting for foreshortening.
+
+Because evaluating this full integral in real-time is computationally immense, graphics programmers historically needed to avoid the overwhelming complexity of simulating billions of individual photons. Instead, real-time graphics traditionally rely on simpler, empirical shading models that "look right."
+
+### Light Sources and Attenuation
+
+Before reflecting light, we must quantify how much light arrives at the surface. 
+*   **Directional (Infinite) Lights**: Placed infinitely far away (like the sun). All rays are parallel, and intensity does not diminish over distance.
+*   **Point Lights**: Radiate equally in all directions from a specific point.
+*   **Spot Lights**: Radiate from a point, but restricted to a specific cone/direction.
+
+For point and spot lights, energy disperses as it travels through space. Physically, light intensity falls off according to the inverse-square law ($1/d^2$). However, for artistic control in rendering pipelines, this distance attenuation is generally modeled using constant ($k_c$), linear ($k_l$), and quadratic ($k_q$) terms:
+
+$$ I_{attenuated} = \frac{1}{k_c + k_l d + k_q d^2} I_{source} $$
+
+### The Phong Reflection Model
+
+To determine the object's brightness and color from these lights, the most famous empirical model is the **Phong reflection model**. It computes local illumination as the sum of three distinct components: **Ambient**, **Diffuse**, and **Specular**.
+
+#### 1. Ambient Light
+In the real world, light bounces off walls, floors, and other objects, filling the environment with indirect illumination. Instead of simulating these complex global bounces (which we will tackle later in path tracing), the ambient term provides a constant base level of light so that objects in shadow are not completely pitch black.
 
 $$
-L_d = k_d\,\max(0,\mathbf{n}\cdot\mathbf{l})
+L_a = k_a I_a
 $$
 
-**Phong shading** adds a specular highlight:
+Here, $I_a$ is the intensity of the ambient light, and $k_a$ is the material's ambient reflection coefficient.
+
+#### 2. Lambertian Diffuse
+A perfectly matte (diffuse) surface, like chalk or unpolished wood, scatters light equally in all directions. Because the scattered light is uniform, the appearance of a diffuse surface does not depend on where the camera is positioned. 
+
+However, it *does* depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert's cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction $\mathbf{l}$:
 
 $$
-L = k_a + k_d\,\max(0,\mathbf{n}\cdot\mathbf{l}) + k_s\,\max(0,\mathbf{r}\cdot\mathbf{v})^\alpha
+L_d = k_d I_d \max(0, \mathbf{n}\cdot\mathbf{l})
 $$
 
-where $\mathbf{r}$ is the reflected light direction, $\mathbf{v}$ points toward the camera, and $\alpha$ controls shininess.
+We clamp the dot product at zero because a negative value means the light is hitting the back of the surface, which should contribute no illumination.
+
+#### 3. Specular Highlights
+Smooth surfaces, like polished metal or wet plastic, are not perfect diffusers. They exhibit specular highlights—bright spots where the light reflects strongly in a specific direction. Unlike diffuse reflection, specular reflection is highly dependent on the viewer's position.
+
+A perfect mirror reflects light exactly along the reflection vector $\mathbf{r}$. Using basic vector projection, we can compute $\mathbf{r}$ by taking the incoming light vector $\mathbf{l}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:
+
+$$
+\mathbf{r} = 2(\mathbf{n} \cdot \mathbf{l})\mathbf{n} - \mathbf{l}
+$$
+
+For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around $\mathbf{r}$. As the angle $\phi$ between the reflection vector $\mathbf{r}$ and the view direction $\mathbf{v}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:
+
+$$
+L_s = k_s I_s \max(0, \mathbf{r} \cdot \mathbf{v})^\alpha
+$$
+
+The exponent $\alpha$ is the **shininess coefficient**. A low value (e.g., $5 - 10$) produces a broad, soft highlight like plastic, while a high value (e.g., $100 - 200$) produces a sharp, tight highlight typical of polished metals.
+
+Combining all three gives the complete Phong shading equation:
+
+$$
+L = \underbrace{k_a I_a}_{\text{Ambient}} + \underbrace{k_d I_d \max(0,\mathbf{n}\cdot\mathbf{l})}_{\text{Diffuse}} + \underbrace{k_s I_s \max(0,\mathbf{r}\cdot\mathbf{v})^\alpha}_{\text{Specular}}
+$$
 
 {{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" noinvert=true >}}
 
-**Whitted ray tracing** extends this idea by spawning secondary rays: shadow rays toward lights, reflection rays for mirrors, and refraction rays for transparent materials. The key idea is recursive visibility: a surface color can depend on what other rays see.
+### The Blinn-Phong Modification
 
-Here is the compact real-time version: primary ray generation, analytic sphere intersection, and Phong-style local shading.
+Calculating the exact reflection vector $\mathbf{r}$ for every pixel is mathematically expensive because it requires multiple vector operations. Jim Blinn proposed a brilliant, cheaper approximation that behaves almost identically: **the halfway vector**.
+
+Instead of finding the angle between the reflection $\mathbf{r}$ and the viewer $\mathbf{v}$, we calculate the vector that sits exactly halfway between the light $\mathbf{l}$ and the viewer $\mathbf{v}$:
+
+$$
+\mathbf{h} = \frac{\mathbf{l} + \mathbf{v}}{\|\mathbf{l} + \mathbf{v}\|}
+$$
+
+If the halfway vector $\mathbf{h}$ perfectly aligns with the surface normal $\mathbf{n}$, the highlight is at its maximum. The specular term becomes $\max(0, \mathbf{n} \cdot \mathbf{h})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$). 
+
+This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away (directional lighting and orthographic camera), $\mathbf{l}$ and $\mathbf{v}$ are constant, meaning $\mathbf{h}$ only needs to be computed *once per scene*, not once per pixel!
+
+---
+
+### Shading Paradigms: Gouraud vs. Phong
+
+The math above tells us *how* to calculate color, but the pipeline must decide *where* to calculate it. In rasterization, there are two primary ways to apply these equations across a triangle mesh:
+
+1. **Gouraud Shading (Vertex Shading):** The lighting equations are evaluated only at the three vertices of a triangle. The resulting *colors* are then linearly interpolated across the pixels of the triangle. This is very fast, but it suffers from severe artifacts: if a sharp specular highlight falls in the exact center of a large triangle, the vertices will all be dark, and the highlight will completely disappear!
+2. **Phong Shading (Pixel/Fragment Shading):** Instead of interpolating colors, we linearly interpolate the *normal vector* $\mathbf{n}$ across the triangle's surface. The full lighting equation is then evaluated at every single pixel. This solves the highlight problem and produces beautifully smooth curved surfaces, but requires significantly more computational power—a trade-off modern GPUs are designed to handle with ease.
+
+
+---
+
+## Ray Tracing
+
+The models above are strictly **local**—they only consider the light hitting a surface directly. **Whitted ray tracing** extends this idea into a global context by spawning secondary rays: shadow rays toward lights (to check for occlusions), reflection rays for mirrors, and refraction rays for transparent materials like glass. The key idea is recursive visibility: a surface color depends entirely on what its secondary rays "see."
+
+Here is the compact, real-time implementation of everything we've built so far: primary ray generation, analytic sphere intersection, and a per-pixel Phong shading model. Note how the GLSL `reflect(-l, n)` function handles the heavy lifting of computing the $\mathbf{r}$ vector natively on the GPU.
 
 {{< glsl >}}
 #version 300 es
@@ -1500,36 +1580,47 @@ float intersectSphere(vec3 ro, vec3 rd, vec3 c, float r) {
 
 vec3 phong(vec3 p, vec3 n, vec3 ro) {
     vec3 lightPos = vec3(2.0 * sin(u_time), 2.0, 2.0 * cos(u_time));
+    
+    // Calculate light (l), view (v), and reflection (r) vectors
     vec3 l = normalize(lightPos - p);
     vec3 v = normalize(ro - p);
     vec3 r = reflect(-l, n);
 
+    // Lambertian Diffuse
     float diff = max(dot(n, l), 0.0);
+    
+    // Phong Specular
     float spec = pow(max(dot(r, v), 0.0), 48.0);
+    
+    // Combine: Ambient + Diffuse + Specular
     return vec3(0.08) + vec3(0.9, 0.35, 0.18) * diff + vec3(1.0) * spec;
 }
 
 void main() {
+    // 1. Generate primary ray from pixel coordinate
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
     vec3 ro = vec3(0.0, 0.0, 3.5);
     vec3 rd = normalize(vec3(uv, -1.0));
 
+    // 2. Intersect geometry
     vec3 center = vec3(0.0);
     float t = intersectSphere(ro, rd, center, 1.0);
-    vec3 col = vec3(0.03, 0.04, 0.06);
+    vec3 col = vec3(0.03, 0.04, 0.06); // Ambient background color
 
+    // 3. Shade visible surfaces
     if (t > 0.0) {
         vec3 p = ro + t * rd;
         vec3 n = normalize(p - center);
         col = phong(p, n, ro);
     }
 
+    // Gamma correction
     col = pow(col, vec3(1.0 / 2.2));
     fragColor = vec4(col, 1.0);
 }
 {{< /glsl >}}
 
-And here is the same camera idea using an SDF instead of an analytic sphere intersection. The geometry is now a function, so changing the scene means editing `map()` rather than uploading new vertices.
+And here is the exact same camera and shading logic, but utilizing Sphere Tracing with a Signed Distance Function (SDF) instead of analytic sphere intersection. Because the geometry is now mathematically implicit, adding a floor or morphing the shape means simply editing the `map()` function rather than generating and uploading thousands of new vertices. Furthermore, because we do not have explicit triangles to provide vertex normals, we estimate the normal at the hit point $\mathbf{p}$ dynamically by sampling the gradient of the SDF.
 
 {{< glsl >}}
 #version 300 es
@@ -1543,12 +1634,14 @@ float sdSphere(vec3 p, float r) {
     return length(p) - r;
 }
 
+// The entire scene geometry is defined here
 float map(vec3 p) {
     float sphere = sdSphere(p, 1.0);
     float floorPlane = p.y + 1.1;
     return min(sphere, floorPlane);
 }
 
+// Approximate the normal using the gradient of the SDF
 vec3 getNormal(vec3 p) {
     vec2 e = vec2(0.001, 0.0);
     return normalize(vec3(
@@ -1566,6 +1659,7 @@ vec3 shade(vec3 p, vec3 n, vec3 ro) {
 
     float diff = max(dot(n, l), 0.0);
     float spec = pow(max(dot(r, v), 0.0), 32.0);
+    
     return vec3(0.07) + vec3(0.25, 0.55, 0.95) * diff + vec3(0.7) * spec;
 }
 
@@ -1574,6 +1668,7 @@ void main() {
     vec3 ro = vec3(0.0, 0.0, 3.5);
     vec3 rd = normalize(vec3(uv, -1.0));
 
+    // Sphere Tracing loop
     float t = 0.0;
     bool hit = false;
     for (int i = 0; i < 96; i++) {
@@ -1595,7 +1690,9 @@ void main() {
 }
 {{< /glsl >}}
 
-This closes the loop: the matrix pipeline explains how cameras map geometry to pixels; primary rays use the same camera model in reverse; intersections decide visibility; shading turns visible surface points into color.
+This closes the loop: the matrix pipeline explains how cameras map explicit geometry to pixels; primary rays use the exact same camera model in reverse; intersection algorithms (analytic or sphere tracing) decide visibility; and shading equations turn those visible surface points into physical colors.
+
+
 
 ---
 

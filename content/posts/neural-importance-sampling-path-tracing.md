@@ -12,14 +12,6 @@ TocOpen: true
 math: true
 ---
 
-<span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and may be updated or expanded soon!
-I will probably break this post into parts with specific part of Path Tracer  so it is easier to read.
-I will start from basics of Path Tracing along with Dr.Jit/Mitsuba code for future reference.
-</span>
-
-
-
 # Introduction to Rendering
 
 The goal of photorealistic rendering is to create an image of $3D$ scene that is indistinguishable from photograph of same scene.  For the most part, we will be satisfied with an accurate simulation of the physics of light and its interaction with matter, relying on our understanding of display technology to present the best possible image to the viewer.
