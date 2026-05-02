@@ -29,10 +29,12 @@
 {{- $alt := .Get "alt" | default "" -}}
 {{- $caption := .Get "caption" | default "" -}}
 {{- $width := .Get "width" | default "80%" -}}
-{{- $noinvert := .Get "noinvert" | default false -}}
+{{- $srcLower := lower $src -}}
+{{- $autoNoinvert := or (hasSuffix $srcLower ".png") (hasSuffix $srcLower ".jpg") (hasSuffix $srcLower ".jpeg") (hasSuffix $srcLower ".gif") -}}
+{{- $noinvert := or (.Get "noinvert") $autoNoinvert -}}
 
 <figure id="{{ $id }}" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:{{ $width }};scroll-margin-top:80px;">
-  <img class="zoomable-image{{ if $noinvert }} no-invert{{ end }}" src="{{ $src }}" alt="{{ $alt }}" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;">
+  <img class="zoomable-image{{ if $noinvert }} no-invert{{ end }}" src="{{ $src }}" alt="{{ $alt }}" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;">
   {{- if $caption -}}
     <figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure {{ $num }}.</span>

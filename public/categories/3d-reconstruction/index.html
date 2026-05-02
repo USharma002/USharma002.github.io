@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/categories/3d-reconstruction/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.921ffc4d586674d42045f566929c986e2b5599a36ec73138b7313048f4e36648.css" integrity="sha256-kh/8TVhmdNQgRfVmkpyYbitVmaNuxzE4tzEwSPTjZkg=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.831ad65feea8022cb1d8a0f2cca04191235467d1c1ddd05b3115820522e2258d.css" integrity="sha256-gxrWX&#43;6oAiyx2KDyzKBBkSNUZ9HB3dBbMRWCBSLiJY0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -201,8 +201,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
     if (!headers.length) return;
 
-    var headerOffsets = [];
     var lastActiveId = '';
+    var activeHeaderOffset = 80;
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
@@ -210,31 +210,19 @@ document.addEventListener('DOMContentLoaded', function() {
         nestedUls[i].style.display = 'none';
     }
 
-    function recomputeHeaderOffsets() {
-        headerOffsets = [];
+    function findActiveHeaderId() {
+        var currentId = '';
+
         for (var i = 0; i < headers.length; i++) {
-            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
-            headerOffsets.push(top);
-        }
-    }
-
-    function findActiveHeaderId(scrollTop) {
-        var lo = 0;
-        var hi = headerOffsets.length - 1;
-        var idx = -1;
-
-        while (lo <= hi) {
-            var mid = (lo + hi) >> 1;
-            if (headerOffsets[mid] <= scrollTop) {
-                idx = mid;
-                lo = mid + 1;
+            var top = headers[i].getBoundingClientRect().top;
+            if (top <= activeHeaderOffset) {
+                currentId = headers[i].getAttribute('id') || '';
             } else {
-                hi = mid - 1;
+                break;
             }
         }
 
-        if (idx < 0) return '';
-        return headers[idx].getAttribute('id') || '';
+        return currentId;
     }
 
     function applyActiveState(currentId) {
@@ -271,8 +259,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    recomputeHeaderOffsets();
-
     
     var ticking = false;
 
@@ -281,21 +267,25 @@ document.addEventListener('DOMContentLoaded', function() {
         ticking = true;
 
         requestAnimationFrame(function() {
-            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var currentId = findActiveHeaderId(scrollTop);
+            var currentId = findActiveHeaderId();
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    window.addEventListener('resize', function() {
-        recomputeHeaderOffsets();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        recomputeHeaderOffsets();
-        onScroll();
-    });
+    if (typeof ResizeObserver !== 'undefined') {
+        var layoutObserver = new ResizeObserver(function() {
+            onScroll();
+        });
+        layoutObserver.observe(content);
+
+        window.addEventListener('beforeunload', function() {
+            layoutObserver.disconnect();
+        });
+    }
+
+    window.addEventListener('resize', onScroll, { passive: true });
+    window.addEventListener('load', onScroll);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); 
 });

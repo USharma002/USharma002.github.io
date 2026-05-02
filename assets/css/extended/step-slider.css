@@ -86,7 +86,7 @@
     transition: filter 0.3s ease;
 }
 
-.dark .step-slide img {
+.dark .step-slide img:not(.no-invert) {
     filter: invert(1) hue-rotate(180deg) brightness(1.6) contrast(1.1) !important;
 }
 

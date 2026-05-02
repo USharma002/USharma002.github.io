@@ -18,9 +18,9 @@
     width: 100% !important;
     max-width: 100%;
     min-width: 0 !important;
-    margin: 16px auto;
-    border: 0;
-    border-radius: var(--radius) !important;
+    margin: 1.5rem auto !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 8px !important;
     box-sizing: border-box;
 }
 
@@ -64,7 +64,6 @@ a[href^="#fig-"]:hover {
     min-height: calc(100vh - var(--header-height) - var(--footer-height));
     max-width: calc(var(--main-width) + var(--gap) * 2);
     margin: auto;
-    margin-right: 50px;
     padding: var(--content-gap) var(--gap) 0;
 }
 
@@ -237,13 +236,13 @@ a[href^="#fig-"]:hover {
 
 /* ─── Blockquotes — definition-style panel ─── */
 .post-content blockquote {
-    border-left: 4px solid var(--site-blockquote-border-color) !important;
+    border-left: 4px solid #1565c0 !important;
     padding-left: 20px !important;
     line-height: 1.5 !important;
     font-weight: 400 !important;
     font-style: normal !important;
-    background-color: var(--site-blockquote-bg) !important;
-    border-radius: 10px !important;
+    background-color: #f1f3f5 !important;
+    border-radius: 8px !important;
     padding-top: 14px !important;
     padding-right: 20px !important;
     padding-bottom: 14px !important;
@@ -252,8 +251,8 @@ a[href^="#fig-"]:hover {
 
 .dark .post-content blockquote,
 [data-theme="dark"] .post-content blockquote {
-    border-left-color: var(--site-blockquote-dark-border-color) !important;
-    background-color: var(--site-blockquote-dark-bg) !important;
+    border-left-color: #90caf9 !important;
+    background-color: #212529 !important;
 }
 
 .post-content blockquote p:first-child strong {

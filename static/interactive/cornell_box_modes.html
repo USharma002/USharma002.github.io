@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+:root { --bg: #ffffff; --text: #374151; --text-sub: #6b7280; --border: #d1d5db; }
+html, body { margin: 0; padding: 0; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--text); overflow: hidden; }
+body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 16px; box-sizing: border-box; }
+canvas { display: block; margin: 0 auto; cursor: grab; touch-action: none; background: #000; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 840px; aspect-ratio: 840 / 760; height: auto; }
+canvas:active { cursor: grabbing; }
+.ctl { max-width: 840px; width: 100%; margin: 12px auto 0; }
+.row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.row label { font-size: 13px; width: 85px; color: var(--text-sub); flex-shrink: 0; }
+.row input[type=range] { flex: 1; margin: 0; cursor: pointer; }
+.row .v { font-size: 13px; min-width: 32px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+.modes { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.modes label { font-size: 12px; display: flex; align-items: center; gap: 4px; cursor: pointer; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; transition: 0.2s; }
+.modes label:hover { background: rgba(128,128,128,0.05); }
+.modes input:checked + span { font-weight: 600; color: #f39c12; }
+.modes input { display: none; }
+.stat { font-size: 12px; color: var(--text-sub); text-align: center; margin: 6px 0 0; font-variant-numeric: tabular-nums; min-height: 16px; }
+.hint { font-size: 12px; text-align: center; color: var(--text-sub); margin: 12px 0 0; }
+#err { display: none; color: #e74c3c; font-family: monospace; font-size: 11px; max-width: 420px; word-wrap: break-word; }
+</style>
+</head>
+<body>
+<canvas id="c" width="420" height="380"></canvas>
+<div id="err"></div>
+<div class="ctl">
+  <div class="modes" id="modes">
+    <label><input type="radio" name="mode" value="0" checked><span>Phong</span></label>
+    <label><input type="radio" name="mode" value="1"><span>Blinn-Phong</span></label>
+    <label><input type="radio" name="mode" value="2"><span>Ray Trace</span></label>
+    <label><input type="radio" name="mode" value="3"><span>Path Trace</span></label>
+  </div>
+  <div class="row" id="shRow">
+    <label>Shininess (&#945;)</label>
+    <input type="range" id="sh" min="4" max="200" step="1" value="32">
+    <span class="v" id="sh-v">32</span>
+  </div>
+  <div class="stat" id="stat"></div>
+</div>
+<p class="hint">drag to orbit · scroll to zoom</p>
+
+<script>
+function detectTheme(){
+  try{
+    const s=getComputedStyle(window.parent.document.body);
+    const rgb=s.backgroundColor.match(/\d+/g); if(!rgb)return;
+    const dk=((parseInt(rgb[0])*299+parseInt(rgb[1])*587+parseInt(rgb[2])*114)/1000)<128;
+    const r=document.documentElement.style;
+    r.setProperty('--bg',dk?'#1a1a1a':'#ffffff');
+    r.setProperty('--text',dk?'#e5e7eb':'#374151');
+    r.setProperty('--text-sub',dk?'#9ca3af':'#6b7280');
+    r.setProperty('--border',dk?'#444':'#d1d5db');
+  }catch(e){}
+}
+setInterval(detectTheme,1500); detectTheme();
+
+function showError(msg) {
+  document.getElementById('c').style.display='none';
+  const e=document.getElementById('err');
+  e.style.display='block';
+  e.innerHTML+=msg+"<br><br>";
+}
+
+const canvas=document.getElementById('c');
+const gl=canvas.getContext('webgl2',{antialias:false});
+if(!gl){showError('WebGL 2 not supported.');throw new Error('WebGL2 required');}
+gl.getExtension('EXT_color_buffer_float');
+gl.getExtension('EXT_color_buffer_half_float');
+
+const vsSource=`#version 300 es
+in vec2 position;
+out vec2 v_uv;
+void main(){v_uv=position*0.5+0.5;gl_Position=vec4(position,0.0,1.0);}`;
+
+const tracerFsSource=`#version 300 es
+precision highp float;
+in vec2 v_uv;
+out vec4 outColor;
+uniform vec2 u_res;
+uniform vec3 u_eye,u_fwd,u_right,u_up;
+uniform int u_mode;
+uniform float u_shininess;
+uniform int u_frame;
+uniform sampler2D u_tex;
+const float PI=3.14159265359;
+const float EPS=1e-4;
+const vec3 WHITE=vec3(0.73,0.71,0.68);
+const vec3 RED=vec3(0.63,0.065,0.05);
+const vec3 GREEN=vec3(0.14,0.45,0.091);
+const vec3 CHROME=vec3(0.85);
+const vec3 LIGHT_EMIT=vec3(17.0,15.0,12.0);
+const float W=1.0,H=1.0,ST=0.01;
+// Light area dimensions (for NEE solid-angle calculation)
+const float LA_W=0.48, LA_D=0.32; // 0.24*2, 0.16*2
+struct Hit{float t;vec3 n,col;float refl;vec3 emit;};
+uint seed;
+void initRng(vec2 fc,int frame){
+  seed=uint(fc.x)*1973u+uint(fc.y)*9277u+uint(frame)*26699u+1u;
+  seed=(seed^(seed>>16))*0x45d9f3bu;
+  seed=(seed^(seed>>16))*0x45d9f3bu;
+  seed=seed^(seed>>16);
+}
+float rand(){
+  seed=seed*747796405u+2891336453u;
+  uint w=((seed>>((seed>>28u)+4u))^seed)*277803737u;
+  return float((w^(w>>22))>>0)/4294967296.0;
+}
+vec3 cosineHemi(vec3 N){
+  float r1=rand(),r2=rand();
+  float sr=sqrt(r1),phi=2.0*PI*r2;
+  float x=sr*cos(phi),y=sr*sin(phi),z=sqrt(max(0.0,1.0-r1));
+  vec3 up=abs(N.y)<0.999?vec3(0.0,1.0,0.0):vec3(1.0,0.0,0.0);
+  vec3 T=normalize(cross(up,N)),B=cross(N,T);
+  return normalize(x*T+y*B+z*N);
+}
+float hitBox(vec3 ro,vec3 rd,vec3 mn,vec3 mx,out vec3 normal){
+  vec3 inv=1.0/rd,t0=(mn-ro)*inv,t1=(mx-ro)*inv;
+  vec3 tmin=min(t0,t1),tmax=max(t0,t1);
+  float tn=max(max(tmin.x,tmin.y),tmin.z);
+  float tf=min(min(tmax.x,tmax.y),tmax.z);
+  if(tn>tf||tf<0.0||tn<0.0)return 1e20;
+  if(tn==tmin.x)normal=vec3(-sign(rd.x),0.0,0.0);
+  else if(tn==tmin.y)normal=vec3(0.0,-sign(rd.y),0.0);
+  else normal=vec3(0.0,0.0,-sign(rd.z));
+  return tn;
+}
+float hitSphere(vec3 ro,vec3 rd,vec3 c,float r,out vec3 normal){
+  vec3 oc=ro-c;
+  float b=dot(oc,rd),disc=b*b-dot(oc,oc)+r*r;
+  if(disc<0.0)return 1e20;
+  float sq=sqrt(disc),t=-b-sq;
+  if(t<EPS)t=-b+sq;
+  if(t<EPS)return 1e20;
+  normal=normalize(ro+rd*t-c);
+  return t;
+}
+void ch(float t,vec3 n,vec3 col,float refl,vec3 emit,inout Hit best){
+  if(t<best.t){best.t=t;best.n=n;best.col=col;best.refl=refl;best.emit=emit;}
+}
+Hit traceScene(vec3 ro,vec3 rd){
+  Hit best=Hit(1e20,vec3(0.0),vec3(0.0),0.0,vec3(0.0));
+  vec3 n;float t;
+  // Area light
+  t=hitBox(ro,rd,vec3(-0.24,H-ST,-0.16),vec3(0.24,H,0.16),n);
+  ch(t,n,vec3(1.0),0.0,LIGHT_EMIT,best);
+  // Floor
+  t=hitBox(ro,rd,vec3(-W,-H,-W),vec3(W,-H+ST,W),n);
+  ch(t,n,WHITE,0.0,vec3(0.0),best);
+  // Ceiling
+  t=hitBox(ro,rd,vec3(-W,H-ST,-W),vec3(W,H,W),n);
+  ch(t,n,WHITE,0.0,vec3(0.0),best);
+  // Back wall
+  t=hitBox(ro,rd,vec3(-W,-H,-W),vec3(W,H,-W+ST),n);
+  ch(t,n,WHITE,0.0,vec3(0.0),best);
+  // Left wall (red)
+  t=hitBox(ro,rd,vec3(-W,-H,-W),vec3(-W+ST,H,W),n);
+  ch(t,n,RED,0.0,vec3(0.0),best);
+  // Right wall (green)
+  t=hitBox(ro,rd,vec3(W-ST,-H,-W),vec3(W,H,W),n);
+  ch(t,n,GREEN,0.0,vec3(0.0),best);
+  // Tall box (left)
+  t=hitBox(ro,rd,vec3(-0.60,-H,-0.50),vec3(-0.08,0.20,0.08),n);
+  ch(t,n,WHITE,0.0,vec3(0.0),best);
+  // Short box (right)
+  t=hitBox(ro,rd,vec3(0.08,-H,-0.28),vec3(0.64,-0.38,0.28),n);
+  ch(t,n,WHITE,0.0,vec3(0.0),best);
+  // Chrome sphere
+  t=hitSphere(ro,rd,vec3(0.36,-0.14,0.0),0.22,n);
+  ch(t,n,CHROME,0.85,vec3(0.0),best);
+  return best;
+}
+vec3 directShade(Hit hit,vec3 ro,vec3 rd,vec3 p){
+  vec3 L=normalize(vec3(0.0,0.985,0.0)-p),V=-rd;
+  Hit sh=traceScene(p+hit.n*EPS,L);
+  bool inS=(sh.t<length(vec3(0.0,0.985,0.0)-p)-EPS&&dot(sh.emit,sh.emit)<0.01);
+  float ndl=max(0.0,dot(hit.n,L));
+  float kd=0.70*(1.0-hit.refl),ks=0.40+0.60*hit.refl;
+  vec3 amb=hit.col*0.08*(1.0-hit.refl*0.5);
+  vec3 dif=inS?vec3(0.0):hit.col*kd*ndl;
+  float sp=0.0;
+  if(!inS&&ndl>0.0){
+    if(u_mode==1){vec3 H2=normalize(L+V);sp=pow(max(0.0,dot(hit.n,H2)),u_shininess);}
+    else{vec3 R=reflect(-L,hit.n);sp=pow(max(0.0,dot(R,V)),u_shininess);}
+  }
+  return amb+dif+vec3(ks*sp);
+}
+vec3 render(vec3 ro,vec3 rd){
+  if(u_mode==3){
+    // Pure unidirectional path tracing — NO next-event estimation.
+    // Every emitter is hit naturally by the random walk, so all bounces
+    // (including indirect) contribute correctly.
+    vec3 rad=vec3(0.0),thru=vec3(1.0);
+    for(int b=0;b<8;b++){
+      Hit hit=traceScene(ro,rd);
+      if(hit.t>1e19)break;
+      // Accumulate emission at ANY bounce depth
+      if(dot(hit.emit,hit.emit)>0.0){
+        rad+=thru*hit.emit;
+        break;
+      }
+      vec3 p=ro+rd*hit.t;
+      // Specular reflection (chrome sphere)
+      if(hit.refl>0.0&&rand()<hit.refl){
+        thru*=hit.col;
+        ro=p+hit.n*EPS;
+        rd=reflect(rd,hit.n);
+        continue;
+      }
+      // Russian roulette — only after bounce 3 to keep indirect light alive
+      if(b>=3){
+        float q=min(0.95,max(thru.r,max(thru.g,thru.b)));
+        if(rand()>q)break;
+        thru/=q;
+      }
+      // Cosine-weighted diffuse bounce
+      thru*=hit.col;
+      ro=p+hit.n*EPS;
+      rd=cosineHemi(hit.n);
+    }
+    return rad;
+  } else {
+    int bounces=(u_mode==2)?3:1;
+    vec3 col=vec3(0.0),thru=vec3(1.0);
+    for(int b=0;b<bounces;b++){
+      Hit hit=traceScene(ro,rd);
+      if(hit.t>1e19)break;
+      if(dot(hit.emit,hit.emit)>0.0){col+=thru*hit.emit;break;}
+      vec3 p=ro+rd*hit.t;
+      vec3 localCol=directShade(hit,ro,rd,p);
+      if(u_mode==2&&hit.refl>0.01&&b<bounces-1){
+        col+=thru*localCol*(1.0-hit.refl);
+        thru*=hit.refl;
+        ro=p+hit.n*EPS;rd=reflect(rd,hit.n);
+      }else{col+=thru*localCol;break;}
+    }
+    return col;
+  }
+}
+void main(){
+  initRng(gl_FragCoord.xy,u_frame);
+  vec2 ndc=v_uv*2.0-1.0;
+  float aspect=u_res.x/u_res.y,fov=PI/3.5;
+  vec2 jitter=(u_mode==3)?vec2(rand()-0.5,rand()-0.5)*2.0/u_res:vec2(0.0);
+  float u_=(ndc.x+jitter.x)*tan(fov/2.0)*aspect;
+  float v_=(ndc.y+jitter.y)*tan(fov/2.0);
+  vec3 rd=normalize(u_fwd+u_right*u_+u_up*v_);
+  vec3 cur=render(u_eye,rd);
+  if(u_frame==1){outColor=vec4(cur,1.0);}
+  else{vec3 old=texture(u_tex,v_uv).rgb;outColor=vec4(mix(old,cur,1.0/float(u_frame)),1.0);}
+}`;
+
+const tonemapFsSource=`#version 300 es
+precision highp float;
+in vec2 v_uv;out vec4 outColor;uniform sampler2D u_tex;
+void main(){
+  vec3 c=texture(u_tex,v_uv).rgb;
+  c=c/(1.0+c);
+  c=pow(max(vec3(0.0),c),vec3(1.0/2.2));
+  outColor=vec4(c,1.0);
+}`;
+
+function createProgram(vs,fs){
+  const p=gl.createProgram();
+  const cvs=gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(cvs,vs);gl.compileShader(cvs);gl.attachShader(p,cvs);
+  if(!gl.getShaderParameter(cvs,gl.COMPILE_STATUS))showError("VS: "+gl.getShaderInfoLog(cvs));
+  const cfs=gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(cfs,fs);gl.compileShader(cfs);gl.attachShader(p,cfs);
+  if(!gl.getShaderParameter(cfs,gl.COMPILE_STATUS))showError("FS: "+gl.getShaderInfoLog(cfs));
+  gl.bindAttribLocation(p,0,"position");gl.linkProgram(p);
+  if(!gl.getProgramParameter(p,gl.LINK_STATUS))showError("Link: "+gl.getProgramInfoLog(p));
+  return p;
+}
+const tracerProg=createProgram(vsSource,tracerFsSource);
+const tonemapProg=createProgram(vsSource,tonemapFsSource);
+
+const vao=gl.createVertexArray();gl.bindVertexArray(vao);
+const qb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,qb);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
+
+function createFBO(){
+  const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,canvas.width,canvas.height,0,gl.RGBA,gl.FLOAT,null);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+  const fbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE){
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA16F,canvas.width,canvas.height,0,gl.RGBA,gl.HALF_FLOAT,null);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  }
+  return{fbo,tex};
+}
+let fboA=createFBO(),fboB=createFBO();
+let camAX=0.15,camAY=0,camD=3.2;
+let dragging=false,lastMX=0,lastMY=0,frameCount=1,cameraMoved=true;
+const statEl=document.getElementById('stat');
+function getMode(){return parseInt(document.querySelector('input[name="mode"]:checked').value);}
+function getShininess(){return parseFloat(document.getElementById('sh').value);}
+function viewMat(){
+  const cx=Math.cos(camAX),sx=Math.sin(camAX),cy=Math.cos(camAY),sy=Math.sin(camAY);
+  return{eye:[camD*sy*cx,camD*sx,camD*cy*cx],fwd:[-sy*cx,-sx,-cy*cx],right:[cy,0,-sy],up:[-sy*sx,cx,-cy*sx]};
+}
+function renderLoop(){
+  const mode=getMode();
+  if(cameraMoved||mode===3){
+    const cam=viewMat();
+    gl.useProgram(tracerProg);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,fboA.fbo);
+    gl.viewport(0,0,canvas.width,canvas.height);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,fboB.tex);
+    gl.uniform1i(gl.getUniformLocation(tracerProg,"u_tex"),0);
+    gl.uniform2f(gl.getUniformLocation(tracerProg,"u_res"),canvas.width,canvas.height);
+    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_eye"),cam.eye);
+    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_fwd"),cam.fwd);
+    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_right"),cam.right);
+    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_up"),cam.up);
+    gl.uniform1i(gl.getUniformLocation(tracerProg,"u_mode"),mode);
+    gl.uniform1f(gl.getUniformLocation(tracerProg,"u_shininess"),getShininess());
+    gl.uniform1i(gl.getUniformLocation(tracerProg,"u_frame"),frameCount);
+    gl.bindVertexArray(vao);gl.drawArrays(gl.TRIANGLES,0,6);
+    let tmp=fboA;fboA=fboB;fboB=tmp;
+    frameCount++;cameraMoved=false;
+  }
+  gl.useProgram(tonemapProg);
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+  gl.viewport(0,0,canvas.width,canvas.height);
+  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,fboB.tex);
+  gl.uniform1i(gl.getUniformLocation(tonemapProg,"u_tex"),0);
+  gl.bindVertexArray(vao);gl.drawArrays(gl.TRIANGLES,0,6);
+  if(mode===3)statEl.textContent=`frame ${frameCount} · ${canvas.width}×${canvas.height} · ${frameCount} spp`;
+  else statEl.textContent='';
+  requestAnimationFrame(renderLoop);
+}
+function triggerUpdate(){cameraMoved=true;frameCount=1;}
+document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('change',e=>{
+  document.getElementById('shRow').style.visibility=(e.target.value==='3')?'hidden':'visible';
+  triggerUpdate();
+}));
+const shEl=document.getElementById('sh'),shV=document.getElementById('sh-v');
+shEl.addEventListener('input',()=>{shV.textContent=shEl.value;triggerUpdate();});
+canvas.addEventListener('mousedown',e=>{dragging=true;lastMX=e.clientX;lastMY=e.clientY;});
+window.addEventListener('mouseup',()=>dragging=false);
+window.addEventListener('mousemove',e=>{
+  if(!dragging)return;
+  camAY+=(e.clientX-lastMX)*0.008;camAX+=(e.clientY-lastMY)*0.008;
+  camAX=Math.max(-1.2,Math.min(1.2,camAX));
+  lastMX=e.clientX;lastMY=e.clientY;triggerUpdate();
+});
+canvas.addEventListener('wheel',e=>{
+  camD+=e.deltaY*0.004;camD=Math.max(1.8,Math.min(5.5,camD));
+  e.preventDefault();triggerUpdate();
+},{passive:false});
+let ts=null;
+canvas.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){ts={x:e.touches[0].clientX,y:e.touches[0].clientY};dragging=true;}
+  e.preventDefault();
+},{passive:false});
+canvas.addEventListener('touchend',()=>dragging=false,{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  if(!dragging||!ts||e.touches.length!==1)return;
+  camAY+=(e.touches[0].clientX-ts.x)*0.008;camAX+=(e.touches[0].clientY-ts.y)*0.008;
+  camAX=Math.max(-1.2,Math.min(1.2,camAX));
+  ts={x:e.touches[0].clientX,y:e.touches[0].clientY};triggerUpdate();e.preventDefault();
+},{passive:false});
+requestAnimationFrame(renderLoop);
+</script>
+</body>
+</html>

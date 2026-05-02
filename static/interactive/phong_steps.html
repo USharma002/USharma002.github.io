@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specular Reflection Math Transformation</title>
+<style>
+    :root {
+        /* Application Theme */
+        --mafs-bg: transparent;
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-axis: rgba(0,0,0,0.8);
+        --mafs-text: #333;
+        
+        /* Vector Colors */
+        --vecorange: #E65100;
+        --vecgreen: #2E7D32;
+        --vecblue: #1565C0;
+        --vecdark: #212121; /* Normal vector, adapts in dark mode */
+    }
+
+    .theme-light {
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-text: #333;
+        --vecdark: #212121;
+    }
+
+    .theme-dark {
+        --mafs-fg: #ffffff;
+        --mafs-grid: rgba(255,255,255,0.2);
+        --mafs-text: #eee;
+        --vecdark: #ffffff;
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--mafs-bg);
+        font-family: system-ui, sans-serif;
+        color: var(--mafs-text);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    /* Top Controls Structure */
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px;
+        background: var(--mafs-bg);
+        border-bottom: 1px solid var(--mafs-grid);
+        z-index: 10;
+    }
+
+    button {
+        background: var(--mafs-bg);
+        color: var(--mafs-fg);
+        border: 1px solid var(--mafs-grid);
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    button:hover { background: var(--mafs-grid); }
+    button.active {
+        background: var(--vecblue);
+        color: #ffffff;
+        border-color: var(--vecblue);
+    }
+
+    /* Main Container & Layout */
+    .container {
+        width: 100%;
+        flex: 1;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Bottom Label Status */
+    .label {
+        position: absolute;
+        bottom: 25px;
+        left: 20px;
+        right: 20px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--mafs-fg);
+        pointer-events: none;
+        background: var(--mafs-bg);
+    }
+
+    /* SVG Styling */
+    svg {
+        width: 100%;
+        height: 100%;
+        max-width: 900px;
+        display: block;
+    }
+
+    .math {
+        font-family: 'Times New Roman', Times, serif;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 26px;
+        paint-order: stroke;
+        stroke: var(--mafs-bg);
+        stroke-width: 5px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .math-small { font-size: 20px; }
+    .vector { stroke-width: 4px; }
+    .dashed-proj { stroke-dasharray: 6 4; stroke-width: 3px; }
+    .dashed-ctx { stroke-dasharray: 8 6; stroke-width: 2px; }
+    .angle-arc { fill: none; stroke: var(--mafs-text); stroke-width: 2.5px; opacity: 0.6; }
+
+    /* Animation Classes */
+    .el-step-1, .el-step-2, .el-step-3 {
+        opacity: 0;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Visibility Logic driven by container data attribute */
+    [data-step="1"] .el-step-1,
+    [data-step="2"] .el-step-1,
+    [data-step="3"] .el-step-1 { opacity: 1; }
+
+    [data-step="2"] .el-step-2,
+    [data-step="3"] .el-step-2 { opacity: 1; }
+
+    [data-step="3"] .el-step-3 { opacity: 1; }
+
+    [data-step="3"] .vec-v, [data-step="3"] .vec-r { stroke-width: 6px; }
+    .vec-v, .vec-r { transition: stroke-width 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+    <button onclick="setStep(0)" id="btn-0" class="active">0. Initial State</button>
+    <button onclick="setStep(1)" id="btn-1">1. Vector Projection</button>
+    <button onclick="setStep(2)" id="btn-2">2. Reflection Vector</button>
+    <button onclick="setStep(3)" id="btn-3">3. View Dot Product</button>
+</div>
+
+<div class="container" id="vis-container" data-step="0">
+    <svg viewBox="-50 50 900 550" preserveAspectRatio="xMidYMid meet">
+        
+        <defs>
+            <!-- Arrowheads -->
+            <marker id="arrow-n" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecdark)" />
+            </marker>
+            <marker id="arrow-l" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecorange)" />
+            </marker>
+            <marker id="arrow-r" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecgreen)" />
+            </marker>
+            <marker id="arrow-v" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecblue)" />
+            </marker>
+            <marker id="arrow-proj" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto-start-reverse">
+                <path d="M 0 0 L 5 2.5 L 0 5 L 1.5 2.5 Z" fill="var(--mafs-text)" />
+            </marker>
+        </defs>
+
+        <!-- Ground Base -->
+        <rect x="75" y="450" width="650" height="70" fill="var(--mafs-grid)" opacity="0.6"/>
+        <line x1="75" y1="450" x2="725" y2="450" stroke="var(--mafs-grid)" stroke-width="3" />
+
+        <!-- Unit Hemisphere -->
+        <path d="M 150 450 A 250 250 0 0 1 650 450" fill="none" stroke="var(--mafs-text)" opacity="0.4" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+        <!-- Contextual Dashed Lines -->
+        <line x1="223.2" y1="273.2" x2="145.4" y2="195.4" stroke="var(--vecorange)" opacity="0.5" class="dashed-ctx" />
+        <line x1="641.5" y1="385.3" x2="747.7" y2="356.8" stroke="var(--vecblue)" opacity="0.5" class="dashed-ctx" />
+
+        <!-- Sun (Light Source Context) -->
+        <g transform="translate(145.4, 195.4)">
+            <circle cx="0" cy="0" r="20" fill="var(--vecorange)" opacity="0.2" />
+            <circle cx="0" cy="0" r="20" fill="none" stroke="var(--vecorange)" stroke-width="3" />
+            <path d="M 27.5 0 L 42.5 0 M -27.5 0 L -42.5 0 M 0 27.5 L 0 42.5 M 0 -27.5 L 0 -42.5 M 19.4 19.4 L 30 30 M -19.4 -19.4 L -30 -30 M 19.4 -19.4 L 30 -30 M -19.4 19.4 L -30 30" stroke="var(--vecorange)" stroke-width="3" stroke-linecap="round"/>
+        </g>
+
+        <!-- Eye (Viewer Context) -->
+        <g transform="translate(747.7, 356.8) rotate(-15) scale(0.9)">
+            <ellipse cx="0" cy="0" rx="35" ry="20" fill="var(--mafs-bg)" stroke="var(--mafs-grid)" stroke-width="2"/>
+            <path d="M -35 0 C -15 -25, 15 -25, 35 0 C 15 25, -15 25, -35 0 Z" fill="none" stroke="var(--vecblue)" stroke-width="3" />
+            <circle cx="0" cy="0" r="12.5" fill="var(--vecblue)" />
+            <circle cx="4" cy="-4" r="2.5" fill="var(--mafs-bg)" />
+        </g>
+
+        <!-- Origin point x -->
+        <circle cx="400" cy="450" r="5" fill="var(--mafs-fg)" />
+        <text x="393" y="480" class="math" fill="var(--mafs-fg)">x</text>
+
+        <!-- STEP 1 & 2: Construction Lines -->
+        <g class="el-step-1">
+            <line x1="223.2" y1="273.2" x2="395" y2="273.2" stroke="var(--mafs-text)" class="dashed-proj" marker-end="url(#arrow-proj)" />
+            <text x="240" y="260" class="math math-small" fill="var(--mafs-fg)"><tspan font-weight="normal">(</tspan>n<tspan font-weight="normal">·</tspan>l<tspan font-weight="normal">)n - </tspan>l</text>
+            <circle cx="400" cy="273.2" r="4" fill="var(--mafs-fg)" />
+            <text x="415" y="325" transform="rotate(-90 415 325)" class="math math-small" fill="var(--mafs-fg)"><tspan font-weight="normal">(</tspan>n<tspan font-weight="normal">·</tspan>l<tspan font-weight="normal">)n</tspan></text>
+        </g>
+
+        <g class="el-step-2">
+            <line x1="400" y1="273.2" x2="571" y2="273.2" stroke="var(--mafs-text)" class="dashed-proj" marker-end="url(#arrow-proj)" />
+            <path d="M 400 375 A 75 75 0 0 0 347 397" class="angle-arc"/>
+            <text x="350" y="375" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--mafs-text)">θ</text>
+            <path d="M 400 375 A 75 75 0 0 1 453 397" class="angle-arc"/>
+            <text x="435" y="375" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--mafs-text)">θ</text>
+        </g>
+
+        <!-- STEP 3: Dot Product Highlight / Phi Angle -->
+        <g class="el-step-3">
+            <path d="M 488.4 361.6 A 125 125 0 0 1 520.7 417.6" class="angle-arc" stroke="var(--vecblue)" opacity="1"/>
+            <text x="525" y="380" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--vecblue)">φ</text>
+        </g>
+
+        <!-- Base Vectors -->
+        <line x1="400" y1="450" x2="400" y2="208" class="vector" stroke="var(--vecdark)" marker-end="url(#arrow-n)" />
+        <text x="393" y="190" class="math" fill="var(--vecdark)">n</text>
+
+        <line x1="400" y1="450" x2="228" y2="278" class="vector" stroke="var(--vecorange)" marker-end="url(#arrow-l)" />
+        <text x="200" y="295" class="math" fill="var(--vecorange)">l</text>
+        
+        <line x1="400" y1="450" x2="636" y2="387" class="vector vec-v" stroke="var(--vecblue)" marker-end="url(#arrow-v)" />
+        <text x="655" y="385" class="math" fill="var(--vecblue)">v</text>
+
+        <g class="el-step-2">
+            <line x1="400" y1="450" x2="571" y2="278" class="vector vec-r" stroke="var(--vecgreen)" marker-end="url(#arrow-r)" />
+            <text x="585" y="265" class="math" fill="var(--vecgreen)">r</text>
+        </g>
+    </svg>
+    
+    <div class="label" id="status-label"></div>
+</div>
+
+<script>
+    // Theme syncing capabilities
+    function syncTheme() {
+        try {
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || 
+                           window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {}
+    }
+    syncTheme();
+    setInterval(syncTheme, 1000);
+
+    const labels =[
+        "The standard vectors: Normal (<b>n</b>), Light direction (<b>l</b>), and View direction (<b>v</b>).",
+        "Project <b>l</b> onto <b>n</b> using the dot product: <b>(n·l)n</b>. The horizontal dashed vector represents <b>(n·l)n - l</b>.",
+        "By adding the horizontal difference twice to <b>l</b>, we complete the parallelogram to find the reflection vector <b>r</b>. <br/><i>r = 2(n·l)n - l</i>",
+        "We measure how close the reflection <b>r</b> is to the viewer <b>v</b>. The dot product <b>r·v = cos(φ)</b> determines the specular highlight."
+    ];
+
+    function setStep(state) {
+        // Update Buttons
+        document.querySelectorAll('button').forEach((b, i) => {
+            b.className = i === state ? 'active' : '';
+        });
+        
+        // Update Visuals
+        document.getElementById('vis-container').setAttribute('data-step', state);
+        
+        // Update Text
+        document.getElementById('status-label').innerHTML = labels[state];
+    }
+
+    // Initialize first state
+    setStep(0);
+</script>
+
+</body>
+</html>

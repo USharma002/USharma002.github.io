@@ -10,7 +10,7 @@
 <meta name="description" content="Notes on PCA and high Dimensional PCA">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/dimensionality-reduction-pca/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.921ffc4d586674d42045f566929c986e2b5599a36ec73138b7313048f4e36648.css" integrity="sha256-kh/8TVhmdNQgRfVmkpyYbitVmaNuxzE4tzEwSPTjZkg=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.831ad65feea8022cb1d8a0f2cca04191235467d1c1ddd05b3115820522e2258d.css" integrity="sha256-gxrWX&#43;6oAiyx2KDyzKBBkSNUZ9HB3dBbMRWCBSLiJY0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -529,7 +529,7 @@ $$<p>where $U$ contains the <strong>top-$K$ eigenvectors</strong> of the covaria
 </span></span></code></pre></div><!-- ![Original Data](/images/pca/pca_scatter_original.png)
 *Original 2D data with two classes* -->
 <figure id="original-data" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/pca/pca_scatter_original.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/pca/pca_scatter_original.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Original 2D data with two classes
     </figcaption></figure>
@@ -664,7 +664,7 @@ document.addEventListener('keydown', e => {
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&#34;equal&#34;</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl"><span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&#34;pca_projection.png&#34;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 </span></span></code></pre></div><figure id="fig-pca-projection" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/pca/pca_projection.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/pca/pca_projection.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       Data projected onto the first principal component (shown in black)
     </figcaption></figure>
@@ -756,8 +756,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
     if (!headers.length) return;
 
-    var headerOffsets = [];
     var lastActiveId = '';
+    var activeHeaderOffset = 80;
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
@@ -765,31 +765,19 @@ document.addEventListener('DOMContentLoaded', function() {
         nestedUls[i].style.display = 'none';
     }
 
-    function recomputeHeaderOffsets() {
-        headerOffsets = [];
+    function findActiveHeaderId() {
+        var currentId = '';
+
         for (var i = 0; i < headers.length; i++) {
-            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
-            headerOffsets.push(top);
-        }
-    }
-
-    function findActiveHeaderId(scrollTop) {
-        var lo = 0;
-        var hi = headerOffsets.length - 1;
-        var idx = -1;
-
-        while (lo <= hi) {
-            var mid = (lo + hi) >> 1;
-            if (headerOffsets[mid] <= scrollTop) {
-                idx = mid;
-                lo = mid + 1;
+            var top = headers[i].getBoundingClientRect().top;
+            if (top <= activeHeaderOffset) {
+                currentId = headers[i].getAttribute('id') || '';
             } else {
-                hi = mid - 1;
+                break;
             }
         }
 
-        if (idx < 0) return '';
-        return headers[idx].getAttribute('id') || '';
+        return currentId;
     }
 
     function applyActiveState(currentId) {
@@ -826,8 +814,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    recomputeHeaderOffsets();
-
     
     var ticking = false;
 
@@ -836,21 +822,25 @@ document.addEventListener('DOMContentLoaded', function() {
         ticking = true;
 
         requestAnimationFrame(function() {
-            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var currentId = findActiveHeaderId(scrollTop);
+            var currentId = findActiveHeaderId();
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    window.addEventListener('resize', function() {
-        recomputeHeaderOffsets();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        recomputeHeaderOffsets();
-        onScroll();
-    });
+    if (typeof ResizeObserver !== 'undefined') {
+        var layoutObserver = new ResizeObserver(function() {
+            onScroll();
+        });
+        layoutObserver.observe(content);
+
+        window.addEventListener('beforeunload', function() {
+            layoutObserver.disconnect();
+        });
+    }
+
+    window.addEventListener('resize', onScroll, { passive: true });
+    window.addEventListener('load', onScroll);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); 
 });

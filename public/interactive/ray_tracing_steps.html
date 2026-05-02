@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cornell Box Ray Tracing</title>
+<style>
+    :root {
+        --mafs-bg: transparent;
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-text: #333;
+        
+        --ray-color: #f39c12;
+        --intersect-color: #f1c40f;
+        --shadow-ray: #f1c40f;
+        --reflect-ray: #00E5FF;
+        --glass-fill: rgba(0, 180, 255, 0.05);
+        --glass-stroke: rgba(0, 100, 200, 0.8);
+    }
+
+    .theme-dark {
+        --mafs-fg: #ffffff;
+        --mafs-grid: rgba(255,255,255,0.2);
+        --mafs-text: #eee;
+        --glass-fill: rgba(0, 180, 255, 0.1);
+        --glass-stroke: rgba(100, 200, 255, 0.9);
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--mafs-bg);
+        font-family: system-ui, sans-serif;
+        color: var(--mafs-text);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 15px;
+        background: var(--mafs-bg);
+        border-bottom: 1px solid var(--mafs-grid);
+        z-index: 10;
+    }
+
+    button {
+        background: var(--mafs-bg);
+        color: var(--mafs-fg);
+        border: 2px solid var(--mafs-grid);
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+
+    button:hover { background: var(--mafs-grid); }
+    button.active {
+        background: #2980b9;
+        color: #ffffff;
+        border-color: #2980b9;
+        box-shadow: 0 4px 15px rgba(41, 128, 185, 0.4);
+    }
+
+    .container {
+        width: 100%;
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    svg {
+        width: 100%;
+        height: 75vh;
+        max-width: 1600px;
+        display: block;
+    }
+
+    /* Animation and Step Control Classes */
+    .step-el { transition: opacity 0.6s ease; }
+    
+    .pixel-poly {
+        transition: fill 0.6s ease, fill-opacity 0.6s ease;
+        fill: transparent;
+        stroke: var(--glass-stroke);
+        stroke-width: 0.6px;
+    }
+
+    /* Step Opacities */[data-step="0"] .g-objects { opacity: 0; }[data-step="0"] .g-rays { opacity: 0; } [data-step="0"] .g-intersections { opacity: 0; } [data-step="0"] .g-sec-rays { opacity: 0; }
+    
+    [data-step="1"] .g-objects { opacity: 1; }[data-step="1"] .g-rays { opacity: 0; }[data-step="1"] .g-intersections { opacity: 0; }[data-step="1"] .g-sec-rays { opacity: 0; }
+
+    [data-step="2"] .g-objects { opacity: 1; }[data-step="2"] .g-rays { opacity: 1; } [data-step="2"] .g-intersections { opacity: 1; }[data-step="2"] .g-sec-rays { opacity: 0; }[data-step="3"] .g-objects { opacity: 1; }[data-step="3"] .g-rays { opacity: 0.15; }[data-step="3"] .g-intersections { opacity: 1; } [data-step="3"] .g-sec-rays { opacity: 1; }
+    
+    [data-step="4"] .g-objects { opacity: 1; }[data-step="4"] .g-rays { opacity: 0; } [data-step="4"] .g-intersections { opacity: 0; }[data-step="4"] .g-sec-rays { opacity: 0; }
+    
+    /* Text Overlay */
+    .description {
+        height: 80px;
+        font-size: 17px;
+        line-height: 1.5;
+        text-align: center;
+        padding: 0 30px;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="controls">
+    <button onclick="setStep(0)" id="btn-0" class="active">0. Setup</button>
+    <button onclick="setStep(1)" id="btn-1">1. The Cornell Box</button>
+    <button onclick="setStep(2)" id="btn-2">2. Primary Rays (Visibility)</button>
+    <button onclick="setStep(3)" id="btn-3">3. Secondary Rays (Bounces)</button>
+    <button onclick="setStep(4)" id="btn-4">4. Final Rendered Image</button>
+</div>
+
+<div class="container" id="vis-container" data-step="0">
+    <svg id="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid meet">
+        <defs>
+            <marker id="arrow-ray" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M 0 0 L 5 2.5 L 0 5 z" fill="var(--ray-color)" /></marker>
+            <marker id="arrow-refl" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M 0 0 L 5 2.5 L 0 5 z" fill="var(--reflect-ray)" /></marker>
+            <marker id="arrow-axis-r" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#e74c3c" /></marker>
+            <marker id="arrow-axis-g" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#2ecc71" /></marker>
+            <marker id="arrow-axis-b" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#3498db" /></marker>
+            
+            <radialGradient id="lightGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#f1c40f" stop-opacity="0.0"/>
+            </radialGradient>
+            
+            <radialGradient id="mirrorGrad" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="30%" stop-color="#e0e0e0"/>
+                <stop offset="80%" stop-color="#7f8c8d"/>
+                <stop offset="100%" stop-color="#2c3e50"/>
+            </radialGradient>
+        </defs>
+    </svg>
+    <div class="description" id="step-desc"></div>
+</div>
+
+<script>
+    function syncTheme() {
+        try {
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {}
+    }
+    syncTheme();
+    setInterval(syncTheme, 1000);
+
+    const descriptions =[
+        "<b>The Setup:</b> The Camera is at the origin (0,0,0). The <b>Image Plane</b> forms the exact front opening of the Cornell Box.",
+        "<b>The Cornell Box:</b> A classic computer graphics test scene. It features a Red left wall, Green right wall, a Point Light on the ceiling, a Diffuse Matte Box, and a Mirror Sphere.",
+        "<b>Primary Rays:</b> Rays shoot straight from the camera into the box. Notice how the <b style='color:#d35400'>yellow intersection dots</b> precisely map the layout of the walls, cube, and sphere.",
+        "<b>Secondary Rays:</b> From the hit points, <b style='color:#f39c12'>Shadow Rays</b> check if the light is blocked by the box or sphere. <b style='color:#00E5FF'>Reflection Rays</b> bounce wildly off the mirror sphere.",
+        "<b>Final Render:</b> The recursion completes! Look at the Mirror Sphere: it brilliantly reflects the Red wall on its left, the Green wall on its right, and the Matte Box behind it!"
+    ];
+
+    const svg = document.getElementById('canvas');
+    function createEl(tag, attrs) {
+        let el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for(let k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+    }
+
+    // --- 3D MATH & PROJECTION ---
+    const SCALE = 48; 
+    const OFFSET_X = 500; 
+    const OFFSET_Y = 650;
+
+    function project(x, y, z) {
+        const px = 0.9 * x - 0.6 * z;
+        const py = -0.15 * x + 1.0 * y - 0.5 * z;
+        return { x: OFFSET_X + px * SCALE, y: OFFSET_Y - py * SCALE };
+    }
+
+    function dot(a, b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
+    function length(v) { return Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z); }
+    function add(a, b) { return {x: a.x+b.x, y: a.y+b.y, z: a.z+b.z}; }
+    function sub(a, b) { return {x: a.x-b.x, y: a.y-b.y, z: a.z-b.z}; }
+    function scale(v, s) { return {x: v.x*s, y: v.y*s, z: v.z*s}; }
+    function normalize(v) {
+        let len = length(v);
+        return {x: v.x/len, y: v.y/len, z: v.z/len};
+    }
+
+    // --- SCENE DEFINITION ---
+    const RES = 36;            // Ray resolution (1296 pixels)
+    const SIZE = 10;           // Exactly matches the width/height of the room (-5 to 5)
+    const Z_PLANE = -5;        // Places the grid precisely at the room's opening
+    const MAX_DEPTH = 2;       // Reflection bounces
+
+    const lightPos = {x: 0.0, y: 4.8, z: -10.0};
+
+    // The Cornell Box Walls
+    const planes =[
+        {n: {x:1, y:0, z:0}, k: -5, col: [200, 40, 40], mat: { shininess: 10, spec: 0.0, refl: 0.0 }, type: 'left'},
+        {n: {x:-1,y:0, z:0}, k: -5, col:[40, 200, 40], mat: { shininess: 10, spec: 0.0, refl: 0.0 }, type: 'right'},
+        {n: {x:0, y:1, z:0}, k: -5, col:[230, 230, 230], mat: { shininess: 10, spec: 0.0, refl: 0.0 }, type: 'floor'},
+        {n: {x:0, y:-1,z:0}, k: -5, col:[230, 230, 230], mat: { shininess: 10, spec: 0.0, refl: 0.0 }, type: 'ceil'},
+        {n: {x:0, y:0, z:1}, k: -15, col:[230, 230, 230], mat: { shininess: 10, spec: 0.0, refl: 0.0 }, type: 'back'}
+    ];
+
+    // Objects inside
+    const sphere = { 
+        type: 'sphere', c: {x: 2.0, y: -2.5, z: -8.5}, r: 2.5, 
+        col:[255, 255, 255], mat: { shininess: 128, spec: 1.0, refl: 0.85 } // Mirror Sphere
+    };
+    
+    const cube = { 
+        type: 'cube', min: {x: -3.5, y: -5.0, z: -12.5}, max: {x: -0.5, y: 0.0, z: -9.5}, 
+        col: [220, 220, 220], mat: { shininess: 10, spec: 0.0, refl: 0.0 } // Matte Box
+    };
+
+    // --- INTERSECTION LOGIC ---
+    function iPlane(ro, rd, pl) {
+        let dN = dot(pl.n, rd);
+        if (Math.abs(dN) < 0.0001) return null;
+        let t = (pl.k - dot(pl.n, ro)) / dN;
+        if (t > 0.001) {
+            let p = add(ro, scale(rd, t));
+            // Restrict plane to exactly the room box
+            if (p.x >= -5.001 && p.x <= 5.001 &&
+                p.y >= -5.001 && p.y <= 5.001 &&
+                p.z >= -15.001 && p.z <= -4.999) {
+                return {t: t, n: pl.n, col: pl.col, mat: pl.mat, type: pl.type};
+            }
+        }
+        return null;
+    }
+
+    function iSphere(ro, rd) {
+        let oc = sub(ro, sphere.c);
+        let b = dot(oc, rd);
+        let c = dot(oc, oc) - sphere.r*sphere.r;
+        let d = b*b - c;
+        if(d > 0) {
+            let t = -b - Math.sqrt(d);
+            if(t > 0) return {t: t, n: normalize(sub(add(ro, scale(rd, t)), sphere.c)), col: sphere.col, mat: sphere.mat, type: 'sphere'};
+        }
+        return null;
+    }
+
+    function iBox(ro, rd) {
+        let tmin = -Infinity, tmax = Infinity;
+        let axes =['x','y','z'];
+        let normals =[{x:1,y:0,z:0}, {x:0,y:1,z:0}, {x:0,y:0,z:1}];
+        let hitNormal = null;
+
+        for(let i=0; i<3; i++) {
+            let axis = axes[i];
+            let invD = 1.0 / rd[axis];
+            let t0 = (cube.min[axis] - ro[axis]) * invD;
+            let t1 = (cube.max[axis] - ro[axis]) * invD;
+            let n0 = {x: -normals[i].x, y: -normals[i].y, z: -normals[i].z};
+            let n1 = normals[i];
+
+            if(invD < 0) { let tmp=t0; t0=t1; t1=tmp; let tn=n0; n0=n1; n1=tn; }
+            if(t0 > tmin) { tmin = t0; hitNormal = n0; }
+            if(t1 < tmax) tmax = t1;
+            if(tmax <= tmin) return null;
+        }
+        if(tmin > 0) return {t: tmin, n: hitNormal, col: cube.col, mat: cube.mat, type: 'cube'};
+        return null;
+    }
+
+    function intersectScene(ro, rd) {
+        let hits =[iSphere(ro, rd), iBox(ro, rd)];
+        planes.forEach(pl => hits.push(iPlane(ro, rd, pl)));
+        hits = hits.filter(h => h !== null);
+        if(hits.length === 0) return null;
+        return hits.reduce((prev, curr) => (prev.t < curr.t ? prev : curr));
+    }
+
+    // --- RECURSIVE RAY TRACER ---
+    function trace(ro, rd, depth=0) {
+        let hit = intersectScene(ro, rd);
+        if(!hit) return { color:[0, 0, 0], t: -1, p: null, n: null, inShadow: false, bounceHit: null };
+
+        let p = add(ro, scale(rd, hit.t));
+        let n = hit.n;
+        let L = normalize(sub(lightPos, p));
+        let distL = length(sub(lightPos, p));
+
+        // SHADOW RAY
+        let pOffset = add(p, scale(n, 0.002));
+        let shadowHit = intersectScene(pOffset, L);
+        let inShadow = (shadowHit && shadowHit.t < distL);
+
+        // LIGHT FALLOFF (Inverse square approximation for realism)
+        let attenuation = 35.0 / (distL * distL + 1.0);
+
+        // PHONG LOCAL ILLUMINATION
+        let ambient = 0.25; // High ambient to fake global illumination bounce light
+        let diffuse = inShadow ? 0 : Math.max(0, dot(n, L)) * attenuation;
+        let spec = 0;
+
+        if(!inShadow && diffuse > 0) {
+            let V = normalize(sub(ro, p));
+            let R = sub(scale(n, 2 * dot(n, L)), L);
+            let rDotV = Math.max(0, dot(R, V));
+            spec = Math.pow(rDotV, hit.mat.shininess);
+        }
+
+        let r = hit.col[0] * (ambient + 1.0 * diffuse) + 255 * hit.mat.spec * spec;
+        let g = hit.col[1] * (ambient + 1.0 * diffuse) + 255 * hit.mat.spec * spec;
+        let b = hit.col[2] * (ambient + 1.0 * diffuse) + 255 * hit.mat.spec * spec;
+        
+        let finalCol =[Math.min(255, r), Math.min(255, g), Math.min(255, b)];
+
+        // REFLECTION RAY
+        let reflDir = null;
+        let bounceHitPoint = null;
+
+        if (depth < MAX_DEPTH && hit.mat.refl > 0) {
+            reflDir = normalize(sub(rd, scale(n, 2 * dot(rd, n))));
+            let reflRes = trace(pOffset, reflDir, depth + 1);
+            
+            bounceHitPoint = reflRes.p; 
+
+            finalCol[0] = finalCol[0] * (1 - hit.mat.refl) + reflRes.color[0] * hit.mat.refl;
+            finalCol[1] = finalCol[1] * (1 - hit.mat.refl) + reflRes.color[1] * hit.mat.refl;
+            finalCol[2] = finalCol[2] * (1 - hit.mat.refl) + reflRes.color[2] * hit.mat.refl;
+        }
+
+        return { 
+            color: finalCol, t: hit.t, p: p, n: n, 
+            inShadow: inShadow, reflDir: reflDir, bounceHit: bounceHitPoint
+        };
+    }
+
+    // --- SVG CONSTRUCTION ---
+    const gObj = createEl('g', {class: 'step-el g-objects'});
+    const gRaysBack = createEl('g', {class: 'step-el g-rays'});
+    const gSecRays = createEl('g', {class: 'step-el g-sec-rays'});
+    const gIntersections = createEl('g', {class: 'step-el g-intersections'});
+    const gPlane = createEl('g', {class: 'step-el'});
+    const gRaysFront = createEl('g', {class: 'step-el g-rays'});
+    const gAxes = createEl('g', {class: 'step-el'});
+    
+    svg.append(gObj, gRaysBack, gSecRays, gIntersections, gPlane, gRaysFront, gAxes);
+
+    let pixelData =[];
+
+    function getPolyPts(pts3d) {
+        return pts3d.map(p => {
+            let p2 = project(p[0], p[1], p[2]);
+            return `${p2.x},${p2.y}`;
+        }).join(' ');
+    }
+
+    function buildScene() {
+        const ro = {x:0, y:0, z:0}; 
+        
+        // 1. Draw SVG Background representing the Box
+        // Back Wall
+        gObj.appendChild(createEl('polygon', { points: getPolyPts([[-5,-5,-15], [5,-5,-15], [5,5,-15],[-5,5,-15]]), fill: '#ecf0f1', stroke: '#bdc3c7' }));
+        // Left Wall (Red)
+        gObj.appendChild(createEl('polygon', { points: getPolyPts([[-5,-5,-5], [-5,-5,-15], [-5,5,-15], [-5,5,-5]]), fill: '#e74c3c', stroke: '#c0392b' }));
+        // Floor
+        gObj.appendChild(createEl('polygon', { points: getPolyPts([[-5,-5,-5], [5,-5,-5], [5,-5,-15],[-5,-5,-15]]), fill: '#ecf0f1', stroke: '#bdc3c7' }));
+        
+        // 2. Draw Objects
+        // Matte Box
+        const v =[
+            {x:cube.min.x, y:cube.min.y, z:cube.min.z}, {x:cube.max.x, y:cube.min.y, z:cube.min.z},
+            {x:cube.max.x, y:cube.max.y, z:cube.min.z}, {x:cube.min.x, y:cube.max.y, z:cube.min.z},
+            {x:cube.min.x, y:cube.min.y, z:cube.max.z}, {x:cube.max.x, y:cube.min.y, z:cube.max.z},
+            {x:cube.max.x, y:cube.max.y, z:cube.max.z}, {x:cube.min.x, y:cube.max.y, z:cube.max.z}
+        ];
+        const faces =[{p:[0,1,2,3], n:{x:0,y:0,z:-1}}, {p:[5,4,7,6], n:{x:0,y:0,z:1}}, {p:[4,0,3,7], n:{x:-1,y:0,z:0}}, {p:[1,5,6,2], n:{x:1,y:0,z:0}}, {p:[3,2,6,7], n:{x:0,y:1,z:0}}, {p:[4,5,1,0], n:{x:0,y:-1,z:0}}];
+        faces.forEach(f => {
+            let fCenter = scale(add(add(v[f.p[0]], v[f.p[1]]), add(v[f.p[2]], v[f.p[3]])), 0.25);
+            if(dot(f.n, normalize(sub(ro, fCenter))) > 0) { 
+                let pts = f.p.map(idx => project(v[idx].x, v[idx].y, v[idx].z));
+                gObj.appendChild(createEl('polygon', { points: pts.map(p => `${p.x},${p.y}`).join(' '), fill: '#d2d6d9', stroke: '#95a5a6', 'stroke-width': '1.0' }));
+            }
+        });
+
+        // Mirror Sphere
+        let sp = project(sphere.c.x, sphere.c.y, sphere.c.z);
+        gObj.appendChild(createEl('circle', { cx: sp.x, cy: sp.y, r: sphere.r * SCALE * 0.95, fill: 'url(#mirrorGrad)' }));
+
+        // Right Wall (Green - Semi transparent so we see inside)
+        gObj.appendChild(createEl('polygon', { points: getPolyPts([[5,-5,-5], [5,-5,-15], [5,5,-15], [5,5,-5]]), fill: 'rgba(46, 204, 113, 0.15)', stroke: '#27ae60' }));
+        // Ceiling (Semi transparent wireframe)
+        gObj.appendChild(createEl('polygon', { points: getPolyPts([[-5,5,-5], [5,5,-5], [5,5,-15], [-5,5,-15]]), fill: 'rgba(236, 240, 241, 0.1)', stroke: '#bdc3c7' }));
+
+        // 3. Point Light 
+        let lp = project(lightPos.x, lightPos.y, lightPos.z);
+        gObj.appendChild(createEl('circle', { cx: lp.x, cy: lp.y, r: 90, fill: 'url(#lightGlow)' }));
+        gObj.appendChild(createEl('circle', { cx: lp.x, cy: lp.y, r: 8, fill: '#fff', stroke: '#f1c40f', 'stroke-width': 2 }));
+
+        // 4. Draw Image Plane Grid (Exact 10x10 front face)
+        let tl = project(-SIZE/2, SIZE/2, Z_PLANE);
+        let tr = project(SIZE/2, SIZE/2, Z_PLANE);
+        let br = project(SIZE/2, -SIZE/2, Z_PLANE);
+        let bl = project(-SIZE/2, -SIZE/2, Z_PLANE);
+        gPlane.appendChild(createEl('polygon', {
+            points: `${tl.x},${tl.y} ${tr.x},${tr.y} ${br.x},${br.y} ${bl.x},${bl.y}`,
+            fill: 'var(--glass-fill)'
+        }));
+
+        // 5. Generate Ray Tracing Grid & Rays
+        const origin2D = project(0,0,0);
+
+        for(let iy=0; iy<RES; iy++) {
+            for(let ix=0; ix<RES; ix++) {
+                let x0 = -SIZE/2 + ix * (SIZE/RES);
+                let y0 = -SIZE/2 + iy * (SIZE/RES);
+                let x1 = x0 + (SIZE/RES);
+                let y1 = y0 + (SIZE/RES);
+                
+                let p0 = project(x0, y0, Z_PLANE);
+                let p1 = project(x1, y0, Z_PLANE);
+                let p2 = project(x1, y1, Z_PLANE);
+                let p3 = project(x0, y1, Z_PLANE);
+
+                let poly = createEl('polygon', {
+                    class: 'pixel-poly',
+                    points: `${p0.x},${p0.y} ${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`
+                });
+                gPlane.appendChild(poly);
+
+                // Math Raycast
+                let px = x0 + (SIZE/RES)/2;
+                let py = y0 + (SIZE/RES)/2;
+                let rd = normalize({x: px, y: py, z: Z_PLANE});
+                
+                let res = trace(ro, rd, 0);
+                pixelData.push({ el: poly, color: `rgb(${Math.round(res.color[0])}, ${Math.round(res.color[1])}, ${Math.round(res.color[2])})` });
+
+                // Draw representative rays
+                if(ix % 4 === 1 && iy % 4 === 1) {
+                    let p2D = project(px, py, Z_PLANE);
+                    
+                    gRaysFront.appendChild(createEl('line', {
+                        x1: origin2D.x, y1: origin2D.y, x2: p2D.x, y2: p2D.y,
+                        stroke: 'var(--ray-color)', 'stroke-width': '1.0', opacity: '0.6'
+                    }));
+
+                    if (res.t > 0) {
+                        let end2D = project(res.p.x, res.p.y, res.p.z);
+                        
+                        gRaysBack.appendChild(createEl('line', {
+                            x1: p2D.x, y1: p2D.y, x2: end2D.x, y2: end2D.y,
+                            stroke: 'var(--ray-color)', 'stroke-width': '1.5', 
+                            opacity: '0.6', 'marker-end': 'url(#arrow-ray)'
+                        }));
+
+                        gIntersections.appendChild(createEl('circle', {
+                            cx: end2D.x, cy: end2D.y, r: 4.5,
+                            fill: 'var(--intersect-color)', stroke: '#d35400', 'stroke-width': 2
+                        }));
+
+                        // Draw Shadow Ray
+                        gSecRays.appendChild(createEl('line', {
+                            x1: end2D.x, y1: end2D.y, x2: lp.x, y2: lp.y,
+                            stroke: '#f1c40f', 'stroke-width': '1.5', 'stroke-dasharray': '6 5', opacity: '0.65'
+                        }));
+
+                        // Draw Reflection Ray
+                        if (res.reflDir) {
+                            let rEnd3D = res.bounceHit ? res.bounceHit : add(res.p, scale(res.reflDir, 8)); 
+                            let rEnd2D = project(rEnd3D.x, rEnd3D.y, rEnd3D.z);
+                            gSecRays.appendChild(createEl('line', {
+                                x1: end2D.x, y1: end2D.y, x2: rEnd2D.x, y2: rEnd2D.y,
+                                stroke: 'var(--reflect-ray)', 'stroke-width': '2.5', opacity: '0.9',
+                                'marker-end': 'url(#arrow-refl)'
+                            }));
+                            
+                            if (res.bounceHit) {
+                                gSecRays.appendChild(createEl('circle', {
+                                    cx: rEnd2D.x, cy: rEnd2D.y, r: 3.5, fill: '#00E5FF', stroke: '#00838F', 'stroke-width': 2
+                                }));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 6. Draw Axes and Labels
+        let axSize = 2.5;
+        let axX = project(axSize, 0, 0);
+        let axY = project(0, axSize, 0);
+        let axZ = project(0, 0, -axSize);
+        
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: axX.x, y2: axX.y, stroke: '#e74c3c', 'stroke-width': 3.5, 'marker-end': 'url(#arrow-axis-r)'}));
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: axY.x, y2: axY.y, stroke: '#2ecc71', 'stroke-width': 3.5, 'marker-end': 'url(#arrow-axis-g)'}));
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: axZ.x, y2: axZ.y, stroke: '#3498db', 'stroke-width': 3.5, 'marker-end': 'url(#arrow-axis-b)'}));
+        
+        gAxes.appendChild(createEl('circle', {cx: origin2D.x, cy: origin2D.y, r: 6, fill: 'var(--mafs-fg)'}));
+        let camLabel = createEl('text', {x: origin2D.x - 85, y: origin2D.y + 25, fill: 'var(--mafs-fg)', 'font-weight': 'bold', 'font-size': '22px'});
+        camLabel.textContent = "Camera";
+        gAxes.appendChild(camLabel);
+    }
+
+    buildScene();
+
+    function setStep(state) {
+        document.querySelectorAll('button').forEach((b, i) => b.className = i === state ? 'active' : '');
+        document.getElementById('vis-container').setAttribute('data-step', state);
+        document.getElementById('step-desc').innerHTML = descriptions[state];
+
+        pixelData.forEach(p => {
+            if (state === 4) {
+                p.el.style.fill = p.color;
+                p.el.style.fillOpacity = "1.0";
+                p.el.style.strokeWidth = "0px";
+            } else {
+                p.el.style.fill = "transparent";
+                p.el.style.fillOpacity = "0";
+                p.el.style.strokeWidth = "0.6px";
+            }
+        });
+    }
+
+    setStep(0);
+</script>
+
+</body>
+</html>

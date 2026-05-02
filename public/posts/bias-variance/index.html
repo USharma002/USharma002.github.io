@@ -10,7 +10,7 @@
 <meta name="description" content="Exploring the bias–variance tradeoff in polynomial regression">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/bias-variance/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.921ffc4d586674d42045f566929c986e2b5599a36ec73138b7313048f4e36648.css" integrity="sha256-kh/8TVhmdNQgRfVmkpyYbitVmaNuxzE4tzEwSPTjZkg=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.831ad65feea8022cb1d8a0f2cca04191235467d1c1ddd05b3115820522e2258d.css" integrity="sha256-gxrWX&#43;6oAiyx2KDyzKBBkSNUZ9HB3dBbMRWCBSLiJY0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -253,7 +253,7 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
 <p>We can create a graphical visualization of bias and variance using a bulls-eye diagram. Imagine that the center of the target is a model that perfectly predicts the correct values. As we move away from the bulls-eye, our predictions get worse and worse. Imagine we can repeat our entire model building process to get a number of separate hits on the target. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well and we are close to the bulls-eye, while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. These different realizations result in a scatter of hits on the target.</p>
 <p>We can plot four different cases representing combinations of both high and low bias and variance.</p>
 <figure id="fig-bulls-eye" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/bias-variance/bias_variance_bulls_eye.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_bulls_eye.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Bias and variance visualized using a bulls-eye diagram: Each dot is a model trained on a random dataset. High bias: far from target center. High variance: scattered dots. Low bias and variance: tight cluster near center.
     </figcaption></figure>
@@ -364,7 +364,7 @@ document.addEventListener('keydown', e => {
 
 </script>
 <figure id="fig-complexity" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/bias-variance/bias_variance_model_complexity.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_model_complexity.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       How bias and variance change with model complexity. Low-complexity (left): high bias, low variance. High-complexity (right): low bias, high variance — a classic overfitting/underfitting curve.
     </figcaption></figure>
@@ -509,14 +509,14 @@ $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$<p>I can  si
 $$
 f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
 $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/bias-variance/true_function.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/true_function.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       True underlying cubic function used for bias-variance experiments. Models attempt to recover this from noisy training data.
     </figcaption></figure>
 
 
 <figure id="fig-poly-degrees" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/bias-variance/polynomial_degrees.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/polynomial_degrees.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Polynomial regression fits for varying degrees. Underfitting for low degree; overfitting and oscillations for very high degree.
     </figcaption></figure>
@@ -645,7 +645,7 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
 <li><strong>Variance increases modestly</strong> for low degrees, but explodes as the condition number becomes large ($\gtrsim 10^9$).</li>
 </ul>
 <figure id="fig-bias-variance-unregularized" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/bias-variance/bias_variance_stacked.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_stacked.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       Stacked bar chart of bias, variance, and irreducible error for polynomial regression with no regularization (α=0).
     </figcaption></figure>
@@ -770,7 +770,7 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
 <li><strong>Bias increases only minimally</strong>, a small price for much lower variance at high degrees.</li>
 </ul>
 <figure id="fig-bias-variance-regularized" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/bias-variance/bias_variance_stacked_regularized.png" alt="" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_stacked_regularized.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       Stacked bar chart of bias, variance, and irreducible error for polynomial regression with adaptive regularization (α = 0.1 × degree).
     </figcaption></figure>
@@ -874,8 +874,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
     if (!headers.length) return;
 
-    var headerOffsets = [];
     var lastActiveId = '';
+    var activeHeaderOffset = 80;
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
@@ -883,31 +883,19 @@ document.addEventListener('DOMContentLoaded', function() {
         nestedUls[i].style.display = 'none';
     }
 
-    function recomputeHeaderOffsets() {
-        headerOffsets = [];
+    function findActiveHeaderId() {
+        var currentId = '';
+
         for (var i = 0; i < headers.length; i++) {
-            var top = headers[i].getBoundingClientRect().top + window.pageYOffset - 80;
-            headerOffsets.push(top);
-        }
-    }
-
-    function findActiveHeaderId(scrollTop) {
-        var lo = 0;
-        var hi = headerOffsets.length - 1;
-        var idx = -1;
-
-        while (lo <= hi) {
-            var mid = (lo + hi) >> 1;
-            if (headerOffsets[mid] <= scrollTop) {
-                idx = mid;
-                lo = mid + 1;
+            var top = headers[i].getBoundingClientRect().top;
+            if (top <= activeHeaderOffset) {
+                currentId = headers[i].getAttribute('id') || '';
             } else {
-                hi = mid - 1;
+                break;
             }
         }
 
-        if (idx < 0) return '';
-        return headers[idx].getAttribute('id') || '';
+        return currentId;
     }
 
     function applyActiveState(currentId) {
@@ -944,8 +932,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    recomputeHeaderOffsets();
-
     
     var ticking = false;
 
@@ -954,21 +940,25 @@ document.addEventListener('DOMContentLoaded', function() {
         ticking = true;
 
         requestAnimationFrame(function() {
-            var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            var currentId = findActiveHeaderId(scrollTop);
+            var currentId = findActiveHeaderId();
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    window.addEventListener('resize', function() {
-        recomputeHeaderOffsets();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        recomputeHeaderOffsets();
-        onScroll();
-    });
+    if (typeof ResizeObserver !== 'undefined') {
+        var layoutObserver = new ResizeObserver(function() {
+            onScroll();
+        });
+        layoutObserver.observe(content);
+
+        window.addEventListener('beforeunload', function() {
+            layoutObserver.disconnect();
+        });
+    }
+
+    window.addEventListener('resize', onScroll, { passive: true });
+    window.addEventListener('load', onScroll);
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); 
 });

@@ -1,6 +1,7 @@
 {{- $data := .Inner | transform.Unmarshal -}}
 {{- $animate := .Get "animate" | default "true" -}}
 {{- $width := .Get "width" | default "100%" -}}
+{{- $noinvert := .Get "noinvert" -}}
 {{- $id := printf "step-slider-%d" .Ordinal -}}
 
 <script>
@@ -57,7 +58,8 @@
     <div class="step-wrapper" id="wrapper-{{ $id }}" style="--current-index: 0;">
       {{ range $index, $item := $data }}
       <div class="step-slide">
-        <img src="{{ $item.image | safeURL }}" alt="{{ $item.title }}">
+        {{- $imageLower := lower ($item.image | default "") -}}
+        <img class="step-slide-image{{ if or $noinvert (hasSuffix $imageLower ".png") (hasSuffix $imageLower ".jpg") (hasSuffix $imageLower ".jpeg") (hasSuffix $imageLower ".gif") }} no-invert{{ end }}" src="{{ $item.image | safeURL }}" alt="{{ $item.title }}" loading="lazy" decoding="async">
       </div>
       {{ end }}
     </div>

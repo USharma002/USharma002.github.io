@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blinn-Phong Reflection Math</title>
+<style>
+    :root {
+        /* Application Theme */
+        --mafs-bg: transparent;
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-axis: rgba(0,0,0,0.8);
+        --mafs-text: #333;
+        
+        /* Vector Colors */
+        --vecorange: #E65100;
+        --vecblue: #1565C0;
+        --vecpurple: #6A1B9A;
+        --vecdark: #212121; /* Normal vector, adapts in dark mode */
+    }
+
+    .theme-light {
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-text: #333;
+        --vecdark: #212121;
+        --vecpurple: #6A1B9A;
+    }
+
+    .theme-dark {
+        --mafs-fg: #ffffff;
+        --mafs-grid: rgba(255,255,255,0.2);
+        --mafs-text: #eee;
+        --vecdark: #ffffff;
+        --vecpurple: #BA68C8; /* Lighter purple for dark mode visibility */
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--mafs-bg);
+        font-family: system-ui, sans-serif;
+        color: var(--mafs-text);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    /* Top Controls Structure */
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px;
+        background: var(--mafs-bg);
+        border-bottom: 1px solid var(--mafs-grid);
+        z-index: 10;
+    }
+
+    button {
+        background: var(--mafs-bg);
+        color: var(--mafs-fg);
+        border: 1px solid var(--mafs-grid);
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    button:hover { background: var(--mafs-grid); }
+    button.active {
+        background: var(--vecpurple);
+        color: #ffffff;
+        border-color: var(--vecpurple);
+    }
+
+    /* Main Container & Layout */
+    .container {
+        width: 100%;
+        flex: 1;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Bottom Label Status */
+    .label {
+        position: absolute;
+        bottom: 25px;
+        left: 20px;
+        right: 20px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--mafs-fg);
+        pointer-events: none;
+        background: var(--mafs-bg);
+    }
+
+    /* SVG Styling */
+    svg {
+        width: 100%;
+        height: 100%;
+        max-width: 900px;
+        display: block;
+    }
+
+    .math {
+        font-family: 'Times New Roman', Times, serif;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 26px;
+        paint-order: stroke;
+        stroke: var(--mafs-bg);
+        stroke-width: 5px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .math-small { font-size: 20px; }
+    .vector { stroke-width: 4px; }
+    .dashed-ctx { stroke-dasharray: 8 6; stroke-width: 2px; }
+    .angle-arc { fill: none; stroke: var(--mafs-text); stroke-width: 2.5px; opacity: 0.6; }
+
+    /* Animation Classes */
+    .el-step-1, .el-step-2, .el-step-3 {
+        opacity: 0;
+        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Visibility Logic driven by container data attribute */
+    [data-step="1"] .el-step-1,
+    [data-step="2"] .el-step-1,[data-step="3"] .el-step-1 { opacity: 1; }[data-step="2"] .el-step-2,
+    [data-step="3"] .el-step-2 { opacity: 1; }
+
+    [data-step="3"] .el-step-3 { opacity: 1; }
+
+    [data-step="3"] .vec-n,[data-step="3"] .vec-h { stroke-width: 6px; }
+    .vec-n, .vec-h { transition: stroke-width 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+    <button onclick="setStep(0)" id="btn-0" class="active">0. Initial State</button>
+    <button onclick="setStep(1)" id="btn-1">1. View & Light Angle</button>
+    <button onclick="setStep(2)" id="btn-2">2. Halfway Vector</button>
+    <button onclick="setStep(3)" id="btn-3">3. Blinn Dot Product</button>
+</div>
+
+<div class="container" id="vis-container" data-step="0">
+    <svg viewBox="-50 50 900 550" preserveAspectRatio="xMidYMid meet">
+        
+        <defs>
+            <!-- Arrowheads -->
+            <marker id="arrow-n" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecdark)" />
+            </marker>
+            <marker id="arrow-l" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecorange)" />
+            </marker>
+            <marker id="arrow-v" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecblue)" />
+            </marker>
+            <marker id="arrow-h" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
+                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecpurple)" />
+            </marker>
+        </defs>
+
+        <!-- Ground Base -->
+        <rect x="75" y="450" width="650" height="70" fill="var(--mafs-grid)" opacity="0.6"/>
+        <line x1="75" y1="450" x2="725" y2="450" stroke="var(--mafs-grid)" stroke-width="3" />
+
+        <!-- Unit Hemisphere -->
+        <path d="M 150 450 A 250 250 0 0 1 650 450" fill="none" stroke="var(--mafs-text)" opacity="0.4" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+        <!-- Contextual Dashed Lines -->
+        <line x1="239.3" y1="258.5" x2="168.6" y2="174.2" stroke="var(--vecorange)" opacity="0.5" class="dashed-ctx" />
+        <line x1="634.9" y1="364.5" x2="738.3" y2="326.9" stroke="var(--vecblue)" opacity="0.5" class="dashed-ctx" />
+
+        <!-- Sun (Light Source Context) -->
+        <g transform="translate(168.6, 174.2)">
+            <circle cx="0" cy="0" r="20" fill="var(--vecorange)" opacity="0.2" />
+            <circle cx="0" cy="0" r="20" fill="none" stroke="var(--vecorange)" stroke-width="3" />
+            <path d="M 27.5 0 L 42.5 0 M -27.5 0 L -42.5 0 M 0 27.5 L 0 42.5 M 0 -27.5 L 0 -42.5 M 19.4 19.4 L 30 30 M -19.4 -19.4 L -30 -30 M 19.4 -19.4 L 30 -30 M -19.4 19.4 L -30 30" stroke="var(--vecorange)" stroke-width="3" stroke-linecap="round"/>
+        </g>
+
+        <!-- Eye (Viewer Context) -->
+        <g transform="translate(738.3, 326.9) rotate(-20) scale(0.9)">
+            <ellipse cx="0" cy="0" rx="35" ry="20" fill="var(--mafs-bg)" stroke="var(--mafs-grid)" stroke-width="2"/>
+            <path d="M -35 0 C -15 -25, 15 -25, 35 0 C 15 25, -15 25, -35 0 Z" fill="none" stroke="var(--vecblue)" stroke-width="3" />
+            <circle cx="0" cy="0" r="12.5" fill="var(--vecblue)" />
+            <circle cx="4" cy="-4" r="2.5" fill="var(--mafs-bg)" />
+        </g>
+
+        <!-- Origin point x -->
+        <circle cx="400" cy="450" r="5" fill="var(--mafs-fg)" />
+        <text x="393" y="480" class="math" fill="var(--mafs-fg)">x</text>
+
+        <!-- STEP 1: Angle Arc from V to L -->
+        <g class="el-step-1">
+            <!-- Radius 1.8 units * 50 = 90px -->
+            <path d="M 484.57 419.22 A 90 90 0 0 0 342.15 381.06" class="angle-arc"/>
+        </g>
+
+        <!-- STEP 2: Halfway tick marks and vector -->
+        <g class="el-step-2">
+            <!-- MidRight Tick (47.5 deg) -->
+            <line x1="455.74" y1="389.17" x2="465.87" y2="378.11" stroke="var(--mafs-text)" stroke-width="2.5" opacity="0.6"/>
+            <!-- MidLeft Tick (102.5 deg) -->
+            <line x1="382.14" y1="369.45" x2="378.89" y2="354.81" stroke="var(--mafs-text)" stroke-width="2.5" opacity="0.6"/>
+        </g>
+
+        <!-- STEP 3: Dot Product Highlight / Phi Angle -->
+        <g class="el-step-3">
+            <!-- Radius 2.8 units * 50 = 140px -->
+            <path d="M 436.23 314.77 A 140 140 0 0 0 400 310.00" class="angle-arc" stroke="var(--mafs-text)" opacity="1"/>
+            <text x="421.5" y="286.4" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--mafs-text)">φ</text>
+        </g>
+
+        <!-- Base Vectors -->
+        <!-- Normal Vector (n) -->
+        <line x1="400" y1="450" x2="400" y2="200" class="vector vec-n" stroke="var(--vecdark)" marker-end="url(#arrow-n)" />
+        <text x="393" y="180" class="math" fill="var(--vecdark)">n</text>
+
+        <!-- Light Vector (l) -->
+        <line x1="400" y1="450" x2="239.3" y2="258.5" class="vector" stroke="var(--vecorange)" marker-end="url(#arrow-l)" />
+        <text x="215" y="275" class="math" fill="var(--vecorange)">l</text>
+        
+        <!-- View Vector (v) -->
+        <line x1="400" y1="450" x2="634.9" y2="364.5" class="vector" stroke="var(--vecblue)" marker-end="url(#arrow-v)" />
+        <text x="645" y="385" class="math" fill="var(--vecblue)">v</text>
+
+        <!-- Halfway Vector (h) -> Shown in Step 2 -->
+        <g class="el-step-2">
+            <line x1="400" y1="450" x2="464.7" y2="208.5" class="vector vec-h" stroke="var(--vecpurple)" marker-end="url(#arrow-h)" />
+            <text x="475" y="200" class="math" fill="var(--vecpurple)">h</text>
+        </g>
+    </svg>
+    
+    <div class="label" id="status-label"></div>
+</div>
+
+<script>
+    // Theme syncing capabilities
+    function syncTheme() {
+        try {
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || 
+                           window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {}
+    }
+    syncTheme();
+    setInterval(syncTheme, 1000);
+
+    const labels =[
+        "The standard vectors: Normal (<b>n</b>), Light direction (<b>l</b>), and View direction (<b>v</b>).",
+        "First, we consider the total angle stretching between the light source <b>l</b> and the viewer <b>v</b>.",
+        "The halfway vector <b>h</b> is the normalized sum of <b>l</b> and <b>v</b>. It perfectly bisects the angle between them.",
+        "The Blinn-Phong model measures how close <b>h</b> is to the normal <b>n</b>. The dot product <b>n·h = cos(φ)</b> determines the specular highlight."
+    ];
+
+    function setStep(state) {
+        // Update Buttons
+        document.querySelectorAll('button').forEach((b, i) => {
+            b.className = i === state ? 'active' : '';
+        });
+        
+        // Update Visuals
+        document.getElementById('vis-container').setAttribute('data-step', state);
+        
+        // Update Text
+        document.getElementById('status-label').innerHTML = labels[state];
+    }
+
+    // Initialize first state
+    setStep(0);
+</script>
+
+</body>
+</html>

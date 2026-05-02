@@ -1,0 +1,92 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usetikzlibrary{calc, arrows.meta}
+
+% Define colors to match a modern aesthetic while distinguishing vectors
+\definecolor{vecorange}{HTML}{E65100} % Light
+\definecolor{vecblue}{HTML}{1565C0}   % View
+\definecolor{vecdark}{HTML}{212121}   % Normal
+\definecolor{vecpurple}{HTML}{6A1B9A} % Halfway
+\definecolor{surfbg}{HTML}{9E9E9E}
+
+\begin{document}
+\begin{tikzpicture}[
+    vec/.style={line width=2.5pt},
+    >={Latex[length=6mm, width=4.5mm]}
+]
+
+% 1. Geometric parameters (Tailored for Blinn-Phong spacing)
+\pgfmathsetmacro{\Langle}{130} % Light angle
+\pgfmathsetmacro{\Vangle}{20}  % View angle
+\pgfmathsetmacro{\Hangle}{(\Langle+\Vangle)/2} % 75 (Exactly halfway)
+\pgfmathsetmacro{\Nangle}{90}  % Normal angle
+
+\pgfmathsetmacro{\vecLen}{5.0}
+\pgfmathsetmacro{\SunDist}{7.2}
+\pgfmathsetmacro{\EyeDist}{7.2}
+
+\pgfmathsetmacro{\ArcRad}{1.8} % Radius for the L to V arc
+\pgfmathsetmacro{\PhiRad}{2.8} % Radius for the N to H angle
+
+\coordinate (O) at (0,0);
+\coordinate (Ltip) at (\Langle:\vecLen);
+\coordinate (Vtip) at (\Vangle:\vecLen);
+\coordinate (Htip) at (\Hangle:\vecLen);
+\coordinate (Ntip) at (\Nangle:\vecLen);
+
+% 2. Surface Ground
+\fill[surfbg!20] (-6.5, -1) rectangle (6.5, 0);
+\draw[line width=2pt, surfbg!80!black] (-6.5, 0) -- (6.5, 0);
+
+% 3. Origin Point (x)
+\fill (O) circle (3pt);
+\node[below=4pt, font=\LARGE] at (O) {$\mathbf{x}$};
+
+% 4. Unit Hemisphere (To justify dot product scalar lengths)
+\draw[dashed, gray!60, line width=1pt] (\vecLen, 0) arc (0:180:\vecLen);
+
+% 5. Angles and Bisecting Arcs
+% Full arc from V to L
+\draw[gray, thick] (\Vangle:\ArcRad) arc (\Vangle:\Langle:\ArcRad);
+
+% Tick marks on the bisector arc to show H cuts it exactly in half
+\pgfmathsetmacro{\midRight}{(\Vangle+\Hangle)/2}
+\pgfmathsetmacro{\midLeft}{(\Hangle+\Langle)/2}
+\draw[gray, thick] (\midRight:\ArcRad-0.15) -- (\midRight:\ArcRad+0.15);
+\draw[gray, thick] (\midLeft:\ArcRad-0.15) -- (\midLeft:\ArcRad+0.15);
+
+% Phi arc between N and H
+\draw[gray, thick] (\Hangle:\PhiRad) arc (\Hangle:\Nangle:\PhiRad);
+\node[font=\LARGE] at ({(\Nangle+\Hangle)/2}:\PhiRad+0.4) {$\phi$};
+
+% 6. Main Shading Vectors
+\draw[->, vec, vecdark] (O) -- (Ntip) node[above=4pt, font=\huge] {$\mathbf{n}$};
+\draw[->, vec, vecorange] (O) -- (Ltip) node[below left=2pt, font=\huge] {$\mathbf{l}$};
+\draw[->, vec, vecblue] (O) -- (Vtip) node[below right=2pt, font=\huge] {$\mathbf{v}$};
+\draw[->, vec, vecpurple] (O) -- (Htip) node[above right=2pt, font=\huge] {$\mathbf{h}$};
+
+% 7. Light Source (Sun) Context
+\coordinate (SunPos) at (\Langle:\SunDist);
+\draw[line width=1.5pt, vecorange, dashed, opacity=0.5] (Ltip) -- (SunPos);
+\begin{scope}[shift={(SunPos)}]
+    \fill[vecorange!20] (0,0) circle (0.4);
+    \draw[vecorange, line width=2pt] (0,0) circle (0.4);
+    \foreach \a in {0, 45, ..., 315} {
+        \draw[vecorange, line width=2pt, line cap=round] (\a:0.55) -- (\a:0.85);
+    }
+\end{scope}
+
+% 8. Viewer (Eye) Context
+\coordinate (EyePos) at (\Vangle:\EyeDist);
+\draw[line width=1.5pt, vecblue, dashed, opacity=0.5] (Vtip) -- (EyePos);
+\begin{scope}[shift={(EyePos)}, rotate=\Vangle, scale=0.9]
+    \fill[white] (0,0) ellipse (0.7 and 0.4);
+    \draw[line width=2pt, vecblue] (-0.7,0) .. controls (-0.3,0.5) and (0.3,0.5) .. (0.7,0)
+                            .. controls (0.3,-0.5) and (-0.3,-0.5) .. (-0.7,0);
+    \fill[vecblue] (0,0) circle (0.25);
+    \fill[white] (0.08,0.08) circle (0.05); % eye glint
+\end{scope}
+
+\end{tikzpicture}
+\end{document}

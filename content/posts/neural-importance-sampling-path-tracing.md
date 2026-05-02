@@ -26,6 +26,8 @@ I found a decent explaination in Unity forums <a href="https://discussions.unity
 - Light Travels in Straight Lines (in a uniform medium
 - **Lambert's Cosine Law** (Incident angle $\theta$ dictates surface illumination)
 <iframe src="/interactive/cosine_forshortening.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="430"
         frameborder="0"
@@ -38,6 +40,8 @@ Size of light source affects shadow softness
 $$Intensity \propto \frac{1}{r^2}$$
 
 <iframe src="/interactive/inverse_square_law.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="430"
         frameborder="0"
@@ -169,7 +173,7 @@ $$
 
 After expanding the rendering integra, we can easily visualize the components of the integral and how they contribute to the final image
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 
 - image: "/images/path_tracing/rendering_components/full.png"
   title: "Incoming Radiance (Full Rendering Equation)"
@@ -353,7 +357,7 @@ $$
 
 The following visualizes the individual components (similar to the one given in the rendering equation) but with appropriate operator formulation for clarity.
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 
 - image: "/images/path_tracing/rendering_components/operator/E.jpg"
   title: |
@@ -398,7 +402,7 @@ The following visualizes the individual components (similar to the one given in 
 
 
 The following visualizes the accumulation of individual components:
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 
 - image: "/images/path_tracing/rendering_components/operator/E.jpg"
   title: |
@@ -493,6 +497,8 @@ width="80%"
 We can see the interaction of light with Specular (S), Diffuse (D) objects. We can write all of the types of interaction of lights as regular expression $L(D | S)^*E$
 
 <iframe src="/interactive/light_paths.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="500"
         frameborder="0"
@@ -667,6 +673,8 @@ $$
 where $X$ is a random variable drawn from distribution $p(x)$.
 
 <iframe src="/interactive/monte_carlo.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="420"
         frameborder="0"
@@ -908,6 +916,8 @@ width="100%"
 >}}
 
 <iframe src="/interactive/importance_sampling.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="670"
         frameborder="0"
@@ -1083,7 +1093,7 @@ width="100%"
 
 ### Path Tracing Steps Overview
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 - image: "/images/path_tracing/path-tracing/init_cam.png"
   title: "Initialize Camera"
   description: "Initialize the Scene objects, lights and camera"
@@ -1266,7 +1276,7 @@ The loop version materializes the infinite recursion by:
 
 #### Visualization of both recursive and iterative formulation
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 - image: "/images/path_tracing/tracing/Slide17.PNG"
   title: "Recursive Ray Tracing Formulation"
   description: ""
@@ -1312,7 +1322,7 @@ The loop version materializes the infinite recursion by:
   description: ""
 {{< /step-slider >}}
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 - image: "/images/path_tracing/tracing/Slide28.PNG"
   title: "Interative Ray Tracing Formulation"
   description: ""
@@ -1469,7 +1479,7 @@ mi.register_integrator("integrator", lambda props: Simple(props))
 ### How to sample Next Ray Direction?
 Now the above illustration was using the normalized (or approximation of normalized) BRDF Function as sampling.  But there can be different ways/PDFs in which we can sample the next ray depending on the scene. A rough example is given below:
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 - image: "/images/path_tracing/sampling/scene_setup.png"
   title: "Scene Setup"
   description: |
@@ -1758,6 +1768,8 @@ $$
 
 
 <iframe src="/interactive/mis.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="660"
         frameborder="0"
@@ -1809,7 +1821,7 @@ With these Monte Carlo foundations in place, let's examine how path tracing impl
 We now have looked at different methods of combining different samples. We can now look at the [path integral formulation](#path-integral-formulation-of-light-transport) and look at individual path sinstead of the next direction. We can observe that we can construct paths using multiple techniques and also combine all of them as visualized below. I've used the images from the [CMU 15-468: Physically Based Rendering and Advanced Image Synthesis](https://graphics.cs.cmu.edu/courses/15-468/2024_spring) course webpage and can be referred for more details.
 
 
-{{< step-slider animate="false" >}}
+{{< step-slider animate="false" noinvert=true >}}
 - image: "/images/path_tracing/paths/pt.png"
   title: "Path Construction: Path Tracing without NEE"
   description: |
@@ -2434,12 +2446,12 @@ caption="vMF Mixture with $K=3$ components"
 width="60%" >}}
 
 <iframe src="/interactive/vmf.html"
+  loading="lazy"
+  fetchpriority="low"
         width="100%"
         height="445"
-        frameborder="0"
-        style="border-radius:8px;">
+        frameborder="0">
 </iframe>
-
 
 ---
 

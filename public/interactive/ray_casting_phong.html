@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Ray Tracing (Large Scale)</title>
+<style>
+    :root {
+        --mafs-bg: transparent;
+        --mafs-fg: #000000;
+        --mafs-grid: rgba(0,0,0,0.15);
+        --mafs-text: #333;
+        
+        --ray-color: #f39c12;
+        --intersect-color: #f1c40f;
+        --glass-fill: rgba(0, 180, 255, 0.12);
+        --glass-stroke: rgba(0, 100, 200, 0.8);
+    }
+
+    .theme-dark {
+        --mafs-fg: #ffffff;
+        --mafs-grid: rgba(255,255,255,0.2);
+        --mafs-text: #eee;
+        --glass-fill: rgba(0, 180, 255, 0.20);
+        --glass-stroke: rgba(100, 200, 255, 0.9);
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: var(--mafs-bg);
+        font-family: system-ui, sans-serif;
+        color: var(--mafs-text);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 20px;
+        background: var(--mafs-bg);
+        border-bottom: 1px solid var(--mafs-grid);
+        z-index: 10;
+    }
+
+    button {
+        background: var(--mafs-bg);
+        color: var(--mafs-fg);
+        border: 2px solid var(--mafs-grid);
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 16px;
+        transition: all 0.2s;
+    }
+
+    button:hover { background: var(--mafs-grid); }
+    button.active {
+        background: #2980b9;
+        color: #ffffff;
+        border-color: #2980b9;
+        box-shadow: 0 4px 15px rgba(41, 128, 185, 0.4);
+    }
+
+    .container {
+        width: 100%;
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    svg {
+        width: 100%;
+        height: 75vh;
+        max-width: 1600px; /* Increased max-width */
+        display: block;
+    }
+
+    /* Animation and Step Control Classes */
+    .step-el { transition: opacity 0.6s ease; }
+    
+    .pixel-poly {
+        transition: fill 0.6s ease, fill-opacity 0.6s ease;
+        fill: transparent;
+        stroke: var(--glass-stroke);
+        stroke-width: 0.8px;
+    }
+
+    /* Step Opacities */
+    [data-step="0"] .g-objects { opacity: 0; }[data-step="0"] .g-rays { opacity: 0; }[data-step="0"] .g-intersections { opacity: 0; }
+    
+    [data-step="1"] .g-objects { opacity: 1; }[data-step="1"] .g-rays { opacity: 0; }
+    [data-step="1"] .g-intersections { opacity: 0; }
+
+    [data-step="2"] .g-objects { opacity: 1; }[data-step="2"] .g-rays { opacity: 1; }[data-step="2"] .g-intersections { opacity: 1; }
+
+    [data-step="3"] .g-objects { opacity: 1; }[data-step="3"] .g-rays { opacity: 0.15; }
+    [data-step="3"] .g-intersections { opacity: 0; }
+    
+    /* Text Overlay */
+    .description {
+        height: 70px;
+        font-size: 18px;
+        line-height: 1.6;
+        text-align: center;
+        padding: 0 30px;
+        margin-top: 15px;
+    }
+</style>
+</head>
+<body>
+
+<div class="controls">
+    <button onclick="setStep(0)" id="btn-0" class="active">0. The Setup</button>
+    <button onclick="setStep(1)" id="btn-1">1. 3D Scene & Light</button>
+    <button onclick="setStep(2)" id="btn-2">2. Primary Ray Casting</button>
+    <button onclick="setStep(3)" id="btn-3">3. Final Rendered Image</button>
+</div>
+
+<div class="container" id="vis-container" data-step="0">
+    <svg id="canvas" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid meet">
+        <defs>
+            <marker id="arrow-ray" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+                <path d="M 0 0 L 5 2.5 L 0 5 z" fill="var(--ray-color)" />
+            </marker>
+            <marker id="arrow-axis-r" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#e74c3c" /></marker>
+            <marker id="arrow-axis-g" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#2ecc71" /></marker>
+            <marker id="arrow-axis-b" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 z" fill="#3498db" /></marker>
+            
+            <radialGradient id="lightGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#f1c40f" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#f39c12" stop-opacity="0.0"/>
+            </radialGradient>
+        </defs>
+    </svg>
+    <div class="description" id="step-desc"></div>
+</div>
+
+<script>
+    function syncTheme() {
+        try {
+            const parent = window.parent.document.body;
+            const isDark = parent.classList.contains('dark') || window.parent.document.documentElement.classList.contains('dark');
+            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
+        } catch (e) {}
+    }
+    syncTheme();
+    setInterval(syncTheme, 1000);
+
+    const descriptions =[
+        "<b>The Setup:</b> A Camera is located at the origin (0,0,0). The semi-transparent grid represents the <b>Image Plane</b> placed exactly at the focal length.",
+        "<b>3D Scene & Light:</b> A Point Light illuminates the scene from the <b>Top Right</b>. The sphere and cube objects are defined mathematically in the 3D space.",
+        "<b>Ray Casting:</b> For every pixel on the image plane, a mathematical vector (Primary Ray) is cast. The <b style='color:#d35400'>yellow dots</b> represent the exact geometric intersection calculations.",
+        "<b>Phong Shading:</b> The normal vector at each intersection point is used to calculate Lambertian diffusion and Specular highlights, determining the final pixel color."
+    ];
+
+    // SVG Utility
+    const svg = document.getElementById('canvas');
+    function createEl(tag, attrs) {
+        let el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for(let k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+    }
+
+    // --- 3D MATH & PROJECTION (DOUBLED SCALE) ---
+    const SCALE = 70; 
+    const OFFSET_X = 550; 
+    const OFFSET_Y = 800;
+
+    function project(x, y, z) {
+        // Isometric-style shear matching the original TikZ projection matrix
+        const px = 0.9 * x - 0.6 * z;
+        const py = -0.15 * x + 1.0 * y - 0.5 * z;
+        return { x: OFFSET_X + px * SCALE, y: OFFSET_Y - py * SCALE };
+    }
+
+    function dot(a, b) { return a.x*b.x + a.y*b.y + a.z*b.z; }
+    function add(a, b) { return {x: a.x+b.x, y: a.y+b.y, z: a.z+b.z}; }
+    function sub(a, b) { return {x: a.x-b.x, y: a.y-b.y, z: a.z-b.z}; }
+    function scale(v, s) { return {x: v.x*s, y: v.y*s, z: v.z*s}; }
+    function normalize(v) {
+        let len = Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+        return {x: v.x/len, y: v.y/len, z: v.z/len};
+    }
+
+    // --- SCENE DEFINITION ---
+    const RES = 32;            // Higher resolution (32x32 = 1024 pixels)
+    const SIZE = 6;            
+    const Z_PLANE = -5;        
+    
+    // Light Source (Moved Top Right)
+    const lightPos = {x: 8.5, y: 8.5, z: -5.0};
+
+    // Objects with Material Properties for Phong
+    const sphere = { 
+        c: {x: 2.2, y: 1.2, z: -11}, 
+        r: 2.4, 
+        col:[46, 204, 113],
+        mat: { shininess: 64, specularity: 0.9 } 
+    };
+    
+    const cube = { 
+        min: {x: -3.5, y: -2.5, z: -15}, 
+        max: {x: 0.5, y: 1.5, z: -11.5}, 
+        col:[231, 76, 60],
+        mat: { shininess: 16, specularity: 0.3 } 
+    };
+
+    // --- RAY TRACING & PHONG LOGIC ---
+    function iSphere(ro, rd) {
+        let oc = sub(ro, sphere.c);
+        let b = dot(oc, rd);
+        let c = dot(oc, oc) - sphere.r*sphere.r;
+        let d = b*b - c;
+        if(d > 0) {
+            let t = -b - Math.sqrt(d);
+            if(t > 0) {
+                let p = add(ro, scale(rd, t));
+                let n = normalize(sub(p, sphere.c));
+                return {t: t, n: n, col: sphere.col, mat: sphere.mat};
+            }
+        }
+        return null;
+    }
+
+    function iBox(ro, rd) {
+        let tmin = -Infinity, tmax = Infinity;
+        let axes =['x','y','z'];
+        let normals =[{x:1,y:0,z:0}, {x:0,y:1,z:0}, {x:0,y:0,z:1}];
+        let hitNormal = null;
+
+        for(let i=0; i<3; i++) {
+            let axis = axes[i];
+            let invD = 1.0 / rd[axis];
+            let t0 = (cube.min[axis] - ro[axis]) * invD;
+            let t1 = (cube.max[axis] - ro[axis]) * invD;
+            let n0 = {x: -normals[i].x, y: -normals[i].y, z: -normals[i].z};
+            let n1 = normals[i];
+
+            if(invD < 0) { let tmp=t0; t0=t1; t1=tmp; let tn=n0; n0=n1; n1=tn; }
+            if(t0 > tmin) { tmin = t0; hitNormal = n0; }
+            if(t1 < tmax) { tmax = t1; }
+            if(tmax <= tmin) return null;
+        }
+        if(tmin > 0) return {t: tmin, n: hitNormal, col: cube.col, mat: cube.mat};
+        return null;
+    }
+
+    function calculatePhong(p, N, col, mat) {
+        let ro = {x:0,y:0,z:0}; 
+        let L = normalize(sub(lightPos, p)); 
+        let V = normalize(sub(ro, p));       
+
+        let ambient = 0.18;
+        let diff = Math.max(0, dot(N, L));
+        let spec = 0;
+
+        if (diff > 0) {
+            let R = sub(scale(N, 2 * dot(N, L)), L);
+            let rDotV = Math.max(0, dot(R, V));
+            spec = Math.pow(rDotV, mat.shininess);
+        }
+
+        let cR = Math.min(255, col[0] * (ambient + 0.8 * diff) + 255 * mat.specularity * spec);
+        let cG = Math.min(255, col[1] * (ambient + 0.8 * diff) + 255 * mat.specularity * spec);
+        let cB = Math.min(255, col[2] * (ambient + 0.8 * diff) + 255 * mat.specularity * spec);
+
+        return `rgb(${Math.round(cR)}, ${Math.round(cG)}, ${Math.round(cB)})`;
+    }
+
+    function trace(ro, rd) {
+        let hs = iSphere(ro, rd);
+        let hb = iBox(ro, rd);
+        let hit = (hs && hb) ? (hs.t < hb.t ? hs : hb) : (hs || hb);
+
+        if(hit) {
+            let p = add(ro, scale(rd, hit.t));
+            let color = calculatePhong(p, hit.n, hit.col, hit.mat);
+            return { color: color, t: hit.t };
+        }
+        return { color: 'rgba(25, 40, 55, 0.9)', t: -1 }; // Background
+    }
+
+    // --- SVG CONSTRUCTION ---
+    const gObj = createEl('g', {class: 'step-el g-objects'});
+    const gRaysBack = createEl('g', {class: 'step-el g-rays'});
+    const gIntersections = createEl('g', {class: 'step-el g-intersections'});
+    const gPlane = createEl('g', {class: 'step-el'});
+    const gRaysFront = createEl('g', {class: 'step-el g-rays'});
+    const gAxes = createEl('g', {class: 'step-el'});
+    
+    svg.append(gObj, gRaysBack, gIntersections, gPlane, gRaysFront, gAxes);
+
+    let pixelData =[];
+
+    function buildScene() {
+        const ro = {x:0, y:0, z:0}; 
+        
+        // 1. Draw Cube Backing
+        const v =[
+            {x:cube.min.x, y:cube.min.y, z:cube.min.z}, {x:cube.max.x, y:cube.min.y, z:cube.min.z},
+            {x:cube.max.x, y:cube.max.y, z:cube.min.z}, {x:cube.min.x, y:cube.max.y, z:cube.min.z},
+            {x:cube.min.x, y:cube.min.y, z:cube.max.z}, {x:cube.max.x, y:cube.min.y, z:cube.max.z},
+            {x:cube.max.x, y:cube.max.y, z:cube.max.z}, {x:cube.min.x, y:cube.max.y, z:cube.max.z}
+        ];
+        const faces = [
+            {p:[0,1,2,3], n:{x:0,y:0,z:-1}}, {p:[5,4,7,6], n:{x:0,y:0,z:1}},
+            {p:[4,0,3,7], n:{x:-1,y:0,z:0}}, {p:[1,5,6,2], n:{x:1,y:0,z:0}},
+            {p:[3,2,6,7], n:{x:0,y:1,z:0}},  {p:[4,5,1,0], n:{x:0,y:-1,z:0}}
+        ];
+
+        faces.forEach(f => {
+            let fCenter = scale(add(add(v[f.p[0]], v[f.p[1]]), add(v[f.p[2]], v[f.p[3]])), 0.25);
+            let V = normalize(sub(ro, fCenter));
+
+            if(dot(f.n, V) > 0) { 
+                let color = calculatePhong(fCenter, f.n, cube.col, cube.mat);
+                let pts = f.p.map(idx => project(v[idx].x, v[idx].y, v[idx].z));
+                let poly = createEl('polygon', {
+                    points: pts.map(p => `${p.x},${p.y}`).join(' '),
+                    fill: color, stroke: '#c0392b', 'stroke-width': '1.5'
+                });
+                gObj.appendChild(poly);
+            }
+        });
+
+        // 2. Draw Background Sphere
+        let sp = project(sphere.c.x, sphere.c.y, sphere.c.z);
+        let sRad = sphere.r * SCALE * 0.95; 
+        
+        let dummyGrad = createEl('radialGradient', {id: 'dummySphere', cx: "35%", cy: "25%", r: "70%"});
+        dummyGrad.appendChild(createEl('stop', {offset: "0%", 'stop-color': "#a5e6c1"})); 
+        dummyGrad.appendChild(createEl('stop', {offset: "40%", 'stop-color': "#2ecc71"})); 
+        dummyGrad.appendChild(createEl('stop', {offset: "100%", 'stop-color': "#145a32"})); 
+        svg.querySelector('defs').appendChild(dummyGrad);
+        
+        gObj.appendChild(createEl('circle', {
+            cx: sp.x, cy: sp.y, r: sRad, fill: 'url(#dummySphere)'
+        }));
+
+        // 3. Draw Point Light Source
+        let lp = project(lightPos.x, lightPos.y, lightPos.z);
+        gObj.appendChild(createEl('circle', { cx: lp.x, cy: lp.y, r: 80, fill: 'url(#lightGlow)' }));
+        gObj.appendChild(createEl('circle', { cx: lp.x, cy: lp.y, r: 10, fill: '#fff', stroke: '#f39c12', 'stroke-width': 3 }));
+        for(let i=0; i<8; i++) {
+            let angle = i * Math.PI/4;
+            gObj.appendChild(createEl('line', {
+                x1: lp.x + Math.cos(angle)*15, y1: lp.y + Math.sin(angle)*15,
+                x2: lp.x + Math.cos(angle)*30, y2: lp.y + Math.sin(angle)*30,
+                stroke: '#f39c12', 'stroke-width': 4, 'stroke-linecap': 'round'
+            }));
+        }
+
+        // 4. Draw Image Plane Grid
+        let tl = project(-SIZE/2, SIZE/2, Z_PLANE);
+        let tr = project(SIZE/2, SIZE/2, Z_PLANE);
+        let br = project(SIZE/2, -SIZE/2, Z_PLANE);
+        let bl = project(-SIZE/2, -SIZE/2, Z_PLANE);
+        gPlane.appendChild(createEl('polygon', {
+            points: `${tl.x},${tl.y} ${tr.x},${tr.y} ${br.x},${br.y} ${bl.x},${bl.y}`,
+            fill: 'var(--glass-fill)'
+        }));
+
+        // 5. Generate Ray Tracing Grid & Rays
+        const origin2D = project(0,0,0);
+
+        for(let iy=0; iy<RES; iy++) {
+            for(let ix=0; ix<RES; ix++) {
+                let x0 = -SIZE/2 + ix * (SIZE/RES);
+                let y0 = -SIZE/2 + iy * (SIZE/RES);
+                let x1 = x0 + (SIZE/RES);
+                let y1 = y0 + (SIZE/RES);
+                
+                let p0 = project(x0, y0, Z_PLANE);
+                let p1 = project(x1, y0, Z_PLANE);
+                let p2 = project(x1, y1, Z_PLANE);
+                let p3 = project(x0, y1, Z_PLANE);
+
+                let poly = createEl('polygon', {
+                    class: 'pixel-poly',
+                    points: `${p0.x},${p0.y} ${p1.x},${p1.y} ${p2.x},${p2.y} ${p3.x},${p3.y}`
+                });
+                gPlane.appendChild(poly);
+
+                // Mathematical Raycast
+                let px = x0 + (SIZE/RES)/2;
+                let py = y0 + (SIZE/RES)/2;
+                let rd = normalize({x: px, y: py, z: Z_PLANE});
+                
+                let hit = trace(ro, rd);
+                pixelData.push({ el: poly, color: hit.color });
+
+                // Draw representative rays (Subset for clarity, otherwise 1024 lines is messy)
+                if(ix % 2 === 0 && iy % 2 === 0) {
+                    let p2D = project(px, py, Z_PLANE);
+                    
+                    gRaysFront.appendChild(createEl('line', {
+                        x1: origin2D.x, y1: origin2D.y, x2: p2D.x, y2: p2D.y,
+                        stroke: 'var(--ray-color)', 'stroke-width': '1', opacity: '0.6'
+                    }));
+
+                    let dist = hit.t > 0 ? hit.t : 18;
+                    let end3D = add(ro, scale(rd, dist));
+                    let end2D = project(end3D.x, end3D.y, end3D.z);
+                    
+                    gRaysBack.appendChild(createEl('line', {
+                        x1: p2D.x, y1: p2D.y, x2: end2D.x, y2: end2D.y,
+                        stroke: 'var(--ray-color)', 'stroke-width': '1.5', 
+                        opacity: '0.4', 'marker-end': 'url(#arrow-ray)'
+                    }));
+
+                    // Geometry Intersection Points
+                    if (hit.t > 0) {
+                        gIntersections.appendChild(createEl('circle', {
+                            cx: end2D.x, cy: end2D.y, r: 5,
+                            fill: 'var(--intersect-color)', stroke: '#d35400', 'stroke-width': 2
+                        }));
+                    }
+                }
+            }
+        }
+
+        // 6. Draw Axes and Labels
+        let axSize = 2.5;
+        let axX = project(axSize, 0, 0);
+        let axY = project(0, axSize, 0);
+        let axZ = project(0, 0, -axSize);
+        
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: axX.x, y2: axX.y, stroke: '#e74c3c', 'stroke-width': 3.5, 'marker-end': 'url(#arrow-axis-r)'}));
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: axY.x, y2: axY.y, stroke: '#2ecc71', 'stroke-width': 3.5, 'marker-end': 'url(#arrow-axis-g)'}));
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: axZ.x, y2: axZ.y, stroke: '#3498db', 'stroke-width': 3.5, 'marker-end': 'url(#arrow-axis-b)'}));
+        
+        gAxes.appendChild(createEl('circle', {cx: origin2D.x, cy: origin2D.y, r: 6, fill: 'var(--mafs-fg)'}));
+        let camLabel = createEl('text', {x: origin2D.x - 85, y: origin2D.y + 25, fill: 'var(--mafs-fg)', 'font-weight': 'bold', 'font-size': '22px'});
+        camLabel.textContent = "Camera";
+        gAxes.appendChild(camLabel);
+
+        // Focal Length Annotation
+        let flStart = project(0, -4.0, 0);
+        let flEnd = project(0, -4.0, Z_PLANE);
+        gAxes.appendChild(createEl('line', {x1: origin2D.x, y1: origin2D.y, x2: flStart.x, y2: flStart.y, stroke: 'var(--mafs-text)', 'stroke-dasharray': '6 6', 'stroke-width': 2}));
+        gAxes.appendChild(createEl('line', {x1: flStart.x, y1: flStart.y, x2: flEnd.x, y2: flEnd.y, stroke: 'var(--mafs-fg)', 'stroke-width': 2.5}));
+        gAxes.appendChild(createEl('line', {x1: flStart.x, y1: flStart.y-8, x2: flStart.x, y2: flStart.y+8, stroke: 'var(--mafs-fg)', 'stroke-width': 3}));
+        gAxes.appendChild(createEl('line', {x1: flEnd.x, y1: flEnd.y-8, x2: flEnd.x, y2: flEnd.y+8, stroke: 'var(--mafs-fg)', 'stroke-width': 3}));
+        
+        let flText = createEl('text', {x: (flStart.x+flEnd.x)/2 - 70, y: flStart.y + 28, fill: 'var(--mafs-fg)', 'font-size': '20px', 'font-style': 'italic'});
+        flText.textContent = "Focal Length f";
+        gAxes.appendChild(flText);
+    }
+
+    buildScene();
+
+    function setStep(state) {
+        document.querySelectorAll('button').forEach((b, i) => b.className = i === state ? 'active' : '');
+        document.getElementById('vis-container').setAttribute('data-step', state);
+        document.getElementById('step-desc').innerHTML = descriptions[state];
+
+        pixelData.forEach(p => {
+            if (state === 3) {
+                p.el.style.fill = p.color;
+                p.el.style.fillOpacity = "0.95";
+                p.el.style.strokeWidth = "0px";
+            } else {
+                p.el.style.fill = "transparent";
+                p.el.style.fillOpacity = "0";
+                p.el.style.strokeWidth = "0.8px";
+            }
+        });
+    }
+
+    setStep(0);
+</script>
+
+</body>
+</html>

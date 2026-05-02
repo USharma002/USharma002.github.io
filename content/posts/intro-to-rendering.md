@@ -13,9 +13,9 @@ math: true
 ---
 
 
-<span style="color:red;font-weight:700;font-size:1.05em">
+<!-- <span style="color:red;font-weight:700;font-size:1.05em">
 This post is a work in progress and may be updated or expanded soon!
-</span>
+</span> -->
 
 <!-- <div style="background: var(--code-bg, #f6f8fa); border-left: 3px solid #3b82f6; border-radius: 6px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.95rem;">
 <strong>This series</strong><br>
@@ -909,7 +909,7 @@ But there is a second, equally valid question you can ask: starting from a pixel
 
 ## Generating Primary Rays
 
-We will now follow a differnt approach to a rendering. Instead of projecting objects into 2D screen, we will use rays to find the pixel color. But before we start with the ray casting algorithm, we need to understand the basics of rays. 
+We will now follow a different approach to rendering. Instead of projecting objects into a 2D screen, we will use rays to find the pixel color. But before we start with the ray casting algorithm, we need to understand the basics of rays.
 
 > For this section I will move away from OpenGL standard, where camera faces $-Z$ direction. Instead, camera will be facing $+Z$ direction.
 
@@ -922,11 +922,11 @@ $$\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$$
 
 
 ### Primary Ray Generation
-Now that we know how to define a ray, for ray casting algorithms we will need to define a ray (or multiple rays) for a pixel. We can visualize the rays being generated from camera origin and passing through the image plane to the scene.  These rays are called primary rays. We will see how to render an image using these later, for now we will first focus on generating these rays.
+Now that we know how to define a ray, for ray casting algorithms we will need to define a ray (or multiple rays) for a pixel. We can visualize the rays being generated from camera origin and passing through the image plane to the scene.  These rays are called primary rays. We will see how to render an image using these later, for now, we will focus on generating these rays.
 
 {{< figure src="/images/intro-to-rendering/raytracing/primary_ray_generation.svg" id="fig-primary-ray-generation" caption="Primary ray generation for a pinhole camera. Each pixel center corresponds to one direction through the image plane." title="Primary Ray Generation" alt="Pinhole camera ray through a pixel center" align="center" >}}
 
-I will assue that we have objects in the world space and then generate rays in camera (eye) space and transform them to world space (note how we are going from camera space to world space). For getting the transformation matrix, we again use the lookAt function.
+I will assume that we have objects in the world space and then generate rays in camera (eye) space and transform them to world space (note how we are going from camera space to world space). For getting the transformation matrix, we again use the lookAt function.
 
 1. **Eye** $\mathbf{e}$: camera position in World Space.
 2. **Target** $\mathbf{t}$: the point the camera looks at.
@@ -1062,7 +1062,7 @@ void main() {
 
 ### Anti-Aliasing
 
-Sampling only the pixel center is simple, but it aliases hard edges. The jaggies (also called staircase artifacts) are clearly visible in the polygon render. Ideally, we want the average colors of objects within the pixel area. A common fix is to take several samples at slightly perturbed positions inside the pixel and average the results (A Monte Calro estimate of the weighted area integration):
+Sampling only the pixel center is simple, but it aliases hard edges. The jaggies (also called staircase artifacts) are clearly visible in the polygon render. Ideally, we want the average colors of objects within the pixel area. A common fix is to take several samples at slightly perturbed positions inside the pixel and average the results (A Monte Carlo estimate of the weighted area integration):
 
 $$
 \mathbf{d}_i=\mathrm{normalize}\!\left(u+\Delta u_i,\;v+\Delta v_i,\;-1\right),
@@ -1290,7 +1290,7 @@ $$
 
 Because $f(\mathbf{p})$ guarantees the exact distance to the *nearest* surface, it gives us a spatial "safe zone." If we are at position $\mathbf{p}$ and $f(\mathbf{p}) = 2.0$, we can shoot a ray in *any* direction by exactly $2.0$ units, and we are mathematically guaranteed not to hit anything.
 
-This leads to the **Sphere Tracing** (or Ray Marching) algorithm. Instead of solving an algebraic equation, we iterative step along the ray:
+This leads to the **Sphere Tracing** (or Ray Marching) algorithm. Instead of solving an algebraic equation, take iterative steps along the ray:
 
 $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}}) $$
 
@@ -1457,19 +1457,21 @@ void main() {
 
 ## Shading Models
 
-Intersection algorithms tell us *where* the ray hit and *which way* the surface is facing. Shading models tell us *what color* that hit should be.
+Intersection algorithms tell us *where* a ray hits and *which way* the surface faces. Shading models answer the next question: *what color should that point be?*
 
-Before we can color a pixel, we have to model how light interacts with materials. When a beam of light strikes a surface, part of its energy is absorbed and part is scattered. The physical truth of this interaction is described by radiometry and the **Rendering Equation**:
+When light strikes a surface, part of its energy is absorbed and part is scattered. The physics of this interaction is captured by the **Rendering Equation**:
 
-$$ L_o(\mathbf{x}, \boldsymbol{\omega}_o) = L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{S^2} L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) (\mathbf{n} \cdot \boldsymbol{\omega}_i) \, d\boldsymbol{\omega}_i $$
+$$ L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Emitted Radiance}} + \underbrace{\int_{\Omega} L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) (\mathbf{n} \cdot \boldsymbol{\omega}_i) \, d\boldsymbol{\omega}_i}_{\text{Reflected Radiance}} $$
 
-Here, the outgoing radiance $L_o$ toward the viewer is the sum of emitted light $L_e$ and the integral of incoming light $L_i$ bouncing off the surface. The term $f_s$ is the **Bidirectional Reflectance Distribution Function (BRDF)**, which dictates exactly how light scatters based on material properties, and the dot product $(\mathbf{n} \cdot \boldsymbol{\omega}_i)$ is Lambert's cosine law accounting for foreshortening.
+The outgoing radiance $L_o$ toward the viewer equals the emitted light $L_e$ plus the integral of all incoming light $L_i$ scattered by the surface. We integrate over $\Omega$ (the upper hemisphere defined by the surface normal) because opaque surfaces only receive light from their exterior side. The function $f_s$ is the **Bidirectional Reflectance Distribution Function (BRDF)**, which encodes how a material distributes incoming light, and the dot product $(\mathbf{n} \cdot \boldsymbol{\omega}_i)$ accounts for foreshortening via Lambert's cosine law.
 
-Because evaluating this full integral in real-time is computationally immense, graphics programmers historically needed to avoid the overwhelming complexity of simulating billions of individual photons. Instead, real-time graphics traditionally rely on simpler, empirical shading models that "look right."
+Evaluating this integral is computationally immense — it involves infinite recursive scattering between all objects in the scene. Real-time graphics have therefore historically relied on simpler, empirical models that approximate the result locally.
+
+> **Gamma Correction:** Before we look at the code, it is important to remember that physical light calculations are linear, but our computer monitors display light non-linearly. To fix this, we apply a $1/2.2$ power function to our final color at the very end of our shaders—a process known as gamma correction.
 
 ### Light Sources and Attenuation
 
-Before reflecting light, we must quantify how much light arrives at the surface. 
+Before applying any reflection model, we first need to know how much light energy actually reaches the surface.
 *   **Directional (Infinite) Lights**: Placed infinitely far away (like the sun). All rays are parallel, and intensity does not diminish over distance.
 *   **Point Lights**: Radiate equally in all directions from a specific point.
 *   **Spot Lights**: Radiate from a point, but restricted to a specific cone/direction.
@@ -1480,10 +1482,12 @@ $$ I_{attenuated} = \frac{1}{k_c + k_l d + k_q d^2} I_{source} $$
 
 ### The Phong Reflection Model
 
-To determine the object's brightness and color from these lights, the most famous empirical model is the **Phong reflection model**. It computes local illumination as the sum of three distinct components: **Ambient**, **Diffuse**, and **Specular**.
+With the incoming light intensity established, we can now compute how the surface responds. The most famous empirical model is the **Phong reflection model**, which decomposes local illumination into three physically motivated components: **Ambient**, **Diffuse**, and **Specular**.
+
+{{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" noinvert=true >}}
 
 #### 1. Ambient Light
-In the real world, light bounces off walls, floors, and other objects, filling the environment with indirect illumination. Instead of simulating these complex global bounces (which we will tackle later in path tracing), the ambient term provides a constant base level of light so that objects in shadow are not completely pitch black.
+In the real world, light bounces off walls, floors, and other objects, filling the environment with indirect illumination. Instead of simulating these complex global bounces, the ambient term provides a constant base level of light so that objects in shadow are not completely pitch black.
 
 $$
 L_a = k_a I_a
@@ -1497,7 +1501,7 @@ A perfectly matte (diffuse) surface, like chalk or unpolished wood, scatters lig
 However, it *does* depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert's cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction $\mathbf{l}$:
 
 $$
-L_d = k_d I_d \max(0, \mathbf{n}\cdot\mathbf{l})
+L_d = k_d I_d \max(0, {\color{#212121}\mathbf{n}}\cdot{\color{#E65100}\mathbf{l}})
 $$
 
 We clamp the dot product at zero because a negative value means the light is hitting the back of the surface, which should contribute no illumination.
@@ -1508,38 +1512,199 @@ Smooth surfaces, like polished metal or wet plastic, are not perfect diffusers. 
 A perfect mirror reflects light exactly along the reflection vector $\mathbf{r}$. Using basic vector projection, we can compute $\mathbf{r}$ by taking the incoming light vector $\mathbf{l}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:
 
 $$
-\mathbf{r} = 2(\mathbf{n} \cdot \mathbf{l})\mathbf{n} - \mathbf{l}
+{\color{#2E7D32}\mathbf{r}} = 2({\color{#212121}\mathbf{n}} \cdot {\color{#E65100}\mathbf{l}}){\color{#212121}\mathbf{n}} - {\color{#E65100}\mathbf{l}}
 $$
 
 For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around $\mathbf{r}$. As the angle $\phi$ between the reflection vector $\mathbf{r}$ and the view direction $\mathbf{v}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:
 
 $$
-L_s = k_s I_s \max(0, \mathbf{r} \cdot \mathbf{v})^\alpha
+L_s = k_s I_s \max(0, {\color{#2E7D32}\mathbf{r}} \cdot {\color{#1565C0}\mathbf{v}})^\alpha
 $$
 
 The exponent $\alpha$ is the **shininess coefficient**. A low value (e.g., $5 - 10$) produces a broad, soft highlight like plastic, while a high value (e.g., $100 - 200$) produces a sharp, tight highlight typical of polished metals.
 
-Combining all three gives the complete Phong shading equation:
+{{< figure src="/images/intro-to-rendering/lighting/phong.svg" id="fig-phong-vectors" caption="The Phong reflection model vectors. The light vector $\mathbf{l}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector $\mathbf{r}$, which is then compared with the view vector $\mathbf{v}$." title="Phong Vectors" alt="Vectors for Phong reflection model" align="center" width="500px" >}}
+
+Combining all three gives the complete Phong reflection model:
 
 $$
-L = \underbrace{k_a I_a}_{\text{Ambient}} + \underbrace{k_d I_d \max(0,\mathbf{n}\cdot\mathbf{l})}_{\text{Diffuse}} + \underbrace{k_s I_s \max(0,\mathbf{r}\cdot\mathbf{v})^\alpha}_{\text{Specular}}
+L = \underbrace{k_a I_a}_{\text{Ambient}} + \underbrace{k_d I_d \max(0,{\color{#212121}\mathbf{n}}\cdot{\color{#E65100}\mathbf{l}})}_{\text{Diffuse}} + \underbrace{k_s I_s \max(0,{\color{#2E7D32}\mathbf{r}}\cdot{\color{#1565C0}\mathbf{v}})^\alpha}_{\text{Specular}}
 $$
 
-{{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" noinvert=true >}}
+<object type="text/html" data="/interactive/phong_lighting_sphere.html" style="width:100%; max-width:760px; height:440px; solid var(--border); background: var(--theme); display:block;"></object>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Interactive Phong reflection model. Drag on the sphere to reposition the light; toggle between Phong and Blinn-Phong specular models.</p>
+
+<iframe src="/interactive/phong_steps.html" width="100%" height="560" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+
+Below is the Phong reflection model applied to a test scene with two spheres on a checkerboard floor. Only local shading is computed here — no shadow rays, no reflections. Notice how the floor receives uniform light everywhere, even directly beneath the spheres where a shadow should be. This is the key limitation of local-only models.
+
+{{< glsl >}}
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+out vec4 fragColor;
+
+float hitSphere(vec3 ro, vec3 rd, vec3 c, float r) {
+    vec3 q = ro - c;
+    float b = dot(q, rd);
+    float disc = b * b - dot(q, q) + r * r;
+    if (disc < 0.0) return -1.0;
+    float t = -b - sqrt(disc);
+    return t > 0.001 ? t : -1.0;
+}
+
+float hitPlane(vec3 ro, vec3 rd, float y) {
+    float t = (y - ro.y) / rd.y;
+    return t > 0.001 ? t : -1.0;
+}
+
+struct Hit { float t; vec3 n; vec3 col; };
+
+Hit traceScene(vec3 ro, vec3 rd) {
+    Hit best = Hit(1e20, vec3(0), vec3(0));
+    float t;
+
+    // Red sphere
+    t = hitSphere(ro, rd, vec3(-0.8, 0.0, -1.0), 1.0);
+    if (t > 0.0 && t < best.t)
+        best = Hit(t, normalize(ro + rd*t - vec3(-0.8, 0, -1)), vec3(0.85, 0.15, 0.1));
+
+    // Silver sphere
+    t = hitSphere(ro, rd, vec3(1.0, -0.3, 0.0), 0.7);
+    if (t > 0.0 && t < best.t)
+        best = Hit(t, normalize(ro + rd*t - vec3(1, -0.3, 0)), vec3(0.9));
+
+    // Floor
+    t = hitPlane(ro, rd, -1.0);
+    if (t > 0.0 && t < best.t) {
+        vec3 p = ro + rd * t;
+        float ck = mod(floor(p.x) + floor(p.z), 2.0);
+        best = Hit(t, vec3(0, 1, 0), mix(vec3(0.3), vec3(0.7), ck));
+    }
+    return best;
+}
+
+void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+    vec3 ro = vec3(0.0, 1.0, 4.0);
+    vec3 rd = normalize(vec3(uv, -1.0));
+    vec3 lightPos = vec3(3.0, 4.0, 2.0);
+
+    Hit hit = traceScene(ro, rd);
+    vec3 col = vec3(0.03, 0.04, 0.06);
+
+    if (hit.t < 1e19) {
+        vec3 p = ro + rd * hit.t;
+        vec3 l = normalize(lightPos - p); // Light vector
+        vec3 v = normalize(ro - p);       // View vector
+        vec3 r = reflect(-l, hit.n);      // Reflection vector
+
+        // Phong: Ambient + Diffuse + dot(r, v)^alpha
+        vec3 ambient  = hit.col * 0.08;
+        vec3 diffuse  = hit.col * max(dot(hit.n, l), 0.0);
+        float spec    = pow(max(dot(r, v), 0.0), 48.0);
+        col = ambient + diffuse + vec3(0.7) * spec;
+    }
+
+    col = pow(col, vec3(1.0 / 2.2));
+    fragColor = vec4(col, 1.0);
+}
+{{< /glsl >}}
 
 ### The Blinn-Phong Modification
 
-Calculating the exact reflection vector $\mathbf{r}$ for every pixel is mathematically expensive because it requires multiple vector operations. Jim Blinn proposed a brilliant, cheaper approximation that behaves almost identically: **the halfway vector**.
+Calculating the exact reflection vector $\mathbf{r}$ at every pixel requires several vector operations. Jim Blinn proposed a cheaper approximation that produces nearly identical results: the **halfway vector**.
 
 Instead of finding the angle between the reflection $\mathbf{r}$ and the viewer $\mathbf{v}$, we calculate the vector that sits exactly halfway between the light $\mathbf{l}$ and the viewer $\mathbf{v}$:
 
 $$
-\mathbf{h} = \frac{\mathbf{l} + \mathbf{v}}{\|\mathbf{l} + \mathbf{v}\|}
+{\color{#6A1B9A}\mathbf{h}} = \frac{{\color{#E65100}\mathbf{l}} + {\color{#1565C0}\mathbf{v}}}{\|{\color{#E65100}\mathbf{l}} + {\color{#1565C0}\mathbf{v}}\|}
 $$
 
-If the halfway vector $\mathbf{h}$ perfectly aligns with the surface normal $\mathbf{n}$, the highlight is at its maximum. The specular term becomes $\max(0, \mathbf{n} \cdot \mathbf{h})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$). 
+{{< figure src="/images/intro-to-rendering/lighting/blinn.svg" id="fig-blinn-vectors" caption="The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector $\mathbf{h}$ is used, which sits exactly halfway between the light vector $\mathbf{l}$ and view vector $\mathbf{v}$." title="Blinn-Phong Vectors" alt="Vectors for Blinn-Phong modification" align="center" width="500px" >}}
 
-This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away (directional lighting and orthographic camera), $\mathbf{l}$ and $\mathbf{v}$ are constant, meaning $\mathbf{h}$ only needs to be computed *once per scene*, not once per pixel!
+If the halfway vector ${\color{#6A1B9A}\mathbf{h}}$ perfectly aligns with the surface normal ${\color{#212121}\mathbf{n}}$, the highlight is at its maximum. The specular term becomes $\max(0, {\color{#212121}\mathbf{n}} \cdot {\color{#6A1B9A}\mathbf{h}})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$). 
+
+This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, $\mathbf{l}$ and $\mathbf{v}$ are constant, meaning $\mathbf{h}$ only needs to be computed *once per scene*, not once per pixel.
+
+<iframe src="/interactive/blinn_steps.html" width="100%" height="560" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+
+The same scene as above, now shaded with Blinn-Phong. The only code change is in the specular calculation — `dot(n, h)^β` replaces `dot(r, v)^α`. The highlights are slightly rounder and wider.
+
+{{< glsl >}}
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+out vec4 fragColor;
+
+float hitSphere(vec3 ro, vec3 rd, vec3 c, float r) {
+    vec3 q = ro - c;
+    float b = dot(q, rd);
+    float disc = b * b - dot(q, q) + r * r;
+    if (disc < 0.0) return -1.0;
+    float t = -b - sqrt(disc);
+    return t > 0.001 ? t : -1.0;
+}
+
+float hitPlane(vec3 ro, vec3 rd, float y) {
+    float t = (y - ro.y) / rd.y;
+    return t > 0.001 ? t : -1.0;
+}
+
+struct Hit { float t; vec3 n; vec3 col; };
+
+Hit traceScene(vec3 ro, vec3 rd) {
+    Hit best = Hit(1e20, vec3(0), vec3(0));
+    float t;
+
+    // Red sphere
+    t = hitSphere(ro, rd, vec3(-0.8, 0.0, -1.0), 1.0);
+    if (t > 0.0 && t < best.t)
+        best = Hit(t, normalize(ro + rd*t - vec3(-0.8, 0, -1)), vec3(0.85, 0.15, 0.1));
+
+    // Silver sphere
+    t = hitSphere(ro, rd, vec3(1.0, -0.3, 0.0), 0.7);
+    if (t > 0.0 && t < best.t)
+        best = Hit(t, normalize(ro + rd*t - vec3(1, -0.3, 0)), vec3(0.9));
+
+    // Floor
+    t = hitPlane(ro, rd, -1.0);
+    if (t > 0.0 && t < best.t) {
+        vec3 p = ro + rd * t;
+        float ck = mod(floor(p.x) + floor(p.z), 2.0);
+        best = Hit(t, vec3(0, 1, 0), mix(vec3(0.3), vec3(0.7), ck));
+    }
+    return best;
+}
+
+void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+    vec3 ro = vec3(0.0, 1.0, 4.0);
+    vec3 rd = normalize(vec3(uv, -1.0));
+    vec3 lightPos = vec3(3.0, 4.0, 2.0);
+
+    Hit hit = traceScene(ro, rd);
+    vec3 col = vec3(0.03, 0.04, 0.06);
+
+    if (hit.t < 1e19) {
+        vec3 p = ro + rd * hit.t;
+        vec3 l = normalize(lightPos - p); // Light vector
+        vec3 v = normalize(ro - p);       // View vector
+        vec3 h = normalize(l + v);        // Halfway vector
+
+        // Blinn-Phong: Ambient + Diffuse + dot(n, h)^beta
+        vec3 ambient  = hit.col * 0.08;
+        vec3 diffuse  = hit.col * max(dot(hit.n, l), 0.0);
+        float spec    = pow(max(dot(hit.n, h), 0.0), 192.0);
+        col = ambient + diffuse + vec3(0.7) * spec;
+    }
+
+    col = pow(col, vec3(1.0 / 2.2));
+    fragColor = vec4(col, 1.0);
+}
+{{< /glsl >}}
 
 ---
 
@@ -1548,100 +1713,285 @@ This was a massive optimization for early rendering pipelines: if the light and 
 The math above tells us *how* to calculate color, but the pipeline must decide *where* to calculate it. In rasterization, there are two primary ways to apply these equations across a triangle mesh:
 
 1. **Gouraud Shading (Vertex Shading):** The lighting equations are evaluated only at the three vertices of a triangle. The resulting *colors* are then linearly interpolated across the pixels of the triangle. This is very fast, but it suffers from severe artifacts: if a sharp specular highlight falls in the exact center of a large triangle, the vertices will all be dark, and the highlight will completely disappear!
-2. **Phong Shading (Pixel/Fragment Shading):** Instead of interpolating colors, we linearly interpolate the *normal vector* $\mathbf{n}$ across the triangle's surface. The full lighting equation is then evaluated at every single pixel. This solves the highlight problem and produces beautifully smooth curved surfaces, but requires significantly more computational power—a trade-off modern GPUs are designed to handle with ease.
+2. **Phong Shading (Pixel/Fragment Shading):** Instead of interpolating colors, we linearly interpolate the *normal vector* $\mathbf{n}$ across the triangle's surface. The full lighting equation is then evaluated at every single pixel. This solves the highlight problem and produces beautifully smooth curved surfaces.
 
+> **Note the terminology:** The **Phong reflection model** (the math equation for ambient/diffuse/specular light) is fundamentally different from **Phong shading** (the technique of interpolating normals per-pixel). You can technically evaluate the Phong reflection model using Gouraud shading, though it will look poor! 
+> 
+> Furthermore, when linearly interpolating unit normal vectors across a triangle in a rasterizer, the resulting vectors will slightly shrink in length. Therefore, they must be **re-normalized** dynamically in the fragment shader before applying the reflection model.
 
----
+### Limitations: Self-Shadowing and Ambient Occlusion
 
-## Ray Tracing
+The Phong and Blinn-Phong models evaluate lighting at each surface point independently — they have no knowledge of the rest of the scene. This means:
 
-The models above are strictly **local**—they only consider the light hitting a surface directly. **Whitted ray tracing** extends this idea into a global context by spawning secondary rays: shadow rays toward lights (to check for occlusions), reflection rays for mirrors, and refraction rays for transparent materials like glass. The key idea is recursive visibility: a surface color depends entirely on what its secondary rays "see."
+*   **No self-shadowing.** A sphere sitting on a floor will not cast a shadow, because the model never asks whether anything blocks the light.
+*   **No contact darkening.** Where two surfaces meet (e.g., the base of a sphere on a floor), real-world light is partially occluded by nearby geometry. Local models miss this entirely.
+*   **The ambient term is a flat constant.** Every surface point receives the same $k_a I_a$, regardless of how enclosed or exposed it is.
 
-Here is the compact, real-time implementation of everything we've built so far: primary ray generation, analytic sphere intersection, and a per-pixel Phong shading model. Note how the GLSL `reflect(-l, n)` function handles the heavy lifting of computing the $\mathbf{r}$ vector natively on the GPU.
+**Ambient Occlusion (AO)** is a popular technique that addresses the third problem without requiring full global illumination. The idea is simple: at each surface point, estimate what fraction of the surrounding hemisphere is blocked by nearby geometry. Points in corners, crevices, and contact regions score low (more occluded), while exposed surfaces score high.
+
+$$
+A(\mathbf{p}) = \frac{1}{\pi} \int_{\Omega} V(\mathbf{p}, \boldsymbol{\omega}) \, (\mathbf{n} \cdot \boldsymbol{\omega}) \, d\boldsymbol{\omega}
+$$
+
+Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function — $1$ if the hemisphere direction $\boldsymbol{\omega}$ is unblocked, $0$ if nearby geometry occludes it. The result $A(\mathbf{p})$ is then multiplied into the ambient (and sometimes diffuse) term, darkening the tucked-away areas that a flat ambient constant would otherwise over-illuminate.
+
+In screen-space implementations like **SSAO** (Screen-Space Ambient Occlusion), the visibility check is approximated by sampling the depth buffer around each pixel — a fast, purely post-processing approach that requires no scene knowledge at all. In ray-traced pipelines, short-range occlusion rays can compute AO directly. 
+
+Here is our test scene rendered with local Phong shading plus an Ambient Occlusion term computed analytically for each sphere. Notice how contact shadows naturally appear underneath the spheres where they approach the floor plane.
 
 {{< glsl >}}
 #version 300 es
 precision highp float;
 
 uniform vec2 u_resolution;
-uniform float u_time;
 out vec4 fragColor;
 
-float intersectSphere(vec3 ro, vec3 rd, vec3 c, float r) {
+float hitSphere(vec3 ro, vec3 rd, vec3 c, float r) {
     vec3 q = ro - c;
     float b = dot(q, rd);
-    float cterm = dot(q, q) - r * r;
-    float h = b * b - cterm;
-    if (h < 0.0) return -1.0;
-    h = sqrt(h);
-    float t = -b - h;
-    return t > 0.0 ? t : -b + h;
+    float disc = b * b - dot(q, q) + r * r;
+    if (disc < 0.0) return -1.0;
+    float t = -b - sqrt(disc);
+    return t > 0.001 ? t : -1.0;
 }
 
-vec3 phong(vec3 p, vec3 n, vec3 ro) {
-    vec3 lightPos = vec3(2.0 * sin(u_time), 2.0, 2.0 * cos(u_time));
-    
-    // Calculate light (l), view (v), and reflection (r) vectors
-    vec3 l = normalize(lightPos - p);
-    vec3 v = normalize(ro - p);
-    vec3 r = reflect(-l, n);
+float hitPlane(vec3 ro, vec3 rd, float y) {
+    float t = (y - ro.y) / rd.y;
+    return t > 0.001 ? t : -1.0;
+}
 
-    // Lambertian Diffuse
-    float diff = max(dot(n, l), 0.0);
-    
-    // Phong Specular
-    float spec = pow(max(dot(r, v), 0.0), 48.0);
-    
-    // Combine: Ambient + Diffuse + Specular
-    return vec3(0.08) + vec3(0.9, 0.35, 0.18) * diff + vec3(1.0) * spec;
+struct Hit { float t; vec3 n; vec3 col; };
+
+Hit traceScene(vec3 ro, vec3 rd) {
+    Hit best = Hit(1e20, vec3(0), vec3(0));
+    float t;
+
+    // Red sphere
+    t = hitSphere(ro, rd, vec3(-0.8, 0.0, -1.0), 1.0);
+    if (t > 0.0 && t < best.t)
+        best = Hit(t, normalize(ro + rd*t - vec3(-0.8, 0, -1)), vec3(0.85, 0.15, 0.1));
+
+    // Silver sphere
+    t = hitSphere(ro, rd, vec3(1.0, -0.3, 0.0), 0.7);
+    if (t > 0.0 && t < best.t)
+        best = Hit(t, normalize(ro + rd*t - vec3(1, -0.3, 0)), vec3(0.9));
+
+    // Floor
+    t = hitPlane(ro, rd, -1.0);
+    if (t > 0.0 && t < best.t) {
+        vec3 p = ro + rd * t;
+        float ck = mod(floor(p.x) + floor(p.z), 2.0);
+        best = Hit(t, vec3(0, 1, 0), mix(vec3(0.3), vec3(0.7), ck));
+    }
+    return best;
+}
+
+// Analytic Ambient Occlusion of a sphere
+float sphereAO(vec3 p, vec3 n, vec3 c, float r) {
+    vec3 v = c - p;
+    float d = length(v);
+    return max(0.0, dot(n, v / d)) * (r * r) / (d * d);
 }
 
 void main() {
-    // 1. Generate primary ray from pixel coordinate
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
-    vec3 ro = vec3(0.0, 0.0, 3.5);
+    vec3 ro = vec3(0.0, 1.0, 4.0);
     vec3 rd = normalize(vec3(uv, -1.0));
+    vec3 lightPos = vec3(3.0, 4.0, 2.0);
 
-    // 2. Intersect geometry
-    vec3 center = vec3(0.0);
-    float t = intersectSphere(ro, rd, center, 1.0);
-    vec3 col = vec3(0.03, 0.04, 0.06); // Ambient background color
+    Hit hit = traceScene(ro, rd);
+    vec3 col = vec3(0.03, 0.04, 0.06);
 
-    // 3. Shade visible surfaces
-    if (t > 0.0) {
-        vec3 p = ro + t * rd;
-        vec3 n = normalize(p - center);
-        col = phong(p, n, ro);
+    if (hit.t < 1e19) {
+        vec3 p = ro + rd * hit.t;
+        vec3 l = normalize(lightPos - p); // Light vector
+        vec3 v = normalize(ro - p);       // View vector
+        vec3 r = reflect(-l, hit.n);      // Reflection vector
+
+        // Compute analytical AO from both spheres
+        float ao = 1.0;
+        ao -= sphereAO(p, hit.n, vec3(-0.8, 0.0, -1.0), 1.0);
+        ao -= sphereAO(p, hit.n, vec3(1.0, -0.3, 0.0), 0.7);
+        ao = clamp(ao, 0.0, 1.0);
+
+        // Combine with local Phong lighting
+        vec3 ambient  = hit.col * 0.08 * ao;
+        vec3 diffuse  = hit.col * max(dot(hit.n, l), 0.0) * ao;
+        float spec    = pow(max(dot(r, v), 0.0), 48.0) * ao;
+        col = ambient + diffuse + vec3(0.7) * spec;
     }
 
-    // Gamma correction
     col = pow(col, vec3(1.0 / 2.2));
     fragColor = vec4(col, 1.0);
 }
 {{< /glsl >}}
 
-And here is the exact same camera and shading logic, but utilizing Sphere Tracing with a Signed Distance Function (SDF) instead of analytic sphere intersection. Because the geometry is now mathematically implicit, adding a floor or morphing the shape means simply editing the `map()` function rather than generating and uploading thousands of new vertices. Furthermore, because we do not have explicit triangles to provide vertex normals, we estimate the normal at the hit point $\mathbf{p}$ dynamically by sampling the gradient of the SDF.
+We will see full shadow and reflection rays in the next section.
+
+---
+
+## Ray Tracing
+
+The shading models above are strictly **local**—they only consider the light hitting a surface directly from a source. **Whitted ray tracing** extends this idea into a global context by tracing visibility recursively. Once a primary ray hits a surface, the rendering algorithm spawns new secondary rays to evaluate the global environment.
+
+Instead of just intersection math, Ray Tracing is defined by this recursive routing logic:
+
+#### 1. Shadow Rays (Visibility Testing)
+To determine if a point $\mathbf{p}$ is in shadow, we don't guess. We cast a **shadow ray** from $\mathbf{p}$ directly toward the light source $\mathbf{l}$. 
+*   If the ray hits an object *before* it reaches the light ($t_{\text{hit}} < t_{\text{light}}$), the point is occluded. We skip the diffuse and specular calculations and only apply ambient light.
+*   To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{origin} = \mathbf{p} + \epsilon\mathbf{n}$.
+
+#### 2. Reflection Rays
+For shiny surfaces like mirrors or water, we calculate the reflection vector $\mathbf{r}$ exactly as we did in the Phong model:
+$$ \mathbf{r} = 2(\mathbf{n} \cdot \mathbf{v})\mathbf{n} - \mathbf{v} $$
+*(Where $\mathbf{v}$ points from the surface back to the camera).* 
+We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of $\mathbf{r}$. Whatever color that ray eventually hits is added to the current pixel's color.
+
+#### 3. Refraction Rays (Transmission)
+For transparent materials like glass, light bends as it passes through the surface boundary. According to **Snell's Law**, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ are related by the indices of refraction ($\eta$):
+$$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$
+The exact transmission vector $\mathbf{t}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector $\mathbf{v}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is **Total Internal Reflection**—no light is refracted; it is all reflected inside the object.
+
+<iframe src="/interactive/ray_tracing_steps.html" width="100%" height="600" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+
+Here is the same scene rendered with full recursive ray tracing. Shadow rays now block direct light where occluded, and reflection rays on the chrome sphere pick up the environment. Compare with the local-only shaders above.
 
 {{< glsl >}}
 #version 300 es
 precision highp float;
 
 uniform vec2 u_resolution;
-uniform float u_time;
 out vec4 fragColor;
 
-float sdSphere(vec3 p, float r) {
-    return length(p) - r;
+float hitSphere(vec3 ro, vec3 rd, vec3 c, float r) {
+    vec3 q = ro - c;
+    float b = dot(q, rd);
+    float disc = b * b - dot(q, q) + r * r;
+    if (disc < 0.0) return -1.0;
+    float t = -b - sqrt(disc);
+    if (t < 0.001) t = -b + sqrt(disc);
+    return t > 0.001 ? t : -1.0;
 }
 
-// The entire scene geometry is defined here
+float hitPlane(vec3 ro, vec3 rd, float y) {
+    float t = (y - ro.y) / rd.y;
+    return t > 0.001 ? t : -1.0;
+}
+
+struct Hit { float t; vec3 n; vec3 col; float refl; };
+
+Hit traceScene(vec3 ro, vec3 rd) {
+    Hit best = Hit(1e20, vec3(0), vec3(0), 0.0);
+    vec3 n; float t;
+
+    // Red sphere
+    t = hitSphere(ro, rd, vec3(-0.8, 0.0, -1.0), 1.0);
+    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(-0.8,0,-1)), vec3(0.85,0.15,0.1), 0.05); }
+
+    // Chrome sphere
+    t = hitSphere(ro, rd, vec3(1.0, -0.3, 0.0), 0.7);
+    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(1.0,-0.3,0.0)), vec3(0.9), 0.8); }
+
+    // Floor plane
+    t = hitPlane(ro, rd, -1.0);
+    if (t > 0.0 && t < best.t) {
+        vec3 p = ro + rd * t;
+        float check = step(0.5, fract(p.x * 0.5)) + step(0.5, fract(p.z * 0.5));
+        check = mod(check, 2.0);
+        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), check), 0.1);
+    }
+    return best;
+}
+
+vec3 shade(Hit hit, vec3 p, vec3 rd) {
+    vec3 lightPos = vec3(3.0, 4.0, 2.0);
+    vec3 l = normalize(lightPos - p);
+    vec3 v = -rd;
+
+    // Shadow ray
+    Hit sh = traceScene(p + hit.n * 0.01, l);
+    float shadow = (sh.t < length(lightPos - p)) ? 0.15 : 1.0;
+
+    float diff = max(dot(hit.n, l), 0.0) * shadow;
+    float spec = pow(max(dot(reflect(-l, hit.n), v), 0.0), 64.0) * shadow;
+    return vec3(0.06) + hit.col * diff + vec3(0.7) * spec;
+}
+
+void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+    vec3 ro = vec3(0.0, 1.0, 4.0);
+    vec3 rd = normalize(vec3(uv, -1.0));
+
+    vec3 col = vec3(0.0);
+    float atten = 1.0;
+
+    // 2 bounces: primary + one reflection
+    for (int bounce = 0; bounce < 2; bounce++) {
+        Hit hit = traceScene(ro, rd);
+        if (hit.t > 1e19) {
+            col += atten * vec3(0.03, 0.04, 0.06);
+            break;
+        }
+        vec3 p = ro + rd * hit.t;
+        col += atten * (1.0 - hit.refl) * shade(hit, p, rd);
+
+        // Reflection ray for next bounce
+        atten *= hit.refl;
+        if (atten < 0.01) break;
+        ro = p + hit.n * 0.01;
+        rd = reflect(rd, hit.n);
+    }
+
+    col = pow(col, vec3(1.0 / 2.2));
+    fragColor = vec4(col, 1.0);
+}
+{{< /glsl >}}
+
+---
+
+## Path Tracing
+
+Whitted ray tracing handles mirrors and hard shadows well, but it cannot capture the soft, diffuse inter-reflections that make real scenes look natural — colored light bleeding from a red wall onto a white floor, for example. **Path tracing** solves this by actually evaluating the rendering equation via Monte Carlo integration.
+
+Instead of spawning deterministic shadow and reflection rays, the path tracer shoots the ray in a *random* direction sampled from the hemisphere at each bounce. Over hundreds or thousands of samples per pixel, the noisy estimates converge to the true solution of the rendering equation. This is the same technique used by production renderers in film (Arnold, RenderMan, Cycles).
+
+The key ideas — Monte Carlo integration, importance sampling, and the mathematics of BRDFs — are covered in depth in the next post in this series: [A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing](https://usharma002.github.io/posts/neural-importance-sampling-path-tracing/)
+
+
+--- 
+
+The interactive below demonstrates how the same scene appears under different rendering paradigms. You can compare the local shading models (Phong and Blinn-Phong) — which calculate light per-surface and ignore inter-object visibility — against global illumination models (Ray Tracing and Path Tracing) that trace ray paths recursively to simulate accurate shadows, glossy reflections, and diffuse light transport.
+
+---
+
+<object type="text/html" data="/interactive/cornell_box_modes.html" style="width:100%; max-width:860px; height:860px; background: transparent; display:block; margin: 1.5rem auto;"></object>
+
+---
+
+## Sphere Tracing
+
+While analytic root-finding (like the quadratic formula) works beautifully for simple shapes, it becomes mathematically complex for arbitrary objects. **Sphere Tracing** (or Ray Marching) is a numerical root-finding technique that replaces analytic equations with a Signed Distance Function (SDF).
+
+Because the geometry in Sphere Tracing is mathematically implicit, adding a floor or morphing shapes means simply editing a `map()` function. Furthermore, because we do not have explicit geometry to provide vertex normals, we estimate the normal dynamically at the hit point by sampling the gradient of the SDF.
+
+Here is the same two-sphere scene, now defined entirely through SDFs. The `map()` function replaces explicit intersection tests, and normals are estimated via the gradient. Shadow rays and reflection bounces work identically to the analytic version above.
+
+{{< glsl >}}
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+out vec4 fragColor;
+
+// Scene defined via Signed Distance Functions
 float map(vec3 p) {
-    float sphere = sdSphere(p, 1.0);
-    float floorPlane = p.y + 1.1;
-    return min(sphere, floorPlane);
+    float s1 = length(p - vec3(-0.8, 0.0, -1.0)) - 1.0;  // Red sphere
+    float s2 = length(p - vec3(1.0, -0.3, 0.0)) - 0.7;   // Silver sphere
+    float fl = p.y + 1.0;                                  // Floor
+    return min(min(s1, s2), fl);
 }
 
-// Approximate the normal using the gradient of the SDF
+// Gradient-based normal estimation
 vec3 getNormal(vec3 p) {
     vec2 e = vec2(0.001, 0.0);
     return normalize(vec3(
@@ -1651,38 +2001,58 @@ vec3 getNormal(vec3 p) {
     ));
 }
 
-vec3 shade(vec3 p, vec3 n, vec3 ro) {
-    vec3 lightPos = vec3(2.5 * sin(u_time), 2.5, 2.5 * cos(u_time));
-    vec3 l = normalize(lightPos - p);
-    vec3 v = normalize(ro - p);
-    vec3 r = reflect(-l, n);
+// Shadow ray via sphere tracing
+float calcShadow(vec3 ro, vec3 rd) {
+    float t = 0.02;
+    for (int i = 0; i < 30; i++) {
+        float h = map(ro + rd * t);
+        if (h < 0.001) return 0.15;
+        t += h;
+    }
+    return 1.0;
+}
 
-    float diff = max(dot(n, l), 0.0);
-    float spec = pow(max(dot(r, v), 0.0), 32.0);
-    
-    return vec3(0.07) + vec3(0.25, 0.55, 0.95) * diff + vec3(0.7) * spec;
+// Identify which object was hit for coloring
+vec3 getColor(vec3 p) {
+    float s1 = length(p - vec3(-0.8, 0.0, -1.0)) - 1.0;
+    float s2 = length(p - vec3(1.0, -0.3, 0.0)) - 0.7;
+    float fl = p.y + 1.0;
+    if (s1 < s2 && s1 < fl) return vec3(0.85, 0.15, 0.1);
+    if (s2 < fl) return vec3(0.9);
+    float ck = mod(floor(p.x) + floor(p.z), 2.0);
+    return mix(vec3(0.3), vec3(0.7), ck);
 }
 
 void main() {
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
-    vec3 ro = vec3(0.0, 0.0, 3.5);
+    vec3 ro = vec3(0.0, 1.0, 4.0);
     vec3 rd = normalize(vec3(uv, -1.0));
+    vec3 lightPos = vec3(3.0, 4.0, 2.0);
 
-    // Sphere Tracing loop
+    vec3 col = vec3(0.03, 0.04, 0.06);
+
+    // Sphere Tracing
     float t = 0.0;
     bool hit = false;
-    for (int i = 0; i < 96; i++) {
-        vec3 p = ro + t * rd;
-        float d = map(p);
+    for (int i = 0; i < 80; i++) {
+        float d = map(ro + rd * t);
         if (d < 0.001) { hit = true; break; }
         if (t > 20.0) break;
         t += d;
     }
 
-    vec3 col = vec3(0.03, 0.04, 0.06);
     if (hit) {
-        vec3 p = ro + t * rd;
-        col = shade(p, getNormal(p), ro);
+        vec3 p = ro + rd * t;
+        vec3 n = getNormal(p);
+        vec3 c = getColor(p);
+        vec3 l = normalize(lightPos - p);
+        vec3 v = normalize(ro - p);
+        vec3 r = reflect(-l, n);
+
+        float shadow = calcShadow(p + n * 0.01, l);
+        float diff = max(dot(n, l), 0.0) * shadow;
+        float spec = pow(max(dot(r, v), 0.0), 48.0) * shadow;
+        col = c * 0.08 + c * diff + vec3(0.7) * spec;
     }
 
     col = pow(col, vec3(1.0 / 2.2));
@@ -1690,9 +2060,244 @@ void main() {
 }
 {{< /glsl >}}
 
-This closes the loop: the matrix pipeline explains how cameras map explicit geometry to pixels; primary rays use the exact same camera model in reverse; intersection algorithms (analytic or sphere tracing) decide visibility; and shading equations turn those visible surface points into physical colors.
+---
 
+## Volume Rendering
 
+All of the techniques above assume that rays interact only with hard surfaces. **Volume rendering** removes that assumption: instead of stopping at the first intersection, rays sample a continuous density field along their path. At each sample point, the ray may be absorbed (Beer's Law), scattered in a new direction, or emit light.
+
+### Participating Media
+
+Volume rendering treats the scene as a participating medium rather than a set of opaque surfaces. As a ray travels through that medium, light can be absorbed, scattered out of the ray, scattered into the ray, or emitted by the medium itself.
+
+- Absorption removes energy from the ray.
+- Out-scattering redirects photons away from the viewing direction.
+- In-scattering adds energy from other directions into the ray.
+- Emission adds radiance generated by the medium.
+
+To keep the notation compact, graphics texts usually group absorption and out-scattering into an extinction coefficient $\sigma_t$:
+
+$$
+\sigma_t = \sigma_a + \sigma_s
+$$
+
+where $\sigma_a$ is the absorption coefficient and $\sigma_s$ is the scattering coefficient.
+
+### Beer-Lambert Law
+
+If we ignore scattering into the ray for a moment, the remaining light along a ray decays exponentially as it travels through the medium. For a homogeneous medium with constant extinction $\sigma_t$, the transmittance over distance $s$ is
+
+$$
+T(s) = e^{-\sigma_t s}.
+$$
+
+For a heterogeneous medium, extinction varies along the ray, so we integrate it instead:
+
+$$
+T(s) = \exp\left(-\int_0^s \sigma_t(x_u)\,du\right).
+$$
+
+The quantity inside the exponent is often called the optical depth $\tau(s)$:
+
+$$
+\operatorname{OD}(s) = \int_0^s \sigma_t(x_u)\,du, \qquad T(s) = e^{-\operatorname{OD}(s)}.
+$$
+
+> <details>
+> <summary style="cursor: pointer;">Proof: Beer-Lambert Law</summary>
+>
+> Consider the homogeneous case first, where the extinction coefficient is constant along the ray. The radiance $L(s)$ obeys
+>
+> $$
+\frac{dL(s)}{ds} = -\sigma_t L(s).
+$$
+>
+> This says the rate of energy loss is proportional to the current radiance and the local extinction coefficient. Separate variables:
+>
+> $$
+\frac{dL(s)}{L(s)} = -\sigma_t \, ds
+$$
+>
+> Integrate both sides from the entry point $0$ to the current distance $s$:
+>
+> $$
+\int_{L(0)}^{L(s)} \frac{dL'}{L'} = -\int_0^s \sigma_t \, du
+$$
+>
+> The left-hand side becomes a logarithm:
+>
+> $$
+\ln L(s) - \ln L(0) = -\sigma_t s
+$$
+>
+> Exponentiating both sides gives the attenuation law:
+>
+> $$
+L(s) = L(0)e^{-\sigma_t s}.
+$$
+>
+> Since transmittance is the surviving fraction of the incoming radiance,
+>
+> $$
+T(s) = \frac{L(s)}{L(0)},
+$$
+>
+> we obtain
+>
+> $$
+T(s) = e^{-\sigma_t s}.
+$$
+>
+> For a heterogeneous medium, $\sigma_t$ varies along the ray, so we replace the constant product by an integral:
+>
+> $$
+T(s) = \exp\left(-\int_0^s \sigma_t(x_u)\,du\right).
+$$
+>
+> Special cases are immediate: if $\sigma_t = 0$, then $T = 1$; if $\sigma_t$ is constant, then we recover the usual exponential falloff.
+>
+> </details>
+
+### Radiative Transfer
+
+The full light transport model adds in-scattering and emission back into the ray. In ray parameter form, the radiance changes as
+
+$$
+\frac{dL(x_s,\omega)}{ds} = -\sigma_t(x_s)L(x_s,\omega) + \sigma_s(x_s)L_s(x_s,\omega) + \sigma_a(x_s)L_e(x_s,\omega),
+$$
+
+where $L_s$ denotes light scattered into the ray from other directions and $L_e$ is the radiance emitted by the medium.
+
+The corresponding volume rendering equation can be written as
+
+$$
+L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + \sigma_a(x_{s'})L_e(x_{s'})\big]\,ds' + T(s)L(0).
+$$
+
+The proof is a standard integrating-factor derivation.
+> <details>
+> <summary style="cursor: pointer;">Proof: from the RTE to the VRE</summary>
+>
+> Define the source term as
+>
+> $$
+q(s) = \sigma_s(x_s)L_s(x_s,\omega) + \sigma_a(x_s)L_e(x_s,\omega).
+$$
+>
+> Then the radiance equation can be written in standard linear ODE form:
+>
+> $$
+ \frac{dL(s)}{ds} + \sigma_t(x_s)L(s) = q(s).
+$$
+>
+> The integrating factor is
+>
+> $$
+ I(s) = \exp\left(\int_0^s \sigma_t(x_u)\,du\right).
+$$
+>
+> Multiplying the ODE by $I(s)$ gives
+>
+> $$
+ I(s)\frac{dL(s)}{ds} + I(s)\sigma_t(x_s)L(s) = I(s)q(s).
+$$
+>
+> By the product rule, the left-hand side is exactly
+>
+> $$
+ \frac{d}{ds}\big[I(s)L(s)\big] = I(s)q(s),
+$$
+>
+> because $I'(s) = I(s)\sigma_t(x_s)$.
+>
+> Integrate from the ray entry point $0$ to the current distance $s$:
+>
+> $$
+ I(s)L(s) - I(0)L(0) = \int_0^s I(s')q(s')\,ds'.
+> $$
+>
+> Since $I(0)=1$, solve for $L(s)$:
+>
+> $$
+ L(s) = I(s)^{-1}\int_0^s I(s')q(s')\,ds' + I(s)^{-1}L(0).
+$$
+>
+> Substituting the integrating factor back in and using
+>
+> $$
+ I(s)^{-1} = \exp\left(-\int_0^s \sigma_t(x_u)\,du\right) = T(s),
+ $$
+>
+> we get
+>
+> $$
+L(s) = \int_0^s T(s')q(s')\,ds' + T(s)L(0).
+$$
+>
+> Replacing $q(s')$ with the emission and in-scattering source terms yields the volume rendering equation:
+>
+> $$
+L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + \sigma_a(x_{s'})L_e(x_{s'})\big]\,ds' + T(s)L(0).
+$$
+>
+> In practice, this is why front-to-back marching works: each sample contributes a local source term, but every contribution is discounted by the transmittance accumulated before that point.
+>
+> </details>
+
+This is the complete participating-media model. The GLSL example below uses the simpler absorption-plus-emission case, which is enough to visualize a soft volumetric cloud.
+
+Here is a live GLSL example demonstrating a volumetric density field. As rays step through the medium, transmittance decays via Beer's Law, while emitted light is accumulated along the path to produce a soft, cloud-like glow.
+
+{{< glsl >}}
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+out vec4 fragColor;
+
+void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
+
+    vec3 ro   = vec3(0.0, 0.0, 3.0);
+    vec3 rd   = normalize(vec3(uv, -1.0));
+
+    // Ray-sphere intersection
+    float b    = dot(ro, rd);
+    float c    = dot(ro, ro) - 1.0;
+    float disc = b * b - c;
+
+    vec3  bgCol    = vec3(0.05, 0.05, 0.08);
+    vec3  col      = bgCol;
+
+    if (disc > 0.0) {
+        float tNear = -b - sqrt(disc);
+        float tFar  = -b + sqrt(disc);
+
+        // Raymarch: discrete approximation of the VRE integral
+        const int   STEPS      = 32;
+        const float sigma_t    = 0.5;  // extinction coefficient
+        const vec3  emit_color = vec3(0.5, 0.7, 1.0);
+
+        float dt = (tFar - tNear) / float(STEPS);
+        float T  = 1.0; // transmittance, starts at 1
+
+        for (int i = 0; i < STEPS; i++) {
+            // T(s') * sigma_a * L_e * dt  (emission term from VRE)
+            float dT  = exp(-sigma_t * dt);
+            col      += emit_color * T * (1.0 - dT);
+            T        *= dT;
+
+            if (T < 0.01) break;
+        }
+
+        // T(s) * L(0)  — background attenuated by remaining transmittance
+        col += bgCol * T;
+    }
+
+    col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));
+    fragColor = vec4(col, 1.0);
+}
+{{< /glsl >}}
 
 ---
 
@@ -1703,5 +2308,9 @@ This closes the loop: the matrix pipeline explains how cameras map explicit geom
 - Song Ho Ahn, [OpenGL Projection Matrix](https://www.songho.ca/opengl/gl_projectionmatrix.html).
 - Song Ho Ahn, [OpenGL Viewport Transform](https://www.songho.ca/opengl/gl_viewport.html).
 - Inigo Quilez, [2D Distance Functions](https://iquilezles.org/articles/distfunctions2d/).
+- Inigo Quilez, [3D Distance Functions](https://iquilezles.org/articles/distfunctions/).
 - Bui Tuong Phong, *Illumination for Computer Generated Pictures*.
 - Turner Whitted, *An Improved Illumination Model for Shaded Display*.
+- James Kajiya, *The Rendering Equation*.
+- Scratchapixel, [Volume Rendering](https://www.scratchapixel.com/lessons/advanced-rendering/volume-rendering/introduction.html).
+- Indian Institute of Science (IISc), [E0 271: Graphics and Visualization](https://www.csa.iisc.ac.in/~vijayn/courses/Graphics/index.html).
