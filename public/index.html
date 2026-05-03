@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             var contentHeight = getSameOriginContentHeight(doc);
             if (contentHeight) {
-                targetHeight = contentHeight;
+                targetHeight = explicitHeight ? Math.max(contentHeight, Math.round(explicitHeight)) : contentHeight;
             }
         }
 
