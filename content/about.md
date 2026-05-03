@@ -7,15 +7,15 @@ summary: "about"
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<section style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 2rem; padding: 2rem; font-family: system-ui, sans-serif; max-width: 900px; margin: auto;">
+<section class="about-hero">
 <!-- Profile Section -->
-<div style="flex: 0 0 200px; text-align: center;">
+<div class="profile-section">
   <img 
     src="/images/about/profile-face.jpg"
     alt="Utkarsh Sharma" 
-    style="width: 160px; height: 160px; object-fit: cover; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin: 0 auto;">
-  <h2 style="margin-top: 1rem; font-size: 1.4rem;">Utkarsh Sharma</h2>
-  <p style="font-size: 0.95rem; color: #666; margin-bottom: 0.75rem;">MTech @ CSA, <br>IISc Bangalore</p>
+    class="profile-image">
+  <h2 class="profile-name">Utkarsh Sharma</h2>
+  <p class="profile-title">MTech @ CSA, <br>IISc Bangalore</p>
   
   <!-- CV Button -->
   <a href="/CV/CV_Utkarsh_Sharma.pdf" class="cv-download-button">
@@ -23,44 +23,28 @@ summary: "about"
   </a>
 </div>
 
-
   <!-- Bio Section -->
-  <div style="flex: 1; min-width: 260px;">
-    <h3 style="margin-bottom: 0.5rem;">About Me</h3>
-    <p style="line-height: 1.6; font-size: 1rem; margin-bottom: 1rem;">
+  <div class="bio-section">
+    <h3 style="margin-bottom: 0.5rem; font-size: 1.8rem;">About Me</h3>
+    <p style="line-height: 1.7; font-size: 1.05rem; margin-bottom: 1rem; color: var(--content, #444);">
       I'm a Master's student at the <strong>Indian Institute of Science</strong>, passionate about <strong>Computer Vision</strong>, <strong>Computer Graphics</strong>, and <strong>Deep Learning</strong>.
     </p>
-    <p style="line-height: 1.6; font-size: 1rem;">
+    <p style="line-height: 1.7; font-size: 1.05rem; color: var(--content, #444);">
       This site is where I share my thoughts, research, and projects. 
     </p>
-    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-      <a href="https://www.linkedin.com/in/utkarsh-sharma-83883a216/" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: #0A66C2; color: white; text-decoration: none;">
+    <div class="social-links">
+      <a href="https://www.linkedin.com/in/utkarsh-sharma-83883a216/" class="social-icon linkedin-icon" aria-label="LinkedIn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/>
         </svg>
       </a>
-      <a href="mailto:utkarshsharma1in100@gmail.com" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background-color: #EA4335; color: white; text-decoration: none;">
+      <a href="mailto:utkarshsharma1in100@gmail.com" class="social-icon email-icon" aria-label="Email">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
       </a>
-      <!-- Add after the email icon in the social links div: -->
     </div>
-  
-<div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
-  <h4 style="margin-bottom: 0.5rem; font-size: 1rem;">Gaming 2026</h4>
-  <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.45rem;">
-    <strong>Favourite Game This Year:</strong>
-      Resident Evil Requiem
-  </p>
-  <p style="line-height: 1.6; font-size: 0.95rem; color: #666; margin-bottom: 0.2rem;">
-    <strong>Favourite Last Year:</strong>
-    <button id="site-theme-toggle-expedition" type="button" class="favorite-game-toggle favorite-game-toggle--expedition" aria-pressed="false" aria-label="Apply Expedition 33 site theme">
-      Expedition 33
-    </button>
-  </p>
-</div>
-
+  </div>
   </div>
 </section>
 
@@ -179,6 +163,86 @@ summary: "about"
 
 
 <style>
+/* About Section Styles */
+.about-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3rem;
+  padding: 3rem 2rem;
+  font-family: system-ui, -apple-system, sans-serif;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.profile-section {
+  flex: 0 0 220px;
+  text-align: center;
+}
+
+.profile-image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  margin: 0 auto;
+  border: 4px solid var(--theme, #fff);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-image:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.profile-name {
+  margin-top: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.profile-title {
+  font-size: 0.95rem;
+  color: var(--content, #666);
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.bio-section {
+  flex: 1;
+  min-width: 280px;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.8rem;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: white;
+  text-decoration: none;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+}
+
+.social-icon:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  color: white;
+  text-decoration: none;
+}
+
+.linkedin-icon { background-color: #0A66C2; }
+.email-icon { background-color: #EA4335; }
+
 .project-container {
   display: flex !important;
   gap: 2.25rem !important;
