@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=57652&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
@@ -9,16 +9,16 @@
 <meta name="keywords" content="Bias-Variance, Model Generalization, Machine Learning">
 <meta name="description" content="Exploring the bias–variance tradeoff in polynomial regression">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="http://localhost:57652/posts/bias-variance/">
+<link rel="canonical" href="http://localhost:1313/posts/bias-variance/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.831ad65feea8022cb1d8a0f2cca04191235467d1c1ddd05b3115820522e2258d.css" integrity="sha256-gxrWX&#43;6oAiyx2KDyzKBBkSNUZ9HB3dBbMRWCBSLiJY0=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:57652/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:57652/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:57652/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:57652/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:57652/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:57652/posts/bias-variance/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/bias-variance/">
 <noscript>
     <style>
         #theme-toggle,
@@ -97,7 +97,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:57652/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -123,22 +123,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:57652/" title="Posts">
+                <a href="http://localhost:1313/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:57652/archives/" title="Archive">
+                <a href="http://localhost:1313/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:57652/tags/" title="Tags">
+                <a href="http://localhost:1313/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:57652/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -149,7 +149,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:57652/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:57652/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Bias–Variance Tradeoff
     </h1>
@@ -263,105 +263,179 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
       position: fixed;
       inset: 0;
       backdrop-filter: blur(8px);
-      background: rgba(0, 0, 0, 0.45);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.7);
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 9999;
-      padding: 2rem;
+      padding: 1rem;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
+      cursor: zoom-out;
     }
     .zoom-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .zoom-overlay img {
-      width: 90vw;           
-      height: 75vh;          
-      object-fit: contain;   
-      
-      border-radius: 12px;
-      box-shadow: 0 0 0px rgba(0,0,0,0.45);
-      transform: scale(0.9);
-      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    .zoom-overlay-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 95vw;
+      max-height: 95vh;
     }
+
+    .zoom-overlay img {
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      transform: scale(0.95) translateY(10px);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    
     .zoom-overlay.active img {
-      transform: scale(1);
+      transform: scale(1) translateY(0);
+    }
+
+    .zoom-overlay.svg-bg img {
+      background-color: #ffffff;
+      padding: 1.5rem;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 10px 40px rgba(0,0,0,0.5);
+    }
+    
+    #zoom-caption {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.95);
+      text-align: center;
+      max-width: 800px;
+      line-height: 1.5;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: 0.1s;
+    }
+    
+    .zoom-overlay.active #zoom-caption {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    #zoom-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      line-height: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 4px;
+    }
+    
+    #zoom-close-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
     }
   </style>
 
 <div id="zoom-overlay" class="zoom-overlay">
-<button id="zoom-close-btn"
-  style="
-    position:absolute;
-    top:20px;
-    right:20px;
-    background:rgba(0,0,0,0.55);
-    border:none;
-    color:white;
-    font-size:1.8rem;
-    line-height:1;
-    padding:0.2em 0.5em;
-    border-radius:6px;
-    cursor:pointer;
-    backdrop-filter:blur(4px);
-    -webkit-backdrop-filter:blur(4px);
-    transition:background 0.2s;
-  "
-  aria-label="Close image"
->&times;</button>
-  <div style="text-align:center;">
+  <button id="zoom-close-btn" aria-label="Close image">&times;</button>
+  <div class="zoom-overlay-content">
     <img id="zoom-img" src="">
-    
-    <div id="zoom-caption"
-         style="margin-top:1em;
-           font-size:1em;
-           color:white;
-           background:rgba(0,0,0,0.65);
-           padding:0.5em 1em;
-           border-radius:6px;
-           max-width:90%;
-           margin-left:auto;
-           margin-right:auto;">
-    </div>
-
+    <div id="zoom-caption"></div>
   </div>
 </div>
 
 <script>
-const overlay = document.getElementById('zoom-overlay');
-const zoomImg = document.getElementById('zoom-img');
-const zoomCaption = document.getElementById('zoom-caption');
+(function() {
+  if (window.__zoomOverlayInited) return;
+  window.__zoomOverlayInited = true;
 
-document.addEventListener('click', e => {
-  const img = e.target.closest('.zoomable-image');
-  if (img) {
-    zoomImg.src = img.src;
+  document.addEventListener('click', e => {
+    const img = e.target.closest('.zoomable-image');
+    if (img) {
+      const overlay = document.getElementById('zoom-overlay');
+      const zoomImg = document.getElementById('zoom-img');
+      const zoomCaption = document.getElementById('zoom-caption');
 
-    
-    const figure = img.closest('figure');
-    const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+      if (!overlay || !zoomImg) return;
 
-    zoomCaption.innerHTML = caption;
-    overlay.classList.add('active');
-  } else if (e.target === overlay || e.target === zoomImg) {
-    overlay.classList.remove('active');
-  }
-});
+      zoomImg.src = img.src;
 
-document.getElementById('zoom-close-btn').addEventListener('click', () => {
-  overlay.classList.remove('active');
-});
+      
+      if (img.src.toLowerCase().includes('.svg')) {
+        overlay.classList.add('svg-bg');
+      } else {
+        overlay.classList.remove('svg-bg');
+      }
 
-document.addEventListener('keydown', e => {
-  if (e.key === "Escape") {
-    overlay.classList.remove('active');
-  }
-});
+      
+      const figure = img.closest('figure');
+      const caption = figure?.querySelector('figcaption')?.innerHTML || "";
 
+      if (zoomCaption) {
+        if (caption) {
+          zoomCaption.innerHTML = caption;
+          zoomCaption.style.display = 'block';
+        } else {
+          zoomCaption.style.display = 'none';
+        }
+      }
+
+      
+      const padding = overlay.classList.contains('svg-bg') ? 48 : 0; 
+      const maxWidth = window.innerWidth * 0.95 - padding;
+      const maxHeight = window.innerHeight * 0.80 - padding; 
+
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const screenRatio = maxWidth / maxHeight;
+
+      let finalWidth, finalHeight;
+      if (imgRatio > screenRatio) {
+        finalWidth = maxWidth;
+        finalHeight = maxWidth / imgRatio;
+      } else {
+        finalHeight = maxHeight;
+        finalWidth = maxHeight * imgRatio;
+      }
+
+      zoomImg.style.width = finalWidth + 'px';
+      zoomImg.style.height = finalHeight + 'px';
+
+      overlay.classList.add('active');
+    } else {
+      const overlay = document.getElementById('zoom-overlay');
+      if (overlay && e.target.closest('#zoom-overlay')) {
+        
+        overlay.classList.remove('active');
+      }
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === "Escape") {
+      const overlay = document.getElementById('zoom-overlay');
+      if (overlay && overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+      }
+    }
+  });
+})();
 </script>
 <figure id="fig-complexity" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_model_complexity.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
@@ -805,17 +879,17 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:57652/tags/bias-variance/">Bias-Variance</a></li>
-      <li><a href="http://localhost:57652/tags/model-generalization/">Model Generalization</a></li>
-      <li><a href="http://localhost:57652/tags/machine-learning/">Machine Learning</a></li>
+      <li><a href="http://localhost:1313/tags/bias-variance/">Bias-Variance</a></li>
+      <li><a href="http://localhost:1313/tags/model-generalization/">Model Generalization</a></li>
+      <li><a href="http://localhost:1313/tags/machine-learning/">Machine Learning</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:57652/posts/transformer-model/">
+  <a class="prev" href="http://localhost:1313/posts/transformer-model/">
     <span class="title">« Prev</span>
     <br>
     <span>Vision Transformer (ViT) - Architecture and Implementation</span>
   </a>
-  <a class="next" href="http://localhost:57652/posts/bagging-boosting/">
+  <a class="next" href="http://localhost:1313/posts/bagging-boosting/">
     <span class="title">Next »</span>
     <br>
     <span>Bagging and Boosting</span>
@@ -827,7 +901,7 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:57652/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
 
     <span>
         Powered by
