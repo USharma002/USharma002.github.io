@@ -13,9 +13,9 @@ math: true
 ---
 
 
-<!-- <span style="color:red;font-weight:700;font-size:1.05em">
-This post is a work in progress and may be updated or expanded soon!
-</span> -->
+<span style="color:#3b82f6;font-weight:700;font-size:1.0em">
+Light mode is recommended for this post to avoid color incoherency within SVG files.
+</span>
 
 <!-- <div style="background: var(--code-bg, #f6f8fa); border-left: 3px solid #3b82f6; border-radius: 6px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.95rem;">
 <strong>This series</strong><br>
