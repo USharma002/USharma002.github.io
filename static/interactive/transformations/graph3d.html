@@ -4,10 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Transformation Widget</title>
-<!-- KaTeX -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" crossorigin="anonymous" />
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" crossorigin="anonymous"></script>
-
 <style>
     :root {
         --mafs-bg: transparent;
@@ -62,6 +58,21 @@
         font-size: 14px;
         margin-bottom: 4px;
         color: var(--mafs-fg);
+    }
+
+    #matrix-code {
+        margin: 0;
+        padding: 8px 12px;
+        border-left: 2px solid var(--mafs-fg);
+        border-right: 2px solid var(--mafs-fg);
+        border-radius: 8px;
+        color: var(--mafs-fg);
+        background: color-mix(in srgb, var(--mafs-bg) 88%, transparent);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: pre;
+        pointer-events: none;
     }
 
     #phase-container {
@@ -162,7 +173,7 @@
 
 <div id="matrix-container">
     <div id="matrix-title"></div>
-    <div id="matrix-latex"></div>
+    <pre id="matrix-code"></pre>
     
     <div id="custom-matrix">
         <input type="number" class="matrix-input col-0" id="m00" value="1" step="0.1">
@@ -272,23 +283,80 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // Color definitions for KaTeX
-    const cX = "\\textcolor{#ef4444}";
-    const cY = "\\textcolor{#22c55e}";
-    const cZ = "\\textcolor{#3b82f6}";
-    const cT = "\\textcolor{#a855f7}";
-
     const matrixMap = {
-        translation: { title: "3D Translation", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{0} & ${cZ}{0} & ${cT}{t_x} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{t_y} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{1} & ${cT}{t_z} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
-        scaling: { title: "3D Scaling", latex: `\\begin{bmatrix} ${cX}{s_x} & ${cY}{0} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{s_y} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{s_z} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
-        rotation: { title: "3D Rotation (Y-axis)", latex: `\\begin{bmatrix} ${cX}{\\cos\\theta} & ${cY}{0} & ${cZ}{\\sin\\theta} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{-\\sin\\theta} & ${cY}{0} & ${cZ}{\\cos\\theta} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
-        shear: { title: "3D Shear", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{sh_y} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{1} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{0} & ${cT}{1} \\end{bmatrix}` },
-        projective: { title: "3D Perspective", latex: `\\begin{bmatrix} ${cX}{1} & ${cY}{0} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{1} & ${cZ}{0} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{1} & ${cT}{0} \\\\ ${cX}{0} & ${cY}{0} & ${cZ}{p_z} & ${cT}{1} \\end{bmatrix}` },
-        custom: { title: "Custom 4x4 Matrix", latex: "" }
+        translation: {
+            title: "Translation",
+            code: `mat4 T = mat4(
+    1.0, 0.0, 0.0, tx,
+    0.0, 1.0, 0.0, ty,
+    0.0, 0.0, 1.0, tz,
+    0.0, 0.0, 0.0, 1.0
+);`
+        },
+        scaling: {
+            title: "Scaling",
+            code: `mat4 S = mat4(
+    sx,  0.0, 0.0, 0.0,
+    0.0, sy,  0.0, 0.0,
+    0.0, 0.0, sz,  0.0,
+    0.0, 0.0, 0.0, 1.0
+);`
+        },
+        rotation: {
+            title: "Rotation",
+            code: `mat4 R = mat4(
+    cos(theta), 0.0, sin(theta), 0.0,
+    0.0,        1.0, 0.0,        0.0,
+    -sin(theta), 0.0, cos(theta), 0.0,
+    0.0,        0.0, 0.0,        1.0
+);`
+        },
+        shear: {
+            title: "Shear",
+            code: `mat4 H = mat4(
+    1.0, sh_y, 0.0, 0.0,
+    0.0, 1.0,  0.0, 0.0,
+    0.0, 0.0,  1.0, 0.0,
+    0.0, 0.0,  0.0, 1.0
+);`
+        },
+        projective: {
+            title: "Perspective",
+            code: `mat4 P = mat4(
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, pz,
+    0.0, 0.0, 0.0, 1.0
+);`
+        },
+        custom: {
+            title: "Custom",
+            code: `mat4 M = mat4(
+    m00, m01, m02, m03,
+    m10, m11, m12, m13,
+    m20, m21, m22, m23,
+    m30, m31, m32, m33
+);`
+        }
     };
 
     const matrixInfo = matrixMap[type] || matrixMap['shear'];
     document.getElementById('matrix-title').textContent = matrixInfo.title;
+    document.getElementById('matrix-code').textContent = matrixInfo.code;
+
+    function mat4(
+        m00, m01, m02, m03,
+        m10, m11, m12, m13,
+        m20, m21, m22, m23,
+        m30, m31, m32, m33
+    ) {
+        return [
+            m00, m01, m02, m03,
+            m10, m11, m12, m13,
+            m20, m21, m22, m23,
+            m30, m31, m32, m33
+        ];
+    }
 
     let customT = 0;
     let targetT = 0;
@@ -299,13 +367,6 @@
         
         document.getElementById('btn-apply').addEventListener('click', () => { targetT = 1; });
         document.getElementById('btn-reset').addEventListener('click', () => { targetT = 0; });
-    } else {
-        window.onload = () => {
-            katex.render(matrixInfo.latex, document.getElementById('matrix-latex'), {
-                displayMode: true,
-                throwOnError: false
-            });
-        };
     }
 
     // Projection Function (Oblique/Cabinet Projection)
@@ -368,7 +429,6 @@
         polygonEls.push(p);
     }
 
-    // 4x4 Matrix Multiplication
     function applyMatrix(p, m) {
         let x = m[0]*p.x + m[1]*p.y + m[2]*p.z + m[3];
         let y = m[4]*p.x + m[5]*p.y + m[6]*p.z + m[7];
@@ -385,7 +445,6 @@
                     vals.push(parseFloat(document.getElementById(`m${i}${j}`).value) || 0);
                 }
             }
-            // Interpolate from Identity
             const ident = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
             const result = [];
             for(let i=0; i<16; i++) {
@@ -394,27 +453,60 @@
             return result;
         }
 
-        // Default Identity
-        let m = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
-
         switch(type) {
-            case 'translation':
-                m[3] = 2 * t; m[7] = 1.5 * t; m[11] = 1 * t; break;
-            case 'scaling':
-                m[0] = 1 + 1.2 * t; m[5] = 1 + 0.5 * t; m[10] = 1 + 0.8 * t; break;
-            case 'rotation':
-                const a = 60 * Math.PI / 180 * t;
-                m[0] = Math.cos(a); m[2] = Math.sin(a);
-                m[8] = -Math.sin(a); m[10] = Math.cos(a);
-                break;
-            case 'shear':
-                m[1] = 1.5 * t; // Shear X along Y
-                break;
-            case 'projective':
-                m[14] = 0.2 * t; // Perspective Z
-                break;
+            case 'translation': {
+                const tx = 2 * t;
+                const ty = 1.5 * t;
+                const tz = 1 * t;
+                return mat4(
+                    1, 0, 0, tx,
+                    0, 1, 0, ty,
+                    0, 0, 1, tz,
+                    0, 0, 0, 1
+                );
+            }
+            case 'scaling': {
+                const sx = 1 + 1.2 * t;
+                const sy = 1 + 0.5 * t;
+                const sz = 1 + 0.8 * t;
+                return mat4(
+                    sx, 0, 0, 0,
+                    0, sy, 0, 0,
+                    0, 0, sz, 0,
+                    0, 0, 0, 1
+                );
+            }
+            case 'rotation': {
+                const theta = 60 * Math.PI / 180 * t;
+                const cosTheta = Math.cos(theta);
+                const sinTheta = Math.sin(theta);
+                return mat4(
+                    cosTheta, 0, sinTheta, 0,
+                    0, 1, 0, 0,
+                    -sinTheta, 0, cosTheta, 0,
+                    0, 0, 0, 1
+                );
+            }
+            case 'shear': {
+                const shY = 1.5 * t;
+                return mat4(
+                    1, shY, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1
+                );
+            }
+            case 'projective': {
+                const pz = 0.2 * t;
+                return mat4(
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, pz, 1
+                );
+            }
         }
-        return m;
+        return mat4(1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1);
     }
 
     function getShadingColor(v0, v1, v2) {
@@ -457,16 +549,12 @@
         if (type === 'custom') {
             customT += (targetT - customT) * 0.08;
             t = customT;
-            if (typeof katex !== 'undefined') {
-                katex.render(targetT === 1 ? "\\text{Applying } T" : "\\text{Identity}", phaseLabel, { throwOnError: false });
-            }
+            phaseLabel.textContent = targetT === 1 ? 'Applying T' : 'Identity';
         } else {
             const phaseRaw = Math.sin(time / 800);
             t = (phaseRaw + 1) / 2;
             const isForward = Math.cos(time / 800) > 0;
-            if (typeof katex !== 'undefined') {
-                katex.render(isForward ? "\\text{Applying } T" : "\\text{Applying } T^{-1}", phaseLabel, { throwOnError: false });
-            }
+            phaseLabel.textContent = isForward ? 'Applying T' : 'Applying T^-1';
         }
 
         const matrix = getTransform(type, t);

@@ -199,6 +199,8 @@
     let animProgress = 0;
     let animTarget = 0;
     let isAnimating = false;
+    const ANIMATION_RATE = 8;
+    let lastFrameTime = 0;
 
     const labels =[
         "World Space: objects and camera share one coordinate system",
@@ -219,17 +221,21 @@
         document.getElementById('status-label').textContent = labels[state];
         if (!isAnimating) {
             isAnimating = true;
+            lastFrameTime = 0;
             requestAnimationFrame(animate);
         }
     }
 
-    function animate() {
+    function animate(now) {
+        const deltaMs = lastFrameTime ? now - lastFrameTime : 16.6667;
+        lastFrameTime = now;
         let diff = animTarget - animProgress;
         if (Math.abs(diff) < 0.01) {
             animProgress = animTarget;
             isAnimating = false;
+            lastFrameTime = 0;
         } else {
-            animProgress += diff * 0.04;
+            animProgress += diff * (1 - Math.exp(-ANIMATION_RATE * deltaMs / 1000));
             requestAnimationFrame(animate);
         }
         renderAll();

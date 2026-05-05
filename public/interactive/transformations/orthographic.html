@@ -21,14 +21,13 @@
     .frustum-line { stroke: #ef4444; stroke-width: 0.04; stroke-linejoin: round; fill: none; }
     text.axis-label { fill: var(--mafs-fg); font-size: 0.4px; font-style: italic; font-weight: bold; }
     
-    /* Overlay for Matrix Display */
     .matrix-overlay {
         position: absolute;
         top: 20px;
         left: 20px;
         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(4px);
-        padding: 10px 15px; /* Reduced from 15px 20px */
+        padding: 10px 15px;
         border-radius: 8px;
         font-family: system-ui, sans-serif;
         color: #000;
@@ -39,19 +38,18 @@
         z-index: 20;
     }
     .theme-dark .matrix-overlay { background: rgba(30, 30, 30, 0.95); color: #fff; }
-    .matrix-title { font-weight: 600; margin-bottom: 8px; text-align: center; line-height: 1.2; } /* Reduced bottom margin */
-    
-    .matrix-wrapper { display: flex; align-items: center; justify-content: center; padding: 5px 0; }
-    .matrix-bracket { width: 8px; align-self: stretch; border: 2px solid currentColor; border-right: none; margin-right: 12px; }
-    .matrix-bracket.right { border-right: 2px solid currentColor; border-left: none; margin-right: 0; margin-left: 12px; }
-    
-    /* Mathematical Formatting */
-    .matrix-content { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px 10px; text-align: center; } /* Reduced cell gap */
-    .math-cell { display: flex; align-items: center; justify-content: center; font-family: 'Times New Roman', Times, serif; font-size: 1.0em; white-space: nowrap; } /* Scaled down slightly */
-    .math-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; font-size: 0.8em; line-height: 1.2; margin: 0 2px; }
-    .math-frac > .top { border-bottom: 1px solid currentColor; width: 100%; text-align: center; padding-bottom: 2px; }
-    .math-frac > .bottom { padding-top: 2px; }
-    .math-sign { margin-right: 4px; font-style: normal; }
+    .matrix-title { font-weight: 600; margin-bottom: 8px; text-align: center; line-height: 1.2; }
+    .matrix-code {
+        margin: 0;
+        padding: 8px 12px;
+        border-left: 2px solid currentColor;
+        border-right: 2px solid currentColor;
+        border-radius: 8px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: pre;
+    }
 
     /* Corner Labels */
     .corner-label {
@@ -88,11 +86,7 @@
     
     <div id="matrix-overlay" class="matrix-overlay" style="opacity: 0;">
         <div id="matrix-title" class="matrix-title">Matrix</div>
-        <div class="matrix-wrapper">
-            <div class="matrix-bracket"></div>
-            <div class="matrix-content" id="matrix-content"></div>
-            <div class="matrix-bracket right"></div>
-        </div>
+        <pre class="matrix-code" id="matrix-code"></pre>
     </div>
     <div class="label" id="status-label">View Space</div>
 </div>
@@ -134,71 +128,35 @@
     function updateMatrixOverlay() {
         const overlay = document.getElementById('matrix-overlay');
         const title = document.getElementById('matrix-title');
-        const content = document.getElementById('matrix-content');
+        const code = document.getElementById('matrix-code');
         
         if (animProgress < 0.05) { overlay.style.opacity = '0'; return; }
         overlay.style.opacity = '1';
 
-        // Helper to cleanly create math fractions with italic variables 
-        const frac = (t, b) => {
-            let tf = t.replace(/([a-zA-Z]+)/g, '<i>$1</i>').replace(/-/g, '&minus;');
-            let bf = b.replace(/([a-zA-Z]+)/g, '<i>$1</i>').replace(/-/g, '&minus;');
-            return `<div class="math-frac"><div class="top">${tf}</div><div class="bottom">${bf}</div></div>`;
-        };
-
-        // Phase 1: Translation matrix (T)[0 to 1]
+        // T
         if (animProgress <= 1.05) {
-            title.innerHTML = `Translation (T)<div style="font-size:0.75em; font-weight:normal; color:var(--mafs-text); margin-top:3px;">Center at origin</div>`;
-            content.innerHTML = `
-                <div class="math-cell">1</div><div class="math-cell">0</div><div class="math-cell">0</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('l+r', '2')}</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">1</div><div class="math-cell">0</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('t+b', '2')}</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">1</div>
-                <div class="math-cell">${frac('n+f', '2')}</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">1</div>
-            `;
-        } 
-        // Phase 2: Scale matrix (S)[1 to 2]
+            title.textContent = 'Translation';
+            code.textContent = `mat4 T = mat4(
+    1.0, 0.0, 0.0, -(l + r) * 0.5,
+    0.0, 1.0, 0.0, -(t + b) * 0.5,
+    0.0, 0.0, 1.0, -(f + n) * 0.5,
+    0.0, 0.0, 0.0, 1.0
+);`;
+        }
+        // S
         else if (animProgress <= 1.95) {
-            title.innerHTML = `Scaling (S)<div style="font-size:0.75em; font-weight:normal; color:var(--mafs-text); margin-top:3px;">Scale to length 2</div>`;
-            content.innerHTML = `
-                <div class="math-cell">${frac('2', 'r-l')}</div>
-                <div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">0</div>
-                
-                <div class="math-cell">0</div>
-                <div class="math-cell">${frac('2', 't-b')}</div>
-                <div class="math-cell">0</div><div class="math-cell">0</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">0</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('2', 'f-n')}</div>
-                <div class="math-cell">0</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">1</div>
-            `;
-        } 
-        // Final combined Projection matrix (P = ST)
+            title.textContent = 'Scaling';
+            code.textContent = `mat4 S = mat4(
+    2.0 / (r - l), 0.0,           0.0,           0.0,
+    0.0,           2.0 / (t - b), 0.0,           0.0,
+    0.0,           0.0,          -2.0 / (f - n), 0.0,
+    0.0,           0.0,           0.0,           1.0
+);`;
+        }
+        // P = S * T
         else {
-            title.innerHTML = `Projection (P = ST)<div style="font-size:0.75em; font-weight:normal; color:var(--mafs-text); margin-top:3px;">Combined</div>`;
-            content.innerHTML = `
-                <div class="math-cell">${frac('2', 'r-l')}</div>
-                <div class="math-cell">0</div><div class="math-cell">0</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('l+r', 'r-l')}</div>
-                
-                <div class="math-cell">0</div>
-                <div class="math-cell">${frac('2', 't-b')}</div>
-                <div class="math-cell">0</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('t+b', 't-b')}</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">0</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('2', 'f-n')}</div>
-                <div class="math-cell"><span class="math-sign">&minus;</span>${frac('f+n', 'f-n')}</div>
-                
-                <div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">0</div><div class="math-cell">1</div>
-            `;
+            title.textContent = 'Projection';
+            code.textContent = `mat4 P = S * T;`;
         }
     }
 
