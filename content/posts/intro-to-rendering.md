@@ -1,9 +1,9 @@
 ---
 author: ["Utkarsh Sharma"]
-title: "Introduction to Rendering"
+title: "Introduction to 3D Rendering"
 date: "2026-04-30"
-description: "A gentle introduction to the 3D rendering pipeline — from geometric transformations to the pinhole camera shader."
-summary: "From the translation problem to the MVP matrix and a live raymarching shader, built from first principles."
+description: "A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering."
+summary: "A long-form guide to 3D rendering from first principles: transforms, camera and projection, ray generation, intersections, shading, ray tracing, path tracing, signed distance functions, and volume rendering."
 tags: ["Rendering", "Computer Graphics"]
 categories: ["Computer Graphics"]
 series: ["Notes"]
@@ -436,7 +436,7 @@ The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ yie
 
 ## The 3D Graphics Rendering Pipeline
 
-We now have the tools to trace a vertex all the way from an artist's model to a screen pixel. Every stage is a matrix multiplication; the GPU applies the same sequence to every vertex in parallel.
+With these pieces in place, we can trace a vertex all the way from an artist's model to a screen pixel. Each stage is still just a matrix multiplication; the GPU applies the same sequence to every vertex in parallel.
 
 {{< figure src="/images/intro-to-rendering/coordinate_spaces_flow.svg" id="fig-coord-space-flow" caption="The MVP pipeline. Each arrow is a matrix multiplication; the final arrow is the hardware viewport transform." title="The Graphics Rendering Pipeline" alt="Flowchart: Object → World → Camera → Clip → NDC → Window Space" align="center" >}}
 
@@ -920,7 +920,7 @@ But there is a second, equally valid question you can ask: starting from a pixel
 
 ## Generating Primary Rays
 
-We will now follow a different approach to rendering. Instead of projecting objects into a 2D screen, we will use rays to find the pixel color. But before we start with the ray casting algorithm, we need to understand the basics of rays.
+Next, we switch to a different way of rendering. Instead of projecting objects onto a 2D screen, we trace rays to determine the pixel color. Before the ray-casting algorithm itself, though, we need a basic definition of a ray.
 
 
 ### Ray
@@ -936,7 +936,7 @@ Now that we know how to define a ray, for ray casting algorithms we will need to
 
 {{< figure src="/images/intro-to-rendering/raytracing/primary_ray_generation.svg" id="fig-primary-ray-generation" caption="Primary ray generation for a pinhole camera. Each pixel center corresponds to one direction through the image plane." title="Primary Ray Generation" alt="Pinhole camera ray through a pixel center" align="center" >}}
 
-I will assume that we have objects in the world space and then generate rays in camera (eye) space and transform them to world space (note how we are going from camera space to world space). For getting the transformation matrix, we again use the lookAt function.
+Assume the objects already live in World Space, and generate rays in Camera Space before transforming them back into World Space. As before, we use the `lookAt` construction to build the camera transform.
 
 1. **Eye** $\mathbf{e}$: camera position in World Space.
 2. **Target** $\mathbf{t}$: the point the camera looks at.
@@ -988,17 +988,17 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 >         self.d = direction
 >
 > class Camera:
->     def __init__(self, pos, target, fov, aspect=1.0, H=800, W=800):
+>     def __init__(self, pos, target, fov, aspect=None, H=800, W=800):
 >         self.pos = Array3f(*pos)
 >         self.target = Array3f(*target)
 >         self.world_up = Array3f(0, 1, 0)
 >         self.fov = fov
->         self.aspect = W / H
+>         self.aspect = aspect if aspect is not None else W / H
 >         self.H = H
 >         self.W = W
 >         self.f = 1.0
 >
->     def lookAt(self, pos, target):
+>     def lookAt(self):
 >         forward = dr.normalize(self.target - self.pos)
 >         right = dr.normalize(dr.cross(forward, self.world_up))
 >         up = dr.normalize(dr.cross(right, forward))
@@ -1030,19 +1030,19 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 >         height = 2.0 * self.f * math.tan(math.radians(self.fov) / 2.0)
 >         width = height * self.aspect
 >
->         # Scale to [-width/2, width/2] x [-heght/2, height/2]
+>         # Scale to [-width/2, width/2] x [-height/2, height/2]
 >         px = xs * (width / 2.0)
 >         py = ys * (height / 2.0)
 >
 >         # Create the Camera-to-World transformation matrix.
->         M_cam = self.lookAt(self.pos, self.target)
+>         M_cam = self.lookAt()
 >
 >         # Pack the camera-space ray directions into an Array3f
 >         dirs_cam = Array3f(px, py, -self.f)
 >
 >         # 5. Matrix multiplication (Matrix @ Vector)
 >         rd = M_cam @ dirs_cam
->         rd = dr.normalize(rd) # normalize the ray direciton
+>         rd = dr.normalize(rd) # normalize the ray direction
 >
 >         ro = self.pos 
 >
@@ -1102,7 +1102,7 @@ void main() {
 
 > **The Simplified Camera Shortcut**
 > 
-> For the rest of the GLSL examples in this post, we will use a common "shortcut". Because we are locking our camera at the origin `vec3(0,0,0)` (or simply shifting it along the Z-axis without rotating) and always looking straight down the $-Z$ axis, our `M_cam` matrix is simply the Identity matrix. 
+> For the rest of the GLSL examples in this post, we will use a common "shortcut". Because the camera stays at the origin `vec3(0,0,0)` (or is shifted only along the Z-axis without rotation) and always looks straight down the $-Z$ axis, the `M_cam` matrix is simply the identity matrix. 
 > 
 > This means we can skip the matrix multiplication entirely and construct our ray direction directly from the pixel coordinates:
 > 
@@ -2032,7 +2032,7 @@ The key ideas — Monte Carlo integration, importance sampling, and the mathemat
 
 --- 
 
-The interactive below demonstrates how the same scene appears under different rendering paradigms. You can compare the local shading models (Phong and Blinn-Phong) — which calculate light per-surface and ignore inter-object visibility — against global illumination models (Ray Tracing and Path Tracing) that trace ray paths recursively to simulate accurate shadows, glossy reflections, and diffuse light transport.
+The interactive below shows the same scene under different rendering paradigms. You can compare the local shading models (Phong and Blinn-Phong) — which calculate light per surface and ignore inter-object visibility — with global illumination models (Ray Tracing and Path Tracing), which trace ray paths recursively to simulate shadows, glossy reflections, and diffuse light transport.
 
 ---
 
@@ -2238,7 +2238,7 @@ void main() {
 
 ## Volume Rendering
 
-All of the techniques above assume that rays interact only with hard surfaces. **Volume rendering** removes that assumption: instead of stopping at the first intersection, rays sample a continuous density field along their path. At each sample point, the ray may be absorbed (Beer's Law), scattered in a new direction, or emit light.
+All of the techniques above assume that rays interact only with hard surfaces. **Volume rendering** removes that assumption: instead of stopping at the first intersection, rays sample a continuous density field along their path. At each sample point, the ray may be absorbed (Beer-Lambert attenuation), scattered in a new direction, or emit light.
 
 ### Participating Media
 
@@ -2339,25 +2339,25 @@ $$
 The full light transport model adds in-scattering and emission back into the ray. In ray parameter form, the radiance changes as
 
 $$
-\frac{dL(x_s,\omega)}{ds} = -\sigma_t(x_s)L(x_s,\omega) + \sigma_s(x_s)L_s(x_s,\omega) + \sigma_a(x_s)L_e(x_s,\omega),
+\frac{dL(x_s,\omega)}{ds} = -\sigma_t(x_s)L(x_s,\omega) + \sigma_s(x_s)L_s(x_s,\omega) + j(x_s,\omega),
 $$
 
-where $L_s$ denotes light scattered into the ray from other directions and $L_e$ is the radiance emitted by the medium.
+where $L_s$ denotes light scattered into the ray from other directions and $j$ is the emitted radiance of the medium.
 
 The corresponding volume rendering equation can be written as
 
 $$
-L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + \sigma_a(x_{s'})L_e(x_{s'})\big]\,ds' + T(s)L(0).
+L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + j(x_{s'},\omega)\big]\,ds' + T(s)L(0).
 $$
 
-The proof is a standard integrating-factor derivation.
+The result follows from a standard integrating-factor derivation.
 > <details>
 > <summary style="cursor: pointer;">Proof: from the RTE to the VRE</summary>
 >
 > Define the source term as
 >
 > $$
-q(s) = \sigma_s(x_s)L_s(x_s,\omega) + \sigma_a(x_s)L_e(x_s,\omega).
+q(s) = \sigma_s(x_s)L_s(x_s,\omega) + j(x_s,\omega).
 $$
 >
 > Then the radiance equation can be written in standard linear ODE form:
@@ -2413,16 +2413,16 @@ $$
 > Replacing $q(s')$ with the emission and in-scattering source terms yields the volume rendering equation:
 >
 > $$
-L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + \sigma_a(x_{s'})L_e(x_{s'})\big]\,ds' + T(s)L(0).
+L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + j(x_{s'},\omega)\big]\,ds' + T(s)L(0).
 $$
 >
-> In practice, this is why front-to-back marching works: each sample contributes a local source term, but every contribution is discounted by the transmittance accumulated before that point.
+> In practice, this is why front-to-back marching works: each sample contributes a local source term, and every contribution is discounted by the transmittance accumulated before that point.
 >
 > </details>
 
-This is the complete participating-media model. The GLSL example below uses the simpler absorption-plus-emission case, which is enough to visualize a soft volumetric cloud.
+That completes the basic participating-media model. The GLSL example below uses the simpler absorption-plus-emission case, which is enough to visualize a soft volumetric cloud.
 
-Here is a live GLSL example demonstrating a volumetric density field. As rays step through the medium, transmittance decays via Beer's Law, while emitted light is accumulated along the path to produce a soft, cloud-like glow.
+Here is a live GLSL example of a volumetric density field. As rays step through the medium, transmittance decays via the Beer-Lambert law, while emitted light is accumulated along the path to produce a soft, cloud-like glow. In the code below, `emission` plays the role of the source term $j$.
 
 {{< glsl >}}
 #version 300 es
@@ -2452,15 +2452,15 @@ void main() {
         // Raymarch: discrete approximation of the VRE integral
         const int   STEPS      = 32;
         const float sigma_t    = 0.5;  // extinction coefficient
-        const vec3  emit_color = vec3(0.5, 0.7, 1.0);
+        const vec3  emission    = vec3(0.5, 0.7, 1.0);
 
         float dt = (tFar - tNear) / float(STEPS);
         float T  = 1.0; // transmittance, starts at 1
 
         for (int i = 0; i < STEPS; i++) {
-            // T(s') * sigma_a * L_e * dt  (emission term from VRE)
+            // T(s') * j * dt  (emission contribution from the VRE)
             float dT  = exp(-sigma_t * dt);
-            col      += emit_color * T * (1.0 - dT);
+            col      += emission * T * (1.0 - dT);
             T        *= dT;
 
             if (T < 0.01) break;
