@@ -254,8 +254,34 @@
             document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
         } catch (e) {}
     }
-    syncTheme();
-    setInterval(syncTheme, 1000);
+    function installThemeSync() {
+        const sync = () => requestAnimationFrame(syncTheme);
+
+        sync();
+
+        if (typeof MutationObserver !== 'undefined') {
+            try {
+                const parentDoc = window.parent.document;
+                const observer = new MutationObserver(sync);
+                const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
+
+                if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
+                if (parentDoc.body) observer.observe(parentDoc.body, options);
+
+                window.addEventListener('beforeunload', function () {
+                    observer.disconnect();
+                }, { once: true });
+            } catch (e) {}
+        }
+
+        if (window.matchMedia) {
+            const media = window.matchMedia('(prefers-color-scheme: dark)');
+            if (media.addEventListener) media.addEventListener('change', sync);
+            else if (media.addListener) media.addListener(sync);
+        }
+    }
+
+    installThemeSync();
 
     const labels =[
         "The standard vectors: Normal (<b>n</b>), Light direction (<b>l</b>), and View direction (<b>v</b>).",

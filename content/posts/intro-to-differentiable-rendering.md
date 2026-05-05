@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Introduction to Differentiable Rendering"
-date: "2026-05-29"
+date: "2026-05-02"
 description: "An introduction to Differentiable rendering techniques for computer graphics and vision"
 summary: "Differentiable rendering techniques for computer graphics and vision"
 tags: ["Differentiable Rendering", "Computer Graphics"]
@@ -605,7 +605,7 @@ $X(p)$ with a potentially discontinuous integrand, the derivative is:
 
 $$
 \begin{equation}
-\partial_p \int_{X(p)} f(\mathbf{x}, p)\, d\mathbf{x} = \underbrace{{\color{#0f85a5}\int_{X(p)} \partial_p f(\mathbf{x}, p)\, d\mathbf{x}}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Gamma(p)} \Delta f(\mathbf{x}, p)\, \langle \partial_p \mathbf{x},\, \mathbf{n} \rangle\, d\mathbf{x}}}_{\text{Boundary derivative}} \label{reynolds-transport-theorem}
+\partial_p \int_{X(p)} f(\mathbf{x}, p)\, d\mathbf{x} = \underbrace{{\color{#0f85a5}\int_{X(p)} \partial_p f(\mathbf{x}, p)\, d\mathbf{x}}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Gamma(p)} \Delta f(\mathbf{x}, p)\, \langle \partial_p \mathbf{x},\, \mathbf{n} \rangle\, d\mathbf{x}}}_{\text{Boundary derivative}} \label{eq:reynolds-transport-theorem}
 \end{equation}
 $$
 
@@ -987,4 +987,113 @@ print(np.round(d_verts, 4))
 
 # Physics-Based Differentiable Rendering Theory
 
-The previous sections demonstrated how to differentiate the rendering integral with respect to geometry parameters using the Reynolds Transport Theorem. However, fully leveraging the power of physics-based differentiable rendering requires us to differentiate with respect to **material parameters** (e.g., albedo, roughness) and **illumination parameters** (e.g., position, intensity of light sources).
+
+Given the mathematical tools described above, we will discuss the differentiaation of hte renderin gequation (RE) with respect to arbitrary scene parameters. 
+
+## Differentiable Rendering of Surfaces
+
+Physica-based renering surfaces has beed a central topic in computer graphics for decades and is governed by the well-known *rendering equation* (RE). The RE is an integral equation stating that the (steady-state) radiance $L$ at any surface point $\mathbf{x}$ with direction $\omega_o$ is given by:
+
+$$
+\begin{equation}
+L(\mathbf{x}, \omega_o) = L_e(\mathbf{x}, \omega_o) + \int_{\Omega}  L_i(\mathbf{x}, \omega_i) \; f_r(\mathbf{x}, \omega_i, \omega_o) \;\operatorname{d} \sigma (\omega_i) \label{eq:rendering-equation}
+\end{equation}
+$$
+
+where $L_i$ indicate the incidence radiance, $f_s$ denotes the cosine-weighted BSDF, and $d\sigma$ is the solid-angle measure.
+
+The RE has no analytical solution in general, and numerous numerical methods have been developed. Some of the widely adopted examples include unbiased methods like unidirectional and bidirectional path tracing, as well as biased ones such as photon mapping and lightcuts.
+
+
+### Direction Illumination
+Before differentiatinf the full RE $\eqref{eq:rendering-equation}$, we will first consider the case of direct illumination as a warm-up. Specifically, the radiance $L_r$ resulting form exactly one reflection at a surface point $\mathbf{x}$ with direction $\omega_o$ equals
+
+$$
+\begin{equation}
+L_r(\mathbf{x}, \omega_o) = \int_{\mathbb{S}^2}  L_e(\mathbf{y}, -\omega_i) \; f_r(\mathbf{x}, \omega_i, \omega_o) \; \operatorname{d} \sigma (\omega_i) \label{eq:direct-illumination}
+\end{equation}
+$$
+
+where $\mathbf{y}$ represents the closest intersection of alight ray originated at $\mathbf{x}$ with direction $\omega_i$, i.e., $\mathbf{y} = \operatorname{rayTrace}(\mathbf{x}, \omega_i)$. Unlike RE $\eqref{eq:rendering-equation}$, that takes the form of an integral equation, Eq. $\eqref{eq:direct-illumination}$ is a simple spherical integral as its right-hand side involves only known quantities.
+
+We now consider the problem of calculating the derivative of $L_r(\mathbf{x}, \omega_o)$ with respect to some abstract scene parameter $\pi \in \mathbb{R}$. Given $\mathbf{x}$ and $\mathbf{\omega_o}$, let $f_{direct}(\omega_i; \mathbf{x}, \omega_o) := L_e(\mathbf{y}-\omega_i) \; f_s(\mathbf{x}, \omega_i, \omega_o)$. It holds that
+
+$$
+\frac{\partial}{\partial \pi} L_r(\mathbf{x}, \omega_o) = \frac{\partial}{\partial \pi} \left( \int_{\mathbb{S}^2} f_{direct}(\omega_i; \mathbf{x}, \omega_o) \operatorname{d} \sigma (\omega_i) \right)  \label{eq:direct-illumination-derivative}
+$$
+
+By applying Reynolds transport theorem $\eqref{eq:reynolds-transport-theorem}$, we obtain:
+
+$$
+\begin{equation}
+\partial_\pi L_r(\mathbf{x}, \omega_o) = \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi f_{direct}(\omega_i; \mathbf{x}, \omega_o) \operatorname{d} \sigma (\omega_i)}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\omega_i; \mathbf{x}, \omega_o) \langle \partial_\pi \omega_i, n(\omega_i) \rangle \operatorname{d}\ell(\omega_i)}}_{\text{Boundary derivative}} \label{eq:direct-illumination-derivative-reynolds}
+\end{equation}
+$$
+
+where $\mathrm{d}ℓ$ is the curve-length measure. In this equation, the *interior* term is an integral over the unit sphere $\mathbb{S}^2$, which is independent of the scene parameter $\pi$, making the integral variable $\omega_i$ also be $\pi$-independent. The *boundary* term, on the other hand, emerges due to the (jump) discontinuity points of $f_{\text{direct}}$ (with respect to $\omega_i$) and captures how they “move” $\pi$ varies. These discontinuity points forms 1D discontinuity curves, which we denote as $\Delta \mathbb{S}^2$, over the unit sphere. For any $\omega_i \in \mathbb{S}^2 (x, \omega_o)$, $n^{\perp}(\omega_i)$ is a vector in the tangent space of $\mathbb{S}^2$ at $\omega_i$ perpendicular to the discontinuity curve.
+
+The term $\nabla_\omega L_e$ accounts for the change in emission as the light source moves, while $\nabla_{\omega_i} f_s$ accounts for changes in the scatteringBRDF. The boundary term captures the flux change as light rays cross edges where either $L_e$ or $f_s$ jumps with unit-normal field $n^{\perp}$.
+
+{{< figure src="/images/diff-rendering/normals.svg" caption="The normal directions of arcs and circles (that are respectively the projections of line segments and spheres) as spherical curves." id="fig-triangle-forward" width="100%">}}
+
+Assuming the (cosine-weighted) BSDF $f_s(\mathbf{x}, \omega_i, \omega_o)$ to be continuous with respect to $\omega_i$, which is usually the case except for perfectly specular BSDFs, the discontinuities of the integrand $f_{direct}$ fully emerge from those of incident emission $L_e(\mathbf{y}, \omega_i)$, which is generally discontinuous due to occlussions. THerefore,
+
+$\Delta f_{direct} (\omega_i; \mathbf{x}, \omega_o) = f_s (\mathbf{x}, \omega_i, \omega_o) \; \Delta L_e (\mathbf{y}, -\omega_i).$
+
+### Differential Rendering Equation
+
+Based on the analysis above, we now differentiate the full rendering equation (RE) $\eqref{eq:rendering-equation}$ using the Reynolds transport theorem ($\ref{eq:reynolds-transport-theorem}$). This yields another integral equation, which we call the *differential rendering equation*.
+
+We begin by applying the derivative operator $\partial_\pi$ to both sides of the standard rendering equation:
+
+$$
+\partial_\pi L(\mathbf{x}, \omega_o) = \partial_\pi L_e(\mathbf{x}, \omega_o) + \partial_\pi \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \omega_i) \; f_s(\mathbf{x}, \omega_i, \omega_o) \; \mathrm{d}\sigma(\omega_i)
+$$
+
+Since the scene geometry may move as the parameter $\pi$ changes, the integration domain inherently contains moving boundaries (i.e., silhouettes). Applying the Reynolds Transport Theorem ($\ref{eq:reynolds-transport-theorem}$) splits the derivative of this integral into an interior and a boundary component:
+
+$$
+\begin{aligned}
+\partial_\pi L(\mathbf{x}, \omega_o) = \partial_\pi L_e(\mathbf{x}, \omega_o) &+ \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi \Big( L_i(\mathbf{x}, \omega_i) f_s(\mathbf{x}, \omega_i, \omega_o) \Big) \mathrm{d}\sigma(\omega_i)}}_{\text{Interior derivative}} \\
+&+ \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s(\mathbf{x}, \omega_i, \omega_o) \Delta L_i(\mathbf{x}, \omega_i) \langle \mathbf{n}_\perp, \partial_\pi \omega_i \rangle \mathrm{d}\ell(\omega_i)}}_{\text{Boundary derivative}}
+\end{aligned}
+$$
+
+> **Note on the boundary term:** Notice that we wrote the jump of the integrand as $f_s \Delta L_i$ rather than $\Delta(L_i f_s)$. This assumes that the (cosine-weighted) BSDF $f_s$ evaluates smoothly and continuously with respect to the incoming direction $\omega_i$. For typical materials (diffuse, rough microfacet), this holds true—the discontinuity is entirely caused by the incoming radiance $L_i$ abruptly jumping when an integration ray sweeps past a silhouette edge or shadow boundary. The notable exception is perfectly specular materials (like ideal mirrors), whose BSDFs are Dirac delta functions; handling those requires a different mathematical approach (such as *attached sampling*).
+
+Inside the interior integral, we expand the derivative of the product $\partial_\pi (L_i f_s)$ using the standard product rule:
+
+$$
+{\color{#0f85a5} \partial_\pi(L_i f_s) = (\partial_\pi L_i) f_s + L_i (\partial_\pi f_s) }
+$$
+
+Substituting this expansion back into the equation allows us to regroup the terms into two distinct transport components. We collect the terms acting as "sources" of differential radiance into one group, and the term representing scattered differential radiance into another:
+
+$$
+\begin{aligned}
+\partial_\pi L(\mathbf{x}, \omega_o) &= \underbrace{ \partial_\pi L_e + {\color{#0f85a5}\int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma} + {\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \omega_i \rangle \mathrm{d}\ell} }_{\textbf{Differential Emission } (Q(\mathbf{x}, \omega_o))} \\
+&\quad + \underbrace{ {\color{#0f85a5}\int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \mathrm{d}\sigma} }_{\textbf{Differential Scattering}}
+\end{aligned}
+$$
+
+This final equation shares the exact same structure as the original rendering equation. Instead of standard light emission and scattering, it describes the emission and scattering of *differential radiance* (gradients).
+
+The **differential emission** term $Q(\mathbf{x}, \omega_o)$ acts as the source of gradients. It evaluates to a non-zero value at any point where the primary emission changes ($\partial_\pi L_e$), the material scattering properties change ($\partial_\pi f_s$), or a silhouette edge moves to uncover a different object ($f_s \Delta L_i$). During Monte Carlo integration, we compute this local change $Q$ at every path vertex and add it to the running gradient estimate.
+
+The **differential scattering** term $\int (\partial_\pi L_i) f_s \mathrm{d}\sigma$ handles the propagation of these gradients. Here, $\partial_\pi L_i$ represents the derivative of the incident radiance arriving from the previous bounce. Just like standard radiance, this incoming differential radiance is multiplied by the material's BSDF ($f_s$) and scattered towards the camera.
+
+Consequently, when a Monte Carlo path tracer simulates this process, it unrolls the recursion identical to forward rendering. For a light path with vertices $x_1 \to x_2 \to x_3 \to \text{Camera}$, the total gradient expands mathematically via the chain rule as:
+
+$$ 
+\partial_\pi L \approx Q(x_1) + Q(x_2) f_s(x_1) + Q(x_3) f_s(x_2) f_s(x_1) 
+$$
+
+In practice, this means we trace a standard light path and, at each bounce, compute the local differential emission $Q$, add it to the accumulated gradient, and multiply the running total by the surface BSDF as the path continues.
+
+# References
+
+1. Zhao, Shuang, Wenzel Jakob, and Tzu-Mao Li. *“Physics-Based Differentiable Rendering: A Comprehensive Introduction.”* *ACM SIGGRAPH 2020 Courses*, 2020.[https://dl.acm.org/doi/10.1145/3388769.3407454](https://dl.acm.org/doi/10.1145/3388769.3407454).
+
+2. Vicini, Delio. *“Efficient and Accurate Physically-Based Differentiable Rendering.”* *EPFL PhD Thesis*, 2022. [https://dvicini.github.io/phdthesis/](https://dvicini.github.io/phdthesis/).
+
+3. Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. *“Differentiable Signed Distance Function Rendering.”* *ACM Transactions on Graphics (TOG)*, 41(4), 2022.[https://rgl.epfl.ch/publications/Vicini2022SDF](https://rgl.epfl.ch/publications/Vicini2022SDF).

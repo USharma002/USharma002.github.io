@@ -586,9 +586,43 @@ function updateTheme() {
     render();
 }
 
-setInterval(detectTheme, 1000);
-detectTheme();
-render();
+function installThemeSync() {
+    const sync = () => {
+        detectTheme();
+        render();
+    };
+
+    sync();
+
+    if (typeof MutationObserver !== 'undefined') {
+        try {
+            const parentDoc = window.parent.document;
+            const observer = new MutationObserver(function () {
+                requestAnimationFrame(sync);
+            });
+            const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
+
+            if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
+            if (parentDoc.body) observer.observe(parentDoc.body, options);
+
+            window.addEventListener('beforeunload', function () {
+                observer.disconnect();
+            }, { once: true });
+        } catch (e) {}
+    }
+
+    if (window.matchMedia) {
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const listener = function () {
+            requestAnimationFrame(sync);
+        };
+
+        if (media.addEventListener) media.addEventListener('change', listener);
+        else if (media.addListener) media.addListener(listener);
+    }
+}
+
+installThemeSync();
 
 </script>
 </body>

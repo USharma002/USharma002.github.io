@@ -122,14 +122,41 @@ const N=6, $=s=>document.querySelector(s);
 const side=$("#side");
 $("#toggle").onclick=()=>side.classList.toggle("closed");
 
+let viewsReady = false;
+let renderQueued = false;
+
 // theme inherit
 const theme=()=>{try{
   const b=window.getComputedStyle(window.parent.document.body).backgroundColor.match(/\d+/g);
   if(!b) return;
   const y=(+b[0]*299 + +b[1]*587 + +b[2]*114)/1000;
   document.documentElement.setAttribute("data-theme", y<128 ? "dark":"light");
+  scheduleRender();
 }catch(e){}};
-setInterval(theme,1000); theme();
+
+(function installThemeSync(){
+  const sync = () => requestAnimationFrame(theme);
+  sync();
+
+  if (typeof MutationObserver !== 'undefined') {
+    try {
+      const parentDoc = window.parent.document;
+      const observer = new MutationObserver(sync);
+      const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
+
+      if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
+      if (parentDoc.body) observer.observe(parentDoc.body, options);
+
+      window.addEventListener('beforeunload', () => observer.disconnect(), { once: true });
+    } catch (e) {}
+  }
+
+  if (window.matchMedia) {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    if (media.addEventListener) media.addEventListener('change', sync);
+    else if (media.addListener) media.addListener(sync);
+  }
+})();
 
 // data
 const randComp=()=> {
@@ -188,7 +215,7 @@ class View {
     this.scene.add(this.mesh);
 
     this.drag();
-    new ResizeObserver(()=>this.resize()).observe(el);
+    new ResizeObserver(()=>{ this.resize(); scheduleRender(); }).observe(el);
     this.resize();
   }
   makeUniforms(){
@@ -217,6 +244,7 @@ class View {
       const dx=e.clientX-p.x, dy=e.clientY-p.y;
       this.mesh.rotation.y+=dx*0.015; this.mesh.rotation.x+=dy*0.015;
       views.forEach(v=>v.setRot(this.mesh.rotation));
+      scheduleRender();
       p={x:e.clientX,y:e.clientY};
     };
     const up=()=>{d=false;this.el.style.cursor="grab";};
@@ -228,6 +256,17 @@ class View {
 
 const main=$("#main"), grid=$("#grid"), sliders=$("#sliders"), sum=$("#sum");
 const mk=(t,c)=>Object.assign(document.createElement(t),c||{});
+
+function renderAll(){ views.forEach(v=>v.render()); }
+
+function scheduleRender(){
+  if (!viewsReady || renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(() => {
+    renderQueued = false;
+    renderAll();
+  });
+}
 
 // build grid
 grid.innerHTML="";
@@ -252,6 +291,7 @@ function updateBorders(){
   });
   sum.textContent=`sum=${data.reduce((s,c)=>s+c.weight,0).toFixed(2)}`;
   views[0].mat.uniforms.w.value = data.map(c=>c.weight);
+  scheduleRender();
 }
 
 function rebuildSliders(){
@@ -273,8 +313,7 @@ function rebuildSliders(){
   });
 }
 
-function loop(){ requestAnimationFrame(loop); views.forEach(v=>v.render()); }
-rebuildSliders(); updateBorders(); loop();
+rebuildSliders(); updateBorders(); viewsReady = true; scheduleRender();
 
 $("#rand").onclick=()=>{
   const w=data.map(c=>c.weight);

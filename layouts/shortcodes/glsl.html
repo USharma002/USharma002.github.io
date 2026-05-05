@@ -40,18 +40,16 @@
     </div>
 </div>
 
-<!-- Textareas natively decode HTML entities securely, making them the safest way to store raw text -->
 <textarea id="fs-{{ $id }}" style="display: none;">{{ $rawCode }}</textarea>
 
 <script>
 (function() {
     const canvas = document.getElementById('glcanvas-{{ $id }}');
     const editor = document.getElementById('editor-{{ $id }}');
-    const gl = canvas.getContext('webgl2');
-    if (!gl) {
-        console.error('WebGL2 not supported');
-        return;
-    }
+    let gl = null;
+    let positionBuffer = null;
+    let initialized = false;
+    let pendingSource = '';
 
     const vsSource = `#version 300 es
     in vec4 aVertexPosition;
@@ -75,27 +73,133 @@
     let positionAttributeLocation = -1;
     let resolutionUniformLocation = null;
     let timeUniformLocation = null;
-    let mouseUniformLocation = null; // Added mouse uniform location
-    
+    let mouseUniformLocation = null;
+    let renderFrameId = null;
+    let isCanvasVisible = false;
+    let isPageVisible = !document.hidden;
+
+    // FIX 1: Scale mouse coords by DPR so they match the physical canvas pixels
+    //         that u_resolution reports. Without this, mouse position is wrong
+    //         on any high-DPI screen (every modern phone).
+    const dpr = window.devicePixelRatio || 1;
+
     let mouseX = 0.0;
     let mouseY = 0.0;
 
-    // Track mouse movement over the canvas
+    function shouldRender() {
+        return isCanvasVisible && isPageVisible;
+    }
+
+    function scheduleRender() {
+        if (renderFrameId !== null || !shouldRender()) return;
+        renderFrameId = requestAnimationFrame(render);
+    }
+
+    function cancelRender() {
+        if (renderFrameId !== null) {
+            cancelAnimationFrame(renderFrameId);
+            renderFrameId = null;
+        }
+    }
+
+    function syncRenderState() {
+        if (shouldRender()) {
+            if (!initialized) {
+                if (!initializeWidget()) return;
+            }
+            scheduleRender();
+        } else {
+            cancelRender();
+        }
+    }
+
+    function initializeWidget() {
+        if (initialized) return !!gl;
+
+        gl = canvas.getContext('webgl2');
+        if (!gl) {
+            console.error('WebGL2 not supported');
+            initialized = true;
+            return false;
+        }
+
+        initialized = true;
+
+        positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1.0,  1.0,
+             1.0,  1.0,
+            -1.0, -1.0,
+             1.0, -1.0,
+        ]), gl.STATIC_DRAW);
+
+        return buildProgram(pendingSource);
+    }
+
+    // ── Mouse (desktop) ──────────────────────────────────────────────────────
     canvas.addEventListener('mousemove', (e) => {
         const rect = canvas.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        // Invert Y axis because WebGL's origin is bottom-left, but DOM's is top-left
-        mouseY = rect.height - (e.clientY - rect.top); 
+        mouseX = (e.clientX - rect.left)  * dpr;
+        mouseY = (rect.height - (e.clientY - rect.top)) * dpr;
     });
 
-    // Reset mouse coordinates when leaving the canvas
     canvas.addEventListener('mouseleave', () => {
         mouseX = 0.0;
         mouseY = 0.0;
     });
 
+    // FIX 2: Add touch event listeners so mobile users can aim the ray.
+    //         touchstart fires immediately; touchmove tracks drags.
+    //         touchend resets to (0,0) so the shader falls back to animation.
+    function setMouseFromTouch(e) {
+        if (e.touches.length === 0) return;
+        e.preventDefault(); // prevent scroll-while-touching-canvas
+        const touch = e.touches[0];
+        const rect  = canvas.getBoundingClientRect();
+        mouseX = (touch.clientX - rect.left)  * dpr;
+        mouseY = (rect.height - (touch.clientY - rect.top)) * dpr;
+    }
+
+    canvas.addEventListener('touchstart', setMouseFromTouch, { passive: false });
+    canvas.addEventListener('touchmove',  setMouseFromTouch, { passive: false });
+    canvas.addEventListener('touchend',   () => { mouseX = 0.0; mouseY = 0.0; }, { passive: true });
+
+    // ── Visibility ───────────────────────────────────────────────────────────
+    // FIX 3: IntersectionObserver was registered TWICE in the original file
+    //         (once before buildProgram, once after). The second registration
+    //         created a second observer that never set isCanvasVisible = true
+    //         in the else-branch, so on browsers without IntersectionObserver
+    //         support (some older mobile WebViews) nothing ever rendered.
+    //         Consolidated into a single observer here.
+    if (typeof IntersectionObserver !== 'undefined') {
+        const visibilityObserver = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (entry.target === canvas) {
+                    isCanvasVisible = entry.isIntersecting;
+                    syncRenderState();
+                }
+            }
+        }, { rootMargin: '200px' });
+
+        visibilityObserver.observe(canvas);
+
+        window.addEventListener('beforeunload', () => {
+            visibilityObserver.disconnect();
+        }, { once: true });
+    } else {
+        // Fallback for older mobile WebViews that lack IntersectionObserver
+        isCanvasVisible = true;
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        isPageVisible = !document.hidden;
+        syncRenderState();
+    });
+
+    // ── Shader program ───────────────────────────────────────────────────────
     function buildProgram(fsSourceRaw) {
-        const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const vertexShader   = createShader(gl, gl.VERTEX_SHADER,   vsSource);
         const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSourceRaw);
 
         if (!fragmentShader) {
@@ -119,21 +223,21 @@
         if (program) gl.deleteProgram(program);
         program = newProgram;
 
-        positionAttributeLocation = gl.getAttribLocation(program, "aVertexPosition");
-        resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-        timeUniformLocation = gl.getUniformLocation(program, "u_time");
-        mouseUniformLocation = gl.getUniformLocation(program, "u_mouse"); // Bind uniform
+        positionAttributeLocation = gl.getAttribLocation(program, 'aVertexPosition');
+        resolutionUniformLocation  = gl.getUniformLocation(program, 'u_resolution');
+        timeUniformLocation        = gl.getUniformLocation(program, 'u_time');
+        mouseUniformLocation       = gl.getUniformLocation(program, 'u_mouse');
 
         gl.deleteShader(vertexShader);
         gl.deleteShader(fragmentShader);
+        syncRenderState();
         return true;
     }
 
-    // Pull the raw value from the textarea and sanitize non-breaking spaces (\u00A0)
     const rawSource = document.getElementById('fs-{{ $id }}').value.trim();
-    const sanitizedInitialSource = rawSource.replace(/\u00A0/g, " ");
-    buildProgram(sanitizedInitialSource);
+    pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
+    // ── Editor events ────────────────────────────────────────────────────────
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
@@ -148,37 +252,25 @@
     });
 
     editor.addEventListener('input', () => {
-        // Browsers love inserting non-breaking spaces into contenteditables. 
-        // We MUST sanitize them into real spaces or WebGL will crash.
-        const newSource = editor.innerText.trim().replace(/\u00A0/g, " ");
+        const newSource = editor.innerText.trim().replace(/\u00A0/g, ' ');
         buildProgram(newSource);
     });
 
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    const positions =[
-        -1.0,  1.0,
-         1.0,  1.0,
-        -1.0, -1.0,
-         1.0, -1.0,
-    ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
+    // ── Render loop ──────────────────────────────────────────────────────────
     function render(time) {
-        if (!program) {
-            requestAnimationFrame(render);
-            return;
-        }
+        renderFrameId = null;
+        if (!shouldRender() || !initialized || !gl || !program) return;
 
-        const displayWidth  = canvas.clientWidth;
-        const displayHeight = canvas.clientHeight;
-        if (canvas.width  !== displayWidth || canvas.height !== displayHeight) {
+        // FIX 1 (cont.): size the backing store at physical pixels (CSS size × DPR)
+        //                 so the canvas is never blurry on retina / high-DPI mobile.
+        const displayWidth  = Math.round(canvas.clientWidth  * dpr);
+        const displayHeight = Math.round(canvas.clientHeight * dpr);
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
             canvas.width  = displayWidth;
             canvas.height = displayHeight;
         }
 
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        
         gl.useProgram(program);
 
         gl.enableVertexAttribArray(positionAttributeLocation);
@@ -186,13 +278,13 @@
         gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
         if (resolutionUniformLocation) gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-        if (timeUniformLocation) gl.uniform1f(timeUniformLocation, time * 0.001);
-        if (mouseUniformLocation) gl.uniform2f(mouseUniformLocation, mouseX, mouseY); // Pass mouse to shader
+        if (timeUniformLocation)       gl.uniform1f(timeUniformLocation, time * 0.001);
+        if (mouseUniformLocation)      gl.uniform2f(mouseUniformLocation, mouseX, mouseY);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-        requestAnimationFrame(render);
+        scheduleRender();
     }
-    requestAnimationFrame(render);
+
+    syncRenderState();
 })();
 </script>

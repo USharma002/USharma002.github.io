@@ -4,18 +4,6 @@
 {{- $noinvert := .Get "noinvert" -}}
 {{- $id := printf "step-slider-%d" .Ordinal -}}
 
-<script>
-  window.MathJax = window.MathJax || {
-    loader: { load: ['[tex]/html'] },
-    tex: {
-      packages: { '[+]': ['html'] },
-      inlineMath: [['$', '$'], ['\\(', '\\)']],
-      displayMath: [['$$','$$'], ['\\[', '\\]']]
-    }
-  };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-
 
 <style>
   /* --- Button pinning fix (buttons won't move when footer grows) --- */
@@ -82,8 +70,21 @@
     dompurifyPromise: null,
     mathjaxPromise: null,
     mathjaxTypesetChain: Promise.resolve(),
-    globalsInstalled: false
+    globalsInstalled: false,
+    themeObserverInstalled: false
   };
+
+  function getSlides(container) {
+    if (!container.__stepSliderSlides) {
+      try {
+        container.__stepSliderSlides = JSON.parse(container.dataset.slides || '[]');
+      } catch (e) {
+        container.__stepSliderSlides = [];
+      }
+    }
+
+    return container.__stepSliderSlides;
+  }
 
   function loadScriptOnce(globalVarName, src) {
     return new Promise((resolve, reject) => {
@@ -117,6 +118,11 @@
 
   // MathJax (load once) + enable \class via [tex]/html
   window.__stepSliderLibs.mathjaxPromise ||= (async () => {
+    if (window.MathJax?.startup?.promise) {
+      try { await window.MathJax.startup.promise; } catch (e) {}
+      return true;
+    }
+
     // Must be set BEFORE MathJax script loads
     window.MathJax = window.MathJax || {
       loader: { load: ['[tex]/html'] },
@@ -149,13 +155,47 @@
         const parentBody = window.parent.document.body;
         const style = window.getComputedStyle(parentBody);
         const bgColor = style.backgroundColor;
-        const rgb = bgColor.match(/\d+/g);
+    if (!window.__stepSliderLibs.themeObserverInstalled) {
+      window.__stepSliderLibs.themeObserverInstalled = true;
+
+      var scheduleThemeSync = function () {
+        window.requestAnimationFrame(window.detectSliderTheme);
+      };
+
+      if (typeof MutationObserver !== 'undefined') {
+        var themeObserver = new MutationObserver(function (mutations) {
+          for (var i = 0; i < mutations.length; i++) {
+            var mutation = mutations[i];
+            if (mutation.type === 'attributes' && (mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
+              scheduleThemeSync();
+              break;
+            }
+          }
+        });
+
+        if (document.documentElement) {
+          themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+        }
+        if (document.body) {
+          themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+        }
+
+        window.addEventListener('beforeunload', function () {
+          themeObserver.disconnect();
+        }, { once: true });
+      } else {
+        window.addEventListener('load', scheduleThemeSync, { once: true });
+      }
+    }
+
 
         if (rgb) {
           const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
           const isDark = brightness < 128;
           const root = document.documentElement;
+      if (!container || !wrapper) return;
 
+      const slides = getSlides(container);
           if (isDark) {
             root.style.setProperty('--bg', '#1a1a1a');
             root.style.setProperty('--text', '#e5e7eb');
@@ -193,12 +233,16 @@
     };
 
     window.updateSliderUI = async function updateSliderUI(container, index) {
-      const slides = JSON.parse(container.dataset.slides);
+      if (!container) return;
+
+      const slides = getSlides(container);
       const data = slides[index] || {};
 
       const titleEl = container.querySelector('.step-title');
       const descEl  = container.querySelector('.step-description');
       const labelEl = container.querySelector('.step-active-label');
+
+      if (!titleEl || !descEl || !labelEl) return;
 
       titleEl.style.opacity = 0;
       descEl.style.opacity = 0;
@@ -254,9 +298,15 @@
   }
 
   // Init only this slider instance
-  window.addEventListener('DOMContentLoaded', () => {
+  const initCurrentSlider = () => {
     const c = document.getElementById('{{ $id }}');
     if (c) window.updateSliderUI(c, 0);
-  });
+  };
+
+  if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', initCurrentSlider, { once: true });
+  } else {
+    initCurrentSlider();
+  }
 })();
 </script>

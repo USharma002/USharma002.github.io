@@ -24,7 +24,7 @@ canvas:active { cursor: grabbing; }
 </style>
 </head>
 <body>
-<canvas id="c" width="420" height="380"></canvas>
+<canvas id="c"></canvas>
 <div id="err"></div>
 <div class="ctl">
   <div class="modes" id="modes">
@@ -65,10 +65,60 @@ function showError(msg) {
 }
 
 const canvas=document.getElementById('c');
-const gl=canvas.getContext('webgl2',{antialias:false});
+
+// FIX 1: Set canvas backing-store size at physical pixels so FBOs
+// match what the GPU actually renders. Without this on retina/mobile,
+// the FBO is created too small and accumulation reads the wrong texels.
+// We cap resolution to avoid shader timeout on slow mobile GPUs.
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+const CSS_W = Math.min(canvas.parentElement.clientWidth || 420, 840);
+const CSS_H = Math.round(CSS_W * 760 / 840);
+canvas.width  = Math.round(CSS_W  * dpr);
+canvas.height = Math.round(CSS_H * dpr);
+
+const gl=canvas.getContext('webgl2',{antialias:false,preserveDrawingBuffer:false});
 if(!gl){showError('WebGL 2 not supported.');throw new Error('WebGL2 required');}
-gl.getExtension('EXT_color_buffer_float');
-gl.getExtension('EXT_color_buffer_half_float');
+
+// FIX 2: Properly check whether float/half-float color buffer rendering
+// is actually available before trying to use it. Some mobile drivers
+// return a non-null extension object but still silently fail FBO creation.
+const extF32 = gl.getExtension('EXT_color_buffer_float');
+const extF16 = gl.getExtension('EXT_color_buffer_half_float') ||
+               gl.getExtension('OES_texture_half_float');
+
+// Probe which internal format actually produces a complete FBO.
+// We try RGBA32F → RGBA16F → RGBA8 (fallback, loses HDR accumulation
+// but at least renders something instead of a black screen).
+function probeFormat() {
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  const fbo = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+  const candidates = [
+    { ifmt: gl.RGBA32F,  fmt: gl.RGBA, type: gl.FLOAT,      label: 'RGBA32F'  },
+    { ifmt: gl.RGBA16F,  fmt: gl.RGBA, type: gl.HALF_FLOAT,  label: 'RGBA16F'  },
+    { ifmt: gl.RGBA8,    fmt: gl.RGBA, type: gl.UNSIGNED_BYTE,label: 'RGBA8'   },
+  ];
+
+  for (const c of candidates) {
+    gl.texImage2D(gl.TEXTURE_2D,0,c.ifmt,4,4,0,c.fmt,c.type,null);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.deleteTexture(tex);
+      gl.deleteFramebuffer(fbo);
+      return c;
+    }
+  }
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.deleteTexture(tex);
+  gl.deleteFramebuffer(fbo);
+  return candidates[2]; // RGBA8 always works
+}
+
+const FMT = probeFormat();
+const isHDR = FMT.label !== 'RGBA8';
 
 const vsSource=`#version 300 es
 in vec2 position;
@@ -93,8 +143,6 @@ const vec3 GREEN=vec3(0.14,0.45,0.091);
 const vec3 CHROME=vec3(0.85);
 const vec3 LIGHT_EMIT=vec3(17.0,15.0,12.0);
 const float W=1.0,H=1.0,ST=0.01;
-// Light area dimensions (for NEE solid-angle calculation)
-const float LA_W=0.48, LA_D=0.32; // 0.24*2, 0.16*2
 struct Hit{float t;vec3 n,col;float refl;vec3 emit;};
 uint seed;
 void initRng(vec2 fc,int frame){
@@ -143,31 +191,22 @@ void ch(float t,vec3 n,vec3 col,float refl,vec3 emit,inout Hit best){
 Hit traceScene(vec3 ro,vec3 rd){
   Hit best=Hit(1e20,vec3(0.0),vec3(0.0),0.0,vec3(0.0));
   vec3 n;float t;
-  // Area light
   t=hitBox(ro,rd,vec3(-0.24,H-ST,-0.16),vec3(0.24,H,0.16),n);
   ch(t,n,vec3(1.0),0.0,LIGHT_EMIT,best);
-  // Floor
   t=hitBox(ro,rd,vec3(-W,-H,-W),vec3(W,-H+ST,W),n);
   ch(t,n,WHITE,0.0,vec3(0.0),best);
-  // Ceiling
   t=hitBox(ro,rd,vec3(-W,H-ST,-W),vec3(W,H,W),n);
   ch(t,n,WHITE,0.0,vec3(0.0),best);
-  // Back wall
   t=hitBox(ro,rd,vec3(-W,-H,-W),vec3(W,H,-W+ST),n);
   ch(t,n,WHITE,0.0,vec3(0.0),best);
-  // Left wall (red)
   t=hitBox(ro,rd,vec3(-W,-H,-W),vec3(-W+ST,H,W),n);
   ch(t,n,RED,0.0,vec3(0.0),best);
-  // Right wall (green)
   t=hitBox(ro,rd,vec3(W-ST,-H,-W),vec3(W,H,W),n);
   ch(t,n,GREEN,0.0,vec3(0.0),best);
-  // Tall box (left)
   t=hitBox(ro,rd,vec3(-0.60,-H,-0.50),vec3(-0.08,0.20,0.08),n);
   ch(t,n,WHITE,0.0,vec3(0.0),best);
-  // Short box (right)
   t=hitBox(ro,rd,vec3(0.08,-H,-0.28),vec3(0.64,-0.38,0.28),n);
   ch(t,n,WHITE,0.0,vec3(0.0),best);
-  // Chrome sphere
   t=hitSphere(ro,rd,vec3(0.36,-0.14,0.0),0.22,n);
   ch(t,n,CHROME,0.85,vec3(0.0),best);
   return best;
@@ -189,36 +228,21 @@ vec3 directShade(Hit hit,vec3 ro,vec3 rd,vec3 p){
 }
 vec3 render(vec3 ro,vec3 rd){
   if(u_mode==3){
-    // Pure unidirectional path tracing — NO next-event estimation.
-    // Every emitter is hit naturally by the random walk, so all bounces
-    // (including indirect) contribute correctly.
     vec3 rad=vec3(0.0),thru=vec3(1.0);
     for(int b=0;b<8;b++){
       Hit hit=traceScene(ro,rd);
       if(hit.t>1e19)break;
-      // Accumulate emission at ANY bounce depth
-      if(dot(hit.emit,hit.emit)>0.0){
-        rad+=thru*hit.emit;
-        break;
-      }
+      if(dot(hit.emit,hit.emit)>0.0){rad+=thru*hit.emit;break;}
       vec3 p=ro+rd*hit.t;
-      // Specular reflection (chrome sphere)
       if(hit.refl>0.0&&rand()<hit.refl){
-        thru*=hit.col;
-        ro=p+hit.n*EPS;
-        rd=reflect(rd,hit.n);
-        continue;
+        thru*=hit.col;ro=p+hit.n*EPS;rd=reflect(rd,hit.n);continue;
       }
-      // Russian roulette — only after bounce 3 to keep indirect light alive
       if(b>=3){
         float q=min(0.95,max(thru.r,max(thru.g,thru.b)));
         if(rand()>q)break;
         thru/=q;
       }
-      // Cosine-weighted diffuse bounce
-      thru*=hit.col;
-      ro=p+hit.n*EPS;
-      rd=cosineHemi(hit.n);
+      thru*=hit.col;ro=p+hit.n*EPS;rd=cosineHemi(hit.n);
     }
     return rad;
   } else {
@@ -232,8 +256,7 @@ vec3 render(vec3 ro,vec3 rd){
       vec3 localCol=directShade(hit,ro,rd,p);
       if(u_mode==2&&hit.refl>0.01&&b<bounces-1){
         col+=thru*localCol*(1.0-hit.refl);
-        thru*=hit.refl;
-        ro=p+hit.n*EPS;rd=reflect(rd,hit.n);
+        thru*=hit.refl;ro=p+hit.n*EPS;rd=reflect(rd,hit.n);
       }else{col+=thru*localCol;break;}
     }
     return col;
@@ -248,17 +271,43 @@ void main(){
   float v_=(ndc.y+jitter.y)*tan(fov/2.0);
   vec3 rd=normalize(u_fwd+u_right*u_+u_up*v_);
   vec3 cur=render(u_eye,rd);
-  if(u_frame==1){outColor=vec4(cur,1.0);}
-  else{vec3 old=texture(u_tex,v_uv).rgb;outColor=vec4(mix(old,cur,1.0/float(u_frame)),1.0);}
+
+  // FIX 3: Clamp HDR output so values don't overflow 16-bit float range
+  // (max ~65504). Unclamped LIGHT_EMIT values can produce NaN/Inf in
+  // RGBA16F textures on mobile, poisoning the accumulation buffer and
+  // turning the entire image black after a few frames.
+  cur = clamp(cur, vec3(0.0), vec3(60000.0));
+
+  // FIX 4: For RGBA8 fallback (no HDR support), tonemap before storing
+  // so the accumulation still works in [0,1] range even without float FBOs.
+  // We detect this via u_frame sign — negative means RGBA8 mode.
+  bool ldrMode = (u_frame < 0);
+  int frame = abs(u_frame);
+  if(ldrMode){
+    cur = cur/(1.0+cur);
+    cur = pow(max(vec3(0.0),cur),vec3(1.0/2.2));
+  }
+
+  if(frame==1){
+    outColor=vec4(cur,1.0);
+  } else {
+    vec3 old=texture(u_tex,v_uv).rgb;
+    outColor=vec4(mix(old,cur,1.0/float(frame)),1.0);
+  }
 }`;
 
 const tonemapFsSource=`#version 300 es
 precision highp float;
-in vec2 v_uv;out vec4 outColor;uniform sampler2D u_tex;
+in vec2 v_uv;out vec4 outColor;
+uniform sampler2D u_tex;
+uniform bool u_ldr;
 void main(){
   vec3 c=texture(u_tex,v_uv).rgb;
-  c=c/(1.0+c);
-  c=pow(max(vec3(0.0),c),vec3(1.0/2.2));
+  // Skip tonemap if already in LDR (RGBA8 fallback path)
+  if(!u_ldr){
+    c=c/(1.0+c);
+    c=pow(max(vec3(0.0),c),vec3(1.0/2.2));
+  }
   outColor=vec4(c,1.0);
 }`;
 
@@ -282,20 +331,27 @@ const qb=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,qb);
 gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
 gl.enableVertexAttribArray(0);gl.vertexAttribPointer(0,2,gl.FLOAT,false,0,0);
 
+// FIX 5: Use the probed format for FBO creation — never assume RGBA32F.
 function createFBO(){
-  const tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);
-  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA32F,canvas.width,canvas.height,0,gl.RGBA,gl.FLOAT,null);
+  const tex=gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D,tex);
+  gl.texImage2D(gl.TEXTURE_2D,0,FMT.ifmt,canvas.width,canvas.height,0,FMT.fmt,FMT.type,null);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
-  const fbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+  const fbo=gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);
   gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
-  if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE){
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA16F,canvas.width,canvas.height,0,gl.RGBA,gl.HALF_FLOAT,null);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);
+  const status=gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+  if(status!==gl.FRAMEBUFFER_COMPLETE){
+    showError(`FBO incomplete (${status}) using ${FMT.label}`);
   }
+  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
   return{fbo,tex};
 }
 let fboA=createFBO(),fboB=createFBO();
+
 let camAX=0.15,camAY=0,camD=3.2;
 let dragging=false,lastMX=0,lastMY=0,frameCount=1,cameraMoved=true;
 const statEl=document.getElementById('stat');
@@ -305,6 +361,23 @@ function viewMat(){
   const cx=Math.cos(camAX),sx=Math.sin(camAX),cy=Math.cos(camAY),sy=Math.sin(camAY);
   return{eye:[camD*sy*cx,camD*sx,camD*cy*cx],fwd:[-sy*cx,-sx,-cy*cx],right:[cy,0,-sy],up:[-sy*sx,cx,-cy*sx]};
 }
+
+const uLoc = {
+  res:   gl.getUniformLocation(tracerProg,'u_res'),
+  eye:   gl.getUniformLocation(tracerProg,'u_eye'),
+  fwd:   gl.getUniformLocation(tracerProg,'u_fwd'),
+  right: gl.getUniformLocation(tracerProg,'u_right'),
+  up:    gl.getUniformLocation(tracerProg,'u_up'),
+  mode:  gl.getUniformLocation(tracerProg,'u_mode'),
+  shin:  gl.getUniformLocation(tracerProg,'u_shininess'),
+  frame: gl.getUniformLocation(tracerProg,'u_frame'),
+  tex:   gl.getUniformLocation(tracerProg,'u_tex'),
+};
+const tmLoc = {
+  tex: gl.getUniformLocation(tonemapProg,'u_tex'),
+  ldr: gl.getUniformLocation(tonemapProg,'u_ldr'),
+};
+
 function renderLoop(){
   const mode=getMode();
   if(cameraMoved||mode===3){
@@ -312,16 +385,18 @@ function renderLoop(){
     gl.useProgram(tracerProg);
     gl.bindFramebuffer(gl.FRAMEBUFFER,fboA.fbo);
     gl.viewport(0,0,canvas.width,canvas.height);
-    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,fboB.tex);
-    gl.uniform1i(gl.getUniformLocation(tracerProg,"u_tex"),0);
-    gl.uniform2f(gl.getUniformLocation(tracerProg,"u_res"),canvas.width,canvas.height);
-    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_eye"),cam.eye);
-    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_fwd"),cam.fwd);
-    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_right"),cam.right);
-    gl.uniform3fv(gl.getUniformLocation(tracerProg,"u_up"),cam.up);
-    gl.uniform1i(gl.getUniformLocation(tracerProg,"u_mode"),mode);
-    gl.uniform1f(gl.getUniformLocation(tracerProg,"u_shininess"),getShininess());
-    gl.uniform1i(gl.getUniformLocation(tracerProg,"u_frame"),frameCount);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D,fboB.tex);
+    gl.uniform1i(uLoc.tex,0);
+    gl.uniform2f(uLoc.res,canvas.width,canvas.height);
+    gl.uniform3fv(uLoc.eye,cam.eye);
+    gl.uniform3fv(uLoc.fwd,cam.fwd);
+    gl.uniform3fv(uLoc.right,cam.right);
+    gl.uniform3fv(uLoc.up,cam.up);
+    gl.uniform1i(uLoc.mode,mode);
+    gl.uniform1f(uLoc.shin,getShininess());
+    // Pass negative frameCount to signal LDR mode to the shader
+    gl.uniform1i(uLoc.frame, isHDR ? frameCount : -frameCount);
     gl.bindVertexArray(vao);gl.drawArrays(gl.TRIANGLES,0,6);
     let tmp=fboA;fboA=fboB;fboB=tmp;
     frameCount++;cameraMoved=false;
@@ -329,13 +404,20 @@ function renderLoop(){
   gl.useProgram(tonemapProg);
   gl.bindFramebuffer(gl.FRAMEBUFFER,null);
   gl.viewport(0,0,canvas.width,canvas.height);
-  gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,fboB.tex);
-  gl.uniform1i(gl.getUniformLocation(tonemapProg,"u_tex"),0);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D,fboB.tex);
+  gl.uniform1i(tmLoc.tex,0);
+  gl.uniform1i(tmLoc.ldr, isHDR ? 0 : 1);
   gl.bindVertexArray(vao);gl.drawArrays(gl.TRIANGLES,0,6);
-  if(mode===3)statEl.textContent=`frame ${frameCount} · ${canvas.width}×${canvas.height} · ${frameCount} spp`;
-  else statEl.textContent='';
+  if(mode===3){
+    const spp=frameCount-1;
+    statEl.textContent=`${spp} spp · ${FMT.label} · ${canvas.width}×${canvas.height}`;
+  } else {
+    statEl.textContent='';
+  }
   requestAnimationFrame(renderLoop);
 }
+
 function triggerUpdate(){cameraMoved=true;frameCount=1;}
 document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('change',e=>{
   document.getElementById('shRow').style.visibility=(e.target.value==='3')?'hidden':'visible';
@@ -343,6 +425,7 @@ document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('c
 }));
 const shEl=document.getElementById('sh'),shV=document.getElementById('sh-v');
 shEl.addEventListener('input',()=>{shV.textContent=shEl.value;triggerUpdate();});
+
 canvas.addEventListener('mousedown',e=>{dragging=true;lastMX=e.clientX;lastMY=e.clientY;});
 window.addEventListener('mouseup',()=>dragging=false);
 window.addEventListener('mousemove',e=>{
@@ -367,6 +450,7 @@ canvas.addEventListener('touchmove',e=>{
   camAX=Math.max(-1.2,Math.min(1.2,camAX));
   ts={x:e.touches[0].clientX,y:e.touches[0].clientY};triggerUpdate();e.preventDefault();
 },{passive:false});
+
 requestAnimationFrame(renderLoop);
 </script>
 </body>

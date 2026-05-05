@@ -29,12 +29,133 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.appendChild(sidebar);
 
+    var tocScrollTarget = null;
+    var tocScrollClearTimer = null;
+    var tocScrollFrame = null;
+    var tocScrollObserver = null;
+    var tocScrollFallbackTimer = null;
+    var tocScrollFallbackTicks = 0;
+    var tocScrollFallbackLimit = 12;
+
+    // Keep TOC navigation pinned while lazy content changes the article height.
+    function stopTocScrollTracking() {
+        tocScrollTarget = null;
+        tocScrollFallbackTicks = 0;
+
+        if (tocScrollClearTimer) {
+            clearTimeout(tocScrollClearTimer);
+            tocScrollClearTimer = null;
+        }
+
+        if (tocScrollFrame) {
+            cancelAnimationFrame(tocScrollFrame);
+            tocScrollFrame = null;
+        }
+
+        if (tocScrollFallbackTimer) {
+            clearInterval(tocScrollFallbackTimer);
+            tocScrollFallbackTimer = null;
+        }
+
+        if (tocScrollObserver) {
+            tocScrollObserver.disconnect();
+            tocScrollObserver = null;
+        }
+    }
+
+    function alignTocScrollTarget() {
+        if (!tocScrollTarget || !document.contains(tocScrollTarget)) {
+            stopTocScrollTracking();
+            return;
+        }
+
+        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - activeHeaderOffset);
+        if (Math.abs(window.scrollY - targetTop) > 2) {
+            window.scrollTo({ top: targetTop, behavior: 'auto' });
+        }
+    }
+
+    function queueTocScrollAlignment() {
+        if (!tocScrollTarget) return;
+
+        if (tocScrollFrame) {
+            cancelAnimationFrame(tocScrollFrame);
+        }
+
+        tocScrollFrame = requestAnimationFrame(function() {
+            tocScrollFrame = null;
+            alignTocScrollTarget();
+        });
+    }
+
+    function scheduleTocScrollClear() {
+        if (!tocScrollTarget) return;
+
+        if (tocScrollClearTimer) {
+            clearTimeout(tocScrollClearTimer);
+        }
+
+        tocScrollClearTimer = setTimeout(function() {
+            stopTocScrollTracking();
+        }, 750);
+    }
+
+    function startTocScroll(target) {
+        stopTocScrollTracking();
+        tocScrollTarget = target;
+
+        alignTocScrollTarget();
+
+        if (typeof ResizeObserver !== 'undefined') {
+            tocScrollObserver = new ResizeObserver(function() {
+                if (!tocScrollTarget) return;
+                queueTocScrollAlignment();
+                scheduleTocScrollClear();
+            });
+            tocScrollObserver.observe(content);
+            scheduleTocScrollClear();
+        } else {
+            tocScrollFallbackTimer = setInterval(function() {
+                if (!tocScrollTarget) {
+                    stopTocScrollTracking();
+                    return;
+                }
+
+                alignTocScrollTarget();
+                tocScrollFallbackTicks++;
+
+                if (tocScrollFallbackTicks >= tocScrollFallbackLimit) {
+                    stopTocScrollTracking();
+                }
+            }, 150);
+        }
+    }
+
+    sidebar.addEventListener('click', function(e) {
+        var anchor = e.target.closest('a[href^="#"]');
+        if (!anchor) return;
+
+        var id = anchor.getAttribute('href').slice(1);
+        if (!id) return;
+
+        var target = document.getElementById(decodeURIComponent(id));
+        if (!target) return;
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        startTocScroll(target);
+
+        history.pushState(null, null, `#${id}`);
+    }, true);
+
     // 2. Get all headings in post-content and all links in sidebar
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
     if (!headers.length) return;
 
     var lastActiveId = '';
     var activeHeaderOffset = 80;
+    var headerPositions = [];
 
     // Hide all nested lists initially
     var nestedUls = sidebar.querySelectorAll('ul ul');
@@ -42,13 +163,23 @@ document.addEventListener('DOMContentLoaded', function() {
         nestedUls[i].style.display = 'none';
     }
 
+    function refreshHeaderPositions() {
+        headerPositions = new Array(headers.length);
+        for (var i = 0; i < headers.length; i++) {
+            headerPositions[i] = {
+                id: headers[i].getAttribute('id') || '',
+                top: headers[i].getBoundingClientRect().top + window.scrollY
+            };
+        }
+    }
+
     function findActiveHeaderId() {
         var currentId = '';
+        var currentTop = window.scrollY + activeHeaderOffset;
 
-        for (var i = 0; i < headers.length; i++) {
-            var top = headers[i].getBoundingClientRect().top;
-            if (top <= activeHeaderOffset) {
-                currentId = headers[i].getAttribute('id') || '';
+        for (var i = 0; i < headerPositions.length; i++) {
+            if (headerPositions[i].top <= currentTop) {
+                currentId = headerPositions[i].id;
             } else {
                 break;
             }
@@ -107,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (typeof ResizeObserver !== 'undefined') {
         var layoutObserver = new ResizeObserver(function() {
+            refreshHeaderPositions();
             onScroll();
         });
         layoutObserver.observe(content);
@@ -116,8 +248,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    window.addEventListener('resize', onScroll, { passive: true });
-    window.addEventListener('load', onScroll);
+    window.addEventListener('resize', function() {
+        refreshHeaderPositions();
+        onScroll();
+    }, { passive: true });
+    window.addEventListener('load', function() {
+        refreshHeaderPositions();
+        onScroll();
+    });
+
+    refreshHeaderPositions();
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); // Initial check
 });
@@ -280,17 +420,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.addEventListener('resize', function() { resizeVisibleIframes(true); }, { passive: true });
-
-    var scrollTicking = false;
-    function onScrollResize() {
-        if (scrollTicking) return;
-        scrollTicking = true;
-        requestAnimationFrame(function() {
-            resizeVisibleIframes(false);
-            scrollTicking = false;
-        });
-    }
-    window.addEventListener('scroll', onScrollResize, { passive: true });
 
     var themeObserver = new MutationObserver(function() {
         resizeVisibleIframes(false);

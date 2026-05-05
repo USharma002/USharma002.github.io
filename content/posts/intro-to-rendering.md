@@ -165,7 +165,7 @@ $$ \begin{bmatrix} \color{#ef4444}1 & \color{#22c55e}0 & \color{#3b82f6}t_x \\ \
 - **Preserves**: lengths, angles, area, orientation, parallelism, straight lines.
 - **DoF**: 2 ($t_x$, $t_y$).
 
-<object type="text/html" data="/interactive/transformations/graph.html?type=translation" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph.html?type=translation" loading="lazy" fetchpriority="low" title="2D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -188,7 +188,7 @@ Adding a translation column gives the full rigid (Euclidean) transform.
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 3 (1 rotation angle $\theta$, 2 translations).
 
-<object type="text/html" data="/interactive/transformations/graph.html?type=euclidean" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph.html?type=euclidean" loading="lazy" fetchpriority="low" title="2D rigid transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -207,7 +207,7 @@ $$ \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}
 
 - **DoF**: 2 ($s_x$, $s_y$).
 
-<object type="text/html" data="/interactive/transformations/graph.html?type=scaling" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph.html?type=scaling" loading="lazy" fetchpriority="low" title="2D scaling demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -220,7 +220,7 @@ $$ \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}
 - **Preserves**: parallelism (parallel lines stay parallel; lengths and angles can change).
 - **DoF**: 6 (four entries of $\mathbf{A}$ + $t_x$ + $t_y$).
 
-<object type="text/html" data="/interactive/transformations/graph.html?type=affine" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph.html?type=affine" loading="lazy" fetchpriority="low" title="2D affine transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -235,11 +235,11 @@ The $9$ matrix entries have only $8$ DoF because multiplying every entry by a no
 - **Preserves**: straight lines (but parallel lines can converge to a **vanishing point**).
 - **DoF**: 8.
 
-<object type="text/html" data="/interactive/transformations/graph.html?type=projective" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph.html?type=projective" loading="lazy" fetchpriority="low" title="2D projective transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ### Custom 2D Transform
 
-<object type="text/html" data="/interactive/transformations/graph.html?type=custom" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph.html?type=custom" loading="lazy" fetchpriority="low" title="Custom 2D transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -256,7 +256,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 3.
 
-<object type="text/html" data="/interactive/transformations/graph3d.html?type=translation" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph3d.html?type=translation" loading="lazy" fetchpriority="low" title="3D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -269,7 +269,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 6 (3 rotation angles, 3 translations).
 
-<object type="text/html" data="/interactive/transformations/graph3d.html?type=rotation" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph3d.html?type=rotation" loading="lazy" fetchpriority="low" title="3D rotation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -280,7 +280,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: parallelism. Angles preserved only if $s_x = s_y = s_z$.
 - **DoF**: 3.
 
-<object type="text/html" data="/interactive/transformations/graph3d.html?type=scaling" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph3d.html?type=scaling" loading="lazy" fetchpriority="low" title="3D scaling demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -291,7 +291,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: parallelism.
 - **DoF**: 12 (nine free entries in $\mathbf{A}$ + three translations).
 
-<object type="text/html" data="/interactive/transformations/graph3d.html?type=shear" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph3d.html?type=shear" loading="lazy" fetchpriority="low" title="3D shear demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -306,11 +306,11 @@ The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ yie
 - **Preserves**: straight lines (parallel lines can converge at a vanishing point).
 - **DoF**: 15.
 
-<object type="text/html" data="/interactive/transformations/graph3d.html?type=projective" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph3d.html?type=projective" loading="lazy" fetchpriority="low" title="3D projective transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ### Custom 3D Transform
 
-<object type="text/html" data="/interactive/transformations/graph3d.html?type=custom" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/graph3d.html?type=custom" loading="lazy" fetchpriority="low" title="Custom 3D transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -446,7 +446,7 @@ We now have the tools to trace a vertex all the way from an artist's model to a 
 
 Each 3D model is authored in its own coordinate frame, with the origin typically at the model's geometric center. A cube, a sphere, and a character mesh all live in their own isolated local universes.
 
-<object type="text/html" data="/interactive/transformations/object_space.html" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/object_space.html" loading="lazy" fetchpriority="low" title="Object space demo" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Each object considers itself centered at its own origin, regardless of where it will end up in the scene.</p>
 
 ---
@@ -457,10 +457,10 @@ We assemble the scene by applying each object's **Model Matrix** $\mathbf{M}_\te
 
 The order matters: **Scale → Rotate → Translate** (applied right-to-left in matrix notation: $\mathbf{T} \cdot \mathbf{R} \cdot \mathbf{S}$). Translating before rotating would orbit the object around the world origin rather than spinning it in place.
 
-<object type="text/html" data="/interactive/transformations/world_space_steps.html" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/world_space_steps.html" loading="lazy" fetchpriority="low" title="World space steps demo" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Scale → Rotate → Translate. Reversing this order produces different results.</p>
 
-<object type="text/html" data="/interactive/transformations/world_space.html" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/world_space.html" loading="lazy" fetchpriority="low" title="World space demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">All objects share one World Space. A camera object is placed here too, defining the viewpoint.</p>
 
 ---
@@ -471,7 +471,7 @@ To render the scene from the camera's point of view, we transform the entire wor
 
 The transform that does this is the **View Matrix** $\mathbf{M}_\text{view}$ — a rigid Euclidean transform (rotation + translation). The camera itself doesn't move; the world is repositioned around it.
 
-<object type="text/html" data="/interactive/transformations/view_space.html" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/view_space.html" loading="lazy" fetchpriority="low" title="View space demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Translating the camera forward is mathematically identical to translating the entire world backward. The camera is always at the origin in Camera Space.</p>
 
 #### Sign Convention Used Throughout This Post
@@ -508,7 +508,7 @@ $$
 
 Geometrically, this is just "make three perpendicular arrows." The vector $\mathbf{f}$ points from the eye to the target, so it fixes where the camera looks. The cross product $\mathbf{f}\times\mathbf{u}_\text{world}$ gives a vector perpendicular to both the viewing direction and the approximate world-up direction; that is the camera's right axis. Crossing right with forward gives the corrected up axis. This last step matters because the supplied world-up vector is usually only a hint — if the camera is pitched or rolled, it is not exactly perpendicular to the viewing direction.
 
-<object type="text/html" data="/interactive/transformations/lookat.html" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/lookat.html" loading="lazy" fetchpriority="low" title="LookAt camera demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 The View Matrix is the *inverse* of the camera's own World-Space transform. Because the rotation part is orthonormal, its inverse is its transpose. The translation inverts via dot products with the eye position:
 
@@ -575,7 +575,7 @@ $$ \mathbf{M}_\text{ortho} = \begin{bmatrix} \color{#ef4444}\frac{2}{r-l} & \col
 
 Because this is an affine transform, $w' = 1$ throughout — no perspective divide is needed. The output is already in NDC.
 
-<object type="text/html" data="/interactive/transformations/orthographic.html" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/orthographic.html" loading="lazy" fetchpriority="low" title="Orthographic projection demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The orthographic projection maps the box-shaped view volume uniformly to the NDC cube. No perspective distortion: a cube 10 m away looks identical to one at 1 m.</p>
 
 ---
@@ -784,7 +784,7 @@ $$
 
 So the horizontal FoV form has $e$ in the $x$ scale entry and $ae$ in the $y$ scale entry. If you start from a vertical FoV instead, $1/\tan(\beta/2)$ appears in the $y$ scale entry and is divided by the aspect ratio for $x$.
 
-<object type="text/html" data="/interactive/transformations/perspective_projection.htm" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/perspective_projection.htm" loading="lazy" fetchpriority="low" title="Perspective projection demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The pyramid frustum warps into the NDC cube. Geometry far from the camera is compressed more than nearby geometry — this is foreshortening.</p>
 
 > **Note on the interactive.** The widget above shows Camera-Space $z$-values as signed coordinates (near plane at $z = -3$, far plane at $z = -13$), consistent with the OpenGL convention and the derivation above.
@@ -849,7 +849,7 @@ So the mapping changes rapidly near the camera and slowly far away. This is why 
 
 The interactive below shows this compression directly: evenly spaced planes in Camera Space bunch up after projection. Objects far away share a tiny slice of the depth range, causing **Z-fighting** (flickering between nearly coplanar surfaces). The practical fix is to push the near plane $n$ as far forward as your scene allows — halving $n$ roughly halves the Z-buffer precision available for distant objects.
 
-<object type="text/html" data="/interactive/transformations/perspective_divide.html" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/perspective_divide.html" loading="lazy" fetchpriority="low" title="Perspective divide demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Five evenly-spaced depth planes in Camera Space become unevenly-spaced planes in NDC. The compression accelerates toward the far plane.</p>
 
 ---
@@ -907,7 +907,7 @@ The full pipeline is the **MVP transform**:
 
 $$\mathbf{v}_\text{clip} = \underbrace{\color{#3b82f6}{\mathbf{M}_\text{proj}}}_{\text{Projection}} \cdot \underbrace{\color{#22c55e}{\mathbf{M}_\text{view}} \cdot \color{#ef4444}{\mathbf{M}_\text{model}}}_{\text{Model-View}} \cdot \mathbf{v}_\text{object}$$
 
-<object type="text/html" data="/interactive/transformations/combine_space.html" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></object>
+<iframe src="/interactive/transformations/combine_space.html" loading="lazy" fetchpriority="low" title="MVP pipeline demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The complete MVP pipeline. Each stage is one matrix multiply on the GPU, applied to every vertex in parallel.</p>
 
 ---
@@ -916,13 +916,12 @@ $$\mathbf{v}_\text{clip} = \underbrace{\color{#3b82f6}{\mathbf{M}_\text{proj}}}_
 
 Everything up to this point has been **object-space / rasterization** thinking: we iterate over geometry and ask where each triangle lands on the screen. The GPU does this in parallel for every vertex, clipping and filling pixels as it goes. It is extremely fast, which is why it dominates real-time graphics.
 
-But there is a second, equally valid question you can ask: starting from a pixel on the screen, what does the camera actually see through it? This is **image-space / ray casting** thinking. Instead of pushing geometry forward into screen space, we pull a ray backward from the pixel into the scene and find whatever it hits first. The rest of this post covers the ray casting side.
+But there is a second, equally valid question you can ask: starting from a pixel on the screen, what does the camera actually see through it? This is **image-space / ray casting** thinking. Instead of pushing geometry forward into screen space, we pull a ray backward from the pixel into the scene and find whatever it hits first. The two viewpoints are complementary: rasterization tells us where a surface lands on the image plane, while primary-ray methods ask which surface sits along each pixel's line of sight. The rest of this post moves from the first view to the second.
 
 ## Generating Primary Rays
 
 We will now follow a different approach to rendering. Instead of projecting objects into a 2D screen, we will use rays to find the pixel color. But before we start with the ray casting algorithm, we need to understand the basics of rays.
 
-> For this section I will move away from OpenGL standard, where camera faces $-Z$ direction. Instead, camera will be facing $+Z$ direction.
 
 ### Ray
 A ray is a parametric line defined by an origin $\mathbf{o}$ and a direction $\mathbf{d}$:
@@ -957,9 +956,9 @@ $$
 
 $$
 \mathbf{M}_{camera} = \begin{bmatrix}
-\mathbf{\color{#ef4444}r}_x & \mathbf{\color{#22c55e}u}_x & \mathbf{\color{#3b82f6}f}_x \\
-\mathbf{\color{#ef4444}r}_y & \mathbf{\color{#22c55e}u}_y & \mathbf{\color{#3b82f6}f}_y \\
-\mathbf{\color{#ef4444}r}_z & \mathbf{\color{#22c55e}u}_z & \mathbf{\color{#3b82f6}f}_z
+\mathbf{\color{#ef4444}r}_x & \mathbf{\color{#22c55e}u}_x & \mathbf{\color{#3b82f6}-f}_x \\
+\mathbf{\color{#ef4444}r}_y & \mathbf{\color{#22c55e}u}_y & \mathbf{\color{#3b82f6}-f}_y \\
+\mathbf{\color{#ef4444}r}_z & \mathbf{\color{#22c55e}u}_z & \mathbf{\color{#3b82f6}-f}_z
 \end{bmatrix}
 $$
 
@@ -969,87 +968,89 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 
 
 #### Ray Generation Code
-The following Python code shows how we can implement a `camera` class in order to create rays:
+> <details>
+> <summary style="cursor: pointer;">DrJit ray generation code</summary>
+>
+> The following Python code shows how we can implement a `camera` class in order to create rays:
+>
+> The code below uses [drjit](https://drjit.readthedocs.io/), the same array library that powers the Mitsuba renderer.
+>
+> ```python
+> import math
+> import drjit as dr
+>
+> # can switch between 'cuda' or 'llvm'
+> from drjit.cuda import Float, Int, Array3f, Matrix3f
+>
+> class Ray:
+>     def __init__(self, origin, direction):
+>         self.o = origin
+>         self.d = direction
+>
+> class Camera:
+>     def __init__(self, pos, target, fov, aspect=1.0, H=800, W=800):
+>         self.pos = Array3f(*pos)
+>         self.target = Array3f(*target)
+>         self.world_up = Array3f(0, 1, 0)
+>         self.fov = fov
+>         self.aspect = W / H
+>         self.H = H
+>         self.W = W
+>         self.f = 1.0
+>
+>     def lookAt(self, pos, target):
+>         forward = dr.normalize(self.target - self.pos)
+>         right = dr.normalize(dr.cross(forward, self.world_up))
+>         up = dr.normalize(dr.cross(right, forward))
+>
+>         M_cam = Matrix3f(right, up, -forward)
+>         return M_cam
+>
+>
+>     def rays(self):
+>         
+>         # Generate 1D pixel indices
+>         num_pixels = self.H * self.W
+>         idx = dr.arange(Int, num_pixels)
+>
+>         # Generate the indices of pixels as (x, y)
+>         x_ind = idx % self.W
+>         y_ind = idx // self.W
+>
+>         # Scale to [0, 1] range with +0.5 to reach center 
+>         # or change 0.5 to randomness in [0, 1] to jitter within pixel
+>         x_center = (Float(x_ind) + 0.5) / self.W
+>         y_center = (Float(y_ind) + 0.5) / self.H
+>
+>         xs = x_center * 2.0 - 1.0
+>         ys = y_center * -2.0 + 1.0
+>
+>         # Get the height and width in physical units
+>         # tan(beta / 2) = height /2 * f
+>         height = 2.0 * self.f * math.tan(math.radians(self.fov) / 2.0)
+>         width = height * self.aspect
+>
+>         # Scale to [-width/2, width/2] x [-heght/2, height/2]
+>         px = xs * (width / 2.0)
+>         py = ys * (height / 2.0)
+>
+>         # Create the Camera-to-World transformation matrix.
+>         M_cam = self.lookAt(self.pos, self.target)
+>
+>         # Pack the camera-space ray directions into an Array3f
+>         dirs_cam = Array3f(px, py, -self.f)
+>
+>         # 5. Matrix multiplication (Matrix @ Vector)
+>         rd = M_cam @ dirs_cam
+>         rd = dr.normalize(rd) # normalize the ray direciton
+>
+>         ro = self.pos 
+>
+>         return Ray(ro, rd) # Convert to Ray class and return 
+>
+> ```
+> </details>
 
-> The code below uses [drjit](https://drjit.readthedocs.io/), the same array library that powers the Mitsuba renderer. 
-
-```python
-import math
-import drjit as dr
-
-# can switch between 'cuda' or 'llvm'
-from drjit.cuda import Float, Int, Array3f, Matrix3f
-
-class Ray:
-    def __init__(self, origin, direction):
-        self.o = origin
-        self.d = direction
-
-class Camera:
-    def __init__(self, pos, target, fov, aspect=1.0, H=800, W=800):
-        self.pos = Array3f(*pos)
-        self.target = Array3f(*target)
-        self.world_up = Array3f(0, 1, 0)
-        self.fov = fov
-        self.aspect = W / H
-        self.H = H
-        self.W = W
-        self.f = 1.0
-
-    def lookAt(self, pos, target):
-        forward = dr.normalize(self.target - self.pos)
-        right = dr.normalize(dr.cross(forward, self.world_up))
-        up = dr.normalize(dr.cross(right, forward))
-
-        M_cam = Matrix3f(right, up, forward)
-        return M_cam
-
-
-    def rays(self):
-        
-        # Generate 1D pixel indices
-        num_pixels = self.H * self.W
-        idx = dr.arange(Int, num_pixels)
-
-        # Generate the indices of pixels as (x, y)
-        x_ind = idx % self.W
-        y_ind = idx // self.W
-
-        # Scale to [0, 1] range with +0.5 to reach center 
-        # or change 0.5 to randomness in [0, 1] to jitter within pixel
-        x_center = (Float(x_ind) + 0.5) / self.W
-        y_center = (Float(y_ind) + 0.5) / self.H
-
-        xs = x_center * 2.0 - 1.0
-        ys = y_center * -2.0 + 1.0
-
-        # Get the height and width in physical units
-        # tan(beta / 2) = height /2 * f
-        height = 2.0 * self.f * math.tan(math.radians(self.fov) / 2.0)
-        width = height * self.aspect
-
-        # Scale to [-width/2, width/2] x [-heght/2, height/2]
-        px = xs * (width / 2.0)
-        py = ys * (height / 2.0)
-
-        # Create the Camera-to-World transformation matrix.
-        M_cam = self.lookAt(self.pos, self.target)
-
-        # Pack the camera-space ray directions into an Array3f
-        dirs_cam = Array3f(px, py, self.f)
-
-        # 5. Matrix multiplication (Matrix @ Vector)
-        rd = M_cam @ dirs_cam
-        rd = dr.normalize(rd) # normalize the ray direciton
-
-        ro = self.pos 
-
-        return Ray(ro, rd) # Convert to Ray class and return 
-
-```
-
-
-#### Ray Generation in GLSL
 
 For the glsl shader, the pixel coordinate itself comes from `gl_FragCoord`. Dividing by `u_resolution.y` keeps the field of view stable while correcting the aspect ratio:
 
@@ -1062,14 +1063,54 @@ precision highp float;
 uniform vec2 u_resolution;
 out vec4 fragColor;
 
+// Builds the Camera-to-World transformation matrix
+mat3 lookAt(vec3 pos, vec3 target, vec3 world_up) {
+    vec3 forward = normalize(target - pos);
+    vec3 right   = normalize(cross(forward, world_up));
+    vec3 up      = cross(right, forward);
+    
+    // GLSL matrices are column-major. 
+    // We negate 'forward' because the camera looks down -Z in camera space.
+    return mat3(right, up, -forward);
+}
+
 void main() {
+    // Pixel coordinates mapped to[-1, 1] range (roughly)
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
-    vec3 rd = normalize(vec3(uv, -1.0));
+    
+    // Camera Setup
+    // Place the camera at the origin, looking straight down the -Z axis
+    vec3 ro = vec3(0.0, 0.0, 0.0);         // Ray Origin (Eye)
+    vec3 target = vec3(0.0, 0.0, -1.0);    // Look at -Z
+    vec3 world_up = vec3(0.0, 1.0, 0.0);
+    
+    mat3 M_cam = lookAt(ro, target, world_up);
+    
+    // Focal length (controls Field of View)
+    float f = 1.0; 
+    
+    // Camera-space ray direction
+    vec3 rd_cam = normalize(vec3(uv, -f)); 
+    
+    // Transform ray direction to World Space
+    vec3 rd = M_cam * rd_cam;
 
     // Visualize direction: [-1,1] -> [0,1].
     fragColor = vec4(rd, 1.0);
 }
 {{< /glsl >}}
+
+> **The Simplified Camera Shortcut**
+> 
+> For the rest of the GLSL examples in this post, we will use a common "shortcut". Because we are locking our camera at the origin `vec3(0,0,0)` (or simply shifting it along the Z-axis without rotating) and always looking straight down the $-Z$ axis, our `M_cam` matrix is simply the Identity matrix. 
+> 
+> This means we can skip the matrix multiplication entirely and construct our ray direction directly from the pixel coordinates:
+> 
+> ```glsl
+> vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
+> vec3 ro = vec3(0.0, 0.0, 3.0);       // Shifted back slightly, but not rotated
+> vec3 rd = normalize(vec3(uv, -1.0)); // Direct to world-space!
+> ```
 
 ### Anti-Aliasing
 
@@ -1086,8 +1127,6 @@ $$
 {{< figure src="/images/intro-to-rendering/raytracing/primary_rays/aliasing.svg" id="fig-aliasing-comparison" caption="Aliasing comparison: (Left) Original vector geometry, (Middle) Jagged aliasing from center-only sampling, (Right) Smooth anti-aliased result using jittered sub-pixel sampling." title="Aliasing Comparison" alt="Comparison of vector, aliased, and anti-aliased rendering" align="center" width="100%" >}}
 
 In a production renderer those offsets are usually stratified, blue-noise, or accumulated over many frames. For this introductory shader, one center ray is enough to keep the moving parts visible.
-
-
 
 
 ## Geometry Representations and Intersections
@@ -1303,11 +1342,31 @@ $$
 
 Because $f(\mathbf{p})$ guarantees the exact distance to the *nearest* surface, it gives us a spatial "safe zone." If we are at position $\mathbf{p}$ and $f(\mathbf{p}) = 2.0$, we can shoot a ray in *any* direction by exactly $2.0$ units, and we are mathematically guaranteed not to hit anything.
 
-This leads to the **Sphere Tracing** (or Ray Marching) algorithm. Instead of solving an algebraic equation, take iterative steps along the ray:
+The next step is to combine these fields into scenes. If $a$ and $b$ are the signed distances of two shapes at the same sample point, the standard operators are:
 
-$$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}}) $$
+```glsl
+float opUnion(float a, float b) {
+    return min(a, b);
+}
 
-We repeat this until $f(\mathbf{p})$ becomes extremely small (a hit), or $t$ becomes extremely large (a miss).
+float opIntersection(float a, float b) {
+    return max(a, b);
+}
+
+float opSubtraction(float a, float b) {
+    return max(a, -b);
+}
+
+float opSmoothUnion(float a, float b, float k) {
+    k *= 4.0;
+    float h = max(k - abs(a - b), 0.0);
+    return min(a, b) - h * h * 0.25 / k;
+}
+```
+
+These operators are not arbitrary. `opUnion` uses `min` because the union surface is the first one you would reach from the current point, so the smaller distance wins. `opIntersection` uses `max` because a point must be inside both shapes at once, which means the limiting distance is the larger one. `opSubtraction` keeps the region inside the first shape and outside the second, which is why the second field is negated before the maximum is taken. `opSmoothUnion` keeps the same geometric logic but replaces the abrupt switch at $a = b$ with a blending band of width $k$, giving a rounded transition instead of a seam.
+
+For visualization, this is the important mental model: `min` picks the nearest surface, `max` keeps the overlapping interior, and smooth union interpolates between both fields without breaking the signed-distance intuition. That is why these operators are so useful when you want to build complex implicit models from simple primitives.
 
 {{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere Tracing: We use the SDF value to safely 'march' along the ray until we hit the surface." title="Signed Distance Field" alt="SDF contour visualization" align="center" noinvert=true >}}
 
@@ -1544,10 +1603,10 @@ $$
 L = \underbrace{k_a I_a}_{\text{Ambient}} + \underbrace{k_d I_d \max(0,{\color{#212121}\mathbf{n}}\cdot{\color{#E65100}\mathbf{l}})}_{\text{Diffuse}} + \underbrace{k_s I_s \max(0,{\color{#2E7D32}\mathbf{r}}\cdot{\color{#1565C0}\mathbf{v}})^\alpha}_{\text{Specular}}
 $$
 
-<object type="text/html" data="/interactive/phong_lighting_sphere.html" style="width:100%; max-width:760px; height:440px; solid var(--border); background: var(--theme); display:block;"></object>
+<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchpriority="low" title="Phong lighting demo" style="width:100%; max-width:760px; height:440px; border:1px solid var(--border); background: var(--theme); display:block;"></iframe>
 <p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Interactive Phong reflection model. Drag on the sphere to reposition the light; toggle between Phong and Blinn-Phong specular models.</p>
 
-<iframe src="/interactive/phong_steps.html" width="100%" height="560" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<iframe src="/interactive/phong_steps.html" width="100%" height="560" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
 
 Below is the Phong reflection model applied to a test scene with two spheres on a checkerboard floor. Only local shading is computed here — no shadow rays, no reflections. Notice how the floor receives uniform light everywhere, even directly beneath the spheres where a shadow should be. This is the key limitation of local-only models.
 
@@ -1641,7 +1700,7 @@ If the halfway vector ${\color{#6A1B9A}\mathbf{h}}$ perfectly aligns with the su
 
 This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, $\mathbf{l}$ and $\mathbf{v}$ are constant, meaning $\mathbf{h}$ only needs to be computed *once per scene*, not once per pixel.
 
-<iframe src="/interactive/blinn_steps.html" width="100%" height="560" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<iframe src="/interactive/blinn_steps.html" width="100%" height="560" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
 
 The same scene as above, now shaded with Blinn-Phong. The only code change is in the specular calculation — `dot(n, h)^β` replaces `dot(r, v)^α`. The highlights are slightly rounder and wider.
 
@@ -1865,7 +1924,7 @@ For transparent materials like glass, light bends as it passes through the surfa
 $$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$
 The exact transmission vector $\mathbf{t}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector $\mathbf{v}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is **Total Internal Reflection**—no light is refracted; it is all reflected inside the object.
 
-<iframe src="/interactive/ray_tracing_steps.html" width="100%" height="600" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<iframe src="/interactive/ray_tracing_steps.html" width="100%" height="600" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
 
 Here is the same scene rendered with full recursive ray tracing. Shadow rays now block direct light where occluded, and reflection rays on the chrome sphere pick up the environment. Compare with the local-only shaders above.
 
@@ -1977,17 +2036,119 @@ The interactive below demonstrates how the same scene appears under different re
 
 ---
 
-<object type="text/html" data="/interactive/cornell_box_modes.html" style="width:100%; max-width:860px; height:860px; background: transparent; display:block; margin: 1.5rem auto;"></object>
+<iframe src="/interactive/cornell_box_modes.html" loading="lazy" fetchpriority="low" title="Cornell box mode comparison demo" style="width:100%; max-width:860px; height:860px; background: transparent; display:block; margin: 1.5rem auto;"></iframe>
 
 ---
 
 ## Sphere Tracing
 
-While analytic root-finding (like the quadratic formula) works beautifully for simple shapes, it becomes mathematically complex for arbitrary objects. **Sphere Tracing** (or Ray Marching) is a numerical root-finding technique that replaces analytic equations with a Signed Distance Function (SDF).
+As described in the SDF section above, **Sphere Tracing** (or Ray Marching) is the algorithm that turns the distance returned by an SDF into safe steps along a ray. Instead of solving an analytic equation, we evaluate the field at the current point, advance by that distance, and repeat.
 
-Because the geometry in Sphere Tracing is mathematically implicit, adding a floor or morphing shapes means simply editing a `map()` function. Furthermore, because we do not have explicit geometry to provide vertex normals, we estimate the normal dynamically at the hit point by sampling the gradient of the SDF.
+At the level of one march step, the update rule is:
 
-Here is the same two-sphere scene, now defined entirely through SDFs. The `map()` function replaces explicit intersection tests, and normals are estimated via the gradient. Shadow rays and reflection bounces work identically to the analytic version above.
+$$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}}) $$
+
+That equation is the heart of the method: the SDF tells us how far we can move along the ray without crossing a surface, so each iteration makes a safe, adaptive jump.
+
+The core loop is simple: march until the distance becomes smaller than an epsilon, or until the ray travels farther than the scene limit. The shader below is just one concrete implementation of that loop for a small scene.
+
+In pseudocode, the algorithm is easy to think about:
+
+```text
+SphereTrace(ray origin ro, ray direction rd):
+    t = 0
+    for i in 1..maxSteps:
+        p = ro + t * rd
+        d = sceneSDF(p)
+        if d < epsilon:
+            return hit at p
+        t = t + d
+        if t > maxDistance:
+            break
+    return miss
+```
+
+The key idea is that the current SDF value is a guaranteed empty radius around the sample point, so the next evaluation can jump forward by exactly that amount. If the field is exact, this is extremely efficient. If the field is only a bound or has been distorted, the same loop still works, but you usually introduce a safety factor so the steps stay conservative.
+
+If you want to visualize what is happening, it helps to think of the ray as a sequence of expanding circles centered on the current sample point. Each march step uses the SDF value as the radius of the next safe jump, so the circles shrink as the ray gets close to the surface.
+
+{{< glsl >}}
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+
+out vec4 fragColor;
+
+float sdCircle(vec2 p, float r) {
+    return length(p) - r;
+}
+
+float sceneSDF(vec2 p) {
+    float c1 = sdCircle(p - vec2(-0.45, 0.10), 0.35);
+    float c2 = sdCircle(p - vec2(0.42, -0.24), 0.22);
+    float fl  = p.y + 0.72;
+    return min(min(c1, c2), fl);
+}
+
+void main() {
+    vec2 p = (2.0 * gl_FragCoord.xy - u_resolution.xy) / u_resolution.x;
+
+    // Fixed ray origin at the top center
+    vec2 ro = vec2(0.0, 0.8);
+
+    // Only ray direction animates / follows mouse
+    vec2 target = (u_mouse.x <= 0.0 && u_mouse.y <= 0.0)
+        ? vec2(0.7 * cos(u_time * 0.55), 0.15 + 0.3 * sin(u_time * 0.8))
+        : (2.0 * u_mouse - u_resolution.xy) / u_resolution.x;
+
+    vec2 rd = normalize(target - ro);
+
+    // --- SDF field visualization ---
+    float d = sceneSDF(p);
+    vec3 col = (d > 0.0) ? vec3(0.314, 0.627, 0.941) : vec3(0.922, 0.314, 0.235);
+    float decay = (d > 0.0) ? 3.0 : 4.0;
+    col *= 1.0 - exp(-decay * abs(d));
+    col *= 0.85 + 0.15 * cos(150.0 * d);
+    col = mix(col, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
+
+    // --- Ray line ---
+    float rayLine = 1.0 - smoothstep(0.0, 0.012,
+        length(p - (ro + clamp(dot(p - ro, rd), 0.0, 4.0) * rd)));
+    col = mix(col, vec3(1.0), rayLine * 0.18);
+
+    // --- Sphere tracing circles (20 steps) ---
+    vec2 marchP = ro;
+    float t = 0.0;
+    for (int i = 0; i < 20; i++) {
+        float sd  = sceneSDF(marchP);
+        float asd = abs(sd);
+
+        float ring     = abs(length(p - marchP) - asd);
+        float ringGlow = 1.0 - smoothstep(0.0, 0.008, ring - 0.003);
+        float frac     = float(i) / 19.0;
+        vec3  ringCol  = mix(vec3(0.3, 0.75, 1.0), vec3(1.0, 0.85, 0.2), frac);
+        col = mix(col, ringCol, ringGlow * 0.9);
+
+        float dot1 = 1.0 - smoothstep(0.0, 0.025, length(p - marchP) - 0.012);
+        col = mix(col, vec3(1.0), dot1 * 0.9);
+
+        if (sd < 0.001 || t > 4.0) break;
+        t     += asd;
+        marchP = ro + t * rd;
+    }
+
+    // --- Ray origin dot ---
+    float roGlow = 1.0 - smoothstep(0.0, 0.03, length(p - ro) - 0.018);
+    col = mix(col, vec3(1.0, 0.9, 0.3), roGlow);
+
+    fragColor = vec4(col, 1.0);
+}
+{{< /glsl >}}
+
+Here is the same two-sphere scene, shown through that marching loop.
 
 {{< glsl >}}
 #version 300 es

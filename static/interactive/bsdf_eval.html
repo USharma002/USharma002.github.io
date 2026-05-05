@@ -381,9 +381,39 @@ select option {
           document.documentElement.style.setProperty('--btn2Text', '#111827');
         }
       } catch(e) {}
+
+      requestRender();
     }
-    detectTheme();
-    setInterval(detectTheme, 1000);
+
+    function installThemeSync() {
+      const sync = () => requestAnimationFrame(detectTheme);
+
+      sync();
+
+      if (typeof MutationObserver !== 'undefined') {
+        try {
+          const parentDoc = window.parent.document;
+          const observer = new MutationObserver(sync);
+          const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
+
+          if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
+          if (parentDoc.body) observer.observe(parentDoc.body, options);
+
+          window.addEventListener('beforeunload', function () {
+            observer.disconnect();
+          }, { once: true });
+        } catch (e) {}
+      }
+
+      if (window.matchMedia) {
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const listener = () => requestAnimationFrame(detectTheme);
+        if (media.addEventListener) media.addEventListener('change', listener);
+        else if (media.addListener) media.addListener(listener);
+      }
+    }
+
+    installThemeSync();
 
     function toggleMenu(show) {
       const menu = document.getElementById('menu');
@@ -438,6 +468,34 @@ select option {
     };
 
     let hasLoggedFrame = false;
+    let renderFrameId = null;
+    let renderPending = true;
+    let isCanvasVisible = true;
+    let isPageVisible = !document.hidden;
+
+    function canRender() {
+      return isCanvasVisible && isPageVisible;
+    }
+
+    function requestRender() {
+      renderPending = true;
+      if (renderFrameId !== null || !canRender()) return;
+      renderFrameId = requestAnimationFrame(loop);
+    }
+
+    function syncRenderState() {
+      if (!canRender()) {
+        if (renderFrameId !== null) {
+          cancelAnimationFrame(renderFrameId);
+          renderFrameId = null;
+        }
+        return;
+      }
+
+      if (renderPending && renderFrameId === null) {
+        renderFrameId = requestAnimationFrame(loop);
+      }
+    }
 
     function getMagma(t) {
       const data = [
@@ -705,6 +763,14 @@ select option {
     }
 
     function loop() {
+      renderFrameId = null;
+
+      if (!canRender()) {
+        return;
+      }
+
+      renderPending = false;
+
       camera.yaw += camera.yawVel;
       camera.pitch += camera.pitchVel;
       camera.dist = Math.max(1.7, Math.min(10, camera.dist + camera.distVel));
@@ -720,7 +786,6 @@ select option {
       ctx.fillRect(0, 0, canvasW, canvasH);
 
       if (!currentSlice) {
-        requestAnimationFrame(loop);
         return;
       }
 
@@ -795,7 +860,9 @@ select option {
         hasLoggedFrame = true;
       }
 
-      requestAnimationFrame(loop);
+      if (Math.abs(camera.yawVel) > 0.0001 || Math.abs(camera.pitchVel) > 0.0001 || Math.abs(camera.distVel) > 0.0001) {
+        requestRender();
+      }
     }
 
     function resize() {
@@ -805,6 +872,7 @@ select option {
       canvas.width = Math.floor(canvasW * dpr);
       canvas.height = Math.floor(canvasH * dpr);
       hasLoggedFrame = false;
+      requestRender();
     }
 
     function loadMaterial(name) {
@@ -831,6 +899,7 @@ select option {
       currentSlice._samplerEnergyCos = buildSliceSamplerEnergyTimesCos(currentSlice);
       rays = [];
       hasLoggedFrame = false;
+      requestRender();
     }
 
     function addSampleRay() {
@@ -843,6 +912,7 @@ select option {
         const w = clamp01(dir.y);
         rays.push({ x: dir.x, y: dir.y, z: dir.z, w });
         hasLoggedFrame = false;
+        requestRender();
         return;
       }
 
@@ -851,6 +921,7 @@ select option {
         const r = computePerfectReflectionRay();
         rays.push({ x:r.x, y:r.y, z:r.z, w: clamp01(r.y) });
         hasLoggedFrame = false;
+        requestRender();
         return;
       }
 
@@ -868,6 +939,7 @@ select option {
       const w = clamp01(picked.y);
       rays.push({ x: picked.x, y: picked.y, z: picked.z, w });
       hasLoggedFrame = false;
+      requestRender();
     }
 
     function setupInteractions() {
@@ -886,18 +958,21 @@ select option {
         camera.yawVel  += dx * 0.0009;
         camera.pitchVel -= dy * 0.0009; // inverted vertical
         hasLoggedFrame = false;
+        requestRender();
       });
 
       canvas.addEventListener('wheel', e => {
         camera.distVel += e.deltaY * 0.0025;
         e.preventDefault();
         hasLoggedFrame = false;
+        requestRender();
       }, { passive: false });
 
       window.addEventListener('keydown', e => {
         if (e.key.toLowerCase() === 'r') {
           rays = [];
           hasLoggedFrame = false;
+          requestRender();
         }
       });
     }
@@ -934,7 +1009,29 @@ select option {
       window.addEventListener('resize', resize);
       resize();
       setupInteractions();
-      requestAnimationFrame(loop);
+
+      if (typeof IntersectionObserver !== 'undefined') {
+        const visibilityObserver = new IntersectionObserver((entries) => {
+          for (const entry of entries) {
+            if (entry.target === canvas) {
+              isCanvasVisible = entry.isIntersecting;
+              syncRenderState();
+            }
+          }
+        }, { rootMargin: '180px' });
+
+        visibilityObserver.observe(canvas);
+        window.addEventListener('beforeunload', function () {
+          visibilityObserver.disconnect();
+        }, { once: true });
+      }
+
+      document.addEventListener('visibilitychange', function () {
+        isPageVisible = !document.hidden;
+        syncRenderState();
+      });
+
+      requestRender();
     }
 
     if (typeof BSDF_DATA !== 'undefined') init();

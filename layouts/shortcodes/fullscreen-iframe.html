@@ -8,6 +8,7 @@
 {{- $src := .Get "src" -}}
 {{- $height := .Get "height" | default "800" -}}
 {{- $title := .Get "title" | default "Interactive content" -}}
+{{- $lazy := lower (printf "%v" (.Get "lazy" | default "true")) -}}
 
 {{- if not (.Page.Scratch.Get "fullscreenIframeInit") -}}
 <style>
@@ -64,8 +65,12 @@ if (typeof goFullscreen !== 'function') {
   <iframe id="{{ $id }}"
           src="{{ $src }}"
           title="{{ $title }}"
-          loading="lazy"
-          fetchpriority="low"
+      {{- if ne $lazy "false" }}
+      loading="lazy"
+      fetchpriority="low"
+      {{- else }}
+      loading="eager"
+      {{- end }}
           allowfullscreen
           style="width:100%; height:{{ $height }}px; border:0 !important; border-radius:8px;">
   </iframe>

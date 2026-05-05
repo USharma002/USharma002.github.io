@@ -12,17 +12,16 @@
 
     <div class="dlider-images">
 
-        <img src="{{ $after }}" alt="After" class="dlider-img-back">
-        <img src="{{ $before }}" alt="Before" class="dlider-img-front">
+    <img src="{{ $after }}" alt="After" class="dlider-img-back" loading="lazy" decoding="async">
+    <img src="{{ $before }}" alt="Before" class="dlider-img-front" loading="lazy" decoding="async">
 
         <div class="dlider-handle">
             <div class="dlider-handle-arrow"></div>
             <div class="dlider-handle-line"></div>
         </div>
 
-        <input type="range" min="0" max="100" value="50" class="dlider-input"
-               oninput="updateDlider(this)" 
-               onchange="updateDlider(this)">
+         <input type="range" min="0" max="100" value="50" class="dlider-input"
+             oninput="updateDlider(this)">
     </div>
 
     <div class="dlider-active-label">{{ $beforeLabel }}</div>
