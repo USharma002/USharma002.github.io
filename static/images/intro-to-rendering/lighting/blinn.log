@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=latex 2026.4.25)  1 MAY 2026 16:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.2) (preloaded format=pdflatex 2026.4.20)  6 MAY 2026 18:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -85,10 +85,10 @@ Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 (C:\Program Files\MiKTeX\tex/latex/graphics-cfg\graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: dvips.def on input line 106.
+Package graphics Info: Driver file: pdftex.def on input line 106.
 
-(C:\Program Files\MiKTeX\tex/latex/graphics-def\dvips.def
-File: dvips.def 2025/01/21 v3.2a Graphics/color driver for dvips
+(C:\Program Files\MiKTeX\tex/latex/graphics-def\pdftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
 ))
 \Gin@req@height=\dimen151
 \Gin@req@width=\dimen152
@@ -128,20 +128,18 @@ tex
  (C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgf.cfg
 File: pgf.cfg 2025-08-29 v3.1.11a (3.1.11a)
 )
-Driver file for pgf: pgfsys-dvips.def
+Driver file for pgf: pgfsys-pdftex.def
 
-(C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgfsys-dvips.def
-File: pgfsys-dvips.def 2025-08-29 v3.1.11a (3.1.11a)
+(C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgfsys-pdftex.def
+File: pgfsys-pdftex.def 2025-08-29 v3.1.11a (3.1.11a)
 
-(C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgfsys-common-postscript.d
-ef
-File: pgfsys-common-postscript.def 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@objectcount=\count291
+(C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2025-08-29 v3.1.11a (3.1.11a)
 )))
 (C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgfsyssoftpath.code.tex
 File: pgfsyssoftpath.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfsyssoftpath@smallbuffer@items=\count292
-\pgfsyssoftpath@bigbuffer@items=\count293
+\pgfsyssoftpath@smallbuffer@items=\count291
+\pgfsyssoftpath@bigbuffer@items=\count292
 )
 (C:\Program Files\MiKTeX\tex/generic/pgf/systemlayer\pgfsysprotocol.code.tex
 File: pgfsysprotocol.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -152,10 +150,11 @@ Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
 (C:\Program Files\MiKTeX\tex/latex/graphics-cfg\color.cfg
 File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
-Package xcolor Info: Driver file: dvips.def on input line 274.
+Package xcolor Info: Driver file: pdftex.def on input line 274.
 
 (C:\Program Files\MiKTeX\tex/latex/graphics\mathcolor.ltx)
 Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1353.
 Package xcolor Info: Model `RGB' extended on input line 1365.
 Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
 Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
@@ -171,7 +170,7 @@ Package: pgfcore 2025-08-29 v3.1.11a (3.1.11a)
 (C:\Program Files\MiKTeX\tex/generic/pgf/math\pgfmathutil.code.tex)
 (C:\Program Files\MiKTeX\tex/generic/pgf/math\pgfmathparser.code.tex
 \pgfmath@dimen=\dimen163
-\pgfmath@count=\count294
+\pgfmath@count=\count293
 \pgfmath@box=\box54
 \pgfmath@toks=\toks26
 \pgfmath@stack@operand=\toks27
@@ -191,7 +190,7 @@ tex)
 (C:\Program Files\MiKTeX\tex/generic/pgf/math\pgfmathfunctions.integerarithmeti
 cs.code.tex) (C:\Program Files\MiKTeX\tex/generic/pgf/math\pgfmathcalc.code.tex
 ) (C:\Program Files\MiKTeX\tex/generic/pgf/math\pgfmathfloat.code.tex
-\c@pgfmathroundto@lastzeros=\count295
+\c@pgfmathroundto@lastzeros=\count294
 ))
 (C:\Program Files\MiKTeX\tex/generic/pgf/math\pgfint.code.tex)
 (C:\Program Files\MiKTeX\tex/generic/pgf/basiclayer\pgfcorepoints.code.tex
@@ -227,7 +226,7 @@ File: pgfcorescopes.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfpic=\box55
 \pgf@hbox=\box56
 \pgf@layerbox@main=\box57
-\pgf@picture@serial@count=\count296
+\pgf@picture@serial@count=\count295
 )
 (C:\Program Files\MiKTeX\tex/generic/pgf/basiclayer\pgfcoregraphicstate.code.te
 x
@@ -254,8 +253,8 @@ File: pgfcorearrows.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 ) (C:\Program Files\MiKTeX\tex/generic/pgf/basiclayer\pgfcoreshade.code.tex
 File: pgfcoreshade.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgf@max=\dimen187
-\pgf@sys@shading@range@num=\count297
-\pgf@shadingcount=\count298
+\pgf@sys@shading@range@num=\count296
+\pgf@shadingcount=\count297
 )
 (C:\Program Files\MiKTeX\tex/generic/pgf/basiclayer\pgfcoreimage.code.tex
 File: pgfcoreimage.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -307,7 +306,7 @@ Package: tikz 2025-08-29 v3.1.11a (3.1.11a)
 (C:\Program Files\MiKTeX\tex/generic/pgf/libraries\pgflibraryplothandlers.code.
 tex
 File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgf@plot@mark@count=\count299
+\pgf@plot@mark@count=\count298
 \pgfplotmarksize=\dimen192
 )
 \tikz@lastx=\dimen193
@@ -322,27 +321,26 @@ File: pgflibraryplothandlers.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \tikz@figbox@bg=\box61
 \tikz@tempbox=\box62
 \tikz@tempbox@bg=\box63
-\tikztreelevel=\count300
-\tikznumberofchildren=\count301
-\tikznumberofcurrentchild=\count302
-\tikz@fig@count=\count303
+\tikztreelevel=\count299
+\tikznumberofchildren=\count300
+\tikznumberofcurrentchild=\count301
+\tikz@fig@count=\count302
  (C:\Program Files\MiKTeX\tex/generic/pgf/modules\pgfmodulematrix.code.tex
 File: pgfmodulematrix.code.tex 2025-08-29 v3.1.11a (3.1.11a)
-\pgfmatrixcurrentrow=\count304
-\pgfmatrixcurrentcolumn=\count305
-\pgf@matrix@numberofcolumns=\count306
+\pgfmatrixcurrentrow=\count303
+\pgfmatrixcurrentcolumn=\count304
+\pgf@matrix@numberofcolumns=\count305
 )
-\tikz@expandcount=\count307
+\tikz@expandcount=\count306
 
 (C:\Program Files\MiKTeX\tex/generic/pgf/frontendlayer/tikz/libraries\tikzlibra
 rytopaths.code.tex
 File: tikzlibrarytopaths.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 )))
 \sa@box=\box64
-\sa@yoffset=\skip51
 ) (C:\Program Files\MiKTeX\tex/latex/amsmath\amsmath.sty
 Package: amsmath 2025/07/09 v2.17z AMS math features
-\@mathmargin=\skip52
+\@mathmargin=\skip51
 
 For additional information on amsmath, use the `?' option.
 (C:\Program Files\MiKTeX\tex/latex/amsmath\amstext.sty
@@ -360,14 +358,14 @@ Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 (C:\Program Files\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
-\inf@bad=\count308
+\inf@bad=\count307
 LaTeX Info: Redefining \frac on input line 233.
-\uproot@=\count309
-\leftroot@=\count310
+\uproot@=\count308
+\leftroot@=\count309
 LaTeX Info: Redefining \overline on input line 398.
 LaTeX Info: Redefining \colon on input line 409.
-\classnum@=\count311
-\DOTSCASE@=\count312
+\classnum@=\count310
+\DOTSCASE@=\count311
 LaTeX Info: Redefining \ldots on input line 495.
 LaTeX Info: Redefining \dots on input line 498.
 LaTeX Info: Redefining \cdots on input line 619.
@@ -380,20 +378,20 @@ LaTeX Info: Redefining \Bigg on input line 724.
 \big@size=\dimen259
 LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
-\macc@depth=\count313
+\macc@depth=\count312
 LaTeX Info: Redefining \bmod on input line 904.
 LaTeX Info: Redefining \pmod on input line 909.
 LaTeX Info: Redefining \smash on input line 939.
 LaTeX Info: Redefining \relbar on input line 969.
 LaTeX Info: Redefining \Relbar on input line 970.
-\c@MaxMatrixCols=\count314
+\c@MaxMatrixCols=\count313
 \dotsspace@=\muskip17
-\c@parentequation=\count315
-\dspbrk@lvl=\count316
+\c@parentequation=\count314
+\dspbrk@lvl=\count315
 \tag@help=\toks32
-\row@=\count317
-\column@=\count318
-\maxfields@=\count319
+\row@=\count316
+\column@=\count317
+\maxfields@=\count318
 \andhelp@=\toks33
 \eqnshift@=\dimen260
 \alignsep@=\dimen261
@@ -402,8 +400,8 @@ LaTeX Info: Redefining \Relbar on input line 970.
 \totwidth@=\dimen264
 \lineht@=\dimen265
 \@envbody=\toks34
-\multlinegap=\skip53
-\multlinetaggap=\skip54
+\multlinegap=\skip52
+\multlinetaggap=\skip53
 \mathdisplay@stack=\toks35
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
@@ -430,15 +428,11 @@ File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
 \pgfarrowlength=\dimen267
 \pgfarrowwidth=\dimen268
 \pgfarrowlinewidth=\dimen269
-) (C:\Program Files\MiKTeX\tex/latex/l3backend\l3backend-dvips.def
-File: l3backend-dvips.def 2025-10-09 L3 backend support: dvips
-\l__pdfannot_backend_content_box=\box67
-\l__pdfannot_backend_model_box=\box68
-\g__pdfannot_backend_int=\count320
-\g__pdfannot_backend_link_int=\count321
-\g__pdfannot_backend_link_sf_int=\count322
+) (C:\Program Files\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
+File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count319
 )
-No file blinn.aux.
+(blinn.aux)
 \openout1 = `blinn.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
@@ -455,7 +449,29 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 13.
 LaTeX Font Info:    ... okay on input line 13.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 13.
 LaTeX Font Info:    ... okay on input line 13.
+ (C:\Program Files\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count320
+\scratchdimen=\dimen270
+\scratchbox=\box67
+\nofMPsegments=\count321
+\nofMParguments=\count322
+\everyMPshowfont=\toks36
+\MPscratchCnt=\count323
+\MPscratchDim=\dimen271
+\MPnumerator=\count324
+\makeMPintoPDFobject=\count325
+\everyMPtoPDFconversion=\toks37
+) (C:\Program Files\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Program Files\MiKTeX\tex/latex/00miktex\epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
 LaTeX Font Info:    Trying to load font information for U+msa on input line 44.
+
 
 (C:\Program Files\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -467,19 +483,28 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 44.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
-] (blinn.aux)
+
+Non-PDF special ignored!
+<special> papersize=417.22743pt,230.56763pt
+{C:/Users/Lenovo/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}] (blinn.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 13837 strings out of 467834
- 281368 string characters out of 5427178
- 688088 words of memory out of 5000000
- 42520 multiletter control sequences out of 15000+600000
+ 14248 strings out of 467833
+ 287181 string characters out of 5427152
+ 662876 words of memory out of 5000000
+ 42915 multiletter control sequences out of 15000+600000
  635847 words of font info for 71 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 117i,6n,121p,412b,695s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 117i,7n,121p,412b,693s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Program Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Progra
+m Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb>
+Output written on blinn.pdf (1 page, 20800 bytes).
+PDF statistics:
+ 19 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 500000)
+ 13 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on blinn.dvi (1 page, 21888 bytes).

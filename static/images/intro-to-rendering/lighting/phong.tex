@@ -7,8 +7,8 @@
 \definecolor{vecorange}{HTML}{E65100} % Light
 \definecolor{vecgreen}{HTML}{2E7D32}  % Reflection
 \definecolor{vecblue}{HTML}{1565C0}   % View
-\definecolor{vecdark}{HTML}{212121}   % Normal
-\definecolor{vecpurple}{HTML}{6A1B9A} % Halfway
+\definecolor{vecdark}{HTML}{BDBDBD}   % Normal (Light Gray for visibility)
+\definecolor{vecpurple}{HTML}{9C27B0} % Halfway
 \definecolor{surfbg}{HTML}{9E9E9E}
 
 \begin{document}
@@ -63,10 +63,10 @@
 
 % 6. Vector Construction Lines
 % First step: l vector projected distance
-\draw[-Latex, gray!80!black, densely dashed, thick] (Ltip) -- (Nproj) node[midway, above=2pt, font=\large] {$(\mathbf{n} \cdot \mathbf{l})\mathbf{n} - \mathbf{l}$};
+\draw[-Latex, gray!60, densely dashed, thick] (Ltip) -- (Nproj) node[midway, above=2pt, font=\large] {$(\mathbf{n} \cdot \mathbf{l})\mathbf{n} - \mathbf{l}$};
 
 % Second step: Completing the parallelogram to r
-\draw[-Latex, gray!80!black, densely dashed, thick] (Nproj) -- (Rtip);
+\draw[-Latex, gray!60, densely dashed, thick] (Nproj) -- (Rtip);
 
 % Projection Point on Normal
 \fill (Nproj) circle (2.5pt);
