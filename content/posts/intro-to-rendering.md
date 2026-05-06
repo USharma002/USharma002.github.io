@@ -1330,7 +1330,9 @@ void main() {
 
 ### 3. Signed Distance Functions (SDFs)
 
-A Signed Distance Function (SDF) describes geometry implicitly. Formally, for a solid object occupying a volume $\Omega$ with boundary surface $\partial \Omega$, the SDF $f(\mathbf{p})$ at any point $\mathbf{p} \in \mathbb{R}^3$ is defined as:
+In contrast to explicit geometry representations like triangle meshes, a **Signed Distance Function (SDF)** describes geometry *implicitly* through a continuous mathematical field. Rather than storing discrete vertices, an SDF evaluates the shortest distance from any given point in space to the nearest surface.
+
+Formally, let $\Omega \subset \mathbb{R}^3$ be a closed set representing a solid object, with its boundary surface denoted by $\partial \Omega$. The signed distance function $f(\mathbf{p})$ at any point $\mathbf{p} \in \mathbb{R}^3$ is defined as the minimum metric distance from $\mathbf{p}$ to the boundary $\partial \Omega$, signed by whether $\mathbf{p}$ is in the interior or exterior of the object:
 
 $$
 f(\mathbf{p}) = \begin{cases} 
@@ -1340,9 +1342,30 @@ f(\mathbf{p}) = \begin{cases}
 \end{cases}
 $$
 
-Because $f(\mathbf{p})$ guarantees the exact distance to the *nearest* surface, it gives us a spatial "safe zone." If we are at position $\mathbf{p}$ and $f(\mathbf{p}) = 2.0$, we can shoot a ray in *any* direction by exactly $2.0$ units, and we are mathematically guaranteed not to hit anything.
+The sign convention dictates that $f(\mathbf{p})$ is positive outside the object, negative inside, and exactly zero on the surface $\partial \Omega$. Consequently, the surface itself is defined implicitly as the zero-level set of the function: $\partial \Omega = \{\mathbf{p} \in \mathbb{R}^3 \mid f(\mathbf{p}) = 0\}$.
 
-The next step is to combine these fields into scenes. If $a$ and $b$ are the signed distances of two shapes at the same sample point, the standard operators are:
+Because $f(\mathbf{p})$ guarantees the exact distance to the nearest surface, it provides a strictly bound spatial radius. If $f(\mathbf{p}) = d$, a sphere of radius $d$ centered at $\mathbf{p}$ is guaranteed to be entirely empty. This property allows ray marching algorithms to safely advance along a ray by distance $d$ without prematurely overshooting the surface.
+
+{{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere Tracing: By evaluating the SDF, the algorithm derives a safe distance to march along the ray. Because the field obeys the Eikonal equation, the circles represent exact bounds of empty space." title="Signed Distance Field" alt="SDF contour visualization" align="center" noinvert=true >}}
+
+#### The Eikonal Equation and Lipschitz Continuity
+
+For a function to be a valid Euclidean signed distance field, it must satisfy the **Eikonal equation**:
+
+$$ \|\nabla f(\mathbf{p})\| = 1 $$
+
+This nonlinear partial differential equation states that the magnitude of the gradient of the function must equal exactly 1 everywhere (except at singularities, such as the medial axis, where the gradient is undefined). Geometrically, this implies that the field's rate of change perfectly matches physical space: moving one unit of distance directly away from the surface increases the SDF value by exactly one.
+
+In practice, when constructing complex 3D scenes, SDFs are often subjected to spatial deformations—such as scaling, twisting, or blending—that violate the strict Eikonal property. For rendering algorithms like sphere tracing to remain mathematically safe, the function must at least maintain a **Lipschitz bound** of $1$:
+
+$$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$
+
+If the gradient magnitude exceeds 1 ($\|\nabla f\| > 1$), the function overestimates the true distance. A sphere tracer would march too far and step *through* the surface, causing visual artifacts or missing geometry entirely. Conversely, if the gradient magnitude is substantially less than 1, the algorithm remains mathematically safe but becomes highly inefficient, forcing the ray to take excessively small, conservative steps. Maintaining the Eikonal property, or a strict Lipschitz bound, is a fundamental constraint when designing operations for SDFs.
+
+
+#### Constructive Solid Geometry (CSG)
+
+Complex scenes can be constructed from primitive SDFs using Boolean operations. If $a = f_1(\mathbf{p})$ and $b = f_2(\mathbf{p})$ represent the signed distances to two individual shapes at a given point, standard **Constructive Solid Geometry (CSG)** operations can be formulated as combinations of `min` and `max` functions:
 
 ```glsl
 float opUnion(float a, float b) {
@@ -1364,14 +1387,11 @@ float opSmoothUnion(float a, float b, float k) {
 }
 ```
 
-These operators are not arbitrary. `opUnion` uses `min` because the union surface is the first one you would reach from the current point, so the smaller distance wins. `opIntersection` uses `max` because a point must be inside both shapes at once, which means the limiting distance is the larger one. `opSubtraction` keeps the region inside the first shape and outside the second, which is why the second field is negated before the maximum is taken. `opSmoothUnion` keeps the same geometric logic but replaces the abrupt switch at $a = b$ with a blending band of width $k$, giving a rounded transition instead of a seam.
-
-For visualization, this is the important mental model: `min` picks the nearest surface, `max` keeps the overlapping interior, and smooth union interpolates between both fields without breaking the signed-distance intuition. That is why these operators are so useful when you want to build complex implicit models from simple primitives.
-
-{{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere Tracing: We use the SDF value to safely 'march' along the ray until we hit the surface." title="Signed Distance Field" alt="SDF contour visualization" align="center" noinvert=true >}}
-
-
-
+These operators directly manipulate the distance fields based on their spatial definitions:
+*   **Union (`opUnion`)**: The combined surface is determined by the closest object, yielding the minimum distance.
+*   **Intersection (`opIntersection`)**: A point is only inside the intersection if it is inside *both* shapes, meaning the limiting boundary is the one furthest away (the maximum).
+*   **Subtraction (`opSubtraction`)**: Subtracting the second shape from the first involves inverting the second field (turning inside to outside by negating $b$) and then intersecting them.
+*   **Smooth Union (`opSmoothUnion`)**: While standard CSG operators introduce non-differentiable $C^0$ seams at the intersection boundaries, smooth operators replace this abrupt transition with a polynomial blending curve of width $k$. While smooth blending slightly violates the Eikonal equation near the transition, it reliably maintains the Lipschitz bound.
 
 {{< glsl >}}
 #version 300 es
@@ -1394,7 +1414,7 @@ void main() {
     
     vec2 probe;
     
-    // If mouse is at (0,0) [meaning not hovered], animate the probe
+    // If mouse is at (0,0)[meaning not hovered], animate the probe
     if (u_mouse.x <= 0.0 && u_mouse.y <= 0.0) {
         probe = vec2(cos(u_time * 0.8) * 0.8, sin(u_time * 0.5) * 0.6);
     } else {
@@ -1437,21 +1457,24 @@ void main() {
 {{< /glsl >}}
 
 #### Calculating Normals for SDFs
-Since we don't have explicit geometry, how do we find the surface normal for lighting? The normal vector is simply the direction of the steepest ascent of the distance field. In calculus, this is the **gradient** of the function, denoted as $\nabla f(\mathbf{p})$:
+
+Unlike explicit meshes, implicit surfaces do not inherently store normal vectors. However, the surface normal at any point $\mathbf{p}$ on the boundary $\partial \Omega$ can be derived directly from the distance field. The normal vector $\mathbf{n}$ points in the direction of steepest ascent, which corresponds to the **gradient** of the SDF, denoted as $\nabla f(\mathbf{p})$.
+
+By definition of the Eikonal equation ($\|\nabla f(\mathbf{p})\| = 1$), the gradient of a mathematically perfect SDF is already a unit vector:
 
 $$ \mathbf{n} = \nabla f(\mathbf{p}) = \begin{pmatrix} \frac{\partial f}{\partial \color{#ef4444}x} \\ \frac{\partial f}{\partial \color{#22c55e}y} \\ \frac{\partial f}{\partial \color{#3b82f6}z} \end{pmatrix} $$
 
-In shader code, we approximate this using finite differences. The standard approach is the **Central Difference** method, which evaluates the SDF at tiny offsets $\varepsilon$ along each axis:
+In a shader implementation, this continuous derivative is typically approximated using finite differences. The **Central Difference** method evaluates the SDF at infinitesimally small offsets $\varepsilon$ along each Cartesian axis:
 
 $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varepsilon {\color{#ef4444}\mathbf{\hat{i}}}) - f(\mathbf{p} - \varepsilon {\color{#ef4444}\mathbf{\hat{i}}}) \\ f(\mathbf{p} + \varepsilon {\color{#22c55e}\mathbf{\hat{j}}}) - f(\mathbf{p} - \varepsilon {\color{#22c55e}\mathbf{\hat{j}}}) \\ f(\mathbf{p} + \varepsilon {\color{#3b82f6}\mathbf{\hat{k}}}) - f(\mathbf{p} - \varepsilon {\color{#3b82f6}\mathbf{\hat{k}}}) \end{pmatrix} $$
 
-This requires 6 evaluations of the SDF. A cheaper approximation (often used for performance) is the **Forward Difference** method, which uses the center point and only requires 4 evaluations:
+This formulation requires six evaluations of the distance function. For real-time applications where rendering performance is critical, a **Forward Difference** method is often preferred. This approach reuses the evaluation at the center point $\mathbf{p}$, reducing the total number of evaluations to four:
 
 $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varepsilon {\color{#ef4444}\mathbf{\hat{i}}}) - f(\mathbf{p}) \\ f(\mathbf{p} + \varepsilon {\color{#22c55e}\mathbf{\hat{j}}}) - f(\mathbf{p}) \\ f(\mathbf{p} + \varepsilon {\color{#3b82f6}\mathbf{\hat{k}}}) - f(\mathbf{p}) \end{pmatrix} $$
 
+*(Note: Although a pure SDF yields a unit-length gradient, numerical precision limits, smooth CSG operations, and domain distortions introduce slight deviations from the perfect Eikonal property. Consequently, the resulting normal vector must be explicitly normalized prior to shading calculations).*
 
-
-Here is a shader that uses Sphere Tracing to render a Torus, calculating its normals dynamically using the forward difference method.
+The following shader demonstrates these concepts by rendering a Torus using sphere tracing, with surface normals calculated dynamically via the forward difference method.
 
 {{< glsl >}}
 #version 300 es
@@ -1508,24 +1531,23 @@ void main() {
         vec3 p = ro + rd * t;
         float d = map(p);
         
-        // If we are close enough to the surface, it's a hit!
+        // If we are close enough to the surface, it is a hit
         if(abs(d) < 0.001) {
             vec3 n = calcNormal(p);
             // Map normal to [0,1] range for visualization
             col = n * 0.5 + 0.5;
             break;
         }
-        // If we marched too far, we missed the object
+        // If we marched too far, the ray missed the object
         if(t > max_d) break;
         
-        // Step forward by the safe distance
+        // Step forward by the safe distance bound
         t += d;
     }
 
     fragColor = vec4(col, 1.0);
 }
 {{< /glsl >}}
-
 
 ## Shading Models
 
@@ -1924,7 +1946,6 @@ For transparent materials like glass, light bends as it passes through the surfa
 $$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$
 The exact transmission vector $\mathbf{t}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector $\mathbf{v}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is **Total Internal Reflection**—no light is refracted; it is all reflected inside the object.
 
-<iframe src="/interactive/ray_tracing_steps.html" width="100%" height="600" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
 
 Here is the same scene rendered with full recursive ray tracing. Shadow rays now block direct light where occluded, and reflection rays on the chrome sphere pick up the environment. Compare with the local-only shaders above.
 

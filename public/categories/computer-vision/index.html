@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/categories/computer-vision/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.e3a65ad727690debd70d15b3959d1fcd3413363830bb042546ff59b4e2653391.css" integrity="sha256-46Za1ydpDevXDRWzlZ0fzTQTNjgwuwQlRv9ZtOJlM5E=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.8f433c302706ed886ed1a735eb8ae74de2e532f2bc656137e34f31ff87472c5d.css" integrity="sha256-j0M8MCcG7Yhu0ac164rnTeLlMvK8ZWE3408x/4dHLF0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -140,6 +140,18 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Introduction to Differentiable Rendering
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Differentiable rendering techniques for computer graphics and vision</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-05-02 00:00:00 +0000 UTC'>May 2, 2026</span>&nbsp;·&nbsp;64 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
+  <a class="entry-link" aria-label="post link to Introduction to Differentiable Rendering" href="http://localhost:1313/posts/intro-to-differentiable-rendering/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">3D Reconstruction with 3DGS, NeRF, and Their Variants
     </h2>
   </header>
@@ -235,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - activeHeaderOffset);
+        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - clickScrollOffset);
         if (Math.abs(window.scrollY - targetTop) > 2) {
             window.scrollTo({ top: targetTop, behavior: 'auto' });
         }
@@ -320,7 +332,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!headers.length) return;
 
     var lastActiveId = '';
-    var activeHeaderOffset = 80;
+    var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+    var activeHeaderOffset = headerHeight + 40;
+    var clickScrollOffset = headerHeight + 8;
     var headerPositions = [];
 
     
@@ -426,197 +440,6 @@ document.addEventListener('DOMContentLoaded', function() {
     refreshHeaderPositions();
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); 
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var iframes = document.querySelectorAll('.post-content iframe, .page-content iframe, .archive iframe, .single iframe');
-    if (!iframes.length) return;
-
-    for (var i = 0; i < iframes.length; i++) {
-        if (!iframes[i].hasAttribute('loading')) {
-            iframes[i].setAttribute('loading', 'lazy');
-        }
-        if (!iframes[i].hasAttribute('fetchpriority')) {
-            iframes[i].setAttribute('fetchpriority', 'low');
-        }
-    }
-
-    function parsePositiveNumber(value) {
-        var n = Number(value);
-        return Number.isFinite(n) && n > 0 ? n : null;
-    }
-
-    function getHostBackgroundColor(iframe) {
-        var host = iframe.closest('.post-content, .page-content, .archive, .single') || document.body;
-        var color = getComputedStyle(host).backgroundColor;
-        if (!color || color === 'rgba(0, 0, 0, 0)' || color === 'transparent') {
-            color = getComputedStyle(document.body).backgroundColor;
-        }
-        return color || '#ffffff';
-    }
-
-    function shouldBlendIframe(iframe) {
-        var explicit = iframe.getAttribute('data-iframe-blend');
-        if (explicit === 'true') return true;
-        if (explicit === 'false') return false;
-
-        var src = (iframe.getAttribute('src') || '').toLowerCase();
-        return src.indexOf('/interactive/vmf.html') !== -1;
-    }
-
-    function harmonizeSameOriginIframe(iframe, doc) {
-        if (!doc || !doc.head) return;
-
-        var styleId = 'copilot-embedded-iframe-theme';
-        var existing = doc.getElementById(styleId);
-        if (!existing) {
-            existing = doc.createElement('style');
-            existing.id = styleId;
-            doc.head.appendChild(existing);
-        }
-
-        var bg = getHostBackgroundColor(iframe);
-        existing.textContent = [
-            'html, body {',
-            '  background: ' + bg + ' !important;',
-            '}',
-            'body {',
-            '  margin: 0;',
-            '}'
-        ].join('\n');
-    }
-
-    function getSameOriginDocument(iframe) {
-        try {
-            return iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document) || null;
-        } catch (e) {
-            return null;
-        }
-    }
-
-    function getSameOriginContentHeight(doc) {
-        if (!doc || !doc.documentElement) return null;
-
-        var body = doc.body;
-        var docHeight = Math.max(
-            doc.documentElement.scrollHeight || 0,
-            doc.documentElement.offsetHeight || 0,
-            doc.documentElement.clientHeight || 0,
-            body ? body.scrollHeight : 0,
-            body ? body.offsetHeight : 0,
-            body ? body.clientHeight : 0
-        );
-
-        return docHeight > 0 ? Math.round(docHeight) : null;
-    }
-
-    function computeAspectRatio(iframe) {
-        var cached = parsePositiveNumber(iframe.getAttribute('data-computed-aspect'));
-        if (cached) return cached;
-
-        var w = parsePositiveNumber(iframe.getAttribute('width'));
-        var h = parsePositiveNumber(iframe.getAttribute('height'));
-        if (w && h) return h / w;
-
-        var dataAspect = iframe.getAttribute('data-aspect');
-        if (dataAspect && dataAspect.indexOf('/') > -1) {
-            var parts = dataAspect.split('/');
-            var aw = parsePositiveNumber(parts[0]);
-            var ah = parsePositiveNumber(parts[1]);
-            if (aw && ah) return ah / aw;
-        }
-
-        
-        if (h) {
-            var currentWidth = iframe.clientWidth;
-            if (currentWidth > 0) {
-                var derived = h / currentWidth;
-                iframe.setAttribute('data-computed-aspect', String(derived));
-                return derived;
-            }
-        }
-
-        return 9 / 16;
-    }
-
-    function resizeIframe(iframe) {
-        var ratio = computeAspectRatio(iframe);
-        var width = iframe.clientWidth;
-        if (!width) return;
-
-        var fallbackHeight = Math.round(width * ratio);
-        var explicitHeight = parsePositiveNumber(iframe.getAttribute('height'));
-        if (explicitHeight) {
-            fallbackHeight = Math.max(fallbackHeight, Math.round(explicitHeight));
-        }
-
-        var targetHeight = fallbackHeight;
-        var isSameOrigin = false;
-
-        var doc = getSameOriginDocument(iframe);
-        if (doc) {
-            isSameOrigin = true;
-            if (shouldBlendIframe(iframe)) {
-                harmonizeSameOriginIframe(iframe, doc);
-            }
-            var contentHeight = getSameOriginContentHeight(doc);
-            if (contentHeight) {
-                targetHeight = explicitHeight ? Math.max(contentHeight, Math.round(explicitHeight)) : contentHeight;
-            }
-        }
-
-        iframe.style.height = targetHeight + 'px';
-        iframe.setAttribute('scrolling', isSameOrigin ? 'no' : 'auto');
-    }
-
-    function isNearViewport(iframe) {
-        var rect = iframe.getBoundingClientRect();
-        var vh = window.innerHeight || document.documentElement.clientHeight || 0;
-        return rect.bottom >= -250 && rect.top <= vh + 1200;
-    }
-
-    function resizeVisibleIframes(force) {
-        for (var i = 0; i < iframes.length; i++) {
-            if (force || isNearViewport(iframes[i])) {
-                resizeIframe(iframes[i]);
-            }
-        }
-    }
-
-    window.addEventListener('resize', function() { resizeVisibleIframes(true); }, { passive: true });
-
-    var themeObserver = new MutationObserver(function() {
-        resizeVisibleIframes(false);
-    });
-
-    if (document.documentElement) {
-        themeObserver.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['class', 'style', 'data-theme']
-        });
-    }
-
-    if (document.body) {
-        themeObserver.observe(document.body, {
-            attributes: true,
-            attributeFilter: ['class', 'style', 'data-theme']
-        });
-    }
-
-    for (var i = 0; i < iframes.length; i++) {
-        iframes[i].addEventListener('load', function() {
-            var frame = this;
-            resizeIframe(frame);
-
-            
-            setTimeout(function() { resizeIframe(frame); }, 250);
-            setTimeout(function() { resizeIframe(frame); }, 1000);
-        });
-    }
-
-    resizeVisibleIframes(false);
 });
 </script>
 

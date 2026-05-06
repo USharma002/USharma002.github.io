@@ -7,7 +7,9 @@
    All sizes below use px to avoid confusion.
    ════════════════════════════════════════ */
 
-.twitter-tweet { margin: auto; }
+.twitter-tweet {
+    margin: auto;
+}
 
 /* Keep plain iframe embeds inside the content column and prevent overflow. */
 .post-content iframe,
@@ -32,10 +34,21 @@
     width: 100% !important;
 }
 
-.home-info ul { padding-inline-start: 20px; }
-.entry-cover img { border: 1px solid var(--border); }
-.first-entry { min-height: 120px !important; }
-html { scroll-behavior: smooth; }
+.home-info ul {
+    padding-inline-start: 20px;
+}
+
+.entry-cover img {
+    border: 1px solid var(--border);
+}
+
+.first-entry {
+    min-height: 120px !important;
+}
+
+html {
+    scroll-behavior: smooth;
+}
 
 .main {
     max-width: calc(var(--main-width) + var(--gap) * 6);
@@ -48,6 +61,7 @@ a[href^="#fig-"] {
     text-decoration: none;
     border-bottom: 1px dotted var(--primary);
 }
+
 a[href^="#fig-"]:hover {
     border-bottom: 1px solid var(--primary);
 }
@@ -58,6 +72,7 @@ a[href^="#fig-"]:hover {
     --post-width: 960px;
     --monospace: monospace;
 }
+
 .main.post {
     --main-width: 880px;
     position: relative;
@@ -90,6 +105,7 @@ a[href^="#fig-"]:hover {
     font-family: 'Lato', Helvetica, sans-serif !important;
     font-weight: 700 !important;
     color: var(--primary) !important;
+    scroll-margin-top: calc(var(--header-height) + 40px);
 }
 
 .post-content h1 {
@@ -97,26 +113,31 @@ a[href^="#fig-"]:hover {
     line-height: 34px !important;
     margin: 40px 0 16px !important;
 }
+
 .post-content h2 {
     font-size: 24px !important;
     line-height: 30px !important;
     margin: 36px 0 14px !important;
 }
+
 .post-content h3 {
     font-size: 21px !important;
     line-height: 26px !important;
     margin: 30px 0 12px !important;
 }
+
 .post-content h4 {
     font-size: 19px !important;
     line-height: 24px !important;
     margin: 26px 0 10px !important;
 }
+
 .post-content h5 {
     font-size: 17px !important;
     line-height: 22px !important;
     margin: 22px 0 8px !important;
 }
+
 .post-content h6 {
     font-size: 16px !important;
     line-height: 20px !important;
@@ -124,12 +145,35 @@ a[href^="#fig-"]:hover {
 }
 
 @media only screen and (max-width: 768px) {
-    .post-content h1 { font-size: 26px !important; line-height: 32px !important; }
-    .post-content h2 { font-size: 22px !important; line-height: 28px !important; }
-    .post-content h3 { font-size: 20px !important; line-height: 24px !important; }
-    .post-content h4 { font-size: 18px !important; line-height: 22px !important; }
-    .post-content h5 { font-size: 16px !important; line-height: 20px !important; }
-    .post-content h6 { font-size: 15px !important; line-height: 18px !important; }
+    .post-content h1 {
+        font-size: 26px !important;
+        line-height: 32px !important;
+    }
+
+    .post-content h2 {
+        font-size: 22px !important;
+        line-height: 28px !important;
+    }
+
+    .post-content h3 {
+        font-size: 20px !important;
+        line-height: 24px !important;
+    }
+
+    .post-content h4 {
+        font-size: 18px !important;
+        line-height: 22px !important;
+    }
+
+    .post-content h5 {
+        font-size: 16px !important;
+        line-height: 20px !important;
+    }
+
+    .post-content h6 {
+        font-size: 15px !important;
+        line-height: 18px !important;
+    }
 }
 
 /* Post title heading */
@@ -140,6 +184,7 @@ a[href^="#fig-"]:hover {
     line-height: 42px !important;
     margin: 0 0 4px !important;
 }
+
 @media only screen and (max-width: 768px) {
     .post-header h1.post-title {
         font-size: 30px !important;
@@ -152,8 +197,10 @@ a[href^="#fig-"]:hover {
     font-weight: 300 !important;
     color: var(--site-link-color) !important;
     text-decoration: none !important;
-    box-shadow: none !important; /* <--- THIS removes the PaperMod line */
+    box-shadow: none !important;
+    /* <--- THIS removes the PaperMod line */
 }
+
 .post-content a:focus,
 .post-content a:hover {
     color: var(--site-link-hover-color) !important;
@@ -189,10 +236,12 @@ a[href^="#fig-"]:hover {
     margin: 20px auto !important;
     padding: 0 !important;
 }
+
 .post-content figure img {
     display: block !important;
     margin: 0 auto !important;
 }
+
 .post-content figcaption,
 .post-content figcaption p {
     text-align: center !important;
@@ -227,8 +276,8 @@ a[href^="#fig-"]:hover {
 }
 
 /* Highlight blocks */
-.post-content .highlight > div,
-.post-content .highlight > pre {
+.post-content .highlight>div,
+.post-content .highlight>pre {
     margin: 12px 0 !important;
     padding: 10px !important;
     border-radius: 6px !important;
@@ -365,6 +414,7 @@ a[href^="#fig-"]:hover {
     padding-left: 2em;
     margin: 8px 0 !important;
 }
+
 .post-content ul ul,
 .post-content ol ol,
 .post-content ul ol,
@@ -372,6 +422,7 @@ a[href^="#fig-"]:hover {
     padding-left: 1.8em;
     margin: 4px 0 !important;
 }
+
 .post-content li {
     margin-bottom: 4px !important;
 }
@@ -399,9 +450,11 @@ a[href^="#fig-"]:hover {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     margin: 24px 0;
-    align-items: end; /* Aligns captions to the bottom */
+    align-items: end;
+    /* Aligns captions to the bottom */
 }
-.paper-fig-row > div {
+
+.paper-fig-row>div {
     text-align: center;
 }
 
@@ -409,8 +462,10 @@ a[href^="#fig-"]:hover {
    ACADEMIC FOOTNOTES (e.g. [1] instead of superscript)
    ════════════════════════════════════════ */
 .post-content sup[id^="fnref"] {
-    vertical-align: baseline; /* Pulls it down from superscript */
-    font-size: 1em;           /* Matches normal text size */
+    vertical-align: baseline;
+    /* Pulls it down from superscript */
+    font-size: 1em;
+    /* Matches normal text size */
     top: auto;
 }
 
@@ -421,8 +476,13 @@ a[href^="#fig-"]:hover {
 }
 
 /* Add brackets around the number */
-.post-content sup[id^="fnref"] a::before { content: "["; }
-.post-content sup[id^="fnref"] a::after  { content: "]"; }
+.post-content sup[id^="fnref"] a::before {
+    content: "[";
+}
+
+.post-content sup[id^="fnref"] a::after {
+    content: "]";
+}
 
 .post-content sup[id^="fnref"] a:hover {
     color: var(--site-link-hover-color) !important;
@@ -435,5 +495,14 @@ a[href^="#fig-"]:hover {
     border-top: 1px solid var(--border);
     padding-top: 20px;
 }
-.footnotes hr { display: none; } /* Hide default HR */
-.footnotes .footnote-backref { display: none; } /* Hide the return arrow ↩ */
+
+.footnotes hr {
+    display: none;
+}
+
+/* Hide default HR */
+.footnotes .footnote-backref {
+    display: none;
+}
+
+/* Hide the return arrow ↩ */
