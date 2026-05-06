@@ -1592,10 +1592,10 @@ Here, $I_a$ is the intensity of the ambient light, and $k_a$ is the material's a
 #### 2. Lambertian Diffuse
 A perfectly matte (diffuse) surface, like chalk or unpolished wood, scatters light equally in all directions. Because the scattered light is uniform, the appearance of a diffuse surface does not depend on where the camera is positioned. 
 
-However, it *does* depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert's cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction $\mathbf{l}$:
+However, it *does* depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert's cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction ${\color{#FF9800}\mathbf{l}}$:
 
 $$
-L_d = k_d I_d \max(0, {\color{#212121}\mathbf{n}}\cdot{\color{#E65100}\mathbf{l}})
+L_d = k_d I_d \max(0, \mathbf{n}\cdot{\color{#FF9800}\mathbf{l}})
 $$
 
 We clamp the dot product at zero because a negative value means the light is hitting the back of the surface, which should contribute no illumination.
@@ -1603,21 +1603,21 @@ We clamp the dot product at zero because a negative value means the light is hit
 #### 3. Specular Highlights
 Smooth surfaces, like polished metal or wet plastic, are not perfect diffusers. They exhibit specular highlights—bright spots where the light reflects strongly in a specific direction. Unlike diffuse reflection, specular reflection is highly dependent on the viewer's position.
 
-A perfect mirror reflects light exactly along the reflection vector $\mathbf{r}$. Using basic vector projection, we can compute $\mathbf{r}$ by taking the incoming light vector $\mathbf{l}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:
+A perfect mirror reflects light exactly along the reflection vector ${\color{#4CAF50}\mathbf{r}}$. Using basic vector projection, we can compute ${\color{#4CAF50}\mathbf{r}}$ by taking the incoming light vector ${\color{#FF9800}\mathbf{l}}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:
 
 $$
-{\color{#2E7D32}\mathbf{r}} = 2({\color{#212121}\mathbf{n}} \cdot {\color{#E65100}\mathbf{l}}){\color{#212121}\mathbf{n}} - {\color{#E65100}\mathbf{l}}
+{\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#FF9800}\mathbf{l}})\mathbf{n} - {\color{#FF9800}\mathbf{l}}
 $$
 
-For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around $\mathbf{r}$. As the angle $\phi$ between the reflection vector $\mathbf{r}$ and the view direction $\mathbf{v}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:
+For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around ${\color{#4CAF50}\mathbf{r}}$. As the angle $\phi$ between the reflection vector ${\color{#4CAF50}\mathbf{r}}$ and the view direction ${\color{#2196F3}\mathbf{v}}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:
 
 $$
-L_s = k_s I_s \max(0, {\color{#2E7D32}\mathbf{r}} \cdot {\color{#1565C0}\mathbf{v}})^\alpha
+L_s = k_s I_s \max(0, {\color{#4CAF50}\mathbf{r}} \cdot {\color{#2196F3}\mathbf{v}})^\alpha
 $$
 
 The exponent $\alpha$ is the **shininess coefficient**. A low value (e.g., $5 - 10$) produces a broad, soft highlight like plastic, while a high value (e.g., $100 - 200$) produces a sharp, tight highlight typical of polished metals.
 
-{{< figure src="/images/intro-to-rendering/lighting/phong.svg" id="fig-phong-vectors" caption="The Phong reflection model vectors. The light vector $\mathbf{l}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector $\mathbf{r}$, which is then compared with the view vector $\mathbf{v}$." title="Phong Vectors" alt="Vectors for Phong reflection model" align="center" width="500px" >}}
+{{< figure src="/images/intro-to-rendering/lighting/phong.svg" id="fig-phong-vectors" caption="The Phong reflection model vectors. The light vector ${\color{#FF9800}\mathbf{l}}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector ${\color{#4CAF50}\mathbf{r}}$, which is then compared with the view vector ${\color{#2196F3}\mathbf{v}}$." title="Phong Vectors" alt="Vectors for Phong reflection model" align="center" width="500px" >}}
 
 Combining all three gives the complete Phong reflection model:
 
@@ -1710,17 +1710,17 @@ void main() {
 
 Calculating the exact reflection vector $\mathbf{r}$ at every pixel requires several vector operations. Jim Blinn proposed a cheaper approximation that produces nearly identical results: the **halfway vector**.
 
-Instead of finding the angle between the reflection $\mathbf{r}$ and the viewer $\mathbf{v}$, we calculate the vector that sits exactly halfway between the light $\mathbf{l}$ and the viewer $\mathbf{v}$:
+Instead of finding the angle between the reflection ${\color{#4CAF50}\mathbf{r}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$, we calculate the vector that sits exactly halfway between the light ${\color{#FF9800}\mathbf{l}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$:
 
 $$
-{\color{#6A1B9A}\mathbf{h}} = \frac{{\color{#E65100}\mathbf{l}} + {\color{#1565C0}\mathbf{v}}}{\|{\color{#E65100}\mathbf{l}} + {\color{#1565C0}\mathbf{v}}\|}
+{\color{#9C27B0}\mathbf{h}} = \frac{{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}}{\|{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}\|}
 $$
 
-{{< figure src="/images/intro-to-rendering/lighting/blinn.svg" id="fig-blinn-vectors" caption="The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector $\mathbf{h}$ is used, which sits exactly halfway between the light vector $\mathbf{l}$ and view vector $\mathbf{v}$." title="Blinn-Phong Vectors" alt="Vectors for Blinn-Phong modification" align="center" width="500px" >}}
+{{< figure src="/images/intro-to-rendering/lighting/blinn.svg" id="fig-blinn-vectors" caption="The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector ${\color{#9C27B0}\mathbf{h}}$ is used, which sits exactly halfway between the light vector ${\color{#FF9800}\mathbf{l}}$ and view vector ${\color{#2196F3}\mathbf{v}}$." title="Blinn-Phong Vectors" alt="Vectors for Blinn-Phong modification" align="center" width="500px" >}}
 
-If the halfway vector ${\color{#6A1B9A}\mathbf{h}}$ perfectly aligns with the surface normal ${\color{#212121}\mathbf{n}}$, the highlight is at its maximum. The specular term becomes $\max(0, {\color{#212121}\mathbf{n}} \cdot {\color{#6A1B9A}\mathbf{h}})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$). 
+If the halfway vector ${\color{#9C27B0}\mathbf{h}}$ perfectly aligns with the surface normal $\mathbf{n}$, the highlight is at its maximum. The specular term becomes $\max(0, \mathbf{n} \cdot {\color{#9C27B0}\mathbf{h}})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$). 
 
-This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, $\mathbf{l}$ and $\mathbf{v}$ are constant, meaning $\mathbf{h}$ only needs to be computed *once per scene*, not once per pixel.
+This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$ are constant, meaning ${\color{#9C27B0}\mathbf{h}}$ only needs to be computed *once per scene*, not once per pixel.
 
 <iframe src="/interactive/blinn_steps.html" width="100%" height="560" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
 
@@ -1931,20 +1931,26 @@ The shading models above are strictly **local**—they only consider the light h
 Instead of just intersection math, Ray Tracing is defined by this recursive routing logic:
 
 #### 1. Shadow Rays (Visibility Testing)
-To determine if a point $\mathbf{p}$ is in shadow, we don't guess. We cast a **shadow ray** from $\mathbf{p}$ directly toward the light source $\mathbf{l}$. 
-*   If the ray hits an object *before* it reaches the light ($t_{\text{hit}} < t_{\text{light}}$), the point is occluded. We skip the diffuse and specular calculations and only apply ambient light.
-*   To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{origin} = \mathbf{p} + \epsilon\mathbf{n}$.
+To determine if a point $\mathbf{p}$ is in shadow, we don't guess. We cast a **shadow ray** from $\mathbf{p}$ directly toward the light source ${\color{#FF9800}\mathbf{l}}$. 
+*   If the ray hits an object *before* it reaches the light (${\color{#795548}t_{\text{hit}}} < {\color{#FF9800}t_{\text{light}}}$), the point is occluded. We skip the diffuse and specular calculations and only apply ambient light.
+*   To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{\text{origin}} = \mathbf{p} + \epsilon\mathbf{n}$.
+
+{{< figure src="/images/intro-to-rendering/raytracing/shadow_ray.svg" id="fig-shadow-ray" caption="A shadow ray cast from point $\mathbf{p}$ toward the light source. If an occluder is found at distance ${\color{#795548}t_{\text{hit}}}$ that is less than the distance to the light ${\color{#FF9800}t_{\text{light}}}$, the point is in shadow." title="Shadow Ray Logic" alt="Diagram showing a shadow ray hit" align="center" width="600px" >}}
 
 #### 2. Reflection Rays
-For shiny surfaces like mirrors or water, we calculate the reflection vector $\mathbf{r}$ exactly as we did in the Phong model:
-$$ \mathbf{r} = 2(\mathbf{n} \cdot \mathbf{v})\mathbf{n} - \mathbf{v} $$
-*(Where $\mathbf{v}$ points from the surface back to the camera).* 
-We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of $\mathbf{r}$. Whatever color that ray eventually hits is added to the current pixel's color.
+For shiny surfaces like mirrors or water, we calculate the reflection vector ${\color{#4CAF50}\mathbf{r}}$ exactly as we did in the Phong model:
+$$ {\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#2196F3}\mathbf{v}})\mathbf{n} - {\color{#2196F3}\mathbf{v}} $$
+*(Where ${\color{#2196F3}\mathbf{v}}$ points from the surface back to the camera).* 
+We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of ${\color{#4CAF50}\mathbf{r}}$. Whatever color that ray eventually hits is added to the current pixel's color.
+
+{{< figure src="/images/intro-to-rendering/raytracing/reflected_ray.svg" id="fig-reflected-ray" caption="A reflection ray is spawned at point $\mathbf{p}$ and cast in the direction $\mathbf{r}$. The color returned by this ray is used to shade the reflective surface." title="Reflection Ray" alt="Diagram showing a reflection ray" align="center" width="500px" >}}
 
 #### 3. Refraction Rays (Transmission)
 For transparent materials like glass, light bends as it passes through the surface boundary. According to **Snell's Law**, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ are related by the indices of refraction ($\eta$):
 $$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$
-The exact transmission vector $\mathbf{t}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector $\mathbf{v}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is **Total Internal Reflection**—no light is refracted; it is all reflected inside the object.
+The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector ${\color{#2196F3}\mathbf{v}}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is **Total Internal Reflection**—no light is refracted; it is all reflected inside the object.
+
+{{< figure src="/images/intro-to-rendering/raytracing/snells_law.svg" id="fig-snells-law" caption="Snell's Law of refraction. Light bends when passing between media with different indices of refraction $\eta_L$ and $\eta_T$." title="Refraction and Snell's Law" alt="Diagram showing refraction" align="center" width="500px" >}}
 
 
 Here is the same scene rendered with full recursive ray tracing. Shadow rays now block direct light where occluded, and reflection rays on the chrome sphere pick up the environment. Compare with the local-only shaders above.

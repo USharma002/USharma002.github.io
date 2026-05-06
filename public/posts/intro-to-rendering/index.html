@@ -154,7 +154,7 @@
     <div class="post-description">
       A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.
     </div>
-    <div class="post-meta"><span title='2026-04-30 00:00:00 +0000 UTC'>April 30, 2026</span>&nbsp;·&nbsp;90 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2026-04-30 00:00:00 +0000 UTC'>April 30, 2026</span>&nbsp;·&nbsp;91 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -1323,10 +1323,10 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 
 <style>
  
-#editor-6d8b1247 .highlight,
-#editor-6d8b1247 .chroma,
-#editor-6d8b1247 pre,
-#editor-6d8b1247 code {
+#editor-ccdfe97c .highlight,
+#editor-ccdfe97c .chroma,
+#editor-ccdfe97c pre,
+#editor-ccdfe97c code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1341,16 +1341,16 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 }
 
  
-#editor-6d8b1247 .copy-code,
-#editor-6d8b1247 .chroma .copy-btn { 
+#editor-ccdfe97c .copy-code,
+#editor-ccdfe97c .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-6d8b1247" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-6d8b1247" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ccdfe97c" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ccdfe97c" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1394,11 +1394,11 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-6d8b1247" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ccdfe97c" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-6d8b1247" style="display: none;">
+<textarea id="fs-ccdfe97c" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1444,8 +1444,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-6d8b1247');
-    const editor = document.getElementById('editor-6d8b1247');
+    const canvas = document.getElementById('glcanvas-ccdfe97c');
+    const editor = document.getElementById('editor-ccdfe97c');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -1634,7 +1634,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-6d8b1247').value.trim();
+    const rawSource = document.getElementById('fs-ccdfe97c').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -1764,10 +1764,10 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 
 <style>
  
-#editor-cf0a9235 .highlight,
-#editor-cf0a9235 .chroma,
-#editor-cf0a9235 pre,
-#editor-cf0a9235 code {
+#editor-d0ba63f1 .highlight,
+#editor-d0ba63f1 .chroma,
+#editor-d0ba63f1 pre,
+#editor-d0ba63f1 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1782,16 +1782,16 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 }
 
  
-#editor-cf0a9235 .copy-code,
-#editor-cf0a9235 .chroma .copy-btn { 
+#editor-d0ba63f1 .copy-code,
+#editor-d0ba63f1 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-cf0a9235" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-cf0a9235" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-d0ba63f1" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-d0ba63f1" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1839,11 +1839,11 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-cf0a9235" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-d0ba63f1" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-cf0a9235" style="display: none;">
+<textarea id="fs-d0ba63f1" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1893,8 +1893,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-cf0a9235');
-    const editor = document.getElementById('editor-cf0a9235');
+    const canvas = document.getElementById('glcanvas-d0ba63f1');
+    const editor = document.getElementById('editor-d0ba63f1');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2083,7 +2083,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-cf0a9235').value.trim();
+    const rawSource = document.getElementById('fs-d0ba63f1').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2172,10 +2172,10 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 <style>
  
-#editor-89e050b0 .highlight,
-#editor-89e050b0 .chroma,
-#editor-89e050b0 pre,
-#editor-89e050b0 code {
+#editor-228aff65 .highlight,
+#editor-228aff65 .chroma,
+#editor-228aff65 pre,
+#editor-228aff65 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2190,16 +2190,16 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 }
 
  
-#editor-89e050b0 .copy-code,
-#editor-89e050b0 .chroma .copy-btn { 
+#editor-228aff65 .copy-code,
+#editor-228aff65 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-89e050b0" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-89e050b0" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-228aff65" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-228aff65" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2259,11 +2259,11 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-89e050b0" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-228aff65" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-89e050b0" style="display: none;">
+<textarea id="fs-228aff65" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2325,8 +2325,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-89e050b0');
-    const editor = document.getElementById('editor-89e050b0');
+    const canvas = document.getElementById('glcanvas-228aff65');
+    const editor = document.getElementById('editor-228aff65');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2515,7 +2515,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-89e050b0').value.trim();
+    const rawSource = document.getElementById('fs-228aff65').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2624,10 +2624,10 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 
 <style>
  
-#editor-528d6790 .highlight,
-#editor-528d6790 .chroma,
-#editor-528d6790 pre,
-#editor-528d6790 code {
+#editor-58f084ea .highlight,
+#editor-58f084ea .chroma,
+#editor-58f084ea pre,
+#editor-58f084ea code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2642,16 +2642,16 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 }
 
  
-#editor-528d6790 .copy-code,
-#editor-528d6790 .chroma .copy-btn { 
+#editor-58f084ea .copy-code,
+#editor-58f084ea .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-528d6790" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-528d6790" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-58f084ea" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-58f084ea" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2714,11 +2714,11 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-528d6790" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-58f084ea" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-528d6790" style="display: none;">
+<textarea id="fs-58f084ea" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2783,8 +2783,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-528d6790');
-    const editor = document.getElementById('editor-528d6790');
+    const canvas = document.getElementById('glcanvas-58f084ea');
+    const editor = document.getElementById('editor-58f084ea');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2973,7 +2973,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-528d6790').value.trim();
+    const rawSource = document.getElementById('fs-58f084ea').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3039,10 +3039,10 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 
 <style>
  
-#editor-b26c2c6c .highlight,
-#editor-b26c2c6c .chroma,
-#editor-b26c2c6c pre,
-#editor-b26c2c6c code {
+#editor-9413b971 .highlight,
+#editor-9413b971 .chroma,
+#editor-9413b971 pre,
+#editor-9413b971 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3057,16 +3057,16 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 }
 
  
-#editor-b26c2c6c .copy-code,
-#editor-b26c2c6c .chroma .copy-btn { 
+#editor-9413b971 .copy-code,
+#editor-9413b971 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-b26c2c6c" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-b26c2c6c" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-9413b971" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-9413b971" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3139,11 +3139,11 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-b26c2c6c" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-9413b971" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-b26c2c6c" style="display: none;">
+<textarea id="fs-9413b971" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3218,8 +3218,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-b26c2c6c');
-    const editor = document.getElementById('editor-b26c2c6c');
+    const canvas = document.getElementById('glcanvas-9413b971');
+    const editor = document.getElementById('editor-9413b971');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3408,7 +3408,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-b26c2c6c').value.trim();
+    const rawSource = document.getElementById('fs-9413b971').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3493,23 +3493,23 @@ L_a = k_a I_a
 $$<p>Here, $I_a$ is the intensity of the ambient light, and $k_a$ is the material&rsquo;s ambient reflection coefficient.</p>
 <h4 id="2-lambertian-diffuse">2. Lambertian Diffuse<a hidden class="anchor" aria-hidden="true" href="#2-lambertian-diffuse">#</a></h4>
 <p>A perfectly matte (diffuse) surface, like chalk or unpolished wood, scatters light equally in all directions. Because the scattered light is uniform, the appearance of a diffuse surface does not depend on where the camera is positioned.</p>
-<p>However, it <em>does</em> depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert&rsquo;s cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction $\mathbf{l}$:</p>
+<p>However, it <em>does</em> depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert&rsquo;s cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction ${\color{#FF9800}\mathbf{l}}$:</p>
 $$
-L_d = k_d I_d \max(0, {\color{#212121}\mathbf{n}}\cdot{\color{#E65100}\mathbf{l}})
+L_d = k_d I_d \max(0, \mathbf{n}\cdot{\color{#FF9800}\mathbf{l}})
 $$<p>We clamp the dot product at zero because a negative value means the light is hitting the back of the surface, which should contribute no illumination.</p>
 <h4 id="3-specular-highlights">3. Specular Highlights<a hidden class="anchor" aria-hidden="true" href="#3-specular-highlights">#</a></h4>
 <p>Smooth surfaces, like polished metal or wet plastic, are not perfect diffusers. They exhibit specular highlights—bright spots where the light reflects strongly in a specific direction. Unlike diffuse reflection, specular reflection is highly dependent on the viewer&rsquo;s position.</p>
-<p>A perfect mirror reflects light exactly along the reflection vector $\mathbf{r}$. Using basic vector projection, we can compute $\mathbf{r}$ by taking the incoming light vector $\mathbf{l}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:</p>
+<p>A perfect mirror reflects light exactly along the reflection vector ${\color{#4CAF50}\mathbf{r}}$. Using basic vector projection, we can compute ${\color{#4CAF50}\mathbf{r}}$ by taking the incoming light vector ${\color{#FF9800}\mathbf{l}}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:</p>
 $$
-{\color{#2E7D32}\mathbf{r}} = 2({\color{#212121}\mathbf{n}} \cdot {\color{#E65100}\mathbf{l}}){\color{#212121}\mathbf{n}} - {\color{#E65100}\mathbf{l}}
-$$<p>For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around $\mathbf{r}$. As the angle $\phi$ between the reflection vector $\mathbf{r}$ and the view direction $\mathbf{v}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:</p>
+{\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#FF9800}\mathbf{l}})\mathbf{n} - {\color{#FF9800}\mathbf{l}}
+$$<p>For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around ${\color{#4CAF50}\mathbf{r}}$. As the angle $\phi$ between the reflection vector ${\color{#4CAF50}\mathbf{r}}$ and the view direction ${\color{#2196F3}\mathbf{v}}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:</p>
 $$
-L_s = k_s I_s \max(0, {\color{#2E7D32}\mathbf{r}} \cdot {\color{#1565C0}\mathbf{v}})^\alpha
+L_s = k_s I_s \max(0, {\color{#4CAF50}\mathbf{r}} \cdot {\color{#2196F3}\mathbf{v}})^\alpha
 $$<p>The exponent $\alpha$ is the <strong>shininess coefficient</strong>. A low value (e.g., $5 - 10$) produces a broad, soft highlight like plastic, while a high value (e.g., $100 - 200$) produces a sharp, tight highlight typical of polished metals.</p>
 <figure id="fig-phong-vectors" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/intro-to-rendering/lighting/phong.svg" alt="Vectors for Phong reflection model" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
-      The Phong reflection model vectors. The light vector $\mathbf{l}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector $\mathbf{r}$, which is then compared with the view vector $\mathbf{v}$.
+      The Phong reflection model vectors. The light vector ${\color{#FF9800}\mathbf{l}}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector ${\color{#4CAF50}\mathbf{r}}$, which is then compared with the view vector ${\color{#2196F3}\mathbf{v}}$.
     </figcaption></figure>
 
 
@@ -3525,10 +3525,10 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 
 <style>
  
-#editor-dc2635a0 .highlight,
-#editor-dc2635a0 .chroma,
-#editor-dc2635a0 pre,
-#editor-dc2635a0 code {
+#editor-7c6da040 .highlight,
+#editor-7c6da040 .chroma,
+#editor-7c6da040 pre,
+#editor-7c6da040 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3543,16 +3543,16 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 }
 
  
-#editor-dc2635a0 .copy-code,
-#editor-dc2635a0 .chroma .copy-btn { 
+#editor-7c6da040 .copy-code,
+#editor-7c6da040 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-dc2635a0" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-dc2635a0" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-7c6da040" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-7c6da040" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3626,11 +3626,11 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-dc2635a0" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-7c6da040" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-dc2635a0" style="display: none;">
+<textarea id="fs-7c6da040" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3706,8 +3706,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-dc2635a0');
-    const editor = document.getElementById('editor-dc2635a0');
+    const canvas = document.getElementById('glcanvas-7c6da040');
+    const editor = document.getElementById('editor-7c6da040');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3896,7 +3896,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-dc2635a0').value.trim();
+    const rawSource = document.getElementById('fs-7c6da040').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3952,18 +3952,18 @@ void main() {
 </script>
 <h3 id="the-blinn-phong-modification">The Blinn-Phong Modification<a hidden class="anchor" aria-hidden="true" href="#the-blinn-phong-modification">#</a></h3>
 <p>Calculating the exact reflection vector $\mathbf{r}$ at every pixel requires several vector operations. Jim Blinn proposed a cheaper approximation that produces nearly identical results: the <strong>halfway vector</strong>.</p>
-<p>Instead of finding the angle between the reflection $\mathbf{r}$ and the viewer $\mathbf{v}$, we calculate the vector that sits exactly halfway between the light $\mathbf{l}$ and the viewer $\mathbf{v}$:</p>
+<p>Instead of finding the angle between the reflection ${\color{#4CAF50}\mathbf{r}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$, we calculate the vector that sits exactly halfway between the light ${\color{#FF9800}\mathbf{l}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$:</p>
 $$
-{\color{#6A1B9A}\mathbf{h}} = \frac{{\color{#E65100}\mathbf{l}} + {\color{#1565C0}\mathbf{v}}}{\|{\color{#E65100}\mathbf{l}} + {\color{#1565C0}\mathbf{v}}\|}
+{\color{#9C27B0}\mathbf{h}} = \frac{{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}}{\|{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}\|}
 $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/intro-to-rendering/lighting/blinn.svg" alt="Vectors for Blinn-Phong modification" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
-      The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector $\mathbf{h}$ is used, which sits exactly halfway between the light vector $\mathbf{l}$ and view vector $\mathbf{v}$.
+      The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector ${\color{#9C27B0}\mathbf{h}}$ is used, which sits exactly halfway between the light vector ${\color{#FF9800}\mathbf{l}}$ and view vector ${\color{#2196F3}\mathbf{v}}$.
     </figcaption></figure>
 
 
-<p>If the halfway vector ${\color{#6A1B9A}\mathbf{h}}$ perfectly aligns with the surface normal ${\color{#212121}\mathbf{n}}$, the highlight is at its maximum. The specular term becomes $\max(0, {\color{#212121}\mathbf{n}} \cdot {\color{#6A1B9A}\mathbf{h}})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$).</p>
-<p>This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, $\mathbf{l}$ and $\mathbf{v}$ are constant, meaning $\mathbf{h}$ only needs to be computed <em>once per scene</em>, not once per pixel.</p>
+<p>If the halfway vector ${\color{#9C27B0}\mathbf{h}}$ perfectly aligns with the surface normal $\mathbf{n}$, the highlight is at its maximum. The specular term becomes $\max(0, \mathbf{n} \cdot {\color{#9C27B0}\mathbf{h}})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$).</p>
+<p>This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$ are constant, meaning ${\color{#9C27B0}\mathbf{h}}$ only needs to be computed <em>once per scene</em>, not once per pixel.</p>
 <iframe src="/interactive/blinn_steps.html" width="100%" height="560" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
 <p>The same scene as above, now shaded with Blinn-Phong. The only code change is in the specular calculation — <code>dot(n, h)^β</code> replaces <code>dot(r, v)^α</code>. The highlights are slightly rounder and wider.</p>
 
@@ -3971,10 +3971,10 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 
 <style>
  
-#editor-932595e4 .highlight,
-#editor-932595e4 .chroma,
-#editor-932595e4 pre,
-#editor-932595e4 code {
+#editor-1115d671 .highlight,
+#editor-1115d671 .chroma,
+#editor-1115d671 pre,
+#editor-1115d671 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3989,16 +3989,16 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 }
 
  
-#editor-932595e4 .copy-code,
-#editor-932595e4 .chroma .copy-btn { 
+#editor-1115d671 .copy-code,
+#editor-1115d671 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-932595e4" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-932595e4" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-1115d671" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-1115d671" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4072,11 +4072,11 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-932595e4" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-1115d671" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-932595e4" style="display: none;">
+<textarea id="fs-1115d671" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4152,8 +4152,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-932595e4');
-    const editor = document.getElementById('editor-932595e4');
+    const canvas = document.getElementById('glcanvas-1115d671');
+    const editor = document.getElementById('editor-1115d671');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4342,7 +4342,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-932595e4').value.trim();
+    const rawSource = document.getElementById('fs-1115d671').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4424,10 +4424,10 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 
 <style>
  
-#editor-02ddcf44 .highlight,
-#editor-02ddcf44 .chroma,
-#editor-02ddcf44 pre,
-#editor-02ddcf44 code {
+#editor-35e2cb9a .highlight,
+#editor-35e2cb9a .chroma,
+#editor-35e2cb9a pre,
+#editor-35e2cb9a code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4442,16 +4442,16 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 }
 
  
-#editor-02ddcf44 .copy-code,
-#editor-02ddcf44 .chroma .copy-btn { 
+#editor-35e2cb9a .copy-code,
+#editor-35e2cb9a .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-02ddcf44" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-02ddcf44" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-35e2cb9a" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-35e2cb9a" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4538,11 +4538,11 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-02ddcf44" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-35e2cb9a" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-02ddcf44" style="display: none;">
+<textarea id="fs-35e2cb9a" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4631,8 +4631,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-02ddcf44');
-    const editor = document.getElementById('editor-02ddcf44');
+    const canvas = document.getElementById('glcanvas-35e2cb9a');
+    const editor = document.getElementById('editor-35e2cb9a');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4821,7 +4821,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-02ddcf44').value.trim();
+    const rawSource = document.getElementById('fs-35e2cb9a').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4881,32 +4881,53 @@ void main() {
 <p>The shading models above are strictly <strong>local</strong>—they only consider the light hitting a surface directly from a source. <strong>Whitted ray tracing</strong> extends this idea into a global context by tracing visibility recursively. Once a primary ray hits a surface, the rendering algorithm spawns new secondary rays to evaluate the global environment.</p>
 <p>Instead of just intersection math, Ray Tracing is defined by this recursive routing logic:</p>
 <h4 id="1-shadow-rays-visibility-testing">1. Shadow Rays (Visibility Testing)<a hidden class="anchor" aria-hidden="true" href="#1-shadow-rays-visibility-testing">#</a></h4>
-<p>To determine if a point $\mathbf{p}$ is in shadow, we don&rsquo;t guess. We cast a <strong>shadow ray</strong> from $\mathbf{p}$ directly toward the light source $\mathbf{l}$.</p>
+<p>To determine if a point $\mathbf{p}$ is in shadow, we don&rsquo;t guess. We cast a <strong>shadow ray</strong> from $\mathbf{p}$ directly toward the light source ${\color{#FF9800}\mathbf{l}}$.</p>
 <ul>
-<li>If the ray hits an object <em>before</em> it reaches the light ($t_{\text{hit}} < t_{\text{light}}$), the point is occluded. We skip the diffuse and specular calculations and only apply ambient light.</li>
-<li>To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{origin} = \mathbf{p} + \epsilon\mathbf{n}$.</li>
+<li>If the ray hits an object <em>before</em> it reaches the light (${\color{#795548}t_{\text{hit}}} < {\color{#FF9800}t_{\text{light}}}$), the point is occluded. We skip the diffuse and specular calculations and only apply ambient light.</li>
+<li>To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{\text{origin}} = \mathbf{p} + \epsilon\mathbf{n}$.</li>
 </ul>
+<figure id="fig-shadow-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:600px;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/shadow_ray.svg" alt="Diagram showing a shadow ray hit" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      A shadow ray cast from point $\mathbf{p}$ toward the light source. If an occluder is found at distance ${\color{#795548}t_{\text{hit}}}$ that is less than the distance to the light ${\color{#FF9800}t_{\text{light}}}$, the point is in shadow.
+    </figcaption></figure>
+
+
 <h4 id="2-reflection-rays">2. Reflection Rays<a hidden class="anchor" aria-hidden="true" href="#2-reflection-rays">#</a></h4>
-<p>For shiny surfaces like mirrors or water, we calculate the reflection vector $\mathbf{r}$ exactly as we did in the Phong model:
+<p>For shiny surfaces like mirrors or water, we calculate the reflection vector ${\color{#4CAF50}\mathbf{r}}$ exactly as we did in the Phong model:
 </p>
-$$ \mathbf{r} = 2(\mathbf{n} \cdot \mathbf{v})\mathbf{n} - \mathbf{v} $$<p>
-<em>(Where $\mathbf{v}$ points from the surface back to the camera).</em>
-We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of $\mathbf{r}$. Whatever color that ray eventually hits is added to the current pixel&rsquo;s color.</p>
+$$ {\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#2196F3}\mathbf{v}})\mathbf{n} - {\color{#2196F3}\mathbf{v}} $$<p>
+<em>(Where ${\color{#2196F3}\mathbf{v}}$ points from the surface back to the camera).</em>
+We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of ${\color{#4CAF50}\mathbf{r}}$. Whatever color that ray eventually hits is added to the current pixel&rsquo;s color.</p>
+<figure id="fig-reflected-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/reflected_ray.svg" alt="Diagram showing a reflection ray" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      A reflection ray is spawned at point $\mathbf{p}$ and cast in the direction $\mathbf{r}$. The color returned by this ray is used to shade the reflective surface.
+    </figcaption></figure>
+
+
 <h4 id="3-refraction-rays-transmission">3. Refraction Rays (Transmission)<a hidden class="anchor" aria-hidden="true" href="#3-refraction-rays-transmission">#</a></h4>
 <p>For transparent materials like glass, light bends as it passes through the surface boundary. According to <strong>Snell&rsquo;s Law</strong>, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ are related by the indices of refraction ($\eta$):
 </p>
 $$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$<p>
-The exact transmission vector $\mathbf{t}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector $\mathbf{v}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is <strong>Total Internal Reflection</strong>—no light is refracted; it is all reflected inside the object.</p>
+The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector ${\color{#2196F3}\mathbf{v}}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is <strong>Total Internal Reflection</strong>—no light is refracted; it is all reflected inside the object.</p>
+<figure id="fig-snells-law" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/snells_law.svg" alt="Diagram showing refraction" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
+      Snell&rsquo;s Law of refraction. Light bends when passing between media with different indices of refraction $\eta_L$ and $\eta_T$.
+    </figcaption></figure>
+
+
 <p>Here is the same scene rendered with full recursive ray tracing. Shadow rays now block direct light where occluded, and reflection rays on the chrome sphere pick up the environment. Compare with the local-only shaders above.</p>
 
 
 
 <style>
  
-#editor-2027ccdb .highlight,
-#editor-2027ccdb .chroma,
-#editor-2027ccdb pre,
-#editor-2027ccdb code {
+#editor-b1ed15c6 .highlight,
+#editor-b1ed15c6 .chroma,
+#editor-b1ed15c6 pre,
+#editor-b1ed15c6 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4921,16 +4942,16 @@ The exact transmission vector $\mathbf{t}$ can be derived from the normal $\math
 }
 
  
-#editor-2027ccdb .copy-code,
-#editor-2027ccdb .chroma .copy-btn { 
+#editor-b1ed15c6 .copy-code,
+#editor-b1ed15c6 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-2027ccdb" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-2027ccdb" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-b1ed15c6" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-b1ed15c6" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5021,11 +5042,11 @@ The exact transmission vector $\mathbf{t}$ can be derived from the normal $\math
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-2027ccdb" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-b1ed15c6" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-2027ccdb" style="display: none;">
+<textarea id="fs-b1ed15c6" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5118,8 +5139,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-2027ccdb');
-    const editor = document.getElementById('editor-2027ccdb');
+    const canvas = document.getElementById('glcanvas-b1ed15c6');
+    const editor = document.getElementById('editor-b1ed15c6');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5308,7 +5329,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-2027ccdb').value.trim();
+    const rawSource = document.getElementById('fs-b1ed15c6').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5396,10 +5417,10 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 
 <style>
  
-#editor-08617d91 .highlight,
-#editor-08617d91 .chroma,
-#editor-08617d91 pre,
-#editor-08617d91 code {
+#editor-91f11b5d .highlight,
+#editor-91f11b5d .chroma,
+#editor-91f11b5d pre,
+#editor-91f11b5d code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5414,16 +5435,16 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 }
 
  
-#editor-08617d91 .copy-code,
-#editor-08617d91 .chroma .copy-btn { 
+#editor-91f11b5d .copy-code,
+#editor-91f11b5d .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-08617d91" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-08617d91" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-91f11b5d" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-91f11b5d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5499,11 +5520,11 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-08617d91" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-91f11b5d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-08617d91" style="display: none;">
+<textarea id="fs-91f11b5d" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5581,8 +5602,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-08617d91');
-    const editor = document.getElementById('editor-08617d91');
+    const canvas = document.getElementById('glcanvas-91f11b5d');
+    const editor = document.getElementById('editor-91f11b5d');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5771,7 +5792,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-08617d91').value.trim();
+    const rawSource = document.getElementById('fs-91f11b5d').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5831,10 +5852,10 @@ void main() {
 
 <style>
  
-#editor-1c301420 .highlight,
-#editor-1c301420 .chroma,
-#editor-1c301420 pre,
-#editor-1c301420 code {
+#editor-202355bf .highlight,
+#editor-202355bf .chroma,
+#editor-202355bf pre,
+#editor-202355bf code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5849,16 +5870,16 @@ void main() {
 }
 
  
-#editor-1c301420 .copy-code,
-#editor-1c301420 .chroma .copy-btn { 
+#editor-202355bf .copy-code,
+#editor-202355bf .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-1c301420" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-1c301420" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-202355bf" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-202355bf" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5942,11 +5963,11 @@ void main() {
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-1c301420" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-202355bf" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-1c301420" style="display: none;">
+<textarea id="fs-202355bf" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6032,8 +6053,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-1c301420');
-    const editor = document.getElementById('editor-1c301420');
+    const canvas = document.getElementById('glcanvas-202355bf');
+    const editor = document.getElementById('editor-202355bf');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6222,7 +6243,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-1c301420').value.trim();
+    const rawSource = document.getElementById('fs-202355bf').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6289,7 +6310,7 @@ void main() {
 </ul>
 <figure id="fig-volume-scatter" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:800px;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/intro-to-rendering/volume-rendering/volume-scatter.svg" alt="Volume scattering interactions: absorption, out-scattering, in-scattering, emission" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       The four types of volume interactions in participating media: (a) Absorption, (b) Out-scattering, (c) In-scattering, and (d) Emission.
     </figcaption></figure>
 
@@ -6389,10 +6410,10 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 
 <style>
  
-#editor-c9b59ab5 .highlight,
-#editor-c9b59ab5 .chroma,
-#editor-c9b59ab5 pre,
-#editor-c9b59ab5 code {
+#editor-4b516ad2 .highlight,
+#editor-4b516ad2 .chroma,
+#editor-4b516ad2 pre,
+#editor-4b516ad2 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6407,16 +6428,16 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 }
 
  
-#editor-c9b59ab5 .copy-code,
-#editor-c9b59ab5 .chroma .copy-btn { 
+#editor-4b516ad2 .copy-code,
+#editor-4b516ad2 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-c9b59ab5" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-c9b59ab5" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-4b516ad2" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-4b516ad2" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6467,11 +6488,11 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-c9b59ab5" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-4b516ad2" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-c9b59ab5" style="display: none;">
+<textarea id="fs-4b516ad2" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6524,8 +6545,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-c9b59ab5');
-    const editor = document.getElementById('editor-c9b59ab5');
+    const canvas = document.getElementById('glcanvas-4b516ad2');
+    const editor = document.getElementById('editor-4b516ad2');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6714,7 +6735,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-c9b59ab5').value.trim();
+    const rawSource = document.getElementById('fs-4b516ad2').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6797,11 +6818,6 @@ void main() {
     <span class="title">« Prev</span>
     <br>
     <span>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing</span>
-  </a>
-  <a class="next" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
-    <span class="title">Next »</span>
-    <br>
-    <span>Introduction to Differentiable Rendering</span>
   </a>
 </nav>
 
