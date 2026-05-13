@@ -52,7 +52,28 @@ summary: "about"
 <!-- --- -->
 <section style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
   <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Projects</h3>
+  <p style="margin: -0.5rem 0 2rem 0; color: #666; line-height: 1.6;">
+    A small selection of projects spanning rendering, computer graphics, and machine learning.
+  </p>
   
+  <!-- Futaba Renderer -->
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
+    <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+      <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/dragon-cbox.png?raw=true" alt="Futaba Renderer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
+      <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/futaba-window.png?raw=true" alt="Futaba Renderer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+    </div>
+    <div>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Futaba Renderer (WIP)</h4>
+      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
+        A high-performance physically based renderer written in C++ and CUDA.
+        The project focuses on clean architecture, GPU acceleration, and advanced rendering techniques.
+      </p>
+      <div class="about-project-actions">
+        <a href="https://github.com/USharma002/futaba-renderer" class="about-project-action" target="_blank">Project Link</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Neural Path Guiding -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
@@ -63,7 +84,7 @@ summary: "about"
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Path Guiding (Python)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
         Flexible research framework for experimenting with neural path guiding in Mitsuba 3 using Python.
-        Includes GUI for PDF visualization, prototype integrators, and spherical sensor tools.
+        Includes PDF visualization, prototype integrators, and spherical sensor tools.
       </p>
       <div class="about-project-actions">
         <a href="https://github.com/USharma002/py-neural-path-guiding" class="about-project-action" target="_blank">Project Link</a>
@@ -80,8 +101,8 @@ summary: "about"
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer (WIP)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        An interactive web-based tool for exploring Signed Distance Fields (SDFs). 
-        Real-time visualization and manipulation of geometric primitives and operations using Raymarching.
+        An interactive web-based tool for exploring signed distance fields (SDFs).
+        Real-time visualization and manipulation of geometric primitives and operations using ray marching.
       </p>
       <div class="about-project-actions">
         <a href="https://usharma002.github.io/sdf-explorer/" target="_blank" class="about-project-action">Live Demo</a>
@@ -99,7 +120,8 @@ summary: "about"
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Scalar Field Reconstructor</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        A python application to load and visualize the scalar field point cloud data and resample it using interpolation, octree or neural network.
+        A Python application for loading, visualizing, and resampling scalar field point cloud data.
+        Supports interpolation, octree-based reconstruction, and neural methods.
       </p>
       <div class="about-project-actions">
         <a href="https://github.com/USharma002/VolPath" class="about-project-action" target="_blank">Project Link</a>
@@ -107,25 +129,6 @@ summary: "about"
     </div>
   </div>
 
-  <!-- Project 3 -->
-  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
-    <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="https://github.com/USharma002/CUDA-PathTracer/blob/main/assets/cbox.png?raw=true" alt="CUDA PathTracer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="/images/about/cuda-pathtracer.gif" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
-    </div>
-    <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">CUDA PathTracer</h4>
-      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        Research project for fast GPU-accelerated path tracing with CUDA.
-        Includes experiments with custom guiding, radiosity, and interactive visual debugging.
-      </p>
-      <div class="about-project-actions">
-        <a href="https://github.com/USharma002/CUDA-PathTracer" class="about-project-action" target="_blank">Project Link</a>
-      </div>
-    </div>
-  </div>
-
-  
   <!-- VIT Project Placeholder -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem; opacity: 1;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
@@ -133,9 +136,9 @@ summary: "about"
       <img src="https://usharma002.github.io/images/transformer/vit.gif" alt="ViT" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Vision Transformer Project</h4>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Vision Transformer Experiments</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        Implementation and experiments with Vision Transformers for efficient scene understanding.
+        Implementation and experiments with Vision Transformers for scene understanding.
         <!-- <br><span style="font-style: italic; color: #888;">(Private repository, coming soon)</span> -->
       </p>
       <div class="about-project-actions">
@@ -151,10 +154,10 @@ summary: "about"
       <img src="https://gpuopen.com/images/neural_supersampling_and_denoising_for_real-time_path_tracing-html-_images-Picture3.DkEknTxE.jpg" alt="Denoiser GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Denoiser</h4>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Denoiser (Coming Soon)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
         Developing deep learning-based denoising methods for photorealistic path tracing.
-        <br><span style="font-style: italic; color: #888;">(Private repository, coming soon)</span>
+        <br><span style="font-style: italic; color: #888;">(Private now, going public soon)</span>
       </p>
     </div>
   </div>
