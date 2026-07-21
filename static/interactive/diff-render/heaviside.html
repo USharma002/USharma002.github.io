@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heaviside Discontinuity Step Mapping</title>
+    <style>
+        :root {
+            /* Defaults (Light Mode) */
+            --bg: #ffffff;
+            --text: #374151;
+            --text-sub: #6b7280;
+            --axis: #d1d5db;
+            --axis-cut: rgba(0,0,0,0.8);
+            --vec-stroke: #475569;
+            --vec-green: #4caf50;
+            --vec-probe: #5c6bc0;
+            --triangle-fill: #8fbc8f;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            user-select: none;
+        }
+
+        .widget-layout {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            height: 100%;
+            max-width: 820px;
+            max-height: 360px;
+            box-sizing: border-box;
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        svg {
+            width: 50%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+            background: var(--bg);
+            box-sizing: border-box;
+            border: 1px solid var(--axis); 
+            border-radius: 6px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .math-text {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+            paint-order: stroke;
+            stroke: var(--bg);
+            stroke-width: 4px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+<div class="widget-layout">
+    <!-- Spatial Geometry Component (2D Scene Space) -->
+    <svg id="spatialSVG" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet">
+        <!-- Triangle Poly Half-space (f_u) shifted left -->
+        <polygon points="0,0 240,0 114,360 0,360" fill="var(--triangle-fill)" opacity="0.85" />
+        
+        <!-- Discontinuity Boundary Line shifted left -->
+        <line x1="240" y1="0" x2="114" y2="360" stroke="var(--vec-stroke)" stroke-width="3" />
+        
+        <!-- Normal Vector Pointer Group (True Perpendicular Edge Normal) -->
+        <g stroke="var(--vec-green)" stroke-width="3" fill="var(--vec-green)">
+            <!-- Vector line orthogonal to shifted left edge line -->
+            <line x1="177" y1="180" x2="220.5" y2="195.2" stroke-dasharray="6,4" />
+            <!-- Correctly angled Arrow Head normal pointer -->
+            <polygon points="216.5,188.7 229.7,198.4 212.3,200.7" stroke-width="1" />
+        </g>
+        
+        <!-- Typography Labels -->
+        <g class="math-text" font-size="26px" fill="var(--text)">
+            <!-- f_u and positive domain sign -->
+            <text x="80" y="135">f<tspan font-size="18px" font-style="normal" dy="4">u</tspan></text>
+            <text x="82" y="170" font-family="monospace" font-style="normal" font-size="22px">+</text>
+            
+            <!-- f_l and negative domain sign -->
+            <text x="230" y="240">f<tspan font-size="18px" font-style="normal" dy="4">l</tspan></text>
+            <text x="210" y="235" font-family="monospace" font-style="normal" font-size="22px">-</text>
+        </g>
+        
+        <!-- Interactive Probe Pointer Tracker -->
+        <circle id="spatialProbe" cx="177" cy="180" r="10" fill="var(--vec-probe)" stroke="#ffffff" stroke-width="2" style="cursor: crosshair;" />
+    </svg>
+
+    <!-- Mathematical Functional Component (1D Heaviside Space) -->
+    <svg id="functionSVG" viewBox="0 0 360 360" preserveAspectRatio="xMidYMid meet">
+        <!-- Axes Coordinates Layout Layout -->
+        <g stroke="var(--axis)" stroke-width="1.5">
+            <line x1="0" y1="270" x2="360" y2="270" /> <!-- Horizontal Axis -->
+            <line x1="180" y1="0" x2="180" y2="360" stroke="var(--axis-cut)" stroke-width="1" /> <!-- Discontinuity Cut Axis -->
+        </g>
+        
+        <!-- Axis Labels -->
+        <g class="math-text" font-size="16px" fill="var(--text)" font-weight="normal">
+            <text x="15" y="295">&alpha; &lt; 0</text>
+            <text x="295" y="295">&alpha; &gt; 0</text>
+            <text x="195" y="25">&theta;(&alpha;)</text>
+        </g>
+        
+        <!-- 1D Heaviside Step Graph Path Profile -->
+        <path d="M 0,270 L 180,270 L 180,115 L 360,115" fill="none" stroke="var(--text)" stroke-width="4" stroke-linejoin="miter" stroke-linecap="square" />
+        
+        <!-- Limit Graph Node Points Loops -->
+        <circle cx="180" cy="270" r="5" fill="var(--bg)" stroke="var(--text)" stroke-width="2" />
+        <circle cx="180" cy="115" r="5" fill="var(--text)" />
+        
+        <!-- Dynamic Interactive Metric Projection Trackers -->
+        <g id="trackerGroup" visibility="visible">
+            <line id="projLine" x1="180" y1="270" x2="180" y2="270" stroke="var(--vec-probe)" stroke-width="1.5" stroke-dasharray="4,4" />
+            <circle id="functionProbe" cx="180" cy="270" r="8" fill="var(--vec-probe)" />
+        </g>
+    </svg>
+</div>
+
+<script>
+    // Robust Theme Synchronizer for Hugo/Modern SSGs
+    function syncTheme() {
+        try {
+            const parentDoc = window.parent.document;
+            const parentEl = parentDoc.documentElement;
+            const parentBody = parentDoc.body;
+            
+            let isDark = parentEl.classList.contains('dark') || 
+                         parentBody.classList.contains('dark') ||
+                         parentEl.classList.contains('dark-mode') ||
+                         parentEl.innerHTML.includes('class="dark"');
+
+            const dataTheme = parentEl.getAttribute('data-theme') || parentBody.getAttribute('data-theme');
+            const dataMode = parentEl.getAttribute('data-mode') || parentBody.getAttribute('data-mode');
+            if (dataTheme === 'dark' || dataMode === 'dark') {
+                isDark = true;
+            }
+
+            if (!isDark && window.parent) {
+                const bg = window.parent.getComputedStyle(parentBody).backgroundColor;
+                const rgb = bg.match(/\d+/g);
+                if (rgb && rgb.length >= 3) {
+                    const brightness = (parseInt(rgb[0]) * 299 + parseInt(rgb[1]) * 587 + parseInt(rgb[2]) * 114) / 1000;
+                    if (brightness < 128) isDark = true;
+                }
+            }
+
+            if (isDark) {
+                document.documentElement.style.setProperty('--bg', '#1a1a1a');
+                document.documentElement.style.setProperty('--text', '#e5e7eb');
+                document.documentElement.style.setProperty('--text-sub', '#9ca3af');
+                document.documentElement.style.setProperty('--axis', '#444444');
+                document.documentElement.style.setProperty('--axis-cut', 'rgba(255,255,255,0.6)');
+                document.documentElement.style.setProperty('--vec-stroke', '#94a3b8');
+                document.documentElement.style.setProperty('--triangle-fill', '#557a55');
+            } else {
+                document.documentElement.style.setProperty('--bg', '#ffffff');
+                document.documentElement.style.setProperty('--text', '#374151');
+                document.documentElement.style.setProperty('--text-sub', '#6b7280');
+                document.documentElement.style.setProperty('--axis', '#d1d5db');
+                document.documentElement.style.setProperty('--axis-cut', 'rgba(0,0,0,0.8)');
+                document.documentElement.style.setProperty('--vec-stroke', '#475569');
+                document.documentElement.style.setProperty('--triangle-fill', '#8fbc8f');
+            }
+        } catch (e) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.style.setProperty('--bg', '#1a1a1a');
+                document.documentElement.style.setProperty('--text', '#e5e7eb');
+            }
+        }
+    }
+    
+    function installThemeSync() {
+        const sync = () => requestAnimationFrame(syncTheme);
+        sync();
+
+        if (typeof MutationObserver !== 'undefined') {
+            try {
+                const parentDoc = window.parent.document;
+                const observer = new MutationObserver(sync);
+                const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme', 'data-mode'] };
+
+                if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
+                if (parentDoc.body) observer.observe(parentDoc.body, options);
+
+                window.addEventListener('beforeunload', function () {
+                    observer.disconnect();
+                }, { once: true });
+            } catch (e) {}
+        }
+
+        if (window.matchMedia) {
+            const media = window.matchMedia('(prefers-color-scheme: dark)');
+            if (media.addEventListener) media.addEventListener('change', sync);
+            else if (media.addListener) media.addListener(sync);
+        }
+    }
+
+    installThemeSync();
+
+    // Interactive & Animation Core Logic Configuration
+    (function() {
+        const spatialSVG = document.getElementById('spatialSVG');
+        const spatialProbe = document.getElementById('spatialProbe');
+        const projLine = document.getElementById('projLine');
+        const functionProbe = document.getElementById('functionProbe');
+
+        // New coefficients for the left-shifted line boundary equation: Ax + By + C = 0[cite: 1]
+        const A = 2.857;
+        const B = 1.0;
+        const C = -685.7;
+
+        let isHovered = false;
+        let animationAngle = 0;
+
+        function updateWidgetState(x, y) {
+            spatialProbe.setAttribute('cx', x);
+            spatialProbe.setAttribute('cy', y);
+
+            // Compute algebraic value coordinates across spatial line discontinuity boundary[cite: 1]
+            const alpha = -(A * x + B * y + C);
+            
+            const centerX = 180;
+            let mapX = centerX + (alpha * 0.45);
+            mapX = Math.max(15, Math.min(345, mapX));
+
+            const mapY = (alpha >= 0) ? 115 : 270;
+
+            functionProbe.setAttribute('cx', mapX);
+            functionProbe.setAttribute('cy', mapY);
+            
+            projLine.setAttribute('x1', mapX);
+            projLine.setAttribute('y1', mapY);
+            projLine.setAttribute('x2', mapX);
+        }
+
+        // Mouse manual overrides
+        spatialSVG.addEventListener('mousemove', (e) => {
+            isHovered = true;
+            const rect = spatialSVG.getBoundingClientRect();
+            const mouseX = ((e.clientX - rect.left) / rect.width) * 360;
+            const mouseY = ((e.clientY - rect.top) / rect.height) * 360;
+            updateWidgetState(mouseX, mouseY);
+        });
+
+        spatialSVG.addEventListener('mouseleave', () => {
+            isHovered = false;
+        });
+
+        // Automated continuous circular background loop framework
+        function animateIdleState() {
+            if (!isHovered) {
+                animationAngle += 0.02; // Control loop speed metrics
+                // Spin in a neat radius orbit centered perfectly on the boundary midpoint area
+                const orbitRadius = 65;
+                const orbitCenterX = 177;
+                const orbitCenterY = 180;
+
+                const loopX = orbitCenterX + Math.cos(animationAngle) * orbitRadius;
+                const loopY = orbitCenterY + Math.sin(animationAngle) * orbitRadius;
+
+                updateWidgetState(loopX, loopY);
+            }
+            requestAnimationFrame(animateIdleState);
+        }
+
+        // Start loop runtime
+        animateIdleState();
+    })();
+</script>
+
+</body>
+</html>

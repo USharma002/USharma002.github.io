@@ -10,7 +10,7 @@
 <meta name="description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
 <meta name="author" content="Utkarsh Sharma">
 <link rel="canonical" href="http://localhost:1313/posts/intro-to-rendering/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.8f433c302706ed886ed1a735eb8ae74de2e532f2bc656137e34f31ff87472c5d.css" integrity="sha256-j0M8MCcG7Yhu0ac164rnTeLlMvK8ZWE3408x/4dHLF0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.630ea136b8cd4146472e343da3511d137a4b731e7e19b2c307f036d591ed1867.css" integrity="sha256-Yw6hNrjNQUZHLjQ9o1EdE3pLcx5&#43;GbLDB/A21ZHtGGc=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -154,7 +154,7 @@
     <div class="post-description">
       A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.
     </div>
-    <div class="post-meta"><span title='2026-04-30 00:00:00 +0000 UTC'>April 30, 2026</span>&nbsp;·&nbsp;91 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2026-04-30 00:00:00 +0000 UTC'>April 30, 2026</span>&nbsp;·&nbsp;94 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -525,7 +525,9 @@ $$\tilde{\mathbf{P}} = (\tilde{x},\, \tilde{y},\, \tilde{w}) \;\longrightarrow\;
       const maxWidth = window.innerWidth * 0.95 - padding;
       const maxHeight = window.innerHeight * 0.80 - padding; 
 
-      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const naturalWidth = img.naturalWidth || img.width || 1;
+      const naturalHeight = img.naturalHeight || img.height || 1;
+      const imgRatio = naturalWidth / naturalHeight;
       const screenRatio = maxWidth / maxHeight;
 
       let finalWidth, finalHeight;
@@ -711,7 +713,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 <li><strong>Preserves</strong>: lengths, angles, orientation.</li>
 <li><strong>DoF</strong>: 3.</li>
 </ul>
-<iframe src="/interactive/transformations/graph3d.html?type=translation" loading="lazy" fetchpriority="low" title="3D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=translation" loading="lazy" fetchpriority="low" title="Heaviside Discontinuity Step Mapping" style="width:100%; max-width:820px; height:360px; background: transparent; display:block; border: none; margin: 0;"></iframe>
 <hr>
 <h3 id="3d-rigid--euclidean--6-dof">3D Rigid / Euclidean — 6 DoF<a hidden class="anchor" aria-hidden="true" href="#3d-rigid--euclidean--6-dof">#</a></h3>
 <p>The $3 \times 3$ rotation block $\mathbf{R}$ is now orthonormal across all three axes ($\mathbf{R}^T\mathbf{R} = \mathbf{I}$, $\det\mathbf{R} = 1$), encoding pitch, yaw, and roll. It preserves lengths and angles for the same reason as in 2D: dot products are unchanged by an orthonormal matrix.</p>
@@ -1323,10 +1325,10 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 
 <style>
  
-#editor-46051956 .highlight,
-#editor-46051956 .chroma,
-#editor-46051956 pre,
-#editor-46051956 code {
+#editor-05b7acda .highlight,
+#editor-05b7acda .chroma,
+#editor-05b7acda pre,
+#editor-05b7acda code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1341,16 +1343,16 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 }
 
  
-#editor-46051956 .copy-code,
-#editor-46051956 .chroma .copy-btn { 
+#editor-05b7acda .copy-code,
+#editor-05b7acda .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-46051956" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-46051956" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-05b7acda" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-05b7acda" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1394,11 +1396,11 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-46051956" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-05b7acda" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-46051956" style="display: none;">
+<textarea id="fs-05b7acda" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1444,8 +1446,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-46051956');
-    const editor = document.getElementById('editor-46051956');
+    const canvas = document.getElementById('glcanvas-05b7acda');
+    const editor = document.getElementById('editor-05b7acda');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -1634,21 +1636,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-46051956').value.trim();
+    const rawSource = document.getElementById('fs-05b7acda').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -1764,10 +1786,10 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 
 <style>
  
-#editor-4ca8dee3 .highlight,
-#editor-4ca8dee3 .chroma,
-#editor-4ca8dee3 pre,
-#editor-4ca8dee3 code {
+#editor-221168a2 .highlight,
+#editor-221168a2 .chroma,
+#editor-221168a2 pre,
+#editor-221168a2 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1782,16 +1804,16 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 }
 
  
-#editor-4ca8dee3 .copy-code,
-#editor-4ca8dee3 .chroma .copy-btn { 
+#editor-221168a2 .copy-code,
+#editor-221168a2 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-4ca8dee3" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-4ca8dee3" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-221168a2" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-221168a2" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1839,11 +1861,11 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-4ca8dee3" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-221168a2" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-4ca8dee3" style="display: none;">
+<textarea id="fs-221168a2" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1893,8 +1915,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-4ca8dee3');
-    const editor = document.getElementById('editor-4ca8dee3');
+    const canvas = document.getElementById('glcanvas-221168a2');
+    const editor = document.getElementById('editor-221168a2');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2083,21 +2105,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-4ca8dee3').value.trim();
+    const rawSource = document.getElementById('fs-221168a2').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -2172,10 +2214,10 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 <style>
  
-#editor-f3a92741 .highlight,
-#editor-f3a92741 .chroma,
-#editor-f3a92741 pre,
-#editor-f3a92741 code {
+#editor-ac56f05f .highlight,
+#editor-ac56f05f .chroma,
+#editor-ac56f05f pre,
+#editor-ac56f05f code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2190,16 +2232,16 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 }
 
  
-#editor-f3a92741 .copy-code,
-#editor-f3a92741 .chroma .copy-btn { 
+#editor-ac56f05f .copy-code,
+#editor-ac56f05f .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-f3a92741" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-f3a92741" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ac56f05f" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ac56f05f" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2259,11 +2301,11 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-f3a92741" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ac56f05f" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-f3a92741" style="display: none;">
+<textarea id="fs-ac56f05f" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2325,8 +2367,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-f3a92741');
-    const editor = document.getElementById('editor-f3a92741');
+    const canvas = document.getElementById('glcanvas-ac56f05f');
+    const editor = document.getElementById('editor-ac56f05f');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2515,21 +2557,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-f3a92741').value.trim();
+    const rawSource = document.getElementById('fs-ac56f05f').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -2624,10 +2686,10 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 
 <style>
  
-#editor-0ba852b6 .highlight,
-#editor-0ba852b6 .chroma,
-#editor-0ba852b6 pre,
-#editor-0ba852b6 code {
+#editor-591e7730 .highlight,
+#editor-591e7730 .chroma,
+#editor-591e7730 pre,
+#editor-591e7730 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2642,16 +2704,16 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 }
 
  
-#editor-0ba852b6 .copy-code,
-#editor-0ba852b6 .chroma .copy-btn { 
+#editor-591e7730 .copy-code,
+#editor-591e7730 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-0ba852b6" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-0ba852b6" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-591e7730" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-591e7730" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2714,11 +2776,11 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-0ba852b6" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-591e7730" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-0ba852b6" style="display: none;">
+<textarea id="fs-591e7730" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2783,8 +2845,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-0ba852b6');
-    const editor = document.getElementById('editor-0ba852b6');
+    const canvas = document.getElementById('glcanvas-591e7730');
+    const editor = document.getElementById('editor-591e7730');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2973,21 +3035,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-0ba852b6').value.trim();
+    const rawSource = document.getElementById('fs-591e7730').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -3039,10 +3121,10 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 
 <style>
  
-#editor-2a1d3a8d .highlight,
-#editor-2a1d3a8d .chroma,
-#editor-2a1d3a8d pre,
-#editor-2a1d3a8d code {
+#editor-202e0538 .highlight,
+#editor-202e0538 .chroma,
+#editor-202e0538 pre,
+#editor-202e0538 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3057,16 +3139,16 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 }
 
  
-#editor-2a1d3a8d .copy-code,
-#editor-2a1d3a8d .chroma .copy-btn { 
+#editor-202e0538 .copy-code,
+#editor-202e0538 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-2a1d3a8d" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-2a1d3a8d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-202e0538" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-202e0538" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3139,11 +3221,11 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-2a1d3a8d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-202e0538" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-2a1d3a8d" style="display: none;">
+<textarea id="fs-202e0538" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3218,8 +3300,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-2a1d3a8d');
-    const editor = document.getElementById('editor-2a1d3a8d');
+    const canvas = document.getElementById('glcanvas-202e0538');
+    const editor = document.getElementById('editor-202e0538');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3408,21 +3490,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-2a1d3a8d').value.trim();
+    const rawSource = document.getElementById('fs-202e0538').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -3525,10 +3627,10 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 
 <style>
  
-#editor-4027928a .highlight,
-#editor-4027928a .chroma,
-#editor-4027928a pre,
-#editor-4027928a code {
+#editor-161e350f .highlight,
+#editor-161e350f .chroma,
+#editor-161e350f pre,
+#editor-161e350f code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3543,16 +3645,16 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 }
 
  
-#editor-4027928a .copy-code,
-#editor-4027928a .chroma .copy-btn { 
+#editor-161e350f .copy-code,
+#editor-161e350f .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-4027928a" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-4027928a" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-161e350f" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-161e350f" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3626,11 +3728,11 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-4027928a" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-161e350f" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-4027928a" style="display: none;">
+<textarea id="fs-161e350f" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3706,8 +3808,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-4027928a');
-    const editor = document.getElementById('editor-4027928a');
+    const canvas = document.getElementById('glcanvas-161e350f');
+    const editor = document.getElementById('editor-161e350f');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3896,21 +3998,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-4027928a').value.trim();
+    const rawSource = document.getElementById('fs-161e350f').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -3971,10 +4093,10 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 
 <style>
  
-#editor-58e7c024 .highlight,
-#editor-58e7c024 .chroma,
-#editor-58e7c024 pre,
-#editor-58e7c024 code {
+#editor-79ad7841 .highlight,
+#editor-79ad7841 .chroma,
+#editor-79ad7841 pre,
+#editor-79ad7841 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3989,16 +4111,16 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 }
 
  
-#editor-58e7c024 .copy-code,
-#editor-58e7c024 .chroma .copy-btn { 
+#editor-79ad7841 .copy-code,
+#editor-79ad7841 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-58e7c024" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-58e7c024" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-79ad7841" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-79ad7841" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4072,11 +4194,11 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-58e7c024" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-79ad7841" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-58e7c024" style="display: none;">
+<textarea id="fs-79ad7841" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4152,8 +4274,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-58e7c024');
-    const editor = document.getElementById('editor-58e7c024');
+    const canvas = document.getElementById('glcanvas-79ad7841');
+    const editor = document.getElementById('editor-79ad7841');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4342,21 +4464,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-58e7c024').value.trim();
+    const rawSource = document.getElementById('fs-79ad7841').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -4424,10 +4566,10 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 
 <style>
  
-#editor-0653c926 .highlight,
-#editor-0653c926 .chroma,
-#editor-0653c926 pre,
-#editor-0653c926 code {
+#editor-81c214e5 .highlight,
+#editor-81c214e5 .chroma,
+#editor-81c214e5 pre,
+#editor-81c214e5 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4442,16 +4584,16 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 }
 
  
-#editor-0653c926 .copy-code,
-#editor-0653c926 .chroma .copy-btn { 
+#editor-81c214e5 .copy-code,
+#editor-81c214e5 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-0653c926" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-0653c926" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-81c214e5" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-81c214e5" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4538,11 +4680,11 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-0653c926" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-81c214e5" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-0653c926" style="display: none;">
+<textarea id="fs-81c214e5" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4631,8 +4773,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-0653c926');
-    const editor = document.getElementById('editor-0653c926');
+    const canvas = document.getElementById('glcanvas-81c214e5');
+    const editor = document.getElementById('editor-81c214e5');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4821,21 +4963,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-0653c926').value.trim();
+    const rawSource = document.getElementById('fs-81c214e5').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -4909,8 +5071,13 @@ We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction o
 <h4 id="3-refraction-rays-transmission">3. Refraction Rays (Transmission)<a hidden class="anchor" aria-hidden="true" href="#3-refraction-rays-transmission">#</a></h4>
 <p>For transparent materials like glass, light bends as it passes through the surface boundary. According to <strong>Snell&rsquo;s Law</strong>, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ are related by the indices of refraction ($\eta$):
 </p>
-$$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$<p>
-The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector ${\color{#2196F3}\mathbf{v}}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is <strong>Total Internal Reflection</strong>—no light is refracted; it is all reflected inside the object.</p>
+$$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$<p>To compute the transmission vector ${\color{#9C27B0}\mathbf{t}}$, we decompose it into components parallel and perpendicular to the surface normal $\mathbf{n}$. Let ${\color{#2196F3}\mathbf{v}}$ point from the surface back toward the incoming ray (i.e. ${\color{#2196F3}\mathbf{v}} = -\mathbf{d}$, where $\mathbf{d}$ is the ray direction), and let $\cos\theta_L = \mathbf{n} \cdot {\color{#2196F3}\mathbf{v}}$. Then:</p>
+$$
+{\color{#9C27B0}\mathbf{t}} = \frac{\eta_L}{\eta_T}\left(-{\color{#2196F3}\mathbf{v}}\right) + \left(\frac{\eta_L}{\eta_T}\cos\theta_L - \cos\theta_T\right)\mathbf{n}
+$$<p>where the transmitted cosine is recovered from Snell&rsquo;s Law:</p>
+$$
+\cos\theta_T = \sqrt{1 - \left(\frac{\eta_L}{\eta_T}\right)^2\!\left(1 - \cos^2\theta_L\right)}
+$$<p>If the expression under the square root is <strong>negative</strong>, $\cos\theta_T$ has no real solution. This physical phenomenon is <strong>Total Internal Reflection</strong> — no light is transmitted; it is all reflected inside the object.</p>
 <figure id="fig-snells-law" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/snells_law.svg" alt="Diagram showing refraction" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
@@ -4924,10 +5091,10 @@ The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from 
 
 <style>
  
-#editor-bec75067 .highlight,
-#editor-bec75067 .chroma,
-#editor-bec75067 pre,
-#editor-bec75067 code {
+#editor-777815e4 .highlight,
+#editor-777815e4 .chroma,
+#editor-777815e4 pre,
+#editor-777815e4 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4942,16 +5109,16 @@ The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from 
 }
 
  
-#editor-bec75067 .copy-code,
-#editor-bec75067 .chroma .copy-btn { 
+#editor-777815e4 .copy-code,
+#editor-777815e4 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-bec75067" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-bec75067" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-777815e4" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-777815e4" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4972,19 +5139,38 @@ The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from 
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.001</span> <span class="o">?</span> <span class="n">t</span> <span class="o">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">Hit</span> <span class="p">{</span> <span class="k">float</span> <span class="n">t</span><span class="p">;</span> <span class="k">vec3</span> <span class="n">n</span><span class="p">;</span> <span class="k">vec3</span> <span class="n">col</span><span class="p">;</span> <span class="k">float</span> <span class="n">refl</span><span class="p">;</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// mirrors GLSL built-in: r = d - 2*dot(d,n)*n</span>
+</span></span><span class="line"><span class="cl"><span class="k">vec3</span> <span class="n">myReflect</span><span class="p">(</span><span class="k">vec3</span> <span class="n">d</span><span class="p">,</span> <span class="k">vec3</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">d</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">dot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// mirrors GLSL built-in: returns vec3(0) on TIR, so always guard with disc check first</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// eta = eta_incident / eta_transmitted, n points against d (into incident medium)</span>
+</span></span><span class="line"><span class="cl"><span class="k">vec3</span> <span class="n">myRefract</span><span class="p">(</span><span class="k">vec3</span> <span class="n">d</span><span class="p">,</span> <span class="k">vec3</span> <span class="n">n</span><span class="p">,</span> <span class="k">float</span> <span class="n">eta</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">cosL</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="o">-</span><span class="n">d</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">disc</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">eta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">cosL</span> <span class="o">*</span> <span class="n">cosL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// caller guarantees disc &gt;= 0</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">d</span> <span class="o">+</span> <span class="p">(</span><span class="n">eta</span> <span class="o">*</span> <span class="n">cosL</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">disc</span><span class="p">))</span> <span class="o">*</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ior &gt; 0.0 marks a dielectric (glass); ior == 0.0 means opaque</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">Hit</span> <span class="p">{</span> <span class="k">float</span> <span class="n">t</span><span class="p">;</span> <span class="k">vec3</span> <span class="n">n</span><span class="p">;</span> <span class="k">vec3</span> <span class="n">col</span><span class="p">;</span> <span class="k">float</span> <span class="n">refl</span><span class="p">;</span> <span class="k">float</span> <span class="n">ior</span><span class="p">;</span> <span class="p">};</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">Hit</span> <span class="n">traceScene</span><span class="p">(</span><span class="k">vec3</span> <span class="n">ro</span><span class="p">,</span> <span class="k">vec3</span> <span class="n">rd</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">Hit</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="mi">1</span><span class="n">e20</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">n</span><span class="p">;</span> <span class="k">float</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">Hit</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="mi">1</span><span class="n">e20</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">t</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// Red sphere</span>
 </span></span><span class="line"><span class="cl">    <span class="n">t</span> <span class="o">=</span> <span class="n">hitSphere</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">rd</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">normalize</span><span class="p">(</span><span class="n">ro</span><span class="o">+</span><span class="n">rd</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="k">vec3</span><span class="p">(</span><span class="o">-</span><span class="mf">0.8</span><span class="p">,</span><span class="mo">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.85</span><span class="p">,</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.1</span><span class="p">),</span> <span class="mf">0.05</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">normalize</span><span class="p">(</span><span class="n">ro</span><span class="o">+</span><span class="n">rd</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="k">vec3</span><span class="p">(</span><span class="o">-</span><span class="mf">0.8</span><span class="p">,</span><span class="mo">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.85</span><span class="p">,</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.1</span><span class="p">),</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// Chrome sphere</span>
 </span></span><span class="line"><span class="cl">    <span class="n">t</span> <span class="o">=</span> <span class="n">hitSphere</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">rd</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">0.7</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">normalize</span><span class="p">(</span><span class="n">ro</span><span class="o">+</span><span class="n">rd</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.9</span><span class="p">),</span> <span class="mf">0.8</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">normalize</span><span class="p">(</span><span class="n">ro</span><span class="o">+</span><span class="n">rd</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.9</span><span class="p">),</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Glass sphere (ior = 1.5, like crown glass)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span> <span class="o">=</span> <span class="n">hitSphere</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">rd</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.2</span><span class="p">),</span> <span class="mf">0.6</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">{</span> <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">normalize</span><span class="p">(</span><span class="n">ro</span><span class="o">+</span><span class="n">rd</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="o">-</span><span class="mf">2.2</span><span class="p">)),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span><span class="mf">0.98</span><span class="p">,</span><span class="mf">1.0</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">);</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// Floor plane</span>
 </span></span><span class="line"><span class="cl">    <span class="n">t</span> <span class="o">=</span> <span class="n">hitPlane</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">rd</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">);</span>
@@ -4992,7 +5178,7 @@ The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from 
 </span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ro</span> <span class="o">+</span> <span class="n">rd</span> <span class="o">*</span> <span class="n">t</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">check</span> <span class="o">=</span> <span class="n">step</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fract</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span> <span class="o">+</span> <span class="n">step</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fract</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">z</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl">        <span class="n">check</span> <span class="o">=</span> <span class="n">mod</span><span class="p">(</span><span class="n">check</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mo">0</span><span class="p">),</span> <span class="n">mix</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.7</span><span class="p">),</span> <span class="n">check</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">best</span> <span class="o">=</span> <span class="n">Hit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mo">0</span><span class="p">),</span> <span class="n">mix</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.7</span><span class="p">),</span> <span class="n">check</span><span class="p">),</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">best</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
@@ -5007,7 +5193,7 @@ The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from 
 </span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">shadow</span> <span class="o">=</span> <span class="p">(</span><span class="n">sh</span><span class="p">.</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">(</span><span class="n">lightPos</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span> <span class="o">?</span> <span class="mf">0.15</span> <span class="o">:</span> <span class="mf">1.0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">shadow</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">spec</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">reflect</span><span class="p">(</span><span class="o">-</span><span class="n">l</span><span class="p">,</span> <span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">),</span> <span class="n">v</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">64.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">shadow</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">spec</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">myReflect</span><span class="p">(</span><span class="o">-</span><span class="n">l</span><span class="p">,</span> <span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">),</span> <span class="n">v</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mf">64.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">shadow</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.06</span><span class="p">)</span> <span class="o">+</span> <span class="n">hit</span><span class="p">.</span><span class="n">col</span> <span class="o">*</span> <span class="n">diff</span> <span class="o">+</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span> <span class="o">*</span> <span class="n">spec</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span><span class="line"><span class="cl">
@@ -5016,37 +5202,60 @@ The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from 
 </span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">ro</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">rd</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="n">uv</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">col</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span>  <span class="n">col</span>   <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">atten</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="c1">// 2 bounces: primary + one reflection</span>
-</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">bounce</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">bounce</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="n">bounce</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 4 bounces: enough for glass entry + exit + one more interaction each</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">bounce</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">bounce</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">bounce</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="n">Hit</span> <span class="n">hit</span> <span class="o">=</span> <span class="n">traceScene</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">rd</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">hit</span><span class="p">.</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e19</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">            <span class="n">col</span> <span class="o">+=</span> <span class="n">atten</span> <span class="o">*</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ro</span> <span class="o">+</span> <span class="n">rd</span> <span class="o">*</span> <span class="n">hit</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">col</span> <span class="o">+=</span> <span class="n">atten</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">hit</span><span class="p">.</span><span class="n">refl</span><span class="p">)</span> <span class="o">*</span> <span class="n">shade</span><span class="p">(</span><span class="n">hit</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">rd</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// Reflection ray for next bounce</span>
-</span></span><span class="line"><span class="cl">        <span class="n">atten</span> <span class="o">*=</span> <span class="n">hit</span><span class="p">.</span><span class="n">refl</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">atten</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">ro</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="n">hit</span><span class="p">.</span><span class="n">n</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="n">rd</span> <span class="o">=</span> <span class="n">reflect</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">hit</span><span class="p">.</span><span class="n">ior</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// Dielectric: refract with TIR fallback</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// If cosL &lt; 0 the ray is already inside the sphere (exiting)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">cosL</span>  <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="n">rd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">bool</span> <span class="n">inside</span> <span class="o">=</span> <span class="n">cosL</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span>  <span class="n">faceN</span> <span class="o">=</span> <span class="n">inside</span> <span class="o">?</span> <span class="o">-</span><span class="n">hit</span><span class="p">.</span><span class="n">n</span> <span class="o">:</span>  <span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">;</span>  <span class="c1">// always points against rd</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">eta</span>   <span class="o">=</span> <span class="n">inside</span> <span class="o">?</span>  <span class="n">hit</span><span class="p">.</span><span class="n">ior</span> <span class="o">:</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">hit</span><span class="p">.</span><span class="n">ior</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">cosL2</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">cosL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">disc</span>  <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">eta</span> <span class="o">*</span> <span class="n">eta</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">cosL2</span> <span class="o">*</span> <span class="n">cosL2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">disc</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// Total internal reflection</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ro</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="n">faceN</span> <span class="o">*</span> <span class="mf">0.001</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="n">rd</span> <span class="o">=</span> <span class="n">myReflect</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">faceN</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// Refract into / out of the medium</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// rd = eta*d + (eta*cosL - sqrt(disc))*n  — derived in the section above</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ro</span> <span class="o">=</span> <span class="n">p</span> <span class="o">-</span> <span class="n">faceN</span> <span class="o">*</span> <span class="mf">0.001</span><span class="p">;</span>  <span class="c1">// nudge into the new medium</span>
+</span></span><span class="line"><span class="cl">                <span class="n">rd</span> <span class="o">=</span> <span class="n">myRefract</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">faceN</span><span class="p">,</span> <span class="n">eta</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">atten</span> <span class="o">*=</span> <span class="mf">0.97</span><span class="p">;</span> <span class="c1">// slight absorption per bounce</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// Opaque: local shading + spawn reflection ray</span>
+</span></span><span class="line"><span class="cl">            <span class="n">col</span>  <span class="o">+=</span> <span class="n">atten</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">hit</span><span class="p">.</span><span class="n">refl</span><span class="p">)</span> <span class="o">*</span> <span class="n">shade</span><span class="p">(</span><span class="n">hit</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">rd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">atten</span> <span class="o">*=</span> <span class="n">hit</span><span class="p">.</span><span class="n">refl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">atten</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ro</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="n">hit</span><span class="p">.</span><span class="n">n</span> <span class="o">*</span> <span class="mf">0.001</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rd</span> <span class="o">=</span> <span class="n">myReflect</span><span class="p">(</span><span class="n">rd</span><span class="p">,</span> <span class="n">hit</span><span class="p">.</span><span class="n">n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">col</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">col</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">clamp</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.2</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl">    <span class="n">fragColor</span> <span class="o">=</span> <span class="k">vec4</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div></div>
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-bec75067" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-777815e4" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-bec75067" style="display: none;">
+<textarea id="fs-777815e4" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5068,19 +5277,38 @@ float hitPlane(vec3 ro, vec3 rd, float y) {
     return t &gt; 0.001 ? t : -1.0;
 }
 
-struct Hit { float t; vec3 n; vec3 col; float refl; };
+// mirrors GLSL built-in: r = d - 2*dot(d,n)*n
+vec3 myReflect(vec3 d, vec3 n) {
+    return d - 2.0 * dot(d, n) * n;
+}
+
+// mirrors GLSL built-in: returns vec3(0) on TIR, so always guard with disc check first
+// eta = eta_incident / eta_transmitted, n points against d (into incident medium)
+vec3 myRefract(vec3 d, vec3 n, float eta) {
+    float cosL = dot(-d, n);
+    float disc = 1.0 - eta * eta * (1.0 - cosL * cosL);
+    // caller guarantees disc &gt;= 0
+    return eta * d &#43; (eta * cosL - sqrt(disc)) * n;
+}
+
+// ior &gt; 0.0 marks a dielectric (glass); ior == 0.0 means opaque
+struct Hit { float t; vec3 n; vec3 col; float refl; float ior; };
 
 Hit traceScene(vec3 ro, vec3 rd) {
-    Hit best = Hit(1e20, vec3(0), vec3(0), 0.0);
-    vec3 n; float t;
+    Hit best = Hit(1e20, vec3(0), vec3(0), 0.0, 0.0);
+    float t;
 
     // Red sphere
     t = hitSphere(ro, rd, vec3(-0.8, 0.0, -1.0), 1.0);
-    if (t &gt; 0.0 &amp;&amp; t &lt; best.t) { best = Hit(t, normalize(ro&#43;rd*t - vec3(-0.8,0,-1)), vec3(0.85,0.15,0.1), 0.05); }
+    if (t &gt; 0.0 &amp;&amp; t &lt; best.t) { best = Hit(t, normalize(ro&#43;rd*t - vec3(-0.8,0,-1)), vec3(0.85,0.15,0.1), 0.05, 0.0); }
 
     // Chrome sphere
     t = hitSphere(ro, rd, vec3(1.0, -0.3, 0.0), 0.7);
-    if (t &gt; 0.0 &amp;&amp; t &lt; best.t) { best = Hit(t, normalize(ro&#43;rd*t - vec3(1.0,-0.3,0.0)), vec3(0.9), 0.8); }
+    if (t &gt; 0.0 &amp;&amp; t &lt; best.t) { best = Hit(t, normalize(ro&#43;rd*t - vec3(1.0,-0.3,0.0)), vec3(0.9), 0.8, 0.0); }
+
+    // Glass sphere (ior = 1.5, like crown glass)
+    t = hitSphere(ro, rd, vec3(0.1, 0.7, -2.2), 0.6);
+    if (t &gt; 0.0 &amp;&amp; t &lt; best.t) { best = Hit(t, normalize(ro&#43;rd*t - vec3(0.1,0.7,-2.2)), vec3(0.95,0.98,1.0), 0.0, 1.5); }
 
     // Floor plane
     t = hitPlane(ro, rd, -1.0);
@@ -5088,7 +5316,7 @@ Hit traceScene(vec3 ro, vec3 rd) {
         vec3 p = ro &#43; rd * t;
         float check = step(0.5, fract(p.x * 0.5)) &#43; step(0.5, fract(p.z * 0.5));
         check = mod(check, 2.0);
-        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), check), 0.1);
+        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), check), 0.1, 0.0);
     }
     return best;
 }
@@ -5103,7 +5331,7 @@ vec3 shade(Hit hit, vec3 p, vec3 rd) {
     float shadow = (sh.t &lt; length(lightPos - p)) ? 0.15 : 1.0;
 
     float diff = max(dot(hit.n, l), 0.0) * shadow;
-    float spec = pow(max(dot(reflect(-l, hit.n), v), 0.0), 64.0) * shadow;
+    float spec = pow(max(dot(myReflect(-l, hit.n), v), 0.0), 64.0) * shadow;
     return vec3(0.06) &#43; hit.col * diff &#43; vec3(0.7) * spec;
 }
 
@@ -5112,35 +5340,58 @@ void main() {
     vec3 ro = vec3(0.0, 1.0, 4.0);
     vec3 rd = normalize(vec3(uv, -1.0));
 
-    vec3 col = vec3(0.0);
+    vec3  col   = vec3(0.0);
     float atten = 1.0;
 
-    // 2 bounces: primary &#43; one reflection
-    for (int bounce = 0; bounce &lt; 2; bounce&#43;&#43;) {
+    // 4 bounces: enough for glass entry &#43; exit &#43; one more interaction each
+    for (int bounce = 0; bounce &lt; 4; bounce&#43;&#43;) {
         Hit hit = traceScene(ro, rd);
         if (hit.t &gt; 1e19) {
             col &#43;= atten * vec3(0.03, 0.04, 0.06);
             break;
         }
         vec3 p = ro &#43; rd * hit.t;
-        col &#43;= atten * (1.0 - hit.refl) * shade(hit, p, rd);
 
-        // Reflection ray for next bounce
-        atten *= hit.refl;
-        if (atten &lt; 0.01) break;
-        ro = p &#43; hit.n * 0.01;
-        rd = reflect(rd, hit.n);
+        if (hit.ior &gt; 0.0) {
+            // Dielectric: refract with TIR fallback
+            // If cosL &lt; 0 the ray is already inside the sphere (exiting)
+            float cosL  = dot(hit.n, -rd);
+            bool inside = cosL &lt; 0.0;
+            vec3  faceN = inside ? -hit.n :  hit.n;  // always points against rd
+            float eta   = inside ?  hit.ior : 1.0 / hit.ior;
+            float cosL2 = abs(cosL);
+            float disc  = 1.0 - eta * eta * (1.0 - cosL2 * cosL2);
+
+            if (disc &lt; 0.0) {
+                // Total internal reflection
+                ro = p &#43; faceN * 0.001;
+                rd = myReflect(rd, faceN);
+            } else {
+                // Refract into / out of the medium
+                // rd = eta*d &#43; (eta*cosL - sqrt(disc))*n  — derived in the section above
+                ro = p - faceN * 0.001;  // nudge into the new medium
+                rd = myRefract(rd, faceN, eta);
+            }
+            atten *= 0.97; // slight absorption per bounce
+        } else {
+            // Opaque: local shading &#43; spawn reflection ray
+            col  &#43;= atten * (1.0 - hit.refl) * shade(hit, p, rd);
+            atten *= hit.refl;
+            if (atten &lt; 0.01) break;
+            ro = p &#43; hit.n * 0.001;
+            rd = myReflect(rd, hit.n);
+        }
     }
 
-    col = pow(col, vec3(1.0 / 2.2));
+    col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));
     fragColor = vec4(col, 1.0);
 }
 </textarea>
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-bec75067');
-    const editor = document.getElementById('editor-bec75067');
+    const canvas = document.getElementById('glcanvas-777815e4');
+    const editor = document.getElementById('editor-777815e4');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5329,21 +5580,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-bec75067').value.trim();
+    const rawSource = document.getElementById('fs-777815e4').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -5417,10 +5688,10 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 
 <style>
  
-#editor-2426d7ba .highlight,
-#editor-2426d7ba .chroma,
-#editor-2426d7ba pre,
-#editor-2426d7ba code {
+#editor-8057d115 .highlight,
+#editor-8057d115 .chroma,
+#editor-8057d115 pre,
+#editor-8057d115 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5435,16 +5706,16 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 }
 
  
-#editor-2426d7ba .copy-code,
-#editor-2426d7ba .chroma .copy-btn { 
+#editor-8057d115 .copy-code,
+#editor-8057d115 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-2426d7ba" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-2426d7ba" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-8057d115" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-8057d115" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5520,11 +5791,11 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-2426d7ba" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-8057d115" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-2426d7ba" style="display: none;">
+<textarea id="fs-8057d115" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5602,8 +5873,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-2426d7ba');
-    const editor = document.getElementById('editor-2426d7ba');
+    const canvas = document.getElementById('glcanvas-8057d115');
+    const editor = document.getElementById('editor-8057d115');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5792,21 +6063,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-2426d7ba').value.trim();
+    const rawSource = document.getElementById('fs-8057d115').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -5852,10 +6143,10 @@ void main() {
 
 <style>
  
-#editor-5501e7e0 .highlight,
-#editor-5501e7e0 .chroma,
-#editor-5501e7e0 pre,
-#editor-5501e7e0 code {
+#editor-137e7713 .highlight,
+#editor-137e7713 .chroma,
+#editor-137e7713 pre,
+#editor-137e7713 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5870,16 +6161,16 @@ void main() {
 }
 
  
-#editor-5501e7e0 .copy-code,
-#editor-5501e7e0 .chroma .copy-btn { 
+#editor-137e7713 .copy-code,
+#editor-137e7713 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-5501e7e0" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-5501e7e0" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-137e7713" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-137e7713" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5963,11 +6254,11 @@ void main() {
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-5501e7e0" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-137e7713" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-5501e7e0" style="display: none;">
+<textarea id="fs-137e7713" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6053,8 +6344,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-5501e7e0');
-    const editor = document.getElementById('editor-5501e7e0');
+    const canvas = document.getElementById('glcanvas-137e7713');
+    const editor = document.getElementById('editor-137e7713');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6243,21 +6534,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-5501e7e0').value.trim();
+    const rawSource = document.getElementById('fs-137e7713').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -6410,10 +6721,10 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 
 <style>
  
-#editor-a0f25702 .highlight,
-#editor-a0f25702 .chroma,
-#editor-a0f25702 pre,
-#editor-a0f25702 code {
+#editor-3e898912 .highlight,
+#editor-3e898912 .chroma,
+#editor-3e898912 pre,
+#editor-3e898912 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6428,16 +6739,16 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 }
 
  
-#editor-a0f25702 .copy-code,
-#editor-a0f25702 .chroma .copy-btn { 
+#editor-3e898912 .copy-code,
+#editor-3e898912 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-a0f25702" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-a0f25702" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-3e898912" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-3e898912" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6488,11 +6799,11 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-a0f25702" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-3e898912" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-a0f25702" style="display: none;">
+<textarea id="fs-3e898912" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6545,8 +6856,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-a0f25702');
-    const editor = document.getElementById('editor-a0f25702');
+    const canvas = document.getElementById('glcanvas-3e898912');
+    const editor = document.getElementById('editor-3e898912');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6735,21 +7046,41 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-a0f25702').value.trim();
+    const rawSource = document.getElementById('fs-3e898912').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {
@@ -6819,6 +7150,11 @@ void main() {
     <br>
     <span>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing</span>
   </a>
+  <a class="next" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Introduction to Differentiable Rendering</span>
+  </a>
 </nav>
 
   </footer>
@@ -6869,108 +7205,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.appendChild(sidebar);
 
-    var tocScrollTarget = null;
-    var tocScrollClearTimer = null;
-    var tocScrollFrame = null;
-    var tocScrollObserver = null;
-    var tocScrollFallbackTimer = null;
-    var tocScrollFallbackTicks = 0;
-    var tocScrollFallbackLimit = 12;
-
     
-    function stopTocScrollTracking() {
-        tocScrollTarget = null;
-        tocScrollFallbackTicks = 0;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-            tocScrollClearTimer = null;
-        }
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-            tocScrollFrame = null;
-        }
-
-        if (tocScrollFallbackTimer) {
-            clearInterval(tocScrollFallbackTimer);
-            tocScrollFallbackTimer = null;
-        }
-
-        if (tocScrollObserver) {
-            tocScrollObserver.disconnect();
-            tocScrollObserver = null;
-        }
-    }
-
-    function alignTocScrollTarget() {
-        if (!tocScrollTarget || !document.contains(tocScrollTarget)) {
-            stopTocScrollTracking();
-            return;
-        }
-
-        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - clickScrollOffset);
-        if (Math.abs(window.scrollY - targetTop) > 2) {
-            window.scrollTo({ top: targetTop, behavior: 'auto' });
-        }
-    }
-
-    function queueTocScrollAlignment() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-        }
-
-        tocScrollFrame = requestAnimationFrame(function() {
-            tocScrollFrame = null;
-            alignTocScrollTarget();
-        });
-    }
-
-    function scheduleTocScrollClear() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-        }
-
-        tocScrollClearTimer = setTimeout(function() {
-            stopTocScrollTracking();
-        }, 750);
-    }
-
-    function startTocScroll(target) {
-        stopTocScrollTracking();
-        tocScrollTarget = target;
-
-        alignTocScrollTarget();
-
-        if (typeof ResizeObserver !== 'undefined') {
-            tocScrollObserver = new ResizeObserver(function() {
-                if (!tocScrollTarget) return;
-                queueTocScrollAlignment();
-                scheduleTocScrollClear();
-            });
-            tocScrollObserver.observe(content);
-            scheduleTocScrollClear();
-        } else {
-            tocScrollFallbackTimer = setInterval(function() {
-                if (!tocScrollTarget) {
-                    stopTocScrollTracking();
-                    return;
-                }
-
-                alignTocScrollTarget();
-                tocScrollFallbackTicks++;
-
-                if (tocScrollFallbackTicks >= tocScrollFallbackLimit) {
-                    stopTocScrollTracking();
-                }
-            }, 150);
-        }
-    }
-
     sidebar.addEventListener('click', function(e) {
         var anchor = e.target.closest('a[href^="#"]');
         if (!anchor) return;
@@ -6982,12 +7217,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!target) return;
 
         e.preventDefault();
-        e.stopImmediatePropagation();
 
-        startTocScroll(target);
+        var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+        var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 40);
 
-        history.pushState(null, null, `#${id}`);
-    }, true);
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth'
+        });
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + id);
+        } else {
+            location.hash = '#' + id;
+        }
+    });
 
     
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
@@ -6995,39 +7239,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var lastActiveId = '';
     var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
-    var activeHeaderOffset = headerHeight + 40;
-    var clickScrollOffset = headerHeight + 8;
-    var headerPositions = [];
+    var activeHeaderOffset = headerHeight + 45;
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
     for (var i = 0; i < nestedUls.length; i++) {
         nestedUls[i].style.display = 'none';
-    }
-
-    function refreshHeaderPositions() {
-        headerPositions = new Array(headers.length);
-        for (var i = 0; i < headers.length; i++) {
-            headerPositions[i] = {
-                id: headers[i].getAttribute('id') || '',
-                top: headers[i].getBoundingClientRect().top + window.scrollY
-            };
-        }
-    }
-
-    function findActiveHeaderId() {
-        var currentId = '';
-        var currentTop = window.scrollY + activeHeaderOffset;
-
-        for (var i = 0; i < headerPositions.length; i++) {
-            if (headerPositions[i].top <= currentTop) {
-                currentId = headerPositions[i].id;
-            } else {
-                break;
-            }
-        }
-
-        return currentId;
     }
 
     function applyActiveState(currentId) {
@@ -7062,46 +7279,54 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             el = el.parentElement;
         }
+
+        
+        var container = sidebar.querySelector('.agn-sidetoc-links');
+        if (container) {
+            var containerRect = container.getBoundingClientRect();
+            var linkRect = activeLink.getBoundingClientRect();
+            var relativeTop = linkRect.top - containerRect.top + container.scrollTop;
+            var targetScrollTop = relativeTop - (container.clientHeight / 2) + (linkRect.height / 2);
+            container.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+        }
     }
 
-    
     var ticking = false;
-
     function onScroll() {
         if (ticking) return;
         ticking = true;
 
         requestAnimationFrame(function() {
-            var currentId = findActiveHeaderId();
+            var currentId = '';
+            var scrollY = window.scrollY;
+            var windowHeight = window.innerHeight;
+            var documentHeight = document.documentElement.scrollHeight;
+
+            if (scrollY + windowHeight >= documentHeight - 10) {
+                currentId = headers[headers.length - 1].id;
+            } else {
+                for (var i = headers.length - 1; i >= 0; i--) {
+                    var rect = headers[i].getBoundingClientRect();
+                    if (rect.top <= activeHeaderOffset) {
+                        currentId = headers[i].id;
+                        break;
+                    }
+                }
+            }
+
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    if (typeof ResizeObserver !== 'undefined') {
-        var layoutObserver = new ResizeObserver(function() {
-            refreshHeaderPositions();
-            onScroll();
-        });
-        layoutObserver.observe(content);
-
-        window.addEventListener('beforeunload', function() {
-            layoutObserver.disconnect();
-        });
-    }
-
-    window.addEventListener('resize', function() {
-        refreshHeaderPositions();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        refreshHeaderPositions();
-        onScroll();
-    });
-
-    refreshHeaderPositions();
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); 
+    window.addEventListener('resize', onScroll, { passive: true });
+    
+    
+    onScroll();
 });
 </script>
 

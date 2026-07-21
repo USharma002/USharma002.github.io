@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/tags/differentiable-rendering/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.8f433c302706ed886ed1a735eb8ae74de2e532f2bc656137e34f31ff87472c5d.css" integrity="sha256-j0M8MCcG7Yhu0ac164rnTeLlMvK8ZWE3408x/4dHLF0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.630ea136b8cd4146472e343da3511d137a4b731e7e19b2c307f036d591ed1867.css" integrity="sha256-Yw6hNrjNQUZHLjQ9o1EdE3pLcx5&#43;GbLDB/A21ZHtGGc=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -140,13 +140,37 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Differentiable Rendering of Participating Media
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Differentiable rendering theory for volumetric light transport</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-07-18 00:00:00 +0000 UTC'>July 18, 2026</span>&nbsp;·&nbsp;11 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
+  <a class="entry-link" aria-label="post link to Differentiable Rendering of Participating Media" href="http://localhost:1313/posts/differentiable-rendering-participating-media/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Introduction to Differentiable Rendering
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
     </h2>
   </header>
   <div class="entry-content">
     <p>Differentiable rendering techniques for computer graphics and vision</p>
   </div>
-  <footer class="entry-footer"><span title='2026-05-02 00:00:00 +0000 UTC'>May 2, 2026</span>&nbsp;·&nbsp;64 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
+  <footer class="entry-footer"><span title='2026-05-02 00:00:00 +0000 UTC'>May 2, 2026</span>&nbsp;·&nbsp;82 min&nbsp;·&nbsp;Utkarsh Sharma</footer>
   <a class="entry-link" aria-label="post link to Introduction to Differentiable Rendering" href="http://localhost:1313/posts/intro-to-differentiable-rendering/"></a>
 </article>
     </main>
@@ -195,108 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.appendChild(sidebar);
 
-    var tocScrollTarget = null;
-    var tocScrollClearTimer = null;
-    var tocScrollFrame = null;
-    var tocScrollObserver = null;
-    var tocScrollFallbackTimer = null;
-    var tocScrollFallbackTicks = 0;
-    var tocScrollFallbackLimit = 12;
-
     
-    function stopTocScrollTracking() {
-        tocScrollTarget = null;
-        tocScrollFallbackTicks = 0;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-            tocScrollClearTimer = null;
-        }
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-            tocScrollFrame = null;
-        }
-
-        if (tocScrollFallbackTimer) {
-            clearInterval(tocScrollFallbackTimer);
-            tocScrollFallbackTimer = null;
-        }
-
-        if (tocScrollObserver) {
-            tocScrollObserver.disconnect();
-            tocScrollObserver = null;
-        }
-    }
-
-    function alignTocScrollTarget() {
-        if (!tocScrollTarget || !document.contains(tocScrollTarget)) {
-            stopTocScrollTracking();
-            return;
-        }
-
-        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - clickScrollOffset);
-        if (Math.abs(window.scrollY - targetTop) > 2) {
-            window.scrollTo({ top: targetTop, behavior: 'auto' });
-        }
-    }
-
-    function queueTocScrollAlignment() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-        }
-
-        tocScrollFrame = requestAnimationFrame(function() {
-            tocScrollFrame = null;
-            alignTocScrollTarget();
-        });
-    }
-
-    function scheduleTocScrollClear() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-        }
-
-        tocScrollClearTimer = setTimeout(function() {
-            stopTocScrollTracking();
-        }, 750);
-    }
-
-    function startTocScroll(target) {
-        stopTocScrollTracking();
-        tocScrollTarget = target;
-
-        alignTocScrollTarget();
-
-        if (typeof ResizeObserver !== 'undefined') {
-            tocScrollObserver = new ResizeObserver(function() {
-                if (!tocScrollTarget) return;
-                queueTocScrollAlignment();
-                scheduleTocScrollClear();
-            });
-            tocScrollObserver.observe(content);
-            scheduleTocScrollClear();
-        } else {
-            tocScrollFallbackTimer = setInterval(function() {
-                if (!tocScrollTarget) {
-                    stopTocScrollTracking();
-                    return;
-                }
-
-                alignTocScrollTarget();
-                tocScrollFallbackTicks++;
-
-                if (tocScrollFallbackTicks >= tocScrollFallbackLimit) {
-                    stopTocScrollTracking();
-                }
-            }, 150);
-        }
-    }
-
     sidebar.addEventListener('click', function(e) {
         var anchor = e.target.closest('a[href^="#"]');
         if (!anchor) return;
@@ -308,12 +231,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!target) return;
 
         e.preventDefault();
-        e.stopImmediatePropagation();
 
-        startTocScroll(target);
+        var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+        var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 40);
 
-        history.pushState(null, null, `#${id}`);
-    }, true);
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth'
+        });
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + id);
+        } else {
+            location.hash = '#' + id;
+        }
+    });
 
     
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
@@ -321,39 +253,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var lastActiveId = '';
     var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
-    var activeHeaderOffset = headerHeight + 40;
-    var clickScrollOffset = headerHeight + 8;
-    var headerPositions = [];
+    var activeHeaderOffset = headerHeight + 45;
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
     for (var i = 0; i < nestedUls.length; i++) {
         nestedUls[i].style.display = 'none';
-    }
-
-    function refreshHeaderPositions() {
-        headerPositions = new Array(headers.length);
-        for (var i = 0; i < headers.length; i++) {
-            headerPositions[i] = {
-                id: headers[i].getAttribute('id') || '',
-                top: headers[i].getBoundingClientRect().top + window.scrollY
-            };
-        }
-    }
-
-    function findActiveHeaderId() {
-        var currentId = '';
-        var currentTop = window.scrollY + activeHeaderOffset;
-
-        for (var i = 0; i < headerPositions.length; i++) {
-            if (headerPositions[i].top <= currentTop) {
-                currentId = headerPositions[i].id;
-            } else {
-                break;
-            }
-        }
-
-        return currentId;
     }
 
     function applyActiveState(currentId) {
@@ -388,46 +293,54 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             el = el.parentElement;
         }
+
+        
+        var container = sidebar.querySelector('.agn-sidetoc-links');
+        if (container) {
+            var containerRect = container.getBoundingClientRect();
+            var linkRect = activeLink.getBoundingClientRect();
+            var relativeTop = linkRect.top - containerRect.top + container.scrollTop;
+            var targetScrollTop = relativeTop - (container.clientHeight / 2) + (linkRect.height / 2);
+            container.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+        }
     }
 
-    
     var ticking = false;
-
     function onScroll() {
         if (ticking) return;
         ticking = true;
 
         requestAnimationFrame(function() {
-            var currentId = findActiveHeaderId();
+            var currentId = '';
+            var scrollY = window.scrollY;
+            var windowHeight = window.innerHeight;
+            var documentHeight = document.documentElement.scrollHeight;
+
+            if (scrollY + windowHeight >= documentHeight - 10) {
+                currentId = headers[headers.length - 1].id;
+            } else {
+                for (var i = headers.length - 1; i >= 0; i--) {
+                    var rect = headers[i].getBoundingClientRect();
+                    if (rect.top <= activeHeaderOffset) {
+                        currentId = headers[i].id;
+                        break;
+                    }
+                }
+            }
+
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    if (typeof ResizeObserver !== 'undefined') {
-        var layoutObserver = new ResizeObserver(function() {
-            refreshHeaderPositions();
-            onScroll();
-        });
-        layoutObserver.observe(content);
-
-        window.addEventListener('beforeunload', function() {
-            layoutObserver.disconnect();
-        });
-    }
-
-    window.addEventListener('resize', function() {
-        refreshHeaderPositions();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        refreshHeaderPositions();
-        onScroll();
-    });
-
-    refreshHeaderPositions();
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); 
+    window.addEventListener('resize', onScroll, { passive: true });
+    
+    
+    onScroll();
 });
 </script>
 

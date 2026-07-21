@@ -1,0 +1,116 @@
+<div class="heaviside-widget-container" style="display: flex; gap: 20px; justify-content: center; align-items: center; background: #fff; padding: 10px; border-radius: 8px; font-family: -apple-system, sans-serif; user-select: none;">
+    <!-- Spatial Geometry Component -->
+    <svg id="spatialSVG" width="360" height="360" viewBox="0 0 360 360" style="border: 1.5px solid #e2e8f0; border-radius: 6px; cursor: crosshair; background: #fff; overflow: visible;">
+        <!-- Background Half-space (f_l) -->
+        <rect width="360" height="360" fill="#ffffff" />
+        
+        <!-- Triangle Poly Half-space (f_u) -->
+        <polygon points="0,0 324,0 198,360 0,360" fill="#8fbc8f" />
+        
+        <!-- Discontinuity Boundary Line -->
+        <line x1="324" y1="0" x2="198" y2="360" stroke="#475569" stroke-width="2.5" />
+        
+        <!-- Normal Vector Pointer Group -->
+        <g stroke="#4caf50" stroke-width="3" fill="#4caf50">
+            <!-- Dashed Line -->
+            <line x1="261" y1="180" x2="306" y2="180" stroke-dasharray="5,3" />
+            <!-- Arrow Head -->
+            <polygon points="306,174 316,180 306,186" stroke-width="1" />
+        </g>
+        
+        <!-- Muted Math Typography Labels -->
+        <g font-family="Times New Roman, Georgia, serif" font-style="italic" font-size="24px" fill="#1e293b">
+            <!-- f_u and positive sign -->
+            <text x="135" y="135">f<tspan font-size="16px" font-style="normal" dy="4">u</tspan></text>
+            <text x="135" y="165" font-family="monospace" font-style="normal" font-size="20px">+</text>
+            
+            <!-- f_l and negative sign -->
+            <text x="270" y="240">f<tspan font-size="16px" font-style="normal" dy="4">l</tspan></text>
+            <text x="252" y="235" font-family="monospace" font-style="normal" font-size="20px">-</text>
+        </g>
+        
+        <!-- Interactive Purple Tracker Pointer -->
+        <circle id="spatialProbe" cx="-100" cy="-100" r="10" fill="#5c6bc0" stroke="#ffffff" stroke-width="2" style="transition: transform 0.05s ease-out;" />
+    </svg>
+
+    <!-- Mathematical Functional Component -->
+    <svg id="functionSVG" width="360" height="360" viewBox="0 0 360 360" style="border: 1.5px solid #e2e8f0; border-radius: 6px; background: #fff; overflow: visible;">
+        <!-- X/Y Axes Coordinates Layout -->
+        <g stroke="#cbd5e1" stroke-width="1">
+            <line x1="0" y1="270" x2="360" y2="270" /> <!-- Horizontal Axis -->
+            <line x1="180" y1="0" x2="180" y2="360" /> <!-- Vertical Discontinuity Line Axis -->
+        </g>
+        
+        <!-- Axis Labels -->
+        <g font-family="Times New Roman, Georgia, serif" font-size="14px" fill="#64748b">
+            <text x="15" y="290">&alpha; &lt; 0</text>
+            <text x="290" y="290">&alpha; &gt; 0</text>
+            <text x="195" y="25" font-style="italic">H(&alpha;)</text>
+        </g>
+        
+        <!-- 1D Heaviside Step Graph Step Path Profile -->
+        <path d="M 0,270 L 180,270 L 180,115 L 360,115" fill="none" stroke="#0f172a" stroke-width="3.5" stroke-linejoin="miter" stroke-linecap="square" />
+        
+        <!-- Limit Nodes Graph Points Loops -->
+        <circle cx="180" cy="270" r="4.5" fill="#ffffff" stroke="#0f172a" stroke-width="1.5" />
+        <circle cx="180" cy="115" r="4.5" fill="#0f172a" />
+        
+        <!-- Interactive Projection Tracking Guides Indicator -->
+        <g id="trackerGroup" visibility="hidden">
+            <line id="projLine" x1="-100" y1="-100" x2="-100" y2="270" stroke="#5c6bc0" stroke-width="1" stroke-dasharray="3,3" />
+            <circle id="functionProbe" cx="-100" cy="-100" r="7" fill="#5c6bc0" />
+        </g>
+    </svg>
+
+    <script>
+        (function() {
+            const spatialSVG = document.getElementById('spatialSVG');
+            const spatialProbe = document.getElementById('spatialProbe');
+            const trackerGroup = document.getElementById('trackerGroup');
+            const projLine = document.getElementById('projLine');
+            const functionProbe = document.getElementById('functionProbe');
+
+            // Line boundary algebraic properties parameter matching: Ax + By + C = 0[cite: 1]
+            const A = 2.857;
+            const B = 1.0;
+            const C = -925.7;
+
+            function updatePointers(e) {
+                const rect = spatialSVG.getBoundingClientRect();
+                const mouseX = ((e.clientX - rect.left) / rect.width) * 360;
+                const mouseY = ((e.clientY - rect.top) / rect.height) * 360;
+
+                // Move spatial pointer dot anchor visually
+                spatialProbe.setAttribute('cx', mouseX);
+                spatialProbe.setAttribute('cy', mouseY);
+
+                // Compute exact algebraic step sign of local functional parameter field space[cite: 1]
+                const alpha = -(A * mouseX + B * mouseY + C);
+                
+                // Map functional location along 1D plot horizontal space profile axis framework
+                const centerX = 180;
+                let mapX = centerX + (alpha * 0.45);
+                mapX = Math.max(15, Math.min(345, mapX)); // Keep safely clamped within borders
+
+                const mapY = (alpha >= 0) ? 115 : 270;
+
+                // Update functional trace pointers metrics
+                functionProbe.setAttribute('cx', mapX);
+                functionProbe.setAttribute('cy', mapY);
+                
+                projLine.setAttribute('x1', mapX);
+                projLine.setAttribute('y1', mapY);
+                projLine.setAttribute('x2', mapX);
+                
+                trackerGroup.setAttribute('visibility', 'visible');
+            }
+
+            spatialSVG.addEventListener('mousemove', updatePointers);
+            spatialSVG.addEventListener('mouseleave', () => {
+                spatialProbe.setAttribute('cx', '-100');
+                spatialProbe.setAttribute('cy', '-100');
+                trackerGroup.setAttribute('visibility', 'hidden');
+            });
+        })();
+    </script>
+</div>

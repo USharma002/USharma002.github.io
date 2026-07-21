@@ -10,7 +10,7 @@
 <meta name="description" content="about">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/about/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.8f433c302706ed886ed1a735eb8ae74de2e532f2bc656137e34f31ff87472c5d.css" integrity="sha256-j0M8MCcG7Yhu0ac164rnTeLlMvK8ZWE3408x/4dHLF0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.630ea136b8cd4146472e343da3511d137a4b731e7e19b2c307f036d591ed1867.css" integrity="sha256-Yw6hNrjNQUZHLjQ9o1EdE3pLcx5&#43;GbLDB/A21ZHtGGc=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -175,6 +175,26 @@
 <!-- --- -->
 <section style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
   <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Projects</h3>
+  <p style="margin: -0.5rem 0 2rem 0; color: #666; line-height: 1.6;">
+    A small selection of projects spanning rendering, computer graphics, and machine learning.
+  </p>
+  <!-- Futaba Renderer -->
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
+    <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+      <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/dragon-cbox.png?raw=true" alt="Futaba Renderer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
+      <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/futaba-window.png?raw=true" alt="Futaba Renderer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+    </div>
+    <div>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Futaba Renderer (WIP)</h4>
+      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
+        A high-performance physically based renderer written in C++ and CUDA.
+        The project focuses on clean architecture, GPU acceleration, and advanced rendering techniques.
+      </p>
+      <div class="about-project-actions">
+        <a href="https://github.com/USharma002/futaba-renderer" class="about-project-action" target="_blank">Project Link</a>
+      </div>
+    </div>
+  </div>
   <!-- Neural Path Guiding -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
@@ -185,7 +205,7 @@
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Path Guiding (Python)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
         Flexible research framework for experimenting with neural path guiding in Mitsuba 3 using Python.
-        Includes GUI for PDF visualization, prototype integrators, and spherical sensor tools.
+        Includes PDF visualization, prototype integrators, and spherical sensor tools.
       </p>
       <div class="about-project-actions">
         <a href="https://github.com/USharma002/py-neural-path-guiding" class="about-project-action" target="_blank">Project Link</a>
@@ -201,8 +221,8 @@
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer (WIP)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        An interactive web-based tool for exploring Signed Distance Fields (SDFs). 
-        Real-time visualization and manipulation of geometric primitives and operations using Raymarching.
+        An interactive web-based tool for exploring signed distance fields (SDFs).
+        Real-time visualization and manipulation of geometric primitives and operations using ray marching.
       </p>
       <div class="about-project-actions">
         <a href="https://usharma002.github.io/sdf-explorer/" target="_blank" class="about-project-action">Live Demo</a>
@@ -219,27 +239,11 @@
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Scalar Field Reconstructor</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        A python application to load and visualize the scalar field point cloud data and resample it using interpolation, octree or neural network.
+        A Python application for loading, visualizing, and resampling scalar field point cloud data.
+        Supports interpolation, octree-based reconstruction, and neural methods.
       </p>
       <div class="about-project-actions">
         <a href="https://github.com/USharma002/VolPath" class="about-project-action" target="_blank">Project Link</a>
-      </div>
-    </div>
-  </div>
-  <!-- Project 3 -->
-  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
-    <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="https://github.com/USharma002/CUDA-PathTracer/blob/main/assets/cbox.png?raw=true" alt="CUDA PathTracer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="/images/about/cuda-pathtracer.gif" alt="CUDA PathTracer GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
-    </div>
-    <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">CUDA PathTracer</h4>
-      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        Research project for fast GPU-accelerated path tracing with CUDA.
-        Includes experiments with custom guiding, radiosity, and interactive visual debugging.
-      </p>
-      <div class="about-project-actions">
-        <a href="https://github.com/USharma002/CUDA-PathTracer" class="about-project-action" target="_blank">Project Link</a>
       </div>
     </div>
   </div>
@@ -250,9 +254,9 @@
       <img src="https://usharma002.github.io/images/transformer/vit.gif" alt="ViT" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Vision Transformer Project</h4>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Vision Transformer Experiments</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        Implementation and experiments with Vision Transformers for efficient scene understanding.
+        Implementation and experiments with Vision Transformers for scene understanding.
         <!-- <br><span style="font-style: italic; color: #888;">(Private repository, coming soon)</span> -->
       </p>
       <div class="about-project-actions">
@@ -267,10 +271,10 @@
       <img src="https://gpuopen.com/images/neural_supersampling_and_denoising_for_real-time_path_tracing-html-_images-Picture3.DkEknTxE.jpg" alt="Denoiser GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Denoiser</h4>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Denoiser (Coming Soon)</h4>
       <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
         Developing deep learning-based denoising methods for photorealistic path tracing.
-        <br><span style="font-style: italic; color: #888;">(Private repository, coming soon)</span>
+        <br><span style="font-style: italic; color: #888;">(Private now, going public soon)</span>
       </p>
     </div>
   </div>
@@ -517,108 +521,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.appendChild(sidebar);
 
-    var tocScrollTarget = null;
-    var tocScrollClearTimer = null;
-    var tocScrollFrame = null;
-    var tocScrollObserver = null;
-    var tocScrollFallbackTimer = null;
-    var tocScrollFallbackTicks = 0;
-    var tocScrollFallbackLimit = 12;
-
     
-    function stopTocScrollTracking() {
-        tocScrollTarget = null;
-        tocScrollFallbackTicks = 0;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-            tocScrollClearTimer = null;
-        }
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-            tocScrollFrame = null;
-        }
-
-        if (tocScrollFallbackTimer) {
-            clearInterval(tocScrollFallbackTimer);
-            tocScrollFallbackTimer = null;
-        }
-
-        if (tocScrollObserver) {
-            tocScrollObserver.disconnect();
-            tocScrollObserver = null;
-        }
-    }
-
-    function alignTocScrollTarget() {
-        if (!tocScrollTarget || !document.contains(tocScrollTarget)) {
-            stopTocScrollTracking();
-            return;
-        }
-
-        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - clickScrollOffset);
-        if (Math.abs(window.scrollY - targetTop) > 2) {
-            window.scrollTo({ top: targetTop, behavior: 'auto' });
-        }
-    }
-
-    function queueTocScrollAlignment() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-        }
-
-        tocScrollFrame = requestAnimationFrame(function() {
-            tocScrollFrame = null;
-            alignTocScrollTarget();
-        });
-    }
-
-    function scheduleTocScrollClear() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-        }
-
-        tocScrollClearTimer = setTimeout(function() {
-            stopTocScrollTracking();
-        }, 750);
-    }
-
-    function startTocScroll(target) {
-        stopTocScrollTracking();
-        tocScrollTarget = target;
-
-        alignTocScrollTarget();
-
-        if (typeof ResizeObserver !== 'undefined') {
-            tocScrollObserver = new ResizeObserver(function() {
-                if (!tocScrollTarget) return;
-                queueTocScrollAlignment();
-                scheduleTocScrollClear();
-            });
-            tocScrollObserver.observe(content);
-            scheduleTocScrollClear();
-        } else {
-            tocScrollFallbackTimer = setInterval(function() {
-                if (!tocScrollTarget) {
-                    stopTocScrollTracking();
-                    return;
-                }
-
-                alignTocScrollTarget();
-                tocScrollFallbackTicks++;
-
-                if (tocScrollFallbackTicks >= tocScrollFallbackLimit) {
-                    stopTocScrollTracking();
-                }
-            }, 150);
-        }
-    }
-
     sidebar.addEventListener('click', function(e) {
         var anchor = e.target.closest('a[href^="#"]');
         if (!anchor) return;
@@ -630,12 +533,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!target) return;
 
         e.preventDefault();
-        e.stopImmediatePropagation();
 
-        startTocScroll(target);
+        var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+        var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 40);
 
-        history.pushState(null, null, `#${id}`);
-    }, true);
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth'
+        });
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + id);
+        } else {
+            location.hash = '#' + id;
+        }
+    });
 
     
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
@@ -643,39 +555,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var lastActiveId = '';
     var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
-    var activeHeaderOffset = headerHeight + 40;
-    var clickScrollOffset = headerHeight + 8;
-    var headerPositions = [];
+    var activeHeaderOffset = headerHeight + 45;
 
     
     var nestedUls = sidebar.querySelectorAll('ul ul');
     for (var i = 0; i < nestedUls.length; i++) {
         nestedUls[i].style.display = 'none';
-    }
-
-    function refreshHeaderPositions() {
-        headerPositions = new Array(headers.length);
-        for (var i = 0; i < headers.length; i++) {
-            headerPositions[i] = {
-                id: headers[i].getAttribute('id') || '',
-                top: headers[i].getBoundingClientRect().top + window.scrollY
-            };
-        }
-    }
-
-    function findActiveHeaderId() {
-        var currentId = '';
-        var currentTop = window.scrollY + activeHeaderOffset;
-
-        for (var i = 0; i < headerPositions.length; i++) {
-            if (headerPositions[i].top <= currentTop) {
-                currentId = headerPositions[i].id;
-            } else {
-                break;
-            }
-        }
-
-        return currentId;
     }
 
     function applyActiveState(currentId) {
@@ -710,46 +595,54 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             el = el.parentElement;
         }
+
+        
+        var container = sidebar.querySelector('.agn-sidetoc-links');
+        if (container) {
+            var containerRect = container.getBoundingClientRect();
+            var linkRect = activeLink.getBoundingClientRect();
+            var relativeTop = linkRect.top - containerRect.top + container.scrollTop;
+            var targetScrollTop = relativeTop - (container.clientHeight / 2) + (linkRect.height / 2);
+            container.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+        }
     }
 
-    
     var ticking = false;
-
     function onScroll() {
         if (ticking) return;
         ticking = true;
 
         requestAnimationFrame(function() {
-            var currentId = findActiveHeaderId();
+            var currentId = '';
+            var scrollY = window.scrollY;
+            var windowHeight = window.innerHeight;
+            var documentHeight = document.documentElement.scrollHeight;
+
+            if (scrollY + windowHeight >= documentHeight - 10) {
+                currentId = headers[headers.length - 1].id;
+            } else {
+                for (var i = headers.length - 1; i >= 0; i--) {
+                    var rect = headers[i].getBoundingClientRect();
+                    if (rect.top <= activeHeaderOffset) {
+                        currentId = headers[i].id;
+                        break;
+                    }
+                }
+            }
+
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    if (typeof ResizeObserver !== 'undefined') {
-        var layoutObserver = new ResizeObserver(function() {
-            refreshHeaderPositions();
-            onScroll();
-        });
-        layoutObserver.observe(content);
-
-        window.addEventListener('beforeunload', function() {
-            layoutObserver.disconnect();
-        });
-    }
-
-    window.addEventListener('resize', function() {
-        refreshHeaderPositions();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        refreshHeaderPositions();
-        onScroll();
-    });
-
-    refreshHeaderPositions();
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); 
+    window.addEventListener('resize', onScroll, { passive: true });
+    
+    
+    onScroll();
 });
 </script>
 
