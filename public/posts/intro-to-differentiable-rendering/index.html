@@ -124,7 +124,7 @@
     "Differentiable Rendering", "Computer Graphics"
   ],
   "articleBody": "Differentiable rendering techniques for computer graphics and vision",
-  "wordCount" : "19605",
+  "wordCount" : "19629",
   "inLanguage": "en",
   "datePublished": "2026-05-02T00:00:00Z",
   "dateModified": "2026-05-02T00:00:00Z",
@@ -621,6 +621,8 @@
 <p>Differentiable rendering asks a simple question with surprisingly sharp edges: if a renderer maps scene parameters to an image, can we differentiate that map? If yes, then geometry, materials, lights, and cameras can be optimized from image-space losses such as reconstruction error, perceptual losses, or task-specific objectives.
 The difficulty is that rendering is not just a smooth program. It is an integral over paths, visibility changes discontinuously, and Monte Carlo estimators have sampling choices that may themselves depend on the parameters. This post builds the story in layers: first automatic differentiation, then why naive AD fails for visibility, then boundary-aware Monte Carlo estimators, and finally the physics-based formulations used in modern differentiable renderers.</p>
 <p>I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. The main article focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic.</p>
+<blockquote>
+<p><em>Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini&rsquo;s PhD thesis <a href="/posts/intro-to-differentiable-rendering/#ref-2">[2]</a>.</em></p></blockquote>
 <h2 id="differentiation-methods">Differentiation Methods<a hidden class="anchor" aria-hidden="true" href="#differentiation-methods">#</a></h2>
 <h3 id="finite-differences-and-simultaneous-perturbation">Finite Differences and Simultaneous Perturbation<a hidden class="anchor" aria-hidden="true" href="#finite-differences-and-simultaneous-perturbation">#</a></h3>
 <p>The simplest approach to derivative estimation is the <strong>finite difference (FD)</strong> method. For a scalar function $f: \mathbb{R} \to \mathbb{R}$, the forward difference estimator approximates the derivative at $x$ using a small step size $h > 0$:</p>

@@ -25,6 +25,8 @@ The difficulty is that rendering is not just a smooth program. It is an integral
 
 I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. The main article focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic.
 
+> *Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini's PhD thesis [[2]](#ref-2).*
+
 ## Differentiation Methods
 
 
