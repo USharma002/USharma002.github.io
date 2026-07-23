@@ -2295,7 +2295,7 @@ Inverse rendering optimizations are highly non-convex and easily get trapped in 
 
 8. <span id="ref-8"></span>Bangaru, Sai Praveen, Tzu-Mao Li, and Frédo Durand. *“Unbiased Warped-Area Sampling for Differentiable Rendering.”* *ACM Transactions on Graphics (TOG)*, 39(6), 2020. [https://doi.org/10.1145/3414685.3417833](https://doi.org/10.1145/3414685.3417833). [Author version and errata](https://people.csail.mit.edu/sbangaru/projects/was-2020/index.html).
 
-9. <span id="ref-9"></span>Zhang, Cheng, Lifan Wu, Changxi Zheng, Ioannis Gkioulekas, Ravi Ramamoorthi, and Shuang Zhao. *“Path-Space Differentiable Rendering.”* *ACM Transactions on Graphics (TOG)*, 39(4), 2020. [https://doi.org/10.1145/3386569.3392414](https://doi.org/10.1145/3386569.3392414).
+9. <span id="ref-9"></span>Zhang, Cheng, Bailey Miller, Kai Yan, Ioannis Gkioulekas, and Shuang Zhao. *“Path-Space Differentiable Rendering.”* *ACM Transactions on Graphics (TOG)*, 39(4), Article 143, 2020. [https://doi.org/10.1145/3386569.3392383](https://doi.org/10.1145/3386569.3392383).
 
 10. <span id="ref-10"></span>Li, Tzu-Mao, Miika Aittala, Frédo Durand, and Jaakko Lehtinen. *“Differentiable Monte Carlo Ray Tracing through Edge Sampling.”* *ACM Transactions on Graphics (TOG)*, 37(6), Article 222, 2018. [https://doi.org/10.1145/3272127.3275109](https://doi.org/10.1145/3272127.3275109).
 
