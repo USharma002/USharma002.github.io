@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPSA - Parent Synchronized TeX Diagram</title>
+    <style>
+        :root {
+            /* Default Light Mode Parameters (PaperMod Day Theme) */
+            --bg: transparent;
+            --text: #0f172a;
+            --text-muted: #1e293b;
+            --axis: #ffffff;
+            --grid: rgba(255, 255, 255, 0.45);
+            --contour: rgba(255, 255, 255, 0.28);
+            --pert-line: #fb923c;
+            --pert-point: #f97316;
+            --grad-blue: #38bdf8;
+            --spsa-orange: #d97706;
+            --avg-green: #059669;
+
+            /* Light Mode Control UI */
+            --btn-bg: #f1f5f9;
+            --btn-border: #cbd5e1;
+            --btn-text: #0f172a;
+            --btn-hover: #e2e8f0;
+            --val-text: #0f172a;
+        }
+
+        /* Dark Mode Overrides (Synced from Parent PaperMod Theme or System) */
+        html.dark, body.dark, [data-theme="dark"] {
+            --text: #f8fafc;
+            --text-muted: #e2e8f0;
+            --axis: #ffffff;
+            --grid: rgba(255, 255, 255, 0.45);
+            --grad-blue: #38bdf8;
+            --spsa-orange: #fbbf24;
+            --avg-green: #34d399;
+
+            /* Dark Mode Control UI */
+            --btn-bg: #21262d;
+            --btn-border: #363b42;
+            --btn-text: #ffffff;
+            --btn-hover: #30363d;
+            --val-text: #ffffff;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: transparent;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+        }
+
+        .diagram-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-height: 380px;
+            aspect-ratio: 400 / 250;
+            border-radius: 0;
+            overflow: hidden;
+            background: #000004;
+            border: none;
+            box-shadow: none;
+        }
+
+        canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: block;
+        }
+
+        svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: block; overflow: visible;
+        }
+
+        /* LaTeX / KaTeX Typography */
+        .label-text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); }
+        .label-math {
+            font-family: 'KaTeX_Math', 'Times New Roman', Times, serif;
+            font-style: italic; font-size: 14px; fill: #ffffff;
+            paint-order: stroke fill; stroke: rgba(0, 0, 4, 0.95);
+            stroke-width: 3.5px; stroke-linecap: round; stroke-linejoin: round;
+        }
+
+        .label-orange { fill: var(--spsa-orange); stroke: rgba(0,0,4,0.95); }
+        .label-blue   { fill: var(--grad-blue);   stroke: rgba(0,0,4,0.95); }
+        .label-green  { fill: var(--avg-green);  stroke: rgba(0,0,4,0.95); }
+
+        /* Full Width Centered Legend & Controls */
+        .diagram-legend {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 24px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 6px 0;
+            border-top: none;
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .legend-line { width: 18px; height: 0; border-top: 2px solid; }
+        .legend-line.dashed { border-top-style: dashed; }
+
+        .minimal-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            width: 100%;
+            padding: 6px 0 12px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Theme Adaptive Buttons */
+        .btn-minimal {
+            background: var(--btn-bg) !important;
+            border: 1.5px solid var(--btn-border) !important;
+            color: var(--btn-text) !important;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-minimal:hover {
+            background: var(--btn-hover) !important;
+            border-color: var(--spsa-orange) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-minimal:active {
+            transform: translateY(0);
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100px;
+            height: 18px;
+            accent-color: var(--spsa-orange);
+            cursor: pointer;
+        }
+
+        .val-num {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--val-text) !important;
+        }
+
+        .sample-counter {
+            font-size: 13px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="diagram-wrapper">
+    <div class="canvas-container">
+        <!-- Magma Heatmap Canvas Layer -->
+        <canvas id="heatCanvas" width="400" height="250"></canvas>
+
+        <!-- SVG Vector Layer -->
+        <svg id="spsaSVG" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid meet">
+            <defs>
+                <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--grad-blue)" /></marker>
+                <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--spsa-orange)" /></marker>
+                <marker id="arrow-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--avg-green)" /></marker>
+                <marker id="axis-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--axis)" /></marker>
+            </defs>
+
+            <!-- Coordinate Axes x1, x2 -->
+            <line x1="30" y1="205" x2="375" y2="205" stroke="var(--axis)" stroke-width="1.5" marker-end="url(#axis-arrow)" />
+            <line x1="45" y1="225" x2="45" y2="20" stroke="var(--axis)" stroke-width="1.5" marker-end="url(#axis-arrow)" />
+            <text x="380" y="209" class="label-math">x₁</text>
+            <text x="41" y="14" class="label-math">x₂</text>
+
+            <g id="contours-group"></g>
+
+            <!-- Coordinate Projections -->
+            <line id="proj-x" stroke="var(--grid)" stroke-width="1" stroke-dasharray="3,3" />
+            <line id="proj-y" stroke="var(--grid)" stroke-width="1" stroke-dasharray="3,3" />
+            <text id="proj-x-lbl" x="0" y="219" text-anchor="middle" class="label-math">x₁*</text>
+            <text id="proj-y-lbl" x="35" y="0" text-anchor="end" class="label-math">x₂*</text>
+
+            <line id="pert-line" stroke="var(--pert-line)" stroke-width="1.2" stroke-dasharray="4,3" />
+
+            <!-- Vector Arrows -->
+            <line id="vec-true" stroke="var(--grad-blue)" stroke-width="2.2" marker-end="url(#arrow-blue)" />
+            <text id="lbl-true" class="label-math label-blue">∇f(x)</text>
+
+            <line id="vec-spsa" stroke="var(--spsa-orange)" stroke-width="2.2" marker-end="url(#arrow-orange)" />
+            <text id="lbl-spsa" class="label-math label-orange">ĝ</text>
+
+            <line id="vec-avg" stroke="var(--avg-green)" stroke-width="2.0" marker-end="url(#arrow-green)" opacity="0" />
+            <text id="lbl-avg" class="label-math label-green" opacity="0">E[ĝ]</text>
+
+            <!-- Perturbation Points & Center x -->
+            <circle id="point-plus" r="4.5" fill="var(--pert-point)" stroke="#ffffff" stroke-width="1.2" />
+            <circle id="point-minus" r="4.5" fill="var(--pert-point)" stroke="#ffffff" stroke-width="1.2" />
+            <circle id="point-center" r="5.5" fill="#ffffff" stroke="var(--axis)" stroke-width="1.5" style="cursor: move;" />
+
+            <text id="lbl-center" class="label-math">x</text>
+            <text id="lbl-plus" class="label-math label-orange">x + hΔ</text>
+            <text id="lbl-minus" class="label-math label-orange">x − hΔ</text>
+        </svg>
+    </div>
+
+    <!-- Centered Legend -->
+    <div class="diagram-legend">
+        <div class="legend-item"><span class="legend-line" style="border-color: #88226a;"></span><span>Magma Landscape: <tspan class="label-math">f(x)</tspan></span></div>
+        <div class="legend-item"><span class="legend-line dashed" style="border-color: var(--pert-line);"></span><span>Secant Direction: <tspan class="label-math">hΔ</tspan></span></div>
+        <div class="legend-item"><span class="legend-line" style="border-color: var(--grad-blue);"></span><span>Blue Vector: True Gradient <tspan class="label-math">∇f(x)</tspan></span></div>
+        <div class="legend-item"><span class="legend-line" style="border-color: var(--spsa-orange);"></span><span>Orange Vector: SPSA Estimate <tspan class="label-math">ĝ</tspan></span></div>
+        <div class="legend-item"><span class="legend-line" style="border-color: var(--avg-green);"></span><span>Green Vector: Mean <tspan class="label-math">E[ĝ]</tspan> over samples</span></div>
+    </div>
+
+    <!-- Prominent Centered Controls -->
+    <div class="minimal-controls">
+        <button class="btn-minimal" id="btn-sample">🎲 Sample Δ = (±1, ±1)ᵀ</button>
+        <button class="btn-minimal" id="btn-reset">Reset Avg</button>
+        <div class="slider-group">
+            <span>Step <tspan class="label-math">h</tspan>:</span>
+            <input type="range" id="slider-h" min="0.15" max="0.6" step="0.02" value="0.35">
+            <span id="val-h" class="val-num">0.35</span>
+        </div>
+        <span class="sample-counter">Samples <tspan class="label-math">N</tspan> = <span id="val-n" class="val-num">1</span></span>
+    </div>
+</div>
+
+<script>
+    // Theme sync listener for PaperMod parent window
+    function syncThemeFromParent() {
+        let isDark = false;
+        try {
+            const pDoc = window.parent.document;
+            const pBody = pDoc.body;
+            const pHtml = pDoc.documentElement;
+            isDark = pBody.classList.contains('dark') || 
+                     pHtml.classList.contains('dark') ||
+                     pBody.getAttribute('data-theme') === 'dark' ||
+                     pHtml.getAttribute('data-theme') === 'dark';
+        } catch(e) {
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    }
+
+    try {
+        const observer = new MutationObserver(syncThemeFromParent);
+        observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+        observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    } catch(e) {}
+
+    syncThemeFromParent();
+
+    let state = { x: [0.75, 0.5], h: 0.35, delta: [1, 1], samples: [], isDragging: false };
+
+    function loss(x1, x2) {
+        const quad = 0.55 * (x1 * x1 + 1.8 * x2 * x2 - 0.75 * x1 * x2);
+        const wave = 0.45 * (1.0 - Math.cos(2.2 * x1) * Math.cos(2.2 * x2));
+        return quad + wave;
+    }
+
+    function trueGrad(x1, x2) {
+        const df_dx1 = 1.1 * x1 - 0.4125 * x2 + 0.99 * Math.sin(2.2 * x1) * Math.cos(2.2 * x2);
+        const df_dx2 = 1.98 * x2 - 0.4125 * x1 + 0.99 * Math.cos(2.2 * x1) * Math.sin(2.2 * x2);
+        return [df_dx1, df_dx2];
+    }
+
+    function mathToSvg(x, y) { return [200 + (x / 1.45) * 155, 125 - (y / 1.45) * 80]; }
+    function svgToMath(sx, sy) { return [((sx - 200) / 155) * 1.45, ((125 - sy) / 80) * 1.45]; }
+
+    const magmaLUT = [
+        [0, 0, 4],        // 0.00: Dark blue / black center
+        [27, 12, 65],     // 0.15: Deep dark purple
+        [74, 16, 121],    // 0.32: Rich violet
+        [136, 34, 106],   // 0.50: Vibrant magenta
+        [198, 70, 83],    // 0.70: Crimson rose
+        [232, 119, 56],   // 0.88: Warm coral
+        [248, 154, 66]    // 1.00: Golden orange corner hint
+    ];
+
+    const heatCanvas = document.getElementById('heatCanvas'), ctx = heatCanvas.getContext('2d');
+
+    function renderHeatmap() {
+        const w = heatCanvas.width, h = heatCanvas.height;
+        const imgData = ctx.createImageData(w, h), data = imgData.data;
+        const maxLoss = 5.2;
+
+        for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+                const [mx, my] = svgToMath(px, py);
+                const l = loss(mx, my);
+                const norm = Math.min(1, Math.max(0, Math.pow(l / maxLoss, 0.75)));
+                const idx = norm * (magmaLUT.length - 1);
+                const i1 = Math.floor(idx);
+                const i2 = Math.min(magmaLUT.length - 1, i1 + 1);
+                const f = idx - i1;
+
+                const offset = (py * w + px) * 4;
+                data[offset]     = Math.round(magmaLUT[i1][0] * (1 - f) + magmaLUT[i2][0] * f);
+                data[offset + 1] = Math.round(magmaLUT[i1][1] * (1 - f) + magmaLUT[i2][1] * f);
+                data[offset + 2] = Math.round(magmaLUT[i1][2] * (1 - f) + magmaLUT[i2][2] * f);
+                data[offset + 3] = 255;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+    }
+
+    const svg = document.getElementById('spsaSVG'), contoursGroup = document.getElementById('contours-group');
+    const pointCenter = document.getElementById('point-center'), pointPlus = document.getElementById('point-plus'), pointMinus = document.getElementById('point-minus');
+    const pertLine = document.getElementById('pert-line'), projX = document.getElementById('proj-x'), projY = document.getElementById('proj-y');
+    const projXLbl = document.getElementById('proj-x-lbl'), projYLbl = document.getElementById('proj-y-lbl');
+    const vecTrue = document.getElementById('vec-true'), vecSpsa = document.getElementById('vec-spsa'), vecAvg = document.getElementById('vec-avg');
+    const lblCenter = document.getElementById('lbl-center'), lblPlus = document.getElementById('lbl-plus'), lblMinus = document.getElementById('lbl-minus');
+    const lblTrue = document.getElementById('lbl-true'), lblSpsa = document.getElementById('lbl-spsa'), lblAvg = document.getElementById('lbl-avg');
+    const btnSample = document.getElementById('btn-sample'), btnReset = document.getElementById('btn-reset'), sliderH = document.getElementById('slider-h');
+    const valH = document.getElementById('val-h'), valN = document.getElementById('val-n');
+
+    function drawContours() {
+        contoursGroup.innerHTML = '';
+        const levels = [0.15, 0.45, 0.9, 1.5, 2.4, 3.5];
+        levels.forEach((val, idx) => {
+            let pts = [];
+            for (let a = 0; a <= 360; a += 5) {
+                const rad = a * Math.PI / 180, cos = Math.cos(rad), sin = Math.sin(rad);
+                let r = 0.15;
+                for (let step = 0; step < 30; step++) {
+                    const l = loss(r * cos, r * sin);
+                    if (l >= val) break;
+                    r += 0.05;
+                }
+                const [sx, sy] = mathToSvg(r * cos, r * sin);
+                pts.push(`${sx.toFixed(1)},${sy.toFixed(1)}`);
+            }
+            const el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            el.setAttribute('points', pts.join(' ')); el.setAttribute('fill', 'none');
+            el.setAttribute('stroke', 'var(--contour)'); el.setAttribute('stroke-width', idx === 2 ? '1.5' : '0.8');
+            contoursGroup.appendChild(el);
+        });
+    }
+
+    function sampleDelta() { state.delta = [Math.random() < 0.5 ? -1 : 1, Math.random() < 0.5 ? -1 : 1]; }
+    function computeSPSA() {
+        const [x1, x2] = state.x, [d1, d2] = state.delta, h = state.h;
+        const diff = (loss(x1 + h * d1, x2 + h * d2) - loss(x1 - h * d1, x2 - h * d2)) / (2 * h);
+        return [diff * d1, diff * d2];
+    }
+
+    function update() {
+        const [x1, x2] = state.x, [d1, d2] = state.delta, h = state.h;
+        const [cx, cy] = mathToSvg(x1, x2);
+        pointCenter.setAttribute('cx', cx); pointCenter.setAttribute('cy', cy);
+        lblCenter.setAttribute('x', cx - 14); lblCenter.setAttribute('y', cy - 8);
+
+        projX.setAttribute('x1', cx); projX.setAttribute('y1', 205); projX.setAttribute('x2', cx); projX.setAttribute('y2', cy);
+        projXLbl.setAttribute('x', cx);
+        projY.setAttribute('x1', 45); projY.setAttribute('y1', cy); projY.setAttribute('x2', cx); projY.setAttribute('y2', cy);
+        projYLbl.setAttribute('y', cy + 4);
+
+        const [px, py] = mathToSvg(x1 + h * d1, x2 + h * d2);
+        const [mx, my] = mathToSvg(x1 - h * d1, x2 - h * d2);
+        pointPlus.setAttribute('cx', px); pointPlus.setAttribute('cy', py);
+        pointMinus.setAttribute('cx', mx); pointMinus.setAttribute('cy', my);
+
+        const dirX = px - cx, dirY = py - cy, len = Math.hypot(dirX, dirY) || 1;
+        const nx = dirX / len, ny = dirY / len;
+
+        lblPlus.setAttribute('x', px + nx * 14); lblPlus.setAttribute('y', py + ny * 14 + 4);
+        lblMinus.setAttribute('x', mx - nx * 45); lblMinus.setAttribute('y', my - ny * 14 + 4);
+
+        pertLine.setAttribute('x1', px); pertLine.setAttribute('y1', py);
+        pertLine.setAttribute('x2', mx); pertLine.setAttribute('y2', my);
+
+        const vecScale = 28;
+        const [gt1, gt2] = trueGrad(x1, x2);
+        const tx = cx + gt1 * vecScale, ty = cy - gt2 * vecScale;
+        vecTrue.setAttribute('x1', cx); vecTrue.setAttribute('y1', cy); vecTrue.setAttribute('x2', tx); vecTrue.setAttribute('y2', ty);
+        const gLen = Math.hypot(gt1, gt2) || 1;
+        lblTrue.setAttribute('x', tx + (gt1 / gLen) * 12); lblTrue.setAttribute('y', ty - (gt2 / gLen) * 12 + 4);
+
+        const [gs1, gs2] = computeSPSA();
+        const sx = cx + gs1 * vecScale, sy = cy - gs2 * vecScale;
+        vecSpsa.setAttribute('x1', cx); vecSpsa.setAttribute('y1', cy); vecSpsa.setAttribute('x2', sx); vecSpsa.setAttribute('y2', sy);
+        const sLen = Math.hypot(gs1, gs2) || 1;
+        lblSpsa.setAttribute('x', sx + (gs1 / sLen) * 12); lblSpsa.setAttribute('y', sy - (gs2 / sLen) * 12 + 4);
+
+        state.samples.push([gs1, gs2]);
+        const N = state.samples.length;
+        let a1 = 0, a2 = 0; state.samples.forEach(s => { a1 += s[0]; a2 += s[1]; }); a1 /= N; a2 /= N;
+
+        const ax = cx + a1 * vecScale, ay = cy - a2 * vecScale;
+        vecAvg.setAttribute('x1', cx); vecAvg.setAttribute('y1', cy); vecAvg.setAttribute('x2', ax); vecAvg.setAttribute('y2', ay);
+        const aLen = Math.hypot(a1, a2) || 1;
+        lblAvg.setAttribute('x', ax + (a1 / aLen) * 12); lblAvg.setAttribute('y', ay - (a2 / aLen) * 12 + 10);
+
+        const showAvg = N > 1;
+        vecAvg.setAttribute('opacity', showAvg ? "0.9" : "0"); lblAvg.setAttribute('opacity', showAvg ? "0.9" : "0");
+        valN.textContent = N;
+    }
+
+    function resetAvg() { state.samples = []; update(); }
+    btnSample.addEventListener('click', () => { sampleDelta(); update(); });
+    btnReset.addEventListener('click', resetAvg);
+    sliderH.addEventListener('input', (e) => { state.h = parseFloat(e.target.value); valH.textContent = state.h.toFixed(2); resetAvg(); });
+
+    function handlePointer(e) {
+        if (!state.isDragging) return;
+        const rect = svg.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX), clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        if (clientX === undefined) return;
+        const [x1, x2] = svgToMath((clientX - rect.left) * (400 / rect.width), (clientY - rect.top) * (250 / rect.height));
+        state.x = [Math.max(-1.3, Math.min(1.3, x1)), Math.max(-1.3, Math.min(1.3, x2))];
+        resetAvg();
+    }
+
+    svg.addEventListener('pointerdown', (e) => { state.isDragging = true; handlePointer(e); });
+    window.addEventListener('pointermove', handlePointer);
+    window.addEventListener('pointerup', () => { state.isDragging = false; });
+
+    renderHeatmap(); drawContours(); sampleDelta(); update();
+</script>
+</body>
+</html>

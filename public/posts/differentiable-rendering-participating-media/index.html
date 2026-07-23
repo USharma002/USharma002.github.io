@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Differentiable Rendering of Participating Media | USharma Notes</title>
+<meta name="keywords" content="Differentiable Rendering, Participating Media, Radiative Transfer">
+<meta name="description" content="Differential radiative transfer and gradient estimation for participating media">
+<meta name="author" content="Utkarsh Sharma">
+<link rel="canonical" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.d560e80c1c8d3bc8e5d808acb01ea1bbbb8fd0d8bbe9a3d4b2515537aecca11e.css" integrity="sha256-1WDoDByNO8jl2AissB6hu7uP0Ni76aPUslFVN67MoR4=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;700&family=Source+Code+Pro:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap"
+  onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;700&family=Source+Code+Pro:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+</noscript>
+
+<script>
+  window.MathJax = {
+    tex: {
+      
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      tags: 'ams'  
+    }
+  };
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/archives/" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <h1 class="post-title entry-hint-parent">
+      Differentiable Rendering of Participating Media
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h1>
+    <div class="post-description">
+      Differential radiative transfer and gradient estimation for participating media
+    </div>
+    <div class="post-meta"><span title='2026-07-18 00:00:00 +0000 UTC'>July 18, 2026</span>&nbsp;·&nbsp;11 min&nbsp;·&nbsp;Utkarsh Sharma
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#radiative-transfer-theory-preliminaries" aria-label="Radiative Transfer Theory Preliminaries">Radiative Transfer Theory Preliminaries</a></li>
+                <li>
+                    <a href="#differential-radiative-transfer" aria-label="Differential Radiative Transfer">Differential Radiative Transfer</a></li>
+                <li>
+                    <a href="#differentiation-of-the-transport-and-collision-operators" aria-label="Differentiation of the Transport and Collision Operators">Differentiation of the Transport and Collision Operators</a></li>
+                <li>
+                    <a href="#differentiation-of-the-in-scattered-radiance" aria-label="Differentiation of the In-Scattered Radiance">Differentiation of the In-Scattered Radiance</a></li>
+                <li>
+                    <a href="#differentiation-of-the-interfacial-scattering-operator" aria-label="Differentiation of the Interfacial Scattering Operator">Differentiation of the Interfacial Scattering Operator</a></li>
+                <li>
+                    <a href="#completing" aria-label="Completing $\partial_\pi L$">Completing $\partial_\pi L$</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><blockquote>
+<p><strong>Draft note:</strong> This article assumes the Reynolds Transport Theorem and surface-visibility notation introduced in <a href="/posts/intro-to-differentiable-rendering/">Introduction to Differentiable Rendering</a>. It is kept as a separate draft while the volumetric treatment is being revised.</p></blockquote>
+<p>Surfaces scatter light at boundaries. Participating media scatter and absorb light <em>inside</em> a volume: smoke, fog, milk, skin, wax, clouds. The radiative transfer equation (RTE) is the volume analogue of the rendering equation. It is intimidating mostly because it has several physical processes happening at once, so we will keep a simple map in mind:</p>
+<ol>
+<li><strong>Transport</strong>: light travels through the medium and is attenuated by transmittance.</li>
+<li><strong>Collision/scattering</strong>: particles redirect light from other directions into the ray.</li>
+<li><strong>Boundary interaction</strong>: light enters, exits, reflects, or refracts at the medium boundary.</li>
+<li><strong>Emission</strong>: the medium or the boundary may add radiance directly.</li>
+</ol>
+<p>The differentiable version asks how each of these four pieces changes when a scene parameter $\pi$ changes.</p>
+<h2 id="radiative-transfer-theory-preliminaries">Radiative Transfer Theory Preliminaries<a hidden class="anchor" aria-hidden="true" href="#radiative-transfer-theory-preliminaries">#</a></h2>
+<p>Radiative transfer uses energy conservation principles to model light transport in participating media. At its core is the <em>radiative transfer equation</em> (RTE). Consider a medium confined in a volume $\Omega \subseteq \mathbb{R}^3$ with boundary $\partial \Omega$.</p>
+<p>Instead of writing massive nested integrals, it is common to use mathematical <em>operators</em> to represent different physical processes. The <em>steady-state</em> RTE is a linear integral equation on the radiance field $L$ in the interior of the volume. Physically, it expresses that the radiance at any point is the sum of three contributions: light that was scattered into the path from elsewhere in the volume, light that entered or was reflected/refracted at the medium&rsquo;s outer boundary, and light that was directly emitted by the medium or the boundary. In operator form, we can write this elegantly as:</p>
+$$
+\begin{equation}
+L = \underbrace{{\color{#0f85a5}(\mathcal{K}_T \mathcal{K}_C) L}}_{\text{Volumetric Scattering}} + \underbrace{{\color{#4facfe}\mathcal{K}_S L}}_{\text{Interfacial Scattering}} + \underbrace{{\color{#ff6b6b}L^{(0)}}}_{\text{Radiant Emission}} \label{eq:rte}
+\end{equation}
+$$<p>The operators below are just compact names for those physical processes:</p>
+<p><strong>1. The transport operator ($\mathcal{K}_T$).</strong> This models straight-line travel through the medium. It maps any function $g: (\Omega \setminus \partial \Omega) \times \mathbb{S}^2 \to \mathbb{R}_+$ to a ray integral:</p>
+$$
+\begin{equation}
+(\mathcal{K}_T g)(\mathbf{x}, \boldsymbol{\omega}) = \int_0^D T(\mathbf{x}', \mathbf{x}) g(\mathbf{x}', \boldsymbol{\omega}) \mathrm{d}\tau, \label{eq:transport_op}
+\end{equation}
+$$<p>where $\mathbf{x}' := \mathbf{x} - \tau\boldsymbol{\omega}$ is a point along the ray, and $D$ is the total distance from $\mathbf{x}$ to the medium&rsquo;s boundary in the direction of $-\boldsymbol{\omega}$:</p>
+$$
+\begin{equation}
+D = \inf\{\tau \in \mathbb{R}_+ \,:\, \mathbf{x} - \tau\boldsymbol{\omega} \in \partial \Omega \}; \label{eq:distance}
+\end{equation}
+$$<p>Here, $T(\mathbf{x}', \mathbf{x})$ is the <em>transmittance</em>. You can think of transmittance as the probability that light successfully travels the distance between $\mathbf{x}'$ and $\mathbf{x}$ without hitting a particle (being absorbed or scattered away):</p>
+$$
+\begin{equation}
+T(\mathbf{x}', \mathbf{x}) = \exp\left(-\int_0^\tau \sigma_t(\mathbf{x} - \tau'\boldsymbol{\omega}) \mathrm{d}\tau'\right), \label{eq:transmittance}
+\end{equation}
+$$<p>with $\sigma_t$ denoting the medium&rsquo;s <em>extinction coefficient</em> (how strongly the medium blocks light).</p>
+<p><strong>2. The collision operator ($\mathcal{K}_C$).</strong> This gathers light scattered toward the ray from all other directions. It maps the interior radiance field $L$ to the <em>in-scattered radiance</em> ($L^\text{ins}$):</p>
+$$
+\begin{equation}
+(\mathcal{K}_C L)(\mathbf{x}, \boldsymbol{\omega}) = \sigma_s(\mathbf{x}) \underbrace{\int_{\mathbb{S}^2} f_p(\mathbf{x}, -\boldsymbol{\omega}_i, \boldsymbol{\omega}) L(\mathbf{x}, \boldsymbol{\omega}_i) \mathrm{d}\sigma(\boldsymbol{\omega}_i)}_{=: L^\text{ins}(\mathbf{x}, \boldsymbol{\omega})}, \label{eq:collision_op}
+\end{equation}
+$$<p>where $\sigma_s$ is the medium&rsquo;s <em>scattering coefficient</em> and $f_p$ is the <em>single-scattering phase function</em> (which dictates the directional distribution of scattered light, similar to a BSDF for surfaces).</p>
+<p><strong>3. The interfacial scattering operator ($\mathcal{K}_S$).</strong> This handles what happens when light hits the boundary of the medium. It follows the standard surface rendering equation:</p>
+$$
+\begin{equation}
+(\mathcal{K}_S L)(\mathbf{x}, \boldsymbol{\omega}) = T(\mathbf{x}_0, \mathbf{x}) \int_{\mathbb{S}^2} f_s(\mathbf{x}_0, -\boldsymbol{\omega}_i, \boldsymbol{\omega}) L(\mathbf{x}_0, \boldsymbol{\omega}_i) \mathrm{d}\sigma(\boldsymbol{\omega}_i), \label{eq:interfacial_op}
+\end{equation}
+$$<p>where $\mathbf{x}_0 := \mathbf{x} - D\boldsymbol{\omega}$ is a point on the medium&rsquo;s boundary.</p>
+<p><strong>4. The emission term ($L^{(0)}$).</strong> The last term on the right-hand side of the RTE $\eqref{eq:rte}$ is the primary emission:</p>
+$$
+\begin{equation}
+L^{(0)}(\mathbf{x}, \boldsymbol{\omega}) := \underbrace{{\color{#0f85a5}(\mathcal{K}_T \sigma_a Q)(\mathbf{x}, \boldsymbol{\omega})}}_{\text{Volumetric Emission}} + \underbrace{{\color{#4facfe}T(\mathbf{x}_0, \mathbf{x}) L_e(\mathbf{x}_0, \boldsymbol{\omega})}}_{\text{Boundary Emission}}, \label{eq:emission_op}
+\end{equation}
+$$<p>which accounts for radiant emission inside the medium and from its boundary. Here, $\sigma_a := \sigma_t - \sigma_s$ is the <em>absorption coefficient</em>, and $Q$ represents the medium&rsquo;s radiant emission.</p>
+<h2 id="differential-radiative-transfer">Differential Radiative Transfer<a hidden class="anchor" aria-hidden="true" href="#differential-radiative-transfer">#</a></h2>
+<p>With the forward model defined, we can now ask how the interior radiance $L$ changes when a scene parameter $\pi \in \mathbb{R}$ changes: density, scattering albedo, phase-function parameters, or the boundary shape. We derive $\partial_\pi L := \partial L / \partial \pi$ by differentiating the operators in Eq. $\eqref{eq:rte}$.</p>
+<p><strong>Assumptions.</strong> To keep this intro readable, we follow the common non-emissive-medium simplification and ignore volumetric emission when deriving $\partial_\pi L$. We also assume the medium properties ($\sigma_t, \sigma_s, f_p, f_s, L_e$) are spatially and directionally continuous, and that there are no ideal specular delta events or perfectly sharp light sources. Those cases require additional care.</p>
+<p><strong>Overview.</strong> By applying the linearity of derivatives, the structure of our differential equation breaks down perfectly into three parts:</p>
+$$
+\begin{equation}
+\partial_\pi L = \underbrace{{\color{#0f85a5}\partial_\pi (\mathcal{K}_T \mathcal{K}_C L)}}_{\text{Volumetric Deriv.}} + \underbrace{{\color{#4facfe}\partial_\pi (\mathcal{K}_S L)}}_{\text{Interfacial Deriv.}} + \underbrace{{\color{#ff6b6b}\partial_\pi L^{(0)}}}_{\text{Emission Deriv.}} \label{eq:diff_outline}
+\end{equation}
+$$<p>The rest of this section expands these terms. The important intuition is simple: differentiating volumes creates the same two kinds of terms we saw for surfaces, but now they can occur along a ray segment as well as on moving discontinuity curves.</p>
+<h2 id="differentiation-of-the-transport-and-collision-operators">Differentiation of the Transport and Collision Operators<a hidden class="anchor" aria-hidden="true" href="#differentiation-of-the-transport-and-collision-operators">#</a></h2>
+<p>We start with the first term: $\partial_\pi (\mathcal{K}_T \mathcal{K}_C L)$. By differentiating this combined operator, we account for changes in the medium&rsquo;s density and scattering properties. Expanding this gives us three distinct effects:</p>
+$$
+\begin{equation}
+\begin{aligned}
+(\partial_\pi \mathcal{K}_T \mathcal{K}_C L)(\mathbf{x}, \boldsymbol{\omega}) = &\underbrace{{\color{#0f85a5} \int_0^D T(\mathbf{x}', \mathbf{x}) \sigma_s(\mathbf{x}') \partial_\pi L^\text{ins}(\mathbf{x}', \boldsymbol{\omega}) \mathrm{d}\tau }}_{\text{Change in In-scattered Radiance}} \\
+&+ \underbrace{{\color{#4facfe} \int_0^D T(\mathbf{x}', \mathbf{x}) \left[ \partial_\pi \sigma_s(\mathbf{x}') - \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, \tau)\sigma_s(\mathbf{x}') \right] L^\text{ins}(\mathbf{x}', \boldsymbol{\omega}) \mathrm{d}\tau }}_{\text{Change in Material \& Transmittance}} \\
+&+ \underbrace{{\color{#e69138} \partial_\pi D \, T(\mathbf{x}_0, \mathbf{x}) \sigma_s(\mathbf{x}_0) L^\text{ins}(\mathbf{x}_0, \boldsymbol{\omega}) }}_{\text{Change in Boundary Distance}},
+\end{aligned}
+\label{eq:diff_transport_collision}
+\end{equation}
+$$<p>where $\mathbf{x}' := \mathbf{x} - \tau\boldsymbol{\omega}$ is a point on the ray; $\mathbf{x}_0$ is where the ray hits the boundary; and $\Sigma_t(\mathbf{x}, \boldsymbol{\omega}, \tau)$ represents the accumulated change in extinction along the ray, defined as:</p>
+$$
+\begin{equation}
+\Sigma_t(\mathbf{x}, \boldsymbol{\omega}, \tau) := \int_0^\tau \partial_\pi \sigma_t(\mathbf{x} - \tau'\boldsymbol{\omega}) \mathrm{d}\tau'. \label{eq:sigma_t}
+\end{equation}
+$$<p>In Eqs. $\eqref{eq:diff_transport_collision}$ and $\eqref{eq:sigma_t}$, $\partial_\pi \sigma_t$ and $\partial_\pi \sigma_s$ are <em>material derivatives</em>. They capture how the medium&rsquo;s properties change if the parameter $\pi$ moves the material itself:</p>
+$$
+\begin{equation}
+\partial_\pi \sigma(\mathbf{x}) = \frac{\partial\sigma}{\partial\pi}(\mathbf{x}) + \langle \partial_\pi \mathbf{x}, \nabla\sigma(\mathbf{x}) \rangle, \label{eq:material_deriv}
+\end{equation}
+$$<p><strong>In-scattered radiance at the boundary.</strong> The last term in Eq. $\eqref{eq:diff_transport_collision}$ requires us to evaluate $L^\text{ins}$ exactly at the boundary point $\mathbf{x}_0$. This needs care because light transport behaves differently depending on whether it is arriving from inside or outside the medium.</p>
+<p>We define $L^\text{ins}(\mathbf{x}_0, \boldsymbol{\omega})$ as the limit approaching from the interior. Because of this boundary split, the integral breaks into two hemispheres:</p>
+$$
+\begin{equation}
+\begin{aligned}
+L^\text{ins}(\mathbf{x}_0, \boldsymbol{\omega}) = &\int_{\mathbb{H}_+} f_p(\mathbf{x}_0, -\boldsymbol{\omega}', \boldsymbol{\omega}) L(\mathbf{x}_0, \boldsymbol{\omega}') \mathrm{d}\boldsymbol{\omega}' \\
+&+ \int_{\mathbb{H}_-} f_p(\mathbf{x}_0, -\boldsymbol{\omega}', \boldsymbol{\omega}) L(\mathbf{x}_0, \boldsymbol{\omega}') \mathrm{d}\boldsymbol{\omega}',
+\end{aligned}
+\label{eq:ins_boundary}
+\end{equation}
+$$<p>where $\mathbb{H}_+$ (pointing outside) and $\mathbb{H}_-$ (pointing inside) are separated by the boundary normal $\mathbf{n}(\mathbf{x}_0)$:</p>
+$$
+\begin{equation}
+\mathbb{H}_+ = \{\boldsymbol{\omega}' \in \mathbb{S}^2 \,:\, \langle \mathbf{n}(\mathbf{x}_0), \boldsymbol{\omega}' \rangle > 0\}, \quad \mathbb{H}_- = \{\boldsymbol{\omega}' \in \mathbb{S}^2 \,:\, \langle \mathbf{n}(\mathbf{x}_0), \boldsymbol{\omega}' \rangle < 0\}. \label{eq:hemispheres}
+\end{equation}
+$$<figure id="fig-rte-boundary" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/inscattering.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
+      Calculating the in-scattered radiance $L^\text{ins}$ at location $\mathbf{x}_0 \in \partial \Omega$ with direction $\boldsymbol{\omega}$ pointing toward the interior of the medium (illustrated in gray). (a) When $\boldsymbol{\omega}' \in \mathbb{H}_+$ (i.e., pointing toward the exterior of the medium), the interior radiance $L(\mathbf{x}_0, \boldsymbol{\omega}')$ involving a line integral (indicated as the dashed line in green) from the interior is used. (b) When $\boldsymbol{\omega}' \in \mathbb{H}_-$, on the contrary, the interfacial radiance $L(\mathbf{x}_0, \boldsymbol{\omega}')$ from the interior is used. This radiance is in turn determined by interior radiances reflected and refracted by the interface (shown as dashed lines in orange).
+    </figcaption></figure>
+
+<style>
+    .zoom-overlay {
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      cursor: zoom-out;
+    }
+    .zoom-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .zoom-overlay-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 95vw;
+      max-height: 95vh;
+    }
+
+    .zoom-overlay img {
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      transform: scale(0.95) translateY(10px);
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    
+    .zoom-overlay.active img {
+      transform: scale(1) translateY(0);
+    }
+
+    .zoom-overlay.svg-bg img {
+      background-color: #ffffff;
+      padding: 1.5rem;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 0 10px 40px rgba(0,0,0,0.5);
+    }
+    
+    #zoom-caption {
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.95);
+      text-align: center;
+      max-width: 800px;
+      line-height: 1.5;
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition-delay: 0.1s;
+    }
+    
+    .zoom-overlay.active #zoom-caption {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    #zoom-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      line-height: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 4px;
+    }
+    
+    #zoom-close-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.05);
+    }
+  </style>
+
+<div id="zoom-overlay" class="zoom-overlay">
+  <button id="zoom-close-btn" aria-label="Close image">&times;</button>
+  <div class="zoom-overlay-content">
+    <img id="zoom-img" src="">
+    <div id="zoom-caption"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  if (window.__zoomOverlayInited) return;
+  window.__zoomOverlayInited = true;
+
+  document.addEventListener('click', e => {
+    const img = e.target.closest('.zoomable-image');
+    if (img) {
+      const overlay = document.getElementById('zoom-overlay');
+      const zoomImg = document.getElementById('zoom-img');
+      const zoomCaption = document.getElementById('zoom-caption');
+
+      if (!overlay || !zoomImg) return;
+
+      zoomImg.src = img.src;
+
+      
+      if (img.src.toLowerCase().includes('.svg')) {
+        overlay.classList.add('svg-bg');
+      } else {
+        overlay.classList.remove('svg-bg');
+      }
+
+      
+      const figure = img.closest('figure');
+      const caption = figure?.querySelector('figcaption')?.innerHTML || "";
+
+      if (zoomCaption) {
+        if (caption) {
+          zoomCaption.innerHTML = caption;
+          zoomCaption.style.display = 'block';
+        } else {
+          zoomCaption.style.display = 'none';
+        }
+      }
+
+      
+      const padding = overlay.classList.contains('svg-bg') ? 48 : 0; 
+      const maxWidth = window.innerWidth * 0.95 - padding;
+      const maxHeight = window.innerHeight * 0.80 - padding; 
+
+      const naturalWidth = img.naturalWidth || img.width || 1;
+      const naturalHeight = img.naturalHeight || img.height || 1;
+      const imgRatio = naturalWidth / naturalHeight;
+      const screenRatio = maxWidth / maxHeight;
+
+      let finalWidth, finalHeight;
+      if (imgRatio > screenRatio) {
+        finalWidth = maxWidth;
+        finalHeight = maxWidth / imgRatio;
+      } else {
+        finalHeight = maxHeight;
+        finalWidth = maxHeight * imgRatio;
+      }
+
+      zoomImg.style.width = finalWidth + 'px';
+      zoomImg.style.height = finalHeight + 'px';
+
+      overlay.classList.add('active');
+    } else {
+      const overlay = document.getElementById('zoom-overlay');
+      if (overlay && e.target.closest('#zoom-overlay')) {
+        
+        overlay.classList.remove('active');
+      }
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === "Escape") {
+      const overlay = document.getElementById('zoom-overlay');
+      if (overlay && overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+      }
+    }
+  });
+})();
+</script>
+<h2 id="differentiation-of-the-in-scattered-radiance">Differentiation of the In-Scattered Radiance<a hidden class="anchor" aria-hidden="true" href="#differentiation-of-the-in-scattered-radiance">#</a></h2>
+<p>To fully evaluate Eq. $\eqref{eq:diff_transport_collision}$, we also need the derivative of the in-scattered radiance, $\partial_\pi L^\text{ins}$. Because $L(\mathbf{x}, \boldsymbol{\omega}')$ might contain sudden jumps due to occlusions, such as an object moving inside the smoke, we apply the Reynolds Transport Theorem reviewed in the introductory article.</p>
+<p>Let $\mathbb{S}(\mathbf{x}) \subset \mathbb{S}^2$ be the set of spherical curves capturing these visual discontinuities. The derivative splits into our familiar interior and boundary components:</p>
+$$
+\begin{equation}
+\begin{aligned}
+\partial_\pi L^\text{ins}(\mathbf{x}, \boldsymbol{\omega}) &= \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi \left[ f_p(\mathbf{x}, -\boldsymbol{\omega}', \boldsymbol{\omega}) L(\mathbf{x}, \boldsymbol{\omega}') \right] \mathrm{d}\boldsymbol{\omega}'}}_{\text{Interior Derivative}} \\
+&\quad + \underbrace{{\color{#e69138}\int_{\mathbb{S}(\mathbf{x})} \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}' \rangle f_p(\mathbf{x}, -\boldsymbol{\omega}', \boldsymbol{\omega}) \Delta L(\mathbf{x}, \boldsymbol{\omega}') \mathrm{d}\ell(\boldsymbol{\omega}')}}_{\text{Boundary Derivative } (B^\text{ins}(\mathbf{x}, \boldsymbol{\omega}))}.
+\end{aligned}
+\label{eq:diff_ins}
+\end{equation}
+$$<p>The interior term is the ordinary derivative of the continuous part; the <strong>Boundary Derivative</strong> ($B^\text{ins}$) is the new piece, capturing the edges of moving objects <em>inside</em> the medium.</p>
+<figure id="fig-rte-curves" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/change_of_measure.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
+      (a) Definitions of $\mathbb{S}(\mathbf{x})$ and $\partial^2\Omega(\mathbf{x})$. (b) Deriving the change-of-measure ratio $\sin\theta/\|\mathbf{y}-\mathbf{x}\|$ in Eq. (36) by projecting a differential curve $\mathrm{d}\mathbf{y}$ to the surface of a unit sphere around $\mathbf{x}$.
+    </figcaption></figure>
+
+
+<p>Computing integrals over spherical curves can be tricky. It is computationally more convenient to rewrite this boundary integral in terms of actual 3D geometric edges in the scene (boundary edges, silhouettes, and sharp edges).</p>
+<p>Let $\partial^2 \Omega(\mathbf{x})$ denote all the 3D boundary curves visible from $\mathbf{x}$. By projecting these into 3D space, $B^\text{ins}(\mathbf{x}, \boldsymbol{\omega})$ becomes:</p>
+$$
+\begin{equation}
+\begin{aligned}
+B^\text{ins}(\mathbf{x}, \boldsymbol{\omega}) = \int_{\partial^2 \Omega(\mathbf{x})} &\langle \mathbf{n}_\perp, \partial_\pi(\mathbf{y} \to \mathbf{x}) \rangle f_p(\mathbf{x}, \mathbf{y} \to \mathbf{x}, \boldsymbol{\omega}) \\
+&\cdot \Delta L(\mathbf{x}, \mathbf{y} \to \mathbf{x}) V(\mathbf{x}, \mathbf{y}) \frac{\sin \theta}{\| \mathbf{y} - \mathbf{x} \|} \mathrm{d}\ell(\mathbf{y}),
+\end{aligned}
+\label{eq:diff_ins_3d}
+\end{equation}
+$$<p>where $\mathbf{y} \to \mathbf{x}$ is the direction from point $\mathbf{y}$ on the edge to $\mathbf{x}$, $V(\mathbf{x}, \mathbf{y})$ is the mutual visibility, and $\theta$ is the angle of the edge.</p>
+<p>To compute this term, we need three geometric ingredients:</p>
+<figure id="fig-rte-normals" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/normals.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
+      Normals of spherical discontinuity curves obtained by projecting line segments and spheres.
+    </figcaption></figure>
+
+
+<ol>
+<li>
+<p><strong>Normal ($\mathbf{n}_\perp$):</strong> The normal vector of the discontinuity boundary (see <a href="#fig-rte-normals">Fig. <span class="auto-fig-ref" data-target="fig-rte-normals"></span></a> ). For an edge between endpoints $\mathbf{p}$ and $\mathbf{q}$:
+</p>
+$$
+    \begin{equation}
+    \mathbf{n}_\perp = \frac{(\mathbf{p} - \mathbf{x}) \times (\mathbf{q} - \mathbf{x})}{\| (\mathbf{p} - \mathbf{x}) \times (\mathbf{q} - \mathbf{x}) \|}. \label{eq:normal}
+    \end{equation}
+    $$</li>
+<li>
+<p><strong>Change rate ($\partial_\pi \boldsymbol{\omega}'$):</strong> How fast the edge direction changes as the parameter $\pi$ changes:
+</p>
+$$
+    \begin{equation}
+    \partial_\pi \boldsymbol{\omega}' = \partial_\pi \left( \frac{\mathbf{x} - \mathbf{y}}{\| \mathbf{x} - \mathbf{y} \|} \right) = \frac{\partial_\pi \mathbf{x} - \partial_\pi \mathbf{y}}{\| \mathbf{x} - \mathbf{y} \|} - \boldsymbol{\omega}' \left\langle \boldsymbol{\omega}', \frac{\partial_\pi \mathbf{x} - \partial_\pi \mathbf{y}}{\| \mathbf{x} - \mathbf{y} \|} \right\rangle. \label{eq:change_rate}
+    \end{equation}
+    $$</li>
+<li>
+<p><strong>Color Jump ($\Delta L$):</strong> The difference in radiance across the boundary, evaluated via two infinitesimally close rays on either side of the edge:
+</p>
+$$
+    \begin{equation}
+    \Delta L(\mathbf{x}, \boldsymbol{\omega}') = \lim_{\epsilon \to 0^-} L(\mathbf{x}, \boldsymbol{\omega}' + \epsilon \mathbf{n}_\perp) - \lim_{\epsilon \to 0^+} L(\mathbf{x}, \boldsymbol{\omega}' + \epsilon \mathbf{n}_\perp). \label{eq:delta_L}
+    \end{equation}
+    $$</li>
+</ol>
+<h2 id="differentiation-of-the-interfacial-scattering-operator">Differentiation of the Interfacial Scattering Operator<a hidden class="anchor" aria-hidden="true" href="#differentiation-of-the-interfacial-scattering-operator">#</a></h2>
+<p>We now move to the second main term in our outline Eq. $\eqref{eq:diff_outline}$: the derivative of the interfacial scattering $\mathcal{K}_S L$. This measures how light reflection/transmission at the medium&rsquo;s outer boundary changes. Differentiating $(\mathcal{K}_S L)(\mathbf{x}, \boldsymbol{\omega}) = T(\mathbf{x}_0, \mathbf{x}) L_r(\mathbf{x}_0, \boldsymbol{\omega})$ using the product rule yields:</p>
+$$
+\begin{equation}
+\begin{aligned}
+\partial_\pi (\mathcal{K}_S L)(\mathbf{x}, \boldsymbol{\omega}) &= \partial_\pi[T(\mathbf{x}_0, \mathbf{x}) L_r(\mathbf{x}_0, \boldsymbol{\omega})] \\
+&= T(\mathbf{x}_0, \mathbf{x}) \partial_\pi L_r(\mathbf{x}_0, \boldsymbol{\omega}) + \partial_\pi T(\mathbf{x}_0, \mathbf{x}) L_r(\mathbf{x}_0, \boldsymbol{\omega}) \\
+&= T(\mathbf{x}_0, \mathbf{x}) \left[ - \left( \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, D) + \partial_\pi D \, \sigma_t(\mathbf{x}_0) \right) L_r(\mathbf{x}_0, \boldsymbol{\omega}) + \partial_\pi L_r(\mathbf{x}_0, \boldsymbol{\omega}) \right].
+\end{aligned}
+\label{eq:diff_interfacial}
+\end{equation}
+$$<p>The derivative of the transmittance to the boundary $\partial_\pi T(\mathbf{x}_0, \mathbf{x})$ gives:</p>
+$$
+\begin{equation}
+\partial_\pi T(\mathbf{x}_0, \mathbf{x}) = -T(\mathbf{x}_0, \mathbf{x}) \left( \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, D) + \partial_\pi D \, \sigma_t(\mathbf{x}_0) \right), \label{eq:diff_transmittance_boundary}
+\end{equation}
+$$<p>where the term $\partial_\pi D \, \sigma_t(\mathbf{x}_0)$ appears because if the boundary of the medium moves, the total travel distance $D$ inside the medium changes.</p>
+<p>Just like the in-scattered radiance earlier, the term $\partial_\pi L_r(\mathbf{x}_0, \boldsymbol{\omega})$ represents the derivative of reflected light at the boundary, which also splits into continuous and discontinuous (boundary) components:</p>
+$$
+\begin{equation}
+\begin{aligned}
+\partial_\pi L_r(\mathbf{x}, \boldsymbol{\omega}) &= \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi \left[ f_s(\mathbf{x}, -\boldsymbol{\omega}', \boldsymbol{\omega}) L(\mathbf{x}, \boldsymbol{\omega}') \right] \mathrm{d}\boldsymbol{\omega}'}}_{\text{Interior Derivative}} \\
+&\quad + \underbrace{{\color{#e69138}\int_{\partial^2 \Omega(\mathbf{x})} \langle \mathbf{n}_\perp, \partial_\pi (\mathbf{y} \to \mathbf{x}) \rangle f_s(\mathbf{x}, \mathbf{y} \to \mathbf{x}, \boldsymbol{\omega}) \Delta L(\mathbf{x}, \mathbf{y} \to \mathbf{x}) V(\mathbf{x}, \mathbf{y}) \frac{\sin \theta}{\| \mathbf{y} - \mathbf{x} \|} \mathrm{d}\ell(\mathbf{y})}}_{\text{Boundary Derivative}},
+\end{aligned}
+\label{eq:diff_L_r}
+\end{equation}
+$$<h2 id="completing">Completing $\partial_\pi L$<a hidden class="anchor" aria-hidden="true" href="#completing">#</a></h2>
+<p>The final term is the derivative of the emission, $L^{(0)} = T L_e$. By replacing the reflected radiance $L_r$ from Eq. $\eqref{eq:diff_interfacial}$ with the emitted radiance $L_e$, we get:</p>
+$$
+\begin{equation}
+\begin{aligned}
+\partial_\pi L^{(0)}(\mathbf{x}, \boldsymbol{\omega}) &= \partial_\pi[T(\mathbf{x}_0, \mathbf{x}) L_e(\mathbf{x}_0, \boldsymbol{\omega})] \\
+&= T(\mathbf{x}_0, \mathbf{x}) \left[ - \left( \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, D) + \partial_\pi D \, \sigma_t(\mathbf{x}_0) \right) L_e(\mathbf{x}_0, \boldsymbol{\omega}) + \partial_\pi L_e(\mathbf{x}_0, \boldsymbol{\omega}) \right].
+\end{aligned}
+\label{eq:diff_emission}
+\end{equation}
+$$<p><strong>Putting it all together.</strong> We now combine everything to get $\partial_\pi L$, the total scene derivative of the interior radiance. By adding the interfacial scattering and emission derivatives together, we get the derivative of the &ldquo;source&rdquo; term $Q$:</p>
+$$
+\begin{equation}
+\begin{aligned}
+\partial_\pi Q(\mathbf{x}, \boldsymbol{\omega}) &= \left( \partial_\pi (\mathcal{K}_S L) + \partial_\pi L^{(0)} \right) (\mathbf{x}, \boldsymbol{\omega}) \\
+&= T(\mathbf{x}_0, \mathbf{x}) \left[ - \left( \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, D) + \partial_\pi D \, \sigma_t(\mathbf{x}_0) \right) L(\mathbf{x}_0, \boldsymbol{\omega}) + \partial_\pi L(\mathbf{x}_0, \boldsymbol{\omega}) \right].
+\end{aligned}
+\label{eq:diff_Q}
+\end{equation}
+$$<p>Finally, adding the volumetric component Eq. $\eqref{eq:diff_transport_collision}$ to Eq. $\eqref{eq:diff_Q}$ completes the derivation. The full equation separates into volumetric, interfacial, and moving-boundary components:</p>
+$$
+\begin{equation}
+\begin{aligned}
+\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}) = &\underbrace{{\color{#0f85a5}\int_0^D T(\mathbf{x}', \mathbf{x}) \left[ \sigma_s(\mathbf{x}') \partial_\pi L^\text{ins}(\mathbf{x}', \boldsymbol{\omega}) + \left( \partial_\pi \sigma_s(\mathbf{x}') - \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, \tau)\sigma_s(\mathbf{x}') \right) L^\text{ins}(\mathbf{x}', \boldsymbol{\omega}) \right] \mathrm{d}\tau}}_{\text{Volumetric Component}} \\
+&+ \underbrace{{\color{#4facfe}T(\mathbf{x}_0, \mathbf{x}) \left[ - \left( \Sigma_t(\mathbf{x}, \boldsymbol{\omega}, D) + \partial_\pi D \, \sigma_t(\mathbf{x}_0) \right) L(\mathbf{x}_0, \boldsymbol{\omega}) + \partial_\pi L(\mathbf{x}_0, \boldsymbol{\omega}) \right]}}_{\text{Interfacial Component}} \\
+&+ \underbrace{{\color{#e69138}T(\mathbf{x}_0, \mathbf{x}) \partial_\pi D \, \sigma_s(\mathbf{x}_0) L^\text{ins}(\mathbf{x}_0, \boldsymbol{\omega})}}_{\text{Boundary Moving Component}}.
+\end{aligned}
+\label{eq:diff_L_final}
+\end{equation}
+$$<p>The takeaway is that differential radiative transfer is not a new kind of physics. It is the same conservation-of-energy story as ordinary radiative transfer, but every term gets a derivative companion: material changes along the ray, transmittance changes along the ray, scattering changes at interior points, and visibility changes on moving boundaries.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/differentiable-rendering/">Differentiable Rendering</a></li>
+      <li><a href="http://localhost:1313/tags/participating-media/">Participating Media</a></li>
+      <li><a href="http://localhost:1313/tags/radiative-transfer/">Radiative Transfer</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+    <span class="title">« Prev</span>
+    <br>
+    <span>Introduction to Differentiable Rendering</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a><script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tocEl = document.querySelector('.toc');
+    var content = document.querySelector('.post-content');
+    if (!tocEl || !content) return;
+
+    
+    var sidebar = document.createElement('div');
+    sidebar.className = 'agn-sidetoc';
+
+    
+    var label = document.createElement('span');
+    label.className = 'agn-sidetoc-label';
+    label.textContent = 'Contents';
+    sidebar.appendChild(label);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.className = 'agn-sidetoc-links';
+    sidebar.appendChild(linksWrap);
+
+    
+    var inner = tocEl.querySelector('.inner');
+    if (inner) {
+        var lists = inner.querySelectorAll(':scope > ul, :scope > nav');
+        lists.forEach(function(el) {
+            linksWrap.appendChild(el.cloneNode(true));
+        });
+    }
+
+    document.body.appendChild(sidebar);
+
+    
+    sidebar.addEventListener('click', function(e) {
+        var anchor = e.target.closest('a[href^="#"]');
+        if (!anchor) return;
+
+        var id = anchor.getAttribute('href').slice(1);
+        if (!id) return;
+
+        var target = document.getElementById(decodeURIComponent(id));
+        if (!target) return;
+
+        e.preventDefault();
+
+        var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+        var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 40);
+
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth'
+        });
+
+        if (history.pushState) {
+            history.pushState(null, null, '#' + id);
+        } else {
+            location.hash = '#' + id;
+        }
+    });
+
+    
+    var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
+    if (!headers.length) return;
+
+    var lastActiveId = '';
+    var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+    var activeHeaderOffset = headerHeight + 45;
+
+    
+    var nestedUls = sidebar.querySelectorAll('ul ul');
+    for (var i = 0; i < nestedUls.length; i++) {
+        nestedUls[i].style.display = 'none';
+    }
+
+    function applyActiveState(currentId) {
+        if (currentId === lastActiveId) return;
+        lastActiveId = currentId;
+
+        
+        var highlighted = sidebar.querySelectorAll('a.active, a.semi_active');
+        for (var i = 0; i < highlighted.length; i++) {
+            highlighted[i].classList.remove('active', 'semi_active');
+            var oldChild = highlighted[i].parentElement.querySelector(':scope > ul');
+            if (oldChild) oldChild.style.display = 'none';
+        }
+
+        if (!currentId) return;
+
+        var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
+        if (!activeLink) return;
+
+        
+        var el = activeLink.parentElement;
+        var depth = 0;
+        while (el && el !== sidebar) {
+            if (el.tagName === 'LI') {
+                var link = el.querySelector(':scope > a');
+                if (link) {
+                    link.classList.add(depth === 0 ? 'active' : 'semi_active');
+                    var childUl = el.querySelector(':scope > ul');
+                    if (childUl) childUl.style.display = 'block';
+                }
+                depth++;
+            }
+            el = el.parentElement;
+        }
+
+        
+        var container = sidebar.querySelector('.agn-sidetoc-links');
+        if (container) {
+            var containerRect = container.getBoundingClientRect();
+            var linkRect = activeLink.getBoundingClientRect();
+            var relativeTop = linkRect.top - containerRect.top + container.scrollTop;
+            var targetScrollTop = relativeTop - (container.clientHeight / 2) + (linkRect.height / 2);
+            container.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    var ticking = false;
+    function onScroll() {
+        if (ticking) return;
+        ticking = true;
+
+        requestAnimationFrame(function() {
+            var currentId = '';
+            var scrollY = window.scrollY;
+            var windowHeight = window.innerHeight;
+            var documentHeight = document.documentElement.scrollHeight;
+
+            if (scrollY + windowHeight >= documentHeight - 10) {
+                currentId = headers[headers.length - 1].id;
+            } else {
+                for (var i = headers.length - 1; i >= 0; i--) {
+                    var rect = headers[i].getBoundingClientRect();
+                    if (rect.top <= activeHeaderOffset) {
+                        currentId = headers[i].id;
+                        break;
+                    }
+                }
+            }
+
+            applyActiveState(currentId);
+            ticking = false;
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    
+    
+    onScroll();
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    
+    var figures = document.querySelectorAll("figure[id]");
+    var figMap = {};
+    figures.forEach(function(fig, index) {
+        figMap[fig.id] = index + 1;
+    });
+
+    
+    var refs = document.querySelectorAll(".auto-fig-ref");
+    refs.forEach(function(ref) {
+        var targetId = ref.getAttribute("data-target");
+        if (figMap[targetId]) {
+            ref.textContent = figMap[targetId];
+        } else {
+            ref.textContent = "??"; 
+            ref.style.color = "red";
+        }
+    });
+});
+</script>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

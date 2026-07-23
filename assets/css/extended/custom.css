@@ -280,8 +280,117 @@ a[href^="#fig-"]:hover {
 .post-content .highlight>pre {
     margin: 12px 0 !important;
     padding: 10px !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;
 }
+
+/* ─── Code Highlighting: Light Theme (Day Mode) matching reference image ─── */
+body:not(.dark) .post-content .highlight,
+body:not(.dark) .post-content pre:not(.highlight pre) {
+    background-color: #fafafa !important;
+    border: 1px solid #e1e4e8 !important;
+    border-radius: 8px !important;
+    color: #24292e !important;
+    overflow: hidden;
+}
+
+body:not(.dark) .post-content .highlight > div,
+body:not(.dark) .post-content .highlight > pre,
+body:not(.dark) .post-content pre.chroma {
+    background-color: transparent !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* Line Numbers */
+body:not(.dark) .chroma .lnt,
+body:not(.dark) .chroma .ln {
+    color: #8b8b8b !important;
+}
+
+/* Keywords (def, for, in, return, class, import, etc.) */
+body:not(.dark) .chroma .k,
+body:not(.dark) .chroma .kd,
+body:not(.dark) .chroma .kn,
+body:not(.dark) .chroma .kp,
+body:not(.dark) .chroma .kr,
+body:not(.dark) .chroma .kt,
+body:not(.dark) .chroma .ow {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Function names (sample_path, spawn_ray, etc.) */
+body:not(.dark) .chroma .nf,
+body:not(.dark) .chroma .fm {
+    color: #a71d5d !important;
+    font-weight: 700 !important;
+}
+
+/* Numbers (0, 1, 3, 4, etc.) */
+body:not(.dark) .chroma .m,
+body:not(.dark) .chroma .mb,
+body:not(.dark) .chroma .mf,
+body:not(.dark) .chroma .mh,
+body:not(.dark) .chroma .mi,
+body:not(.dark) .chroma .il,
+body:not(.dark) .chroma .mo {
+    color: #17a2b8 !important;
+}
+
+/* Builtins (range, print, len, etc.) */
+body:not(.dark) .chroma .nb,
+body:not(.dark) .chroma .bp {
+    color: #777777 !important;
+}
+
+/* Comments (# Accumulate...) */
+body:not(.dark) .chroma .c,
+body:not(.dark) .chroma .ch,
+body:not(.dark) .chroma .cm,
+body:not(.dark) .chroma .c1,
+body:not(.dark) .chroma .cs,
+body:not(.dark) .chroma .cp,
+body:not(.dark) .chroma .cpf {
+    color: #8f8c85 !important;
+    font-style: italic !important;
+}
+
+/* Operators (=, +=, *=, @, *, /, etc.) */
+body:not(.dark) .chroma .o {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Strings */
+body:not(.dark) .chroma .s,
+body:not(.dark) .chroma .sa,
+body:not(.dark) .chroma .sb,
+body:not(.dark) .chroma .sc,
+body:not(.dark) .chroma .dl,
+body:not(.dark) .chroma .sd,
+body:not(.dark) .chroma .s2,
+body:not(.dark) .chroma .se,
+body:not(.dark) .chroma .sh,
+body:not(.dark) .chroma .si,
+body:not(.dark) .chroma .sx,
+body:not(.dark) .chroma .sr,
+body:not(.dark) .chroma .s1,
+body:not(.dark) .chroma .ss {
+    color: #22863a !important;
+}
+
+/* Normal identifiers and variables */
+body:not(.dark) .chroma .n,
+body:not(.dark) .chroma .nx,
+body:not(.dark) .chroma .nv,
+body:not(.dark) .chroma .vc,
+body:not(.dark) .chroma .vg,
+body:not(.dark) .chroma .vi,
+body:not(.dark) .chroma .vm,
+body:not(.dark) .chroma .p {
+    color: #24292e !important;
+}
+
 
 /* ─── Blockquotes — definition-style panel ─── */
 .post-content blockquote {

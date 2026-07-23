@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="300" height="220" viewBox="0 0 300 220">
+  <style>
+    .axis { stroke: #8b8b8b; stroke-width: 1.5; stroke-dasharray: 4,4; }
+    .main-axis { stroke: #24292e; stroke-width: 1.5; }
+    .contour { fill: none; stroke: #0f85a5; stroke-width: 1.5; opacity: 0.4; }
+    .contour-bold { fill: none; stroke: #0f85a5; stroke-width: 2.0; opacity: 0.8; }
+    .pert-line { stroke: #e69138; stroke-width: 1.5; stroke-dasharray: 4,3; }
+    .pert-vec { stroke: #e69138; stroke-width: 2.5; marker-end: url(#arrow-orange); }
+    .grad-vec { stroke: #0f85a5; stroke-width: 2.5; marker-end: url(#arrow-blue); }
+    .point-center { fill: #24292e; r: 4.5; }
+    .point-pert { fill: #e69138; r: 4.5; stroke: #ffffff; stroke-width: 1.5; }
+    .label-text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 13px; fill: #24292e; }
+    .label-math { font-family: 'KaTeX_Math', 'Times New Roman', serif; font-style: italic; font-size: 14px; fill: #24292e; }
+    .label-orange { fill: #d97706; font-weight: 600; }
+    .label-blue { fill: #0f85a5; font-weight: 600; }
+  </style>
+
+  <defs>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#e69138" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f85a5" />
+    </marker>
+    <marker id="axis-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#24292e" />
+    </marker>
+  </defs>
+
+  <!-- Background contours of f(π) -->
+  <ellipse cx="150" cy="110" rx="110" ry="65" class="contour" transform="rotate(-25 150 110)" />
+  <ellipse cx="150" cy="110" rx="80" ry="45" class="contour" transform="rotate(-25 150 110)" />
+  <ellipse cx="150" cy="110" rx="50" ry="28" class="contour-bold" transform="rotate(-25 150 110)" />
+
+  <!-- Parameter Space Axes (π1, π2) -->
+  <line x1="30" y1="175" x2="265" y2="175" class="main-axis" marker-end="url(#axis-arrow)" />
+  <line x1="45" y1="190" x2="45" y2="25" class="main-axis" marker-end="url(#axis-arrow)" />
+  
+  <text x="270" y="179" class="label-math">π₁</text>
+  <text x="41" y="17" class="label-math">π₂</text>
+
+  <!-- Center point π -->
+  <line x1="150" y1="175" x2="150" y2="110" class="axis" />
+  <line x1="45" y1="110" x2="150" y2="110" class="axis" />
+  
+  <!-- Perturbation Line through center along Δ = (+1, +1) -->
+  <line x1="75" y1="162.5" x2="225" y2="57.5" class="pert-line" />
+  
+  <!-- Perturbation Vector hΔ -->
+  <line x1="150" y1="110" x2="205" y2="71.5" class="pert-vec" />
+  <line x1="150" y1="110" x2="95" y2="148.5" class="pert-vec" />
+
+  <!-- Gradient direction ∇f(π) -->
+  <line x1="150" y1="110" x2="125" y2="55" class="grad-vec" />
+  <text x="95" y="48" class="label-text label-blue">∇f(π)</text>
+
+  <!-- Points -->
+  <circle cx="150" cy="110" class="point-center" />
+  <circle cx="205" cy="71.5" class="point-pert" />
+  <circle cx="95" cy="148.5" class="point-pert" />
+
+  <!-- Point Labels -->
+  <text x="156" y="122" class="label-math">π</text>
+  <text x="210" y="68" class="label-text label-orange">π + hΔ</text>
+  <text x="35" y="156" class="label-text label-orange">π − hΔ</text>
+
+  <!-- Random Perturbation Label -->
+  <text x="168" y="100" class="label-text label-orange">hΔ</text>
+
+  <!-- Caption text inside SVG bottom right -->
+  <text x="150" y="208" text-anchor="middle" class="label-text" font-size="11" fill="#718096">Random direction Δ = (±1, ±1)ᵀ</text>
+</svg>

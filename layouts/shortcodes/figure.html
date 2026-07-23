@@ -191,7 +191,9 @@
       const maxWidth = window.innerWidth * 0.95 - padding;
       const maxHeight = window.innerHeight * 0.80 - padding; // Leave room for caption
 
-      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const naturalWidth = img.naturalWidth || img.width || 1;
+      const naturalHeight = img.naturalHeight || img.height || 1;
+      const imgRatio = naturalWidth / naturalHeight;
       const screenRatio = maxWidth / maxHeight;
 
       let finalWidth, finalHeight;

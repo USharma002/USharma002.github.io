@@ -241,14 +241,34 @@
     editor.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             e.preventDefault();
-            document.execCommand('insertText', false, '    ');
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                const node = document.createTextNode('    ');
+                range.insertNode(node);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            editor.dispatchEvent(new Event('input'));
         }
     });
 
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
-        const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            const node = document.createTextNode(text);
+            range.insertNode(node);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+        editor.dispatchEvent(new Event('input'));
     });
 
     editor.addEventListener('input', () => {

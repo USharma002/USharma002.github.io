@@ -24,7 +24,6 @@
     padding: 0 20px 16px;
     overflow: visible;
     line-height: 1.7em;
-    scroll-padding-top: 100px;
     background: var(--theme);
     z-index: 100;
     max-height: calc(100vh - 110px);
@@ -87,13 +86,6 @@
 
 /* Nested lists: circle, hidden by default */
 .agn-sidetoc ul ul {
-    margin-left: 1px;
-    padding-left: 20px;
-    list-style-type: circle;
-    display: none;
-}
-
-.agn-sidetoc ul ul ul {
     margin-left: 1px;
     padding-left: 20px;
     list-style-type: circle;

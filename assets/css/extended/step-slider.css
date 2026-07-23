@@ -3,6 +3,11 @@
     --step-acc: #e67e22;
     --transition-speed: 0.5s;
     --anim-curve: cubic-bezier(0.4, 0, 0.2, 1);
+
+    --bg: #ffffff;
+    --text: #374151;
+    --text-sub: #6b7280;
+    --axis: #d1d5db;
 }
 
 .step-slider-container {
@@ -122,9 +127,14 @@
   --eq-stack:#111827;
 }
 
-/* Apply if theme is on html OR body */
-html[data-theme="dark"], body[data-theme="dark"]{
+/* Apply if theme is on html OR body, or body has .dark class */
+html[data-theme="dark"], body[data-theme="dark"], body.dark {
   --mj-current:#fff;
   --mj-dim:#9ca3af;
   --eq-stack:#fff;
+
+  --bg: #1a1a1a;
+  --text: #e5e7eb;
+  --text-sub: #9ca3af;
+  --axis: #525252;
 }

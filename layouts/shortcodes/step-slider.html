@@ -70,8 +70,7 @@
     dompurifyPromise: null,
     mathjaxPromise: null,
     mathjaxTypesetChain: Promise.resolve(),
-    globalsInstalled: false,
-    themeObserverInstalled: false
+    globalsInstalled: false
   };
 
   function getSlides(container) {
@@ -82,7 +81,6 @@
         container.__stepSliderSlides = [];
       }
     }
-
     return container.__stepSliderSlides;
   }
 
@@ -116,14 +114,25 @@
     'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js'
   ).catch(() => false);
 
-  // MathJax (load once) + enable \class via [tex]/html
-  window.__stepSliderLibs.mathjaxPromise ||= (async () => {
-    if (window.MathJax?.startup?.promise) {
-      try { await window.MathJax.startup.promise; } catch (e) {}
-      return true;
+  // MathJax Loader (Consolidated, avoiding concurrent race loads)
+  window.__stepSliderLibs.mathjaxPromise ||= (() => {
+    if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+      return window.MathJax.startup.promise.then(() => true);
     }
 
-    // Must be set BEFORE MathJax script loads
+    const existing = document.querySelector('script[src*="mathjax"]');
+    if (existing) {
+      return new Promise((resolve) => {
+        const interval = setInterval(() => {
+          if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+            clearInterval(interval);
+            window.MathJax.startup.promise.then(() => resolve(true));
+          }
+        }, 50);
+      });
+    }
+
+    // Must configure before loading MathJax
     window.MathJax = window.MathJax || {
       loader: { load: ['[tex]/html'] },
       tex: {
@@ -133,15 +142,20 @@
       }
     };
 
-    const ok = await loadScriptOnce(
-      'MathJax',
-      'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
-    ).catch(() => false);
+    const scriptUrl = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js';
+    const s = document.createElement('script');
+    s.src = scriptUrl;
+    s.async = true;
+    document.head.appendChild(s);
 
-    if (ok && window.MathJax?.startup?.promise) {
-      try { await MathJax.startup.promise; } catch (e) {}
-    }
-    return !!window.MathJax;
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+          clearInterval(interval);
+          window.MathJax.startup.promise.then(() => resolve(true));
+        }
+      }, 50);
+    });
   })();
 
   // -----------------------------
@@ -150,79 +164,12 @@
   if (!window.__stepSliderLibs.globalsInstalled) {
     window.__stepSliderLibs.globalsInstalled = true;
 
-    window.detectSliderTheme = function detectSliderTheme() {
-      try {
-        const parentBody = window.parent.document.body;
-        const style = window.getComputedStyle(parentBody);
-        const bgColor = style.backgroundColor;
-    if (!window.__stepSliderLibs.themeObserverInstalled) {
-      window.__stepSliderLibs.themeObserverInstalled = true;
-
-      var scheduleThemeSync = function () {
-        window.requestAnimationFrame(window.detectSliderTheme);
-      };
-
-      if (typeof MutationObserver !== 'undefined') {
-        var themeObserver = new MutationObserver(function (mutations) {
-          for (var i = 0; i < mutations.length; i++) {
-            var mutation = mutations[i];
-            if (mutation.type === 'attributes' && (mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
-              scheduleThemeSync();
-              break;
-            }
-          }
-        });
-
-        if (document.documentElement) {
-          themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
-        }
-        if (document.body) {
-          themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
-        }
-
-        window.addEventListener('beforeunload', function () {
-          themeObserver.disconnect();
-        }, { once: true });
-      } else {
-        window.addEventListener('load', scheduleThemeSync, { once: true });
-      }
-    }
-
-
-        if (rgb) {
-          const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
-          const isDark = brightness < 128;
-          const root = document.documentElement;
-      if (!container || !wrapper) return;
-
-      const slides = getSlides(container);
-          if (isDark) {
-            root.style.setProperty('--bg', '#1a1a1a');
-            root.style.setProperty('--text', '#e5e7eb');
-            root.style.setProperty('--text-sub', '#9ca3af');
-            root.style.setProperty('--axis', '#525252');
-          } else {
-            root.style.setProperty('--bg', '#ffffff');
-            root.style.setProperty('--text', '#374151');
-            root.style.setProperty('--text-sub', '#6b7280');
-            root.style.setProperty('--axis', '#d1d5db');
-          }
-        }
-      } catch (e) {
-        const root = document.documentElement;
-        root.style.setProperty('--bg', '#ffffff');
-        root.style.setProperty('--text', '#374151');
-        root.style.setProperty('--axis', '#d1d5db');
-      }
-    };
-
-    setInterval(window.detectSliderTheme, 1000);
-    window.detectSliderTheme();
-
     window.moveSlide = function moveSlide(containerId, direction) {
       const container = document.getElementById(containerId);
+      if (!container) return;
       const wrapper = document.getElementById('wrapper-' + containerId);
-      const slides = JSON.parse(container.dataset.slides);
+      if (!wrapper) return;
+      const slides = getSlides(container);
       let currentIndex = parseInt(wrapper.style.getPropertyValue('--current-index') || 0);
 
       currentIndex += direction;
@@ -271,7 +218,7 @@
           }
         } catch (e) {}
 
-        // IMPORTANT: allow HTML so your <div class="eq-stack"> and \class highlighting work
+        // ALLOW HTML so class highlighting/styling works
         titleEl.innerHTML = safeTitle;
         descEl.innerHTML  = safeDesc;
 
@@ -282,7 +229,7 @@
         titleEl.style.opacity = 1;
         descEl.style.opacity = 1;
 
-        // Re-typeset only updated nodes (chain calls to avoid overlap)
+        // Re-typeset updated elements using the MathJax typeset chain
         try {
           const ok = await window.__stepSliderLibs.mathjaxPromise;
           if (ok && window.MathJax?.typesetPromise) {

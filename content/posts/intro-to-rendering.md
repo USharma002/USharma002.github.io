@@ -256,7 +256,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 3.
 
-<iframe src="/interactive/transformations/graph3d.html?type=translation" loading="lazy" fetchpriority="low" title="3D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=translation" loading="lazy" fetchpriority="low" title="Heaviside Discontinuity Step Mapping" style="width:100%; max-width:820px; height:360px; background: transparent; display:block; border: none; margin: 0;"></iframe>
 
 ---
 
@@ -1948,7 +1948,21 @@ We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction o
 #### 3. Refraction Rays (Transmission)
 For transparent materials like glass, light bends as it passes through the surface boundary. According to **Snell's Law**, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ are related by the indices of refraction ($\eta$):
 $$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$
-The exact transmission vector ${\color{#9C27B0}\mathbf{t}}$ can be derived from the normal $\mathbf{n}$ and the incoming view vector ${\color{#2196F3}\mathbf{v}}$. If the light enters a medium with a lower index of refraction at a steep enough angle, the math under the square root becomes negative. This physical phenomenon is **Total Internal Reflection**—no light is refracted; it is all reflected inside the object.
+
+To compute the transmission vector ${\color{#9C27B0}\mathbf{t}}$, we decompose it into components parallel and perpendicular to the surface normal $\mathbf{n}$. Let ${\color{#2196F3}\mathbf{v}}$ point from the surface back toward the incoming ray (i.e. ${\color{#2196F3}\mathbf{v}} = -\mathbf{d}$, where $\mathbf{d}$ is the ray direction), and let $\cos\theta_L = \mathbf{n} \cdot {\color{#2196F3}\mathbf{v}}$. Then:
+
+$$
+{\color{#9C27B0}\mathbf{t}} = \frac{\eta_L}{\eta_T}\left(-{\color{#2196F3}\mathbf{v}}\right) + \left(\frac{\eta_L}{\eta_T}\cos\theta_L - \cos\theta_T\right)\mathbf{n}
+$$
+
+where the transmitted cosine is recovered from Snell's Law:
+
+$$
+\cos\theta_T = \sqrt{1 - \left(\frac{\eta_L}{\eta_T}\right)^2\!\left(1 - \cos^2\theta_L\right)}
+$$
+
+If the expression under the square root is **negative**, $\cos\theta_T$ has no real solution. This physical phenomenon is **Total Internal Reflection** — no light is transmitted; it is all reflected inside the object.
+
 
 {{< figure src="/images/intro-to-rendering/raytracing/snells_law.svg" id="fig-snells-law" caption="Snell's Law of refraction. Light bends when passing between media with different indices of refraction $\eta_L$ and $\eta_T$." title="Refraction and Snell's Law" alt="Diagram showing refraction" align="center" width="500px" >}}
 
@@ -1977,19 +1991,38 @@ float hitPlane(vec3 ro, vec3 rd, float y) {
     return t > 0.001 ? t : -1.0;
 }
 
-struct Hit { float t; vec3 n; vec3 col; float refl; };
+// mirrors GLSL built-in: r = d - 2*dot(d,n)*n
+vec3 myReflect(vec3 d, vec3 n) {
+    return d - 2.0 * dot(d, n) * n;
+}
+
+// mirrors GLSL built-in: returns vec3(0) on TIR, so always guard with disc check first
+// eta = eta_incident / eta_transmitted, n points against d (into incident medium)
+vec3 myRefract(vec3 d, vec3 n, float eta) {
+    float cosL = dot(-d, n);
+    float disc = 1.0 - eta * eta * (1.0 - cosL * cosL);
+    // caller guarantees disc >= 0
+    return eta * d + (eta * cosL - sqrt(disc)) * n;
+}
+
+// ior > 0.0 marks a dielectric (glass); ior == 0.0 means opaque
+struct Hit { float t; vec3 n; vec3 col; float refl; float ior; };
 
 Hit traceScene(vec3 ro, vec3 rd) {
-    Hit best = Hit(1e20, vec3(0), vec3(0), 0.0);
-    vec3 n; float t;
+    Hit best = Hit(1e20, vec3(0), vec3(0), 0.0, 0.0);
+    float t;
 
     // Red sphere
     t = hitSphere(ro, rd, vec3(-0.8, 0.0, -1.0), 1.0);
-    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(-0.8,0,-1)), vec3(0.85,0.15,0.1), 0.05); }
+    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(-0.8,0,-1)), vec3(0.85,0.15,0.1), 0.05, 0.0); }
 
     // Chrome sphere
     t = hitSphere(ro, rd, vec3(1.0, -0.3, 0.0), 0.7);
-    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(1.0,-0.3,0.0)), vec3(0.9), 0.8); }
+    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(1.0,-0.3,0.0)), vec3(0.9), 0.8, 0.0); }
+
+    // Glass sphere (ior = 1.5, like crown glass)
+    t = hitSphere(ro, rd, vec3(0.1, 0.7, -2.2), 0.6);
+    if (t > 0.0 && t < best.t) { best = Hit(t, normalize(ro+rd*t - vec3(0.1,0.7,-2.2)), vec3(0.95,0.98,1.0), 0.0, 1.5); }
 
     // Floor plane
     t = hitPlane(ro, rd, -1.0);
@@ -1997,7 +2030,7 @@ Hit traceScene(vec3 ro, vec3 rd) {
         vec3 p = ro + rd * t;
         float check = step(0.5, fract(p.x * 0.5)) + step(0.5, fract(p.z * 0.5));
         check = mod(check, 2.0);
-        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), check), 0.1);
+        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), check), 0.1, 0.0);
     }
     return best;
 }
@@ -2012,7 +2045,7 @@ vec3 shade(Hit hit, vec3 p, vec3 rd) {
     float shadow = (sh.t < length(lightPos - p)) ? 0.15 : 1.0;
 
     float diff = max(dot(hit.n, l), 0.0) * shadow;
-    float spec = pow(max(dot(reflect(-l, hit.n), v), 0.0), 64.0) * shadow;
+    float spec = pow(max(dot(myReflect(-l, hit.n), v), 0.0), 64.0) * shadow;
     return vec3(0.06) + hit.col * diff + vec3(0.7) * spec;
 }
 
@@ -2021,27 +2054,50 @@ void main() {
     vec3 ro = vec3(0.0, 1.0, 4.0);
     vec3 rd = normalize(vec3(uv, -1.0));
 
-    vec3 col = vec3(0.0);
+    vec3  col   = vec3(0.0);
     float atten = 1.0;
 
-    // 2 bounces: primary + one reflection
-    for (int bounce = 0; bounce < 2; bounce++) {
+    // 4 bounces: enough for glass entry + exit + one more interaction each
+    for (int bounce = 0; bounce < 4; bounce++) {
         Hit hit = traceScene(ro, rd);
         if (hit.t > 1e19) {
             col += atten * vec3(0.03, 0.04, 0.06);
             break;
         }
         vec3 p = ro + rd * hit.t;
-        col += atten * (1.0 - hit.refl) * shade(hit, p, rd);
 
-        // Reflection ray for next bounce
-        atten *= hit.refl;
-        if (atten < 0.01) break;
-        ro = p + hit.n * 0.01;
-        rd = reflect(rd, hit.n);
+        if (hit.ior > 0.0) {
+            // Dielectric: refract with TIR fallback
+            // If cosL < 0 the ray is already inside the sphere (exiting)
+            float cosL  = dot(hit.n, -rd);
+            bool inside = cosL < 0.0;
+            vec3  faceN = inside ? -hit.n :  hit.n;  // always points against rd
+            float eta   = inside ?  hit.ior : 1.0 / hit.ior;
+            float cosL2 = abs(cosL);
+            float disc  = 1.0 - eta * eta * (1.0 - cosL2 * cosL2);
+
+            if (disc < 0.0) {
+                // Total internal reflection
+                ro = p + faceN * 0.001;
+                rd = myReflect(rd, faceN);
+            } else {
+                // Refract into / out of the medium
+                // rd = eta*d + (eta*cosL - sqrt(disc))*n  — derived in the section above
+                ro = p - faceN * 0.001;  // nudge into the new medium
+                rd = myRefract(rd, faceN, eta);
+            }
+            atten *= 0.97; // slight absorption per bounce
+        } else {
+            // Opaque: local shading + spawn reflection ray
+            col  += atten * (1.0 - hit.refl) * shade(hit, p, rd);
+            atten *= hit.refl;
+            if (atten < 0.01) break;
+            ro = p + hit.n * 0.001;
+            rd = myReflect(rd, hit.n);
+        }
     }
 
-    col = pow(col, vec3(1.0 / 2.2));
+    col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));
     fragColor = vec4(col, 1.0);
 }
 {{< /glsl >}}

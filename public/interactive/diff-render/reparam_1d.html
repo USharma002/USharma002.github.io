@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1D Reparameterization - Minimal Pure TeX Diagram</title>
+    <!-- KaTeX CSS & JS for Authentic LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <style>
+        :root {
+            /* LaTeX Paper Light Theme Defaults */
+            --bg: transparent;
+            --text: #000000;
+            --text-muted: #374151;
+            --axis: #000000;
+            --grid: #9ca3af;
+            --curve: #1d4ed8;
+            --step-boundary: #dc2626;
+
+            --moving-sample: #16a34a;
+            --fixed-sample: #9333ea;
+            --fill-area: rgba(29, 78, 216, 0.12);
+            
+            --btn-bg: #f3f4f6;
+            --btn-border: #d1d5db;
+            --btn-text: #111827;
+            --val-text: #000000;
+        }
+
+        /* Dark Mode Overrides (Synced with PaperMod parent window) */
+        html.dark, body.dark, [data-theme="dark"] {
+            --text: #ffffff;
+            --text-muted: #cbd5e1;
+            --axis: #ffffff;
+            --grid: #6b7280;
+            --curve: #60a5fa;
+            --step-boundary: #f87171;
+
+            --moving-sample: #4ade80;
+            --fixed-sample: #c084fc;
+            --fill-area: rgba(96, 165, 250, 0.18);
+
+            --btn-bg: #1f2937;
+            --btn-border: #374151;
+            --btn-text: #ffffff;
+            --val-text: #ffffff;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: transparent;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 4px;
+        }
+
+        /* Minimal Slider Control Bar */
+        .controls-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            padding: 4px 0 8px 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            height: 18px;
+            accent-color: var(--step-boundary);
+            cursor: pointer;
+        }
+
+        .val-num {
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--val-text);
+        }
+
+        /* Side-by-Side 2 TeX Figures Grid */
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .fig-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .fig-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 420 / 280;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: block; overflow: visible;
+        }
+
+        .caption-katex {
+            margin-top: 8px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* KaTeX Overlay positioning inside SVG foreignObject */
+        .katex-label {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 15px;
+            color: var(--text);
+        }
+        
+        .katex-pi { color: var(--step-boundary); font-weight: bold; }
+        .katex-moving { color: var(--moving-sample); }
+        .katex-fixed { color: var(--fixed-sample); }
+        
+        .draggable-boundary {
+            cursor: ew-resize;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Minimal Slider Control Bar -->
+    <div class="controls-bar">
+        <div class="slider-group">
+            <span id="label-slider-pi"></span>
+            <input type="range" id="slider-pi" min="0.6" max="2.8" step="0.01" value="1.50">
+            <span id="val-pi" class="val-num">1.50</span>
+        </div>
+    </div>
+
+    <div class="diagram-grid">
+
+        <!-- Figure (a): Reparameterized Domain -->
+        <div class="fig-card">
+            <div class="fig-box">
+                <svg id="svg-moving" viewBox="0 0 420 280" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <marker id="arrow-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--axis)" /></marker>
+                    </defs>
+
+                    <!-- Axes -->
+                    <line x1="40" y1="240" x2="400" y2="240" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-m)" />
+                    <line x1="50" y1="255" x2="50" y2="25" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-m)" />
+
+                    <!-- Axis Labels via foreignObject KaTeX -->
+                    <foreignObject x="402" y="228" width="30" height="30"><div id="katex-axis-x1" class="katex-label"></div></foreignObject>
+                    <foreignObject x="44" y="2" width="80" height="30"><div id="katex-axis-fx1" class="katex-label"></div></foreignObject>
+
+                    <!-- Shaded Area Under Step Function -->
+                    <path id="fill-m" fill="var(--fill-area)" stroke="none" />
+
+                    <!-- Smooth Function g(x) Ghost Line -->
+                    <path id="curve-g1" fill="none" stroke="var(--grid)" stroke-width="1.4" stroke-dasharray="4,4" />
+
+                    <!-- Step Integrand f(x, \pi) -->
+                    <path id="curve-m" fill="none" stroke="var(--curve)" stroke-width="2.5" />
+
+                    <!-- Discontinuity Boundary Line at x = \pi -->
+                    <line id="boundary-m" class="draggable-boundary" stroke="var(--step-boundary)" stroke-width="2.2" stroke-dasharray="5,4" />
+                    <foreignObject id="fo-pi-m" y="244" width="40" height="30"><div id="katex-pi-m" class="katex-label katex-pi" style="text-align: center;"></div></foreignObject>
+
+                    <!-- Moving Samples Container -->
+                    <g id="moving-samples-group"></g>
+                </svg>
+            </div>
+
+            <!-- Figure Caption via KaTeX -->
+            <div id="caption-a" class="caption-katex"></div>
+        </div>
+
+        <!-- Figure (b): Static Domain -->
+        <div class="fig-card">
+            <div class="fig-box">
+                <svg id="svg-fixed" viewBox="0 0 420 280" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <marker id="arrow-f" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--axis)" /></marker>
+                    </defs>
+
+                    <!-- Axes -->
+                    <line x1="40" y1="240" x2="400" y2="240" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-f)" />
+                    <line x1="50" y1="255" x2="50" y2="25" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-f)" />
+
+                    <!-- Axis Labels via foreignObject KaTeX -->
+                    <foreignObject x="402" y="228" width="30" height="30"><div id="katex-axis-x2" class="katex-label"></div></foreignObject>
+                    <foreignObject x="44" y="2" width="80" height="30"><div id="katex-axis-fx2" class="katex-label"></div></foreignObject>
+
+                    <!-- Shaded Area Under Step Function -->
+                    <path id="fill-f" fill="var(--fill-area)" stroke="none" />
+
+                    <!-- Smooth Function g(x) Ghost Line -->
+                    <path id="curve-g2" fill="none" stroke="var(--grid)" stroke-width="1.4" stroke-dasharray="4,4" />
+
+                    <!-- Step Integrand f(x, \pi) -->
+                    <path id="curve-f" fill="none" stroke="var(--curve)" stroke-width="2.5" />
+
+                    <!-- Discontinuity Boundary Line at x = \pi -->
+                    <line id="boundary-f" class="draggable-boundary" stroke="var(--step-boundary)" stroke-width="2.2" stroke-dasharray="5,4" />
+                    <foreignObject id="fo-pi-f" y="244" width="40" height="30"><div id="katex-pi-f" class="katex-label katex-pi" style="text-align: center;"></div></foreignObject>
+
+                    <!-- Fixed Samples Container -->
+                    <g id="fixed-samples-group"></g>
+                </svg>
+            </div>
+
+            <!-- Figure Caption via KaTeX -->
+            <div id="caption-b" class="caption-katex"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Theme sync listener for PaperMod parent window
+    function syncThemeFromParent() {
+        let isDark = false;
+        try {
+            const pDoc = window.parent.document;
+            const pBody = pDoc.body;
+            const pHtml = pDoc.documentElement;
+            isDark = pBody.classList.contains('dark') || 
+                     pHtml.classList.contains('dark') ||
+                     pBody.getAttribute('data-theme') === 'dark' ||
+                     pHtml.getAttribute('data-theme') === 'dark';
+        } catch(e) {
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    }
+
+    try {
+        const observer = new MutationObserver(syncThemeFromParent);
+        observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+        observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    } catch(e) {}
+
+    syncThemeFromParent();
+
+    // Render KaTeX Math Elements
+    function renderStaticKaTeX() {
+        if (typeof katex === 'undefined') return;
+        katex.render("\\text{Discontinuity Boundary } \\pi:", document.getElementById('label-slider-pi'), { displayMode: false });
+        katex.render("x", document.getElementById('katex-axis-x1'), { displayMode: false });
+        katex.render("x", document.getElementById('katex-axis-x2'), { displayMode: false });
+        katex.render("f(x, \\pi)", document.getElementById('katex-axis-fx1'), { displayMode: false });
+        katex.render("f(x, \\pi)", document.getElementById('katex-axis-fx2'), { displayMode: false });
+        katex.render("\\pi", document.getElementById('katex-pi-m'), { displayMode: false });
+        katex.render("\\pi", document.getElementById('katex-pi-f'), { displayMode: false });
+
+        katex.render("\\textbf{(a) Reparameterized Domain: } x_i(\\pi) = y_i + \\pi", document.getElementById('caption-a'), { displayMode: false });
+        katex.render("\\textbf{(b) Static Domain: Fixed Samples } x_i", document.getElementById('caption-b'), { displayMode: false });
+    }
+
+    // Smooth function g(x) = 0.35 * x + 0.35 * sin(2.2 * x) + 0.85
+    function funcG(x) {
+        return 0.35 * x + 0.35 * Math.sin(2.2 * x) + 0.85;
+    }
+
+    // Step integrand f(x, \pi) = 1_{[\pi, \infty]}(x) * g(x)
+    function funcF(x, pi) {
+        return x < pi ? 0.0 : funcG(x);
+    }
+
+    // Mapping Math domain [0.0, 4.0] x [0.0, 2.6] -> SVG ViewBox [0..420] x [0..280]
+    function mathToSvg(x, y) {
+        const sx = 50 + (x / 4.0) * 340;
+        const sy = 240 - (y / 2.6) * 195;
+        return [sx, sy];
+    }
+
+    function svgToMath(sx, sy) {
+        const x = ((sx - 50) / 340) * 4.0;
+        const y = ((240 - sy) / 195) * 2.6;
+        return [x, y];
+    }
+
+    // Controls
+    const sliderPi = document.getElementById('slider-pi'), valPi = document.getElementById('val-pi');
+
+    let state = {
+        pi: 1.50,
+        isDraggingM: false,
+        isDraggingF: false
+    };
+
+    // 3 Well-Spaced Samples for pristine clarity
+    const relativeOffsetsY = [0.45, 1.25, 2.05]; // Moving samples: x_i(\pi) = \pi + y_i
+    const staticPositionsX = [0.8, 2.0, 3.2];   // Static samples: x_i fixed
+
+    // Draw Smooth Ghost Curve g(x)
+    function drawGhostCurve() {
+        let pts = [];
+        for (let i = 0; i <= 200; i++) {
+            const mx = (i / 200) * 4.0;
+            const my = funcG(mx);
+            const [sx, sy] = mathToSvg(mx, my);
+            pts.push(`${i === 0 ? 'M' : 'L'} ${sx.toFixed(1)} ${sy.toFixed(1)}`);
+        }
+        const d = pts.join(' ');
+        document.getElementById('curve-g1').setAttribute('d', d);
+        document.getElementById('curve-g2').setAttribute('d', d);
+    }
+
+    function update() {
+        const pi = state.pi;
+        valPi.textContent = pi.toFixed(2);
+
+        const [spi_x] = mathToSvg(pi, 0);
+
+        // -------------------------------------------------------------
+        // DRAW STEP INTEGRAND f(x, \pi) = 1_{[\pi, \infty]}(x) g(x)
+        // -------------------------------------------------------------
+        const [sx_pi, sy_pi_base] = mathToSvg(pi, 0);
+        const [sx_pi_top, sy_pi_top] = mathToSvg(pi, funcG(pi));
+        const [sx_end, sy_end] = mathToSvg(4.0, 0);
+
+        let stepPts = [`M 50 240 L ${sx_pi} 240 L ${sx_pi} ${sy_pi_top}`];
+        let fillPts = [`M ${sx_pi} 240 L ${sx_pi} ${sy_pi_top}`];
+
+        for (let i = 0; i <= 150; i++) {
+            const mx = pi + (i / 150) * (4.0 - pi);
+            if (mx > 4.0) break;
+            const my = funcG(mx);
+            const [sx, sy] = mathToSvg(mx, my);
+            stepPts.push(`L ${sx.toFixed(1)} ${sy.toFixed(1)}`);
+            fillPts.push(`L ${sx.toFixed(1)} ${sy.toFixed(1)}`);
+        }
+
+        const stepD = stepPts.join(' ');
+        fillPts.push(`L ${sx_end} 240 Z`);
+        const fillD = fillPts.join(' ');
+
+        document.getElementById('curve-m').setAttribute('d', stepD);
+        document.getElementById('curve-f').setAttribute('d', stepD);
+        document.getElementById('fill-m').setAttribute('d', fillD);
+        document.getElementById('fill-f').setAttribute('d', fillD);
+
+        // Discontinuity Boundary Lines at x = \pi
+        document.getElementById('boundary-m').setAttribute('x1', spi_x); document.getElementById('boundary-m').setAttribute('y1', 25);
+        document.getElementById('boundary-m').setAttribute('x2', spi_x); document.getElementById('boundary-m').setAttribute('y2', 240);
+        document.getElementById('fo-pi-m').setAttribute('x', spi_x - 20);
+
+        document.getElementById('boundary-f').setAttribute('x1', spi_x); document.getElementById('boundary-f').setAttribute('y1', 25);
+        document.getElementById('boundary-f').setAttribute('x2', spi_x); document.getElementById('boundary-f').setAttribute('y2', 240);
+        document.getElementById('fo-pi-f').setAttribute('x', spi_x - 20);
+
+        // -------------------------------------------------------------
+        // (a) RENDER MOVING SAMPLES x_1(\pi)...x_3(\pi)
+        // -------------------------------------------------------------
+        const mGroup = document.getElementById('moving-samples-group');
+        mGroup.innerHTML = '';
+
+        relativeOffsetsY.forEach((yi, idx) => {
+            const xi = pi + yi;
+            if (xi > 3.95) return;
+            const fi = funcG(xi);
+            const [sx, sy] = mathToSvg(xi, fi);
+
+            // Projection down to x-axis
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', sx); line.setAttribute('y1', 240);
+            line.setAttribute('x2', sx); line.setAttribute('y2', sy);
+            line.setAttribute('stroke', 'var(--moving-sample)');
+            line.setAttribute('stroke-width', '1.2');
+            line.setAttribute('stroke-dasharray', '3,3');
+            mGroup.appendChild(line);
+
+            // Sample Node Circle
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', sx); circle.setAttribute('cy', sy);
+            circle.setAttribute('r', '5.0');
+            circle.setAttribute('fill', 'var(--moving-sample)');
+            circle.setAttribute('stroke', '#ffffff');
+            circle.setAttribute('stroke-width', '1.5');
+            mGroup.appendChild(circle);
+
+            // ForeignObject for KaTeX Label x_i(\pi)
+            const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+            fo.setAttribute('x', sx - 25); fo.setAttribute('y', 242);
+            fo.setAttribute('width', '50'); fo.setAttribute('height', '30');
+
+            const div = document.createElement('div');
+            div.className = 'katex-label katex-moving';
+            div.style.textAlign = 'center';
+            fo.appendChild(div);
+            mGroup.appendChild(fo);
+
+            if (typeof katex !== 'undefined') {
+                katex.render(`x_${idx+1}(\\pi)`, div, { displayMode: false });
+            }
+        });
+
+        // -------------------------------------------------------------
+        // (b) RENDER FIXED SAMPLES x_1...x_3 (STATIC DOMAIN)
+        // -------------------------------------------------------------
+        const fGroup = document.getElementById('fixed-samples-group');
+        fGroup.innerHTML = '';
+
+        staticPositionsX.forEach((xi, idx) => {
+            const fi = funcF(xi, pi);
+            const [sx, sy] = mathToSvg(xi, fi);
+
+            // Projection down to x-axis
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', sx); line.setAttribute('y1', 240);
+            line.setAttribute('x2', sx); line.setAttribute('y2', sy);
+            line.setAttribute('stroke', 'var(--fixed-sample)');
+            line.setAttribute('stroke-width', '1.2');
+            line.setAttribute('stroke-dasharray', '3,3');
+            fGroup.appendChild(line);
+
+            // Sample Node Circle
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', sx); circle.setAttribute('cy', sy);
+            circle.setAttribute('r', '5.0');
+            circle.setAttribute('fill', fi > 0 ? 'var(--fixed-sample)' : 'var(--grid)');
+            circle.setAttribute('stroke', '#ffffff');
+            circle.setAttribute('stroke-width', '1.5');
+            fGroup.appendChild(circle);
+
+            // ForeignObject for KaTeX Label x_i
+            const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+            fo.setAttribute('x', sx - 20); fo.setAttribute('y', 242);
+            fo.setAttribute('width', '40'); fo.setAttribute('height', '30');
+
+            const div = document.createElement('div');
+            div.className = 'katex-label katex-fixed';
+            div.style.textAlign = 'center';
+            fo.appendChild(div);
+            fGroup.appendChild(fo);
+
+            if (typeof katex !== 'undefined') {
+                katex.render(`x_${idx+1}`, div, { displayMode: false });
+            }
+        });
+    }
+
+    // Input Events
+    sliderPi.addEventListener('input', (e) => { state.pi = parseFloat(e.target.value); update(); });
+
+    // Interactive Pointer Dragging on SVGs (Drag \pi boundary across domain)
+    const svgM = document.getElementById('svg-moving'), svgF = document.getElementById('svg-fixed');
+
+    function handleDrag(e, svgEl) {
+        const rect = svgEl.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (clientX === undefined) return;
+        const [mx] = svgToMath((clientX - rect.left) * (420 / rect.width), 0);
+        state.pi = Math.max(0.6, Math.min(2.8, mx));
+        sliderPi.value = state.pi.toFixed(2);
+        update();
+    }
+
+    svgM.addEventListener('pointerdown', (e) => { state.isDraggingM = true; handleDrag(e, svgM); });
+    svgF.addEventListener('pointerdown', (e) => { state.isDraggingF = true; handleDrag(e, svgF); });
+
+    window.addEventListener('pointermove', (e) => {
+        if (state.isDraggingM) handleDrag(e, svgM);
+        if (state.isDraggingF) handleDrag(e, svgF);
+    });
+
+    window.addEventListener('pointerup', () => {
+        state.isDraggingM = false;
+        state.isDraggingF = false;
+    });
+
+    renderStaticKaTeX();
+    drawGhostCurve();
+    update();
+</script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1D Finite Difference - True KaTeX LaTeX Rendering</title>
+    <!-- KaTeX CSS & JS for Authentic LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <style>
+        :root {
+            /* LaTeX Paper Light Theme Defaults */
+            --bg: transparent;
+            --text: #000000;
+            --text-muted: #374151;
+            --axis: #000000;
+            --grid: #9ca3af;
+            --curve: #1d4ed8;
+
+            /* Forward Difference Red Accent */
+            --fd-stroke: #dc2626;
+            --fd-fill: rgba(220, 38, 38, 0.18);
+
+            /* Central Difference Green Accent */
+            --cd-stroke: #16a34a;
+            --cd-fill: rgba(22, 163, 74, 0.18);
+            
+            --btn-bg: #f3f4f6;
+            --btn-border: #d1d5db;
+            --btn-text: #111827;
+            --val-text: #000000;
+        }
+
+        /* Dark Mode Overrides (Synced with PaperMod parent window) */
+        html.dark, body.dark, [data-theme="dark"] {
+            --text: #ffffff;
+            --text-muted: #cbd5e1;
+            --axis: #ffffff;
+            --grid: #6b7280;
+            --curve: #60a5fa;
+
+            --fd-stroke: #f87171;
+            --fd-fill: rgba(248, 113, 113, 0.22);
+
+            --cd-stroke: #4ade80;
+            --cd-fill: rgba(74, 222, 128, 0.22);
+
+            --btn-bg: #1f2937;
+            --btn-border: #374151;
+            --btn-text: #ffffff;
+            --val-text: #ffffff;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: transparent;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text);
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            padding: 4px;
+        }
+
+        /* Large Controls */
+        .controls-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            width: 100%;
+            padding: 6px 0 10px 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            width: 130px;
+            height: 18px;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        .val-num {
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--val-text);
+        }
+
+        /* Side-by-Side 2 TeX Figures Grid */
+        .diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .fig-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .fig-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 420 / 280;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        svg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: block; overflow: visible;
+        }
+
+        .caption-katex {
+            margin-top: 6px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* KaTeX Overlay positioning */
+        .katex-label {
+            display: inline-block;
+            white-space: nowrap;
+            font-size: 15px;
+            color: var(--text);
+        }
+        
+        .draggable-dot {
+            cursor: grab;
+            transition: r 0.15s ease;
+        }
+        .draggable-dot:active {
+            cursor: grabbing;
+            r: 8.0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Minimal Controls with KaTeX Labels -->
+    <div class="controls-bar">
+        <div class="slider-group">
+            <span id="label-slider-x"></span>
+            <input type="range" id="slider-x" min="0.8" max="3.2" step="0.01" value="1.80">
+            <span id="val-x" class="val-num">1.80</span>
+        </div>
+
+        <div class="slider-group">
+            <span id="label-slider-h"></span>
+            <input type="range" id="slider-h" min="0.2" max="0.8" step="0.02" value="0.45">
+            <span id="val-h" class="val-num">0.45</span>
+        </div>
+    </div>
+
+    <div class="diagram-grid">
+
+        <!-- Figure (a): Finite Difference (Forward) -->
+        <div class="fig-card">
+            <div class="fig-box">
+                <svg id="svg-fd" viewBox="0 0 420 280" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <marker id="arrow-fd" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--axis)" /></marker>
+                    </defs>
+
+                    <!-- Axes -->
+                    <line x1="40" y1="240" x2="400" y2="240" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-fd)" />
+                    <line x1="50" y1="255" x2="50" y2="25" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-fd)" />
+
+                    <!-- Axis Labels via foreignObject KaTeX -->
+                    <foreignObject x="402" y="228" width="30" height="30"><div id="katex-axis-x-fd" class="katex-label"></div></foreignObject>
+                    <foreignObject x="44" y="2" width="60" height="30"><div id="katex-axis-fx-fd" class="katex-label"></div></foreignObject>
+
+                    <!-- Curve f(x) -->
+                    <path id="curve-fd" fill="none" stroke="var(--curve)" stroke-width="2.5" />
+
+                    <!-- Translucent Red Slope Triangle -->
+                    <polygon id="tri-fd" fill="var(--fd-fill)" stroke="none" />
+                    <line id="tri-base-fd" stroke="var(--fd-stroke)" stroke-width="2.0" />
+                    <line id="tri-height-fd" stroke="var(--fd-stroke)" stroke-width="2.0" />
+                    <line id="secant-fd" stroke="var(--fd-stroke)" stroke-width="2.0" stroke-dasharray="5,4" />
+
+                    <!-- Dashed Projections -->
+                    <line id="proj-x-fd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+                    <line id="proj-xph-fd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+                    <line id="proj-fx-fd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+                    <line id="proj-fxph-fd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+
+                    <!-- Evaluation Points & Interactive Parameter Dot x -->
+                    <circle id="dot-xph-fd" r="5.0" fill="var(--fd-stroke)" stroke="#ffffff" stroke-width="1.5" />
+                    <circle id="dot-x-fd" class="draggable-dot" r="6.5" fill="#ffffff" stroke="var(--axis)" stroke-width="2.2" />
+
+                    <!-- Axis Projection Labels via KaTeX -->
+                    <foreignObject id="fo-lbl-x-fd" y="242" width="40" height="30"><div id="katex-lbl-x-fd" class="katex-label" style="text-align: center;"></div></foreignObject>
+                    <foreignObject id="fo-lbl-xph-fd" y="242" width="60" height="30"><div id="katex-lbl-xph-fd" class="katex-label" style="text-align: center;"></div></foreignObject>
+
+                    <foreignObject id="fo-lbl-fx-fd" x="2" width="46" height="30"><div id="katex-lbl-fx-fd" class="katex-label" style="text-align: right;"></div></foreignObject>
+                    <foreignObject id="fo-lbl-fxph-fd" x="2" width="46" height="30"><div id="katex-lbl-fxph-fd" class="katex-label" style="text-align: right;"></div></foreignObject>
+                </svg>
+            </div>
+            <div id="caption-fd" class="caption-katex"></div>
+        </div>
+
+        <!-- Figure (b): Central Difference -->
+        <div class="fig-card">
+            <div class="fig-box">
+                <svg id="svg-cd" viewBox="0 0 420 280" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <marker id="arrow-cd" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--axis)" /></marker>
+                    </defs>
+
+                    <!-- Axes -->
+                    <line x1="40" y1="240" x2="400" y2="240" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-cd)" />
+                    <line x1="50" y1="255" x2="50" y2="25" stroke="var(--axis)" stroke-width="1.8" marker-end="url(#arrow-cd)" />
+
+                    <!-- Axis Labels via foreignObject KaTeX -->
+                    <foreignObject x="402" y="228" width="30" height="30"><div id="katex-axis-x-cd" class="katex-label"></div></foreignObject>
+                    <foreignObject x="44" y="2" width="60" height="30"><div id="katex-axis-fx-cd" class="katex-label"></div></foreignObject>
+
+                    <!-- Curve f(x) -->
+                    <path id="curve-cd" fill="none" stroke="var(--curve)" stroke-width="2.5" />
+
+                    <!-- Translucent Green Slope Triangle -->
+                    <polygon id="tri-cd" fill="var(--cd-fill)" stroke="none" />
+                    <line id="tri-base-cd" stroke="var(--cd-stroke)" stroke-width="2.0" />
+                    <line id="tri-height-cd" stroke="var(--cd-stroke)" stroke-width="2.0" />
+                    <line id="secant-cd" stroke="var(--cd-stroke)" stroke-width="2.0" stroke-dasharray="5,4" />
+
+                    <!-- Dashed Projections -->
+                    <line id="proj-xmh-cd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+                    <line id="proj-xph-cd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+                    <line id="proj-fxmh-cd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+                    <line id="proj-fxph-cd" stroke="var(--grid)" stroke-width="1.2" stroke-dasharray="3,3" />
+
+                    <!-- Evaluation Points & Interactive Parameter Dot x -->
+                    <circle id="dot-xmh-cd" r="5.0" fill="var(--cd-stroke)" stroke="#ffffff" stroke-width="1.5" />
+                    <circle id="dot-xph-cd" r="5.0" fill="var(--cd-stroke)" stroke="#ffffff" stroke-width="1.5" />
+                    <circle id="dot-x-cd" class="draggable-dot" r="6.5" fill="#ffffff" stroke="var(--axis)" stroke-width="2.2" />
+
+                    <!-- Axis Projection Labels via KaTeX -->
+                    <foreignObject id="fo-lbl-xmh-cd" y="242" width="60" height="30"><div id="katex-lbl-xmh-cd" class="katex-label" style="text-align: center;"></div></foreignObject>
+                    <foreignObject id="fo-lbl-xph-cd" y="242" width="60" height="30"><div id="katex-lbl-xph-cd" class="katex-label" style="text-align: center;"></div></foreignObject>
+
+                    <foreignObject id="fo-lbl-fxmh-cd" x="2" width="46" height="30"><div id="katex-lbl-fxmh-cd" class="katex-label" style="text-align: right;"></div></foreignObject>
+                    <foreignObject id="fo-lbl-fxph-cd" x="2" width="46" height="30"><div id="katex-lbl-fxph-cd" class="katex-label" style="text-align: right;"></div></foreignObject>
+                </svg>
+            </div>
+            <div id="caption-cd" class="caption-katex"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Theme sync listener for PaperMod parent window
+    function syncThemeFromParent() {
+        let isDark = false;
+        try {
+            const pDoc = window.parent.document;
+            const pBody = pDoc.body;
+            const pHtml = pDoc.documentElement;
+            isDark = pBody.classList.contains('dark') || 
+                     pHtml.classList.contains('dark') ||
+                     pBody.getAttribute('data-theme') === 'dark' ||
+                     pHtml.getAttribute('data-theme') === 'dark';
+        } catch(e) {
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    }
+
+    try {
+        const observer = new MutationObserver(syncThemeFromParent);
+        observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+        observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    } catch(e) {}
+
+    syncThemeFromParent();
+
+    // Render KaTeX Math Elements
+    function renderStaticKaTeX() {
+        if (typeof katex === 'undefined') return;
+        katex.render("\\text{Parameter } x:", document.getElementById('label-slider-x'), { displayMode: false });
+        katex.render("\\text{Step size } h:", document.getElementById('label-slider-h'), { displayMode: false });
+
+        katex.render("x", document.getElementById('katex-axis-x-fd'), { displayMode: false });
+        katex.render("x", document.getElementById('katex-axis-x-cd'), { displayMode: false });
+        katex.render("f(x)", document.getElementById('katex-axis-fx-fd'), { displayMode: false });
+        katex.render("f(x)", document.getElementById('katex-axis-fx-cd'), { displayMode: false });
+
+        katex.render("x", document.getElementById('katex-lbl-x-fd'), { displayMode: false });
+        katex.render("x+h", document.getElementById('katex-lbl-xph-fd'), { displayMode: false });
+        katex.render("x-h", document.getElementById('katex-lbl-xmh-cd'), { displayMode: false });
+        katex.render("x+h", document.getElementById('katex-lbl-xph-cd'), { displayMode: false });
+
+        katex.render("\\textbf{(a) Finite Difference}", document.getElementById('caption-fd'), { displayMode: false });
+        katex.render("\\textbf{(b) Central Difference}", document.getElementById('caption-cd'), { displayMode: false });
+    }
+
+    // Dynamic multi-wave scalar function: f(x) = 0.12 * x^2 + 0.45 * sin(1.8 * x) + 0.9
+    function funcF(x) {
+        return 0.12 * x * x + 0.45 * Math.sin(1.8 * x) + 0.9;
+    }
+
+    // Mapping Math domain [0.2, 3.8] x [0.0, 2.5] -> SVG ViewBox [0..420] x [0..280]
+    function mathToSvg(x, y) {
+        const sx = 50 + ((x - 0.2) / 3.6) * 340;
+        const sy = 240 - (y / 2.5) * 195;
+        return [sx, sy];
+    }
+
+    function svgToMath(sx, sy) {
+        const x = 0.2 + ((sx - 50) / 340) * 3.6;
+        const y = ((240 - sy) / 195) * 2.5;
+        return [x, y];
+    }
+
+    // Controls
+    const sliderX = document.getElementById('slider-x'), valX = document.getElementById('val-x');
+    const sliderH = document.getElementById('slider-h'), valH = document.getElementById('val-h');
+
+    let state = {
+        x: 1.80,
+        h: 0.45,
+        isDraggingFD: false,
+        isDraggingCD: false
+    };
+
+    // Draw Blue Curves f(x)
+    function drawCurves() {
+        let pts = [];
+        for (let i = 0; i <= 200; i++) {
+            const mx = 0.2 + (i / 200) * 3.6;
+            const my = funcF(mx);
+            const [sx, sy] = mathToSvg(mx, my);
+            pts.push(`${i === 0 ? 'M' : 'L'} ${sx.toFixed(1)} ${sy.toFixed(1)}`);
+        }
+        const d = pts.join(' ');
+        document.getElementById('curve-fd').setAttribute('d', d);
+        document.getElementById('curve-cd').setAttribute('d', d);
+    }
+
+    function update() {
+        const x = state.x, h = state.h;
+        valX.textContent = x.toFixed(2);
+        valH.textContent = h.toFixed(2);
+
+        // =========================================================================
+        // FIGURE (a): FORWARD FINITE DIFFERENCE
+        // =========================================================================
+        const fx = funcF(x);
+        const xph = Math.min(3.7, x + h);
+        const fxph = funcF(xph);
+
+        const [px_fd, py_fd] = mathToSvg(x, fx);
+        const [qx_fd, qy_fd] = mathToSvg(xph, fx);
+        const [rx_fd, ry_fd] = mathToSvg(xph, fxph);
+
+        // Parameter Dot x & Evaluation Point x+h
+        document.getElementById('dot-x-fd').setAttribute('cx', px_fd);
+        document.getElementById('dot-x-fd').setAttribute('cy', py_fd);
+        document.getElementById('dot-xph-fd').setAttribute('cx', rx_fd);
+        document.getElementById('dot-xph-fd').setAttribute('cy', ry_fd);
+
+        // Slope Triangle
+        document.getElementById('tri-fd').setAttribute('points', `${px_fd},${py_fd} ${qx_fd},${qy_fd} ${rx_fd},${ry_fd}`);
+        document.getElementById('tri-base-fd').setAttribute('x1', px_fd); document.getElementById('tri-base-fd').setAttribute('y1', py_fd);
+        document.getElementById('tri-base-fd').setAttribute('x2', qx_fd); document.getElementById('tri-base-fd').setAttribute('y2', qy_fd);
+
+        document.getElementById('tri-height-fd').setAttribute('x1', qx_fd); document.getElementById('tri-height-fd').setAttribute('y1', qy_fd);
+        document.getElementById('tri-height-fd').setAttribute('x2', rx_fd); document.getElementById('tri-height-fd').setAttribute('y2', ry_fd);
+
+        document.getElementById('secant-fd').setAttribute('x1', px_fd); document.getElementById('secant-fd').setAttribute('y1', py_fd);
+        document.getElementById('secant-fd').setAttribute('x2', rx_fd); document.getElementById('secant-fd').setAttribute('y2', ry_fd);
+
+        // Projections
+        document.getElementById('proj-x-fd').setAttribute('x1', px_fd); document.getElementById('proj-x-fd').setAttribute('y1', 240);
+        document.getElementById('proj-x-fd').setAttribute('x2', px_fd); document.getElementById('proj-x-fd').setAttribute('y2', py_fd);
+
+        document.getElementById('proj-xph-fd').setAttribute('x1', rx_fd); document.getElementById('proj-xph-fd').setAttribute('y1', 240);
+        document.getElementById('proj-xph-fd').setAttribute('x2', rx_fd); document.getElementById('proj-xph-fd').setAttribute('y2', ry_fd);
+
+        document.getElementById('proj-fx-fd').setAttribute('x1', 50); document.getElementById('proj-fx-fd').setAttribute('y1', py_fd);
+        document.getElementById('proj-fx-fd').setAttribute('x2', px_fd); document.getElementById('proj-fx-fd').setAttribute('y2', py_fd);
+
+        document.getElementById('proj-fxph-fd').setAttribute('x1', 50); document.getElementById('proj-fxph-fd').setAttribute('y1', ry_fd);
+        document.getElementById('proj-fxph-fd').setAttribute('x2', rx_fd); document.getElementById('proj-fxph-fd').setAttribute('y2', ry_fd);
+
+        // Labels
+        document.getElementById('fo-lbl-x-fd').setAttribute('x', px_fd - 20);
+        document.getElementById('fo-lbl-xph-fd').setAttribute('x', rx_fd - 30);
+        document.getElementById('fo-lbl-fx-fd').setAttribute('y', py_fd - 12);
+        document.getElementById('fo-lbl-fxph-fd').setAttribute('y', ry_fd - 12);
+
+        if (typeof katex !== 'undefined') {
+            katex.render("f(x)", document.getElementById('katex-lbl-fx-fd'), { displayMode: false });
+            katex.render("f(x+h)", document.getElementById('katex-lbl-fxph-fd'), { displayMode: false });
+        }
+
+        // =========================================================================
+        // FIGURE (b): CENTRAL DIFFERENCE
+        // =========================================================================
+        const xmh = Math.max(0.3, x - h);
+        const fxmh = funcF(xmh);
+
+        const [px_cd, py_cd] = mathToSvg(xmh, fxmh);
+        const [qx_cd, qy_cd] = mathToSvg(xph, fxmh);
+        const [rx_cd, ry_cd] = mathToSvg(xph, fxph);
+        const [cx_cd, cy_cd] = mathToSvg(x, fx);
+
+        // Parameter Dot x & Evaluation Points x-h, x+h
+        document.getElementById('dot-x-cd').setAttribute('cx', cx_cd);
+        document.getElementById('dot-x-cd').setAttribute('cy', cy_cd);
+        document.getElementById('dot-xmh-cd').setAttribute('cx', px_cd);
+        document.getElementById('dot-xmh-cd').setAttribute('cy', py_cd);
+        document.getElementById('dot-xph-cd').setAttribute('cx', rx_cd);
+        document.getElementById('dot-xph-cd').setAttribute('cy', ry_cd);
+
+        // Slope Triangle
+        document.getElementById('tri-cd').setAttribute('points', `${px_cd},${py_cd} ${qx_cd},${qy_cd} ${rx_cd},${ry_cd}`);
+        document.getElementById('tri-base-cd').setAttribute('x1', px_cd); document.getElementById('tri-base-cd').setAttribute('y1', py_cd);
+        document.getElementById('tri-base-cd').setAttribute('x2', qx_cd); document.getElementById('tri-base-cd').setAttribute('y2', qy_cd);
+
+        document.getElementById('tri-height-cd').setAttribute('x1', qx_cd); document.getElementById('tri-height-cd').setAttribute('y1', qy_cd);
+        document.getElementById('tri-height-cd').setAttribute('x2', rx_cd); document.getElementById('tri-height-cd').setAttribute('y2', ry_cd);
+
+        document.getElementById('secant-cd').setAttribute('x1', px_cd); document.getElementById('secant-cd').setAttribute('y1', py_cd);
+        document.getElementById('secant-cd').setAttribute('x2', rx_cd); document.getElementById('secant-cd').setAttribute('y2', ry_cd);
+
+        // Projections
+        document.getElementById('proj-xmh-cd').setAttribute('x1', px_cd); document.getElementById('proj-xmh-cd').setAttribute('y1', 240);
+        document.getElementById('proj-xmh-cd').setAttribute('x2', px_cd); document.getElementById('proj-xmh-cd').setAttribute('y2', py_cd);
+
+        document.getElementById('proj-xph-cd').setAttribute('x1', rx_cd); document.getElementById('proj-xph-cd').setAttribute('y1', 240);
+        document.getElementById('proj-xph-cd').setAttribute('x2', rx_cd); document.getElementById('proj-xph-cd').setAttribute('y2', ry_cd);
+
+        document.getElementById('proj-fxmh-cd').setAttribute('x1', 50); document.getElementById('proj-fxmh-cd').setAttribute('y1', py_cd);
+        document.getElementById('proj-fxmh-cd').setAttribute('x2', px_cd); document.getElementById('proj-fxmh-cd').setAttribute('y2', py_cd);
+
+        document.getElementById('proj-fxph-cd').setAttribute('x1', 50); document.getElementById('proj-fxph-cd').setAttribute('y1', ry_cd);
+        document.getElementById('proj-fxph-cd').setAttribute('x2', rx_cd); document.getElementById('proj-fxph-cd').setAttribute('y2', ry_cd);
+
+        // Labels
+        document.getElementById('fo-lbl-xmh-cd').setAttribute('x', px_cd - 30);
+        document.getElementById('fo-lbl-xph-cd').setAttribute('x', rx_cd - 30);
+        document.getElementById('fo-lbl-fxmh-cd').setAttribute('y', py_cd - 12);
+        document.getElementById('fo-lbl-fxph-cd').setAttribute('y', ry_cd - 12);
+
+        if (typeof katex !== 'undefined') {
+            katex.render("f(x-h)", document.getElementById('katex-lbl-fxmh-cd'), { displayMode: false });
+            katex.render("f(x+h)", document.getElementById('katex-lbl-fxph-cd'), { displayMode: false });
+        }
+    }
+
+    // Input Events
+    sliderX.addEventListener('input', (e) => { state.x = parseFloat(e.target.value); update(); });
+    sliderH.addEventListener('input', (e) => { state.h = parseFloat(e.target.value); update(); });
+
+    // Interactive Pointer Dragging on SVGs
+    const svgFD = document.getElementById('svg-fd'), svgCD = document.getElementById('svg-cd');
+
+    function handleDrag(e, svgEl) {
+        const rect = svgEl.getBoundingClientRect();
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        if (clientX === undefined) return;
+        const [mx] = svgToMath((clientX - rect.left) * (420 / rect.width), 0);
+        state.x = Math.max(0.8, Math.min(3.2, mx));
+        sliderX.value = state.x.toFixed(2);
+        update();
+    }
+
+    svgFD.addEventListener('pointerdown', (e) => { state.isDraggingFD = true; handleDrag(e, svgFD); });
+    svgCD.addEventListener('pointerdown', (e) => { state.isDraggingCD = true; handleDrag(e, svgCD); });
+
+    window.addEventListener('pointermove', (e) => {
+        if (state.isDraggingFD) handleDrag(e, svgFD);
+        if (state.isDraggingCD) handleDrag(e, svgCD);
+    });
+
+    window.addEventListener('pointerup', () => {
+        state.isDraggingFD = false;
+        state.isDraggingCD = false;
+    });
+
+    renderStaticKaTeX();
+    drawCurves();
+    update();
+</script>
+</body>
+</html>

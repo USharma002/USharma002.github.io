@@ -29,108 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.body.appendChild(sidebar);
 
-    var tocScrollTarget = null;
-    var tocScrollClearTimer = null;
-    var tocScrollFrame = null;
-    var tocScrollObserver = null;
-    var tocScrollFallbackTimer = null;
-    var tocScrollFallbackTicks = 0;
-    var tocScrollFallbackLimit = 12;
-
-    // Keep TOC navigation pinned while lazy content changes the article height.
-    function stopTocScrollTracking() {
-        tocScrollTarget = null;
-        tocScrollFallbackTicks = 0;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-            tocScrollClearTimer = null;
-        }
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-            tocScrollFrame = null;
-        }
-
-        if (tocScrollFallbackTimer) {
-            clearInterval(tocScrollFallbackTimer);
-            tocScrollFallbackTimer = null;
-        }
-
-        if (tocScrollObserver) {
-            tocScrollObserver.disconnect();
-            tocScrollObserver = null;
-        }
-    }
-
-    function alignTocScrollTarget() {
-        if (!tocScrollTarget || !document.contains(tocScrollTarget)) {
-            stopTocScrollTracking();
-            return;
-        }
-
-        var targetTop = Math.max(0, tocScrollTarget.getBoundingClientRect().top + window.scrollY - clickScrollOffset);
-        if (Math.abs(window.scrollY - targetTop) > 2) {
-            window.scrollTo({ top: targetTop, behavior: 'auto' });
-        }
-    }
-
-    function queueTocScrollAlignment() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollFrame) {
-            cancelAnimationFrame(tocScrollFrame);
-        }
-
-        tocScrollFrame = requestAnimationFrame(function() {
-            tocScrollFrame = null;
-            alignTocScrollTarget();
-        });
-    }
-
-    function scheduleTocScrollClear() {
-        if (!tocScrollTarget) return;
-
-        if (tocScrollClearTimer) {
-            clearTimeout(tocScrollClearTimer);
-        }
-
-        tocScrollClearTimer = setTimeout(function() {
-            stopTocScrollTracking();
-        }, 750);
-    }
-
-    function startTocScroll(target) {
-        stopTocScrollTracking();
-        tocScrollTarget = target;
-
-        alignTocScrollTarget();
-
-        if (typeof ResizeObserver !== 'undefined') {
-            tocScrollObserver = new ResizeObserver(function() {
-                if (!tocScrollTarget) return;
-                queueTocScrollAlignment();
-                scheduleTocScrollClear();
-            });
-            tocScrollObserver.observe(content);
-            scheduleTocScrollClear();
-        } else {
-            tocScrollFallbackTimer = setInterval(function() {
-                if (!tocScrollTarget) {
-                    stopTocScrollTracking();
-                    return;
-                }
-
-                alignTocScrollTarget();
-                tocScrollFallbackTicks++;
-
-                if (tocScrollFallbackTicks >= tocScrollFallbackLimit) {
-                    stopTocScrollTracking();
-                }
-            }, 150);
-        }
-    }
-
+    // 2. Click handler for smooth scrolling
     sidebar.addEventListener('click', function(e) {
         var anchor = e.target.closest('a[href^="#"]');
         if (!anchor) return;
@@ -142,22 +41,29 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!target) return;
 
         e.preventDefault();
-        e.stopImmediatePropagation();
 
-        startTocScroll(target);
+        var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+        var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 40);
 
-        history.pushState(null, null, `#${id}`);
-    }, true);
+        window.scrollTo({
+            top: targetTop,
+            behavior: 'smooth'
+        });
 
-    // 2. Get all headings in post-content and all links in sidebar
+        if (history.pushState) {
+            history.pushState(null, null, '#' + id);
+        } else {
+            location.hash = '#' + id;
+        }
+    });
+
+    // 3. Scroll tracking and active state highlighting
     var headers = Array.prototype.slice.call(content.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'));
     if (!headers.length) return;
 
     var lastActiveId = '';
     var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
-    var activeHeaderOffset = headerHeight + 40;
-    var clickScrollOffset = headerHeight + 8;
-    var headerPositions = [];
+    var activeHeaderOffset = headerHeight + 45;
 
     // Hide all nested lists initially
     var nestedUls = sidebar.querySelectorAll('ul ul');
@@ -165,36 +71,11 @@ document.addEventListener('DOMContentLoaded', function() {
         nestedUls[i].style.display = 'none';
     }
 
-    function refreshHeaderPositions() {
-        headerPositions = new Array(headers.length);
-        for (var i = 0; i < headers.length; i++) {
-            headerPositions[i] = {
-                id: headers[i].getAttribute('id') || '',
-                top: headers[i].getBoundingClientRect().top + window.scrollY
-            };
-        }
-    }
-
-    function findActiveHeaderId() {
-        var currentId = '';
-        var currentTop = window.scrollY + activeHeaderOffset;
-
-        for (var i = 0; i < headerPositions.length; i++) {
-            if (headerPositions[i].top <= currentTop) {
-                currentId = headerPositions[i].id;
-            } else {
-                break;
-            }
-        }
-
-        return currentId;
-    }
-
     function applyActiveState(currentId) {
         if (currentId === lastActiveId) return;
         lastActiveId = currentId;
 
-        // Clear old state.
+        // Clear old state
         var highlighted = sidebar.querySelectorAll('a.active, a.semi_active');
         for (var i = 0; i < highlighted.length; i++) {
             highlighted[i].classList.remove('active', 'semi_active');
@@ -207,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var activeLink = sidebar.querySelector('a[href="#' + currentId + '"]');
         if (!activeLink) return;
 
-        // Walk up and mark active parent chain.
+        // Walk up and mark active parent chain
         var el = activeLink.parentElement;
         var depth = 0;
         while (el && el !== sidebar) {
@@ -222,46 +103,54 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             el = el.parentElement;
         }
+
+        // Smoothly scroll TOC sidebar container to keep active link centered
+        var container = sidebar.querySelector('.agn-sidetoc-links');
+        if (container) {
+            var containerRect = container.getBoundingClientRect();
+            var linkRect = activeLink.getBoundingClientRect();
+            var relativeTop = linkRect.top - containerRect.top + container.scrollTop;
+            var targetScrollTop = relativeTop - (container.clientHeight / 2) + (linkRect.height / 2);
+            container.scrollTo({
+                top: targetScrollTop,
+                behavior: 'smooth'
+            });
+        }
     }
 
-    // 3. Scroll handler
     var ticking = false;
-
     function onScroll() {
         if (ticking) return;
         ticking = true;
 
         requestAnimationFrame(function() {
-            var currentId = findActiveHeaderId();
+            var currentId = '';
+            var scrollY = window.scrollY;
+            var windowHeight = window.innerHeight;
+            var documentHeight = document.documentElement.scrollHeight;
+
+            if (scrollY + windowHeight >= documentHeight - 10) {
+                currentId = headers[headers.length - 1].id;
+            } else {
+                for (var i = headers.length - 1; i >= 0; i--) {
+                    var rect = headers[i].getBoundingClientRect();
+                    if (rect.top <= activeHeaderOffset) {
+                        currentId = headers[i].id;
+                        break;
+                    }
+                }
+            }
+
             applyActiveState(currentId);
             ticking = false;
         });
     }
 
-    if (typeof ResizeObserver !== 'undefined') {
-        var layoutObserver = new ResizeObserver(function() {
-            refreshHeaderPositions();
-            onScroll();
-        });
-        layoutObserver.observe(content);
-
-        window.addEventListener('beforeunload', function() {
-            layoutObserver.disconnect();
-        });
-    }
-
-    window.addEventListener('resize', function() {
-        refreshHeaderPositions();
-        onScroll();
-    }, { passive: true });
-    window.addEventListener('load', function() {
-        refreshHeaderPositions();
-        onScroll();
-    });
-
-    refreshHeaderPositions();
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // Initial check
+    window.addEventListener('resize', onScroll, { passive: true });
+    
+    // Initial call
+    onScroll();
 });
 </script>
 
