@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>Introduction to 3D Rendering | USharma Notes</title>
 <meta name="keywords" content="Rendering, Computer Graphics">
 <meta name="description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="http://localhost:1313/posts/intro-to-rendering/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.d560e80c1c8d3bc8e5d808acb01ea1bbbb8fd0d8bbe9a3d4b2515537aecca11e.css" integrity="sha256-1WDoDByNO8jl2AissB6hu7uP0Ni76aPUslFVN67MoR4=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="canonical" href="https://USharma002.github.io/posts/intro-to-rendering/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.fca3f056e7a225d4c87bd8ff804ab024727bdcf3d542ddb687b278e1431005ed.css" integrity="sha256-/KPwVueiJdTIe9j/gEqwJHJ73PPVQt22h7J44UMQBe0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://USharma002.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/intro-to-rendering/">
+<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/intro-to-rendering/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,7 +77,75 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/intro-to-rendering/">
+  <meta property="og:site_name" content="USharma Notes">
+  <meta property="og:title" content="Introduction to 3D Rendering">
+  <meta property="og:description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-04-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-04-30T00:00:00+00:00">
+    <meta property="article:tag" content="Rendering">
+    <meta property="article:tag" content="Computer Graphics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Introduction to 3D Rendering">
+<meta name="twitter:description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://USharma002.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Introduction to 3D Rendering",
+      "item": "https://USharma002.github.io/posts/intro-to-rendering/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to 3D Rendering",
+  "name": "Introduction to 3D Rendering",
+  "description": "A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.",
+  "keywords": [
+    "Rendering", "Computer Graphics"
+  ],
+  "articleBody": "A long-form guide to 3D rendering from first principles: transforms, camera and projection, ray generation, intersections, shading, ray tracing, path tracing, signed distance functions, and volume rendering.",
+  "wordCount" : "19860",
+  "inLanguage": "en",
+  "datePublished": "2026-04-30T00:00:00Z",
+  "dateModified": "2026-04-30T00:00:00Z",
+  "author":[{
+    "@type": "Person",
+    "name": "Utkarsh Sharma"
+  }],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://USharma002.github.io/posts/intro-to-rendering/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "USharma Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://USharma002.github.io/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -95,7 +163,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -121,22 +189,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="Posts">
+                <a href="https://USharma002.github.io/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/archives/" title="Archive">
+                <a href="https://USharma002.github.io/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/tags/" title="Tags">
+                <a href="https://USharma002.github.io/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="About">
+                <a href="https://USharma002.github.io/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -147,7 +215,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Introduction to 3D Rendering
     </h1>
@@ -1325,10 +1393,10 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 
 <style>
  
-#editor-70143d7c .highlight,
-#editor-70143d7c .chroma,
-#editor-70143d7c pre,
-#editor-70143d7c code {
+#editor-76d7c41e .highlight,
+#editor-76d7c41e .chroma,
+#editor-76d7c41e pre,
+#editor-76d7c41e code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1343,16 +1411,92 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 }
 
  
-#editor-70143d7c .copy-code,
-#editor-70143d7c .chroma .copy-btn { 
+#editor-76d7c41e .copy-code,
+#editor-76d7c41e .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-76d7c41e {
+    background-color: #1e1e1e !important;
+}
+
+#editor-76d7c41e,
+#editor-76d7c41e .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-76d7c41e .chroma .k,
+#editor-76d7c41e .chroma .kd,
+#editor-76d7c41e .chroma .kn,
+#editor-76d7c41e .chroma .kp,
+#editor-76d7c41e .chroma .kr,
+#editor-76d7c41e .chroma .ow,
+#editor-76d7c41e .chroma .cp,
+#editor-76d7c41e .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-76d7c41e .chroma .kt,
+#editor-76d7c41e .chroma .nb,
+#editor-76d7c41e .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-76d7c41e .chroma .nf,
+#editor-76d7c41e .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-76d7c41e .chroma .m,
+#editor-76d7c41e .chroma .mb,
+#editor-76d7c41e .chroma .mf,
+#editor-76d7c41e .chroma .mh,
+#editor-76d7c41e .chroma .mi,
+#editor-76d7c41e .chroma .il,
+#editor-76d7c41e .chroma .mo,
+#editor-76d7c41e .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-76d7c41e .chroma .s,
+#editor-76d7c41e .chroma .sa,
+#editor-76d7c41e .chroma .sb,
+#editor-76d7c41e .chroma .sc,
+#editor-76d7c41e .chroma .dl,
+#editor-76d7c41e .chroma .sd,
+#editor-76d7c41e .chroma .s2,
+#editor-76d7c41e .chroma .se,
+#editor-76d7c41e .chroma .sh,
+#editor-76d7c41e .chroma .si,
+#editor-76d7c41e .chroma .sx,
+#editor-76d7c41e .chroma .sr,
+#editor-76d7c41e .chroma .s1,
+#editor-76d7c41e .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-76d7c41e .chroma .c,
+#editor-76d7c41e .chroma .ch,
+#editor-76d7c41e .chroma .cm,
+#editor-76d7c41e .chroma .c1,
+#editor-76d7c41e .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-76d7c41e .chroma .o { color: #d4d4d4 !important; }
+#editor-76d7c41e .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-76d7c41e .chroma .n,
+#editor-76d7c41e .chroma .nx,
+#editor-76d7c41e .chroma .nv,
+#editor-76d7c41e .chroma .vc,
+#editor-76d7c41e .chroma .vg,
+#editor-76d7c41e .chroma .vi,
+#editor-76d7c41e .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-70143d7c" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-70143d7c" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-76d7c41e" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-76d7c41e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1396,11 +1540,11 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-70143d7c" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-76d7c41e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-70143d7c" style="display: none;">
+<textarea id="fs-76d7c41e" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1446,8 +1590,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-70143d7c');
-    const editor = document.getElementById('editor-70143d7c');
+    const canvas = document.getElementById('glcanvas-76d7c41e');
+    const editor = document.getElementById('editor-76d7c41e');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -1636,7 +1780,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-70143d7c').value.trim();
+    const rawSource = document.getElementById('fs-76d7c41e').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -1786,10 +1930,10 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 
 <style>
  
-#editor-951d54c1 .highlight,
-#editor-951d54c1 .chroma,
-#editor-951d54c1 pre,
-#editor-951d54c1 code {
+#editor-6c14faac .highlight,
+#editor-6c14faac .chroma,
+#editor-6c14faac pre,
+#editor-6c14faac code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1804,16 +1948,92 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 }
 
  
-#editor-951d54c1 .copy-code,
-#editor-951d54c1 .chroma .copy-btn { 
+#editor-6c14faac .copy-code,
+#editor-6c14faac .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-6c14faac {
+    background-color: #1e1e1e !important;
+}
+
+#editor-6c14faac,
+#editor-6c14faac .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-6c14faac .chroma .k,
+#editor-6c14faac .chroma .kd,
+#editor-6c14faac .chroma .kn,
+#editor-6c14faac .chroma .kp,
+#editor-6c14faac .chroma .kr,
+#editor-6c14faac .chroma .ow,
+#editor-6c14faac .chroma .cp,
+#editor-6c14faac .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-6c14faac .chroma .kt,
+#editor-6c14faac .chroma .nb,
+#editor-6c14faac .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-6c14faac .chroma .nf,
+#editor-6c14faac .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-6c14faac .chroma .m,
+#editor-6c14faac .chroma .mb,
+#editor-6c14faac .chroma .mf,
+#editor-6c14faac .chroma .mh,
+#editor-6c14faac .chroma .mi,
+#editor-6c14faac .chroma .il,
+#editor-6c14faac .chroma .mo,
+#editor-6c14faac .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-6c14faac .chroma .s,
+#editor-6c14faac .chroma .sa,
+#editor-6c14faac .chroma .sb,
+#editor-6c14faac .chroma .sc,
+#editor-6c14faac .chroma .dl,
+#editor-6c14faac .chroma .sd,
+#editor-6c14faac .chroma .s2,
+#editor-6c14faac .chroma .se,
+#editor-6c14faac .chroma .sh,
+#editor-6c14faac .chroma .si,
+#editor-6c14faac .chroma .sx,
+#editor-6c14faac .chroma .sr,
+#editor-6c14faac .chroma .s1,
+#editor-6c14faac .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-6c14faac .chroma .c,
+#editor-6c14faac .chroma .ch,
+#editor-6c14faac .chroma .cm,
+#editor-6c14faac .chroma .c1,
+#editor-6c14faac .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-6c14faac .chroma .o { color: #d4d4d4 !important; }
+#editor-6c14faac .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-6c14faac .chroma .n,
+#editor-6c14faac .chroma .nx,
+#editor-6c14faac .chroma .nv,
+#editor-6c14faac .chroma .vc,
+#editor-6c14faac .chroma .vg,
+#editor-6c14faac .chroma .vi,
+#editor-6c14faac .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-951d54c1" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-951d54c1" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-6c14faac" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-6c14faac" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1861,11 +2081,11 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-951d54c1" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-6c14faac" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-951d54c1" style="display: none;">
+<textarea id="fs-6c14faac" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1915,8 +2135,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-951d54c1');
-    const editor = document.getElementById('editor-951d54c1');
+    const canvas = document.getElementById('glcanvas-6c14faac');
+    const editor = document.getElementById('editor-6c14faac');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2105,7 +2325,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-951d54c1').value.trim();
+    const rawSource = document.getElementById('fs-6c14faac').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2214,10 +2434,10 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 <style>
  
-#editor-ba5a760e .highlight,
-#editor-ba5a760e .chroma,
-#editor-ba5a760e pre,
-#editor-ba5a760e code {
+#editor-ac5bdeea .highlight,
+#editor-ac5bdeea .chroma,
+#editor-ac5bdeea pre,
+#editor-ac5bdeea code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2232,16 +2452,92 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 }
 
  
-#editor-ba5a760e .copy-code,
-#editor-ba5a760e .chroma .copy-btn { 
+#editor-ac5bdeea .copy-code,
+#editor-ac5bdeea .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-ac5bdeea {
+    background-color: #1e1e1e !important;
+}
+
+#editor-ac5bdeea,
+#editor-ac5bdeea .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-ac5bdeea .chroma .k,
+#editor-ac5bdeea .chroma .kd,
+#editor-ac5bdeea .chroma .kn,
+#editor-ac5bdeea .chroma .kp,
+#editor-ac5bdeea .chroma .kr,
+#editor-ac5bdeea .chroma .ow,
+#editor-ac5bdeea .chroma .cp,
+#editor-ac5bdeea .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-ac5bdeea .chroma .kt,
+#editor-ac5bdeea .chroma .nb,
+#editor-ac5bdeea .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-ac5bdeea .chroma .nf,
+#editor-ac5bdeea .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-ac5bdeea .chroma .m,
+#editor-ac5bdeea .chroma .mb,
+#editor-ac5bdeea .chroma .mf,
+#editor-ac5bdeea .chroma .mh,
+#editor-ac5bdeea .chroma .mi,
+#editor-ac5bdeea .chroma .il,
+#editor-ac5bdeea .chroma .mo,
+#editor-ac5bdeea .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-ac5bdeea .chroma .s,
+#editor-ac5bdeea .chroma .sa,
+#editor-ac5bdeea .chroma .sb,
+#editor-ac5bdeea .chroma .sc,
+#editor-ac5bdeea .chroma .dl,
+#editor-ac5bdeea .chroma .sd,
+#editor-ac5bdeea .chroma .s2,
+#editor-ac5bdeea .chroma .se,
+#editor-ac5bdeea .chroma .sh,
+#editor-ac5bdeea .chroma .si,
+#editor-ac5bdeea .chroma .sx,
+#editor-ac5bdeea .chroma .sr,
+#editor-ac5bdeea .chroma .s1,
+#editor-ac5bdeea .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-ac5bdeea .chroma .c,
+#editor-ac5bdeea .chroma .ch,
+#editor-ac5bdeea .chroma .cm,
+#editor-ac5bdeea .chroma .c1,
+#editor-ac5bdeea .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-ac5bdeea .chroma .o { color: #d4d4d4 !important; }
+#editor-ac5bdeea .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-ac5bdeea .chroma .n,
+#editor-ac5bdeea .chroma .nx,
+#editor-ac5bdeea .chroma .nv,
+#editor-ac5bdeea .chroma .vc,
+#editor-ac5bdeea .chroma .vg,
+#editor-ac5bdeea .chroma .vi,
+#editor-ac5bdeea .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-ba5a760e" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-ba5a760e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ac5bdeea" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ac5bdeea" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2301,11 +2597,11 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-ba5a760e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ac5bdeea" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-ba5a760e" style="display: none;">
+<textarea id="fs-ac5bdeea" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2367,8 +2663,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-ba5a760e');
-    const editor = document.getElementById('editor-ba5a760e');
+    const canvas = document.getElementById('glcanvas-ac5bdeea');
+    const editor = document.getElementById('editor-ac5bdeea');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2557,7 +2853,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-ba5a760e').value.trim();
+    const rawSource = document.getElementById('fs-ac5bdeea').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2686,10 +2982,10 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 
 <style>
  
-#editor-620e98bc .highlight,
-#editor-620e98bc .chroma,
-#editor-620e98bc pre,
-#editor-620e98bc code {
+#editor-006d98a6 .highlight,
+#editor-006d98a6 .chroma,
+#editor-006d98a6 pre,
+#editor-006d98a6 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2704,16 +3000,92 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 }
 
  
-#editor-620e98bc .copy-code,
-#editor-620e98bc .chroma .copy-btn { 
+#editor-006d98a6 .copy-code,
+#editor-006d98a6 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-006d98a6 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-006d98a6,
+#editor-006d98a6 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-006d98a6 .chroma .k,
+#editor-006d98a6 .chroma .kd,
+#editor-006d98a6 .chroma .kn,
+#editor-006d98a6 .chroma .kp,
+#editor-006d98a6 .chroma .kr,
+#editor-006d98a6 .chroma .ow,
+#editor-006d98a6 .chroma .cp,
+#editor-006d98a6 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-006d98a6 .chroma .kt,
+#editor-006d98a6 .chroma .nb,
+#editor-006d98a6 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-006d98a6 .chroma .nf,
+#editor-006d98a6 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-006d98a6 .chroma .m,
+#editor-006d98a6 .chroma .mb,
+#editor-006d98a6 .chroma .mf,
+#editor-006d98a6 .chroma .mh,
+#editor-006d98a6 .chroma .mi,
+#editor-006d98a6 .chroma .il,
+#editor-006d98a6 .chroma .mo,
+#editor-006d98a6 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-006d98a6 .chroma .s,
+#editor-006d98a6 .chroma .sa,
+#editor-006d98a6 .chroma .sb,
+#editor-006d98a6 .chroma .sc,
+#editor-006d98a6 .chroma .dl,
+#editor-006d98a6 .chroma .sd,
+#editor-006d98a6 .chroma .s2,
+#editor-006d98a6 .chroma .se,
+#editor-006d98a6 .chroma .sh,
+#editor-006d98a6 .chroma .si,
+#editor-006d98a6 .chroma .sx,
+#editor-006d98a6 .chroma .sr,
+#editor-006d98a6 .chroma .s1,
+#editor-006d98a6 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-006d98a6 .chroma .c,
+#editor-006d98a6 .chroma .ch,
+#editor-006d98a6 .chroma .cm,
+#editor-006d98a6 .chroma .c1,
+#editor-006d98a6 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-006d98a6 .chroma .o { color: #d4d4d4 !important; }
+#editor-006d98a6 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-006d98a6 .chroma .n,
+#editor-006d98a6 .chroma .nx,
+#editor-006d98a6 .chroma .nv,
+#editor-006d98a6 .chroma .vc,
+#editor-006d98a6 .chroma .vg,
+#editor-006d98a6 .chroma .vi,
+#editor-006d98a6 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-620e98bc" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-620e98bc" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-006d98a6" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-006d98a6" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2776,11 +3148,11 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-620e98bc" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-006d98a6" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-620e98bc" style="display: none;">
+<textarea id="fs-006d98a6" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2845,8 +3217,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-620e98bc');
-    const editor = document.getElementById('editor-620e98bc');
+    const canvas = document.getElementById('glcanvas-006d98a6');
+    const editor = document.getElementById('editor-006d98a6');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3035,7 +3407,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-620e98bc').value.trim();
+    const rawSource = document.getElementById('fs-006d98a6').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3121,10 +3493,10 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 
 <style>
  
-#editor-553e4ce8 .highlight,
-#editor-553e4ce8 .chroma,
-#editor-553e4ce8 pre,
-#editor-553e4ce8 code {
+#editor-19d19969 .highlight,
+#editor-19d19969 .chroma,
+#editor-19d19969 pre,
+#editor-19d19969 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3139,16 +3511,92 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 }
 
  
-#editor-553e4ce8 .copy-code,
-#editor-553e4ce8 .chroma .copy-btn { 
+#editor-19d19969 .copy-code,
+#editor-19d19969 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-19d19969 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-19d19969,
+#editor-19d19969 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-19d19969 .chroma .k,
+#editor-19d19969 .chroma .kd,
+#editor-19d19969 .chroma .kn,
+#editor-19d19969 .chroma .kp,
+#editor-19d19969 .chroma .kr,
+#editor-19d19969 .chroma .ow,
+#editor-19d19969 .chroma .cp,
+#editor-19d19969 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-19d19969 .chroma .kt,
+#editor-19d19969 .chroma .nb,
+#editor-19d19969 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-19d19969 .chroma .nf,
+#editor-19d19969 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-19d19969 .chroma .m,
+#editor-19d19969 .chroma .mb,
+#editor-19d19969 .chroma .mf,
+#editor-19d19969 .chroma .mh,
+#editor-19d19969 .chroma .mi,
+#editor-19d19969 .chroma .il,
+#editor-19d19969 .chroma .mo,
+#editor-19d19969 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-19d19969 .chroma .s,
+#editor-19d19969 .chroma .sa,
+#editor-19d19969 .chroma .sb,
+#editor-19d19969 .chroma .sc,
+#editor-19d19969 .chroma .dl,
+#editor-19d19969 .chroma .sd,
+#editor-19d19969 .chroma .s2,
+#editor-19d19969 .chroma .se,
+#editor-19d19969 .chroma .sh,
+#editor-19d19969 .chroma .si,
+#editor-19d19969 .chroma .sx,
+#editor-19d19969 .chroma .sr,
+#editor-19d19969 .chroma .s1,
+#editor-19d19969 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-19d19969 .chroma .c,
+#editor-19d19969 .chroma .ch,
+#editor-19d19969 .chroma .cm,
+#editor-19d19969 .chroma .c1,
+#editor-19d19969 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-19d19969 .chroma .o { color: #d4d4d4 !important; }
+#editor-19d19969 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-19d19969 .chroma .n,
+#editor-19d19969 .chroma .nx,
+#editor-19d19969 .chroma .nv,
+#editor-19d19969 .chroma .vc,
+#editor-19d19969 .chroma .vg,
+#editor-19d19969 .chroma .vi,
+#editor-19d19969 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-553e4ce8" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-553e4ce8" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-19d19969" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-19d19969" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3221,11 +3669,11 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-553e4ce8" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-19d19969" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-553e4ce8" style="display: none;">
+<textarea id="fs-19d19969" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3300,8 +3748,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-553e4ce8');
-    const editor = document.getElementById('editor-553e4ce8');
+    const canvas = document.getElementById('glcanvas-19d19969');
+    const editor = document.getElementById('editor-19d19969');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3490,7 +3938,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-553e4ce8').value.trim();
+    const rawSource = document.getElementById('fs-19d19969').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3627,10 +4075,10 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 
 <style>
  
-#editor-23f190bc .highlight,
-#editor-23f190bc .chroma,
-#editor-23f190bc pre,
-#editor-23f190bc code {
+#editor-8dc79c2a .highlight,
+#editor-8dc79c2a .chroma,
+#editor-8dc79c2a pre,
+#editor-8dc79c2a code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3645,16 +4093,92 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 }
 
  
-#editor-23f190bc .copy-code,
-#editor-23f190bc .chroma .copy-btn { 
+#editor-8dc79c2a .copy-code,
+#editor-8dc79c2a .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-8dc79c2a {
+    background-color: #1e1e1e !important;
+}
+
+#editor-8dc79c2a,
+#editor-8dc79c2a .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-8dc79c2a .chroma .k,
+#editor-8dc79c2a .chroma .kd,
+#editor-8dc79c2a .chroma .kn,
+#editor-8dc79c2a .chroma .kp,
+#editor-8dc79c2a .chroma .kr,
+#editor-8dc79c2a .chroma .ow,
+#editor-8dc79c2a .chroma .cp,
+#editor-8dc79c2a .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-8dc79c2a .chroma .kt,
+#editor-8dc79c2a .chroma .nb,
+#editor-8dc79c2a .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-8dc79c2a .chroma .nf,
+#editor-8dc79c2a .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-8dc79c2a .chroma .m,
+#editor-8dc79c2a .chroma .mb,
+#editor-8dc79c2a .chroma .mf,
+#editor-8dc79c2a .chroma .mh,
+#editor-8dc79c2a .chroma .mi,
+#editor-8dc79c2a .chroma .il,
+#editor-8dc79c2a .chroma .mo,
+#editor-8dc79c2a .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-8dc79c2a .chroma .s,
+#editor-8dc79c2a .chroma .sa,
+#editor-8dc79c2a .chroma .sb,
+#editor-8dc79c2a .chroma .sc,
+#editor-8dc79c2a .chroma .dl,
+#editor-8dc79c2a .chroma .sd,
+#editor-8dc79c2a .chroma .s2,
+#editor-8dc79c2a .chroma .se,
+#editor-8dc79c2a .chroma .sh,
+#editor-8dc79c2a .chroma .si,
+#editor-8dc79c2a .chroma .sx,
+#editor-8dc79c2a .chroma .sr,
+#editor-8dc79c2a .chroma .s1,
+#editor-8dc79c2a .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-8dc79c2a .chroma .c,
+#editor-8dc79c2a .chroma .ch,
+#editor-8dc79c2a .chroma .cm,
+#editor-8dc79c2a .chroma .c1,
+#editor-8dc79c2a .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-8dc79c2a .chroma .o { color: #d4d4d4 !important; }
+#editor-8dc79c2a .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-8dc79c2a .chroma .n,
+#editor-8dc79c2a .chroma .nx,
+#editor-8dc79c2a .chroma .nv,
+#editor-8dc79c2a .chroma .vc,
+#editor-8dc79c2a .chroma .vg,
+#editor-8dc79c2a .chroma .vi,
+#editor-8dc79c2a .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-23f190bc" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-23f190bc" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-8dc79c2a" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-8dc79c2a" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3728,11 +4252,11 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-23f190bc" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-8dc79c2a" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-23f190bc" style="display: none;">
+<textarea id="fs-8dc79c2a" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3808,8 +4332,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-23f190bc');
-    const editor = document.getElementById('editor-23f190bc');
+    const canvas = document.getElementById('glcanvas-8dc79c2a');
+    const editor = document.getElementById('editor-8dc79c2a');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3998,7 +4522,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-23f190bc').value.trim();
+    const rawSource = document.getElementById('fs-8dc79c2a').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4093,10 +4617,10 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 
 <style>
  
-#editor-990d841f .highlight,
-#editor-990d841f .chroma,
-#editor-990d841f pre,
-#editor-990d841f code {
+#editor-a35e61a8 .highlight,
+#editor-a35e61a8 .chroma,
+#editor-a35e61a8 pre,
+#editor-a35e61a8 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4111,16 +4635,92 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 }
 
  
-#editor-990d841f .copy-code,
-#editor-990d841f .chroma .copy-btn { 
+#editor-a35e61a8 .copy-code,
+#editor-a35e61a8 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-a35e61a8 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-a35e61a8,
+#editor-a35e61a8 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-a35e61a8 .chroma .k,
+#editor-a35e61a8 .chroma .kd,
+#editor-a35e61a8 .chroma .kn,
+#editor-a35e61a8 .chroma .kp,
+#editor-a35e61a8 .chroma .kr,
+#editor-a35e61a8 .chroma .ow,
+#editor-a35e61a8 .chroma .cp,
+#editor-a35e61a8 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-a35e61a8 .chroma .kt,
+#editor-a35e61a8 .chroma .nb,
+#editor-a35e61a8 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-a35e61a8 .chroma .nf,
+#editor-a35e61a8 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-a35e61a8 .chroma .m,
+#editor-a35e61a8 .chroma .mb,
+#editor-a35e61a8 .chroma .mf,
+#editor-a35e61a8 .chroma .mh,
+#editor-a35e61a8 .chroma .mi,
+#editor-a35e61a8 .chroma .il,
+#editor-a35e61a8 .chroma .mo,
+#editor-a35e61a8 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-a35e61a8 .chroma .s,
+#editor-a35e61a8 .chroma .sa,
+#editor-a35e61a8 .chroma .sb,
+#editor-a35e61a8 .chroma .sc,
+#editor-a35e61a8 .chroma .dl,
+#editor-a35e61a8 .chroma .sd,
+#editor-a35e61a8 .chroma .s2,
+#editor-a35e61a8 .chroma .se,
+#editor-a35e61a8 .chroma .sh,
+#editor-a35e61a8 .chroma .si,
+#editor-a35e61a8 .chroma .sx,
+#editor-a35e61a8 .chroma .sr,
+#editor-a35e61a8 .chroma .s1,
+#editor-a35e61a8 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-a35e61a8 .chroma .c,
+#editor-a35e61a8 .chroma .ch,
+#editor-a35e61a8 .chroma .cm,
+#editor-a35e61a8 .chroma .c1,
+#editor-a35e61a8 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-a35e61a8 .chroma .o { color: #d4d4d4 !important; }
+#editor-a35e61a8 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-a35e61a8 .chroma .n,
+#editor-a35e61a8 .chroma .nx,
+#editor-a35e61a8 .chroma .nv,
+#editor-a35e61a8 .chroma .vc,
+#editor-a35e61a8 .chroma .vg,
+#editor-a35e61a8 .chroma .vi,
+#editor-a35e61a8 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-990d841f" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-990d841f" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-a35e61a8" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-a35e61a8" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4194,11 +4794,11 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-990d841f" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-a35e61a8" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-990d841f" style="display: none;">
+<textarea id="fs-a35e61a8" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4274,8 +4874,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-990d841f');
-    const editor = document.getElementById('editor-990d841f');
+    const canvas = document.getElementById('glcanvas-a35e61a8');
+    const editor = document.getElementById('editor-a35e61a8');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4464,7 +5064,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-990d841f').value.trim();
+    const rawSource = document.getElementById('fs-a35e61a8').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4566,10 +5166,10 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 
 <style>
  
-#editor-eae4e993 .highlight,
-#editor-eae4e993 .chroma,
-#editor-eae4e993 pre,
-#editor-eae4e993 code {
+#editor-a212fc80 .highlight,
+#editor-a212fc80 .chroma,
+#editor-a212fc80 pre,
+#editor-a212fc80 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4584,16 +5184,92 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 }
 
  
-#editor-eae4e993 .copy-code,
-#editor-eae4e993 .chroma .copy-btn { 
+#editor-a212fc80 .copy-code,
+#editor-a212fc80 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-a212fc80 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-a212fc80,
+#editor-a212fc80 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-a212fc80 .chroma .k,
+#editor-a212fc80 .chroma .kd,
+#editor-a212fc80 .chroma .kn,
+#editor-a212fc80 .chroma .kp,
+#editor-a212fc80 .chroma .kr,
+#editor-a212fc80 .chroma .ow,
+#editor-a212fc80 .chroma .cp,
+#editor-a212fc80 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-a212fc80 .chroma .kt,
+#editor-a212fc80 .chroma .nb,
+#editor-a212fc80 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-a212fc80 .chroma .nf,
+#editor-a212fc80 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-a212fc80 .chroma .m,
+#editor-a212fc80 .chroma .mb,
+#editor-a212fc80 .chroma .mf,
+#editor-a212fc80 .chroma .mh,
+#editor-a212fc80 .chroma .mi,
+#editor-a212fc80 .chroma .il,
+#editor-a212fc80 .chroma .mo,
+#editor-a212fc80 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-a212fc80 .chroma .s,
+#editor-a212fc80 .chroma .sa,
+#editor-a212fc80 .chroma .sb,
+#editor-a212fc80 .chroma .sc,
+#editor-a212fc80 .chroma .dl,
+#editor-a212fc80 .chroma .sd,
+#editor-a212fc80 .chroma .s2,
+#editor-a212fc80 .chroma .se,
+#editor-a212fc80 .chroma .sh,
+#editor-a212fc80 .chroma .si,
+#editor-a212fc80 .chroma .sx,
+#editor-a212fc80 .chroma .sr,
+#editor-a212fc80 .chroma .s1,
+#editor-a212fc80 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-a212fc80 .chroma .c,
+#editor-a212fc80 .chroma .ch,
+#editor-a212fc80 .chroma .cm,
+#editor-a212fc80 .chroma .c1,
+#editor-a212fc80 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-a212fc80 .chroma .o { color: #d4d4d4 !important; }
+#editor-a212fc80 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-a212fc80 .chroma .n,
+#editor-a212fc80 .chroma .nx,
+#editor-a212fc80 .chroma .nv,
+#editor-a212fc80 .chroma .vc,
+#editor-a212fc80 .chroma .vg,
+#editor-a212fc80 .chroma .vi,
+#editor-a212fc80 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-eae4e993" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-eae4e993" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-a212fc80" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-a212fc80" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4680,11 +5356,11 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-eae4e993" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-a212fc80" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-eae4e993" style="display: none;">
+<textarea id="fs-a212fc80" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4773,8 +5449,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-eae4e993');
-    const editor = document.getElementById('editor-eae4e993');
+    const canvas = document.getElementById('glcanvas-a212fc80');
+    const editor = document.getElementById('editor-a212fc80');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4963,7 +5639,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-eae4e993').value.trim();
+    const rawSource = document.getElementById('fs-a212fc80').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5091,10 +5767,10 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 
 <style>
  
-#editor-91c62e56 .highlight,
-#editor-91c62e56 .chroma,
-#editor-91c62e56 pre,
-#editor-91c62e56 code {
+#editor-b0b3fb22 .highlight,
+#editor-b0b3fb22 .chroma,
+#editor-b0b3fb22 pre,
+#editor-b0b3fb22 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5109,16 +5785,92 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 }
 
  
-#editor-91c62e56 .copy-code,
-#editor-91c62e56 .chroma .copy-btn { 
+#editor-b0b3fb22 .copy-code,
+#editor-b0b3fb22 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-b0b3fb22 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-b0b3fb22,
+#editor-b0b3fb22 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-b0b3fb22 .chroma .k,
+#editor-b0b3fb22 .chroma .kd,
+#editor-b0b3fb22 .chroma .kn,
+#editor-b0b3fb22 .chroma .kp,
+#editor-b0b3fb22 .chroma .kr,
+#editor-b0b3fb22 .chroma .ow,
+#editor-b0b3fb22 .chroma .cp,
+#editor-b0b3fb22 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-b0b3fb22 .chroma .kt,
+#editor-b0b3fb22 .chroma .nb,
+#editor-b0b3fb22 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-b0b3fb22 .chroma .nf,
+#editor-b0b3fb22 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-b0b3fb22 .chroma .m,
+#editor-b0b3fb22 .chroma .mb,
+#editor-b0b3fb22 .chroma .mf,
+#editor-b0b3fb22 .chroma .mh,
+#editor-b0b3fb22 .chroma .mi,
+#editor-b0b3fb22 .chroma .il,
+#editor-b0b3fb22 .chroma .mo,
+#editor-b0b3fb22 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-b0b3fb22 .chroma .s,
+#editor-b0b3fb22 .chroma .sa,
+#editor-b0b3fb22 .chroma .sb,
+#editor-b0b3fb22 .chroma .sc,
+#editor-b0b3fb22 .chroma .dl,
+#editor-b0b3fb22 .chroma .sd,
+#editor-b0b3fb22 .chroma .s2,
+#editor-b0b3fb22 .chroma .se,
+#editor-b0b3fb22 .chroma .sh,
+#editor-b0b3fb22 .chroma .si,
+#editor-b0b3fb22 .chroma .sx,
+#editor-b0b3fb22 .chroma .sr,
+#editor-b0b3fb22 .chroma .s1,
+#editor-b0b3fb22 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-b0b3fb22 .chroma .c,
+#editor-b0b3fb22 .chroma .ch,
+#editor-b0b3fb22 .chroma .cm,
+#editor-b0b3fb22 .chroma .c1,
+#editor-b0b3fb22 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-b0b3fb22 .chroma .o { color: #d4d4d4 !important; }
+#editor-b0b3fb22 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-b0b3fb22 .chroma .n,
+#editor-b0b3fb22 .chroma .nx,
+#editor-b0b3fb22 .chroma .nv,
+#editor-b0b3fb22 .chroma .vc,
+#editor-b0b3fb22 .chroma .vg,
+#editor-b0b3fb22 .chroma .vi,
+#editor-b0b3fb22 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-91c62e56" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-91c62e56" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-b0b3fb22" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-b0b3fb22" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5251,11 +6003,11 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-91c62e56" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-b0b3fb22" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-91c62e56" style="display: none;">
+<textarea id="fs-b0b3fb22" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5390,8 +6142,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-91c62e56');
-    const editor = document.getElementById('editor-91c62e56');
+    const canvas = document.getElementById('glcanvas-b0b3fb22');
+    const editor = document.getElementById('editor-b0b3fb22');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5580,7 +6332,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-91c62e56').value.trim();
+    const rawSource = document.getElementById('fs-b0b3fb22').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5688,10 +6440,10 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 
 <style>
  
-#editor-013fe4c4 .highlight,
-#editor-013fe4c4 .chroma,
-#editor-013fe4c4 pre,
-#editor-013fe4c4 code {
+#editor-9f79bbf8 .highlight,
+#editor-9f79bbf8 .chroma,
+#editor-9f79bbf8 pre,
+#editor-9f79bbf8 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5706,16 +6458,92 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 }
 
  
-#editor-013fe4c4 .copy-code,
-#editor-013fe4c4 .chroma .copy-btn { 
+#editor-9f79bbf8 .copy-code,
+#editor-9f79bbf8 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-9f79bbf8 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-9f79bbf8,
+#editor-9f79bbf8 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-9f79bbf8 .chroma .k,
+#editor-9f79bbf8 .chroma .kd,
+#editor-9f79bbf8 .chroma .kn,
+#editor-9f79bbf8 .chroma .kp,
+#editor-9f79bbf8 .chroma .kr,
+#editor-9f79bbf8 .chroma .ow,
+#editor-9f79bbf8 .chroma .cp,
+#editor-9f79bbf8 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-9f79bbf8 .chroma .kt,
+#editor-9f79bbf8 .chroma .nb,
+#editor-9f79bbf8 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-9f79bbf8 .chroma .nf,
+#editor-9f79bbf8 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-9f79bbf8 .chroma .m,
+#editor-9f79bbf8 .chroma .mb,
+#editor-9f79bbf8 .chroma .mf,
+#editor-9f79bbf8 .chroma .mh,
+#editor-9f79bbf8 .chroma .mi,
+#editor-9f79bbf8 .chroma .il,
+#editor-9f79bbf8 .chroma .mo,
+#editor-9f79bbf8 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-9f79bbf8 .chroma .s,
+#editor-9f79bbf8 .chroma .sa,
+#editor-9f79bbf8 .chroma .sb,
+#editor-9f79bbf8 .chroma .sc,
+#editor-9f79bbf8 .chroma .dl,
+#editor-9f79bbf8 .chroma .sd,
+#editor-9f79bbf8 .chroma .s2,
+#editor-9f79bbf8 .chroma .se,
+#editor-9f79bbf8 .chroma .sh,
+#editor-9f79bbf8 .chroma .si,
+#editor-9f79bbf8 .chroma .sx,
+#editor-9f79bbf8 .chroma .sr,
+#editor-9f79bbf8 .chroma .s1,
+#editor-9f79bbf8 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-9f79bbf8 .chroma .c,
+#editor-9f79bbf8 .chroma .ch,
+#editor-9f79bbf8 .chroma .cm,
+#editor-9f79bbf8 .chroma .c1,
+#editor-9f79bbf8 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-9f79bbf8 .chroma .o { color: #d4d4d4 !important; }
+#editor-9f79bbf8 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-9f79bbf8 .chroma .n,
+#editor-9f79bbf8 .chroma .nx,
+#editor-9f79bbf8 .chroma .nv,
+#editor-9f79bbf8 .chroma .vc,
+#editor-9f79bbf8 .chroma .vg,
+#editor-9f79bbf8 .chroma .vi,
+#editor-9f79bbf8 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-013fe4c4" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-013fe4c4" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-9f79bbf8" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-9f79bbf8" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5791,11 +6619,11 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-013fe4c4" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-9f79bbf8" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-013fe4c4" style="display: none;">
+<textarea id="fs-9f79bbf8" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5873,8 +6701,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-013fe4c4');
-    const editor = document.getElementById('editor-013fe4c4');
+    const canvas = document.getElementById('glcanvas-9f79bbf8');
+    const editor = document.getElementById('editor-9f79bbf8');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6063,7 +6891,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-013fe4c4').value.trim();
+    const rawSource = document.getElementById('fs-9f79bbf8').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6143,10 +6971,10 @@ void main() {
 
 <style>
  
-#editor-41a3b52e .highlight,
-#editor-41a3b52e .chroma,
-#editor-41a3b52e pre,
-#editor-41a3b52e code {
+#editor-c44cd6a7 .highlight,
+#editor-c44cd6a7 .chroma,
+#editor-c44cd6a7 pre,
+#editor-c44cd6a7 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6161,16 +6989,92 @@ void main() {
 }
 
  
-#editor-41a3b52e .copy-code,
-#editor-41a3b52e .chroma .copy-btn { 
+#editor-c44cd6a7 .copy-code,
+#editor-c44cd6a7 .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-c44cd6a7 {
+    background-color: #1e1e1e !important;
+}
+
+#editor-c44cd6a7,
+#editor-c44cd6a7 .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-c44cd6a7 .chroma .k,
+#editor-c44cd6a7 .chroma .kd,
+#editor-c44cd6a7 .chroma .kn,
+#editor-c44cd6a7 .chroma .kp,
+#editor-c44cd6a7 .chroma .kr,
+#editor-c44cd6a7 .chroma .ow,
+#editor-c44cd6a7 .chroma .cp,
+#editor-c44cd6a7 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-c44cd6a7 .chroma .kt,
+#editor-c44cd6a7 .chroma .nb,
+#editor-c44cd6a7 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-c44cd6a7 .chroma .nf,
+#editor-c44cd6a7 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-c44cd6a7 .chroma .m,
+#editor-c44cd6a7 .chroma .mb,
+#editor-c44cd6a7 .chroma .mf,
+#editor-c44cd6a7 .chroma .mh,
+#editor-c44cd6a7 .chroma .mi,
+#editor-c44cd6a7 .chroma .il,
+#editor-c44cd6a7 .chroma .mo,
+#editor-c44cd6a7 .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-c44cd6a7 .chroma .s,
+#editor-c44cd6a7 .chroma .sa,
+#editor-c44cd6a7 .chroma .sb,
+#editor-c44cd6a7 .chroma .sc,
+#editor-c44cd6a7 .chroma .dl,
+#editor-c44cd6a7 .chroma .sd,
+#editor-c44cd6a7 .chroma .s2,
+#editor-c44cd6a7 .chroma .se,
+#editor-c44cd6a7 .chroma .sh,
+#editor-c44cd6a7 .chroma .si,
+#editor-c44cd6a7 .chroma .sx,
+#editor-c44cd6a7 .chroma .sr,
+#editor-c44cd6a7 .chroma .s1,
+#editor-c44cd6a7 .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-c44cd6a7 .chroma .c,
+#editor-c44cd6a7 .chroma .ch,
+#editor-c44cd6a7 .chroma .cm,
+#editor-c44cd6a7 .chroma .c1,
+#editor-c44cd6a7 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-c44cd6a7 .chroma .o { color: #d4d4d4 !important; }
+#editor-c44cd6a7 .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-c44cd6a7 .chroma .n,
+#editor-c44cd6a7 .chroma .nx,
+#editor-c44cd6a7 .chroma .nv,
+#editor-c44cd6a7 .chroma .vc,
+#editor-c44cd6a7 .chroma .vg,
+#editor-c44cd6a7 .chroma .vi,
+#editor-c44cd6a7 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-41a3b52e" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-41a3b52e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-c44cd6a7" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-c44cd6a7" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6254,11 +7158,11 @@ void main() {
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-41a3b52e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-c44cd6a7" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-41a3b52e" style="display: none;">
+<textarea id="fs-c44cd6a7" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6344,8 +7248,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-41a3b52e');
-    const editor = document.getElementById('editor-41a3b52e');
+    const canvas = document.getElementById('glcanvas-c44cd6a7');
+    const editor = document.getElementById('editor-c44cd6a7');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6534,7 +7438,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-41a3b52e').value.trim();
+    const rawSource = document.getElementById('fs-c44cd6a7').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6721,10 +7625,10 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 
 <style>
  
-#editor-be2f2294 .highlight,
-#editor-be2f2294 .chroma,
-#editor-be2f2294 pre,
-#editor-be2f2294 code {
+#editor-50675c0f .highlight,
+#editor-50675c0f .chroma,
+#editor-50675c0f pre,
+#editor-50675c0f code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6739,16 +7643,92 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 }
 
  
-#editor-be2f2294 .copy-code,
-#editor-be2f2294 .chroma .copy-btn { 
+#editor-50675c0f .copy-code,
+#editor-50675c0f .chroma .copy-btn { 
     display: none !important; 
 }
+
+ 
+.glsl-code-panel-50675c0f {
+    background-color: #1e1e1e !important;
+}
+
+#editor-50675c0f,
+#editor-50675c0f .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+ 
+#editor-50675c0f .chroma .k,
+#editor-50675c0f .chroma .kd,
+#editor-50675c0f .chroma .kn,
+#editor-50675c0f .chroma .kp,
+#editor-50675c0f .chroma .kr,
+#editor-50675c0f .chroma .ow,
+#editor-50675c0f .chroma .cp,
+#editor-50675c0f .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+ 
+#editor-50675c0f .chroma .kt,
+#editor-50675c0f .chroma .nb,
+#editor-50675c0f .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+ 
+#editor-50675c0f .chroma .nf,
+#editor-50675c0f .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+ 
+#editor-50675c0f .chroma .m,
+#editor-50675c0f .chroma .mb,
+#editor-50675c0f .chroma .mf,
+#editor-50675c0f .chroma .mh,
+#editor-50675c0f .chroma .mi,
+#editor-50675c0f .chroma .il,
+#editor-50675c0f .chroma .mo,
+#editor-50675c0f .chroma .kc { color: #b5cea8 !important; }
+
+ 
+#editor-50675c0f .chroma .s,
+#editor-50675c0f .chroma .sa,
+#editor-50675c0f .chroma .sb,
+#editor-50675c0f .chroma .sc,
+#editor-50675c0f .chroma .dl,
+#editor-50675c0f .chroma .sd,
+#editor-50675c0f .chroma .s2,
+#editor-50675c0f .chroma .se,
+#editor-50675c0f .chroma .sh,
+#editor-50675c0f .chroma .si,
+#editor-50675c0f .chroma .sx,
+#editor-50675c0f .chroma .sr,
+#editor-50675c0f .chroma .s1,
+#editor-50675c0f .chroma .ss { color: #ce9178 !important; }
+
+ 
+#editor-50675c0f .chroma .c,
+#editor-50675c0f .chroma .ch,
+#editor-50675c0f .chroma .cm,
+#editor-50675c0f .chroma .c1,
+#editor-50675c0f .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+ 
+#editor-50675c0f .chroma .o { color: #d4d4d4 !important; }
+#editor-50675c0f .chroma .p { color: #d4d4d4 !important; }
+
+ 
+#editor-50675c0f .chroma .n,
+#editor-50675c0f .chroma .nx,
+#editor-50675c0f .chroma .nv,
+#editor-50675c0f .chroma .vc,
+#editor-50675c0f .chroma .vg,
+#editor-50675c0f .chroma .vi,
+#editor-50675c0f .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-be2f2294" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-be2f2294" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-50675c0f" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-50675c0f" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6799,11 +7779,11 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-be2f2294" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-50675c0f" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-be2f2294" style="display: none;">
+<textarea id="fs-50675c0f" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6856,8 +7836,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-be2f2294');
-    const editor = document.getElementById('editor-be2f2294');
+    const canvas = document.getElementById('glcanvas-50675c0f');
+    const editor = document.getElementById('editor-50675c0f');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -7046,7 +8026,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-be2f2294').value.trim();
+    const rawSource = document.getElementById('fs-50675c0f').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -7141,19 +8121,19 @@ void main() {
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/rendering/">Rendering</a></li>
-      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="https://USharma002.github.io/tags/rendering/">Rendering</a></li>
+      <li><a href="https://USharma002.github.io/tags/computer-graphics/">Computer Graphics</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+  <a class="prev" href="https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/">
     <span class="title">« Prev</span>
     <br>
     <span>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing</span>
   </a>
-  <a class="next" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
+  <a class="next" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
     <span class="title">Next »</span>
     <br>
-    <span>Differentiable Rendering of Participating Media</span>
+    <span>Introduction to Differentiable Rendering</span>
   </a>
 </nav>
 
@@ -7162,7 +8142,7 @@ void main() {
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
 
     <span>
         Powered by

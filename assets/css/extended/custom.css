@@ -293,6 +293,17 @@ body:not(.dark) .post-content pre:not(.highlight pre) {
     overflow: hidden;
 }
 
+body:not(.dark) .post-content pre,
+body:not(.dark) .post-content pre code,
+body:not(.dark) .post-content pre span,
+body:not(.dark) .post-content .chroma,
+body:not(.dark) .post-content .chroma code,
+body:not(.dark) .post-content .chroma .cl,
+body:not(.dark) .post-content .chroma .line,
+body:not(.dark) .post-content .chroma .w {
+    color: #24292e !important;
+}
+
 body:not(.dark) .post-content .highlight > div,
 body:not(.dark) .post-content .highlight > pre,
 body:not(.dark) .post-content pre.chroma {
@@ -390,6 +401,76 @@ body:not(.dark) .chroma .vm,
 body:not(.dark) .chroma .p {
     color: #24292e !important;
 }
+
+/* ─── GLSL Interactive Editor VS Code Dark Plus Theme Override ─── */
+.glsl-wrapper,
+.glsl-wrapper pre,
+.glsl-wrapper code,
+.glsl-wrapper .chroma,
+.glsl-wrapper .chroma code,
+.glsl-wrapper .chroma .cl,
+.glsl-wrapper .chroma .line,
+.glsl-wrapper .chroma .w {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+}
+
+.glsl-wrapper .chroma .k,
+.glsl-wrapper .chroma .kd,
+.glsl-wrapper .chroma .kn,
+.glsl-wrapper .chroma .kp,
+.glsl-wrapper .chroma .kr,
+.glsl-wrapper .chroma .ow,
+.glsl-wrapper .chroma .cp,
+.glsl-wrapper .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+.glsl-wrapper .chroma .kt,
+.glsl-wrapper .chroma .nb,
+.glsl-wrapper .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+.glsl-wrapper .chroma .nf,
+.glsl-wrapper .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+.glsl-wrapper .chroma .m,
+.glsl-wrapper .chroma .mb,
+.glsl-wrapper .chroma .mf,
+.glsl-wrapper .chroma .mh,
+.glsl-wrapper .chroma .mi,
+.glsl-wrapper .chroma .il,
+.glsl-wrapper .chroma .mo,
+.glsl-wrapper .chroma .kc { color: #b5cea8 !important; }
+
+.glsl-wrapper .chroma .s,
+.glsl-wrapper .chroma .sa,
+.glsl-wrapper .chroma .sb,
+.glsl-wrapper .chroma .sc,
+.glsl-wrapper .chroma .dl,
+.glsl-wrapper .chroma .sd,
+.glsl-wrapper .chroma .s2,
+.glsl-wrapper .chroma .se,
+.glsl-wrapper .chroma .sh,
+.glsl-wrapper .chroma .si,
+.glsl-wrapper .chroma .sx,
+.glsl-wrapper .chroma .sr,
+.glsl-wrapper .chroma .s1,
+.glsl-wrapper .chroma .ss { color: #ce9178 !important; }
+
+.glsl-wrapper .chroma .c,
+.glsl-wrapper .chroma .ch,
+.glsl-wrapper .chroma .cm,
+.glsl-wrapper .chroma .c1,
+.glsl-wrapper .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+.glsl-wrapper .chroma .o { color: #d4d4d4 !important; }
+.glsl-wrapper .chroma .p { color: #d4d4d4 !important; }
+
+.glsl-wrapper .chroma .n,
+.glsl-wrapper .chroma .nx,
+.glsl-wrapper .chroma .nv,
+.glsl-wrapper .chroma .vc,
+.glsl-wrapper .chroma .vg,
+.glsl-wrapper .chroma .vi,
+.glsl-wrapper .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 
 
 /* ─── Blockquotes — definition-style panel ─── */

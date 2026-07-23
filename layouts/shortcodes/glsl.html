@@ -25,13 +25,89 @@
 #editor-{{ $id }} .chroma .copy-btn { 
     display: none !important; 
 }
+
+/* VS Code Dark Plus (Dark+) Theme overrides for GLSL Editor */
+.glsl-code-panel-{{ $id }} {
+    background-color: #1e1e1e !important;
+}
+
+#editor-{{ $id }},
+#editor-{{ $id }} .chroma {
+    color: #d4d4d4 !important;
+    background-color: #1e1e1e !important;
+}
+
+/* VS Code Dark Plus: Keywords (const, return, for, if, break, struct, void, precision, out, uniform) */
+#editor-{{ $id }} .chroma .k,
+#editor-{{ $id }} .chroma .kd,
+#editor-{{ $id }} .chroma .kn,
+#editor-{{ $id }} .chroma .kp,
+#editor-{{ $id }} .chroma .kr,
+#editor-{{ $id }} .chroma .ow,
+#editor-{{ $id }} .chroma .cp,
+#editor-{{ $id }} .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+
+/* VS Code Dark Plus: Types & Builtins (vec3, vec2, vec4, float, int, mat3, double, bool) */
+#editor-{{ $id }} .chroma .kt,
+#editor-{{ $id }} .chroma .nb,
+#editor-{{ $id }} .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+
+/* VS Code Dark Plus: Functions (calcNormal, normalize, calcShadow, clamp, min, mix, smoothstep) */
+#editor-{{ $id }} .chroma .nf,
+#editor-{{ $id }} .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+
+/* VS Code Dark Plus: Numbers (0.005, 1.0, 16, 0.05, 0.0, 5.0) */
+#editor-{{ $id }} .chroma .m,
+#editor-{{ $id }} .chroma .mb,
+#editor-{{ $id }} .chroma .mf,
+#editor-{{ $id }} .chroma .mh,
+#editor-{{ $id }} .chroma .mi,
+#editor-{{ $id }} .chroma .il,
+#editor-{{ $id }} .chroma .mo,
+#editor-{{ $id }} .chroma .kc { color: #b5cea8 !important; }
+
+/* VS Code Dark Plus: Strings */
+#editor-{{ $id }} .chroma .s,
+#editor-{{ $id }} .chroma .sa,
+#editor-{{ $id }} .chroma .sb,
+#editor-{{ $id }} .chroma .sc,
+#editor-{{ $id }} .chroma .dl,
+#editor-{{ $id }} .chroma .sd,
+#editor-{{ $id }} .chroma .s2,
+#editor-{{ $id }} .chroma .se,
+#editor-{{ $id }} .chroma .sh,
+#editor-{{ $id }} .chroma .si,
+#editor-{{ $id }} .chroma .sx,
+#editor-{{ $id }} .chroma .sr,
+#editor-{{ $id }} .chroma .s1,
+#editor-{{ $id }} .chroma .ss { color: #ce9178 !important; }
+
+/* VS Code Dark Plus: Comments */
+#editor-{{ $id }} .chroma .c,
+#editor-{{ $id }} .chroma .ch,
+#editor-{{ $id }} .chroma .cm,
+#editor-{{ $id }} .chroma .c1,
+#editor-{{ $id }} .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+
+/* VS Code Dark Plus: Operators & Punctuation */
+#editor-{{ $id }} .chroma .o { color: #d4d4d4 !important; }
+#editor-{{ $id }} .chroma .p { color: #d4d4d4 !important; }
+
+/* VS Code Dark Plus: Identifiers & Variables */
+#editor-{{ $id }} .chroma .n,
+#editor-{{ $id }} .chroma .nx,
+#editor-{{ $id }} .chroma .nv,
+#editor-{{ $id }} .chroma .vc,
+#editor-{{ $id }} .chroma .vg,
+#editor-{{ $id }} .chroma .vi,
+#editor-{{ $id }} .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-{{ $id }}" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+    <div class="glsl-code-panel-{{ $id }}" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
         <div id="editor-{{ $id }}" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;">
-            {{- highlight (trim $rawCode "\n\r") "glsl" "lineNos=false" -}}
+            {{- highlight (trim $rawCode "\n\r") "glsl" "lineNos=false,style=monokai" -}}
         </div>
     </div>
     
