@@ -13,8 +13,8 @@ math: true
 draft: false
 ---
 
-<div style="background-color: rgba(220, 38, 38, 0.08); border-left: 4px solid #dc2626; color: #dc2626; padding: 10px 14px; font-weight: 600; border-radius: 4px; margin-bottom: 20px;">
-  <strong>Work in Progress:</strong> This post is currently under active development.
+<div style="background-color: rgba(220, 38, 38, 0.08); border-left: 4px solid #dc2626; color: #dc2626; padding: 10px 14px; font-weight: 500; border-radius: 4px; margin-bottom: 20px; line-height: 1.5;">
+  <strong>Work in Progress:</strong> This post is under active development. I am continuously updating and expanding sections as I explore the literature further.
 </div>
 
 {{< figure src="/images/diff-rendering/diff-render.svg" id="fig-diff-render" caption="High-level overview of the differentiable rendering pipeline mapping scene parameters to images and propagating loss gradients back to parameters." width="100%" >}}
