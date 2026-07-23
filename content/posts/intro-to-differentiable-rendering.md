@@ -51,7 +51,7 @@ $$
   </div>
 </div>
 
-<iframe src="/interactive/diff-render/finite_difference_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/finite_difference_1d.html" loading="lazy" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 
 Finite differences are inherently **biased** because evaluating $f$ at a non-zero step $h$ returns a local spatial average of the true derivative rather than its point value at $x$:
 
@@ -81,7 +81,7 @@ $$
 
 The random perturbation vector $\boldsymbol{\Delta}$ has entries drawn independently from a mean-zero, symmetric distribution with bounded inverse moments—in practice, almost always a **Rademacher distribution** (each entry $\Delta_i = \pm 1$ with equal probability). A Gaussian $\boldsymbol{\Delta}$ cannot be used here: its probability density is non-zero at $0$, so $\Delta_i^{-1}$ has infinite variance and the estimator blows up.
 
-<iframe src="/interactive/diff-render/spsa.html" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/spsa.html" loading="lazy" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 
 While SPSA requires only two function evaluations per step regardless of input dimensionality, it introduces additional stochastic direction variance into the gradient estimates. This requires careful tuning of the step size $h$ to achieve good convergence. Consequently, derivative-free methods cannot compete with gradient descent using true infinitesimal gradients computed via automatic differentiation.
 
@@ -1139,6 +1139,7 @@ f(x, y) = \theta(\alpha(x, y)) f_u(x, y) + \theta(-\alpha(x, y)) f_l(x, y)
 $$
 
 <iframe src="/interactive/diff-render/heaviside.html"
+        loading="lazy"
         width="100%"
         height="400"
         frameborder="0"
@@ -1150,6 +1151,7 @@ where $f_u$ represents the upper half-space, $f_l$ represents the lower half-spa
 {{< figure src="/images/diff-rendering/edge_sampling/silhouette.svg" id="fig-edge-silhouette" caption="Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$." width="100%" >}}
 
 <iframe src="/interactive/diff-render/silhouette.html"
+        loading="lazy"
         width="100%"
         height="500"
         frameborder="0"
@@ -1351,7 +1353,7 @@ Two equivalent interpretations:
 
 To preserve the primal computation of $I$, the transformation $\mathcal{T}$ should be the identity map at the current parameter value $\pi_0$, i.e., $\mathcal{T}(y, \pi) = y + \pi - \pi_0$. The step location is fixed at $y = \pi_0$, allowing automatic differentiation to evaluate the smooth motion of $g$ without differentiating through a moving visibility test. Note that the sampling density $p(y_i)$ must not depend on $\pi$, otherwise parameter dependencies are reintroduced into the integrand.
 
-<iframe src="/interactive/diff-render/reparam_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/reparam_1d.html" loading="lazy" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 
 {{< figure src="/images/diff-rendering/integral_domain.svg" id="fig-reparameterized-domain" caption="Changing the integration domain can turn a moving discontinuity into a smooth differentiable estimator." width="100%" >}}
 

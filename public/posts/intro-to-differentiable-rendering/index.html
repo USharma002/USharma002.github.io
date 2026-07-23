@@ -649,7 +649,7 @@ $$<div class="paper-fig-row">
 
   </div>
 </div>
-<iframe src="/interactive/diff-render/finite_difference_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/finite_difference_1d.html" loading="lazy" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <p>Finite differences are inherently <strong>biased</strong> because evaluating $f$ at a non-zero step $h$ returns a local spatial average of the true derivative rather than its point value at $x$:</p>
 $$
 \frac{f(x + h) - f(x - h)}{2h} = \frac{1}{2h} \int_{-h}^{h} f'(x + t) \, \mathrm{d}t = \int_{-\infty}^{\infty} K_h(t - x) \, f'(t) \, \mathrm{d}t,
@@ -664,7 +664,7 @@ $$<p>where $\boldsymbol{\Delta}^{-1} = (\Delta_1^{-1}, \dots, \Delta_n^{-1})^T$ 
 $$
 \hat{g}_i(\mathbf{x}) = \frac{f(\mathbf{x} + h \cdot \boldsymbol{\Delta}) - f(\mathbf{x} - h \cdot \boldsymbol{\Delta})}{2h \, \Delta_i}
 $$<p>The random perturbation vector $\boldsymbol{\Delta}$ has entries drawn independently from a mean-zero, symmetric distribution with bounded inverse moments—in practice, almost always a <strong>Rademacher distribution</strong> (each entry $\Delta_i = \pm 1$ with equal probability). A Gaussian $\boldsymbol{\Delta}$ cannot be used here: its probability density is non-zero at $0$, so $\Delta_i^{-1}$ has infinite variance and the estimator blows up.</p>
-<iframe src="/interactive/diff-render/spsa.html" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/spsa.html" loading="lazy" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <p>While SPSA requires only two function evaluations per step regardless of input dimensionality, it introduces additional stochastic direction variance into the gradient estimates. This requires careful tuning of the step size $h$ to achieve good convergence. Consequently, derivative-free methods cannot compete with gradient descent using true infinitesimal gradients computed via automatic differentiation.</p>
 <h3 id="automatic-differentiation">Automatic Differentiation<a hidden class="anchor" aria-hidden="true" href="#automatic-differentiation">#</a></h3>
 <p>Instead of approximating derivatives with finite differences or deriving a large formula by hand, we can use <em>automatic differentiation</em> (AD). AD runs the original computation as a sequence of simple operations and applies the chain rule to each operation. For two scalar functions, the chain rule is:
@@ -2092,6 +2092,7 @@ $$<figure id="fig-path-space" class="zoomable-figure" style="text-align:center;m
 $$
 f(x, y) = \theta(\alpha(x, y)) f_u(x, y) + \theta(-\alpha(x, y)) f_l(x, y)
 $$<iframe src="/interactive/diff-render/heaviside.html"
+        loading="lazy"
         width="100%"
         height="400"
         frameborder="0"
@@ -2106,6 +2107,7 @@ $$<iframe src="/interactive/diff-render/heaviside.html"
 
 
 <iframe src="/interactive/diff-render/silhouette.html"
+        loading="lazy"
         width="100%"
         height="500"
         frameborder="0"
@@ -2262,7 +2264,7 @@ $$<p>Two equivalent interpretations:</p>
 <li>This is equivalent to importance sampling $\int f(x) \, \mathrm{d}x$ using samples $x_i(\pi) = y_i + \pi$ that <em>follow</em> the movement of the discontinuity.</li>
 </ul>
 <p>To preserve the primal computation of $I$, the transformation $\mathcal{T}$ should be the identity map at the current parameter value $\pi_0$, i.e., $\mathcal{T}(y, \pi) = y + \pi - \pi_0$. The step location is fixed at $y = \pi_0$, allowing automatic differentiation to evaluate the smooth motion of $g$ without differentiating through a moving visibility test. Note that the sampling density $p(y_i)$ must not depend on $\pi$, otherwise parameter dependencies are reintroduced into the integrand.</p>
-<iframe src="/interactive/diff-render/reparam_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/reparam_1d.html" loading="lazy" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <figure id="fig-reparameterized-domain" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/integral_domain.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
