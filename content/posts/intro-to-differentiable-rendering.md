@@ -800,229 +800,234 @@ which can also be approximated with Monte Carlo sampling.
 {{< figure src="/images/diff-rendering/svgtex/triangles/9.svg" id="fig-boundary-volume" caption="The Infinitesimal Boundary Volume. For each point on the boundary, we compute its 2D movement $v$ with respect to the differentiating parameter. This movement is projected onto the normal direction $n$ to yield the normal movement speed $n \cdot v$. This projection accounts for the infinitesimal width of the swept area, allowing us to properly measure the infinitesimal area changes at the boundary. Multiplying this projected width by the differential edge segment $dt$ (length) and the color jump (height) calculates the exact boundary derivative contribution." width="100%" >}}
 
 
-### Code for the above example
-The following code is adapted from SIGGRAPH 2020 Course.
-
-```python
-import numpy as np
-
-class TriangleMesh:
-    def __init__(self, vertices, indices, colors):
-        self.vertices = np.array(vertices, dtype=np.float64)  # (N, 2) vertices
-        self.indices = np.array(indices, dtype=np.int32)      # (M, 3) face indices
-        self.colors = np.array(colors, dtype=np.float64)      # (M, 3) per-face RGB
-
-def raytrace(mesh, pos):
-    """
-    Uses the half-plane test: a point is inside a triangle if it's
-    on the same side of all three edges.
-    """
-    for i in range(len(mesh.indices)):
-
-        # Extract the current triangle
-        idx = mesh.indices[i]
-        v0, v1, v2 = mesh.vertices[idx[0]], mesh.vertices[idx[1]], mesh.vertices[idx[2]]
-
-        # Edge normals (2D perpendicular: normal of (dx,dy) = (-dy, dx))
-        def normal_2d(v):
-            return np.array([-v[1], v[0]])
-
-        # Get edge normals for all edges of triangles
-        n01 = normal_2d(v1 - v0)
-        n12 = normal_2d(v2 - v1)
-        n20 = normal_2d(v0 - v2)
-
-        # Find in which side pos is for each edge
-        side01 = np.dot(pos - v0, n01) > 0
-        side12 = np.dot(pos - v1, n12) > 0
-        side20 = np.dot(pos - v2, n20) > 0
-
-        # if it is on same side for all edges, then it is inside (since this is 2D)
-        if (side01 and side12 and side20) or (not side01 and not side12 and not side20):
-            return mesh.colors[i], i
-
-    return np.array([0.0, 0.0, 0.0]), -1  # background
-
-def render(mesh, h, w, spp=4):
-    """
-    Forward pass: render the mesh into an image.
-    """
-    img = np.zeros((h, w, 3))    # setup the (H, W, 3) buffer for RGB image
-    sqrt_spp = int(np.sqrt(spp)) # grid cells for stratified sampling
-
-    # For each pixel
-    for y in range(h):
-        for x in range(w):
-            # for each grid cell
-            for dy in range(sqrt_spp):
-                for dx in range(sqrt_spp):
-
-                    # Offset the position within the pixel
-                    xoff = (dx + np.random.rand()) / sqrt_spp
-                    yoff = (dy + np.random.rand()) / sqrt_spp
-
-                    # compute the color at that position
-                    pos = np.array([x + xoff, y + yoff])
-                    color, _ = raytrace(mesh, pos)
-                    img[y, x] += color / spp
-    return img
-
-def compute_interior_derivatives(mesh, adjoint, spp=4):
-    """
-    Interior derivatives: ∂Loss/∂color.
-    Standard AD works here because color changes are continuous.
-    """
-    img_h, img_w = adjoint.shape[:2]
-    sqrt_spp = int(np.sqrt(spp))
-    d_colors = np.zeros_like(mesh.colors)
-
-    # For each pixel
-    for y in range(img_h):
-        for x in range(img_w):
-            # For each grid cell
-            for dy in range(sqrt_spp):
-                for dx in range(sqrt_spp):
-
-                    # Find the position within the cell within pixel
-                    xoff = (dx + np.random.rand()) / sqrt_spp
-                    yoff = (dy + np.random.rand()) / sqrt_spp
-
-                    # compute the gradient at that position
-                    pos = np.array([x + xoff, y + yoff])
-                    _, hit_idx = raytrace(mesh, pos)
-                    if hit_idx >= 0:
-                        d_colors[hit_idx] += adjoint[y, x] / spp
-    return d_colors
-
-
-def collect_edges(mesh):
-    """Collect unique edges."""
-    edges = set() # Stores edges as tuples (u, v)
-
-    for idx in mesh.indices:
-        edges.add((min(idx[0], idx[1]), max(idx[0], idx[1])))
-        edges.add((min(idx[1], idx[2]), max(idx[1], idx[2])))
-        edges.add((min(idx[2], idx[0]), max(idx[2], idx[0])))
-
-    # [(u, v) ...]
-    return list(edges)
-
-def build_edge_sampler(mesh, edges):
-    """Build CDF for importance-sampling edges by length."""
-    lengths = []
-
-    # Store the lengths of the edges
-    for v0_id, v1_id in edges:
-        lengths.append(np.linalg.norm(mesh.vertices[v1_id] - mesh.vertices[v0_id]))
-
-    lengths = np.array(lengths)
-
-    # Use the edge lengths as weight for PDF and construct CDF
-    pmf = lengths / lengths.sum()
-    cdf = np.concatenate([[0], np.cumsum(pmf)])
-
-    return pmf, cdf, lengths
-
-def compute_edge_derivatives(mesh, adjoint, n_edge_samples=10000):
-    """∂Loss/∂vertices via Reynolds Transport Theorem."""
-
-    # Extract unique edges and build CDF for sampling
-    img_h, img_w = adjoint.shape[:2]
-    edges = collect_edges(mesh)
-    pmf, cdf, lengths = build_edge_sampler(mesh, edges)
-
-    d_vertices = np.zeros_like(mesh.vertices)
-    screen_dx = np.zeros((img_h, img_w, 3))
-    screen_dy = np.zeros((img_h, img_w, 3))
-
-    for i in range(n_edge_samples):
-        # 1. Pick an edge (importance sampling by length)
-        u = np.random.rand()
-        edge_id = np.searchsorted(cdf, u, side='right') - 1
-        edge_id = np.clip(edge_id, 0, len(edges) - 1)
-        u, v = edges[edge_id]
-
-        # 2. Pick a point on the edge
-        v0 = mesh.vertices[u]
-        v1 = mesh.vertices[v]
-        t = np.random.rand()   # t in [0, 1]
-        p = v0 + t * (v1 - v0)
-
-        xi, yi = int(p[0]), int(p[1])
-        if xi < 0 or yi < 0 or xi >= img_w or yi >= img_h:
-            continue
-
-        # 3. Sample both sides of the edge (the "jump" / discontinuity)
-        edge_dir = (v1 - v0) / np.linalg.norm(v1 - v0)
-        n = np.array([-edge_dir[1], edge_dir[0]])  # outward normal
-        eps = 1e-3
-
-        color_in, _ = raytrace(mesh, p - eps * n)
-        color_out, _ = raytrace(mesh, p + eps * n)
-
-        # 4. Compute gradient contribution (Reynolds Transport Theorem)
-        pdf = pmf[edge_id] / lengths[edge_id]
-        weight = 1.0 / (pdf * n_edge_samples)
-        color_diff = color_in - color_out  # the jump Δf
-        adj = np.dot(color_diff, adjoint[yi, xi])
-
-        # dp/dv0 = (1-t), dp/dv1 = t  (from p = v0 + t*(v1-v0))
-        d_v0 = np.array([(1 - t) * n[0], (1 - t) * n[1]]) * adj * weight
-        d_v1 = np.array([t * n[0], t * n[1]]) * adj * weight
-
-        d_vertices[u] += d_v0
-        d_vertices[v] += d_v1
-
-        # Screen-space derivatives
-        screen_dx[yi, xi] += -n[0] * color_diff * weight
-        screen_dy[yi, xi] += -n[1] * color_diff * weight
-
-    return d_vertices, screen_dx, screen_dy
-
-
-# 1. Scene setup
-c_blue =[15/255, 133/255, 165/255]
-c_red  =[187/255, 37/255, 66/255]
-
-scale = 2.0
-mesh = TriangleMesh(
-    vertices = np.array([
-        # Tri 0 (Red)
-        [10.0, 12.0],[26.0, 1.0], [31.0, 16.0],
-        # Tri 1 (Blue)
-        [2.0, 11.0],[16.0, 2.0], [20.0, 19.0],
-    ]) * scale,
-    indices = [[0, 1, 2], [3, 4, 5]],
-    colors =[c_red, c_blue]
-)
-
-# Window setup
-W, H, spp = 70, 45, 4
-np.random.seed(48)
-
-# 2. Forward Pass
-print("Rendering...")
-img = render(mesh, H, W, spp)
-
-# 3. Backward Pass (Interior: ∂I/∂color)
-adjoint = np.ones((H, W, 3)) # Uniform adjoint to pull gradients
-d_colors = compute_interior_derivatives(mesh, adjoint, spp)
-
-# 4. Backward Pass (Edges: ∂I/∂vertex via boundary sampling)
-d_verts, screen_dx, screen_dy = compute_edge_derivatives(mesh, adjoint, n_edge_samples=W*H)
-
-print("\nVertex Gradients (d_verts):")
-print(np.round(d_verts, 4))
-
-# Output:
-# Vertex Gradients (d_verts):
-# [[ -4.2248   2.533 ]
-#  [  7.4785 -18.8305]
-#  [ 13.7454  13.4763]
-#  [-21.0542   4.3572]
-#  [  0.4232 -20.9386]
-#  [  2.0691  19.6481]]
-```
+> <details>
+> <summary style="cursor: pointer; font-weight: 600;">Complete 2D Triangle Code Implementation (Python)</summary>
+>
+> ### Code for the above example
+> The following code is adapted from SIGGRAPH 2020 Course.
+>
+> ```python
+> import numpy as np
+>
+> class TriangleMesh:
+>     def __init__(self, vertices, indices, colors):
+>         self.vertices = np.array(vertices, dtype=np.float64)  # (N, 2) vertices
+>         self.indices = np.array(indices, dtype=np.int32)      # (M, 3) face indices
+>         self.colors = np.array(colors, dtype=np.float64)      # (M, 3) per-face RGB
+>
+> def raytrace(mesh, pos):
+>     """
+>     Uses the half-plane test: a point is inside a triangle if it's
+>     on the same side of all three edges.
+>     """
+>     for i in range(len(mesh.indices)):
+>
+>         # Extract the current triangle
+>         idx = mesh.indices[i]
+>         v0, v1, v2 = mesh.vertices[idx[0]], mesh.vertices[idx[1]], mesh.vertices[idx[2]]
+>
+>         # Edge normals (2D perpendicular: normal of (dx,dy) = (-dy, dx))
+>         def normal_2d(v):
+>             return np.array([-v[1], v[0]])
+>
+>         # Get edge normals for all edges of triangles
+>         n01 = normal_2d(v1 - v0)
+>         n12 = normal_2d(v2 - v1)
+>         n20 = normal_2d(v0 - v2)
+>
+>         # Find in which side pos is for each edge
+>         side01 = np.dot(pos - v0, n01) > 0
+>         side12 = np.dot(pos - v1, n12) > 0
+>         side20 = np.dot(pos - v2, n20) > 0
+>
+>         # if it is on same side for all edges, then it is inside (since this is 2D)
+>         if (side01 and side12 and side20) or (not side01 and not side12 and not side20):
+>             return mesh.colors[i], i
+>
+>     return np.array([0.0, 0.0, 0.0]), -1  # background
+>
+> def render(mesh, h, w, spp=4):
+>     """
+>     Forward pass: render the mesh into an image.
+>     """
+>     img = np.zeros((h, w, 3))    # setup the (H, W, 3) buffer for RGB image
+>     sqrt_spp = int(np.sqrt(spp)) # grid cells for stratified sampling
+>
+>     # For each pixel
+>     for y in range(h):
+>         for x in range(w):
+>             # for each grid cell
+>             for dy in range(sqrt_spp):
+>                 for dx in range(sqrt_spp):
+>
+>                     # Offset the position within the pixel
+>                     xoff = (dx + np.random.rand()) / sqrt_spp
+>                     yoff = (dy + np.random.rand()) / sqrt_spp
+>
+>                     # compute the color at that position
+>                     pos = np.array([x + xoff, y + yoff])
+>                     color, _ = raytrace(mesh, pos)
+>                     img[y, x] += color / spp
+>     return img
+>
+> def compute_interior_derivatives(mesh, adjoint, spp=4):
+>     """
+>     Interior derivatives: ∂Loss/∂color.
+>     Standard AD works here because color changes are continuous.
+>     """
+>     img_h, img_w = adjoint.shape[:2]
+>     sqrt_spp = int(np.sqrt(spp))
+>     d_colors = np.zeros_like(mesh.colors)
+>
+>     # For each pixel
+>     for y in range(img_h):
+>         for x in range(img_w):
+>             # For each grid cell
+>             for dy in range(sqrt_spp):
+>                 for dx in range(sqrt_spp):
+>
+>                     # Find the position within the cell within pixel
+>                     xoff = (dx + np.random.rand()) / sqrt_spp
+>                     yoff = (dy + np.random.rand()) / sqrt_spp
+>
+>                     # compute the gradient at that position
+>                     pos = np.array([x + xoff, y + yoff])
+>                     _, hit_idx = raytrace(mesh, pos)
+>                     if hit_idx >= 0:
+>                         d_colors[hit_idx] += adjoint[y, x] / spp
+>     return d_colors
+>
+>
+> def collect_edges(mesh):
+>     """Collect unique edges."""
+>     edges = set() # Stores edges as tuples (u, v)
+>
+>     for idx in mesh.indices:
+>         edges.add((min(idx[0], idx[1]), max(idx[0], idx[1])))
+>         edges.add((min(idx[1], idx[2]), max(idx[1], idx[2])))
+>         edges.add((min(idx[2], idx[0]), max(idx[2], idx[0])))
+>
+>     # [(u, v) ...]
+>     return list(edges)
+>
+> def build_edge_sampler(mesh, edges):
+>     """Build CDF for importance-sampling edges by length."""
+>     lengths = []
+>
+>     # Store the lengths of the edges
+>     for v0_id, v1_id in edges:
+>         lengths.append(np.linalg.norm(mesh.vertices[v1_id] - mesh.vertices[v0_id]))
+>
+>     lengths = np.array(lengths)
+>
+>     # Use the edge lengths as weight for PDF and construct CDF
+>     pmf = lengths / lengths.sum()
+>     cdf = np.concatenate([[0], np.cumsum(pmf)])
+>
+>     return pmf, cdf, lengths
+>
+> def compute_edge_derivatives(mesh, adjoint, n_edge_samples=10000):
+>     """∂Loss/∂vertices via Reynolds Transport Theorem."""
+>
+>     # Extract unique edges and build CDF for sampling
+>     img_h, img_w = adjoint.shape[:2]
+>     edges = collect_edges(mesh)
+>     pmf, cdf, lengths = build_edge_sampler(mesh, edges)
+>
+>     d_vertices = np.zeros_like(mesh.vertices)
+>     screen_dx = np.zeros((img_h, img_w, 3))
+>     screen_dy = np.zeros((img_h, img_w, 3))
+>
+>     for i in range(n_edge_samples):
+>         # 1. Pick an edge (importance sampling by length)
+>         u = np.random.rand()
+>         edge_id = np.searchsorted(cdf, u, side='right') - 1
+>         edge_id = np.clip(edge_id, 0, len(edges) - 1)
+>         u, v = edges[edge_id]
+>
+>         # 2. Pick a point on the edge
+>         v0 = mesh.vertices[u]
+>         v1 = mesh.vertices[v]
+>         t = np.random.rand()   # t in [0, 1]
+>         p = v0 + t * (v1 - v0)
+>
+>         xi, yi = int(p[0]), int(p[1])
+>         if xi < 0 or yi < 0 or xi >= img_w or yi >= img_h:
+>             continue
+>
+>         # 3. Sample both sides of the edge (the "jump" / discontinuity)
+>         edge_dir = (v1 - v0) / np.linalg.norm(v1 - v0)
+>         n = np.array([-edge_dir[1], edge_dir[0]])  # outward normal
+>         eps = 1e-3
+>
+>         color_in, _ = raytrace(mesh, p - eps * n)
+>         color_out, _ = raytrace(mesh, p + eps * n)
+>
+>         # 4. Compute gradient contribution (Reynolds Transport Theorem)
+>         pdf = pmf[edge_id] / lengths[edge_id]
+>         weight = 1.0 / (pdf * n_edge_samples)
+>         color_diff = color_in - color_out  # the jump Δf
+>         adj = np.dot(color_diff, adjoint[yi, xi])
+>
+>         # dp/dv0 = (1-t), dp/dv1 = t  (from p = v0 + t*(v1-v0))
+>         d_v0 = np.array([(1 - t) * n[0], (1 - t) * n[1]]) * adj * weight
+>         d_v1 = np.array([t * n[0], t * n[1]]) * adj * weight
+>
+>         d_vertices[u] += d_v0
+>         d_vertices[v] += d_v1
+>
+>         # Screen-space derivatives
+>         screen_dx[yi, xi] += -n[0] * color_diff * weight
+>         screen_dy[yi, xi] += -n[1] * color_diff * weight
+>
+>     return d_vertices, screen_dx, screen_dy
+>
+>
+> # 1. Scene setup
+> c_blue =[15/255, 133/255, 165/255]
+> c_red  =[187/255, 37/255, 66/255]
+>
+> scale = 2.0
+> mesh = TriangleMesh(
+>     vertices = np.array([
+>         # Tri 0 (Red)
+>         [10.0, 12.0],[26.0, 1.0], [31.0, 16.0],
+>         # Tri 1 (Blue)
+>         [2.0, 11.0],[16.0, 2.0], [20.0, 19.0],
+>     ]) * scale,
+>     indices = [[0, 1, 2], [3, 4, 5]],
+>     colors =[c_red, c_blue]
+> )
+>
+> # Window setup
+> W, H, spp = 70, 45, 4
+> np.random.seed(48)
+>
+> # 2. Forward Pass
+> print("Rendering...")
+> img = render(mesh, H, W, spp)
+>
+> # 3. Backward Pass (Interior: ∂I/∂color)
+> adjoint = np.ones((H, W, 3)) # Uniform adjoint to pull gradients
+> d_colors = compute_interior_derivatives(mesh, adjoint, spp)
+>
+> # 4. Backward Pass (Edges: ∂I/∂vertex via boundary sampling)
+> d_verts, screen_dx, screen_dy = compute_edge_derivatives(mesh, adjoint, n_edge_samples=W*H)
+>
+> print("\nVertex Gradients (d_verts):")
+> print(np.round(d_verts, 4))
+>
+> # Output:
+> # Vertex Gradients (d_verts):
+> # [[ -4.2248   2.533 ]
+> #  [  7.4785 -18.8305]
+> #  [ 13.7454  13.4763]
+> #  [-21.0542   4.3572]
+> #  [  0.4232 -20.9386]
+> #  [  2.0691  19.6481]]
+> ```
+>
+> </details>
 
 <div class="paper-fig-row">
     {{< figure src="/images/diff-rendering/triangles/1_forward_render.png" caption="Forward Render Output" id="fig-triangle-forward" width="100%">}}
@@ -1142,6 +1147,15 @@ $$
 
 where $f_u$ represents the upper half-space, $f_l$ represents the lower half-space, and $\alpha$ defines the edge equation formed by the triangles. For each edge with two end points $(a_x, a_y), (b_x, b_y),$ we can construct the edge equation by forming the line $\alpha(x, y) = Ax + By + C$. If $\alpha(x, y) > 0$ then the point is at the upper half-space, and vice versa.
 
+{{< figure src="/images/diff-rendering/edge_sampling/silhouette.svg" id="fig-edge-silhouette" caption="Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$." width="100%" >}}
+
+<iframe src="/interactive/diff-render/silhouette.html"
+        width="100%"
+        height="500"
+        frameborder="0"
+        style="border: none; min-width: 100%; margin: 1rem 0 2rem 0;">
+</iframe>
+
 {{< figure src="/images/diff-rendering/edge_sampling/half_spaces.svg" id="fig-edge-sampling" caption="(a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. We estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative." width="100%" >}}
 
 For the two endpoints of the edge, $\alpha(x, y) = 0$. Thus by plugging in the two endpoints we obtain:
@@ -1248,7 +1262,9 @@ $$
 $$
 n_h = \frac{(v_0 - p) \times (v_1 - p)}{\lVert (v_0 - p) \times (v_1 - p) \rVert},
 $$
-where $n_m$ is the surface normal at $m$. Two key differences distinguish this 3D integral from its screen-space counterpart. First, the measure $\sigma'(m)$ is no longer the arc length along the 2D edge; instead it measures the projected length from the edge through the shading point $p$ onto the scene manifold (the semi-transparent triangle in {{< figref "fig-edge-sampling" >}}(a) illustrates this projection). Second, an additional area-correction factor $\lVert n_m \times n_h \rVert$ appears because the scene surface element must be projected onto the infinitesimal width of the edge ({{< figref "fig-edge-sampling" >}}(b)).
+where $n_m$ is the surface normal at $m$. Two key differences distinguish this 3D integral from its screen-space counterpart. First, the measure $\sigma'(m)$ is no longer the arc length along the 2D edge; instead it measures the projected length from the edge through the shading point $p$ onto the scene manifold (the semi-transparent triangle in {{< figref "fig-edge-secondary-visibility" >}}(a) illustrates this projection). Second, an additional area-correction factor $\lVert n_m \times n_h \rVert$ appears because the scene surface element must be projected onto the infinitesimal width of the edge ({{< figref "fig-edge-secondary-visibility" >}}(b)).
+
+{{< figure src="/images/diff-rendering/reparam/secondary_visibility.svg" id="fig-edge-secondary-visibility" caption="(a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, we integrate over the edge to compute the difference. By doing so we take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration we need to project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$)." width="100%" >}}
 
 To evaluate this integral with Monte Carlo sampling, we reparameterise from the surface point $m$ to the edge line parameter $t \in [0,1]$, where $m(t)$ is the projection of $v_0 + t(v_1 - v_0)$ onto the scene manifold:
 $$
@@ -1509,6 +1525,8 @@ where $D_i'=D_i\setminus\partial D_i$. The first term is the usual interior deri
 
 This partition is only a device used in the proof; evaluating the estimator does not require clipping the scene into the regions $D_i$ or enumerating their boundaries.
 
+{{< figure src="/images/diff-rendering/warparea/pixel_content.svg" id="fig-warparea-pixel-content" caption="Differentiating boundary movements. Our goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how we partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. We can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals." width="100%" >}}
+
 Introduce a vector field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ that interpolates the boundary velocity into the interior. Applying the divergence theorem to $f\mathbf{V}_{\boldsymbol{\pi}}$ rewrites the boundary contribution as:
 
 #### Area Form of the Boundary Derivative
@@ -1560,6 +1578,8 @@ $$
 
 This matrix form incorporates the correction in the paper's 2022 erratum: the denominator is not a Jacobian *determinant*. The equation is a Jacobian solve, with matrix-valued numerator and denominator when the quantities are multidimensional.
 
+{{< figure src="/images/diff-rendering/warparea/derivative_field.svg" id="fig-warparea-derivative-field" caption="Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in our derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which we have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative." width="100%" >}}
+
 The direct warp has the correct limiting motion on a silhouette, but it jumps when neighboring directions hit different surfaces. Bangaru et al. therefore filter it using a normalized, boundary-aware harmonic convolution:
 
 $$
@@ -1590,6 +1610,8 @@ $$
 
 Hence the filtered warp approaches the boundary-consistent direct warp as the primary direction approaches a silhouette. The field may remain undefined exactly on the silhouette, where the harmonic weights become infinite, because the area estimator only evaluates the smooth interior.
 
+{{< figure src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" id="fig-warparea-harmonic-conv" caption="Boundary-aware convolution. (a) The form of the warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathbf{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Our proposed convolution method $\mathbf{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary." width="100%" >}}
+
 #### Relation to Loubet et al.
 
 A differentiable reparameterization $\mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi})$ induces the infinitesimal warp
@@ -1600,6 +1622,8 @@ $$
 
 This establishes a local relationship between reparameterization and the warp-field formulation, but it does **not** imply that every chosen reparameterization is exact. A spherical rotation has unit Jacobian and therefore produces a divergence-free field. Some boundary motions require nonzero divergence, so a rotation cannot satisfy the boundary conditions in general. Bangaru et al. interpret the approximations of Loubet et al. as producing a field that can be smooth without being boundary-consistent, which explains the remaining bias. Warped-area sampling instead makes continuity and boundary consistency explicit and uses the harmonic construction to satisfy both without enumerating silhouettes.
 
+{{< figure src="/images/diff-rendering/warparea/warp_formulation.svg" id="fig-warparea-formulation" caption="Warp field formulation. We apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and our area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, our method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering." width="100%" >}}
+
 Appendix C proves both directions of this relationship. A transformation $\mathcal{T}$ induces the field above by differentiating at the evaluation point $\boldsymbol{\pi}_0$. Conversely, one possible Euclidean transformation generated by a given field is
 
 $$
@@ -1609,6 +1633,8 @@ $$
 The construction is not unique; on the sphere, the appendix also gives a rotational solution. This equivalence concerns the infinitesimal field induced by a transformation. Unbiasedness still depends on whether that field is continuous and has the correct limiting boundary velocity.
 
 #### Monte Carlo Estimation of the Warp
+
+{{< figure src="/images/diff-rendering/warparea/overview.svg" id="fig-warparea-overview" caption="Our algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, we need to estimate the warp function at this point. To achieve this, our method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. We then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Our final step computes the weighted average of the direct warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathbf{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathbf{V}_{\boldsymbol{\pi}}$ at the primary sample." width="100%" >}}
 
 At each ordinary path-tracing direction $\boldsymbol{\omega}$, the algorithm:
 

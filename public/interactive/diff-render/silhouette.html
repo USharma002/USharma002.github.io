@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silhouette Edge Condition 3D Visualization</title>
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- KaTeX for crisp LaTeX math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+    <style>
+        :root {
+            --bg: transparent;
+            --text: #0f172a;
+            --text-sub: #475569;
+            --border: rgba(0, 0, 0, 0.15);
+            --btn-bg: rgba(0, 0, 0, 0.05);
+            --accent-cyan: #0284c7;
+            --accent-green: #16a34a;
+            --accent-orange: #ea580c;
+            --accent-gold: #d97706;
+        }
+
+        html.dark, body.dark, [data-theme="dark"] {
+            --text: #f8fafc;
+            --text-sub: #94a3b8;
+            --border: rgba(255, 255, 255, 0.2);
+            --btn-bg: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-orange: #fb923c;
+            --accent-gold: #facc15;
+        }
+
+        html, body {
+            margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;
+            background: transparent !important;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text); user-select: none;
+        }
+
+        #canvas-container {
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            background: transparent !important;
+        }
+
+        .controls-panel {
+            position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+            background: transparent; border: none; padding: 4px 8px;
+            display: flex; gap: 8px 15px; flex-wrap: wrap; align-items: center; justify-content: center;
+            z-index: 10; font-size: 0.8rem; width: 100%; max-width: 100vw;
+        }
+
+        .control-group {
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 0.8rem; font-weight: 500;
+        }
+
+        .val-badge {
+            font-size: 0.72rem; color: var(--text-sub); min-width: 35px;
+        }
+
+        select, input[type="range"] {
+            background: var(--btn-bg); border: 1px solid var(--border); border-radius: 4px;
+            padding: 2px; cursor: pointer; color: var(--text);
+        }
+
+        .legend {
+            position: absolute; top: 12px; right: 12px;
+            background: transparent; padding: 0; font-size: 0.75rem; z-index: 10;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+
+        .legend-item {
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .legend-line { width: 14px; height: 3px; border-radius: 1px; }
+
+        .label-3d {
+            position: absolute; color: var(--text);
+            font-family: 'Times New Roman', serif; font-style: italic; font-weight: bold;
+            font-size: 1.15rem; pointer-events: none; transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-line" style="background:var(--accent-cyan);"></div><span id="legend-pv"></span></div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--accent-green);"></div><span id="legend-nf"></span></div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--accent-orange);"></div><span id="legend-nb"></span></div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--accent-gold);"></div><span>Silhouette Edges</span></div>
+    </div>
+
+    <!-- UI Controls -->
+    <div class="controls-panel">
+        <div class="control-group">
+            <label for="theta-slider"><span id="lbl-theta-math"></span> (Pitch):</label>
+            <input type="range" id="theta-slider" min="-90" max="90" value="33" step="0.5">
+            <span id="val-theta" class="val-badge">33.0°</span>
+        </div>
+
+        <div class="control-group">
+            <label for="phi-slider"><span id="lbl-phi-math"></span> (Yaw):</label>
+            <input type="range" id="phi-slider" min="-180" max="180" value="4" step="0.5">
+            <span id="val-phi" class="val-badge">4.0°</span>
+        </div>
+
+        <div class="control-group">
+            <label for="cam-rot-slider">Orbit Camera:</label>
+            <input type="range" id="cam-rot-slider" min="0" max="360" value="160" step="1">
+        </div>
+
+        <div class="control-group">
+            <label style="cursor:pointer;">
+                <input type="checkbox" id="toggle-all-silhouettes" checked> All Silhouettes
+            </label>
+        </div>
+    </div>
+
+    <!-- Math Labels -->
+    <div id="label-v" class="label-3d" style="color:var(--accent-cyan);">v</div>
+    <div id="label-p" class="label-3d">p</div>
+    <div id="label-nf" class="label-3d" style="color:var(--accent-green);">n_f</div>
+    <div id="label-nb" class="label-3d" style="color:var(--accent-orange);">n_b</div>
+
+    <script>
+        function syncHugoTheme() {
+            try {
+                const parentIsDark = window.parent && (window.parent.document.body.classList.contains('dark') || window.parent.document.documentElement.classList.contains('dark'));
+                const selfIsDark = document.documentElement.classList.contains('dark') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (parentIsDark || selfIsDark) { document.documentElement.classList.add('dark'); document.body.classList.add('dark'); } 
+                else { document.documentElement.classList.remove('dark'); document.body.classList.remove('dark'); }
+            } catch(e) {}
+        }
+        syncHugoTheme();
+
+        function renderMathWhenReady() {
+            if (window.katex) {
+                katex.render("p - v", document.getElementById("legend-pv"));
+                katex.render("n_f \\text{ (Face } f)", document.getElementById("legend-nf"));
+                katex.render("n_b \\text{ (Face } b)", document.getElementById("legend-nb"));
+                katex.render("\\theta", document.getElementById("lbl-theta-math"));
+                katex.render("\\phi", document.getElementById("lbl-phi-math"));
+                katex.render("\\mathbf{v}", document.getElementById("label-v"));
+                katex.render("\\mathbf{p}", document.getElementById("label-p"));
+                katex.render("\\mathbf{n}_f", document.getElementById("label-nf"));
+                katex.render("\\mathbf{n}_b", document.getElementById("label-nb"));
+            } else {
+                setTimeout(renderMathWhenReady, 50);
+            }
+        }
+        window.addEventListener('load', renderMathWhenReady);
+
+        // ----------------------------------------------------
+        // 1. Scene Setup
+        // ----------------------------------------------------
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(44, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 1.8, 8.2);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0x000000, 0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 0, 0);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        const raycaster = new THREE.Raycaster();
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85); dirLight1.position.set(5, 10, 7); scene.add(dirLight1);
+        const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.35); dirLight2.position.set(-5, -5, -5); scene.add(dirLight2);
+
+        // ----------------------------------------------------
+        // 2. High-Quality TikZ Camera Mesh (Oriented pointing +Z)
+        // ----------------------------------------------------
+        const cameraGroup = new THREE.Group();
+
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.3 });
+        const accentMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.3, metalness: 0.5 });
+        const lensGlassMat = new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, roughness: 0.1, transmission: 0.8 });
+        const wireMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 });
+
+        // Body positioned behind local origin
+        const bodyGeo = new THREE.BoxGeometry(0.5, 0.38, 0.45);
+        const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat); bodyMesh.position.set(0, 0, -0.2); cameraGroup.add(bodyMesh);
+        const bodyWire = new THREE.LineSegments(new THREE.WireframeGeometry(bodyGeo), wireMat); bodyWire.position.copy(bodyMesh.position); cameraGroup.add(bodyWire);
+        const dialMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.08, 16), accentMat); dialMesh.position.set(0, 0.23, -0.2); cameraGroup.add(dialMesh);
+        
+        // Lens pointing forward along +Z
+        const lensGeo = new THREE.CylinderGeometry(0.15, 0.19, 0.32, 20); lensGeo.rotateX(Math.PI / 2);
+        const lensMesh = new THREE.Mesh(lensGeo, accentMat); lensMesh.position.set(0, 0, 0.1); cameraGroup.add(lensMesh);
+        
+        const ringMesh = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.025, 12, 24), bodyMat); ringMesh.position.set(0, 0, 0.26); cameraGroup.add(ringMesh);
+        const glassMesh = new THREE.Mesh(new THREE.CircleGeometry(0.15, 24), lensGlassMat); glassMesh.position.set(0, 0, 0.265); cameraGroup.add(glassMesh);
+        
+        scene.add(cameraGroup);
+
+        // ----------------------------------------------------
+        // 3. Torus Setup & Adjacency
+        // ----------------------------------------------------
+        let currentMesh = null;
+        let meshTriangles = [];
+        let meshEdges = [];
+        let activeIntersection = null;
+
+        let rayArrow = null;
+        let normalFArrow = null;
+        let normalBArrow = null;
+        let hitPointSphere = null;
+
+        const allSilhouettesGroup = new THREE.Group();
+        scene.add(allSilhouettesGroup);
+
+        const highlightOffset = { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 };
+        const faceFSilhouetteMat = new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.5, side: THREE.DoubleSide, ...highlightOffset });
+        const faceBSilhouetteMat = new THREE.MeshBasicMaterial({ color: 0xfb923c, transparent: true, opacity: 0.5, side: THREE.DoubleSide, ...highlightOffset });
+        const faceFInteriorMat = new THREE.MeshBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.3, side: THREE.DoubleSide, ...highlightOffset });
+        const faceBInteriorMat = new THREE.MeshBasicMaterial({ color: 0x64748b, transparent: true, opacity: 0.3, side: THREE.DoubleSide, ...highlightOffset });
+
+        const faceFMesh = new THREE.Mesh(new THREE.BufferGeometry(), faceFSilhouetteMat);
+        const faceBMesh = new THREE.Mesh(new THREE.BufferGeometry(), faceBSilhouetteMat);
+        scene.add(faceFMesh); scene.add(faceBMesh);
+
+        function buildShape() {
+            let geo = new THREE.TorusGeometry(1.3, 0.48, 10, 22);
+            geo = geo.toNonIndexed(); // Convert to non-indexed so hit.faceIndex maps 1:1 with meshTriangles!
+            const mat = new THREE.MeshStandardMaterial({ color: 0xbb2542, roughness: 0.55, metalness: 0.08, flatShading: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+            currentMesh = new THREE.Mesh(geo, mat);
+            scene.add(currentMesh);
+
+            const wireframe = new THREE.LineSegments(new THREE.WireframeGeometry(geo), new THREE.LineBasicMaterial({ color: 0x471520, transparent: true, opacity: 0.35, linewidth: 1 }));
+            currentMesh.add(wireframe);
+
+            extractEdgesAndAdjacency(geo);
+            updateScene(); 
+        }
+
+        function extractEdgesAndAdjacency(geo) {
+            meshTriangles = []; meshEdges = [];
+            const positions = geo.attributes.position.array;
+            
+            for (let i = 0; i < positions.length; i += 9) {
+                const v0 = new THREE.Vector3(positions[i], positions[i+1], positions[i+2]);
+                const v1 = new THREE.Vector3(positions[i+3], positions[i+4], positions[i+5]);
+                const v2 = new THREE.Vector3(positions[i+6], positions[i+7], positions[i+8]);
+                const normal = new THREE.Vector3().crossVectors(new THREE.Vector3().subVectors(v2, v1), new THREE.Vector3().subVectors(v0, v1)).normalize();
+                const center = new THREE.Vector3().add(v0).add(v1).add(v2).divideScalar(3);
+                meshTriangles.push({ id: i/9, v0, v1, v2, normal, center, neighbors: [] });
+            }
+
+            // Precompute exact adjacent 3D neighbors for every triangle
+            for (let i = 0; i < meshTriangles.length; i++) {
+                const triA = meshTriangles[i];
+                const vertsA = [triA.v0, triA.v1, triA.v2];
+
+                for (let j = i + 1; j < meshTriangles.length; j++) {
+                    const triB = meshTriangles[j];
+                    const vertsB = [triB.v0, triB.v1, triB.v2];
+
+                    let sharedVerts = [];
+                    for (let va of vertsA) {
+                        for (let vb of vertsB) {
+                            if (va.distanceToSquared(vb) < 0.0001) {
+                                sharedVerts.push(va);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (sharedVerts.length >= 2) {
+                        triA.neighbors.push(triB);
+                        triB.neighbors.push(triA);
+                        meshEdges.push({
+                            p1: sharedVerts[0], p2: sharedVerts[1],
+                            midPoint: new THREE.Vector3().addVectors(sharedVerts[0], sharedVerts[1]).multiplyScalar(0.5),
+                            triF: triA, triB: triB
+                        });
+                    }
+                }
+            }
+        }
+
+        // ----------------------------------------------------
+        // 4. Update Camera Rotation & Raycast
+        // ----------------------------------------------------
+        function updateScene() {
+            if (!currentMesh) return;
+
+            const thetaDeg = parseFloat(document.getElementById('theta-slider').value);
+            const phiDeg = parseFloat(document.getElementById('phi-slider').value);
+            const orbitDeg = parseFloat(document.getElementById('cam-rot-slider').value);
+
+            document.getElementById('val-theta').innerText = `${thetaDeg.toFixed(1)}°`;
+            document.getElementById('val-phi').innerText = `${phiDeg.toFixed(1)}°`;
+
+            const pitch = (thetaDeg * Math.PI) / 180;
+            const yaw = (phiDeg * Math.PI) / 180;
+            const orbit = (orbitDeg * Math.PI) / 180;
+
+            // Step A: Position camera on orbit ring closer to Torus
+            const radius = 2.8;
+            cameraGroup.position.set(radius * Math.cos(orbit), 0, radius * Math.sin(orbit));
+            
+            // Step B: Point camera toward torus center (0,0,0) along +Z
+            cameraGroup.lookAt(0, 0, 0); 
+            cameraGroup.rotateY(-yaw);   // Yaw slider adjustment
+            cameraGroup.rotateX(-pitch); // Pitch slider adjustment
+            cameraGroup.updateMatrixWorld(true);
+
+            // Step C: Emit ray along physical +Z vector out of the lens
+            const lensPoint = cameraGroup.localToWorld(new THREE.Vector3(0, 0, 0.27));
+            const rayDir = new THREE.Vector3(0, 0, 1).applyQuaternion(cameraGroup.quaternion).normalize();
+
+            raycaster.set(lensPoint, rayDir);
+            const hits = raycaster.intersectObject(currentMesh);
+
+            let hitResult = { hit: false, point: lensPoint.clone().addScaledVector(rayDir, 10), rayDir, lensPoint };
+
+            if (hits.length > 0) {
+                const hit = hits[0];
+                const triF = meshTriangles[hit.faceIndex] || meshTriangles[0];
+                const normalMatrix = new THREE.Matrix3().getNormalMatrix(currentMesh.matrixWorld);
+                const nF = triF.normal.clone().applyMatrix3(normalMatrix).normalize();
+
+                let bestBackfacingB = null;
+                let maxBackfacingDot = -Infinity;
+
+                // Search across all 3 adjacent neighbors of triF using exact 3D view direction vectors
+                const viewDirF = new THREE.Vector3().subVectors(hit.point, lensPoint).normalize();
+                const dotF = viewDirF.dot(nF);
+
+                triF.neighbors.forEach(cand => {
+                    const candNorm = cand.normal.clone().applyMatrix3(normalMatrix).normalize();
+                    const candCenterWorld = cand.center.clone().applyMatrix4(currentMesh.matrixWorld);
+                    const viewDirCand = new THREE.Vector3().subVectors(candCenterWorld, lensPoint).normalize();
+
+                    const dotCand = viewDirCand.dot(candNorm);
+
+                    // Neighbor is back-facing if dotCand > 0 (facing away from lens) or has opposite sign to dotF
+                    if (dotCand > 0 || Math.sign(dotCand) !== Math.sign(dotF)) {
+                        if (dotCand > maxBackfacingDot) {
+                            maxBackfacingDot = dotCand;
+                            bestBackfacingB = cand;
+                        }
+                    }
+                });
+
+                const isSilhouette = (bestBackfacingB !== null);
+                const triB = bestBackfacingB || (triF.neighbors.length > 0 ? triF.neighbors[0] : meshTriangles[(hit.faceIndex + 1) % meshTriangles.length]);
+                const nB = triB ? triB.normal.clone().applyMatrix3(normalMatrix).normalize() : nF;
+
+                hitResult = { hit: true, point: hit.point, triF, triB, nF, nB, isSilhouette, rayDir, lensPoint };
+            }
+
+            activeIntersection = hitResult;
+            render3DVisualization();
+        }
+
+        // ----------------------------------------------------
+        // 5. Drawing Three.js Geometry
+        // ----------------------------------------------------
+        function render3DVisualization() {
+            if (!activeIntersection) return;
+            const { hit, point, lensPoint, rayDir, triF, triB, nF, nB, isSilhouette } = activeIntersection;
+            
+            if (rayArrow) scene.remove(rayArrow);
+            rayArrow = new THREE.ArrowHelper(rayDir, lensPoint, lensPoint.distanceTo(point), hit ? 0x38bdf8 : 0x64748b, 0.28, 0.16);
+            scene.add(rayArrow);
+
+            updateAllSilhouettes(lensPoint);
+
+            if (!hit) {
+                if (hitPointSphere) { scene.remove(hitPointSphere); hitPointSphere = null; }
+                if (normalFArrow) { scene.remove(normalFArrow); normalFArrow = null; }
+                if (normalBArrow) { scene.remove(normalBArrow); normalBArrow = null; }
+                faceFMesh.geometry.dispose(); faceFMesh.geometry = new THREE.BufferGeometry();
+                faceBMesh.geometry.dispose(); faceBMesh.geometry = new THREE.BufferGeometry();
+                return;
+            }
+
+            if (!hitPointSphere) {
+                hitPointSphere = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 16), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+                scene.add(hitPointSphere);
+            }
+            hitPointSphere.position.copy(point);
+
+            if (normalFArrow) { scene.remove(normalFArrow); normalFArrow = null; }
+            if (normalBArrow) { scene.remove(normalBArrow); normalBArrow = null; }
+
+            const pointB = (triB && triB.center) ? triB.center.clone().applyMatrix4(currentMesh.matrixWorld) : point;
+
+            if (hit && nF) {
+                // Green normal n_f on intersected triangle face f
+                normalFArrow = new THREE.ArrowHelper(nF, point, 1.25, 0x4ade80, 0.28, 0.16);
+                scene.add(normalFArrow);
+            }
+
+            if (hit && nB && isSilhouette) {
+                // Orange normal n_b is ONLY rendered on adjacent face b if it is actually backfacing!
+                normalBArrow = new THREE.ArrowHelper(nB, pointB, 1.25, 0xfb923c, 0.28, 0.16);
+                scene.add(normalBArrow);
+            }
+
+            if (isSilhouette) {
+                faceFMesh.material = faceFSilhouetteMat;
+                faceBMesh.material = faceBSilhouetteMat;
+                
+                faceFMesh.geometry.dispose();
+                faceFMesh.geometry = new THREE.BufferGeometry().setFromPoints([
+                    triF.v0.clone().applyMatrix4(currentMesh.matrixWorld), triF.v1.clone().applyMatrix4(currentMesh.matrixWorld), triF.v2.clone().applyMatrix4(currentMesh.matrixWorld)
+                ]);
+
+                faceBMesh.geometry.dispose();
+                faceBMesh.geometry = new THREE.BufferGeometry().setFromPoints([
+                    triB.v0.clone().applyMatrix4(currentMesh.matrixWorld), triB.v1.clone().applyMatrix4(currentMesh.matrixWorld), triB.v2.clone().applyMatrix4(currentMesh.matrixWorld)
+                ]);
+            } else {
+                faceFMesh.geometry.dispose();
+                faceFMesh.geometry = new THREE.BufferGeometry();
+                faceBMesh.geometry.dispose();
+                faceBMesh.geometry = new THREE.BufferGeometry();
+            }
+        }
+
+        function updateAllSilhouettes(lensPoint) {
+            while (allSilhouettesGroup.children.length > 0) {
+                const child = allSilhouettesGroup.children[0];
+                if (child.geometry) child.geometry.dispose();
+                allSilhouettesGroup.remove(child);
+            }
+
+            if (!document.getElementById('toggle-all-silhouettes').checked) return;
+
+            const normalMatrix = new THREE.Matrix3().getNormalMatrix(currentMesh.matrixWorld);
+            meshEdges.forEach(e => {
+                const edgePoint = e.midPoint.clone().applyMatrix4(currentMesh.matrixWorld);
+                const viewDir = new THREE.Vector3().subVectors(edgePoint, lensPoint).normalize();
+                const nF = e.triF.normal.clone().applyMatrix3(normalMatrix).normalize();
+                const nB = e.triB.normal.clone().applyMatrix3(normalMatrix).normalize();
+
+                if (Math.sign(viewDir.dot(nF)) !== Math.sign(viewDir.dot(nB))) {
+                    const p1W = e.p1.clone().applyMatrix4(currentMesh.matrixWorld);
+                    const p2W = e.p2.clone().applyMatrix4(currentMesh.matrixWorld);
+                    
+                    const tubeMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, p1W.distanceTo(p2W), 8), new THREE.MeshBasicMaterial({ color: 0xfacc15 }));
+                    tubeMesh.position.copy(new THREE.Vector3().addVectors(p1W, p2W).multiplyScalar(0.5));
+                    tubeMesh.geometry.rotateX(Math.PI / 2); tubeMesh.lookAt(p2W);
+                    allSilhouettesGroup.add(tubeMesh);
+                }
+            });
+        }
+
+        // ----------------------------------------------------
+        // 6. Dynamic 2D HTML Labels
+        // ----------------------------------------------------
+        function updateLabels() {
+            if (!activeIntersection) return;
+            const { hit, point, lensPoint, triB, nF, nB, isSilhouette } = activeIntersection;
+
+            updateLabelPos('label-v', lensPoint.clone().add(new THREE.Vector3(0, 0.4, 0)));
+
+            if (!hit) {
+                updateLabelPos('label-p', null, false);
+                updateLabelPos('label-nf', null, false);
+                updateLabelPos('label-nb', null, false);
+                return;
+            }
+
+            updateLabelPos('label-p', point.clone().add(new THREE.Vector3(0, 0.18, 0)));
+            
+            const pointB = triB.center.clone().applyMatrix4(currentMesh.matrixWorld);
+            updateLabelPos('label-nf', point.clone().add(nF.clone().multiplyScalar(1.35)), hit);
+            updateLabelPos('label-nb', pointB.clone().add(nB.clone().multiplyScalar(1.35)), hit && isSilhouette);
+        }
+
+        function updateLabelPos(elementId, worldPos, visible = true) {
+            const elem = document.getElementById(elementId);
+            if (!visible) { elem.style.display = 'none'; return; }
+
+            const vector = worldPos.clone().project(camera);
+            if (vector.z < 1) {
+                elem.style.display = 'block';
+                elem.style.left = `${(vector.x * 0.5 + 0.5) * window.innerWidth}px`;
+                elem.style.top = `${(-vector.y * 0.5 + 0.5) * window.innerHeight}px`;
+            } else {
+                elem.style.display = 'none';
+            }
+        }
+
+        // ----------------------------------------------------
+        // 7. Listeners & Loop
+        // ----------------------------------------------------
+        document.getElementById('theta-slider').addEventListener('input', updateScene);
+        document.getElementById('phi-slider').addEventListener('input', updateScene);
+        document.getElementById('cam-rot-slider').addEventListener('input', updateScene);
+        document.getElementById('toggle-all-silhouettes').addEventListener('change', render3DVisualization);
+
+        window.addEventListener('resize', () => {
+            syncHugoTheme();
+            camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render3DVisualization();
+        });
+
+        buildShape();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            updateLabels();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

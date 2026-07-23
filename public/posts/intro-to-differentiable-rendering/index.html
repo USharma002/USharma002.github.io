@@ -124,7 +124,7 @@
     "Differentiable Rendering", "Computer Graphics"
   ],
   "articleBody": "Differentiable rendering techniques for computer graphics and vision",
-  "wordCount" : "18816",
+  "wordCount" : "19605",
   "inLanguage": "en",
   "datePublished": "2026-05-02T00:00:00Z",
   "dateModified": "2026-05-02T00:00:00Z",
@@ -222,7 +222,7 @@
     <div class="post-description">
       An introduction to differentiable rendering techniques for computer graphics and vision
     </div>
-    <div class="post-meta"><span title='2026-05-02 00:00:00 +0000 UTC'>May 2, 2026</span>&nbsp;·&nbsp;89 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2026-05-02 00:00:00 +0000 UTC'>May 2, 2026</span>&nbsp;·&nbsp;93 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -1755,6 +1755,9 @@ $$<p>which can also be approximated with Monte Carlo sampling.</p>
     </figcaption></figure>
 
 
+<blockquote>
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Complete 2D Triangle Code Implementation (Python)</summary>
 <h3 id="code-for-the-above-example">Code for the above example<a hidden class="anchor" aria-hidden="true" href="#code-for-the-above-example">#</a></h3>
 <p>The following code is adapted from SIGGRAPH 2020 Course.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -1975,7 +1978,8 @@ $$<p>which can also be approximated with Monte Carlo sampling.</p>
 </span></span><span class="line"><span class="cl"><span class="c1">#  [-21.0542   4.3572]</span>
 </span></span><span class="line"><span class="cl"><span class="c1">#  [  0.4232 -20.9386]</span>
 </span></span><span class="line"><span class="cl"><span class="c1">#  [  2.0691  19.6481]]</span>
-</span></span></code></pre></div><div class="paper-fig-row">
+</span></span></code></pre></div></details></blockquote>
+<div class="paper-fig-row">
     <figure id="fig-triangle-forward" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
       <img class="zoomable-image no-invert" src="/images/diff-rendering/triangles/1_forward_render.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
           <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
@@ -2094,9 +2098,22 @@ $$<iframe src="/interactive/diff-render/heaviside.html"
         style="border-radius:0px; min-width: 600px;">
 </iframe>
 <p>where $f_u$ represents the upper half-space, $f_l$ represents the lower half-space, and $\alpha$ defines the edge equation formed by the triangles. For each edge with two end points $(a_x, a_y), (b_x, b_y),$ we can construct the edge equation by forming the line $\alpha(x, y) = Ax + By + C$. If $\alpha(x, y) > 0$ then the point is at the upper half-space, and vice versa.</p>
+<figure id="fig-edge-silhouette" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/silhouette.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$.
+    </figcaption></figure>
+
+
+<iframe src="/interactive/diff-render/silhouette.html"
+        width="100%"
+        height="500"
+        frameborder="0"
+        style="border: none; min-width: 100%; margin: 1rem 0 2rem 0;">
+</iframe>
 <figure id="fig-edge-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/half_spaces.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
       (a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. We estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative.
     </figcaption></figure>
 
@@ -2160,7 +2177,7 @@ $$<p>where $\lVert E \rVert$ is the length of the edge and $p(E)$ is the probabi
 <p>In practice, candidate edges are projected and clipped into screen space. Only sampled edge points across which the scene function actually jumps produce a nonzero contribution; occluded edges and smooth internal edges cancel in the two-sided difference. Li et al. sample candidate edges in proportion to their projected length, draw a point along the selected edge, and evaluate this difference. This directly estimates how pixel coverage changes as geometry or the camera moves.</p>
 <figure id="fig-edge-visibility" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_vis.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       Visualization of some of the terms evaluated during edge sampling. The motion $\partial_\pi\boldsymbol{\omega}_s$ and the normal $\mathbf{n}^\perp$ are both in the local tangent space $\mathrm{T}_{\boldsymbol{\omega}_s}\mathcal{S}^2$.
     </figcaption></figure>
 
@@ -2186,7 +2203,14 @@ $$<p>
 $$
 n_h = \frac{(v_0 - p) \times (v_1 - p)}{\lVert (v_0 - p) \times (v_1 - p) \rVert},
 $$<p>
-where $n_m$ is the surface normal at $m$. Two key differences distinguish this 3D integral from its screen-space counterpart. First, the measure $\sigma'(m)$ is no longer the arc length along the 2D edge; instead it measures the projected length from the edge through the shading point $p$ onto the scene manifold (the semi-transparent triangle in <a href="#fig-edge-sampling">Fig. <span class="auto-fig-ref" data-target="fig-edge-sampling"></span></a>(a) illustrates this projection). Second, an additional area-correction factor $\lVert n_m \times n_h \rVert$ appears because the scene surface element must be projected onto the infinitesimal width of the edge (<a href="#fig-edge-sampling">Fig. <span class="auto-fig-ref" data-target="fig-edge-sampling"></span></a>(b)).</p>
+where $n_m$ is the surface normal at $m$. Two key differences distinguish this 3D integral from its screen-space counterpart. First, the measure $\sigma'(m)$ is no longer the arc length along the 2D edge; instead it measures the projected length from the edge through the shading point $p$ onto the scene manifold (the semi-transparent triangle in <a href="#fig-edge-secondary-visibility">Fig. <span class="auto-fig-ref" data-target="fig-edge-secondary-visibility"></span></a>(a) illustrates this projection). Second, an additional area-correction factor $\lVert n_m \times n_h \rVert$ appears because the scene surface element must be projected onto the infinitesimal width of the edge (<a href="#fig-edge-secondary-visibility">Fig. <span class="auto-fig-ref" data-target="fig-edge-secondary-visibility"></span></a>(b)).</p>
+<figure id="fig-edge-secondary-visibility" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/reparam/secondary_visibility.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      (a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, we integrate over the edge to compute the difference. By doing so we take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration we need to project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$).
+    </figcaption></figure>
+
+
 <p>To evaluate this integral with Monte Carlo sampling, we reparameterise from the surface point $m$ to the edge line parameter $t \in [0,1]$, where $m(t)$ is the projection of $v_0 + t(v_1 - v_0)$ onto the scene manifold:
 </p>
 $$
@@ -2241,7 +2265,7 @@ $$<p>Two equivalent interpretations:</p>
 <iframe src="/interactive/diff-render/reparam_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <figure id="fig-reparameterized-domain" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/integral_domain.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       Changing the integration domain can turn a moving discontinuity into a smooth differentiable estimator.
     </figcaption></figure>
 
@@ -2249,7 +2273,7 @@ $$<p>Two equivalent interpretations:</p>
 <h4 id="removing-discontinuities-using-rotations">Removing Discontinuities Using Rotations<a hidden class="anchor" aria-hidden="true" href="#removing-discontinuities-using-rotations">#</a></h4>
 <figure id="fig-integrand-discontinuity" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/discontinuity.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       For integrands with small angular support, visibility discontinuities typically consist of a single object silhouette.
     </figcaption></figure>
 
@@ -2261,7 +2285,7 @@ I = \int_{S^2} f(\omega, \pi) \, \mathrm{d}\omega = \int_{S^2} f(R(\omega, \pi),
 $$<p>makes $f(R(\omega, \pi), \pi)$ continuous with respect to $\pi$ for each direction $\omega$. The rotation determinant is $|\operatorname{det} J_R| = 1$, and $R$ depends explicitly on $\pi$.</p>
 <figure id="fig-conv-zoomed" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/reparam/conv_zoomed.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
       Zooming into the support of a convolution shows how small-support kernels isolate single geometric edges, making local rotations a good approximation.
     </figcaption></figure>
 
@@ -2273,7 +2297,7 @@ $$<p>where $\omega_i \sim p(\cdot, \pi_0)$ are drawn from the default sampling d
 <h4 id="generalizing-to-functions-with-large-support">Generalizing to Functions with Large Support<a hidden class="anchor" aria-hidden="true" href="#generalizing-to-functions-with-large-support">#</a></h4>
 <figure id="fig-spherical-rotations" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/spherical_rotations.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
       Spherical rotations (left) approximate silhouette motion, while spherical convolution (right) reduces large-support integrands to narrow kernels.
     </figcaption></figure>
 
@@ -2306,7 +2330,7 @@ R(\pi_0) \omega = \omega, \quad \forall \omega \in S^2 \qquad \text{and} \qquad 
 $$<p>Thus $R(\pi_0) = I$ (leaving primal ray tracing unchanged) while its derivative tracks the occluder&rsquo;s motion to first order. Appendix B of Loubet et al. provides a closed-form formula for $R(\pi)$.</p>
 <figure id="fig-reparam-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/overview.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
       Overview of the reparameterization algorithm. For each integral, a small number of rays are intersected against the scene geometry (steps 1, 3, 5) and the resulting information is used to construct suitable local rotations (red arcs). These rotations do not affect the primal computation (steps 2, 4, 6) but introduce gradients that correct for the presence of discontinuities.
     </figcaption></figure>
 
@@ -2352,7 +2376,7 @@ $$<p>Correlated path pairs reuse the random numbers for path-construction steps 
 <p>Bangaru et al. <a href="/posts/intro-to-differentiable-rendering/#ref-8">[8]</a> ask whether the boundary term can be estimated using the same <em>area samples</em> as an ordinary path tracer. Their answer is yes: apply the divergence theorem to replace flux through visibility boundaries by divergence throughout the smooth interior. The resulting method does not enumerate or sample silhouette edges. This is different from merely smoothing visibility; the construction specifies conditions under which the area estimator represents the exact boundary derivative.</p>
 <figure id="fig-bangaru-taxonomy" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/bangaru/taxonomy.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
       Taxonomy of differentiable rendering techniques categorizing edge sampling, reparameterization, and warped-area methods.
     </figcaption></figure>
 
@@ -2363,6 +2387,13 @@ $$
 \partial_{\boldsymbol{\pi}} I = \sum_i \int_{D_i'} \partial_{\boldsymbol{\pi}} f(\boldsymbol{\omega};\boldsymbol{\pi})\,\mathrm{d}\boldsymbol{\omega} + \sum_i \oint_{\partial D_i} f(\boldsymbol{\omega};\boldsymbol{\pi}) \left\langle \partial_{\boldsymbol{\pi}}\boldsymbol{\omega}, \mathbf{n}_\perp \right\rangle \,\mathrm{d}\ell,
 $$<p>where $D_i'=D_i\setminus\partial D_i$. The first term is the usual interior derivative. The second measures the flux produced by moving discontinuities.</p>
 <p>This partition is only a device used in the proof; evaluating the estimator does not require clipping the scene into the regions $D_i$ or enumerating their boundaries.</p>
+<figure id="fig-warparea-pixel-content" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/warparea/pixel_content.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+      Differentiating boundary movements. Our goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how we partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. We can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals.
+    </figcaption></figure>
+
+
 <p>Introduce a vector field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ that interpolates the boundary velocity into the interior. Applying the divergence theorem to $f\mathbf{V}_{\boldsymbol{\pi}}$ rewrites the boundary contribution as:</p>
 <h4 id="area-form-of-the-boundary-derivative">Area Form of the Boundary Derivative<a hidden class="anchor" aria-hidden="true" href="#area-form-of-the-boundary-derivative">#</a></h4>
 $$
@@ -2393,6 +2424,13 @@ $$<p>Equivalently, in local two-dimensional coordinates,</p>
 $$
 \mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}} = \left(\partial_{\boldsymbol{\omega}}\mathbf{y}\right)^{-1} \partial_{\boldsymbol{\pi}}\mathbf{y}.
 $$<p>This matrix form incorporates the correction in the paper&rsquo;s 2022 erratum: the denominator is not a Jacobian <em>determinant</em>. The equation is a Jacobian solve, with matrix-valued numerator and denominator when the quantities are multidimensional.</p>
+<figure id="fig-warparea-derivative-field" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/warparea/derivative_field.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
+      Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in our derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which we have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative.
+    </figcaption></figure>
+
+
 <p>The direct warp has the correct limiting motion on a silhouette, but it jumps when neighboring directions hit different surfaces. Bangaru et al. therefore filter it using a normalized, boundary-aware harmonic convolution:</p>
 $$
 \mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = \frac{\int w(\boldsymbol{\omega},\boldsymbol{\omega}') \mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}(\boldsymbol{\omega}') \,\mathrm{d}\boldsymbol{\omega}'}{\int w(\boldsymbol{\omega},\boldsymbol{\omega}') \,\mathrm{d}\boldsymbol{\omega}'},
@@ -2408,16 +2446,37 @@ $$<p>where $\beta = 0.01$ controls the spread rate. At a silhouette point, the r
 $$
 \lim_{\boldsymbol{\omega}^{(b)}\to\partial D} \frac{w(\boldsymbol{\omega}^{(b)},\boldsymbol{\omega})}{\int w(\boldsymbol{\omega}^{(b)},\boldsymbol{\omega}') \,\mathrm{d}\boldsymbol{\omega}'} = \delta\!\left(\left\lVert \boldsymbol{\omega}^{(b)}-\boldsymbol{\omega} \right\rVert\right).
 $$<p>Hence the filtered warp approaches the boundary-consistent direct warp as the primary direction approaches a silhouette. The field may remain undefined exactly on the silhouette, where the harmonic weights become infinite, because the area estimator only evaluates the smooth interior.</p>
+<figure id="fig-warparea-harmonic-conv" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
+      Boundary-aware convolution. (a) The form of the warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathbf{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Our proposed convolution method $\mathbf{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary.
+    </figcaption></figure>
+
+
 <h4 id="relation-to-loubet-et-al">Relation to Loubet et al.<a hidden class="anchor" aria-hidden="true" href="#relation-to-loubet-et-al">#</a></h4>
 <p>A differentiable reparameterization $\mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi})$ induces the infinitesimal warp</p>
 $$
 \mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = \left.\partial_{\boldsymbol{\pi}}\mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi})\right|_{\boldsymbol{\pi}=\boldsymbol{\pi}_0}.
 $$<p>This establishes a local relationship between reparameterization and the warp-field formulation, but it does <strong>not</strong> imply that every chosen reparameterization is exact. A spherical rotation has unit Jacobian and therefore produces a divergence-free field. Some boundary motions require nonzero divergence, so a rotation cannot satisfy the boundary conditions in general. Bangaru et al. interpret the approximations of Loubet et al. as producing a field that can be smooth without being boundary-consistent, which explains the remaining bias. Warped-area sampling instead makes continuity and boundary consistency explicit and uses the harmonic construction to satisfy both without enumerating silhouettes.</p>
+<figure id="fig-warparea-formulation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/warparea/warp_formulation.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
+      Warp field formulation. We apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and our area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, our method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering.
+    </figcaption></figure>
+
+
 <p>Appendix C proves both directions of this relationship. A transformation $\mathcal{T}$ induces the field above by differentiating at the evaluation point $\boldsymbol{\pi}_0$. Conversely, one possible Euclidean transformation generated by a given field is</p>
 $$
 \mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi}) = \boldsymbol{\omega}+(\boldsymbol{\pi}-\boldsymbol{\pi}_0)\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}).
 $$<p>The construction is not unique; on the sphere, the appendix also gives a rotational solution. This equivalence concerns the infinitesimal field induced by a transformation. Unbiasedness still depends on whether that field is continuous and has the correct limiting boundary velocity.</p>
 <h4 id="monte-carlo-estimation-of-the-warp">Monte Carlo Estimation of the Warp<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-estimation-of-the-warp">#</a></h4>
+<figure id="fig-warparea-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+  <img class="zoomable-image" src="/images/diff-rendering/warparea/overview.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
+      Our algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, we need to estimate the warp function at this point. To achieve this, our method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. We then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Our final step computes the weighted average of the direct warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathbf{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathbf{V}_{\boldsymbol{\pi}}$ at the primary sample.
+    </figcaption></figure>
+
+
 <p>At each ordinary path-tracing direction $\boldsymbol{\omega}$, the algorithm:</p>
 <ol>
 <li>traces the primary ray and recursively evaluates radiance $L$, its parameter derivative $\partial_{\boldsymbol{\pi}} L$, and directional derivative $\partial_{\boldsymbol{\omega}}L$;</li>
@@ -2477,7 +2536,7 @@ $$
 $$<p>where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT split from before, specialized to a spherical integral: the <em>interior</em> term integrates over the ($\pi$-independent) sphere $\mathbb{S}^2$, and the <em>boundary</em> term picks up the jump of $f_{\text{direct}}$ across the 1D discontinuity curves $\Delta \mathbb{S}^2$, the silhouette-induced jumps in $L_e$, as they move with $\pi$. For any $\boldsymbol{\omega}_i \in \mathbb{S}^2$, $\mathbf{n}^{\perp}(\boldsymbol{\omega}_i)$ is, as before, the tangent-space vector at $\boldsymbol{\omega}_i$ perpendicular to the discontinuity curve.</p>
 <figure id="fig-rte-normals" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/normals.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
       The normal directions of arcs and circles (that are respectively the projections of line segments and spheres) as spherical curves.
     </figcaption></figure>
 
@@ -2541,7 +2600,7 @@ $$<p>$\delta\mathbf y$ says how each rendered pixel should change to reduce the 
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">radiative_backprop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">δ_y</span><span class="p">)</span>
 </span></span></code></pre></div><figure id="fig-rbp-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/radiative_backpropagation/overview.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
       Overview of Radiative Backpropagation: Differentiation separates into (1) a fast primal rendering step, (2) objective differentiation yielding adjoint rendering $\delta_\mathbf{y}$, and (3) an adjoint light transport simulation emitting $\delta_\mathbf{y}$ from the sensor to accumulate parameter gradients $\delta_\boldsymbol{\pi}$.
     </figcaption></figure>
 
@@ -2673,7 +2732,7 @@ $$<p>The path then continues with adjoint throughput multiplied by $f_s/p$. This
 <p>Thus, RBP solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.</p>
 <figure id="fig-rbp-algorithm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/radiative_backpropagation/algorithm.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
       Illustration of the quadratic <strong>$\mathcal{O}(D^2)$</strong> complexity in Radiative Backpropagation. An adjoint path launched from the camera (<strong>black rays</strong>) evaluates local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) at each differentiable surface hit (<strong>red dots</strong>). To estimate the unknown primal incident radiance $L_i$ in $Q$, a recursive primal path-tracing query (<strong>gray rays</strong>) is launched at every bounce.
     </figcaption></figure>
 
@@ -2696,7 +2755,7 @@ $$<p>instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the re
 <p>Radiative backpropagation obtains constant memory by recomputing a fresh primal suffix at each differentiable interaction, causing the quadratic cost above. Vicini et al. <a href="/posts/intro-to-differentiable-rendering/#ref-15">[15]</a> instead replay the <em>same complete random walk</em> and reconstruct all required suffix radiances incrementally. Under the sampling and discontinuity assumptions below, <strong>Path Replay Backpropagation (PRB)</strong> is unbiased, uses memory independent of path length, and takes time linear in the number of scattering events.</p>
 <figure id="fig-prb-algorithm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/prb/algorithm.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
       Illustration of linear <strong>$\mathcal{O}(D)$</strong> complexity in Path Replay Backpropagation (PRB). Rather than spawning branching quadratic primal suffix trees, PRB replays the exact same random walk (<strong>green rays</strong>) alongside the adjoint path (<strong>black rays</strong>). Local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) are evaluated at each surface hit (<strong>red dots</strong>) in linear time and constant memory.
     </figcaption></figure>
 
