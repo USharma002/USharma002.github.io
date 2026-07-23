@@ -1,0 +1,12 @@
+# Enforce LF line endings for all text files (prevents CRLF vs LF churn on Windows)
+* text=auto eol=lf
+
+# Keep binary assets intact
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
