@@ -649,7 +649,7 @@ $$<div class="paper-fig-row">
 
   </div>
 </div>
-<iframe src="/interactive/diff-render/finite_difference_1d.html" loading="lazy" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/finite_difference_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <p>Finite differences are inherently <strong>biased</strong> because evaluating $f$ at a non-zero step $h$ returns a local spatial average of the true derivative rather than its point value at $x$:</p>
 $$
 \frac{f(x + h) - f(x - h)}{2h} = \frac{1}{2h} \int_{-h}^{h} f'(x + t) \, \mathrm{d}t = \int_{-\infty}^{\infty} K_h(t - x) \, f'(t) \, \mathrm{d}t,
@@ -664,7 +664,7 @@ $$<p>where $\boldsymbol{\Delta}^{-1} = (\Delta_1^{-1}, \dots, \Delta_n^{-1})^T$ 
 $$
 \hat{g}_i(\mathbf{x}) = \frac{f(\mathbf{x} + h \cdot \boldsymbol{\Delta}) - f(\mathbf{x} - h \cdot \boldsymbol{\Delta})}{2h \, \Delta_i}
 $$<p>The random perturbation vector $\boldsymbol{\Delta}$ has entries drawn independently from a mean-zero, symmetric distribution with bounded inverse moments—in practice, almost always a <strong>Rademacher distribution</strong> (each entry $\Delta_i = \pm 1$ with equal probability). A Gaussian $\boldsymbol{\Delta}$ cannot be used here: its probability density is non-zero at $0$, so $\Delta_i^{-1}$ has infinite variance and the estimator blows up.</p>
-<iframe src="/interactive/diff-render/spsa.html" loading="lazy" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/spsa.html" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <p>While SPSA requires only two function evaluations per step regardless of input dimensionality, it introduces additional stochastic direction variance into the gradient estimates. This requires careful tuning of the step size $h$ to achieve good convergence. Consequently, derivative-free methods cannot compete with gradient descent using true infinitesimal gradients computed via automatic differentiation.</p>
 <h3 id="automatic-differentiation">Automatic Differentiation<a hidden class="anchor" aria-hidden="true" href="#automatic-differentiation">#</a></h3>
 <p>Instead of approximating derivatives with finite differences or deriving a large formula by hand, we can use <em>automatic differentiation</em> (AD). AD runs the original computation as a sequence of simple operations and applies the chain rule to each operation. For two scalar functions, the chain rule is:
@@ -1534,14 +1534,16 @@ $$<figure id="fig-triangle-antialiased" class="zoomable-figure" style="text-alig
 <h3 id="the-leibniz-integral-rule-1d">The Leibniz Integral Rule (1D)<a hidden class="anchor" aria-hidden="true" href="#the-leibniz-integral-rule-1d">#</a></h3>
 <p>The two failure examples and the triangle scene share one root cause: differentiating only the sampled integrand omits motion of parameter-dependent boundaries. The Leibniz rule provides the formula for differentiating an integral whose limits, as well as its integrand, depend on a parameter $\pi$.</p>
 <blockquote>
-<p><strong>Regularity Conditions:</strong>
-One convenient set of sufficient regularity hypotheses for the Leibniz rule is the following (as detailed in standard real analysis and Delio Vicini&rsquo;s PhD Thesis):</p>
+<details>
+<summary style="cursor: pointer;"><strong>Regularity Conditions</strong></summary>
+<p>One convenient set of sufficient regularity hypotheses for the Leibniz rule is the following (as detailed in standard real analysis and Delio Vicini&rsquo;s PhD Thesis):</p>
 <ol>
 <li>The integration limits $a(\pi)$ and $b(\pi)$ must be continuously differentiable functions of $\pi$.</li>
 <li>The integrand $f(x, \pi)$ must be <strong>differentiable everywhere</strong> (specifically continuously differentiable, or $\mathcal{C}^1$) with respect to both $x$ and $\pi$ on the integration domain.</li>
 <li>Under a measure-theoretic framework (using Lebesgue integration), the partial derivative $\partial f/\partial \pi$ must be <strong>Lebesgue-integrable</strong> and dominated by a Lebesgue-integrable function (enabling the use of the Lebesgue Dominated Convergence Theorem to swap differentiation and integration in the interior).</li>
 </ol>
-<p>Without these hypotheses, for instance if $f$ has interior jump discontinuities that depend on $\pi$, the standard Leibniz rule cannot be applied directly.</p></blockquote>
+<p>Without these hypotheses, for instance if $f$ has interior jump discontinuities that depend on $\pi$, the standard Leibniz rule cannot be applied directly.</p>
+</details></blockquote>
 <p>For a 1D integral of the form $I(\pi) = \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx$ satisfying these conditions, the derivative is:</p>
 $$\frac{d}{d\pi} \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx = \underbrace{{\color{#00d1b2}\int_{a(\pi)}^{b(\pi)} \frac{\partial f}{\partial \pi}(x, \pi) dx}}_{\text{Interior Term}} + \underbrace{{\color{#4facfe}f(b(\pi), \pi) \frac{db}{d\pi}} - {\color{#ff6b6b}f(a(\pi), \pi) \frac{da}{d\pi}}}_{\text{Boundary Term}}$$<figure id="fig-leibniz-visual" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/leibniz-visual.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
@@ -1622,13 +1624,15 @@ $$\boxed{\frac{d}{d\pi} \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx = \underbrace{{\colo
 <h3 id="generalization-reynolds-transport-theorem-3d">Generalization: Reynolds Transport Theorem (3D)<a hidden class="anchor" aria-hidden="true" href="#generalization-reynolds-transport-theorem-3d">#</a></h3>
 <p>In computer graphics, we deal with 2D images and 3D scenes. The 1D Leibniz rule generalizes to higher dimensions via the <strong>Reynolds Transport Theorem</strong> (RTT).</p>
 <blockquote>
-<p><strong>Regularity Conditions:</strong>
-As in the 1D case, a convenient sufficient set of regularity assumptions for RTT is (see Delio Vicini&rsquo;s PhD Thesis <a href="/posts/intro-to-differentiable-rendering/#ref-2">[2]</a>):</p>
+<details>
+<summary style="cursor: pointer;"><strong>Regularity Conditions</strong></summary>
+<p>As in the 1D case, a convenient sufficient set of regularity assumptions for RTT is (see Delio Vicini&rsquo;s PhD Thesis <a href="/posts/intro-to-differentiable-rendering/#ref-2">[2]</a>):</p>
 <ol>
 <li><strong>Differentiability everywhere in the subdomains:</strong> The integrand $f(\mathbf{x}, \pi)$ must be continuously differentiable ($\mathcal{C}^1$) with respect to both $\mathbf{x}$ and $\pi$ <em>everywhere in the interior</em> of the domains separated by the boundary/discontinuity surfaces $\Gamma(\pi)$.</li>
 <li><strong>Lipschitz Continuity:</strong> The boundary motion mapping (the trajectory of boundary points $\mathbf{x}(\pi)$) is Lipschitz continuous, so the boundary velocity field $\partial_\pi \mathbf{x}$ exists almost everywhere.</li>
 <li><strong>Lebesgue-Integrability:</strong> Both the integrand $f(\mathbf{x}, \pi)$ and the partial derivative $\partial_\pi f(\mathbf{x}, \pi)$ must be Lebesgue-integrable over the respective interior domains.</li>
-</ol></blockquote>
+</ol>
+</details></blockquote>
 <p>For an integral over a moving domain $X(\pi)$ satisfying these conditions:</p>
 $$
 \begin{equation}
@@ -2092,7 +2096,6 @@ $$<figure id="fig-path-space" class="zoomable-figure" style="text-align:center;m
 $$
 f(x, y) = \theta(\alpha(x, y)) f_u(x, y) + \theta(-\alpha(x, y)) f_l(x, y)
 $$<iframe src="/interactive/diff-render/heaviside.html"
-        loading="lazy"
         width="100%"
         height="400"
         frameborder="0"
@@ -2107,7 +2110,6 @@ $$<iframe src="/interactive/diff-render/heaviside.html"
 
 
 <iframe src="/interactive/diff-render/silhouette.html"
-        loading="lazy"
         width="100%"
         height="500"
         frameborder="0"
@@ -2264,7 +2266,7 @@ $$<p>Two equivalent interpretations:</p>
 <li>This is equivalent to importance sampling $\int f(x) \, \mathrm{d}x$ using samples $x_i(\pi) = y_i + \pi$ that <em>follow</em> the movement of the discontinuity.</li>
 </ul>
 <p>To preserve the primal computation of $I$, the transformation $\mathcal{T}$ should be the identity map at the current parameter value $\pi_0$, i.e., $\mathcal{T}(y, \pi) = y + \pi - \pi_0$. The step location is fixed at $y = \pi_0$, allowing automatic differentiation to evaluate the smooth motion of $g$ without differentiating through a moving visibility test. Note that the sampling density $p(y_i)$ must not depend on $\pi$, otherwise parameter dependencies are reintroduced into the integrand.</p>
-<iframe src="/interactive/diff-render/reparam_1d.html" loading="lazy" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
+<iframe src="/interactive/diff-render/reparam_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <figure id="fig-reparameterized-domain" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/integral_domain.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
