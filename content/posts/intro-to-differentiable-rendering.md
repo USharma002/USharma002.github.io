@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Introduction to Differentiable Rendering"
-date: "2026-05-02"
+date: "2026-07-23"
 description: "An introduction to differentiable rendering techniques for computer graphics and vision"
 summary: "Differentiable rendering techniques for computer graphics and vision"
 tags: ["Differentiable Rendering", "Computer Graphics"]
@@ -1102,7 +1102,7 @@ The attached estimator is primarily useful for perfectly specular surfaces, but 
 
 Attached sampling handles a local delta interaction when the sampled specular direction changes smoothly with the scene parameters. It does not by itself resolve discontinuous visibility through a chain of specular events or changes in caustic-path topology. Those cases require specialized path-space or manifold techniques and are outside the surface-visibility methods developed here.
 
-Finally, the attached estimator is more difficult to use as in practice it requires handling discontinuities in the sampling function $\mathcal{T}$. Examples of such discontinuities are discrete sampling decisions such as in delta tracking or discontinuities due to sampled rays hitting different objects as $\boldsymbol{\pi}$ changes.
+Finally, the attached estimator is more difficult to use as in practice it requires handling discontinuities in the sampling function $\mathcal{T}$. Examples of such discontinuities are discrete sampling decisions (such as BSDF component selection) or discontinuities due to sampled rays hitting different objects as $\boldsymbol{\pi}$ changes.
 
 | Question | Detached estimator | Attached estimator |
 | --- | --- | --- |
@@ -2215,38 +2215,6 @@ $$
 
 The forward evaluation supplies the full suffix Jacobian product. During replay, subtracting emitted radiance and dividing out the current BSDF factor applies $J_{h,k}^{-1}$ one step at a time. PRB therefore reverses the derivative state through small local Jacobian inverses rather than reversing the complete primal program. Attached PRB extends the state with the $4\times4$ ray Jacobian and applies the same principle to the path geometry.
 
-#### Differentiable Delta Tracking
-
-The same construction applies to null-collision volume transport. Let $\bar\sigma$ be a parameter-independent majorant, $\sigma_a$, $\sigma_s$, and $\sigma_n$ the absorption, scattering, and null coefficients, and
-
-$$
-\psi_a=\frac{\sigma_a}{\bar\sigma},
-\qquad
-\psi_s=\frac{\sigma_s}{\bar\sigma},
-\qquad
-\psi_n=\frac{\sigma_n}{\bar\sigma},
-\qquad
-\psi_t=\psi_a+\psi_s.
-$$
-
-For a free-flight distance $t\sim p(t)=\bar\sigma e^{-t\bar\sigma}$ and $u\sim\mathcal U(0,1)$, a detached derivative sample is
-
-$$
-\begin{aligned}
-\left\langle\partial_{\boldsymbol{\pi}}L_i(\mathbf x)\right\rangle
-={}&\partial_{\boldsymbol{\pi}}\left[\psi_a(\mathbf x_t)L_e(\mathbf x_t)\right]
-\psi_a(\mathbf x_t)^{-1}
-H[u<\psi_a(\mathbf x_t)]\\
-&+\partial_{\boldsymbol{\pi}}\left[\psi_s(\mathbf x_t)L_s(\mathbf x_t)\right]
-\psi_s(\mathbf x_t)^{-1}
-H[\psi_a(\mathbf x_t)\leq u<\psi_t(\mathbf x_t)]\\
-&+\partial_{\boldsymbol{\pi}}\left[\psi_n(\mathbf x_t)L_i(\mathbf x_t)\right]
-\psi_n(\mathbf x_t)^{-1}
-H[\psi_t(\mathbf x_t)\leq u].
-\end{aligned}
-$$
-
-The derivative brackets include both the coefficient and radiance dependence on $\boldsymbol{\pi}$. Each particle proportion also appears outside the brackets as an inverse Monte Carlo weight, but it is differentiated only inside the brackets. The inverse weight and Heaviside event selection are detached: differentiating the discrete absorption, scattering, or null-event choice would severely bias the estimator. Replay is particularly valuable here because a path may contain an unbounded number of null collisions while its stored state remains constant-sized.
 
 #### Complexity and Scope
 

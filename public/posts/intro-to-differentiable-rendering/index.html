@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>Introduction to Differentiable Rendering | USharma Notes</title>
 <meta name="keywords" content="Differentiable Rendering, Computer Graphics">
 <meta name="description" content="An introduction to differentiable rendering techniques for computer graphics and vision">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+<link rel="canonical" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.d560e80c1c8d3bc8e5d808acb01ea1bbbb8fd0d8bbe9a3d4b2515537aecca11e.css" integrity="sha256-1WDoDByNO8jl2AissB6hu7uP0Ni76aPUslFVN67MoR4=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://USharma002.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,7 +77,75 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
+  <meta property="og:site_name" content="USharma Notes">
+  <meta property="og:title" content="Introduction to Differentiable Rendering">
+  <meta property="og:description" content="An introduction to differentiable rendering techniques for computer graphics and vision">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-07-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-07-23T00:00:00+00:00">
+    <meta property="article:tag" content="Differentiable Rendering">
+    <meta property="article:tag" content="Computer Graphics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Introduction to Differentiable Rendering">
+<meta name="twitter:description" content="An introduction to differentiable rendering techniques for computer graphics and vision">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://USharma002.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Introduction to Differentiable Rendering",
+      "item": "https://USharma002.github.io/posts/intro-to-differentiable-rendering/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to Differentiable Rendering",
+  "name": "Introduction to Differentiable Rendering",
+  "description": "An introduction to differentiable rendering techniques for computer graphics and vision",
+  "keywords": [
+    "Differentiable Rendering", "Computer Graphics"
+  ],
+  "articleBody": "Differentiable rendering techniques for computer graphics and vision",
+  "wordCount" : "19483",
+  "inLanguage": "en",
+  "datePublished": "2026-07-23T00:00:00Z",
+  "dateModified": "2026-07-23T00:00:00Z",
+  "author":[{
+    "@type": "Person",
+    "name": "Utkarsh Sharma"
+  }],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://USharma002.github.io/posts/intro-to-differentiable-rendering/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "USharma Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://USharma002.github.io/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -95,7 +163,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -121,22 +189,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="Posts">
+                <a href="https://USharma002.github.io/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/archives/" title="Archive">
+                <a href="https://USharma002.github.io/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/tags/" title="Tags">
+                <a href="https://USharma002.github.io/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="About">
+                <a href="https://USharma002.github.io/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -147,14 +215,14 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Introduction to Differentiable Rendering
     </h1>
     <div class="post-description">
       An introduction to differentiable rendering techniques for computer graphics and vision
     </div>
-    <div class="post-meta"><span title='2026-05-02 00:00:00 +0000 UTC'>May 2, 2026</span>&nbsp;·&nbsp;93 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2026-07-23 00:00:00 +0000 UTC'>July 23, 2026</span>&nbsp;·&nbsp;92 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -334,8 +402,6 @@
                     <a href="#stochastic-regularization-and-moving-discontinuities" aria-label="Stochastic Regularization and Moving Discontinuities">Stochastic Regularization and Moving Discontinuities</a></li>
                 <li>
                     <a href="#iterative-jacobian-inversion" aria-label="Iterative Jacobian Inversion">Iterative Jacobian Inversion</a></li>
-                <li>
-                    <a href="#differentiable-delta-tracking" aria-label="Differentiable Delta Tracking">Differentiable Delta Tracking</a></li>
                 <li>
                     <a href="#complexity-and-scope" aria-label="Complexity and Scope">Complexity and Scope</a></li></ul>
                 </li></ul>
@@ -1962,7 +2028,7 @@ $$ \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}
 $$ I = \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} = \int_{\mathcal{U}} f(\mathcal{T}(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi}) |J_\mathcal{T}(\mathbf{u}, \boldsymbol{\pi})| \, \mathrm{d}\mathbf{u} = \int_{\mathcal{U}} \frac{f(\mathcal{T}(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})}{p(\mathcal{T}(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})} \, \mathrm{d}\mathbf{u}. $$<p>This formulation is called <strong>attached</strong>, since samples geometrically follow the motion of $\mathcal{T}(\mathbf{u}, \boldsymbol{\pi})$ with respect to perturbations of $\boldsymbol{\pi}$. Similar to before, we can build an estimator of the derivative by applying Monte Carlo integration:</p>
 $$ \partial_{\boldsymbol{\pi}} I = \int_{\mathcal{U}} \partial_{\boldsymbol{\pi}} \left[ \frac{f(\mathcal{T}(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})}{p(\mathcal{T}(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})} \right] \mathrm{d}\mathbf{u} \approx \frac{1}{N} \sum_{i=1}^N \partial_{\boldsymbol{\pi}} \left[ \frac{f(\mathcal{T}(\mathbf{u}_i, \boldsymbol{\pi}), \boldsymbol{\pi})}{p(\mathcal{T}(\mathbf{u}_i, \boldsymbol{\pi}), \boldsymbol{\pi})} \right]. $$<p>The attached estimator is primarily useful for perfectly specular surfaces, but it can also produce lower variance than the detached version for derivatives of BSDFs with low roughness. On the other hand, the additional motion of the samples might introduce more variance in the evaluation of other terms in the integrand.</p>
 <p>Attached sampling handles a local delta interaction when the sampled specular direction changes smoothly with the scene parameters. It does not by itself resolve discontinuous visibility through a chain of specular events or changes in caustic-path topology. Those cases require specialized path-space or manifold techniques and are outside the surface-visibility methods developed here.</p>
-<p>Finally, the attached estimator is more difficult to use as in practice it requires handling discontinuities in the sampling function $\mathcal{T}$. Examples of such discontinuities are discrete sampling decisions such as in delta tracking or discontinuities due to sampled rays hitting different objects as $\boldsymbol{\pi}$ changes.</p>
+<p>Finally, the attached estimator is more difficult to use as in practice it requires handling discontinuities in the sampling function $\mathcal{T}$. Examples of such discontinuities are discrete sampling decisions (such as BSDF component selection) or discontinuities due to sampled rays hitting different objects as $\boldsymbol{\pi}$ changes.</p>
 <table>
   <thead>
       <tr>
@@ -2826,31 +2892,6 @@ J_{h,k}^{-1}
 0 & 1/f_{s,k}
 \end{pmatrix}.
 $$<p>The forward evaluation supplies the full suffix Jacobian product. During replay, subtracting emitted radiance and dividing out the current BSDF factor applies $J_{h,k}^{-1}$ one step at a time. PRB therefore reverses the derivative state through small local Jacobian inverses rather than reversing the complete primal program. Attached PRB extends the state with the $4\times4$ ray Jacobian and applies the same principle to the path geometry.</p>
-<h4 id="differentiable-delta-tracking">Differentiable Delta Tracking<a hidden class="anchor" aria-hidden="true" href="#differentiable-delta-tracking">#</a></h4>
-<p>The same construction applies to null-collision volume transport. Let $\bar\sigma$ be a parameter-independent majorant, $\sigma_a$, $\sigma_s$, and $\sigma_n$ the absorption, scattering, and null coefficients, and</p>
-$$
-\psi_a=\frac{\sigma_a}{\bar\sigma},
-\qquad
-\psi_s=\frac{\sigma_s}{\bar\sigma},
-\qquad
-\psi_n=\frac{\sigma_n}{\bar\sigma},
-\qquad
-\psi_t=\psi_a+\psi_s.
-$$<p>For a free-flight distance $t\sim p(t)=\bar\sigma e^{-t\bar\sigma}$ and $u\sim\mathcal U(0,1)$, a detached derivative sample is</p>
-$$
-\begin{aligned}
-\left\langle\partial_{\boldsymbol{\pi}}L_i(\mathbf x)\right\rangle
-={}&\partial_{\boldsymbol{\pi}}\left[\psi_a(\mathbf x_t)L_e(\mathbf x_t)\right]
-\psi_a(\mathbf x_t)^{-1}
-H[u<\psi_a(\mathbf x_t)]\\
-&+\partial_{\boldsymbol{\pi}}\left[\psi_s(\mathbf x_t)L_s(\mathbf x_t)\right]
-\psi_s(\mathbf x_t)^{-1}
-H[\psi_a(\mathbf x_t)\leq u<\psi_t(\mathbf x_t)]\\
-&+\partial_{\boldsymbol{\pi}}\left[\psi_n(\mathbf x_t)L_i(\mathbf x_t)\right]
-\psi_n(\mathbf x_t)^{-1}
-H[\psi_t(\mathbf x_t)\leq u].
-\end{aligned}
-$$<p>The derivative brackets include both the coefficient and radiance dependence on $\boldsymbol{\pi}$. Each particle proportion also appears outside the brackets as an inverse Monte Carlo weight, but it is differentiated only inside the brackets. The inverse weight and Heaviside event selection are detached: differentiating the discrete absorption, scattering, or null-event choice would severely bias the estimator. Replay is particularly valuable here because a path may contain an unbounded number of null collisions while its stored state remains constant-sized.</p>
 <h4 id="complexity-and-scope">Complexity and Scope<a hidden class="anchor" aria-hidden="true" href="#complexity-and-scope">#</a></h4>
 <p>For path length $D$:</p>
 <table>
@@ -2960,19 +3001,14 @@ $$<p>The derivative brackets include both the coefficient and radiance dependenc
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/differentiable-rendering/">Differentiable Rendering</a></li>
-      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="https://USharma002.github.io/tags/differentiable-rendering/">Differentiable Rendering</a></li>
+      <li><a href="https://USharma002.github.io/tags/computer-graphics/">Computer Graphics</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/intro-to-rendering/">
+  <a class="prev" href="https://USharma002.github.io/posts/intro-to-rendering/">
     <span class="title">« Prev</span>
     <br>
     <span>Introduction to 3D Rendering</span>
-  </a>
-  <a class="next" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
-    <span class="title">Next »</span>
-    <br>
-    <span>Differentiable Rendering of Participating Media</span>
   </a>
 </nav>
 
@@ -2981,7 +3017,7 @@ $$<p>The derivative brackets include both the coefficient and radiance dependenc
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
 
     <span>
         Powered by

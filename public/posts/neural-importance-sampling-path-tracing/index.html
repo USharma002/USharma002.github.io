@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing | USharma Notes</title>
 <meta name="keywords" content="Generative Modelling, Computer Graphics, Ray Tracing">
 <meta name="description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+<link rel="canonical" href="https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.d560e80c1c8d3bc8e5d808acb01ea1bbbb8fd0d8bbe9a3d4b2515537aecca11e.css" integrity="sha256-1WDoDByNO8jl2AissB6hu7uP0Ni76aPUslFVN67MoR4=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://USharma002.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,7 +77,76 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/">
+  <meta property="og:site_name" content="USharma Notes">
+  <meta property="og:title" content="A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing">
+  <meta property="og:description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-22T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-12-22T00:00:00+00:00">
+    <meta property="article:tag" content="Generative Modelling">
+    <meta property="article:tag" content="Computer Graphics">
+    <meta property="article:tag" content="Ray Tracing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing">
+<meta name="twitter:description" content="Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://USharma002.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing",
+      "item": "https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing",
+  "name": "A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing",
+  "description": "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing",
+  "keywords": [
+    "Generative Modelling", "Computer Graphics", "Ray Tracing"
+  ],
+  "articleBody": "Exploring the Importance Sampling Techniques to reduce variance in Monte Carlo Path Tracing",
+  "wordCount" : "12455",
+  "inLanguage": "en",
+  "datePublished": "2025-12-22T00:00:00Z",
+  "dateModified": "2025-12-22T00:00:00Z",
+  "author":[{
+    "@type": "Person",
+    "name": "Utkarsh Sharma"
+  }],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "USharma Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://USharma002.github.io/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -95,7 +164,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -121,22 +190,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="Posts">
+                <a href="https://USharma002.github.io/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/archives/" title="Archive">
+                <a href="https://USharma002.github.io/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/tags/" title="Tags">
+                <a href="https://USharma002.github.io/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="About">
+                <a href="https://USharma002.github.io/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -147,7 +216,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing
     </h1>
@@ -5626,17 +5695,17 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/generative-modelling/">Generative Modelling</a></li>
-      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
-      <li><a href="http://localhost:1313/tags/ray-tracing/">Ray Tracing</a></li>
+      <li><a href="https://USharma002.github.io/tags/generative-modelling/">Generative Modelling</a></li>
+      <li><a href="https://USharma002.github.io/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="https://USharma002.github.io/tags/ray-tracing/">Ray Tracing</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/3d-reconstruction/">
+  <a class="prev" href="https://USharma002.github.io/posts/3d-reconstruction/">
     <span class="title">« Prev</span>
     <br>
     <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
   </a>
-  <a class="next" href="http://localhost:1313/posts/intro-to-rendering/">
+  <a class="next" href="https://USharma002.github.io/posts/intro-to-rendering/">
     <span class="title">Next »</span>
     <br>
     <span>Introduction to 3D Rendering</span>
@@ -5648,7 +5717,7 @@ $$<p>The radiance caching approach follows Neural Radiance Caching (NRC) and use
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
 
     <span>
         Powered by
