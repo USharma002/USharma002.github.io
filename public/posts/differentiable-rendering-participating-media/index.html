@@ -286,7 +286,7 @@ $$
 \mathbb{H}_+ = \{\boldsymbol{\omega}' \in \mathbb{S}^2 \,:\, \langle \mathbf{n}(\mathbf{x}_0), \boldsymbol{\omega}' \rangle > 0\}, \quad \mathbb{H}_- = \{\boldsymbol{\omega}' \in \mathbb{S}^2 \,:\, \langle \mathbf{n}(\mathbf{x}_0), \boldsymbol{\omega}' \rangle < 0\}. \label{eq:hemispheres}
 \end{equation}
 $$<figure id="fig-rte-boundary" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/diff-rendering/inscattering.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/diff-rendering/inscattering.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Calculating the in-scattered radiance $L^\text{ins}$ at location $\mathbf{x}_0 \in \partial \Omega$ with direction $\boldsymbol{\omega}$ pointing toward the interior of the medium (illustrated in gray). (a) When $\boldsymbol{\omega}' \in \mathbb{H}_+$ (i.e., pointing toward the exterior of the medium), the interior radiance $L(\mathbf{x}_0, \boldsymbol{\omega}')$ involving a line integral (indicated as the dashed line in green) from the interior is used. (b) When $\boldsymbol{\omega}' \in \mathbb{H}_-$, on the contrary, the interfacial radiance $L(\mathbf{x}_0, \boldsymbol{\omega}')$ from the interior is used. This radiance is in turn determined by interior radiances reflected and refracted by the interface (shown as dashed lines in orange).
     </figcaption></figure>
@@ -485,7 +485,7 @@ $$
 \end{equation}
 $$<p>The interior term is the ordinary derivative of the continuous part; the <strong>Boundary Derivative</strong> ($B^\text{ins}$) is the new piece, capturing the edges of moving objects <em>inside</em> the medium.</p>
 <figure id="fig-rte-curves" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/diff-rendering/change_of_measure.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/diff-rendering/change_of_measure.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       (a) Definitions of $\mathbb{S}(\mathbf{x})$ and $\partial^2\Omega(\mathbf{x})$. (b) Deriving the change-of-measure ratio $\sin\theta/\|\mathbf{y}-\mathbf{x}\|$ in Eq. (36) by projecting a differential curve $\mathrm{d}\mathbf{y}$ to the surface of a unit sphere around $\mathbf{x}$.
     </figcaption></figure>
@@ -504,7 +504,7 @@ B^\text{ins}(\mathbf{x}, \boldsymbol{\omega}) = \int_{\partial^2 \Omega(\mathbf{
 $$<p>where $\mathbf{y} \to \mathbf{x}$ is the direction from point $\mathbf{y}$ on the edge to $\mathbf{x}$, $V(\mathbf{x}, \mathbf{y})$ is the mutual visibility, and $\theta$ is the angle of the edge.</p>
 <p>To compute this term, we need three geometric ingredients:</p>
 <figure id="fig-rte-normals" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/diff-rendering/normals.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/diff-rendering/normals.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       Normals of spherical discontinuity curves obtained by projecting line segments and spheres.
     </figcaption></figure>
@@ -603,8 +603,13 @@ $$<p>The takeaway is that differential radiative transfer is not a new kind of p
       <li><a href="http://localhost:1313/tags/radiative-transfer/">Radiative Transfer</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+  <a class="prev" href="http://localhost:1313/posts/intro-to-rendering/">
     <span class="title">« Prev</span>
+    <br>
+    <span>Introduction to 3D Rendering</span>
+  </a>
+  <a class="next" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+    <span class="title">Next »</span>
     <br>
     <span>Introduction to Differentiable Rendering</span>
   </a>

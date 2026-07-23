@@ -47,7 +47,7 @@
       {{ range $index, $item := $data }}
       <div class="step-slide">
         {{- $imageLower := lower ($item.image | default "") -}}
-        <img class="step-slide-image{{ if or $noinvert (hasSuffix $imageLower ".png") (hasSuffix $imageLower ".jpg") (hasSuffix $imageLower ".jpeg") (hasSuffix $imageLower ".gif") }} no-invert{{ end }}" src="{{ $item.image | safeURL }}" alt="{{ $item.title }}" loading="lazy" decoding="async">
+        <img class="step-slide-image{{ if or $noinvert (hasSuffix $imageLower ".png") (hasSuffix $imageLower ".jpg") (hasSuffix $imageLower ".jpeg") (hasSuffix $imageLower ".gif") }} no-invert{{ end }}" src="{{ $item.image | safeURL }}" alt="{{ $item.title }}" loading="eager" decoding="async">
       </div>
       {{ end }}
     </div>

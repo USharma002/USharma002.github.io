@@ -65,7 +65,7 @@ if (typeof goFullscreen !== 'function') {
   <iframe id="{{ $id }}"
           src="{{ $src }}"
           title="{{ $title }}"
-      {{- if ne $lazy "false" }}
+      {{- if eq $lazy "true" }}
       loading="lazy"
       fetchpriority="low"
       {{- else }}

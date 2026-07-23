@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Bias–Variance Tradeoff | USharma Notes</title>
 <meta name="keywords" content="Bias-Variance, Model Generalization, Machine Learning">
 <meta name="description" content="Exploring the bias–variance tradeoff in polynomial regression">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="https://USharma002.github.io/posts/bias-variance/">
+<link rel="canonical" href="http://localhost:1313/posts/bias-variance/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.d560e80c1c8d3bc8e5d808acb01ea1bbbb8fd0d8bbe9a3d4b2515537aecca11e.css" integrity="sha256-1WDoDByNO8jl2AissB6hu7uP0Ni76aPUslFVN67MoR4=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://USharma002.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/bias-variance/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/bias-variance/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,76 +77,7 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/bias-variance/">
-  <meta property="og:site_name" content="USharma Notes">
-  <meta property="og:title" content="Bias–Variance Tradeoff">
-  <meta property="og:description" content="Exploring the bias–variance tradeoff in polynomial regression">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2025-11-08T00:00:00+00:00">
-    <meta property="article:modified_time" content="2025-11-08T00:00:00+00:00">
-    <meta property="article:tag" content="Bias-Variance">
-    <meta property="article:tag" content="Model Generalization">
-    <meta property="article:tag" content="Machine Learning">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Bias–Variance Tradeoff">
-<meta name="twitter:description" content="Exploring the bias–variance tradeoff in polynomial regression">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://USharma002.github.io/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Bias–Variance Tradeoff",
-      "item": "https://USharma002.github.io/posts/bias-variance/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Bias–Variance Tradeoff",
-  "name": "Bias–Variance Tradeoff",
-  "description": "Exploring the bias–variance tradeoff in polynomial regression",
-  "keywords": [
-    "Bias-Variance", "Model Generalization", "Machine Learning"
-  ],
-  "articleBody": "Understanding how bias and variance affect model performance",
-  "wordCount" : "2076",
-  "inLanguage": "en",
-  "datePublished": "2025-11-08T00:00:00Z",
-  "dateModified": "2025-11-08T00:00:00Z",
-  "author":[{
-    "@type": "Person",
-    "name": "Utkarsh Sharma"
-  }],
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://USharma002.github.io/posts/bias-variance/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "USharma Notes",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://USharma002.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="" id="top">
@@ -164,7 +95,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -190,22 +121,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://USharma002.github.io/" title="Posts">
+                <a href="http://localhost:1313/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/archives/" title="Archive">
+                <a href="http://localhost:1313/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/tags/" title="Tags">
+                <a href="http://localhost:1313/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -216,7 +147,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Bias–Variance Tradeoff
     </h1>
@@ -320,7 +251,7 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
 <p>We can create a graphical visualization of bias and variance using a bulls-eye diagram. Imagine that the center of the target is a model that perfectly predicts the correct values. As we move away from the bulls-eye, our predictions get worse and worse. Imagine we can repeat our entire model building process to get a number of separate hits on the target. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well and we are close to the bulls-eye, while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. These different realizations result in a scatter of hits on the target.</p>
 <p>We can plot four different cases representing combinations of both high and low bias and variance.</p>
 <figure id="fig-bulls-eye" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_bulls_eye.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_bulls_eye.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       Bias and variance visualized using a bulls-eye diagram: Each dot is a model trained on a random dataset. High bias: far from target center. High variance: scattered dots. Low bias and variance: tight cluster near center.
     </figcaption></figure>
@@ -507,7 +438,7 @@ where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic err
 })();
 </script>
 <figure id="fig-complexity" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_model_complexity.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_model_complexity.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       How bias and variance change with model complexity. Low-complexity (left): high bias, low variance. High-complexity (right): low bias, high variance — a classic overfitting/underfitting curve.
     </figcaption></figure>
@@ -652,14 +583,14 @@ $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$<p>I can  si
 $$
 f(x) = 0.1\,x^3 - 0.5\,x^2 + 0.3\,x + 0.2
 $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:70%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/bias-variance/true_function.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/true_function.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       True underlying cubic function used for bias-variance experiments. Models attempt to recover this from noisy training data.
     </figcaption></figure>
 
 
 <figure id="fig-poly-degrees" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/bias-variance/polynomial_degrees.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/polynomial_degrees.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Polynomial regression fits for varying degrees. Underfitting for low degree; overfitting and oscillations for very high degree.
     </figcaption></figure>
@@ -788,7 +719,7 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
 <li><strong>Variance increases modestly</strong> for low degrees, but explodes as the condition number becomes large ($\gtrsim 10^9$).</li>
 </ul>
 <figure id="fig-bias-variance-unregularized" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_stacked.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_stacked.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       Stacked bar chart of bias, variance, and irreducible error for polynomial regression with no regularization (α=0).
     </figcaption></figure>
@@ -913,7 +844,7 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
 <li><strong>Bias increases only minimally</strong>, a small price for much lower variance at high degrees.</li>
 </ul>
 <figure id="fig-bias-variance-regularized" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_stacked_regularized.png" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/bias-variance/bias_variance_stacked_regularized.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       Stacked bar chart of bias, variance, and irreducible error for polynomial regression with adaptive regularization (α = 0.1 × degree).
     </figcaption></figure>
@@ -948,17 +879,17 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://USharma002.github.io/tags/bias-variance/">Bias-Variance</a></li>
-      <li><a href="https://USharma002.github.io/tags/model-generalization/">Model Generalization</a></li>
-      <li><a href="https://USharma002.github.io/tags/machine-learning/">Machine Learning</a></li>
+      <li><a href="http://localhost:1313/tags/bias-variance/">Bias-Variance</a></li>
+      <li><a href="http://localhost:1313/tags/model-generalization/">Model Generalization</a></li>
+      <li><a href="http://localhost:1313/tags/machine-learning/">Machine Learning</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="https://USharma002.github.io/posts/transformer-model/">
+  <a class="prev" href="http://localhost:1313/posts/transformer-model/">
     <span class="title">« Prev</span>
     <br>
     <span>Vision Transformer (ViT) - Architecture and Implementation</span>
   </a>
-  <a class="next" href="https://USharma002.github.io/posts/bagging-boosting/">
+  <a class="next" href="http://localhost:1313/posts/bagging-boosting/">
     <span class="title">Next »</span>
     <br>
     <span>Bagging and Boosting</span>
@@ -970,7 +901,7 @@ $$<figure id="fig-true-function" class="zoomable-figure" style="text-align:cente
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
 
     <span>
         Powered by

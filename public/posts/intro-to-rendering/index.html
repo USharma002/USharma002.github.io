@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Introduction to 3D Rendering | USharma Notes</title>
 <meta name="keywords" content="Rendering, Computer Graphics">
 <meta name="description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="https://USharma002.github.io/posts/intro-to-rendering/">
+<link rel="canonical" href="http://localhost:1313/posts/intro-to-rendering/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.d560e80c1c8d3bc8e5d808acb01ea1bbbb8fd0d8bbe9a3d4b2515537aecca11e.css" integrity="sha256-1WDoDByNO8jl2AissB6hu7uP0Ni76aPUslFVN67MoR4=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://USharma002.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/intro-to-rendering/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/intro-to-rendering/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,75 +77,7 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/intro-to-rendering/">
-  <meta property="og:site_name" content="USharma Notes">
-  <meta property="og:title" content="Introduction to 3D Rendering">
-  <meta property="og:description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2026-04-30T00:00:00+00:00">
-    <meta property="article:modified_time" content="2026-04-30T00:00:00+00:00">
-    <meta property="article:tag" content="Rendering">
-    <meta property="article:tag" content="Computer Graphics">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Introduction to 3D Rendering">
-<meta name="twitter:description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://USharma002.github.io/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Introduction to 3D Rendering",
-      "item": "https://USharma002.github.io/posts/intro-to-rendering/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Introduction to 3D Rendering",
-  "name": "Introduction to 3D Rendering",
-  "description": "A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.",
-  "keywords": [
-    "Rendering", "Computer Graphics"
-  ],
-  "articleBody": "A long-form guide to 3D rendering from first principles: transforms, camera and projection, ray generation, intersections, shading, ray tracing, path tracing, signed distance functions, and volume rendering.",
-  "wordCount" : "19860",
-  "inLanguage": "en",
-  "datePublished": "2026-04-30T00:00:00Z",
-  "dateModified": "2026-04-30T00:00:00Z",
-  "author":[{
-    "@type": "Person",
-    "name": "Utkarsh Sharma"
-  }],
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://USharma002.github.io/posts/intro-to-rendering/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "USharma Notes",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://USharma002.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="" id="top">
@@ -163,7 +95,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -189,22 +121,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://USharma002.github.io/" title="Posts">
+                <a href="http://localhost:1313/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/archives/" title="Archive">
+                <a href="http://localhost:1313/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/tags/" title="Tags">
+                <a href="http://localhost:1313/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -215,7 +147,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Introduction to 3D Rendering
     </h1>
@@ -444,7 +376,7 @@ $$
 $$<p>Every real 2D point lives on the hyperplane $w = 1$. To recover a 2D point from a homogeneous triple, we divide through by $w$:</p>
 $$\tilde{\mathbf{P}} = (\tilde{x},\, \tilde{y},\, \tilde{w}) \;\longrightarrow\; \mathbf{P} =\!\left(\frac{\tilde{x}}{\tilde{w}},\; \frac{\tilde{y}}{\tilde{w}}\right)$$<p>This division is called the <strong>perspective divide</strong>. Note: any scalar multiple $(\lambda x, \lambda y, \lambda)$ represents the <em>same</em> 2D point, because the $w$-divide cancels $\lambda$.</p>
 <figure id="fig-1" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/homogeneous_coords.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/homogeneous_coords.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
       The homogeneous embedding: a 2D point $(x, y)$ corresponds to the ray through $(x, y, 1)$ in $\mathbb{R}^3$. Any point on this ray maps to the same 2D location.
     </figcaption></figure>
@@ -701,7 +633,7 @@ $$<p>The translation column is multiplied by $w=0$, so it vanishes. That is exac
 <hr>
 <h3 id="2d-translation--2-dof">2D Translation — 2 DoF<a hidden class="anchor" aria-hidden="true" href="#2d-translation--2-dof">#</a></h3>
 $$x' = x + t_x, \qquad y' = y + t_y$$<figure id="fig-2" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:400px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/translate.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/translate.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 2.</span>
       Translation slides every point by the same vector $(t_x, t_y)$, leaving shapes unchanged.
     </figcaption></figure>
@@ -718,7 +650,7 @@ $$ \begin{bmatrix} \color{#ef4444}1 & \color{#22c55e}0 & \color{#3b82f6}t_x \\ \
 <p>A rigid transform is a rotation composed with a translation. It moves objects without any deformation at all — it is the most constrained non-trivial transform.</p>
 <p>For a point at polar coordinates $(r, \phi)$, rotating by $\theta$ gives:</p>
 $$x' = x\cos\theta - y\sin\theta, \qquad y' = x\sin\theta + y\cos\theta$$<figure id="fig-3" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:400px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/rotation.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/rotation.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 3.</span>
       Rotation about the origin by $\theta$, derived from the angle-addition identities.
     </figcaption></figure>
@@ -734,7 +666,7 @@ $$ \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}
 <hr>
 <h3 id="2d-scaling--2-dof">2D Scaling — 2 DoF<a hidden class="anchor" aria-hidden="true" href="#2d-scaling--2-dof">#</a></h3>
 $$x' = s_x \cdot x, \qquad y' = s_y \cdot y$$<figure id="fig-4" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:400px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/scaling.svg" alt="" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/scaling.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 4.</span>
       Scaling stretches or compresses relative to the origin. The axes can be scaled independently.
     </figcaption></figure>
@@ -932,7 +864,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ w' \end{bmatrix} = \begin{bmatrix} \color{#
 <h2 id="the-3d-graphics-rendering-pipeline">The 3D Graphics Rendering Pipeline<a hidden class="anchor" aria-hidden="true" href="#the-3d-graphics-rendering-pipeline">#</a></h2>
 <p>With these pieces in place, we can trace a vertex all the way from an artist&rsquo;s model to a screen pixel. Each stage is still just a matrix multiplication; the GPU applies the same sequence to every vertex in parallel.</p>
 <figure id="fig-coord-space-flow" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/coordinate_spaces_flow.svg" alt="Flowchart: Object → World → Camera → Clip → NDC → Window Space" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/coordinate_spaces_flow.svg" alt="Flowchart: Object → World → Camera → Clip → NDC → Window Space" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 5.</span>
       The MVP pipeline. Each arrow is a matrix multiplication; the final arrow is the hardware viewport transform.
     </figcaption></figure>
@@ -1002,7 +934,7 @@ $$\color{#ef4444}{x_\text{ndc}} = \frac{\color{#ef4444}{x_c}}{\color{#a855f7}{w_
 <p>An orthographic (parallel) projection has no perspective effect — objects do not appear smaller with distance. It is used for technical drawings, isometric games, and UI rendering.</p>
 <p>The view volume is a <strong>rectangular box</strong> bounded by left ($l$), right ($r$), bottom ($b$), top ($t$), near ($n$), and far ($f$). In Camera Space the box spans $[l, r] \times [b, t] \times [-f, -n]$ (note: the near and far planes sit at <em>negative</em> $z$ because the camera looks down $-Z$, and $n, f > 0$).</p>
 <figure id="fig-orthographic-volume" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/orthographic.svg" alt="Orthographic cuboid view volume" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/orthographic.svg" alt="Orthographic cuboid view volume" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 6.</span>
       An orthographic view volume is already a box. Projection only has to translate and scale it into the canonical NDC cube.
     </figcaption></figure>
@@ -1030,7 +962,7 @@ $$ \mathbf{M}_\text{ortho} = \begin{bmatrix} \color{#ef4444}\frac{2}{r-l} & \col
 <h5 id="the-view-frustum">The View Frustum<a hidden class="anchor" aria-hidden="true" href="#the-view-frustum">#</a></h5>
 <p>The visible region is a <strong>truncated pyramid</strong> called the view frustum. It is bounded by six planes: near, far, left, right, top, and bottom. Everything outside the frustum is clipped; everything inside is rasterized.</p>
 <figure id="fig-view-frustum" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/frustum.svg" alt="Perspective frustum showing near and far planes" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/frustum.svg" alt="Perspective frustum showing near and far planes" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 7.</span>
       A perspective frustum in Camera Space. The near rectangle is at $z=-n$ with bounds $(l,r,b,t)$; the far rectangle is the same set of rays expanded out to $z=-f$.
     </figcaption></figure>
@@ -1045,14 +977,14 @@ $$<p>So at the far plane $(d=f)$, the bounds are scaled by $f/n$. This depth-dep
 <h5 id="field-of-view-and-focal-length">Field of View and Focal Length<a hidden class="anchor" aria-hidden="true" href="#field-of-view-and-focal-length">#</a></h5>
 <p>Field of view is a friendlier way to specify the same frustum. The <strong>horizontal field of view</strong> $\alpha$ controls the left/right opening, and the <strong>vertical field of view</strong> $\beta$ controls the top/bottom opening.</p>
 <figure id="fig-fov-horizontal" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/fov_horizontal.svg" alt="Horizontal field of view diagram" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/fov_horizontal.svg" alt="Horizontal field of view diagram" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 8.</span>
       Horizontal FoV. For a symmetric frustum, the half-width of the near plane is $r=n\tan(\alpha/2)$.
     </figcaption></figure>
 
 
 <figure id="fig-fov-vertical" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/fov_vertical.svg" alt="Vertical field of view diagram" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/fov_vertical.svg" alt="Vertical field of view diagram" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 9.</span>
       Vertical FoV. The half-height of the near plane is $t=n\tan(\beta/2)$.
     </figcaption></figure>
@@ -1072,14 +1004,14 @@ $$<p>Larger FoV means a smaller focal scale, which makes the image wider. These 
 <h5 id="similar-triangles-why-perspective-divides-by-depth">Similar Triangles: Why Perspective Divides by Depth<a hidden class="anchor" aria-hidden="true" href="#similar-triangles-why-perspective-divides-by-depth">#</a></h5>
 <p>Take a Camera-Space point $(x,y,z)$ with $z<0$. Project it along the ray from the camera origin onto the near plane $z=-n$. The side and top views are the same argument in two different planes.</p>
 <figure id="fig-similar-triangles-y" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/similar_triangles-1.svg" alt="Side-view similar triangles for perspective projection" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/similar_triangles-1.svg" alt="Side-view similar triangles for perspective projection" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 10.</span>
       Side view in the $yz$ plane. Similar triangles give $y_p=-ny/z$.
     </figcaption></figure>
 
 
 <figure id="fig-similar-triangles-x" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/similar_triangles-2.svg" alt="Top-view similar triangles for perspective projection" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/similar_triangles-2.svg" alt="Top-view similar triangles for perspective projection" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 11.</span>
       Top view in the $xz$ plane. The same ratio gives $x_p=-nx/z$.
     </figcaption></figure>
@@ -1213,7 +1145,7 @@ D=f \Rightarrow \color{#3b82f6}{z_\text{ndc}}=+1
 $$<p>But it is not linear in distance; it is linear in $1/D$. Its slope with respect to distance $D$ is:</p>
 $$\frac{\mathrm{d}\,\color{#3b82f6}{z_\text{ndc}}}{\mathrm{d}D} = \frac{2fn}{(f-n)D^2}$$<p>So the mapping changes rapidly near the camera and slowly far away. This is why the depth buffer gets much more precision near the near plane than near the far plane.</p>
 <figure id="fig-ndc-cube" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/camera/ndc.svg" alt="NDC cube with coordinates from -1 to 1" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/camera/ndc.svg" alt="NDC cube with coordinates from -1 to 1" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 12.</span>
       All visible geometry maps to the NDC cube after the perspective divide. Clipping tests become simple comparisons against $\pm 1$.
     </figcaption></figure>
@@ -1265,7 +1197,7 @@ $$\mathbf{v}_\text{clip} = \underbrace{\color{#3b82f6}{\mathbf{M}_\text{proj}}}_
 <p>A ray is a parametric line defined by an origin $\mathbf{o}$ and a direction $\mathbf{d}$:
 </p>
 $$\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$$<figure id="fig-ray-definition" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/ray.svg" alt="Parametric ray diagram" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/ray.svg" alt="Parametric ray diagram" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 13.</span>
       A ray is defined by its origin $\mathbf{o}$ and a unit direction vector $\mathbf{d}$.
     </figcaption></figure>
@@ -1274,7 +1206,7 @@ $$\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$$<figure id="fig-ray-definition" clas
 <h3 id="primary-ray-generation">Primary Ray Generation<a hidden class="anchor" aria-hidden="true" href="#primary-ray-generation">#</a></h3>
 <p>Now that we know how to define a ray, for ray casting algorithms we will need to define a ray (or multiple rays) for a pixel. We can visualize the rays being generated from camera origin and passing through the image plane to the scene.  These rays are called primary rays. We will see how to render an image using these later, for now, we will focus on generating these rays.</p>
 <figure id="fig-primary-ray-generation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_ray_generation.svg" alt="Pinhole camera ray through a pixel center" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_ray_generation.svg" alt="Pinhole camera ray through a pixel center" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
       Primary ray generation for a pinhole camera. Each pixel center corresponds to one direction through the image plane.
     </figcaption></figure>
@@ -1302,7 +1234,7 @@ $$$$
 \end{bmatrix}
 $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world space. For generating the rays we will use the pixel index.</p>
 <figure id="fig-coordinate-mapping" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_rays/raygen.svg" alt="Four-step diagram of pixel to physical coordinate mapping" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_rays/raygen.svg" alt="Four-step diagram of pixel to physical coordinate mapping" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 15.</span>
       The four steps of mapping discrete pixel indices $(ix, iy)$ to continuous physical coordinates $(px, py)$ on the camera&rsquo;s image plane.
     </figcaption></figure>
@@ -1393,10 +1325,10 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 
 <style>
  
-#editor-44bb8ee9 .highlight,
-#editor-44bb8ee9 .chroma,
-#editor-44bb8ee9 pre,
-#editor-44bb8ee9 code {
+#editor-70143d7c .highlight,
+#editor-70143d7c .chroma,
+#editor-70143d7c pre,
+#editor-70143d7c code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1411,16 +1343,16 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 }
 
  
-#editor-44bb8ee9 .copy-code,
-#editor-44bb8ee9 .chroma .copy-btn { 
+#editor-70143d7c .copy-code,
+#editor-70143d7c .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-44bb8ee9" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-44bb8ee9" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-70143d7c" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-70143d7c" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1464,11 +1396,11 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-44bb8ee9" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-70143d7c" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-44bb8ee9" style="display: none;">
+<textarea id="fs-70143d7c" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1514,8 +1446,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-44bb8ee9');
-    const editor = document.getElementById('editor-44bb8ee9');
+    const canvas = document.getElementById('glcanvas-70143d7c');
+    const editor = document.getElementById('editor-70143d7c');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -1704,7 +1636,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-44bb8ee9').value.trim();
+    const rawSource = document.getElementById('fs-70143d7c').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -1793,14 +1725,14 @@ $$
 \qquad
 \mathbf{C}_\text{pixel}=\frac{1}{N}\sum_{i=1}^{N}\mathbf{C}(\mathbf{d}_i)
 $$<figure id="fig-aa-jitter" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_rays/aa_jitter.svg" alt="Pixel grid with jittered sample points" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_rays/aa_jitter.svg" alt="Pixel grid with jittered sample points" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 16.</span>
       Anti-aliasing perturbs sample positions inside the pixel instead of always shooting through the center.
     </figcaption></figure>
 
 
 <figure id="fig-aliasing-comparison" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_rays/aliasing.svg" alt="Comparison of vector, aliased, and anti-aliased rendering" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/primary_rays/aliasing.svg" alt="Comparison of vector, aliased, and anti-aliased rendering" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 17.</span>
       Aliasing comparison: (Left) Original vector geometry, (Middle) Jagged aliasing from center-only sampling, (Right) Smooth anti-aliased result using jittered sub-pixel sampling.
     </figcaption></figure>
@@ -1819,7 +1751,7 @@ $$<figure id="fig-aa-jitter" class="zoomable-figure" style="text-align:center;ma
 <hr>
 <h3 id="1-ray-sphere-intersection">1. Ray-Sphere Intersection<a hidden class="anchor" aria-hidden="true" href="#1-ray-sphere-intersection">#</a></h3>
 <figure id="fig-sphere-intersection" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/representation/sphere_intersection.svg" alt="Diagram showing ray intersecting a sphere at two points" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/representation/sphere_intersection.svg" alt="Diagram showing ray intersecting a sphere at two points" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
       Ray-Sphere Intersection: Substituting the ray equation into the sphere&rsquo;s implicit equation yields a quadratic in $t$.
     </figcaption></figure>
@@ -1843,7 +1775,7 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 </ul>
 <p>Once we find the hit distance $t$, the hit point is $\mathbf{p} = {\color{#3273F6}\mathbf{o}} + t{\color{#FF4B4B}\mathbf{d}}$, and the surface normal is simply the normalized vector from the center to the hit point: $\mathbf{n} = (\mathbf{p} - {\color{#109618}\mathbf{c}}) / {\color{#990099}R}$.</p>
 <figure id="fig-sphere-cases" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/representation/sphere_cases.svg" alt="Diagram showing three rays: miss, grazing hit, and two hits" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/representation/sphere_cases.svg" alt="Diagram showing three rays: miss, grazing hit, and two hits" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
       The three intersection cases based on the discriminant $h$: missing the sphere, grazing it, or passing through.
     </figcaption></figure>
@@ -1854,10 +1786,10 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 
 <style>
  
-#editor-606ad652 .highlight,
-#editor-606ad652 .chroma,
-#editor-606ad652 pre,
-#editor-606ad652 code {
+#editor-951d54c1 .highlight,
+#editor-951d54c1 .chroma,
+#editor-951d54c1 pre,
+#editor-951d54c1 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1872,16 +1804,16 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 }
 
  
-#editor-606ad652 .copy-code,
-#editor-606ad652 .chroma .copy-btn { 
+#editor-951d54c1 .copy-code,
+#editor-951d54c1 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-606ad652" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-606ad652" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-951d54c1" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-951d54c1" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1929,11 +1861,11 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-606ad652" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-951d54c1" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-606ad652" style="display: none;">
+<textarea id="fs-951d54c1" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1983,8 +1915,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-606ad652');
-    const editor = document.getElementById('editor-606ad652');
+    const canvas = document.getElementById('glcanvas-951d54c1');
+    const editor = document.getElementById('editor-951d54c1');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2173,7 +2105,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-606ad652').value.trim();
+    const rawSource = document.getElementById('fs-951d54c1').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2251,7 +2183,7 @@ void main() {
 <h3 id="2-ray-triangle-intersection-möller-trumbore">2. Ray-Triangle Intersection (Möller-Trumbore)<a hidden class="anchor" aria-hidden="true" href="#2-ray-triangle-intersection-möller-trumbore">#</a></h3>
 <p>Triangles are the backbone of 3D modeling. Let a triangle be defined by its three vertices ${\color{#FF9900}\mathbf{a}}$, ${\color{#0099C6}\mathbf{b}}$, and ${\color{#DD4477}\mathbf{c}}$. Any point $\mathbf{p}$ lying on the plane of this triangle can be written using <strong>barycentric coordinates</strong> $(u, v)$:</p>
 $$ \mathbf{p}(u, v) = {\color{#FF9900}\mathbf{a}} + u({\color{#0099C6}\mathbf{b}} - {\color{#FF9900}\mathbf{a}}) + v({\color{#DD4477}\mathbf{c}} - {\color{#FF9900}\mathbf{a}}) $$<figure id="fig-triangle-barycentric" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:60%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/representation/triangle_barycentric.svg" alt="Triangle divided into three colored sub-areas representing barycentric weights" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/representation/triangle_barycentric.svg" alt="Triangle divided into three colored sub-areas representing barycentric weights" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
       Barycentric coordinates $(u, v, w)$ can be thought of as the weights of the three vertices, or as ratios of sub-triangle areas.
     </figcaption></figure>
@@ -2263,7 +2195,7 @@ $$ \begin{bmatrix} -{\color{#FF4B4B}\mathbf{d}} & \mathbf{e}_1 & \mathbf{e}_2 \e
 <p>Geometrically, the determinant of a $3\times3$ matrix composed of three vectors $\det(\mathbf{u}, \mathbf{v}, \mathbf{w})$ is the <strong>scalar triple product</strong>, written as $\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})$. It represents the volume of the parallelepiped formed by the three vectors.</p>
 <p>Using Cramer&rsquo;s Rule, the solution is:</p>
 $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\mathbf{d}}, \mathbf{e}_1, \mathbf{e}_2)} \begin{bmatrix} \det(\mathbf{s}, \mathbf{e}_1, \mathbf{e}_2) \\ \det(-{\color{#FF4B4B}\mathbf{d}}, \mathbf{s}, \mathbf{e}_2) \\ \det(-{\color{#FF4B4B}\mathbf{d}}, \mathbf{e}_1, \mathbf{s}) \end{bmatrix} $$<figure id="fig-triangle-intersection" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/representation/triangle_intersection.svg" alt="Diagram showing ray hitting a triangle with basis vectors and s-vector labeled" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/representation/triangle_intersection.svg" alt="Diagram showing ray hitting a triangle with basis vectors and s-vector labeled" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
       Möller-Trumbore Algorithm: We equate the ray and triangle equations and solve for the intersection distance $t$ and barycentric coordinates $(u, v)$ simultaneously.
     </figcaption></figure>
@@ -2282,10 +2214,10 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 <style>
  
-#editor-f705120d .highlight,
-#editor-f705120d .chroma,
-#editor-f705120d pre,
-#editor-f705120d code {
+#editor-ba5a760e .highlight,
+#editor-ba5a760e .chroma,
+#editor-ba5a760e pre,
+#editor-ba5a760e code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2300,16 +2232,16 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 }
 
  
-#editor-f705120d .copy-code,
-#editor-f705120d .chroma .copy-btn { 
+#editor-ba5a760e .copy-code,
+#editor-ba5a760e .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-f705120d" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-f705120d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ba5a760e" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ba5a760e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2369,11 +2301,11 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-f705120d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ba5a760e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-f705120d" style="display: none;">
+<textarea id="fs-ba5a760e" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2435,8 +2367,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-f705120d');
-    const editor = document.getElementById('editor-f705120d');
+    const canvas = document.getElementById('glcanvas-ba5a760e');
+    const editor = document.getElementById('editor-ba5a760e');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2625,7 +2557,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-f705120d').value.trim();
+    const rawSource = document.getElementById('fs-ba5a760e').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2712,7 +2644,7 @@ f(\mathbf{p}) = \begin{cases}
 $$<p>The sign convention dictates that $f(\mathbf{p})$ is positive outside the object, negative inside, and exactly zero on the surface $\partial \Omega$. Consequently, the surface itself is defined implicitly as the zero-level set of the function: $\partial \Omega = \{\mathbf{p} \in \mathbb{R}^3 \mid f(\mathbf{p}) = 0\}$.</p>
 <p>Because $f(\mathbf{p})$ guarantees the exact distance to the nearest surface, it provides a strictly bound spatial radius. If $f(\mathbf{p}) = d$, a sphere of radius $d$ centered at $\mathbf{p}$ is guaranteed to be entirely empty. This property allows ray marching algorithms to safely advance along a ray by distance $d$ without prematurely overshooting the surface.</p>
 <figure id="fig-sdf-visualization" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:80%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/intro-to-rendering/representation/sdf.svg" alt="SDF contour visualization" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/intro-to-rendering/representation/sdf.svg" alt="SDF contour visualization" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
       Sphere Tracing: By evaluating the SDF, the algorithm derives a safe distance to march along the ray. Because the field obeys the Eikonal equation, the circles represent exact bounds of empty space.
     </figcaption></figure>
@@ -2754,10 +2686,10 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 
 <style>
  
-#editor-6d991cfe .highlight,
-#editor-6d991cfe .chroma,
-#editor-6d991cfe pre,
-#editor-6d991cfe code {
+#editor-620e98bc .highlight,
+#editor-620e98bc .chroma,
+#editor-620e98bc pre,
+#editor-620e98bc code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2772,16 +2704,16 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 }
 
  
-#editor-6d991cfe .copy-code,
-#editor-6d991cfe .chroma .copy-btn { 
+#editor-620e98bc .copy-code,
+#editor-620e98bc .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-6d991cfe" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-6d991cfe" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-620e98bc" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-620e98bc" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2844,11 +2776,11 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-6d991cfe" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-620e98bc" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-6d991cfe" style="display: none;">
+<textarea id="fs-620e98bc" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2913,8 +2845,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-6d991cfe');
-    const editor = document.getElementById('editor-6d991cfe');
+    const canvas = document.getElementById('glcanvas-620e98bc');
+    const editor = document.getElementById('editor-620e98bc');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3103,7 +3035,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-6d991cfe').value.trim();
+    const rawSource = document.getElementById('fs-620e98bc').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3189,10 +3121,10 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 
 <style>
  
-#editor-50bf6c8d .highlight,
-#editor-50bf6c8d .chroma,
-#editor-50bf6c8d pre,
-#editor-50bf6c8d code {
+#editor-553e4ce8 .highlight,
+#editor-553e4ce8 .chroma,
+#editor-553e4ce8 pre,
+#editor-553e4ce8 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3207,16 +3139,16 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 }
 
  
-#editor-50bf6c8d .copy-code,
-#editor-50bf6c8d .chroma .copy-btn { 
+#editor-553e4ce8 .copy-code,
+#editor-553e4ce8 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-50bf6c8d" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-50bf6c8d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-553e4ce8" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-553e4ce8" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3289,11 +3221,11 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-50bf6c8d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-553e4ce8" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-50bf6c8d" style="display: none;">
+<textarea id="fs-553e4ce8" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3368,8 +3300,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-50bf6c8d');
-    const editor = document.getElementById('editor-50bf6c8d');
+    const canvas = document.getElementById('glcanvas-553e4ce8');
+    const editor = document.getElementById('editor-553e4ce8');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3558,7 +3490,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-50bf6c8d').value.trim();
+    const rawSource = document.getElementById('fs-553e4ce8').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3650,7 +3582,7 @@ $$ L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{L_e(\mathbf{x}, \boldsym
 $$ I_{attenuated} = \frac{1}{k_c + k_l d + k_q d^2} I_{source} $$<h3 id="the-phong-reflection-model">The Phong Reflection Model<a hidden class="anchor" aria-hidden="true" href="#the-phong-reflection-model">#</a></h3>
 <p>With the incoming light intensity established, we can now compute how the surface responds. The most famous empirical model is the <strong>Phong reflection model</strong>, which decomposes local illumination into three physically motivated components: <strong>Ambient</strong>, <strong>Diffuse</strong>, and <strong>Specular</strong>.</p>
 <figure id="fig-phong-components" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
-  <img class="zoomable-image no-invert" src="/images/intro-to-rendering/lighting/sphere_lighting.svg" alt="Three spheres showing ambient, diffuse, and specular components" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image no-invert" src="/images/intro-to-rendering/lighting/sphere_lighting.svg" alt="Three spheres showing ambient, diffuse, and specular components" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
       The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections.
     </figcaption></figure>
@@ -3677,7 +3609,7 @@ $$
 L_s = k_s I_s \max(0, {\color{#4CAF50}\mathbf{r}} \cdot {\color{#2196F3}\mathbf{v}})^\alpha
 $$<p>The exponent $\alpha$ is the <strong>shininess coefficient</strong>. A low value (e.g., $5 - 10$) produces a broad, soft highlight like plastic, while a high value (e.g., $100 - 200$) produces a sharp, tight highlight typical of polished metals.</p>
 <figure id="fig-phong-vectors" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/lighting/phong.svg" alt="Vectors for Phong reflection model" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/lighting/phong.svg" alt="Vectors for Phong reflection model" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
       The Phong reflection model vectors. The light vector ${\color{#FF9800}\mathbf{l}}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector ${\color{#4CAF50}\mathbf{r}}$, which is then compared with the view vector ${\color{#2196F3}\mathbf{v}}$.
     </figcaption></figure>
@@ -3695,10 +3627,10 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 
 <style>
  
-#editor-4c970dd7 .highlight,
-#editor-4c970dd7 .chroma,
-#editor-4c970dd7 pre,
-#editor-4c970dd7 code {
+#editor-23f190bc .highlight,
+#editor-23f190bc .chroma,
+#editor-23f190bc pre,
+#editor-23f190bc code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3713,16 +3645,16 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 }
 
  
-#editor-4c970dd7 .copy-code,
-#editor-4c970dd7 .chroma .copy-btn { 
+#editor-23f190bc .copy-code,
+#editor-23f190bc .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-4c970dd7" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-4c970dd7" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-23f190bc" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-23f190bc" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3796,11 +3728,11 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-4c970dd7" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-23f190bc" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-4c970dd7" style="display: none;">
+<textarea id="fs-23f190bc" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3876,8 +3808,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-4c970dd7');
-    const editor = document.getElementById('editor-4c970dd7');
+    const canvas = document.getElementById('glcanvas-23f190bc');
+    const editor = document.getElementById('editor-23f190bc');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4066,7 +3998,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-4c970dd7').value.trim();
+    const rawSource = document.getElementById('fs-23f190bc').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4146,7 +4078,7 @@ void main() {
 $$
 {\color{#9C27B0}\mathbf{h}} = \frac{{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}}{\|{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}\|}
 $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/lighting/blinn.svg" alt="Vectors for Blinn-Phong modification" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/lighting/blinn.svg" alt="Vectors for Blinn-Phong modification" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
       The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector ${\color{#9C27B0}\mathbf{h}}$ is used, which sits exactly halfway between the light vector ${\color{#FF9800}\mathbf{l}}$ and view vector ${\color{#2196F3}\mathbf{v}}$.
     </figcaption></figure>
@@ -4161,10 +4093,10 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 
 <style>
  
-#editor-60fc6456 .highlight,
-#editor-60fc6456 .chroma,
-#editor-60fc6456 pre,
-#editor-60fc6456 code {
+#editor-990d841f .highlight,
+#editor-990d841f .chroma,
+#editor-990d841f pre,
+#editor-990d841f code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4179,16 +4111,16 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 }
 
  
-#editor-60fc6456 .copy-code,
-#editor-60fc6456 .chroma .copy-btn { 
+#editor-990d841f .copy-code,
+#editor-990d841f .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-60fc6456" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-60fc6456" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-990d841f" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-990d841f" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4262,11 +4194,11 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-60fc6456" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-990d841f" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-60fc6456" style="display: none;">
+<textarea id="fs-990d841f" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4342,8 +4274,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-60fc6456');
-    const editor = document.getElementById('editor-60fc6456');
+    const canvas = document.getElementById('glcanvas-990d841f');
+    const editor = document.getElementById('editor-990d841f');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4532,7 +4464,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-60fc6456').value.trim();
+    const rawSource = document.getElementById('fs-990d841f').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4634,10 +4566,10 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 
 <style>
  
-#editor-ba4a3c3d .highlight,
-#editor-ba4a3c3d .chroma,
-#editor-ba4a3c3d pre,
-#editor-ba4a3c3d code {
+#editor-eae4e993 .highlight,
+#editor-eae4e993 .chroma,
+#editor-eae4e993 pre,
+#editor-eae4e993 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4652,16 +4584,16 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 }
 
  
-#editor-ba4a3c3d .copy-code,
-#editor-ba4a3c3d .chroma .copy-btn { 
+#editor-eae4e993 .copy-code,
+#editor-eae4e993 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-ba4a3c3d" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-ba4a3c3d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-eae4e993" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-eae4e993" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4748,11 +4680,11 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-ba4a3c3d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-eae4e993" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-ba4a3c3d" style="display: none;">
+<textarea id="fs-eae4e993" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4841,8 +4773,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-ba4a3c3d');
-    const editor = document.getElementById('editor-ba4a3c3d');
+    const canvas = document.getElementById('glcanvas-eae4e993');
+    const editor = document.getElementById('editor-eae4e993');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5031,7 +4963,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-ba4a3c3d').value.trim();
+    const rawSource = document.getElementById('fs-eae4e993').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5117,7 +5049,7 @@ void main() {
 <li>To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{\text{origin}} = \mathbf{p} + \epsilon\mathbf{n}$.</li>
 </ul>
 <figure id="fig-shadow-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:600px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/shadow_ray.svg" alt="Diagram showing a shadow ray hit" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/shadow_ray.svg" alt="Diagram showing a shadow ray hit" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       A shadow ray cast from point $\mathbf{p}$ toward the light source. If an occluder is found at distance ${\color{#795548}t_{\text{hit}}}$ that is less than the distance to the light ${\color{#FF9800}t_{\text{light}}}$, the point is in shadow.
     </figcaption></figure>
@@ -5130,7 +5062,7 @@ $$ {\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#2196F3}\mathbf{v}})
 <em>(Where ${\color{#2196F3}\mathbf{v}}$ points from the surface back to the camera).</em>
 We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of ${\color{#4CAF50}\mathbf{r}}$. Whatever color that ray eventually hits is added to the current pixel&rsquo;s color.</p>
 <figure id="fig-reflected-ray" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/reflected_ray.svg" alt="Diagram showing a reflection ray" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/reflected_ray.svg" alt="Diagram showing a reflection ray" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       A reflection ray is spawned at point $\mathbf{p}$ and cast in the direction $\mathbf{r}$. The color returned by this ray is used to shade the reflective surface.
     </figcaption></figure>
@@ -5147,7 +5079,7 @@ $$
 \cos\theta_T = \sqrt{1 - \left(\frac{\eta_L}{\eta_T}\right)^2\!\left(1 - \cos^2\theta_L\right)}
 $$<p>If the expression under the square root is <strong>negative</strong>, $\cos\theta_T$ has no real solution. This physical phenomenon is <strong>Total Internal Reflection</strong> — no light is transmitted; it is all reflected inside the object.</p>
 <figure id="fig-snells-law" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:500px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/snells_law.svg" alt="Diagram showing refraction" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/raytracing/snells_law.svg" alt="Diagram showing refraction" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       Snell&rsquo;s Law of refraction. Light bends when passing between media with different indices of refraction $\eta_L$ and $\eta_T$.
     </figcaption></figure>
@@ -5159,10 +5091,10 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 
 <style>
  
-#editor-5b43e6eb .highlight,
-#editor-5b43e6eb .chroma,
-#editor-5b43e6eb pre,
-#editor-5b43e6eb code {
+#editor-91c62e56 .highlight,
+#editor-91c62e56 .chroma,
+#editor-91c62e56 pre,
+#editor-91c62e56 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5177,16 +5109,16 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 }
 
  
-#editor-5b43e6eb .copy-code,
-#editor-5b43e6eb .chroma .copy-btn { 
+#editor-91c62e56 .copy-code,
+#editor-91c62e56 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-5b43e6eb" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-5b43e6eb" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-91c62e56" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-91c62e56" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5319,11 +5251,11 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-5b43e6eb" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-91c62e56" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-5b43e6eb" style="display: none;">
+<textarea id="fs-91c62e56" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5458,8 +5390,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-5b43e6eb');
-    const editor = document.getElementById('editor-5b43e6eb');
+    const canvas = document.getElementById('glcanvas-91c62e56');
+    const editor = document.getElementById('editor-91c62e56');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5648,7 +5580,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-5b43e6eb').value.trim();
+    const rawSource = document.getElementById('fs-91c62e56').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5756,10 +5688,10 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 
 <style>
  
-#editor-21906242 .highlight,
-#editor-21906242 .chroma,
-#editor-21906242 pre,
-#editor-21906242 code {
+#editor-013fe4c4 .highlight,
+#editor-013fe4c4 .chroma,
+#editor-013fe4c4 pre,
+#editor-013fe4c4 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5774,16 +5706,16 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 }
 
  
-#editor-21906242 .copy-code,
-#editor-21906242 .chroma .copy-btn { 
+#editor-013fe4c4 .copy-code,
+#editor-013fe4c4 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-21906242" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-21906242" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-013fe4c4" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-013fe4c4" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5859,11 +5791,11 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-21906242" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-013fe4c4" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-21906242" style="display: none;">
+<textarea id="fs-013fe4c4" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5941,8 +5873,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-21906242');
-    const editor = document.getElementById('editor-21906242');
+    const canvas = document.getElementById('glcanvas-013fe4c4');
+    const editor = document.getElementById('editor-013fe4c4');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6131,7 +6063,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-21906242').value.trim();
+    const rawSource = document.getElementById('fs-013fe4c4').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6211,10 +6143,10 @@ void main() {
 
 <style>
  
-#editor-0af649bb .highlight,
-#editor-0af649bb .chroma,
-#editor-0af649bb pre,
-#editor-0af649bb code {
+#editor-41a3b52e .highlight,
+#editor-41a3b52e .chroma,
+#editor-41a3b52e pre,
+#editor-41a3b52e code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6229,16 +6161,16 @@ void main() {
 }
 
  
-#editor-0af649bb .copy-code,
-#editor-0af649bb .chroma .copy-btn { 
+#editor-41a3b52e .copy-code,
+#editor-41a3b52e .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-0af649bb" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-0af649bb" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-41a3b52e" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-41a3b52e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6322,11 +6254,11 @@ void main() {
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-0af649bb" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-41a3b52e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-0af649bb" style="display: none;">
+<textarea id="fs-41a3b52e" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6412,8 +6344,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-0af649bb');
-    const editor = document.getElementById('editor-0af649bb');
+    const canvas = document.getElementById('glcanvas-41a3b52e');
+    const editor = document.getElementById('editor-41a3b52e');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6602,7 +6534,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-0af649bb').value.trim();
+    const rawSource = document.getElementById('fs-41a3b52e').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6688,7 +6620,7 @@ void main() {
 <li>Emission adds radiance generated by the medium.</li>
 </ul>
 <figure id="fig-volume-scatter" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:800px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/volume-rendering/volume-scatter.svg" alt="Volume scattering interactions: absorption, out-scattering, in-scattering, emission" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+  <img class="zoomable-image" src="/images/intro-to-rendering/volume-rendering/volume-scatter.svg" alt="Volume scattering interactions: absorption, out-scattering, in-scattering, emission" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       The four types of volume interactions in participating media: (a) Absorption, (b) Out-scattering, (c) In-scattering, and (d) Emission.
     </figcaption></figure>
@@ -6789,10 +6721,10 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 
 <style>
  
-#editor-876d99cd .highlight,
-#editor-876d99cd .chroma,
-#editor-876d99cd pre,
-#editor-876d99cd code {
+#editor-be2f2294 .highlight,
+#editor-be2f2294 .chroma,
+#editor-be2f2294 pre,
+#editor-be2f2294 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6807,16 +6739,16 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 }
 
  
-#editor-876d99cd .copy-code,
-#editor-876d99cd .chroma .copy-btn { 
+#editor-be2f2294 .copy-code,
+#editor-be2f2294 .chroma .copy-btn { 
     display: none !important; 
 }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-876d99cd" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-876d99cd" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-be2f2294" style="flex: 1 1 350px; background: var(--code-block-bg, #1e1e1e); overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-be2f2294" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6867,11 +6799,11 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-876d99cd" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-be2f2294" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-876d99cd" style="display: none;">
+<textarea id="fs-be2f2294" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6924,8 +6856,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-876d99cd');
-    const editor = document.getElementById('editor-876d99cd');
+    const canvas = document.getElementById('glcanvas-be2f2294');
+    const editor = document.getElementById('editor-be2f2294');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -7114,7 +7046,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-876d99cd').value.trim();
+    const rawSource = document.getElementById('fs-be2f2294').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -7209,19 +7141,19 @@ void main() {
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://USharma002.github.io/tags/rendering/">Rendering</a></li>
-      <li><a href="https://USharma002.github.io/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="http://localhost:1313/tags/rendering/">Rendering</a></li>
+      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/">
+  <a class="prev" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
     <span class="title">« Prev</span>
     <br>
     <span>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing</span>
   </a>
-  <a class="next" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
+  <a class="next" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
     <span class="title">Next »</span>
     <br>
-    <span>Introduction to Differentiable Rendering</span>
+    <span>Differentiable Rendering of Participating Media</span>
   </a>
 </nav>
 
@@ -7230,7 +7162,7 @@ void main() {
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
 
     <span>
         Powered by
