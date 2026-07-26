@@ -8,7 +8,7 @@
 {{- $src := .Get "src" -}}
 {{- $height := .Get "height" | default "800" -}}
 {{- $title := .Get "title" | default "Interactive content" -}}
-{{- $lazy := lower (printf "%v" (.Get "lazy" | default "true")) -}}
+{{- $lazy := lower (printf "%v" (.Get "lazy" | default "false")) -}}
 
 {{- if not (.Page.Scratch.Get "fullscreenIframeInit") -}}
 <style>

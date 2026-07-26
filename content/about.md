@@ -60,7 +60,7 @@ summary: "about"
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/dragon-cbox.png?raw=true" alt="Futaba Renderer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/futaba-window.png?raw=true" alt="Futaba Renderer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/futaba.gif" alt="Futaba Renderer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Futaba Renderer (WIP)</h4>

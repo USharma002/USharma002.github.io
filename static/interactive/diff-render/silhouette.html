@@ -15,79 +15,55 @@
         :root {
             --bg: transparent;
             --text: #0f172a;
-            --text-sub: #475569;
-            --border: rgba(0, 0, 0, 0.15);
-            --btn-bg: rgba(0, 0, 0, 0.05);
+            --text-sub: #334155;
+            --border: rgba(0, 0, 0, 0.2);
+            --btn-bg: rgba(0, 0, 0, 0.06);
             --accent-cyan: #0284c7;
             --accent-green: #16a34a;
             --accent-orange: #ea580c;
             --accent-gold: #d97706;
         }
-
         html.dark, body.dark, [data-theme="dark"] {
             --text: #f8fafc;
-            --text-sub: #94a3b8;
-            --border: rgba(255, 255, 255, 0.2);
-            --btn-bg: rgba(255, 255, 255, 0.08);
+            --text-sub: #cbd5e1;
+            --border: rgba(255, 255, 255, 0.25);
+            --btn-bg: rgba(255, 255, 255, 0.12);
             --accent-cyan: #38bdf8;
             --accent-green: #4ade80;
             --accent-orange: #fb923c;
             --accent-gold: #facc15;
         }
-
         html, body {
             margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden;
             background: transparent !important;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            color: var(--text); user-select: none;
+            color: var(--text) !important;
+            user-select: none;
         }
-
-        #canvas-container {
-            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
-            background: transparent !important;
-        }
-
+        #canvas-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: transparent !important; }
         .controls-panel {
             position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
             background: transparent; border: none; padding: 4px 8px;
             display: flex; gap: 8px 15px; flex-wrap: wrap; align-items: center; justify-content: center;
             z-index: 10; font-size: 0.8rem; width: 100%; max-width: 100vw;
+            color: var(--text) !important;
         }
-
-        .control-group {
-            display: flex; align-items: center; gap: 5px;
-        }
-
-        .control-group label {
-            font-size: 0.8rem; font-weight: 500;
-        }
-
-        .val-badge {
-            font-size: 0.72rem; color: var(--text-sub); min-width: 35px;
-        }
-
-        select, input[type="range"] {
-            background: var(--btn-bg); border: 1px solid var(--border); border-radius: 4px;
-            padding: 2px; cursor: pointer; color: var(--text);
-        }
-
+        .control-group { display: flex; align-items: center; gap: 5px; color: var(--text) !important; }
+        .control-group label { font-size: 0.8rem; font-weight: 600; color: var(--text) !important; }
+        .val-badge { font-size: 0.75rem; font-weight: 600; color: var(--text-sub) !important; min-width: 35px; }
+        select, input[type="range"] { background: var(--btn-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px; cursor: pointer; color: var(--text) !important; }
         .legend {
-            position: absolute; top: 12px; right: 12px;
-            background: transparent; padding: 0; font-size: 0.75rem; z-index: 10;
-            display: flex; flex-direction: column; gap: 4px;
+            position: absolute; top: 12px; right: 12px; background: transparent; padding: 0;
+            font-size: 0.8rem; font-weight: 600; z-index: 10; display: flex; flex-direction: column; gap: 4px;
+            color: var(--text) !important;
         }
-
-        .legend-item {
-            display: flex; align-items: center; gap: 6px;
-        }
-
+        .legend-item { display: flex; align-items: center; gap: 6px; color: var(--text) !important; }
         .legend-line { width: 14px; height: 3px; border-radius: 1px; }
-
         .label-3d {
-            position: absolute; color: var(--text);
-            font-family: 'Times New Roman', serif; font-style: italic; font-weight: bold;
-            font-size: 1.15rem; pointer-events: none; transform: translate(-50%, -50%);
+            position: absolute; color: var(--text) !important; font-family: 'Times New Roman', serif; font-style: italic;
+            font-weight: bold; font-size: 1.15rem; pointer-events: none; transform: translate(-50%,-50%);
         }
+        .katex, .katex-html { color: var(--text) !important; }
     </style>
 </head>
 <body>
@@ -136,12 +112,38 @@
     <script>
         function syncHugoTheme() {
             try {
-                const parentIsDark = window.parent && (window.parent.document.body.classList.contains('dark') || window.parent.document.documentElement.classList.contains('dark'));
-                const selfIsDark = document.documentElement.classList.contains('dark') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                if (parentIsDark || selfIsDark) { document.documentElement.classList.add('dark'); document.body.classList.add('dark'); } 
-                else { document.documentElement.classList.remove('dark'); document.body.classList.remove('dark'); }
+                let isDark = false;
+                if (window.parent && window.parent.document) {
+                    const pBody = window.parent.document.body;
+                    const pHtml = window.parent.document.documentElement;
+                    isDark = pBody.classList.contains('dark') || 
+                             pHtml.classList.contains('dark') ||
+                             pBody.getAttribute('data-theme') === 'dark' ||
+                             pHtml.getAttribute('data-theme') === 'dark';
+                } else {
+                    isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                }
+
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    if (document.body) document.body.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    if (document.body) document.body.classList.remove('dark');
+                }
             } catch(e) {}
         }
+
+        try {
+            if (window.parent && window.parent.document) {
+                const observer = new MutationObserver(syncHugoTheme);
+                observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+                observer.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+            }
+        } catch(e) {}
+
         syncHugoTheme();
 
         function renderMathWhenReady() {

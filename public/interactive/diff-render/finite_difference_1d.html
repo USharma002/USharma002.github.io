@@ -7,154 +7,7 @@
     <!-- KaTeX CSS & JS for Authentic LaTeX Math Rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <style>
-        :root {
-            /* LaTeX Paper Light Theme Defaults */
-            --bg: transparent;
-            --text: #000000;
-            --text-muted: #374151;
-            --axis: #000000;
-            --grid: #9ca3af;
-            --curve: #1d4ed8;
-
-            /* Forward Difference Red Accent */
-            --fd-stroke: #dc2626;
-            --fd-fill: rgba(220, 38, 38, 0.18);
-
-            /* Central Difference Green Accent */
-            --cd-stroke: #16a34a;
-            --cd-fill: rgba(22, 163, 74, 0.18);
-            
-            --btn-bg: #f3f4f6;
-            --btn-border: #d1d5db;
-            --btn-text: #111827;
-            --val-text: #000000;
-        }
-
-        /* Dark Mode Overrides (Synced with PaperMod parent window) */
-        html.dark, body.dark, [data-theme="dark"] {
-            --text: #ffffff;
-            --text-muted: #cbd5e1;
-            --axis: #ffffff;
-            --grid: #6b7280;
-            --curve: #60a5fa;
-
-            --fd-stroke: #f87171;
-            --fd-fill: rgba(248, 113, 113, 0.22);
-
-            --cd-stroke: #4ade80;
-            --cd-fill: rgba(74, 222, 128, 0.22);
-
-            --btn-bg: #1f2937;
-            --btn-border: #374151;
-            --btn-text: #ffffff;
-            --val-text: #ffffff;
-        }
-
-        * { box-sizing: border-box; user-select: none; }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            background: transparent;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            color: var(--text);
-        }
-
-        .container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 18px;
-            padding: 4px;
-        }
-
-        /* Large Controls */
-        .controls-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 28px;
-            width: 100%;
-            padding: 6px 0 10px 0;
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        .slider-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="range"] {
-            width: 130px;
-            height: 18px;
-            accent-color: #2563eb;
-            cursor: pointer;
-        }
-
-        .val-num {
-            font-family: monospace;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--val-text);
-        }
-
-        /* Side-by-Side 2 TeX Figures Grid */
-        .diagram-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 20px;
-            width: 100%;
-        }
-
-        .fig-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .fig-box {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 420 / 280;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        svg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: block; overflow: visible;
-        }
-
-        .caption-katex {
-            margin-top: 6px;
-            font-size: 14px;
-            text-align: center;
-        }
-
-        /* KaTeX Overlay positioning */
-        .katex-label {
-            display: inline-block;
-            white-space: nowrap;
-            font-size: 15px;
-            color: var(--text);
-        }
-        
-        .draggable-dot {
-            cursor: grab;
-            transition: r 0.15s ease;
-        }
-        .draggable-dot:active {
-            cursor: grabbing;
-            r: 8.0;
-        }
-    </style>
+    <style>:root{--bg:transparent;--text:#000000;--text-muted:#374151;--axis:#000000;--grid:#9ca3af;--curve:#1d4ed8;--fd-stroke:#dc2626;--fd-fill:rgba(220,38,38,0.18);--cd-stroke:#16a34a;--cd-fill:rgba(22,163,74,0.18);--btn-bg:#f3f4f6;--btn-border:#d1d5db;--btn-text:#111827;--val-text:#000000;}html.dark,body.dark,[data-theme="dark"]{--text:#ffffff;--text-muted:#cbd5e1;--axis:#ffffff;--grid:#6b7280;--curve:#60a5fa;--fd-stroke:#f87171;--fd-fill:rgba(248,113,113,0.22);--cd-stroke:#4ade80;--cd-fill:rgba(74,222,128,0.22);--btn-bg:#1f2937;--btn-border:#374151;--btn-text:#ffffff;--val-text:#ffffff;}*{box-sizing:border-box;user-select:none;}html,body{margin:0;padding:0;width:100%;background:transparent;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);}.container{width:100%;display:flex;flex-direction:column;align-items:center;gap:18px;padding:4px;}.controls-bar{display:flex;align-items:center;justify-content:center;gap:28px;width:100%;padding:6px 0 10px 0;font-size:15px;font-weight:700;color:var(--text-muted);}.slider-group{display:flex;align-items:center;gap:10px;}input[type="range"]{width:130px;height:18px;accent-color:#2563eb;cursor:pointer;}.val-num{font-family:monospace;font-size:16px;font-weight:700;color:var(--val-text);}.diagram-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:20px;width:100%;}.fig-card{display:flex;flex-direction:column;align-items:center;width:100%;}.fig-box{position:relative;width:100%;aspect-ratio:420 / 280;background:transparent;cursor:pointer;}svg{position:absolute;top:0;left:0;width:100%;height:100%;display:block;overflow:visible;}.caption-katex{margin-top:6px;font-size:14px;text-align:center;}.katex-label{display:inline-block;white-space:nowrap;font-size:15px;color:var(--text);}.draggable-dot{cursor:grab;transition:r 0.15s ease;}.draggable-dot:active{cursor:grabbing;r:8.0;}</style>
 </head>
 <body>
 
@@ -368,6 +221,18 @@
         document.getElementById('curve-cd').setAttribute('d', d);
     }
 
+    
+    let _rafScheduled = false;
+    function requestUpdate() {
+        if (!_rafScheduled) {
+            _rafScheduled = true;
+            requestAnimationFrame(() => {
+                _rafScheduled = false;
+                update();
+            });
+        }
+    }
+    
     function update() {
         const x = state.x, h = state.h;
         valX.textContent = x.toFixed(2);
@@ -481,8 +346,8 @@
     }
 
     // Input Events
-    sliderX.addEventListener('input', (e) => { state.x = parseFloat(e.target.value); update(); });
-    sliderH.addEventListener('input', (e) => { state.h = parseFloat(e.target.value); update(); });
+    sliderX.addEventListener('input', (e) => { state.x = parseFloat(e.target.value);  requestUpdate(); });
+    sliderH.addEventListener('input', (e) => { state.h = parseFloat(e.target.value);  requestUpdate(); });
 
     // Interactive Pointer Dragging on SVGs
     const svgFD = document.getElementById('svg-fd'), svgCD = document.getElementById('svg-cd');

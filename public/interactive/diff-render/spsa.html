@@ -4,188 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SPSA - Parent Synchronized TeX Diagram</title>
-    <style>
-        :root {
-            /* Default Light Mode Parameters (PaperMod Day Theme) */
-            --bg: transparent;
-            --text: #0f172a;
-            --text-muted: #1e293b;
-            --axis: #ffffff;
-            --grid: rgba(255, 255, 255, 0.45);
-            --contour: rgba(255, 255, 255, 0.28);
-            --pert-line: #fb923c;
-            --pert-point: #f97316;
-            --grad-blue: #38bdf8;
-            --spsa-orange: #d97706;
-            --avg-green: #059669;
-
-            /* Light Mode Control UI */
-            --btn-bg: #f1f5f9;
-            --btn-border: #cbd5e1;
-            --btn-text: #0f172a;
-            --btn-hover: #e2e8f0;
-            --val-text: #0f172a;
-        }
-
-        /* Dark Mode Overrides (Synced from Parent PaperMod Theme or System) */
-        html.dark, body.dark, [data-theme="dark"] {
-            --text: #f8fafc;
-            --text-muted: #e2e8f0;
-            --axis: #ffffff;
-            --grid: rgba(255, 255, 255, 0.45);
-            --grad-blue: #38bdf8;
-            --spsa-orange: #fbbf24;
-            --avg-green: #34d399;
-
-            /* Dark Mode Control UI */
-            --btn-bg: #21262d;
-            --btn-border: #363b42;
-            --btn-text: #ffffff;
-            --btn-hover: #30363d;
-            --val-text: #ffffff;
-        }
-
-        * { box-sizing: border-box; user-select: none; }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            background: transparent;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            color: var(--text);
-        }
-
-        .diagram-wrapper {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 14px;
-            padding: 0;
-            margin: 0;
-        }
-
-        .canvas-container {
-            position: relative;
-            width: 100%;
-            max-height: 380px;
-            aspect-ratio: 400 / 250;
-            border-radius: 0;
-            overflow: hidden;
-            background: #000004;
-            border: none;
-            box-shadow: none;
-        }
-
-        canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: block;
-        }
-
-        svg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: block; overflow: visible;
-        }
-
-        /* LaTeX / KaTeX Typography */
-        .label-text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: var(--text-muted); }
-        .label-math {
-            font-family: 'KaTeX_Math', 'Times New Roman', Times, serif;
-            font-style: italic; font-size: 14px; fill: #ffffff;
-            paint-order: stroke fill; stroke: rgba(0, 0, 4, 0.95);
-            stroke-width: 3.5px; stroke-linecap: round; stroke-linejoin: round;
-        }
-
-        .label-orange { fill: var(--spsa-orange); stroke: rgba(0,0,4,0.95); }
-        .label-blue   { fill: var(--grad-blue);   stroke: rgba(0,0,4,0.95); }
-        .label-green  { fill: var(--avg-green);  stroke: rgba(0,0,4,0.95); }
-
-        /* Full Width Centered Legend & Controls */
-        .diagram-legend {
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px 24px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            padding: 6px 0;
-            border-top: none;
-        }
-
-        .legend-item { display: flex; align-items: center; gap: 8px; }
-        .legend-line { width: 18px; height: 0; border-top: 2px solid; }
-        .legend-line.dashed { border-top-style: dashed; }
-
-        .minimal-controls {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 24px;
-            width: 100%;
-            padding: 6px 0 12px 0;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        /* Theme Adaptive Buttons */
-        .btn-minimal {
-            background: var(--btn-bg) !important;
-            border: 1.5px solid var(--btn-border) !important;
-            color: var(--btn-text) !important;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-            transition: all 0.18s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-minimal:hover {
-            background: var(--btn-hover) !important;
-            border-color: var(--spsa-orange) !important;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
-        }
-
-        .btn-minimal:active {
-            transform: translateY(0);
-        }
-
-        .slider-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        input[type="range"] {
-            width: 100px;
-            height: 18px;
-            accent-color: var(--spsa-orange);
-            cursor: pointer;
-        }
-
-        .val-num {
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--val-text) !important;
-        }
-
-        .sample-counter {
-            font-size: 13px;
-            font-weight: 600;
-        }
-    </style>
+    <style>:root{--bg:transparent;--text:#0f172a;--text-muted:#1e293b;--axis:#ffffff;--grid:rgba(255,255,255,0.45);--contour:rgba(255,255,255,0.28);--pert-line:#fb923c;--pert-point:#f97316;--grad-blue:#38bdf8;--spsa-orange:#d97706;--avg-green:#059669;--btn-bg:#f1f5f9;--btn-border:#cbd5e1;--btn-text:#0f172a;--btn-hover:#e2e8f0;--val-text:#0f172a;}html.dark,body.dark,[data-theme="dark"]{--text:#f8fafc;--text-muted:#e2e8f0;--axis:#ffffff;--grid:rgba(255,255,255,0.45);--grad-blue:#38bdf8;--spsa-orange:#fbbf24;--avg-green:#34d399;--btn-bg:#21262d;--btn-border:#363b42;--btn-text:#ffffff;--btn-hover:#30363d;--val-text:#ffffff;}*{box-sizing:border-box;user-select:none;}html,body{margin:0;padding:0;width:100%;background:transparent;font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);}.diagram-wrapper{width:100%;display:flex;flex-direction:column;align-items:center;gap:14px;padding:0;margin:0;}.canvas-container{position:relative;width:100%;max-height:380px;aspect-ratio:400 / 250;border-radius:0;overflow:hidden;background:#000004;border:none;box-shadow:none;}canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}svg{position:absolute;top:0;left:0;width:100%;height:100%;display:block;overflow:visible;}.label-text{font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:12px;fill:var(--text-muted);}.label-math{font-family:'KaTeX_Math','Times New Roman',Times,serif;font-style:italic;font-size:14px;fill:#ffffff;paint-order:stroke fill;stroke:rgba(0,0,4,0.95);stroke-width:3.5px;stroke-linecap:round;stroke-linejoin:round;}.label-orange{fill:var(--spsa-orange);stroke:rgba(0,0,4,0.95);}.label-blue{fill:var(--grad-blue);stroke:rgba(0,0,4,0.95);}.label-green{fill:var(--avg-green);stroke:rgba(0,0,4,0.95);}.diagram-legend{width:100%;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 24px;font-size:13px;font-weight:600;color:var(--text-muted);padding:6px 0;border-top:none;}.legend-item{display:flex;align-items:center;gap:8px;}.legend-line{width:18px;height:0;border-top:2px solid;}.legend-line.dashed{border-top-style:dashed;}.minimal-controls{display:flex;align-items:center;justify-content:center;gap:24px;width:100%;padding:6px 0 12px 0;font-size:13px;font-weight:600;color:var(--text-muted);}.btn-minimal{background:var(--btn-bg) !important;border:1.5px solid var(--btn-border) !important;color:var(--btn-text) !important;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.12);transition:all 0.18s ease;display:inline-flex;align-items:center;gap:6px;}.btn-minimal:hover{background:var(--btn-hover) !important;border-color:var(--spsa-orange) !important;transform:translateY(-1px);box-shadow:0 3px 6px rgba(0,0,0,0.18);}.btn-minimal:active{transform:translateY(0);}.slider-group{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}input[type="range"]{width:100px;height:18px;accent-color:var(--spsa-orange);cursor:pointer;}.val-num{font-family:monospace;font-weight:700;color:var(--val-text) !important;}.sample-counter{font-size:13px;font-weight:600;}</style>
 </head>
 <body>
 
@@ -389,6 +208,18 @@
         return [diff * d1, diff * d2];
     }
 
+    
+    let _rafScheduled = false;
+    function requestUpdate() {
+        if (!_rafScheduled) {
+            _rafScheduled = true;
+            requestAnimationFrame(() => {
+                _rafScheduled = false;
+                update();
+            });
+        }
+    }
+    
     function update() {
         const [x1, x2] = state.x, [d1, d2] = state.delta, h = state.h;
         const [cx, cy] = mathToSvg(x1, x2);
