@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>Introduction to 3D Rendering | USharma Notes</title>
 <meta name="keywords" content="Rendering, Computer Graphics">
 <meta name="description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="http://localhost:1313/posts/intro-to-rendering/">
+<link rel="canonical" href="https://USharma002.github.io/posts/intro-to-rendering/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.fca3f056e7a225d4c87bd8ff804ab024727bdcf3d542ddb687b278e1431005ed.css" integrity="sha256-/KPwVueiJdTIe9j/gEqwJHJ73PPVQt22h7J44UMQBe0=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://USharma002.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/intro-to-rendering/">
+<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/intro-to-rendering/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,7 +77,75 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/intro-to-rendering/">
+  <meta property="og:site_name" content="USharma Notes">
+  <meta property="og:title" content="Introduction to 3D Rendering">
+  <meta property="og:description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-04-30T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-04-30T00:00:00+00:00">
+    <meta property="article:tag" content="Rendering">
+    <meta property="article:tag" content="Computer Graphics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Introduction to 3D Rendering">
+<meta name="twitter:description" content="A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://USharma002.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Introduction to 3D Rendering",
+      "item": "https://USharma002.github.io/posts/intro-to-rendering/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to 3D Rendering",
+  "name": "Introduction to 3D Rendering",
+  "description": "A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.",
+  "keywords": [
+    "Rendering", "Computer Graphics"
+  ],
+  "articleBody": "A long-form guide to 3D rendering from first principles: transforms, camera and projection, ray generation, intersections, shading, ray tracing, path tracing, signed distance functions, and volume rendering.",
+  "wordCount" : "19860",
+  "inLanguage": "en",
+  "datePublished": "2026-04-30T00:00:00Z",
+  "dateModified": "2026-04-30T00:00:00Z",
+  "author":[{
+    "@type": "Person",
+    "name": "Utkarsh Sharma"
+  }],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://USharma002.github.io/posts/intro-to-rendering/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "USharma Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://USharma002.github.io/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -95,7 +163,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -121,22 +189,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="Posts">
+                <a href="https://USharma002.github.io/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/archives/" title="Archive">
+                <a href="https://USharma002.github.io/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/tags/" title="Tags">
+                <a href="https://USharma002.github.io/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="About">
+                <a href="https://USharma002.github.io/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -147,7 +215,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Introduction to 3D Rendering
     </h1>
@@ -1325,10 +1393,10 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 
 <style>
  
-#editor-47110d47 .highlight,
-#editor-47110d47 .chroma,
-#editor-47110d47 pre,
-#editor-47110d47 code {
+#editor-2d8670a7 .highlight,
+#editor-2d8670a7 .chroma,
+#editor-2d8670a7 pre,
+#editor-2d8670a7 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1343,92 +1411,92 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 }
 
  
-#editor-47110d47 .copy-code,
-#editor-47110d47 .chroma .copy-btn { 
+#editor-2d8670a7 .copy-code,
+#editor-2d8670a7 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-47110d47 {
+.glsl-code-panel-2d8670a7 {
     background-color: #1e1e1e !important;
 }
 
-#editor-47110d47,
-#editor-47110d47 .chroma {
+#editor-2d8670a7,
+#editor-2d8670a7 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-47110d47 .chroma .k,
-#editor-47110d47 .chroma .kd,
-#editor-47110d47 .chroma .kn,
-#editor-47110d47 .chroma .kp,
-#editor-47110d47 .chroma .kr,
-#editor-47110d47 .chroma .ow,
-#editor-47110d47 .chroma .cp,
-#editor-47110d47 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-2d8670a7 .chroma .k,
+#editor-2d8670a7 .chroma .kd,
+#editor-2d8670a7 .chroma .kn,
+#editor-2d8670a7 .chroma .kp,
+#editor-2d8670a7 .chroma .kr,
+#editor-2d8670a7 .chroma .ow,
+#editor-2d8670a7 .chroma .cp,
+#editor-2d8670a7 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-47110d47 .chroma .kt,
-#editor-47110d47 .chroma .nb,
-#editor-47110d47 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-2d8670a7 .chroma .kt,
+#editor-2d8670a7 .chroma .nb,
+#editor-2d8670a7 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-47110d47 .chroma .nf,
-#editor-47110d47 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-2d8670a7 .chroma .nf,
+#editor-2d8670a7 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-47110d47 .chroma .m,
-#editor-47110d47 .chroma .mb,
-#editor-47110d47 .chroma .mf,
-#editor-47110d47 .chroma .mh,
-#editor-47110d47 .chroma .mi,
-#editor-47110d47 .chroma .il,
-#editor-47110d47 .chroma .mo,
-#editor-47110d47 .chroma .kc { color: #b5cea8 !important; }
+#editor-2d8670a7 .chroma .m,
+#editor-2d8670a7 .chroma .mb,
+#editor-2d8670a7 .chroma .mf,
+#editor-2d8670a7 .chroma .mh,
+#editor-2d8670a7 .chroma .mi,
+#editor-2d8670a7 .chroma .il,
+#editor-2d8670a7 .chroma .mo,
+#editor-2d8670a7 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-47110d47 .chroma .s,
-#editor-47110d47 .chroma .sa,
-#editor-47110d47 .chroma .sb,
-#editor-47110d47 .chroma .sc,
-#editor-47110d47 .chroma .dl,
-#editor-47110d47 .chroma .sd,
-#editor-47110d47 .chroma .s2,
-#editor-47110d47 .chroma .se,
-#editor-47110d47 .chroma .sh,
-#editor-47110d47 .chroma .si,
-#editor-47110d47 .chroma .sx,
-#editor-47110d47 .chroma .sr,
-#editor-47110d47 .chroma .s1,
-#editor-47110d47 .chroma .ss { color: #ce9178 !important; }
+#editor-2d8670a7 .chroma .s,
+#editor-2d8670a7 .chroma .sa,
+#editor-2d8670a7 .chroma .sb,
+#editor-2d8670a7 .chroma .sc,
+#editor-2d8670a7 .chroma .dl,
+#editor-2d8670a7 .chroma .sd,
+#editor-2d8670a7 .chroma .s2,
+#editor-2d8670a7 .chroma .se,
+#editor-2d8670a7 .chroma .sh,
+#editor-2d8670a7 .chroma .si,
+#editor-2d8670a7 .chroma .sx,
+#editor-2d8670a7 .chroma .sr,
+#editor-2d8670a7 .chroma .s1,
+#editor-2d8670a7 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-47110d47 .chroma .c,
-#editor-47110d47 .chroma .ch,
-#editor-47110d47 .chroma .cm,
-#editor-47110d47 .chroma .c1,
-#editor-47110d47 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-2d8670a7 .chroma .c,
+#editor-2d8670a7 .chroma .ch,
+#editor-2d8670a7 .chroma .cm,
+#editor-2d8670a7 .chroma .c1,
+#editor-2d8670a7 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-47110d47 .chroma .o { color: #d4d4d4 !important; }
-#editor-47110d47 .chroma .p { color: #d4d4d4 !important; }
+#editor-2d8670a7 .chroma .o { color: #d4d4d4 !important; }
+#editor-2d8670a7 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-47110d47 .chroma .n,
-#editor-47110d47 .chroma .nx,
-#editor-47110d47 .chroma .nv,
-#editor-47110d47 .chroma .vc,
-#editor-47110d47 .chroma .vg,
-#editor-47110d47 .chroma .vi,
-#editor-47110d47 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-2d8670a7 .chroma .n,
+#editor-2d8670a7 .chroma .nx,
+#editor-2d8670a7 .chroma .nv,
+#editor-2d8670a7 .chroma .vc,
+#editor-2d8670a7 .chroma .vg,
+#editor-2d8670a7 .chroma .vi,
+#editor-2d8670a7 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-47110d47" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-47110d47" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-2d8670a7" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-2d8670a7" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1472,11 +1540,11 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-47110d47" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-2d8670a7" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-47110d47" style="display: none;">
+<textarea id="fs-2d8670a7" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1522,8 +1590,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-47110d47');
-    const editor = document.getElementById('editor-47110d47');
+    const canvas = document.getElementById('glcanvas-2d8670a7');
+    const editor = document.getElementById('editor-2d8670a7');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -1712,7 +1780,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-47110d47').value.trim();
+    const rawSource = document.getElementById('fs-2d8670a7').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -1862,10 +1930,10 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 
 <style>
  
-#editor-aaf45172 .highlight,
-#editor-aaf45172 .chroma,
-#editor-aaf45172 pre,
-#editor-aaf45172 code {
+#editor-e528ee44 .highlight,
+#editor-e528ee44 .chroma,
+#editor-e528ee44 pre,
+#editor-e528ee44 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1880,92 +1948,92 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 }
 
  
-#editor-aaf45172 .copy-code,
-#editor-aaf45172 .chroma .copy-btn { 
+#editor-e528ee44 .copy-code,
+#editor-e528ee44 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-aaf45172 {
+.glsl-code-panel-e528ee44 {
     background-color: #1e1e1e !important;
 }
 
-#editor-aaf45172,
-#editor-aaf45172 .chroma {
+#editor-e528ee44,
+#editor-e528ee44 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-aaf45172 .chroma .k,
-#editor-aaf45172 .chroma .kd,
-#editor-aaf45172 .chroma .kn,
-#editor-aaf45172 .chroma .kp,
-#editor-aaf45172 .chroma .kr,
-#editor-aaf45172 .chroma .ow,
-#editor-aaf45172 .chroma .cp,
-#editor-aaf45172 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-e528ee44 .chroma .k,
+#editor-e528ee44 .chroma .kd,
+#editor-e528ee44 .chroma .kn,
+#editor-e528ee44 .chroma .kp,
+#editor-e528ee44 .chroma .kr,
+#editor-e528ee44 .chroma .ow,
+#editor-e528ee44 .chroma .cp,
+#editor-e528ee44 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-aaf45172 .chroma .kt,
-#editor-aaf45172 .chroma .nb,
-#editor-aaf45172 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-e528ee44 .chroma .kt,
+#editor-e528ee44 .chroma .nb,
+#editor-e528ee44 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-aaf45172 .chroma .nf,
-#editor-aaf45172 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-e528ee44 .chroma .nf,
+#editor-e528ee44 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-aaf45172 .chroma .m,
-#editor-aaf45172 .chroma .mb,
-#editor-aaf45172 .chroma .mf,
-#editor-aaf45172 .chroma .mh,
-#editor-aaf45172 .chroma .mi,
-#editor-aaf45172 .chroma .il,
-#editor-aaf45172 .chroma .mo,
-#editor-aaf45172 .chroma .kc { color: #b5cea8 !important; }
+#editor-e528ee44 .chroma .m,
+#editor-e528ee44 .chroma .mb,
+#editor-e528ee44 .chroma .mf,
+#editor-e528ee44 .chroma .mh,
+#editor-e528ee44 .chroma .mi,
+#editor-e528ee44 .chroma .il,
+#editor-e528ee44 .chroma .mo,
+#editor-e528ee44 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-aaf45172 .chroma .s,
-#editor-aaf45172 .chroma .sa,
-#editor-aaf45172 .chroma .sb,
-#editor-aaf45172 .chroma .sc,
-#editor-aaf45172 .chroma .dl,
-#editor-aaf45172 .chroma .sd,
-#editor-aaf45172 .chroma .s2,
-#editor-aaf45172 .chroma .se,
-#editor-aaf45172 .chroma .sh,
-#editor-aaf45172 .chroma .si,
-#editor-aaf45172 .chroma .sx,
-#editor-aaf45172 .chroma .sr,
-#editor-aaf45172 .chroma .s1,
-#editor-aaf45172 .chroma .ss { color: #ce9178 !important; }
+#editor-e528ee44 .chroma .s,
+#editor-e528ee44 .chroma .sa,
+#editor-e528ee44 .chroma .sb,
+#editor-e528ee44 .chroma .sc,
+#editor-e528ee44 .chroma .dl,
+#editor-e528ee44 .chroma .sd,
+#editor-e528ee44 .chroma .s2,
+#editor-e528ee44 .chroma .se,
+#editor-e528ee44 .chroma .sh,
+#editor-e528ee44 .chroma .si,
+#editor-e528ee44 .chroma .sx,
+#editor-e528ee44 .chroma .sr,
+#editor-e528ee44 .chroma .s1,
+#editor-e528ee44 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-aaf45172 .chroma .c,
-#editor-aaf45172 .chroma .ch,
-#editor-aaf45172 .chroma .cm,
-#editor-aaf45172 .chroma .c1,
-#editor-aaf45172 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-e528ee44 .chroma .c,
+#editor-e528ee44 .chroma .ch,
+#editor-e528ee44 .chroma .cm,
+#editor-e528ee44 .chroma .c1,
+#editor-e528ee44 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-aaf45172 .chroma .o { color: #d4d4d4 !important; }
-#editor-aaf45172 .chroma .p { color: #d4d4d4 !important; }
+#editor-e528ee44 .chroma .o { color: #d4d4d4 !important; }
+#editor-e528ee44 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-aaf45172 .chroma .n,
-#editor-aaf45172 .chroma .nx,
-#editor-aaf45172 .chroma .nv,
-#editor-aaf45172 .chroma .vc,
-#editor-aaf45172 .chroma .vg,
-#editor-aaf45172 .chroma .vi,
-#editor-aaf45172 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-e528ee44 .chroma .n,
+#editor-e528ee44 .chroma .nx,
+#editor-e528ee44 .chroma .nv,
+#editor-e528ee44 .chroma .vc,
+#editor-e528ee44 .chroma .vg,
+#editor-e528ee44 .chroma .vi,
+#editor-e528ee44 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-aaf45172" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-aaf45172" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-e528ee44" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-e528ee44" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2013,11 +2081,11 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-aaf45172" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-e528ee44" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-aaf45172" style="display: none;">
+<textarea id="fs-e528ee44" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2067,8 +2135,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-aaf45172');
-    const editor = document.getElementById('editor-aaf45172');
+    const canvas = document.getElementById('glcanvas-e528ee44');
+    const editor = document.getElementById('editor-e528ee44');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2257,7 +2325,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-aaf45172').value.trim();
+    const rawSource = document.getElementById('fs-e528ee44').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2366,10 +2434,10 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 <style>
  
-#editor-72e901d4 .highlight,
-#editor-72e901d4 .chroma,
-#editor-72e901d4 pre,
-#editor-72e901d4 code {
+#editor-42777d50 .highlight,
+#editor-42777d50 .chroma,
+#editor-42777d50 pre,
+#editor-42777d50 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2384,92 +2452,92 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 }
 
  
-#editor-72e901d4 .copy-code,
-#editor-72e901d4 .chroma .copy-btn { 
+#editor-42777d50 .copy-code,
+#editor-42777d50 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-72e901d4 {
+.glsl-code-panel-42777d50 {
     background-color: #1e1e1e !important;
 }
 
-#editor-72e901d4,
-#editor-72e901d4 .chroma {
+#editor-42777d50,
+#editor-42777d50 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-72e901d4 .chroma .k,
-#editor-72e901d4 .chroma .kd,
-#editor-72e901d4 .chroma .kn,
-#editor-72e901d4 .chroma .kp,
-#editor-72e901d4 .chroma .kr,
-#editor-72e901d4 .chroma .ow,
-#editor-72e901d4 .chroma .cp,
-#editor-72e901d4 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-42777d50 .chroma .k,
+#editor-42777d50 .chroma .kd,
+#editor-42777d50 .chroma .kn,
+#editor-42777d50 .chroma .kp,
+#editor-42777d50 .chroma .kr,
+#editor-42777d50 .chroma .ow,
+#editor-42777d50 .chroma .cp,
+#editor-42777d50 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-72e901d4 .chroma .kt,
-#editor-72e901d4 .chroma .nb,
-#editor-72e901d4 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-42777d50 .chroma .kt,
+#editor-42777d50 .chroma .nb,
+#editor-42777d50 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-72e901d4 .chroma .nf,
-#editor-72e901d4 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-42777d50 .chroma .nf,
+#editor-42777d50 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-72e901d4 .chroma .m,
-#editor-72e901d4 .chroma .mb,
-#editor-72e901d4 .chroma .mf,
-#editor-72e901d4 .chroma .mh,
-#editor-72e901d4 .chroma .mi,
-#editor-72e901d4 .chroma .il,
-#editor-72e901d4 .chroma .mo,
-#editor-72e901d4 .chroma .kc { color: #b5cea8 !important; }
+#editor-42777d50 .chroma .m,
+#editor-42777d50 .chroma .mb,
+#editor-42777d50 .chroma .mf,
+#editor-42777d50 .chroma .mh,
+#editor-42777d50 .chroma .mi,
+#editor-42777d50 .chroma .il,
+#editor-42777d50 .chroma .mo,
+#editor-42777d50 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-72e901d4 .chroma .s,
-#editor-72e901d4 .chroma .sa,
-#editor-72e901d4 .chroma .sb,
-#editor-72e901d4 .chroma .sc,
-#editor-72e901d4 .chroma .dl,
-#editor-72e901d4 .chroma .sd,
-#editor-72e901d4 .chroma .s2,
-#editor-72e901d4 .chroma .se,
-#editor-72e901d4 .chroma .sh,
-#editor-72e901d4 .chroma .si,
-#editor-72e901d4 .chroma .sx,
-#editor-72e901d4 .chroma .sr,
-#editor-72e901d4 .chroma .s1,
-#editor-72e901d4 .chroma .ss { color: #ce9178 !important; }
+#editor-42777d50 .chroma .s,
+#editor-42777d50 .chroma .sa,
+#editor-42777d50 .chroma .sb,
+#editor-42777d50 .chroma .sc,
+#editor-42777d50 .chroma .dl,
+#editor-42777d50 .chroma .sd,
+#editor-42777d50 .chroma .s2,
+#editor-42777d50 .chroma .se,
+#editor-42777d50 .chroma .sh,
+#editor-42777d50 .chroma .si,
+#editor-42777d50 .chroma .sx,
+#editor-42777d50 .chroma .sr,
+#editor-42777d50 .chroma .s1,
+#editor-42777d50 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-72e901d4 .chroma .c,
-#editor-72e901d4 .chroma .ch,
-#editor-72e901d4 .chroma .cm,
-#editor-72e901d4 .chroma .c1,
-#editor-72e901d4 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-42777d50 .chroma .c,
+#editor-42777d50 .chroma .ch,
+#editor-42777d50 .chroma .cm,
+#editor-42777d50 .chroma .c1,
+#editor-42777d50 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-72e901d4 .chroma .o { color: #d4d4d4 !important; }
-#editor-72e901d4 .chroma .p { color: #d4d4d4 !important; }
+#editor-42777d50 .chroma .o { color: #d4d4d4 !important; }
+#editor-42777d50 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-72e901d4 .chroma .n,
-#editor-72e901d4 .chroma .nx,
-#editor-72e901d4 .chroma .nv,
-#editor-72e901d4 .chroma .vc,
-#editor-72e901d4 .chroma .vg,
-#editor-72e901d4 .chroma .vi,
-#editor-72e901d4 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-42777d50 .chroma .n,
+#editor-42777d50 .chroma .nx,
+#editor-42777d50 .chroma .nv,
+#editor-42777d50 .chroma .vc,
+#editor-42777d50 .chroma .vg,
+#editor-42777d50 .chroma .vi,
+#editor-42777d50 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-72e901d4" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-72e901d4" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-42777d50" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-42777d50" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2529,11 +2597,11 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-72e901d4" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-42777d50" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-72e901d4" style="display: none;">
+<textarea id="fs-42777d50" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2595,8 +2663,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-72e901d4');
-    const editor = document.getElementById('editor-72e901d4');
+    const canvas = document.getElementById('glcanvas-42777d50');
+    const editor = document.getElementById('editor-42777d50');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2785,7 +2853,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-72e901d4').value.trim();
+    const rawSource = document.getElementById('fs-42777d50').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2914,10 +2982,10 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 
 <style>
  
-#editor-93ad80e5 .highlight,
-#editor-93ad80e5 .chroma,
-#editor-93ad80e5 pre,
-#editor-93ad80e5 code {
+#editor-66d8a5f8 .highlight,
+#editor-66d8a5f8 .chroma,
+#editor-66d8a5f8 pre,
+#editor-66d8a5f8 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2932,92 +3000,92 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 }
 
  
-#editor-93ad80e5 .copy-code,
-#editor-93ad80e5 .chroma .copy-btn { 
+#editor-66d8a5f8 .copy-code,
+#editor-66d8a5f8 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-93ad80e5 {
+.glsl-code-panel-66d8a5f8 {
     background-color: #1e1e1e !important;
 }
 
-#editor-93ad80e5,
-#editor-93ad80e5 .chroma {
+#editor-66d8a5f8,
+#editor-66d8a5f8 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-93ad80e5 .chroma .k,
-#editor-93ad80e5 .chroma .kd,
-#editor-93ad80e5 .chroma .kn,
-#editor-93ad80e5 .chroma .kp,
-#editor-93ad80e5 .chroma .kr,
-#editor-93ad80e5 .chroma .ow,
-#editor-93ad80e5 .chroma .cp,
-#editor-93ad80e5 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-66d8a5f8 .chroma .k,
+#editor-66d8a5f8 .chroma .kd,
+#editor-66d8a5f8 .chroma .kn,
+#editor-66d8a5f8 .chroma .kp,
+#editor-66d8a5f8 .chroma .kr,
+#editor-66d8a5f8 .chroma .ow,
+#editor-66d8a5f8 .chroma .cp,
+#editor-66d8a5f8 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-93ad80e5 .chroma .kt,
-#editor-93ad80e5 .chroma .nb,
-#editor-93ad80e5 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-66d8a5f8 .chroma .kt,
+#editor-66d8a5f8 .chroma .nb,
+#editor-66d8a5f8 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-93ad80e5 .chroma .nf,
-#editor-93ad80e5 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-66d8a5f8 .chroma .nf,
+#editor-66d8a5f8 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-93ad80e5 .chroma .m,
-#editor-93ad80e5 .chroma .mb,
-#editor-93ad80e5 .chroma .mf,
-#editor-93ad80e5 .chroma .mh,
-#editor-93ad80e5 .chroma .mi,
-#editor-93ad80e5 .chroma .il,
-#editor-93ad80e5 .chroma .mo,
-#editor-93ad80e5 .chroma .kc { color: #b5cea8 !important; }
+#editor-66d8a5f8 .chroma .m,
+#editor-66d8a5f8 .chroma .mb,
+#editor-66d8a5f8 .chroma .mf,
+#editor-66d8a5f8 .chroma .mh,
+#editor-66d8a5f8 .chroma .mi,
+#editor-66d8a5f8 .chroma .il,
+#editor-66d8a5f8 .chroma .mo,
+#editor-66d8a5f8 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-93ad80e5 .chroma .s,
-#editor-93ad80e5 .chroma .sa,
-#editor-93ad80e5 .chroma .sb,
-#editor-93ad80e5 .chroma .sc,
-#editor-93ad80e5 .chroma .dl,
-#editor-93ad80e5 .chroma .sd,
-#editor-93ad80e5 .chroma .s2,
-#editor-93ad80e5 .chroma .se,
-#editor-93ad80e5 .chroma .sh,
-#editor-93ad80e5 .chroma .si,
-#editor-93ad80e5 .chroma .sx,
-#editor-93ad80e5 .chroma .sr,
-#editor-93ad80e5 .chroma .s1,
-#editor-93ad80e5 .chroma .ss { color: #ce9178 !important; }
+#editor-66d8a5f8 .chroma .s,
+#editor-66d8a5f8 .chroma .sa,
+#editor-66d8a5f8 .chroma .sb,
+#editor-66d8a5f8 .chroma .sc,
+#editor-66d8a5f8 .chroma .dl,
+#editor-66d8a5f8 .chroma .sd,
+#editor-66d8a5f8 .chroma .s2,
+#editor-66d8a5f8 .chroma .se,
+#editor-66d8a5f8 .chroma .sh,
+#editor-66d8a5f8 .chroma .si,
+#editor-66d8a5f8 .chroma .sx,
+#editor-66d8a5f8 .chroma .sr,
+#editor-66d8a5f8 .chroma .s1,
+#editor-66d8a5f8 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-93ad80e5 .chroma .c,
-#editor-93ad80e5 .chroma .ch,
-#editor-93ad80e5 .chroma .cm,
-#editor-93ad80e5 .chroma .c1,
-#editor-93ad80e5 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-66d8a5f8 .chroma .c,
+#editor-66d8a5f8 .chroma .ch,
+#editor-66d8a5f8 .chroma .cm,
+#editor-66d8a5f8 .chroma .c1,
+#editor-66d8a5f8 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-93ad80e5 .chroma .o { color: #d4d4d4 !important; }
-#editor-93ad80e5 .chroma .p { color: #d4d4d4 !important; }
+#editor-66d8a5f8 .chroma .o { color: #d4d4d4 !important; }
+#editor-66d8a5f8 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-93ad80e5 .chroma .n,
-#editor-93ad80e5 .chroma .nx,
-#editor-93ad80e5 .chroma .nv,
-#editor-93ad80e5 .chroma .vc,
-#editor-93ad80e5 .chroma .vg,
-#editor-93ad80e5 .chroma .vi,
-#editor-93ad80e5 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-66d8a5f8 .chroma .n,
+#editor-66d8a5f8 .chroma .nx,
+#editor-66d8a5f8 .chroma .nv,
+#editor-66d8a5f8 .chroma .vc,
+#editor-66d8a5f8 .chroma .vg,
+#editor-66d8a5f8 .chroma .vi,
+#editor-66d8a5f8 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-93ad80e5" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-93ad80e5" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-66d8a5f8" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-66d8a5f8" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3080,11 +3148,11 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-93ad80e5" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-66d8a5f8" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-93ad80e5" style="display: none;">
+<textarea id="fs-66d8a5f8" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3149,8 +3217,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-93ad80e5');
-    const editor = document.getElementById('editor-93ad80e5');
+    const canvas = document.getElementById('glcanvas-66d8a5f8');
+    const editor = document.getElementById('editor-66d8a5f8');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3339,7 +3407,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-93ad80e5').value.trim();
+    const rawSource = document.getElementById('fs-66d8a5f8').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3425,10 +3493,10 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 
 <style>
  
-#editor-599cc4dc .highlight,
-#editor-599cc4dc .chroma,
-#editor-599cc4dc pre,
-#editor-599cc4dc code {
+#editor-c8b1573c .highlight,
+#editor-c8b1573c .chroma,
+#editor-c8b1573c pre,
+#editor-c8b1573c code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3443,92 +3511,92 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 }
 
  
-#editor-599cc4dc .copy-code,
-#editor-599cc4dc .chroma .copy-btn { 
+#editor-c8b1573c .copy-code,
+#editor-c8b1573c .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-599cc4dc {
+.glsl-code-panel-c8b1573c {
     background-color: #1e1e1e !important;
 }
 
-#editor-599cc4dc,
-#editor-599cc4dc .chroma {
+#editor-c8b1573c,
+#editor-c8b1573c .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-599cc4dc .chroma .k,
-#editor-599cc4dc .chroma .kd,
-#editor-599cc4dc .chroma .kn,
-#editor-599cc4dc .chroma .kp,
-#editor-599cc4dc .chroma .kr,
-#editor-599cc4dc .chroma .ow,
-#editor-599cc4dc .chroma .cp,
-#editor-599cc4dc .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-c8b1573c .chroma .k,
+#editor-c8b1573c .chroma .kd,
+#editor-c8b1573c .chroma .kn,
+#editor-c8b1573c .chroma .kp,
+#editor-c8b1573c .chroma .kr,
+#editor-c8b1573c .chroma .ow,
+#editor-c8b1573c .chroma .cp,
+#editor-c8b1573c .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-599cc4dc .chroma .kt,
-#editor-599cc4dc .chroma .nb,
-#editor-599cc4dc .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-c8b1573c .chroma .kt,
+#editor-c8b1573c .chroma .nb,
+#editor-c8b1573c .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-599cc4dc .chroma .nf,
-#editor-599cc4dc .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-c8b1573c .chroma .nf,
+#editor-c8b1573c .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-599cc4dc .chroma .m,
-#editor-599cc4dc .chroma .mb,
-#editor-599cc4dc .chroma .mf,
-#editor-599cc4dc .chroma .mh,
-#editor-599cc4dc .chroma .mi,
-#editor-599cc4dc .chroma .il,
-#editor-599cc4dc .chroma .mo,
-#editor-599cc4dc .chroma .kc { color: #b5cea8 !important; }
+#editor-c8b1573c .chroma .m,
+#editor-c8b1573c .chroma .mb,
+#editor-c8b1573c .chroma .mf,
+#editor-c8b1573c .chroma .mh,
+#editor-c8b1573c .chroma .mi,
+#editor-c8b1573c .chroma .il,
+#editor-c8b1573c .chroma .mo,
+#editor-c8b1573c .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-599cc4dc .chroma .s,
-#editor-599cc4dc .chroma .sa,
-#editor-599cc4dc .chroma .sb,
-#editor-599cc4dc .chroma .sc,
-#editor-599cc4dc .chroma .dl,
-#editor-599cc4dc .chroma .sd,
-#editor-599cc4dc .chroma .s2,
-#editor-599cc4dc .chroma .se,
-#editor-599cc4dc .chroma .sh,
-#editor-599cc4dc .chroma .si,
-#editor-599cc4dc .chroma .sx,
-#editor-599cc4dc .chroma .sr,
-#editor-599cc4dc .chroma .s1,
-#editor-599cc4dc .chroma .ss { color: #ce9178 !important; }
+#editor-c8b1573c .chroma .s,
+#editor-c8b1573c .chroma .sa,
+#editor-c8b1573c .chroma .sb,
+#editor-c8b1573c .chroma .sc,
+#editor-c8b1573c .chroma .dl,
+#editor-c8b1573c .chroma .sd,
+#editor-c8b1573c .chroma .s2,
+#editor-c8b1573c .chroma .se,
+#editor-c8b1573c .chroma .sh,
+#editor-c8b1573c .chroma .si,
+#editor-c8b1573c .chroma .sx,
+#editor-c8b1573c .chroma .sr,
+#editor-c8b1573c .chroma .s1,
+#editor-c8b1573c .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-599cc4dc .chroma .c,
-#editor-599cc4dc .chroma .ch,
-#editor-599cc4dc .chroma .cm,
-#editor-599cc4dc .chroma .c1,
-#editor-599cc4dc .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-c8b1573c .chroma .c,
+#editor-c8b1573c .chroma .ch,
+#editor-c8b1573c .chroma .cm,
+#editor-c8b1573c .chroma .c1,
+#editor-c8b1573c .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-599cc4dc .chroma .o { color: #d4d4d4 !important; }
-#editor-599cc4dc .chroma .p { color: #d4d4d4 !important; }
+#editor-c8b1573c .chroma .o { color: #d4d4d4 !important; }
+#editor-c8b1573c .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-599cc4dc .chroma .n,
-#editor-599cc4dc .chroma .nx,
-#editor-599cc4dc .chroma .nv,
-#editor-599cc4dc .chroma .vc,
-#editor-599cc4dc .chroma .vg,
-#editor-599cc4dc .chroma .vi,
-#editor-599cc4dc .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-c8b1573c .chroma .n,
+#editor-c8b1573c .chroma .nx,
+#editor-c8b1573c .chroma .nv,
+#editor-c8b1573c .chroma .vc,
+#editor-c8b1573c .chroma .vg,
+#editor-c8b1573c .chroma .vi,
+#editor-c8b1573c .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-599cc4dc" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-599cc4dc" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-c8b1573c" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-c8b1573c" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3601,11 +3669,11 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-599cc4dc" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-c8b1573c" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-599cc4dc" style="display: none;">
+<textarea id="fs-c8b1573c" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3680,8 +3748,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-599cc4dc');
-    const editor = document.getElementById('editor-599cc4dc');
+    const canvas = document.getElementById('glcanvas-c8b1573c');
+    const editor = document.getElementById('editor-c8b1573c');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3870,7 +3938,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-599cc4dc').value.trim();
+    const rawSource = document.getElementById('fs-c8b1573c').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4007,10 +4075,10 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 
 <style>
  
-#editor-89a94d88 .highlight,
-#editor-89a94d88 .chroma,
-#editor-89a94d88 pre,
-#editor-89a94d88 code {
+#editor-70162e5b .highlight,
+#editor-70162e5b .chroma,
+#editor-70162e5b pre,
+#editor-70162e5b code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4025,92 +4093,92 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 }
 
  
-#editor-89a94d88 .copy-code,
-#editor-89a94d88 .chroma .copy-btn { 
+#editor-70162e5b .copy-code,
+#editor-70162e5b .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-89a94d88 {
+.glsl-code-panel-70162e5b {
     background-color: #1e1e1e !important;
 }
 
-#editor-89a94d88,
-#editor-89a94d88 .chroma {
+#editor-70162e5b,
+#editor-70162e5b .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-89a94d88 .chroma .k,
-#editor-89a94d88 .chroma .kd,
-#editor-89a94d88 .chroma .kn,
-#editor-89a94d88 .chroma .kp,
-#editor-89a94d88 .chroma .kr,
-#editor-89a94d88 .chroma .ow,
-#editor-89a94d88 .chroma .cp,
-#editor-89a94d88 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-70162e5b .chroma .k,
+#editor-70162e5b .chroma .kd,
+#editor-70162e5b .chroma .kn,
+#editor-70162e5b .chroma .kp,
+#editor-70162e5b .chroma .kr,
+#editor-70162e5b .chroma .ow,
+#editor-70162e5b .chroma .cp,
+#editor-70162e5b .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-89a94d88 .chroma .kt,
-#editor-89a94d88 .chroma .nb,
-#editor-89a94d88 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-70162e5b .chroma .kt,
+#editor-70162e5b .chroma .nb,
+#editor-70162e5b .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-89a94d88 .chroma .nf,
-#editor-89a94d88 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-70162e5b .chroma .nf,
+#editor-70162e5b .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-89a94d88 .chroma .m,
-#editor-89a94d88 .chroma .mb,
-#editor-89a94d88 .chroma .mf,
-#editor-89a94d88 .chroma .mh,
-#editor-89a94d88 .chroma .mi,
-#editor-89a94d88 .chroma .il,
-#editor-89a94d88 .chroma .mo,
-#editor-89a94d88 .chroma .kc { color: #b5cea8 !important; }
+#editor-70162e5b .chroma .m,
+#editor-70162e5b .chroma .mb,
+#editor-70162e5b .chroma .mf,
+#editor-70162e5b .chroma .mh,
+#editor-70162e5b .chroma .mi,
+#editor-70162e5b .chroma .il,
+#editor-70162e5b .chroma .mo,
+#editor-70162e5b .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-89a94d88 .chroma .s,
-#editor-89a94d88 .chroma .sa,
-#editor-89a94d88 .chroma .sb,
-#editor-89a94d88 .chroma .sc,
-#editor-89a94d88 .chroma .dl,
-#editor-89a94d88 .chroma .sd,
-#editor-89a94d88 .chroma .s2,
-#editor-89a94d88 .chroma .se,
-#editor-89a94d88 .chroma .sh,
-#editor-89a94d88 .chroma .si,
-#editor-89a94d88 .chroma .sx,
-#editor-89a94d88 .chroma .sr,
-#editor-89a94d88 .chroma .s1,
-#editor-89a94d88 .chroma .ss { color: #ce9178 !important; }
+#editor-70162e5b .chroma .s,
+#editor-70162e5b .chroma .sa,
+#editor-70162e5b .chroma .sb,
+#editor-70162e5b .chroma .sc,
+#editor-70162e5b .chroma .dl,
+#editor-70162e5b .chroma .sd,
+#editor-70162e5b .chroma .s2,
+#editor-70162e5b .chroma .se,
+#editor-70162e5b .chroma .sh,
+#editor-70162e5b .chroma .si,
+#editor-70162e5b .chroma .sx,
+#editor-70162e5b .chroma .sr,
+#editor-70162e5b .chroma .s1,
+#editor-70162e5b .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-89a94d88 .chroma .c,
-#editor-89a94d88 .chroma .ch,
-#editor-89a94d88 .chroma .cm,
-#editor-89a94d88 .chroma .c1,
-#editor-89a94d88 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-70162e5b .chroma .c,
+#editor-70162e5b .chroma .ch,
+#editor-70162e5b .chroma .cm,
+#editor-70162e5b .chroma .c1,
+#editor-70162e5b .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-89a94d88 .chroma .o { color: #d4d4d4 !important; }
-#editor-89a94d88 .chroma .p { color: #d4d4d4 !important; }
+#editor-70162e5b .chroma .o { color: #d4d4d4 !important; }
+#editor-70162e5b .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-89a94d88 .chroma .n,
-#editor-89a94d88 .chroma .nx,
-#editor-89a94d88 .chroma .nv,
-#editor-89a94d88 .chroma .vc,
-#editor-89a94d88 .chroma .vg,
-#editor-89a94d88 .chroma .vi,
-#editor-89a94d88 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-70162e5b .chroma .n,
+#editor-70162e5b .chroma .nx,
+#editor-70162e5b .chroma .nv,
+#editor-70162e5b .chroma .vc,
+#editor-70162e5b .chroma .vg,
+#editor-70162e5b .chroma .vi,
+#editor-70162e5b .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-89a94d88" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-89a94d88" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-70162e5b" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-70162e5b" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4184,11 +4252,11 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-89a94d88" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-70162e5b" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-89a94d88" style="display: none;">
+<textarea id="fs-70162e5b" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4264,8 +4332,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-89a94d88');
-    const editor = document.getElementById('editor-89a94d88');
+    const canvas = document.getElementById('glcanvas-70162e5b');
+    const editor = document.getElementById('editor-70162e5b');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4454,7 +4522,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-89a94d88').value.trim();
+    const rawSource = document.getElementById('fs-70162e5b').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4549,10 +4617,10 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 
 <style>
  
-#editor-b30f7b34 .highlight,
-#editor-b30f7b34 .chroma,
-#editor-b30f7b34 pre,
-#editor-b30f7b34 code {
+#editor-05640382 .highlight,
+#editor-05640382 .chroma,
+#editor-05640382 pre,
+#editor-05640382 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4567,92 +4635,92 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 }
 
  
-#editor-b30f7b34 .copy-code,
-#editor-b30f7b34 .chroma .copy-btn { 
+#editor-05640382 .copy-code,
+#editor-05640382 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-b30f7b34 {
+.glsl-code-panel-05640382 {
     background-color: #1e1e1e !important;
 }
 
-#editor-b30f7b34,
-#editor-b30f7b34 .chroma {
+#editor-05640382,
+#editor-05640382 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-b30f7b34 .chroma .k,
-#editor-b30f7b34 .chroma .kd,
-#editor-b30f7b34 .chroma .kn,
-#editor-b30f7b34 .chroma .kp,
-#editor-b30f7b34 .chroma .kr,
-#editor-b30f7b34 .chroma .ow,
-#editor-b30f7b34 .chroma .cp,
-#editor-b30f7b34 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-05640382 .chroma .k,
+#editor-05640382 .chroma .kd,
+#editor-05640382 .chroma .kn,
+#editor-05640382 .chroma .kp,
+#editor-05640382 .chroma .kr,
+#editor-05640382 .chroma .ow,
+#editor-05640382 .chroma .cp,
+#editor-05640382 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-b30f7b34 .chroma .kt,
-#editor-b30f7b34 .chroma .nb,
-#editor-b30f7b34 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-05640382 .chroma .kt,
+#editor-05640382 .chroma .nb,
+#editor-05640382 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-b30f7b34 .chroma .nf,
-#editor-b30f7b34 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-05640382 .chroma .nf,
+#editor-05640382 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-b30f7b34 .chroma .m,
-#editor-b30f7b34 .chroma .mb,
-#editor-b30f7b34 .chroma .mf,
-#editor-b30f7b34 .chroma .mh,
-#editor-b30f7b34 .chroma .mi,
-#editor-b30f7b34 .chroma .il,
-#editor-b30f7b34 .chroma .mo,
-#editor-b30f7b34 .chroma .kc { color: #b5cea8 !important; }
+#editor-05640382 .chroma .m,
+#editor-05640382 .chroma .mb,
+#editor-05640382 .chroma .mf,
+#editor-05640382 .chroma .mh,
+#editor-05640382 .chroma .mi,
+#editor-05640382 .chroma .il,
+#editor-05640382 .chroma .mo,
+#editor-05640382 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-b30f7b34 .chroma .s,
-#editor-b30f7b34 .chroma .sa,
-#editor-b30f7b34 .chroma .sb,
-#editor-b30f7b34 .chroma .sc,
-#editor-b30f7b34 .chroma .dl,
-#editor-b30f7b34 .chroma .sd,
-#editor-b30f7b34 .chroma .s2,
-#editor-b30f7b34 .chroma .se,
-#editor-b30f7b34 .chroma .sh,
-#editor-b30f7b34 .chroma .si,
-#editor-b30f7b34 .chroma .sx,
-#editor-b30f7b34 .chroma .sr,
-#editor-b30f7b34 .chroma .s1,
-#editor-b30f7b34 .chroma .ss { color: #ce9178 !important; }
+#editor-05640382 .chroma .s,
+#editor-05640382 .chroma .sa,
+#editor-05640382 .chroma .sb,
+#editor-05640382 .chroma .sc,
+#editor-05640382 .chroma .dl,
+#editor-05640382 .chroma .sd,
+#editor-05640382 .chroma .s2,
+#editor-05640382 .chroma .se,
+#editor-05640382 .chroma .sh,
+#editor-05640382 .chroma .si,
+#editor-05640382 .chroma .sx,
+#editor-05640382 .chroma .sr,
+#editor-05640382 .chroma .s1,
+#editor-05640382 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-b30f7b34 .chroma .c,
-#editor-b30f7b34 .chroma .ch,
-#editor-b30f7b34 .chroma .cm,
-#editor-b30f7b34 .chroma .c1,
-#editor-b30f7b34 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-05640382 .chroma .c,
+#editor-05640382 .chroma .ch,
+#editor-05640382 .chroma .cm,
+#editor-05640382 .chroma .c1,
+#editor-05640382 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-b30f7b34 .chroma .o { color: #d4d4d4 !important; }
-#editor-b30f7b34 .chroma .p { color: #d4d4d4 !important; }
+#editor-05640382 .chroma .o { color: #d4d4d4 !important; }
+#editor-05640382 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-b30f7b34 .chroma .n,
-#editor-b30f7b34 .chroma .nx,
-#editor-b30f7b34 .chroma .nv,
-#editor-b30f7b34 .chroma .vc,
-#editor-b30f7b34 .chroma .vg,
-#editor-b30f7b34 .chroma .vi,
-#editor-b30f7b34 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-05640382 .chroma .n,
+#editor-05640382 .chroma .nx,
+#editor-05640382 .chroma .nv,
+#editor-05640382 .chroma .vc,
+#editor-05640382 .chroma .vg,
+#editor-05640382 .chroma .vi,
+#editor-05640382 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-b30f7b34" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-b30f7b34" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-05640382" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-05640382" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4726,11 +4794,11 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-b30f7b34" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-05640382" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-b30f7b34" style="display: none;">
+<textarea id="fs-05640382" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4806,8 +4874,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-b30f7b34');
-    const editor = document.getElementById('editor-b30f7b34');
+    const canvas = document.getElementById('glcanvas-05640382');
+    const editor = document.getElementById('editor-05640382');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4996,7 +5064,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-b30f7b34').value.trim();
+    const rawSource = document.getElementById('fs-05640382').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5098,10 +5166,10 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 
 <style>
  
-#editor-72bcedf1 .highlight,
-#editor-72bcedf1 .chroma,
-#editor-72bcedf1 pre,
-#editor-72bcedf1 code {
+#editor-7b31f02c .highlight,
+#editor-7b31f02c .chroma,
+#editor-7b31f02c pre,
+#editor-7b31f02c code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5116,92 +5184,92 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 }
 
  
-#editor-72bcedf1 .copy-code,
-#editor-72bcedf1 .chroma .copy-btn { 
+#editor-7b31f02c .copy-code,
+#editor-7b31f02c .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-72bcedf1 {
+.glsl-code-panel-7b31f02c {
     background-color: #1e1e1e !important;
 }
 
-#editor-72bcedf1,
-#editor-72bcedf1 .chroma {
+#editor-7b31f02c,
+#editor-7b31f02c .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-72bcedf1 .chroma .k,
-#editor-72bcedf1 .chroma .kd,
-#editor-72bcedf1 .chroma .kn,
-#editor-72bcedf1 .chroma .kp,
-#editor-72bcedf1 .chroma .kr,
-#editor-72bcedf1 .chroma .ow,
-#editor-72bcedf1 .chroma .cp,
-#editor-72bcedf1 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-7b31f02c .chroma .k,
+#editor-7b31f02c .chroma .kd,
+#editor-7b31f02c .chroma .kn,
+#editor-7b31f02c .chroma .kp,
+#editor-7b31f02c .chroma .kr,
+#editor-7b31f02c .chroma .ow,
+#editor-7b31f02c .chroma .cp,
+#editor-7b31f02c .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-72bcedf1 .chroma .kt,
-#editor-72bcedf1 .chroma .nb,
-#editor-72bcedf1 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-7b31f02c .chroma .kt,
+#editor-7b31f02c .chroma .nb,
+#editor-7b31f02c .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-72bcedf1 .chroma .nf,
-#editor-72bcedf1 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-7b31f02c .chroma .nf,
+#editor-7b31f02c .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-72bcedf1 .chroma .m,
-#editor-72bcedf1 .chroma .mb,
-#editor-72bcedf1 .chroma .mf,
-#editor-72bcedf1 .chroma .mh,
-#editor-72bcedf1 .chroma .mi,
-#editor-72bcedf1 .chroma .il,
-#editor-72bcedf1 .chroma .mo,
-#editor-72bcedf1 .chroma .kc { color: #b5cea8 !important; }
+#editor-7b31f02c .chroma .m,
+#editor-7b31f02c .chroma .mb,
+#editor-7b31f02c .chroma .mf,
+#editor-7b31f02c .chroma .mh,
+#editor-7b31f02c .chroma .mi,
+#editor-7b31f02c .chroma .il,
+#editor-7b31f02c .chroma .mo,
+#editor-7b31f02c .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-72bcedf1 .chroma .s,
-#editor-72bcedf1 .chroma .sa,
-#editor-72bcedf1 .chroma .sb,
-#editor-72bcedf1 .chroma .sc,
-#editor-72bcedf1 .chroma .dl,
-#editor-72bcedf1 .chroma .sd,
-#editor-72bcedf1 .chroma .s2,
-#editor-72bcedf1 .chroma .se,
-#editor-72bcedf1 .chroma .sh,
-#editor-72bcedf1 .chroma .si,
-#editor-72bcedf1 .chroma .sx,
-#editor-72bcedf1 .chroma .sr,
-#editor-72bcedf1 .chroma .s1,
-#editor-72bcedf1 .chroma .ss { color: #ce9178 !important; }
+#editor-7b31f02c .chroma .s,
+#editor-7b31f02c .chroma .sa,
+#editor-7b31f02c .chroma .sb,
+#editor-7b31f02c .chroma .sc,
+#editor-7b31f02c .chroma .dl,
+#editor-7b31f02c .chroma .sd,
+#editor-7b31f02c .chroma .s2,
+#editor-7b31f02c .chroma .se,
+#editor-7b31f02c .chroma .sh,
+#editor-7b31f02c .chroma .si,
+#editor-7b31f02c .chroma .sx,
+#editor-7b31f02c .chroma .sr,
+#editor-7b31f02c .chroma .s1,
+#editor-7b31f02c .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-72bcedf1 .chroma .c,
-#editor-72bcedf1 .chroma .ch,
-#editor-72bcedf1 .chroma .cm,
-#editor-72bcedf1 .chroma .c1,
-#editor-72bcedf1 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-7b31f02c .chroma .c,
+#editor-7b31f02c .chroma .ch,
+#editor-7b31f02c .chroma .cm,
+#editor-7b31f02c .chroma .c1,
+#editor-7b31f02c .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-72bcedf1 .chroma .o { color: #d4d4d4 !important; }
-#editor-72bcedf1 .chroma .p { color: #d4d4d4 !important; }
+#editor-7b31f02c .chroma .o { color: #d4d4d4 !important; }
+#editor-7b31f02c .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-72bcedf1 .chroma .n,
-#editor-72bcedf1 .chroma .nx,
-#editor-72bcedf1 .chroma .nv,
-#editor-72bcedf1 .chroma .vc,
-#editor-72bcedf1 .chroma .vg,
-#editor-72bcedf1 .chroma .vi,
-#editor-72bcedf1 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-7b31f02c .chroma .n,
+#editor-7b31f02c .chroma .nx,
+#editor-7b31f02c .chroma .nv,
+#editor-7b31f02c .chroma .vc,
+#editor-7b31f02c .chroma .vg,
+#editor-7b31f02c .chroma .vi,
+#editor-7b31f02c .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-72bcedf1" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-72bcedf1" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-7b31f02c" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-7b31f02c" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5288,11 +5356,11 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-72bcedf1" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-7b31f02c" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-72bcedf1" style="display: none;">
+<textarea id="fs-7b31f02c" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5381,8 +5449,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-72bcedf1');
-    const editor = document.getElementById('editor-72bcedf1');
+    const canvas = document.getElementById('glcanvas-7b31f02c');
+    const editor = document.getElementById('editor-7b31f02c');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5571,7 +5639,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-72bcedf1').value.trim();
+    const rawSource = document.getElementById('fs-7b31f02c').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5699,10 +5767,10 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 
 <style>
  
-#editor-94a68cd4 .highlight,
-#editor-94a68cd4 .chroma,
-#editor-94a68cd4 pre,
-#editor-94a68cd4 code {
+#editor-e2f06d0d .highlight,
+#editor-e2f06d0d .chroma,
+#editor-e2f06d0d pre,
+#editor-e2f06d0d code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5717,92 +5785,92 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 }
 
  
-#editor-94a68cd4 .copy-code,
-#editor-94a68cd4 .chroma .copy-btn { 
+#editor-e2f06d0d .copy-code,
+#editor-e2f06d0d .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-94a68cd4 {
+.glsl-code-panel-e2f06d0d {
     background-color: #1e1e1e !important;
 }
 
-#editor-94a68cd4,
-#editor-94a68cd4 .chroma {
+#editor-e2f06d0d,
+#editor-e2f06d0d .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-94a68cd4 .chroma .k,
-#editor-94a68cd4 .chroma .kd,
-#editor-94a68cd4 .chroma .kn,
-#editor-94a68cd4 .chroma .kp,
-#editor-94a68cd4 .chroma .kr,
-#editor-94a68cd4 .chroma .ow,
-#editor-94a68cd4 .chroma .cp,
-#editor-94a68cd4 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-e2f06d0d .chroma .k,
+#editor-e2f06d0d .chroma .kd,
+#editor-e2f06d0d .chroma .kn,
+#editor-e2f06d0d .chroma .kp,
+#editor-e2f06d0d .chroma .kr,
+#editor-e2f06d0d .chroma .ow,
+#editor-e2f06d0d .chroma .cp,
+#editor-e2f06d0d .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-94a68cd4 .chroma .kt,
-#editor-94a68cd4 .chroma .nb,
-#editor-94a68cd4 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-e2f06d0d .chroma .kt,
+#editor-e2f06d0d .chroma .nb,
+#editor-e2f06d0d .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-94a68cd4 .chroma .nf,
-#editor-94a68cd4 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-e2f06d0d .chroma .nf,
+#editor-e2f06d0d .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-94a68cd4 .chroma .m,
-#editor-94a68cd4 .chroma .mb,
-#editor-94a68cd4 .chroma .mf,
-#editor-94a68cd4 .chroma .mh,
-#editor-94a68cd4 .chroma .mi,
-#editor-94a68cd4 .chroma .il,
-#editor-94a68cd4 .chroma .mo,
-#editor-94a68cd4 .chroma .kc { color: #b5cea8 !important; }
+#editor-e2f06d0d .chroma .m,
+#editor-e2f06d0d .chroma .mb,
+#editor-e2f06d0d .chroma .mf,
+#editor-e2f06d0d .chroma .mh,
+#editor-e2f06d0d .chroma .mi,
+#editor-e2f06d0d .chroma .il,
+#editor-e2f06d0d .chroma .mo,
+#editor-e2f06d0d .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-94a68cd4 .chroma .s,
-#editor-94a68cd4 .chroma .sa,
-#editor-94a68cd4 .chroma .sb,
-#editor-94a68cd4 .chroma .sc,
-#editor-94a68cd4 .chroma .dl,
-#editor-94a68cd4 .chroma .sd,
-#editor-94a68cd4 .chroma .s2,
-#editor-94a68cd4 .chroma .se,
-#editor-94a68cd4 .chroma .sh,
-#editor-94a68cd4 .chroma .si,
-#editor-94a68cd4 .chroma .sx,
-#editor-94a68cd4 .chroma .sr,
-#editor-94a68cd4 .chroma .s1,
-#editor-94a68cd4 .chroma .ss { color: #ce9178 !important; }
+#editor-e2f06d0d .chroma .s,
+#editor-e2f06d0d .chroma .sa,
+#editor-e2f06d0d .chroma .sb,
+#editor-e2f06d0d .chroma .sc,
+#editor-e2f06d0d .chroma .dl,
+#editor-e2f06d0d .chroma .sd,
+#editor-e2f06d0d .chroma .s2,
+#editor-e2f06d0d .chroma .se,
+#editor-e2f06d0d .chroma .sh,
+#editor-e2f06d0d .chroma .si,
+#editor-e2f06d0d .chroma .sx,
+#editor-e2f06d0d .chroma .sr,
+#editor-e2f06d0d .chroma .s1,
+#editor-e2f06d0d .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-94a68cd4 .chroma .c,
-#editor-94a68cd4 .chroma .ch,
-#editor-94a68cd4 .chroma .cm,
-#editor-94a68cd4 .chroma .c1,
-#editor-94a68cd4 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-e2f06d0d .chroma .c,
+#editor-e2f06d0d .chroma .ch,
+#editor-e2f06d0d .chroma .cm,
+#editor-e2f06d0d .chroma .c1,
+#editor-e2f06d0d .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-94a68cd4 .chroma .o { color: #d4d4d4 !important; }
-#editor-94a68cd4 .chroma .p { color: #d4d4d4 !important; }
+#editor-e2f06d0d .chroma .o { color: #d4d4d4 !important; }
+#editor-e2f06d0d .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-94a68cd4 .chroma .n,
-#editor-94a68cd4 .chroma .nx,
-#editor-94a68cd4 .chroma .nv,
-#editor-94a68cd4 .chroma .vc,
-#editor-94a68cd4 .chroma .vg,
-#editor-94a68cd4 .chroma .vi,
-#editor-94a68cd4 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-e2f06d0d .chroma .n,
+#editor-e2f06d0d .chroma .nx,
+#editor-e2f06d0d .chroma .nv,
+#editor-e2f06d0d .chroma .vc,
+#editor-e2f06d0d .chroma .vg,
+#editor-e2f06d0d .chroma .vi,
+#editor-e2f06d0d .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-94a68cd4" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-94a68cd4" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-e2f06d0d" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-e2f06d0d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5935,11 +6003,11 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-94a68cd4" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-e2f06d0d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-94a68cd4" style="display: none;">
+<textarea id="fs-e2f06d0d" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6074,8 +6142,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-94a68cd4');
-    const editor = document.getElementById('editor-94a68cd4');
+    const canvas = document.getElementById('glcanvas-e2f06d0d');
+    const editor = document.getElementById('editor-e2f06d0d');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6264,7 +6332,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-94a68cd4').value.trim();
+    const rawSource = document.getElementById('fs-e2f06d0d').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6372,10 +6440,10 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 
 <style>
  
-#editor-4756a18a .highlight,
-#editor-4756a18a .chroma,
-#editor-4756a18a pre,
-#editor-4756a18a code {
+#editor-7bda082d .highlight,
+#editor-7bda082d .chroma,
+#editor-7bda082d pre,
+#editor-7bda082d code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6390,92 +6458,92 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 }
 
  
-#editor-4756a18a .copy-code,
-#editor-4756a18a .chroma .copy-btn { 
+#editor-7bda082d .copy-code,
+#editor-7bda082d .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-4756a18a {
+.glsl-code-panel-7bda082d {
     background-color: #1e1e1e !important;
 }
 
-#editor-4756a18a,
-#editor-4756a18a .chroma {
+#editor-7bda082d,
+#editor-7bda082d .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-4756a18a .chroma .k,
-#editor-4756a18a .chroma .kd,
-#editor-4756a18a .chroma .kn,
-#editor-4756a18a .chroma .kp,
-#editor-4756a18a .chroma .kr,
-#editor-4756a18a .chroma .ow,
-#editor-4756a18a .chroma .cp,
-#editor-4756a18a .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-7bda082d .chroma .k,
+#editor-7bda082d .chroma .kd,
+#editor-7bda082d .chroma .kn,
+#editor-7bda082d .chroma .kp,
+#editor-7bda082d .chroma .kr,
+#editor-7bda082d .chroma .ow,
+#editor-7bda082d .chroma .cp,
+#editor-7bda082d .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-4756a18a .chroma .kt,
-#editor-4756a18a .chroma .nb,
-#editor-4756a18a .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-7bda082d .chroma .kt,
+#editor-7bda082d .chroma .nb,
+#editor-7bda082d .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-4756a18a .chroma .nf,
-#editor-4756a18a .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-7bda082d .chroma .nf,
+#editor-7bda082d .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-4756a18a .chroma .m,
-#editor-4756a18a .chroma .mb,
-#editor-4756a18a .chroma .mf,
-#editor-4756a18a .chroma .mh,
-#editor-4756a18a .chroma .mi,
-#editor-4756a18a .chroma .il,
-#editor-4756a18a .chroma .mo,
-#editor-4756a18a .chroma .kc { color: #b5cea8 !important; }
+#editor-7bda082d .chroma .m,
+#editor-7bda082d .chroma .mb,
+#editor-7bda082d .chroma .mf,
+#editor-7bda082d .chroma .mh,
+#editor-7bda082d .chroma .mi,
+#editor-7bda082d .chroma .il,
+#editor-7bda082d .chroma .mo,
+#editor-7bda082d .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-4756a18a .chroma .s,
-#editor-4756a18a .chroma .sa,
-#editor-4756a18a .chroma .sb,
-#editor-4756a18a .chroma .sc,
-#editor-4756a18a .chroma .dl,
-#editor-4756a18a .chroma .sd,
-#editor-4756a18a .chroma .s2,
-#editor-4756a18a .chroma .se,
-#editor-4756a18a .chroma .sh,
-#editor-4756a18a .chroma .si,
-#editor-4756a18a .chroma .sx,
-#editor-4756a18a .chroma .sr,
-#editor-4756a18a .chroma .s1,
-#editor-4756a18a .chroma .ss { color: #ce9178 !important; }
+#editor-7bda082d .chroma .s,
+#editor-7bda082d .chroma .sa,
+#editor-7bda082d .chroma .sb,
+#editor-7bda082d .chroma .sc,
+#editor-7bda082d .chroma .dl,
+#editor-7bda082d .chroma .sd,
+#editor-7bda082d .chroma .s2,
+#editor-7bda082d .chroma .se,
+#editor-7bda082d .chroma .sh,
+#editor-7bda082d .chroma .si,
+#editor-7bda082d .chroma .sx,
+#editor-7bda082d .chroma .sr,
+#editor-7bda082d .chroma .s1,
+#editor-7bda082d .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-4756a18a .chroma .c,
-#editor-4756a18a .chroma .ch,
-#editor-4756a18a .chroma .cm,
-#editor-4756a18a .chroma .c1,
-#editor-4756a18a .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-7bda082d .chroma .c,
+#editor-7bda082d .chroma .ch,
+#editor-7bda082d .chroma .cm,
+#editor-7bda082d .chroma .c1,
+#editor-7bda082d .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-4756a18a .chroma .o { color: #d4d4d4 !important; }
-#editor-4756a18a .chroma .p { color: #d4d4d4 !important; }
+#editor-7bda082d .chroma .o { color: #d4d4d4 !important; }
+#editor-7bda082d .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-4756a18a .chroma .n,
-#editor-4756a18a .chroma .nx,
-#editor-4756a18a .chroma .nv,
-#editor-4756a18a .chroma .vc,
-#editor-4756a18a .chroma .vg,
-#editor-4756a18a .chroma .vi,
-#editor-4756a18a .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-7bda082d .chroma .n,
+#editor-7bda082d .chroma .nx,
+#editor-7bda082d .chroma .nv,
+#editor-7bda082d .chroma .vc,
+#editor-7bda082d .chroma .vg,
+#editor-7bda082d .chroma .vi,
+#editor-7bda082d .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-4756a18a" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-4756a18a" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-7bda082d" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-7bda082d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6551,11 +6619,11 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-4756a18a" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-7bda082d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-4756a18a" style="display: none;">
+<textarea id="fs-7bda082d" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6633,8 +6701,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-4756a18a');
-    const editor = document.getElementById('editor-4756a18a');
+    const canvas = document.getElementById('glcanvas-7bda082d');
+    const editor = document.getElementById('editor-7bda082d');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6823,7 +6891,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-4756a18a').value.trim();
+    const rawSource = document.getElementById('fs-7bda082d').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6903,10 +6971,10 @@ void main() {
 
 <style>
  
-#editor-97400f7b .highlight,
-#editor-97400f7b .chroma,
-#editor-97400f7b pre,
-#editor-97400f7b code {
+#editor-e43fabf3 .highlight,
+#editor-e43fabf3 .chroma,
+#editor-e43fabf3 pre,
+#editor-e43fabf3 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6921,92 +6989,92 @@ void main() {
 }
 
  
-#editor-97400f7b .copy-code,
-#editor-97400f7b .chroma .copy-btn { 
+#editor-e43fabf3 .copy-code,
+#editor-e43fabf3 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-97400f7b {
+.glsl-code-panel-e43fabf3 {
     background-color: #1e1e1e !important;
 }
 
-#editor-97400f7b,
-#editor-97400f7b .chroma {
+#editor-e43fabf3,
+#editor-e43fabf3 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-97400f7b .chroma .k,
-#editor-97400f7b .chroma .kd,
-#editor-97400f7b .chroma .kn,
-#editor-97400f7b .chroma .kp,
-#editor-97400f7b .chroma .kr,
-#editor-97400f7b .chroma .ow,
-#editor-97400f7b .chroma .cp,
-#editor-97400f7b .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-e43fabf3 .chroma .k,
+#editor-e43fabf3 .chroma .kd,
+#editor-e43fabf3 .chroma .kn,
+#editor-e43fabf3 .chroma .kp,
+#editor-e43fabf3 .chroma .kr,
+#editor-e43fabf3 .chroma .ow,
+#editor-e43fabf3 .chroma .cp,
+#editor-e43fabf3 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-97400f7b .chroma .kt,
-#editor-97400f7b .chroma .nb,
-#editor-97400f7b .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-e43fabf3 .chroma .kt,
+#editor-e43fabf3 .chroma .nb,
+#editor-e43fabf3 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-97400f7b .chroma .nf,
-#editor-97400f7b .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-e43fabf3 .chroma .nf,
+#editor-e43fabf3 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-97400f7b .chroma .m,
-#editor-97400f7b .chroma .mb,
-#editor-97400f7b .chroma .mf,
-#editor-97400f7b .chroma .mh,
-#editor-97400f7b .chroma .mi,
-#editor-97400f7b .chroma .il,
-#editor-97400f7b .chroma .mo,
-#editor-97400f7b .chroma .kc { color: #b5cea8 !important; }
+#editor-e43fabf3 .chroma .m,
+#editor-e43fabf3 .chroma .mb,
+#editor-e43fabf3 .chroma .mf,
+#editor-e43fabf3 .chroma .mh,
+#editor-e43fabf3 .chroma .mi,
+#editor-e43fabf3 .chroma .il,
+#editor-e43fabf3 .chroma .mo,
+#editor-e43fabf3 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-97400f7b .chroma .s,
-#editor-97400f7b .chroma .sa,
-#editor-97400f7b .chroma .sb,
-#editor-97400f7b .chroma .sc,
-#editor-97400f7b .chroma .dl,
-#editor-97400f7b .chroma .sd,
-#editor-97400f7b .chroma .s2,
-#editor-97400f7b .chroma .se,
-#editor-97400f7b .chroma .sh,
-#editor-97400f7b .chroma .si,
-#editor-97400f7b .chroma .sx,
-#editor-97400f7b .chroma .sr,
-#editor-97400f7b .chroma .s1,
-#editor-97400f7b .chroma .ss { color: #ce9178 !important; }
+#editor-e43fabf3 .chroma .s,
+#editor-e43fabf3 .chroma .sa,
+#editor-e43fabf3 .chroma .sb,
+#editor-e43fabf3 .chroma .sc,
+#editor-e43fabf3 .chroma .dl,
+#editor-e43fabf3 .chroma .sd,
+#editor-e43fabf3 .chroma .s2,
+#editor-e43fabf3 .chroma .se,
+#editor-e43fabf3 .chroma .sh,
+#editor-e43fabf3 .chroma .si,
+#editor-e43fabf3 .chroma .sx,
+#editor-e43fabf3 .chroma .sr,
+#editor-e43fabf3 .chroma .s1,
+#editor-e43fabf3 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-97400f7b .chroma .c,
-#editor-97400f7b .chroma .ch,
-#editor-97400f7b .chroma .cm,
-#editor-97400f7b .chroma .c1,
-#editor-97400f7b .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-e43fabf3 .chroma .c,
+#editor-e43fabf3 .chroma .ch,
+#editor-e43fabf3 .chroma .cm,
+#editor-e43fabf3 .chroma .c1,
+#editor-e43fabf3 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-97400f7b .chroma .o { color: #d4d4d4 !important; }
-#editor-97400f7b .chroma .p { color: #d4d4d4 !important; }
+#editor-e43fabf3 .chroma .o { color: #d4d4d4 !important; }
+#editor-e43fabf3 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-97400f7b .chroma .n,
-#editor-97400f7b .chroma .nx,
-#editor-97400f7b .chroma .nv,
-#editor-97400f7b .chroma .vc,
-#editor-97400f7b .chroma .vg,
-#editor-97400f7b .chroma .vi,
-#editor-97400f7b .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-e43fabf3 .chroma .n,
+#editor-e43fabf3 .chroma .nx,
+#editor-e43fabf3 .chroma .nv,
+#editor-e43fabf3 .chroma .vc,
+#editor-e43fabf3 .chroma .vg,
+#editor-e43fabf3 .chroma .vi,
+#editor-e43fabf3 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-97400f7b" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-97400f7b" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-e43fabf3" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-e43fabf3" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -7090,11 +7158,11 @@ void main() {
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-97400f7b" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-e43fabf3" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-97400f7b" style="display: none;">
+<textarea id="fs-e43fabf3" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -7180,8 +7248,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-97400f7b');
-    const editor = document.getElementById('editor-97400f7b');
+    const canvas = document.getElementById('glcanvas-e43fabf3');
+    const editor = document.getElementById('editor-e43fabf3');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -7370,7 +7438,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-97400f7b').value.trim();
+    const rawSource = document.getElementById('fs-e43fabf3').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -7557,10 +7625,10 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 
 <style>
  
-#editor-27c4903e .highlight,
-#editor-27c4903e .chroma,
-#editor-27c4903e pre,
-#editor-27c4903e code {
+#editor-985c261a .highlight,
+#editor-985c261a .chroma,
+#editor-985c261a pre,
+#editor-985c261a code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -7575,92 +7643,92 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
 }
 
  
-#editor-27c4903e .copy-code,
-#editor-27c4903e .chroma .copy-btn { 
+#editor-985c261a .copy-code,
+#editor-985c261a .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-27c4903e {
+.glsl-code-panel-985c261a {
     background-color: #1e1e1e !important;
 }
 
-#editor-27c4903e,
-#editor-27c4903e .chroma {
+#editor-985c261a,
+#editor-985c261a .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-27c4903e .chroma .k,
-#editor-27c4903e .chroma .kd,
-#editor-27c4903e .chroma .kn,
-#editor-27c4903e .chroma .kp,
-#editor-27c4903e .chroma .kr,
-#editor-27c4903e .chroma .ow,
-#editor-27c4903e .chroma .cp,
-#editor-27c4903e .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-985c261a .chroma .k,
+#editor-985c261a .chroma .kd,
+#editor-985c261a .chroma .kn,
+#editor-985c261a .chroma .kp,
+#editor-985c261a .chroma .kr,
+#editor-985c261a .chroma .ow,
+#editor-985c261a .chroma .cp,
+#editor-985c261a .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-27c4903e .chroma .kt,
-#editor-27c4903e .chroma .nb,
-#editor-27c4903e .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-985c261a .chroma .kt,
+#editor-985c261a .chroma .nb,
+#editor-985c261a .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-27c4903e .chroma .nf,
-#editor-27c4903e .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-985c261a .chroma .nf,
+#editor-985c261a .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-27c4903e .chroma .m,
-#editor-27c4903e .chroma .mb,
-#editor-27c4903e .chroma .mf,
-#editor-27c4903e .chroma .mh,
-#editor-27c4903e .chroma .mi,
-#editor-27c4903e .chroma .il,
-#editor-27c4903e .chroma .mo,
-#editor-27c4903e .chroma .kc { color: #b5cea8 !important; }
+#editor-985c261a .chroma .m,
+#editor-985c261a .chroma .mb,
+#editor-985c261a .chroma .mf,
+#editor-985c261a .chroma .mh,
+#editor-985c261a .chroma .mi,
+#editor-985c261a .chroma .il,
+#editor-985c261a .chroma .mo,
+#editor-985c261a .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-27c4903e .chroma .s,
-#editor-27c4903e .chroma .sa,
-#editor-27c4903e .chroma .sb,
-#editor-27c4903e .chroma .sc,
-#editor-27c4903e .chroma .dl,
-#editor-27c4903e .chroma .sd,
-#editor-27c4903e .chroma .s2,
-#editor-27c4903e .chroma .se,
-#editor-27c4903e .chroma .sh,
-#editor-27c4903e .chroma .si,
-#editor-27c4903e .chroma .sx,
-#editor-27c4903e .chroma .sr,
-#editor-27c4903e .chroma .s1,
-#editor-27c4903e .chroma .ss { color: #ce9178 !important; }
+#editor-985c261a .chroma .s,
+#editor-985c261a .chroma .sa,
+#editor-985c261a .chroma .sb,
+#editor-985c261a .chroma .sc,
+#editor-985c261a .chroma .dl,
+#editor-985c261a .chroma .sd,
+#editor-985c261a .chroma .s2,
+#editor-985c261a .chroma .se,
+#editor-985c261a .chroma .sh,
+#editor-985c261a .chroma .si,
+#editor-985c261a .chroma .sx,
+#editor-985c261a .chroma .sr,
+#editor-985c261a .chroma .s1,
+#editor-985c261a .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-27c4903e .chroma .c,
-#editor-27c4903e .chroma .ch,
-#editor-27c4903e .chroma .cm,
-#editor-27c4903e .chroma .c1,
-#editor-27c4903e .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-985c261a .chroma .c,
+#editor-985c261a .chroma .ch,
+#editor-985c261a .chroma .cm,
+#editor-985c261a .chroma .c1,
+#editor-985c261a .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-27c4903e .chroma .o { color: #d4d4d4 !important; }
-#editor-27c4903e .chroma .p { color: #d4d4d4 !important; }
+#editor-985c261a .chroma .o { color: #d4d4d4 !important; }
+#editor-985c261a .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-27c4903e .chroma .n,
-#editor-27c4903e .chroma .nx,
-#editor-27c4903e .chroma .nv,
-#editor-27c4903e .chroma .vc,
-#editor-27c4903e .chroma .vg,
-#editor-27c4903e .chroma .vi,
-#editor-27c4903e .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-985c261a .chroma .n,
+#editor-985c261a .chroma .nx,
+#editor-985c261a .chroma .nv,
+#editor-985c261a .chroma .vc,
+#editor-985c261a .chroma .vg,
+#editor-985c261a .chroma .vi,
+#editor-985c261a .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-27c4903e" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-27c4903e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-985c261a" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-985c261a" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -7711,11 +7779,11 @@ $$<p>In practice, this is why front-to-back marching works: each sample contribu
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-27c4903e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-985c261a" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-27c4903e" style="display: none;">
+<textarea id="fs-985c261a" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -7768,8 +7836,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-27c4903e');
-    const editor = document.getElementById('editor-27c4903e');
+    const canvas = document.getElementById('glcanvas-985c261a');
+    const editor = document.getElementById('editor-985c261a');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -7958,7 +8026,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-27c4903e').value.trim();
+    const rawSource = document.getElementById('fs-985c261a').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -8053,19 +8121,19 @@ void main() {
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/rendering/">Rendering</a></li>
-      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="https://USharma002.github.io/tags/rendering/">Rendering</a></li>
+      <li><a href="https://USharma002.github.io/tags/computer-graphics/">Computer Graphics</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/neural-importance-sampling-path-tracing/">
+  <a class="prev" href="https://USharma002.github.io/posts/neural-importance-sampling-path-tracing/">
     <span class="title">« Prev</span>
     <br>
     <span>A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing</span>
   </a>
-  <a class="next" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
+  <a class="next" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
     <span class="title">Next »</span>
     <br>
-    <span>Differentiable Rendering of Participating Media</span>
+    <span>Introduction to Differentiable Rendering</span>
   </a>
 </nav>
 
@@ -8074,7 +8142,7 @@ void main() {
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
 
     <span>
         Powered by

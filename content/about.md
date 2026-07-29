@@ -59,7 +59,7 @@ summary: "about"
   <!-- Futaba Renderer -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="https://github.com/USharma002/futaba-renderer/blob/main/assets/dragon-cbox.png?raw=true" alt="Futaba Renderer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
+      <img src="/images/about/dragon-cbox.png" alt="Futaba Renderer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
       <img src="/images/about/futaba.gif" alt="Futaba Renderer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
@@ -77,8 +77,8 @@ summary: "about"
   <!-- Neural Path Guiding -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="https://github.com/USharma002/py-neural-path-guiding/blob/main/assets/app.png?raw=true" alt="Neural Path Guiding Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="https://github.com/USharma002/py-neural-path-guiding/blob/main/assets/learning_pdf.gif?raw=true" alt="Neural Path Guiding GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/neural_path_guiding.png" alt="Neural Path Guiding Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
+      <img src="/images/about/learning_pdf.gif" alt="Neural Path Guiding GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Neural Path Guiding (Python)</h4>
@@ -96,7 +96,7 @@ summary: "about"
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
       <img src="/images/about/sdf-explorer.png" alt="SDF Explorer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; background-color: #f0f0f0;">
-      <img src="/images/about/sdf-explorer.gif" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/sdf-explorer.webp" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer (WIP)</h4>
@@ -114,8 +114,8 @@ summary: "about"
   <!-- Project 2 -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="https://github.com/USharma002/VolPath/raw/main/icons/volpath.png" alt="Scalar Field Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
-      <img src="/images/about/volpath.gif" alt="Scalar Field GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
+      <img src="/images/about/volpath.png" alt="Scalar Field Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block;">
+      <img src="/images/about/volpath.webp" alt="Scalar Field GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
     </div>
     <div>
       <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Scalar Field Reconstructor</h4>
