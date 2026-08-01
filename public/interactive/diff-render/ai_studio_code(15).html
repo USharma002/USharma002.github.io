@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Edge Sampling Geometry (Minimal)</title>
+    <style>
+        /* Minimal, academic paper aesthetic */
+        body { margin: 0; overflow: hidden; background-color: #ffffff; font-family: "Latin Modern Math", "Computer Modern", serif; color: #000; }
+        #canvas-container { width: 100vw; height: 100vh; }
+        
+        /* Minimal UI Panel */
+        #ui-panel {
+            position: absolute; top: 20px; right: 20px; width: 280px;
+            background: rgba(255, 255, 255, 0.9); padding: 15px;
+            border: 1px solid #ccc; font-size: 14px;
+        }
+        .control-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 4px; font-style: italic; }
+        input[type=range] { width: 100%; cursor: pointer; }
+        
+        /* Math Box */
+        .math { 
+            font-style: italic; font-size: 15px; margin-top: 15px; padding-top: 10px; 
+            border-top: 1px solid #ddd; line-height: 1.6;
+        }
+        
+        /* Floating LaTeX-style Labels */
+        .label {
+            position: absolute; color: #000; font-size: 20px; font-style: italic;
+            pointer-events: none; transform: translate(-50%, -50%);
+            text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+        }
+    </style>
+    <!-- Load Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <!-- Floating Labels -->
+    <div id="label-p" class="label">p</div>
+    <div id="label-v0" class="label">v₀</div>
+    <div id="label-v1" class="label">v₁</div>
+    <div id="label-nm" class="label">n_m</div>
+    <div id="label-nh" class="label">n_h</div>
+
+    <div id="ui-panel">
+        <div class="control-group">
+            <label>Move Box Up/Down</label>
+            <input type="range" id="boxY" min="1" max="4" step="0.1" value="2.5">
+        </div>
+        <div class="control-group">
+            <label>Tilt Background Wall</label>
+            <input type="range" id="wallTilt" min="-45" max="45" step="1" value="0">
+        </div>
+        <div class="math">
+            n_m = <span id="val_nm"></span><br>
+            n_h = <span id="val_nh"></span><br>
+            <div style="margin-top: 10px; font-weight: bold; text-align: center;">
+                Area Correction:<br>
+                1 / ||n_m × n_h|| = <span id="val_correction" style="color: #d32f2f;"></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        // --- Setup Scene ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff); // White background
+        
+        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(10, 6, 10);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 2, -2);
+
+        // --- Materials (Flat Vector Style) ---
+        const matGray = new THREE.MeshBasicMaterial({ color: 0x777777 });
+        const matYellow = new THREE.MeshBasicMaterial({ color: 0xeeee44, side: THREE.DoubleSide });
+        const matBrown = new THREE.MeshBasicMaterial({ color: 0xa87676, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+        const matBlack = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const matLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
+        const matRedLine = new THREE.LineBasicMaterial({ color: 0xd32f2f, linewidth: 3 });
+
+        // --- Static Scene Elements ---
+        // Shading Point 'p'
+        const p = new THREE.Vector3(0, 0, 4);
+        const pMesh = new THREE.Mesh(new THREE.SphereGeometry(0.12), matBlack);
+        pMesh.position.copy(p);
+        scene.add(pMesh);
+
+        // Occluder Box
+        const boxGeometry = new THREE.BoxGeometry(3, 2, 1);
+        const box = new THREE.Mesh(boxGeometry, matGray);
+        scene.add(box);
+
+        // Highlight Occluding Edge (v0 to v1)
+        const edgeGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+        const edgeLine = new THREE.Line(edgeGeom, matLine);
+        scene.add(edgeLine);
+
+        // Background Wall
+        const wallGeometry = new THREE.PlaneGeometry(15, 15);
+        const wall = new THREE.Mesh(wallGeometry, matYellow);
+        scene.add(wall);
+
+        // --- Dynamic Scene Elements ---
+        // Shadow Plane Triangle
+        const shadowPlaneGeom = new THREE.BufferGeometry();
+        const shadowPlaneMesh = new THREE.Mesh(shadowPlaneGeom, matBrown);
+        scene.add(shadowPlaneMesh);
+
+        // Projected Shadow Line on Wall
+        const projectedLineGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+        const projectedLine = new THREE.Line(projectedLineGeom, matRedLine);
+        scene.add(projectedLine);
+
+        // Arrows for Normals
+        const arrowNm = new THREE.ArrowHelper(new THREE.Vector3(), new THREE.Vector3(), 2, 0x00b0ff, 0.3, 0.2);
+        const arrowNh = new THREE.ArrowHelper(new THREE.Vector3(), new THREE.Vector3(), 2, 0x00b0ff, 0.3, 0.2);
+        scene.add(arrowNm);
+        scene.add(arrowNh);
+
+        // --- Math & Update Logic ---
+        function intersectRayPlane(rayOrigin, rayDir, planePoint, planeNormal) {
+            const denom = rayDir.dot(planeNormal);
+            if (Math.abs(denom) > 0.0001) {
+                const t = planePoint.clone().sub(rayOrigin).dot(planeNormal) / denom;
+                if (t >= 0) return rayOrigin.clone().add(rayDir.clone().multiplyScalar(t));
+            }
+            return null; 
+        }
+
+        function updateScene() {
+            // Read Inputs
+            const boxY = parseFloat(document.getElementById('boxY').value);
+            const wallTilt = parseFloat(document.getElementById('wallTilt').value) * THREE.MathUtils.DEG2RAD;
+
+            // Update Box
+            box.position.set(0, boxY, 0);
+            
+            // Get Box Vertices v0 (left) and v1 (right)
+            const v0 = new THREE.Vector3(-1.5, boxY + 1, 0.5);
+            const v1 = new THREE.Vector3(1.5, boxY + 1, 0.5);
+            edgeLine.geometry.setFromPoints([v0, v1]);
+
+            // Update Wall
+            wall.position.set(0, 5, -5);
+            wall.rotation.x = wallTilt;
+            
+            const wallNormal = new THREE.Vector3(0, 0, 1).applyEuler(wall.rotation).normalize();
+            
+            // MATH: Calculate Shadow Plane Normal (n_h)
+            const vec0 = v0.clone().sub(p);
+            const vec1 = v1.clone().sub(p);
+            const nh = new THREE.Vector3().crossVectors(vec0, vec1).normalize();
+
+            // MATH: Ray-Plane Intersections
+            const m0 = intersectRayPlane(p, vec0.clone().normalize(), wall.position, wallNormal);
+            const m1 = intersectRayPlane(p, vec1.clone().normalize(), wall.position, wallNormal);
+
+            if (m0 && m1) {
+                // Update Shadow Plane
+                const vertices = new Float32Array([
+                    p.x, p.y, p.z,
+                    m1.x, m1.y, m1.z, 
+                    m0.x, m0.y, m0.z
+                ]);
+                shadowPlaneGeom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                shadowPlaneGeom.computeVertexNormals();
+
+                // Update Projected Line
+                projectedLine.geometry.setFromPoints([m0, m1]);
+
+                // Update Arrows
+                const centerWall = m0.clone().add(m1).multiplyScalar(0.5);
+                arrowNm.setDirection(wallNormal);
+                arrowNm.position.copy(centerWall);
+                
+                arrowNh.setDirection(nh);
+                arrowNh.position.copy(centerWall);
+
+                // Update UI Math
+                document.getElementById('val_nm').innerText = `[${wallNormal.x.toFixed(2)}, ${wallNormal.y.toFixed(2)}, ${wallNormal.z.toFixed(2)}]`;
+                document.getElementById('val_nh').innerText = `[${nh.x.toFixed(2)}, ${nh.y.toFixed(2)}, ${nh.z.toFixed(2)}]`;
+                
+                const cross = new THREE.Vector3().crossVectors(wallNormal, nh);
+                const correction = 1 / cross.length();
+                document.getElementById('val_correction').innerText = correction.toFixed(3);
+
+                // Update HTML Labels
+                updateLabelPosition('label-p', p, 0, 0.4);
+                updateLabelPosition('label-v0', v0, -0.4, 0);
+                updateLabelPosition('label-v1', v1, 0.4, 0);
+                updateLabelPosition('label-nm', centerWall.clone().add(wallNormal.clone().multiplyScalar(2)), 0, 0);
+                updateLabelPosition('label-nh', centerWall.clone().add(nh.clone().multiplyScalar(2)), 0, 0);
+            }
+        }
+
+        // Project 3D coordinate to 2D screen coordinate for LaTeX labels
+        function updateLabelPosition(id, position, offsetX = 0, offsetY = 0) {
+            const vector = position.clone();
+            vector.x += offsetX; vector.y += offsetY;
+            vector.project(camera);
+            const x = (vector.x * .5 + .5) * window.innerWidth;
+            const y = (vector.y * -.5 + .5) * window.innerHeight;
+            const el = document.getElementById(id);
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+        }
+
+        // Event Listeners
+        document.getElementById('boxY').addEventListener('input', updateScene);
+        document.getElementById('wallTilt').addEventListener('input', updateScene);
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+            updateScene(); // Keep labels synced with camera movement
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        updateScene();
+        animate();
+    </script>
+</body>
+</html>

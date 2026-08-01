@@ -13,6 +13,14 @@ math: true
 draft: false
 ---
 
+<style>
+html.dark img[src$=".svg"]:not(.no-invert),
+body.dark img[src$=".svg"]:not(.no-invert),
+[data-theme="dark"] img[src$=".svg"]:not(.no-invert) {
+    filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.2) !important;
+}
+</style>
+
 <div style="background-color: rgba(220, 38, 38, 0.08); border-left: 4px solid #dc2626; color: #dc2626; padding: 10px 14px; font-weight: 500; border-radius: 4px; margin-bottom: 20px; line-height: 1.5;">
   <strong>Work in Progress:</strong> This post is under active development. I am continuously updating and expanding sections as I explore the literature further.
 </div>
@@ -24,374 +32,65 @@ Differentiable rendering asks a simple question with surprisingly sharp edges: i
 
 
 
-
-
-> I will use the following renderer components for some examples:
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Renderer Components</strong></summary>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Camera</strong></summary>
-> 
-> ```python
-> import torch
-> import numpy as np
-> from .ray import Ray
-> 
-> class Camera:
->     """Pinhole camera for primary ray generation and 3D projection."""
->     def __init__(self, pos=[0.0, 1.1, 2.2], target=[0.0, 0.35, -0.4], up=[0.0, 1.0, 0.0], fov=60.0, res=128, device='cuda'):
->         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
-> 
->         self.pos = torch.as_tensor(pos, dtype=torch.float32, device=self.device)
->         self.target = torch.as_tensor(target, dtype=torch.float32, device=self.device)
-> 
->         self.up = torch.as_tensor(up, dtype=torch.float32, device=self.device)
-> 
->         self.fov = fov
->         self.res = res
-> 
->         self.forward = torch.nn.functional.normalize(self.target - self.pos, dim=0)
->         self.right = torch.nn.functional.normalize(torch.linalg.cross(self.forward, self.up), dim=0)
->         self.cam_up = torch.linalg.cross(self.right, self.forward)
-> 
->     def sample(self) -> Ray:
->         fov_rad = np.radians(self.fov)
->         half_w = np.tan(fov_rad / 2.0)
-> 
->         y = torch.linspace(half_w, -half_w, self.res, device=self.device)
->         x = torch.linspace(-half_w, half_w, self.res, device=self.device)
->         grid_y, grid_x = torch.meshgrid(y, x, indexing='ij')
-> 
->         dirs = (grid_x.unsqueeze(-1) * self.right + grid_y.unsqueeze(-1) * self.cam_up + self.forward.view(1, 1, 3))
->         dirs = torch.nn.functional.normalize(dirs, dim=-1)
->         origins = self.pos.view(1, 1, 3).expand(self.res, self.res, 3)
->         return Ray(origins, dirs)
-> 
->     def project(self, p_world: torch.Tensor):
->         rel = p_world - self.pos
->         x_c = torch.sum(rel * self.right)
->         y_c = torch.sum(rel * self.cam_up)
->         z_c = torch.sum(rel * self.forward)
-> 
->         focal_len = 1.0 / np.tan(np.radians(self.fov) / 2.0)
->         u = (x_c / (z_c + 1e-8)) * focal_len
->         v = (y_c / (z_c + 1e-8)) * focal_len
->         return u, v, z_c
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>BSDF</strong></summary>
-> 
-> ```python
-> import torch
-> 
-> class BSDF:
->     """Abstract Base BSDF material."""
->     def __init__(self, albedo=[0.8, 0.8, 0.8], device='cuda'):
->         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
->         self.albedo = torch.as_tensor(albedo, dtype=torch.float32, device=self.device)
-> 
->     def sample(self, wo: torch.Tensor, normal: torch.Tensor, rand_noise: torch.Tensor = None):
->         raise NotImplementedError
-> 
-> 
-> class DiffuseBSDF(BSDF):
->     """Lambertian Diffuse BSDF Subclass."""
->     def sample(self, wo: torch.Tensor, normal: torch.Tensor, rand_noise: torch.Tensor = None):
->         if rand_noise is None:
->             rand_noise = torch.nn.functional.normalize(torch.randn_like(normal), dim=-1)
->         wi = torch.where(torch.sum(rand_noise * normal, dim=-1, keepdim=True) < 0, -rand_noise, rand_noise)
->         return wi, self.albedo.view(1, 1, 3) * 2.5
-> 
-> 
-> class MetallicBSDF(BSDF):
->     """Specular Metallic BSDF Subclass with Roughness."""
->     def __init__(self, tint=[0.85, 0.85, 0.9], roughness=0.08, device='cuda'):
->         super().__init__(albedo=tint, device=device)
->         self.roughness = roughness
-> 
->     def sample(self, wo: torch.Tensor, normal: torch.Tensor, rand_noise: torch.Tensor = None):
->         if rand_noise is None:
->             rand_noise = torch.randn_like(normal)
->         reflect_dir = -wo + 2.0 * torch.sum(wo * normal, dim=-1, keepdim=True) * normal
->         wi = torch.nn.functional.normalize(reflect_dir + rand_noise * self.roughness, dim=-1)
->         return wi, self.albedo.view(1, 1, 3)
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Integrator</strong></summary>
-> 
-> ```python
-> import torch
-> from .scene import Scene
-> from .camera import Camera
-> from .ray import Ray
-> 
-> class PathTracer:
->     """Pure Path Tracer."""
->     def __init__(self, max_depth=3, num_samples=128, device='cuda'):
->         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
->         self.max_depth = max_depth
->         self.num_samples = num_samples
-> 
->     def sample(self, scene: Scene, camera: Camera) -> torch.Tensor:
->         primary_ray = camera.sample()
->         accumulated_L = torch.zeros_like(primary_ray.origins)
-> 
->         for _ in range(self.num_samples):
->             ray = Ray(primary_ray.origins, primary_ray.dirs)
-> 
->             f = torch.ones_like(ray.origins)
->             L = torch.zeros_like(ray.origins)
-> 
->             for depth in range(self.max_depth):
->                 si = scene.intersect(ray)
->                 valid = ((si.t < 1e5) & (si.t > 0)).unsqueeze(-1)
-> 
->                 # Radiance accumulation: L += f * Le
->                 L = L + torch.where(valid, f * si.emission, torch.zeros_like(L))
-> 
->                 wo = -ray.dirs
->                 bsdf_sample_wo, bsdf_val = si.bsdf.sample(wo, si.n)
-> 
->                 ray = Ray(si.p + si.n * 1e-3, bsdf_sample_wo)
->                 f = f * torch.where(valid, bsdf_val, torch.zeros_like(f))
-> 
->             accumulated_L += L
-> 
->         accumulated_L /= self.num_samples
->         return torch.clamp(accumulated_L, 0.0, 1.0)
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Primitives</strong></summary>
-> 
-> ```python
-> import torch
-> from .ray import Ray
-> from .intersection import SurfaceIntersection
-> from .bsdf import DiffuseBSDF
-> 
-> class CompositeBSDF:
->     """Delegates per-pixel BSDF sampling to hit triangle BSDF instances."""
->     def __init__(self, triangles, closest_idx):
->         self.triangles = triangles
->         self.closest_idx = closest_idx
-> 
->     def sample(self, wo: torch.Tensor, normal: torch.Tensor):
->         rand_noise = torch.nn.functional.normalize(torch.randn_like(normal), dim=-1)
->         wi_out, val_out = torch.zeros_like(normal), torch.zeros_like(normal)
-> 
->         for i, tri in enumerate(self.triangles):
->             mask = (self.closest_idx == i).unsqueeze(-1)
->             if torch.any(mask):
->                 wi_i, val_i = tri.bsdf.sample(wo, normal, rand_noise=rand_noise)
->                 wi_out = torch.where(mask, wi_i, wi_out)
->                 val_out = torch.where(mask, val_i, val_out)
-> 
->         return wi_out, val_out
-> 
-> 
-> class Triangle:
->     """3D Triangle primitive."""
->     def __init__(self, v0, v1, v2, bsdf=None, emission=[0.0, 0.0, 0.0], device='cuda'):
->         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
-> 
->         # Preserve autograd graph for tensor inputs (e.g. differentiable vertex positions)
->         self.v0 = v0 if isinstance(v0, torch.Tensor) else torch.tensor(v0, dtype=torch.float32, device=self.device)
->         self.v1 = v1 if isinstance(v1, torch.Tensor) else torch.tensor(v1, dtype=torch.float32, device=self.device)
->         self.v2 = v2 if isinstance(v2, torch.Tensor) else torch.tensor(v2, dtype=torch.float32, device=self.device)
-> 
->         self.bsdf = bsdf if bsdf is not None else DiffuseBSDF(albedo=[0.8, 0.8, 0.8], device=self.device)
->         self.emission = torch.as_tensor(emission, dtype=torch.float32, device=self.device)
-> 
->         e1, e2 = self.v1 - self.v0, self.v2 - self.v0
->         self.normal = torch.nn.functional.normalize(torch.linalg.cross(e1, e2, dim=-1), dim=-1)
-> 
-> 
-> class Mesh:
->     """Vectorized Triangle Mesh."""
->     def __init__(self, triangles=None):
->         self.triangles = triangles if triangles is not None else []
-> 
->     def add_triangle(self, tri: Triangle):
->         self.triangles.append(tri)
-> 
->     def intersect(self, ray: Ray) -> SurfaceIntersection:
->         device = ray.origins.device
->         N_tri = len(self.triangles)
-> 
->         v0_stack = torch.stack([tri.v0 for tri in self.triangles])
->         v1_stack = torch.stack([tri.v1 for tri in self.triangles])
->         v2_stack = torch.stack([tri.v2 for tri in self.triangles])
-> 
->         color_stack = torch.stack([tri.bsdf.albedo for tri in self.triangles])
->         emission_stack = torch.stack([tri.emission for tri in self.triangles])
-> 
->         e1, e2 = v1_stack - v0_stack, v2_stack - v0_stack
->         normals = torch.nn.functional.normalize(torch.linalg.cross(e1, e2, dim=-1), dim=-1)
-> 
->         O, D = ray.origins.unsqueeze(-2), ray.dirs.unsqueeze(-2)
->         v0 = v0_stack.view(1, 1, N_tri, 3)
->         e1_b = e1.view(1, 1, N_tri, 3)
->         e2_b = e2.view(1, 1, N_tri, 3)
-> 
->         h = torch.linalg.cross(D, e2_b, dim=-1)
->         a = torch.sum(e1_b * h, dim=-1)
->         f = 1.0 / (a + 1e-8)
-> 
->         s = O - v0
->         u = f * torch.sum(s * h, dim=-1)
->         q = torch.linalg.cross(s, e1_b, dim=-1)
->         v = f * torch.sum(D * q, dim=-1)
->         t = f * torch.sum(e2_b * q, dim=-1)
-> 
->         valid_hit = (torch.abs(a) > 1e-7) & (u >= 0.0) & (u <= 1.0) & (v >= 0.0) & (u + v <= 1.0) & (t > 1e-4)
->         t_val = torch.where(valid_hit, t, torch.tensor(1e6, device=device))
-> 
->         min_t, closest_idx = torch.min(t_val, dim=-1)
->         hit_pos = ray.point_at(min_t)
-> 
->         idx_exp = closest_idx.unsqueeze(-1).unsqueeze(-2).expand(-1, -1, 1, 3)
->         H, W = ray.origins.shape[:2]
-> 
->         closest_normals = torch.gather(normals.view(1, 1, N_tri, 3).expand(H, W, -1, -1), -2, idx_exp).squeeze(-2)
->         closest_colors = torch.gather(color_stack.view(1, 1, N_tri, 3).expand(H, W, -1, -1), -2, idx_exp).squeeze(-2)
->         closest_emissions = torch.gather(emission_stack.view(1, 1, N_tri, 3).expand(H, W, -1, -1), -2, idx_exp).squeeze(-2)
-> 
->         composite_bsdf = CompositeBSDF(self.triangles, closest_idx)
->         return SurfaceIntersection(min_t, closest_normals, hit_pos, closest_colors, emission=closest_emissions, bsdf=composite_bsdf)
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Ray</strong></summary>
-> 
-> ```python
-> import torch
-> 
-> class Ray:
->     """Ray data structure containing origins O and directions D."""
->     def __init__(self, origins: torch.Tensor, dirs: torch.Tensor):
->         self.origins = origins
->         self.dirs = dirs
-> 
->     def point_at(self, t: torch.Tensor) -> torch.Tensor:
->         return self.origins + t.unsqueeze(-1) * self.dirs
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Scene</strong></summary>
-> 
-> ```python
-> import torch
-> from .ray import Ray
-> from .intersection import SurfaceIntersection
-> from .primitives import Mesh, Triangle
-> 
-> class AreaLight:
->     """Area light emitter composed of emissive triangles."""
->     def __init__(self, triangles=None, radiance=[6.0, 6.0, 6.0], device='cuda'):
->         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
->         self.triangles = triangles if triangles is not None else []
->         self.radiance = torch.as_tensor(radiance, dtype=torch.float32, device=self.device)
-> 
-> 
-> class Scene:
->     """Scene graph containing triangles and area light emitters."""
->     def __init__(self):
->         self.triangles = []
->         self.emitters = []
->         self._mesh = Mesh(self.triangles)
-> 
->     def add_triangle(self, triangle: Triangle):
->         self.triangles.append(triangle)
->         self._mesh = Mesh(self.triangles)
-> 
->     def add_emitter(self, emitter: AreaLight):
->         self.emitters.append(emitter)
->         for tri in emitter.triangles:
->             tri.emission = emitter.radiance
->             self.triangles.append(tri)
->         self._mesh = Mesh(self.triangles)
-> 
->     def intersect(self, ray: Ray) -> SurfaceIntersection:
->         return self._mesh.intersect(ray)
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Intersection</strong></summary>
-> 
-> ```python
-> import torch
-> 
-> class SurfaceIntersection:
->     """Surface interaction hit record."""
->     def __init__(
->             self, t: torch.Tensor, 
->             normals: torch.Tensor, 
->             hit_pos: torch.Tensor, 
->             color: torch.Tensor, 
->             emission: torch.Tensor = None, 
->             bsdf = None
->         ):
->         self.t = t
->         self.n = normals
->         self.p = hit_pos
->         self.color = color
->         self.emission = emission if emission is not None else torch.zeros_like(color)
->         self.bsdf = bsdf
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>__init__</strong></summary>
-> 
-> ```python
-> from .ray import Ray
-> from .intersection import SurfaceIntersection
-> from .camera import Camera
-> from .bsdf import BSDF, DiffuseBSDF, MetallicBSDF
-> from .primitives import Triangle, Mesh
-> from .scene import Scene, AreaLight
-> from .path_tracer import PathTracer
-> 
-> __all__ = [
->     'Ray',
->     'SurfaceIntersection',
->     'Camera',
->     'BSDF',
->     'DiffuseBSDF',
->     'MetallicBSDF',
->     'Triangle',
->     'Mesh',
->     'Scene',
->     'AreaLight',
->     'PathTracer'
-> ]
-> ```
-> 
-> </details>
-> </details>
 The difficulty is that rendering is not just a smooth program. It is an integral over paths, visibility changes discontinuously, and Monte Carlo estimators have sampling choices that may themselves depend on the parameters. This post builds the story in layers: first automatic differentiation, then why naive AD fails for visibility, then boundary-aware Monte Carlo estimators, and finally the physics-based formulations used in modern differentiable renderers.
 
-I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. The main article focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic.
+I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. This post focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic in [Differentiable Rendering of Participating Media](/posts/differentiable-rendering-participating-media/).
 
-> *Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini's PhD thesis [[2]](#ref-2).*
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+  <p><em>Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini's PhD thesis <a href="#ref-2">[2]</a>.</em></p>
+  <p style="margin-top: 1rem;">I will be using the following custom differentiable renderer to do simplified implementations throughout this post. <em>(The full code is available on <a href="https://github.com/USharma002/nabla-renderer" title="Nabla Renderer on GitHub">GitHub</a>)</em>:</p>
+  <details><summary style="cursor: pointer; font-weight: 600; padding: 4px 0;">Path</summary>
+  <div style="padding-left: 1rem; margin-bottom: 8px;">
+
+```python
+import torch
+from scene import Scene
+from camera import Camera
+from ray import Ray
+
+
+class PathTracer:
+    def __init__(self, max_depth=5, num_samples=128, chunk_size=4):
+        self.max_depth = max_depth
+
+        self.num_samples = num_samples
+        self.chunk_size = chunk_size
+
+    def sample(self, scene: Scene, camera: Camera):
+        primary_rays = camera.sample()
+        accum_L = torch.zeros_like(primary_rays.origins)
+
+        for sample_idx in range(0, self.num_samples, self.chunk_size):
+            chunk = min(self.chunk_size, self.num_samples - sample_idx)
+            ray = Ray(primary_rays.origins.expand(chunk, -1, -1, -1), primary_rays.dirs.expand(chunk, -1, -1, -1))
+
+            β = torch.ones_like(ray.origins)
+            L = torch.zeros_like(ray.origins)
+
+            for depth in range(self.max_depth):
+                si = scene.intersect(ray)
+                
+                # Direct emission
+                Le = β * si.emission
+                L = L + torch.where(si.is_valid(), Le, 0.0)
+
+                shading_n = torch.where((si.n * ray.dirs).sum(-1, keepdim=True) > 0.0, -si.n, si.n)
+                
+                # BSDF Sampling
+                bsdf_wi, bsdf_val = si.bsdf.sample(-ray.dirs, shading_n)
+                
+                # Update loop variables
+                ray = Ray(si.p + shading_n * 1e-3, bsdf_wi)
+                β = torch.where(si.is_valid(), β * bsdf_val, 0.0)
+
+            accum_L += L.sum(dim=0)
+
+        img = torch.clamp(accum_L / self.num_samples, 1e-6, 1.0)
+        return img ** (1.0 / 2.2)
+```
+
+</div></details>
+</blockquote>
 
 ## Differentiation Methods
 
@@ -453,49 +152,81 @@ The random perturbation vector $\boldsymbol{\Delta}$ has entries drawn independe
 
 While SPSA requires only two function evaluations per step regardless of input dimensionality, it introduces additional stochastic direction variance into the gradient estimates. This requires careful tuning of the step size $h$ to achieve good convergence. Consequently, derivative-free methods cannot compete with gradient descent using true infinitesimal gradients computed via automatic differentiation.
 
-> <details>
-> <summary style="cursor: pointer;"><strong>Finite Differences Optimization Example</strong></summary>
-> 
-> ```python
-> import torch
-> from diff_render import Camera, PathTracer
-> 
-> device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-> 
-> # Initialize camera and path tracer
-> camera = Camera(pos=[0.0, 1.1, 2.2], target=[0.0, 0.35, -0.4], res=256, device=device)
-> tracer = PathTracer(max_depth=3, num_samples=256, device=device)
-> 
-> # Render target image (cube target x = -0.15)
-> with torch.no_grad():
->     torch.manual_seed(42)
->     img_target = tracer.sample(build_scene(pos_cube=[-0.15, 0.25, -0.2]), camera)
-> 
-> # Inverse rendering position optimization loop
-> current_x, lr, h, seed = -0.70, 0.45, 0.01, 42
-> 
-> for it in range(22):
->     with torch.no_grad():
->         # Evaluate current render f(x)
->         torch.manual_seed(seed)
->         img_curr = tracer.sample(build_scene(pos_cube=[current_x, 0.25, -0.2]), camera)
-> 
->         # Evaluate perturbed render f(x + h) using Common Random Numbers (CRN)
->         torch.manual_seed(seed)
->         img_plus = tracer.sample(build_scene(pos_cube=[current_x + h, 0.25, -0.2]), camera)
-> 
->         # Finite Difference derivative estimation: dL/dx = (L(x+h) - L(x)) / h
->         loss_curr = torch.mean((img_curr - img_target)**2)
->         loss_plus = torch.mean((img_plus - img_target)**2)
->         dloss_dx = (loss_plus - loss_curr) / h
-> 
->     # Parameter update
->     current_x = current_x - lr * dloss_dx.item()
-> ```
-> </details>
+
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
+  <div>
+    {{< figure src="/images/diff-rendering/cbox/base_render.png" caption="Cbox Initial Render" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/cbox/perturbed_translated_render.png" caption="Perturbed Render (Translated)" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/cbox/fd_translated_gradient_map.png" caption="Finite Difference Gradient (Translation)" width="100%" >}}
+  </div>
+</div>
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Generating cbox translation gradient via Finite Difference</summary>
+<div style="margin-top: 1rem;">
+
+```python
+scene_path = 'scenes/cbox/cbox_bunny.xml'
+if not os.path.exists(scene_path): scene_path = 'scenes/cbox/scene.xml'
+scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
+img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh = scene.get_mesh("bunny")
+
+h = 0.01
+mesh.translate([h, 0.0, 0.0])
+img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh.translate([-h, 0.0, 0.0])
+
+fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
+plot_fd(img_base, img_pert, fd_grad, "X-shift", h, vmin=-25, vmax=25)
+```
+</div>
+</details>
+</blockquote>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
+  <div>
+    {{< figure src="/images/diff-rendering/cbox/base_render.png" caption="Cbox Initial Render" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/cbox/perturbed_albedo_render.png" caption="Perturbed Render (Albedo)" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/cbox/fd_albedo_gradient_map.png" caption="Finite Difference Gradient (Albedo)" width="100%" >}}
+  </div>
+</div>
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Generating cbox albedo gradient via Finite Difference</summary>
+<div style="margin-top: 1rem;">
+
+```python
+scene_path = 'scenes/cbox/cbox_bunny.xml'
+if not os.path.exists(scene_path): scene_path = 'scenes/cbox/scene.xml'
+scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
+img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh = scene.get_mesh("bunny")
+
+h = 0.1
+mesh.albedo += torch.tensor([h, 0.0, 0.0], device=device)
+img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh.albedo -= torch.tensor([h, 0.0, 0.0], device=device)
+
+fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
+plot_fd(img_base, img_pert, fd_grad, "Albedo", h, vmin=-0.5, vmax=0.5)
+```
+</div>
+</details>
+</blockquote>
 
 {{< figure src="/images/diff-rendering/cube_optimization_fd.gif" id="fig-cube-opt" caption="Optimization process mapping scene parameters to target image using finite differences." width="100%" >}}
-
 
 ### Automatic Differentiation
 
@@ -856,6 +587,56 @@ print("Grad y:", y)
 # Grad y: Var(val=3.0000, grad=13.5016)
 ```
 
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
+  <div>
+    {{< figure src="/images/diff-rendering/base_render.png" caption="Teapot Initial Render" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/perturbed_roughness_render.png" caption="Perturbed Render (Roughness)" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/fd_roughness_gradient_map.png" caption="Gradient w.r.t Roughness (Interior Integral)" width="100%" >}}
+  </div>
+</div>
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Generating roughness gradient (Valid for AD)</summary>
+<div style="margin-top: 1rem;">
+
+```python
+scene_path = 'scenes/teapot/teapot.xml'
+if not os.path.exists(scene_path): scene_path = 'scenes/teapot/scene.xml'
+scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
+img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh = scene.get_mesh("teapot")
+
+h = 0.1
+mesh.roughness += torch.tensor([h], device=device)
+img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh.roughness -= torch.tensor([h], device=device)
+
+fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
+plot_fd(img_base, img_pert, fd_grad, "Roughness", h, vmin=-25, vmax=25)
+```
+</div>
+</details>
+</blockquote>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center; align-items: end;">
+  <div>
+    {{< figure src="/images/diff-rendering/planets/initial_render.png" caption="Initial Render" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/planets/render_timelapse.gif" caption="Optimization Process" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/planets/target_render.png" caption="Target Render" width="100%" >}}
+  </div>
+</div>
+
+{{< figure src="/images/diff-rendering/planets/texture_timelapse.gif" id="fig-texture-opt" caption="Underlying Texture Optimization (Latent Variable)" width="100%" >}}
+
 ## Why is Differentiable Rendering Difficult?
 
 In many cases, **symbolically differentiating a Monte Carlo estimator path tracer does not always work.**
@@ -872,47 +653,48 @@ $$\frac{d}{d\pi}\int f(x,\pi)\,dx = \int \frac{\partial f}{\partial \pi}(x,\pi)\
 
 However, this interchange is only valid under regularity conditions that justify differentiating under the integral sign, such as a suitable integrable bound on $\partial_\pi f$. Parameter-dependent jumps violate these conditions. In rendering, this frequently happens because of **visibility**: when an object moves, the color changes discontinuously across a moving boundary.
 
-> <details>
-> <summary style="cursor: pointer;"><strong>Naive AD Disconnection Example</strong></summary>
-> 
-> ```python
-> import torch
-> from diff_render import Camera, PathTracer
-> 
-> device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-> 
-> camera = Camera(pos=[0.0, 1.1, 2.2], target=[0.0, 0.35, -0.4], res=128, device=device)
-> tracer = PathTracer(max_depth=3, num_samples=32, device=device)
-> 
-> # Target state render
-> with torch.no_grad():
->     img_target = tracer.sample(build_scene(pos_cube=[-0.40, 0.25, -0.2]), camera)
-> 
-> # Parameter requiring gradient tracking
-> pos_cube_param = torch.tensor([-0.55, 0.25, -0.2], device=device, requires_grad=True)
-> img_ad = tracer.sample(build_scene(pos_cube=pos_cube_param), camera)
-> loss = torch.mean((img_ad - img_target)**2)
-> 
-> # Inspect autograd graph connection
-> print(f"loss.requires_grad = {loss.requires_grad}")
-> # Output: False (Ray-triangle intersection is non-differentiable step function, graph is disconnected)
-> ```
-> 
-> <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
->   <div>
->     <img src="/images/diff-rendering/render_initial.png" alt="Initial Render f(x)" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
->     <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Initial Render f(x)</span>
->   </div>
->   <div>
->     <img src="/images/diff-rendering/naive_ad_gradient.png" alt="Naive AD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
->     <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Naive AD Gradient (Zero)</span>
->   </div>
->   <div>
->     <img src="/images/diff-rendering/error_iter_00.png" alt="Pixel Error Map" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
->     <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Pixel Error Map |I - I_target|^2</span>
->   </div>
-> </div>
-> </details>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
+  <div>
+    <img src="/images/diff-rendering/base_render.png" alt="Initial Render" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
+    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Initial Render f(x)</span>
+  </div>
+  <div>
+    <img src="/images/diff-rendering/naive_ad_gradient.png" alt="Naive AD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
+    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Naive AD Gradient (Zero)</span>
+  </div>
+  <div>
+    <img src="/images/diff-rendering/fd_translated_gradient_map.png" alt="FD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
+    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Finite Difference Gradient</span>
+  </div>
+</div>
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Generating translation gradient via Finite Difference</summary>
+
+<div style="margin-top: 1rem;">
+
+```python
+scene_path = 'scenes/teapot/teapot.xml'
+if not os.path.exists(scene_path): scene_path = 'scenes/teapot/scene.xml'
+scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
+
+img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
+
+mesh = scene.get_mesh("teapot")
+h = 0.01
+mesh.translate([h, 0.0, 0.0])
+img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh.translate([-h, 0.0, 0.0])
+
+fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
+plot_fd(img_base, img_pert, fd_grad, "X-shift", h, vmin=-25, vmax=25)
+```
+
+</div>
+</details>
+</blockquote>
 
 ### Example 1: Distributional Parameters
 
@@ -1230,7 +1012,7 @@ $$
 \frac{\partial}{\partial \pi_v} I_i(\boldsymbol{\pi}) = \frac{\partial}{\partial \pi_v} \iint f(x, y; \boldsymbol{\pi}) dx dy \neq \frac{1}{N}\sum_{j=1}^{N}\frac{\partial f(x_j, y_j; \boldsymbol{\pi})}{\partial \pi_v} = 0
 $$
 
-This is the same failure mode as [Example 2](#example-2-discontinuities-the-visibility-problem): the discretization and the gradient operator do not commute for discontinuous integrands, since a uniformly placed sample has zero probability of landing exactly on the moving edge where the change actually happens. The fix is also the same one, sample the boundary explicitly.
+This is the same failure mode as [Example 2](#example-2-discontinuities-the-visibility-problem): the discretization and the gradient operator do not commute for discontinuous integrands, since a uniformly placed sample has zero probability of landing exactly on the moving edge where the change actually happens. The fix is also the same: sample the boundary explicitly.
 
 {{< figure src="/images/diff-rendering/svgtex/triangles/6.svg" id="fig-triangle-edge-sampling" caption="Sampling the boundary captures the missing gradient contribution from moving visibility edges." width="100%" >}}
 
@@ -1586,7 +1368,7 @@ $$
 I = \int \int k(x, y) L(x, y)\; dx\; dy.
 $$
 
-{{< figure src="/images/diff-rendering/path_space.svg" id="fig-path-space" caption="Path Space integral with integration over each pixel area where the $L$ itself is an integral over light source or hemisphere (path vertices)" width="100%" >}}
+{{< figure src="/images/diff-rendering/edge_sampling/primary_pixel.svg" id="fig-primary-pixel" caption="2D pixel filter integration over an image plane showing the interior area sample $f(x,y)$ and the moving silhouette edge boundary term." width="100%" >}}
 
 Under the paper's assumptions of non-interpenetrating triangle meshes, finite-area emitters, non-delta BSDFs, and static scenes, the relevant visibility discontinuities occur at projected triangle edges. This makes it possible to integrate over them explicitly. Li et al. were the first to systematically study these discontinuities in the context of differentiable rendering, proposing Monte Carlo integration of the boundary term by directly sampling the edges responsible for visibility jumps. Open boundary edges, view-dependent silhouette edges, and sharp edges where neighbouring faces have differing normals can all define discontinuities; with smooth shading, only edges across which the scene function actually jumps contribute to the boundary estimator.
 
@@ -1608,204 +1390,7 @@ where $f_u$ represents the upper half-space, $f_l$ represents the lower half-spa
 
 {{< figure src="/images/diff-rendering/edge_sampling/silhouette.svg" id="fig-edge-silhouette" caption="Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$." width="100%" >}}
 
-> <details>
-> <summary style="cursor: pointer;"><strong>Edge Sampler Component</strong></summary>
-> 
-> ```python
-> class EdgeSampler:
->     """Primary visibility edge sampler implementing Li et al. 2018 (Section 3.1, Eqs. 4, 8, 9, 10)."""
-> 
->     def __init__(self, num_samples=32768, epsilon=1.5):
->         self.num_samples = num_samples
->         self.epsilon = epsilon
-> 
->     def _project_to_pixel(self, v_world, camera):
->         u, v, z = camera.project(v_world)
->         half_w = np.tan(np.radians(camera.fov) / 2.0)
->         px = (u / half_w + 1.0) / 2.0 * (camera.res - 1)
->         py = (1.0 - v / half_w) / 2.0 * (camera.res - 1)
->         return px, py, z
-> 
->     def sample(self, moving_geometry, camera, rendered_image, phi_dir=None, h=0.01):
->         """Compute boundary gradient heatmap using exact formulation from Li et al. 2018."""
->         res = camera.res
->         dev = rendered_image.device
->         triangles = moving_geometry.triangles if hasattr(moving_geometry, 'triangles') else moving_geometry
-> 
->         if phi_dir is None:
->             phi_dir = torch.tensor([1.0, 0.0, 0.0], device=dev)
->         else:
->             phi_dir = torch.as_tensor(phi_dir, dtype=torch.float32, device=dev)
-> 
->         # 1. Map edges to adjacent triangles and normals
->         edge_map = {}
->         for tri in triangles:
->             center = (tri.v0 + tri.v1 + tri.v2) / 3.0
->             view_dir = center - camera.pos
->             is_front = torch.dot(tri.normal, view_dir) < 0
-> 
->             for va, vb in [(tri.v0, tri.v1), (tri.v1, tri.v2), (tri.v2, tri.v0)]:
->                 k0 = tuple(torch.round(va.detach() * 1000).cpu().int().tolist())
->                 k1 = tuple(torch.round(vb.detach() * 1000).cpu().int().tolist())
->                 key = tuple(sorted([k0, k1]))
-> 
->                 if key not in edge_map:
->                     edge_map[key] = {'va': va, 'vb': vb, 'normals': [], 'front_flags': []}
->                 edge_map[key]['normals'].append(tri.normal)
->                 edge_map[key]['front_flags'].append(is_front.item())
-> 
->         # 2. Filter for true SILHOUETTE edges with CONSISTENT orientation (a_y <= b_y)
->         edges_px = []
->         da_dPhi_list = []
->         db_dPhi_list = []
-> 
->         for info in edge_map.values():
->             normals = info['normals']
->             flags = info['front_flags']
-> 
->             is_coplanar = len(normals) == 2 and (torch.dot(normals[0], normals[1]) > 0.99)
->             is_silhouette = not is_coplanar and ((len(flags) == 1 and flags[0]) or (len(flags) == 2 and (flags[0] != flags[1])))
-> 
->             if is_silhouette:
->                 va, vb = info['va'], info['vb']
->                 p0x, p0y, z0 = self._project_to_pixel(va, camera)
->                 p1x, p1y, z1 = self._project_to_pixel(vb, camera)
-> 
->                 # Ensure consistent endpoint ordering: a_y <= b_y
->                 if p0y.item() > p1y.item():
->                     va, vb = vb, va
->                     p0x, p0y, z0, p1x, p1y, z1 = p1x, p1y, z1, p0x, p0y, z0
-> 
->                 # Endpoint velocities under parameter direction velocity (phi_dir)
->                 va_s = va + h * phi_dir
->                 vb_s = vb + h * phi_dir
->                 p0x_s, p0y_s, _ = self._project_to_pixel(va_s, camera)
->                 p1x_s, p1y_s, _ = self._project_to_pixel(vb_s, camera)
-> 
->                 dax_dPhi = (p0x_s - p0x) / h
->                 day_dPhi = (p0y_s - p0y) / h
->                 dbx_dPhi = (p1x_s - p1x) / h
->                 dby_dPhi = (p1y_s - p1y) / h
-> 
->                 if z0.item() > 0 and z1.item() > 0:
->                     edges_px.append(torch.stack([p0x, p0y, p1x, p1y]))
->                     da_dPhi_list.append(torch.stack([dax_dPhi, day_dPhi]))
->                     db_dPhi_list.append(torch.stack([dbx_dPhi, dby_dPhi]))
-> 
->         if len(edges_px) == 0:
->             return torch.zeros(res, res, device=dev)
-> 
->         edges = torch.stack(edges_px)          # [E, 4] -> (ax, ay, bx, by)
->         da_dPhi = torch.stack(da_dPhi_list)    # [E, 2] -> (dax/dPhi, day/dPhi)
->         db_dPhi = torch.stack(db_dPhi_list)    # [E, 2] -> (dbx/dPhi, dby/dPhi)
-> 
->         ax, ay, bx, by = edges[:, 0], edges[:, 1], edges[:, 2], edges[:, 3]
->         dx = bx - ax
->         dy = by - ay
->         lengths = torch.sqrt(dx**2 + dy**2).clamp(min=1e-6)  # ||E||
-> 
->         total_length = lengths.sum()
->         cdf = torch.cumsum(lengths / total_length, dim=0)
-> 
->         N = self.num_samples
->         u_samples = torch.rand(N, device=dev)
->         edge_idx = torch.searchsorted(cdf, u_samples).clamp(max=len(edges) - 1)
->         t = torch.rand(N, device=dev)
-> 
->         sampled_edges = edges[edge_idx]
->         sampled_da = da_dPhi[edge_idx]
->         sampled_db = db_dPhi[edge_idx]
->         sampled_len = lengths[edge_idx]
-> 
->         ax_s, ay_s, bx_s, by_s = sampled_edges[:, 0], sampled_edges[:, 1], sampled_edges[:, 2], sampled_edges[:, 3]
-> 
->         px = (1 - t) * ax_s + t * bx_s
->         py = (1 - t) * ay_s + t * by_s
-> 
->         # Li et al. 2018 Eq. 8:
->         dalpha_dax = (1 - t) * (by_s - ay_s)
->         dalpha_day = (1 - t) * (ax_s - bx_s)
->         dalpha_dbx = t * (by_s - ay_s)
->         dalpha_dby = t * (ax_s - bx_s)
-> 
->         # Chain Rule Eq. 9:
->         dalpha_dPhi = (dalpha_dax * sampled_da[:, 0] +
->                        dalpha_day * sampled_da[:, 1] +
->                        dalpha_dbx * sampled_db[:, 0] +
->                        dalpha_dby * sampled_db[:, 1])
-> 
->         # Unit normal pointing outward (towards upper half space alpha > 0)
->         nx = -(by_s - ay_s) / sampled_len
->         ny =  (bx_s - ax_s) / sampled_len
-> 
->         eps = self.epsilon
->         px_u = (px + eps * nx).clamp(0, res - 1).long()
->         py_u = (py + eps * ny).clamp(0, res - 1).long()
->         px_l = (px - eps * nx).clamp(0, res - 1).long()
->         py_l = (py - eps * ny).clamp(0, res - 1).long()
-> 
->         # Radiance jump: f_upper - f_lower
->         c_upper = rendered_image[py_u, px_u]
->         c_lower = rendered_image[py_l, px_l]
->         delta_f = (c_upper - c_lower).mean(dim=-1)
-> 
->         # Li et al. 2018 Estimator (Eq. 10):
->         # 1/P(E) = total_length / sampled_len, so each sample contribution is divided by sampled_len
->         sample_contrib = (dalpha_dPhi * delta_f) / sampled_len
-> 
->         flat_idx = py.clamp(0, res - 1).long() * res + px.clamp(0, res - 1).long()
->         grad_map = torch.zeros(res * res, device=dev)
->         grad_map.scatter_add_(0, flat_idx, sample_contrib)
-> 
->         grad_map = grad_map.view(res, res) * (total_length / N)
->         return grad_map
-> ```
-> 
-> </details>
-> 
-> <details>
-> <summary style="cursor: pointer;"><strong>Edge Sampling Gradient Estimation Example</strong></summary>
-> 
-> ```python
-> import torch
-> from diff_render import Camera, PathTracer, DiffuseBSDF, EdgeSampler
-> 
-> device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-> 
-> camera = Camera(pos=[0.0, 1.1, 2.2], target=[0.0, 0.35, -0.4], res=256, device=device)
-> tracer = PathTracer(max_depth=3, num_samples=128, device=device)
-> 
-> pos_cube = [-0.40, 0.25, -0.2]
-> 
-> # 1. Primary path tracing render f(x)
-> with torch.no_grad():
->     torch.manual_seed(42)
->     img_rendered = tracer.sample(build_scene(pos_cube), camera)
-> 
-> # 2. Extract geometry silhouette edges
-> bsdf_cube = DiffuseBSDF(albedo=[0.9, 0.2, 0.15], device=device)
-> cube_triangles = make_box(pos_cube, [0.25, 0.25, 0.25], bsdf=bsdf_cube)
-> 
-> # 3. Compute boundary gradient heatmap using Edge Sampling (Li et al. 2018)
-> edge_sampler = EdgeSampler(num_samples=32768, epsilon=1.5)
-> grad_map_boundary = edge_sampler.sample(cube_triangles, camera, img_rendered)
-> ```
-> 
-> <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
->   <div>
->     <img src="/images/diff-rendering/render_initial.png" alt="Initial Render f(x)" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
->     <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Initial Render f(x)</span>
->   </div>
->   <div>
->     <img src="/images/diff-rendering/edge_sampling_gradient.png" alt="Edge Sampling Boundary Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
->     <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Edge Sampling Boundary Gradient</span>
->   </div>
->   <div>
->     <img src="/images/diff-rendering/error_iter_00.png" alt="Pixel Error Map" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
->     <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Pixel Error Map |I - I_target|^2</span>
->   </div>
-> </div>
-> </details>
+
 
 <iframe src="/interactive/diff-render/silhouette.html"
         width="100%"
@@ -1814,7 +1399,7 @@ where $f_u$ represents the upper half-space, $f_l$ represents the lower half-spa
         style="border: none; min-width: 100%; margin: 1rem 0 2rem 0;">
 </iframe>
 
-{{< figure src="/images/diff-rendering/edge_sampling/half_spaces.svg" id="fig-edge-sampling" caption="(a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. We estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative." width="100%" >}}
+{{< figure src="/images/diff-rendering/edge_sampling/half_spaces.svg" id="fig-edge-sampling" caption="(a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. Li et al. estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative." width="100%" >}}
 
 For the two endpoints of the edge, $\alpha(x, y) = 0$. Thus by plugging in the two endpoints we obtain:
 
@@ -1825,6 +1410,19 @@ $$
 A scene function $f$ can be rewritten as a sum of such Heaviside functions $\theta$, one per edge, and $f_i$ itself can contain further nested Heaviside terms (a single triangle is the product of three Heaviside step functions). This fact is also crucial for generalization to secondary visibility.
 
 $$\int \int f(x,y)\; dx\;dy = \sum_i \iint \theta(\alpha_i(x,y))\,f_i(x,y) dx\;dy.$$
+
+
+<div class="paper-fig-row">
+  <div>
+    {{< figure src="/images/diff-rendering/edge_sampling/heaviside_triangle.svg" id="fig-heaviside-triangle" caption="(a) Triangle formed by product of three Heaviside step functions $\prod_{i=1}^3 \theta(\alpha_i)$." width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/edge_sampling/pixel_partition.svg" id="fig-pixel-partition" caption="(b) Pixel domain partition into regions via Heaviside sum $\sum_i \theta(\alpha_i) f_i$." width="84%" >}}
+  </div>
+</div>
+
+{{< figure src="/images/diff-rendering/edge_sampling/heaviside_sum.svg" id="fig-heaviside-sum" caption="Decomposition of the pixel integral into a sum of Heaviside-masked region integrals." width="100%" >}}
+
 
 Analytically differentiating a single term in this sum, we apply the product and chain rules step by step:
 
@@ -1852,6 +1450,41 @@ $$
 \end{equation}
 $$
 
+{{< figure src="/images/diff-rendering/edge_sampling/area_to_line_integral.svg" id="fig-area-to-line-integral" caption="Dimensionality collapse converting the 2D Dirac delta area integral into a 1D arc-length line integral along the boundary edge $\alpha_i(x,y) = 0$." width="100%" >}}
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer;"><strong>Proof: 2D Area Integral to 1D Arc-Length Line Integral</strong></summary>
+
+<div style="margin-top: 1rem;">
+
+Assume that $\alpha \in C^1$ and that $\nabla\alpha \neq 0$ on the regular level set
+$$ \mathcal{C}=\{(x,y)\mid \alpha(x,y)=0\}. $$
+
+Near any point on $\mathcal{C}$, introduce local coordinates $(n,\sigma)$, where $n$ is the signed distance measured along the unit normal
+$$ \mathbf n=\frac{\nabla\alpha}{\|\nabla\alpha\|}, $$
+and $\sigma$ is the arc-length parameter along the curve.
+
+Along the normal direction,
+$$ \frac{\partial\alpha}{\partial n} =\nabla\alpha\cdot\mathbf n =\|\nabla\alpha\|, $$
+so that
+$$ d\alpha=\|\nabla\alpha\|\,dn, \qquad dn=\frac{d\alpha}{\|\nabla\alpha\|}. $$
+
+Since the signed-distance coordinate has unit Jacobian on the curve, the area element becomes
+$$ dx\,dy =dn\,d\sigma =\frac{d\alpha}{\|\nabla\alpha(x,y)\|}\,d\sigma. $$
+
+Substituting this change of variables into the area integral gives
+$$ \iint_{\mathbb R^2} \delta(\alpha)\,\mathbf g\;dx\,dy = \int_{\mathcal C} \left( \int_{-\infty}^{\infty} \delta(\alpha) \frac{\mathbf g(x,y)}{\|\nabla\alpha(x,y)\|} \,d\alpha \right) d\sigma. $$
+
+Applying the one-dimensional sifting property of the Dirac delta, $\int_{-\infty}^{\infty}\delta(\alpha)h(\alpha)\,d\alpha =h(0)$, yields
+$$ \iint_{\mathbb R^2} \delta(\alpha(x,y)) \,\mathbf g(x,y)\,dx\,dy = \int_{\alpha=0} \frac{\mathbf g(x,y)}{\|\nabla\alpha(x,y)\|} \,d\sigma. $$
+
+Finally, setting $\mathbf g(x,y)=\nabla\alpha_i(x,y)\,f_i(x,y)$ immediately gives Equation $\eqref{eq:2d-delta-to-arclength}$. $\blacksquare$
+
+</div>
+</details>
+</blockquote>
+
 
 The gradients of the edge equations $\alpha_i$ are:
 $$
@@ -1862,6 +1495,52 @@ $$
 \frac{\partial\alpha_i}{\partial x} &= a_y - b_y, \quad \frac{\partial\alpha_i}{\partial y} = b_x - a_x.
 \end{aligned}
 $$
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px; overflow: hidden; width: 100%; box-sizing: border-box;">
+<details>
+<summary style="cursor: pointer;"><strong>Derivation of Edge Equation Partial Derivatives</strong></summary>
+
+<div style="margin-top: 1rem; overflow-x: auto; overflow-y: hidden; max-width: 100%;">
+
+The implicit edge equation $\alpha(x,y)$ for the line connecting endpoints $\mathbf{a} = (a_x, a_y)$ and $\mathbf{b} = (b_x, b_y)$ is given by the cross product determinant:
+$$ \alpha(x,y) = (a_y - b_y)x + (b_x - a_x)y + (a_x b_y - b_x a_y). $$
+
+Differentiating $\alpha(x,y)$ with respect to each variable step by step:
+
+1. **Spatial Derivatives ($x, y$)**
+   $$ \frac{\partial\alpha}{\partial x} = a_y - b_y, \qquad \frac{\partial\alpha}{\partial y} = b_x - a_x $$
+   The norm of the spatial gradient equals the length of the edge segment:
+   $$ 
+   \begin{aligned}
+   \lVert \nabla_{x,y}\alpha \rVert &= \sqrt{\left(\frac{\partial\alpha}{\partial x}\right)^2 + \left(\frac{\partial\alpha}{\partial y}\right)^2} \\
+   &= \sqrt{(a_y - b_y)^2 + (b_x - a_x)^2} \\
+   &= \sqrt{(a_x - b_x)^2 + (a_y - b_y)^2}.
+   \end{aligned} 
+   $$
+
+2. **Vertex $\mathbf{a}$ Derivatives ($a_x, a_y$)**
+   $$ 
+   \begin{aligned} 
+   \frac{\partial\alpha}{\partial a_x} &= \frac{\partial}{\partial a_x}\big[(a_y - b_y)x + (b_x - a_x)y + (a_x b_y - b_x a_y)\big] \\
+   &= -y + b_y = b_y - y \\[0.6em]
+   \frac{\partial\alpha}{\partial a_y} &= \frac{\partial}{\partial a_y}\big[(a_y - b_y)x + (b_x - a_x)y + (a_x b_y - b_x a_y)\big] \\
+   &= x - b_x. 
+   \end{aligned} 
+   $$
+
+3. **Vertex $\mathbf{b}$ Derivatives ($b_x, b_y$)**
+   $$ 
+   \begin{aligned} 
+   \frac{\partial\alpha}{\partial b_x} &= \frac{\partial}{\partial b_x}\big[(a_y - b_y)x + (b_x - a_x)y + (a_x b_y - b_x a_y)\big] \\
+   &= y - a_y \\[0.6em]
+   \frac{\partial\alpha}{\partial b_y} &= \frac{\partial}{\partial b_y}\big[(a_y - b_y)x + (b_x - a_x)y + (a_x b_y - b_x a_y)\big] \\
+   &= -x + a_x = a_x - x. \quad \blacksquare 
+   \end{aligned} 
+   $$
+
+</div>
+</details>
+</blockquote>
 
 Gradients with respect to other scene parameters, such as camera pose, 3D vertex positions, or vertex normals, follow by applying the chain rule through the projection of the triangle vertices:
 
@@ -1887,21 +1566,31 @@ I_E &= \int_E \frac{\nabla\alpha_i(x,y)}{\lVert\nabla_{x,y}\alpha_i(x,y)\rVert} 
 \end{aligned}
 $$
 
-Selecting an edge $E$ with discrete probability $p(E)$ and sampling points uniformly along it via $t_j \sim \text{Uniform}(0,1)$, the Monte Carlo estimation of the Dirac integral for a single edge $E$ on a triangle is:
+To estimate this integral via Monte Carlo, we first select a candidate edge $E$ from the scene with a discrete probability $p(E)$. We then draw a sample point $\mathbf{x}_j = (x_j, y_j)$ uniformly along the length of $E$. 
+
+The marginal probability density $p(\mathbf{x}_j)$ of selecting a specific boundary point $\mathbf{x}_j$ is evaluated using the law of total probability over the set of all edges $\mathcal{E}$:
+$$
+\begin{aligned}
+p(\mathbf{x}_j) &= \sum_{E' \in \mathcal{E}} p(\mathbf{x}_j \mid E') \, p(E') & \quad &[\text{Law of total probability}] \\[0.6em]
+&= p(\mathbf{x}_j \mid E) \, p(E) & \quad &[\text{Point } \mathbf{x}_j \text{ is exclusive to edge } E] \\[0.6em]
+&= \frac{1}{\lVert E \rVert} \, p(E) & \quad &[\text{Uniform sampling along edge length } \lVert E \rVert]
+\end{aligned}
+$$
+*(Note: we safely ignore the measure-zero set of vertices where edges intersect).*
+
+Substituting this probability density $p(\mathbf{x}_j)$ into the standard primary Monte Carlo estimator $\frac{1}{N}\sum_{j=1}^N \frac{f(\mathbf{x}_j)}{p(\mathbf{x}_j)}$ yields the unbiased boundary estimator:
 
 $$
-\frac{1}{N}\sum_{j=1}^N \frac{\lVert E \rVert\, \nabla\alpha_i(x_j,y_j)\,\big(f_u(x_j,y_j)-f_l(x_j,y_j)\big)}{p(E)\,\lVert \nabla_{x_j,y_j}\alpha_i(x_j,y_j)\rVert}
+\frac{1}{N}\sum_{j=1}^N \frac{\lVert E \rVert}{p(E)} \frac{\nabla\alpha_i(x_j,y_j)\,\big(f_u(x_j,y_j)-f_l(x_j,y_j)\big)}{\lVert \nabla_{x_j,y_j}\alpha_i(x_j,y_j)\rVert}
 $$
-
-where $\lVert E \rVert$ is the length of the edge and $p(E)$ is the probability of selecting edge $E$.
 
 If a sampled edge point is hidden behind another surface ($(x,y)$ lands on a *continuous* part of the true image), something else fills that pixel regardless of which side of the edge you're nominally on. So $f_u = f_l$ there and the sample contributes zero as seen in {{< figref "fig-edge-sampling" >}}(b).
 
 In practice, candidate edges are projected and clipped into screen space. Only sampled edge points across which the scene function actually jumps produce a nonzero contribution; occluded edges and smooth internal edges cancel in the two-sided difference. Li et al. sample candidate edges in proportion to their projected length, draw a point along the selected edge, and evaluate this difference. This directly estimates how pixel coverage changes as geometry or the camera moves.
 
-{{< figure src="/images/diff-rendering/edge_vis.svg" id="fig-edge-visibility" caption="Visualization of some of the terms evaluated during edge sampling. The motion $\partial_\pi\boldsymbol{\omega}_s$ and the normal $\mathbf{n}^\perp$ are both in the local tangent space $\mathrm{T}_{\boldsymbol{\omega}_s}\mathcal{S}^2$." width="100%" >}}
-
 #### Secondary visibility
+
+{{< figure src="/images/diff-rendering/reparam/secondary_visibility.svg" id="fig-edge-secondary-visibility" caption="(a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Loubet et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$)." width="100%" >}}
 
 This method can be generalized to handle shadows, reflections, and indirect illumination by integrating over the $3D$ scene.
 
@@ -1922,8 +1611,7 @@ n_h = \frac{(v_0 - p) \times (v_1 - p)}{\lVert (v_0 - p) \times (v_1 - p) \rVert
 $$
 where $n_m$ is the surface normal at $m$. Two key differences distinguish this 3D integral from its screen-space counterpart. First, the measure $\sigma'(m)$ is no longer the arc length along the 2D edge; instead it measures the projected length from the edge through the shading point $p$ onto the scene manifold (the semi-transparent triangle in {{< figref "fig-edge-secondary-visibility" >}}(a) illustrates this projection). Second, an additional area-correction factor $\lVert n_m \times n_h \rVert$ appears because the scene surface element must be projected onto the infinitesimal width of the edge ({{< figref "fig-edge-secondary-visibility" >}}(b)).
 
-{{< figure src="/images/diff-rendering/reparam/secondary_visibility.svg" id="fig-edge-secondary-visibility" caption="(a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, we integrate over the edge to compute the difference. By doing so we take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration we need to project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$)." width="100%" >}}
-
+<iframe src="/interactive/diff-render/secondary_visibility_correction.html" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden; border-radius: 8px; margin: 1.5rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"></iframe>
 To evaluate this integral with Monte Carlo sampling, we reparameterise from the surface point $m$ to the edge line parameter $t \in [0,1]$, where $m(t)$ is the projection of $v_0 + t(v_1 - v_0)$ onto the scene manifold:
 $$
 \int_0^1 \frac{\nabla\alpha(p, m(t))}{\lVert \nabla_m\alpha(p, m(t)) \rVert}h(p, m(t))\frac{\lVert J_m(t) \rVert}{\lVert n_m \times n_h \rVert}\mathrm{d}t.
@@ -2079,6 +1767,8 @@ A central insight of Loubet et al. is that finding a suitable change of variable
 Because the integrand has small support, the displacement of points on silhouette edges closely approximates the displacement of other nearby surface positions on the same object. We exploit this by tracing a *small* batch of auxiliary rays within the integrand's support (this number has an impact on the probability of missing a discontinuity by sampling only one of the objects of the integrand,
 which results in bias). Using distance and surface normal information, a heuristic selects a candidate occluder point whose motion under parameter changes tracks that of the silhouette.
 
+{{< figure src="/images/diff-rendering/reparam/occlusion_estimate.svg" id="fig-reparam-occlusion" caption="From a pair of surface points $p_0$ and $p_1$ that are visible from a point $p$, Loubet et al. estimate the occlusion between the corresponding objects using first-order surface approximations from the normals at $p_0$ and $p_1$. Figures (a) and (b) show cases where one plane occludes the other intersection point from $p$. Figures (c) and (d) illustrate the case of an intersection between objects that can be estimated from the intersection of the planes." width="100%" >}}
+
 Projecting the selected point onto $S^2$ gives direction $\omega_P(\pi)$, with $\omega_{P_0} = \omega_P(\pi_0)$. A differentiable rotation matrix $R(\pi)$ is then constructed to satisfy:
 
 $$
@@ -2164,6 +1854,8 @@ $$
 
 Correlated path pairs reuse the random numbers for path-construction steps except those that affect the local reparameterization weights. Those samples remain independent so that $f_{0,l}$ is uncorrelated with $\partial_\pi W_{1,l}$ and vice versa. Under this independence condition, cross-reduction lowers gradient variance for direct and multi-bounce illumination without adding bias, at the cost of tracing paired paths.
 
+{{< figure src="/images/diff-rendering/reparam/correlated_paths.svg" id="fig-reparam-correlated-paths" caption="Loubet et al.'s method samples correlated paths that share some of their random numbers, while others are chosen independently. The gradients associated with the resulting pairs of nearby paths (blue and red) contain uncorrelated terms that they leverage in conjunction with the technique of control variates to reduce variance substantially without adding bias." width="100%" >}}
+
 
 ### Unbiased Warped-Area Sampling (Bangaru et al., 2020)
 
@@ -2183,7 +1875,7 @@ where $D_i'=D_i\setminus\partial D_i$. The first term is the usual interior deri
 
 This partition is only a device used in the proof; evaluating the estimator does not require clipping the scene into the regions $D_i$ or enumerating their boundaries.
 
-{{< figure src="/images/diff-rendering/warparea/pixel_content.svg" id="fig-warparea-pixel-content" caption="Differentiating boundary movements. Our goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how we partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. We can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals." width="100%" >}}
+{{< figure src="/images/diff-rendering/warparea/pixel_content.svg" id="fig-warparea-pixel-content" caption="Differentiating boundary movements. Bangaru et al.'s goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how they partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. They can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals." width="100%" >}}
 
 Introduce a vector field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ that interpolates the boundary velocity into the interior. Applying the divergence theorem to $f\mathbf{V}_{\boldsymbol{\pi}}$ rewrites the boundary contribution as:
 
@@ -2236,7 +1928,7 @@ $$
 
 This matrix form incorporates the correction in the paper's 2022 erratum: the denominator is not a Jacobian *determinant*. The equation is a Jacobian solve, with matrix-valued numerator and denominator when the quantities are multidimensional.
 
-{{< figure src="/images/diff-rendering/warparea/derivative_field.svg" id="fig-warparea-derivative-field" caption="Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in our derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which we have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative." width="100%" >}}
+{{< figure src="/images/diff-rendering/warparea/derivative_field.svg" id="fig-warparea-derivative-field" caption="Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in their derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which they have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative." width="100%" >}}
 
 The direct warp has the correct limiting motion on a silhouette, but it jumps when neighboring directions hit different surfaces. Bangaru et al. therefore filter it using a normalized, boundary-aware harmonic convolution:
 
@@ -2268,7 +1960,7 @@ $$
 
 Hence the filtered warp approaches the boundary-consistent direct warp as the primary direction approaches a silhouette. The field may remain undefined exactly on the silhouette, where the harmonic weights become infinite, because the area estimator only evaluates the smooth interior.
 
-{{< figure src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" id="fig-warparea-harmonic-conv" caption="Boundary-aware convolution. (a) The form of the warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathbf{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Our proposed convolution method $\mathbf{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary." width="100%" >}}
+{{< figure src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" id="fig-warparea-harmonic-conv" caption="Boundary-aware convolution. (a) The form of the warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathbf{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Bangaru et al.'s proposed convolution method $\mathbf{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary." width="100%" >}}
 
 #### Relation to Loubet et al.
 
@@ -2280,7 +1972,7 @@ $$
 
 This establishes a local relationship between reparameterization and the warp-field formulation, but it does **not** imply that every chosen reparameterization is exact. A spherical rotation has unit Jacobian and therefore produces a divergence-free field. Some boundary motions require nonzero divergence, so a rotation cannot satisfy the boundary conditions in general. Bangaru et al. interpret the approximations of Loubet et al. as producing a field that can be smooth without being boundary-consistent, which explains the remaining bias. Warped-area sampling instead makes continuity and boundary consistency explicit and uses the harmonic construction to satisfy both without enumerating silhouettes.
 
-{{< figure src="/images/diff-rendering/warparea/warp_formulation.svg" id="fig-warparea-formulation" caption="Warp field formulation. We apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and our area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, our method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering." width="100%" >}}
+{{< figure src="/images/diff-rendering/warparea/warp_formulation.svg" id="fig-warparea-formulation" caption="Warp field formulation. Bangaru et al. apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and their area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, their method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering." width="100%" >}}
 
 Appendix C proves both directions of this relationship. A transformation $\mathcal{T}$ induces the field above by differentiating at the evaluation point $\boldsymbol{\pi}_0$. Conversely, one possible Euclidean transformation generated by a given field is
 
@@ -2292,7 +1984,7 @@ The construction is not unique; on the sphere, the appendix also gives a rotatio
 
 #### Monte Carlo Estimation of the Warp
 
-{{< figure src="/images/diff-rendering/warparea/overview.svg" id="fig-warparea-overview" caption="Our algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, we need to estimate the warp function at this point. To achieve this, our method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. We then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Our final step computes the weighted average of the direct warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathbf{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathbf{V}_{\boldsymbol{\pi}}$ at the primary sample." width="100%" >}}
+{{< figure src="/images/diff-rendering/warparea/overview.svg" id="fig-warparea-overview" caption="Bangaru et al.'s algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, they need to estimate the warp function at this point. To achieve this, their method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. They then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Their final step computes the weighted average of the direct warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathbf{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathbf{V}_{\boldsymbol{\pi}}$ at the primary sample." width="100%" >}}
 
 At each ordinary path-tracing direction $\boldsymbol{\omega}$, the algorithm:
 
@@ -2650,9 +2342,9 @@ $$
 The path then continues with adjoint throughput multiplied by $f_s/p$. This is the Monte Carlo realization of $\langle\mathcal G\mathcal S A_e,Q\rangle$, not a reversal of stored primal vertices.
 
 ##### Primal Radiance Dependence and Acceleration
-A key practical bottleneck is that the differential emission term $Q$ depends on the unknown **primal incident radiance $L_i$**. Evaluating $Q$ at every differentiable interaction requires launching a recursive primal path-tracing query. Along a path of depth $D$ with differentiable surfaces at each bounce, these suffix queries have lengths $D, D-1, \ldots, 1$, leading to quadratic time complexity $\mathcal{O}(D^2)$ (a bottleneck also reported by **Zhang et al. (2019)** [[16]](#ref-16) for forward AD). Non-differentiated interactions do not trigger this extra work.
+A key practical bottleneck is that the differential emission term $Q$ depends on the unknown **primal incident radiance $L_i$**. Evaluating $Q$ at every differentiable interaction requires launching a recursive primal path-tracing query. Along a path of depth $D$ with differentiable surfaces at each bounce, these suffix queries have lengths $D, D-1, \ldots, 1$, leading to quadratic time complexity $\mathcal{O}(D^2)$ (a bottleneck also reported by **Zhang et al. (2019)** [[14]](#ref-14) for forward AD). Non-differentiated interactions do not trigger this extra work.
 
-To mitigate this quadratic overhead in long light paths, one can precompute an approximate spatio-directional data structure during the primal phase (such as a **Path Guiding tree** [Müller et al., 2017] [[17]](#ref-17)) to perform fast $\mathcal{O}(1)$ interpolant queries of $L_i$ during adjoint backpropagation.
+To mitigate this quadratic overhead in long light paths, one can precompute an approximate spatio-directional data structure during the primal phase (such as a **Path Guiding tree** [Müller et al., 2017] [[15]](#ref-15)) to perform fast $\mathcal{O}(1)$ interpolant queries of $L_i$ during adjoint backpropagation.
 
 Thus, RBP solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.
 
@@ -2665,7 +2357,7 @@ The paper studies two faster approximations:
 - **Biased I:** replace $L_i$ in $Q$ by $1$. This removes recursive radiance queries and reduces time to $O(D)$, but changes the gradient.
 - **Biased II:** pipeline optimization by using the previous iteration's adjoint rendering with the current iteration's rendering Jacobian. This overlaps primal and adjoint work but introduces an intentional one-iteration mismatch.
 
-The RBP paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. [[15]](#ref-15) give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.
+The RBP paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. [[13]](#ref-13) give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.
 
 For Biased II, if superscripts denote optimization iterations, the propagated quantity is
 
@@ -2682,7 +2374,7 @@ The unbiased algorithm is constant-memory with respect to path length, but its r
 
 ### Path Replay Backpropagation
 
-Radiative backpropagation obtains constant memory by recomputing a fresh primal suffix at each differentiable interaction, causing the quadratic cost above. Vicini et al. [[15]](#ref-15) instead replay the *same complete random walk* and reconstruct all required suffix radiances incrementally. Under the sampling and discontinuity assumptions below, **Path Replay Backpropagation (PRB)** is unbiased, uses memory independent of path length, and takes time linear in the number of scattering events.
+Radiative backpropagation obtains constant memory by recomputing a fresh primal suffix at each differentiable interaction, causing the quadratic cost above. Vicini et al. [[13]](#ref-13) instead replay the *same complete random walk* and reconstruct all required suffix radiances incrementally. Under the sampling and discontinuity assumptions below, **Path Replay Backpropagation (PRB)** is unbiased, uses memory independent of path length, and takes time linear in the number of scattering events.
 
 {{< figure src="/images/diff-rendering/prb/algorithm.png" id="fig-prb-algorithm" caption="Illustration of linear **$\mathcal{O}(D)$** complexity in Path Replay Backpropagation (PRB). Rather than spawning branching quadratic primal suffix trees, PRB replays the exact same random walk (**green rays**) alongside the adjoint path (**black rays**). Local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) are evaluated at each surface hit (**red dots**) in linear time and constant memory." width="100%" >}}
 
@@ -2895,6 +2587,8 @@ To reduce the high variance associated with boundary integrals on complex mesh g
 ### 4. Many-Worlds Inverse Rendering
 Inverse rendering optimizations are highly non-convex and easily get trapped in local minima, especially when starting from an empty scene or when objects are completely occluded. **Zhang et al. (2025)** [[6]](#ref-6) introduced **Many-Worlds Inverse Rendering** to address this limitation. Rather than evolving a surface locally via gradient descent, their approach considers adding hypothetical surface patches anywhere in 3D space. They evaluate a superposition of independent, competing surface hypotheses that do not shadow or scatter light from each other, allowing gradients to flow from empty space. This framework combines the optimization robustness of volumetric representations (starting from scratch) with the computational efficiency of surface rendering, avoiding expensive transmittance and multiple scattering evaluations.
 
+*Note: I might create a follow-up post expanding further on these modern advances in differentiable rendering in the near future!*
+
 ## References
 
 1. <span id="ref-1"></span>Zhao, Shuang, Wenzel Jakob, and Tzu-Mao Li. *“Physics-Based Differentiable Rendering: A Comprehensive Introduction.”* *ACM SIGGRAPH 2020 Courses*, 2020. [https://dl.acm.org/doi/10.1145/3388769.3407454](https://dl.acm.org/doi/10.1145/3388769.3407454).
@@ -2921,12 +2615,8 @@ Inverse rendering optimizations are highly non-convex and easily get trapped in 
 
 12. <span id="ref-12"></span>Zeltner, Tizian, Sébastien Speierer, Iliyan Georgiev, and Wenzel Jakob. *“Monte Carlo Estimators for Differential Light Transport.”* *ACM Transactions on Graphics (TOG)*, 40(4), 2021. [https://doi.org/10.1145/3450626.3459807](https://doi.org/10.1145/3450626.3459807).
 
-13. <span id="ref-13"></span>Paisley, John, David Blei, and Michael Jordan. *“Variational Bayesian Inference with Stochastic Search.”* *Proceedings of the 29th International Conference on Machine Learning (ICML)*, 2012. [https://arxiv.org/abs/1206.6430](https://arxiv.org/abs/1206.6430).
+13. <span id="ref-13"></span>Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. *“Path Replay Backpropagation: Differentiating Light Paths using Constant Memory and Linear Time.”* *ACM Transactions on Graphics (TOG)*, 40(4), 2021. [https://doi.org/10.1145/3450626.3459804](https://doi.org/10.1145/3450626.3459804).
 
-14. <span id="ref-14"></span>de Lataillade, A., S. Blanco, Y. Clergent, J. L. Dufresne, M. El Hafi, and R. Fournier. *“Monte Carlo Method and Sensitivity Estimations.”* *Journal of Quantitative Spectroscopy and Radiative Transfer*, 75(5), 529–538, 2002. [https://doi.org/10.1016/S0022-4073(02)00027-4](https://doi.org/10.1016/S0022-4073(02)00027-4).
+14. <span id="ref-14"></span>Zhang, Cheng, Lifan Wu, Changxi Zheng, Ioannis Gkioulekas, Ravi Ramamoorthi, and Shuang Zhao. *“A Differential Theory of Radiative Transfer.”* *ACM Transactions on Graphics (TOG)*, 38(6), Article 227, 2019. [https://doi.org/10.1145/3355089.3356522](https://doi.org/10.1145/3355089.3356522).
 
-15. <span id="ref-15"></span>Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. *“Path Replay Backpropagation: Differentiating Light Paths using Constant Memory and Linear Time.”* *ACM Transactions on Graphics (TOG)*, 40(4), 2021. [https://doi.org/10.1145/3450626.3459804](https://doi.org/10.1145/3450626.3459804).
-
-16. <span id="ref-16"></span>Zhang, Cheng, Lifan Wu, Changxi Zheng, Ioannis Gkioulekas, Ravi Ramamoorthi, and Shuang Zhao. *“A Differential Theory of Radiative Transfer.”* *ACM Transactions on Graphics (TOG)*, 38(6), Article 227, 2019. [https://doi.org/10.1145/3355089.3356522](https://doi.org/10.1145/3355089.3356522).
-
-17. <span id="ref-17"></span>Müller, Thomas, Markus Gross, and Jan Novák. *“Practical Path Guiding for Efficient Light Transport Simulation.”* *Computer Graphics Forum (Proc. EGSR)*, 36(4), 91–100, 2017. [https://doi.org/10.1111/cgf.13227](https://doi.org/10.1111/cgf.13227).
+15. <span id="ref-15"></span>Müller, Thomas, Markus Gross, and Jan Novák. *“Practical Path Guiding for Efficient Light Transport Simulation.”* *Computer Graphics Forum (Proc. EGSR)*, 36(4), 91–100, 2017. [https://doi.org/10.1111/cgf.13227](https://doi.org/10.1111/cgf.13227).
