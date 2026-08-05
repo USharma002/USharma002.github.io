@@ -1284,7 +1284,7 @@ Our goal is to solve inverse rendering problems of the form:
 
 $$ \hat{\boldsymbol{\pi}} = \arg \min_{\boldsymbol{\pi}} g(I(\boldsymbol{\pi})) $$
 
-where $g$ is an image-based objective function. To simplify the notation, we will consider only the intensity $I$ of a single pixel $j$ and one differentiable parameter $\pi$. The derivations generalize to differentiable rendering of RGB images and multiple parameters.
+where $g$ is an image-based objective function. To simplify the notation, we will consider only the intensity $I$ of a single pixel $j$ and one differentiable parameter $\pi$. The derivations generalize to differentiable rendering of RGB images and multiple parameters. *(Note: In the following physics-based sections, we will upgrade $\pi$ to the vector $\boldsymbol{\pi}$ to represent gradients with respect to the entire scene parameter space simultaneously.)*
 
 ### Objective Function Gradient
 As in the two-triangle example above, the outermost step is just the chain rule. What's new this time is that $I$ itself will be estimated by noisy Monte Carlo samples rather than computed exactly, and we need to handle that carefully. Using the simplified notation, our goal is to compute the derivative $\partial_\pi g(I(\pi))$. The chain rule allows writing this term as:
@@ -1311,7 +1311,9 @@ Here, a path $\mathbf{x}=(\mathbf{x}_0,\ldots,\mathbf{x}_k)$ is a sequence of se
 
 $$ \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} = \int_{\mathcal{P}} \partial_{\boldsymbol{\pi}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} \approx \frac{1}{N} \sum_{i=1}^N \frac{\partial_{\boldsymbol{\pi}} f(\mathbf{x}_i, \boldsymbol{\pi})}{p(\mathbf{x}_i, \boldsymbol{\pi})}. $$
 
-For this estimator, we need to differentiate the evaluation of $f$. We do not have to differentiate the sampling process that produces $\mathbf{x}_i$ or the corresponding PDF $p(\mathbf{x}_i)$. We call this estimator **detached** since both sampling and PDF evaluation are detached from the differentiation process. This is the most commonly used estimator in differentiable rendering. Zeltner et al. (2021) [[12]](#ref-12) provide the systematic study of this attached/detached distinction that the next two subsections summarize.
+For this estimator, we need to differentiate the evaluation of $f$. We do not have to differentiate the sampling process that produces $\mathbf{x}_i$ or the corresponding PDF $p(\mathbf{x}_i)$. We call this estimator **detached** since both sampling and PDF evaluation are detached from the differentiation process. This is the most commonly used estimator in differentiable rendering. Zeltner et al. (2021) [[12]](#ref-12) provide the systematic study of this attached/detached distinction that the next two subsections summarize (see {{< figref "fig-taxonomy-estimators" >}} for the overall taxonomy).
+
+{{< figure src="/images/diff-rendering/zeltner/taxonomy_of_estimators.svg" id="fig-taxonomy-estimators" caption="A taxonomy of differential estimators. We illustrate key operations that can be applied to a “primal” integral (white box). These include Monte Carlo importance sampling, multiple importance sampling, and differentiation. Non-commutativity of these operations leads to a plethora of differential estimators. We omit the explicit dependence of $f$ and $p$ on $\boldsymbol{\pi}$ for brevity. (Zeltner et al., 2021)" width="100%" >}}
 
 If $f$ contains $\boldsymbol{\pi}$-dependent discontinuities, additional precautions are required (e.g., edge sampling or reparameterization). Similarly, if the path space $\mathcal{P}$ is parameter-dependent, we need to account for changes in its geometry or switch to a parameterization of the integration domain that is independent of $\boldsymbol{\pi}$.
 
@@ -1353,7 +1355,9 @@ Russian roulette gives a useful example. If a path survives with probability $q(
 1. **Detach the proposal decision and its compensation.** Sample survival using the current $q$, but stop gradients through both the discrete decision and $q$ in the Monte Carlo weight. The resulting detached estimator differentiates the underlying transport contribution rather than the proposal mechanism.
 2. **Differentiate the probability consistently.** Add the corresponding score-function term, or use a valid continuous reparameterization when one exists. This is usually more expensive and can have high variance.
 
-The same rule applies to light and lobe selection. MIS adds another layer because its weights depend on the PDFs of several techniques. Proposal PDFs and MIS weights should not be differentiated selectively: derive the complete estimator as either detached or attached, then apply that choice consistently to sampling, PDF factors, and weights. Selectively differentiating a PDF denominator or MIS weight while detaching the random choice that produced it is the mixed failure mode described in Example 1.
+The same rule applies to light and lobe selection. MIS adds another layer because its weights depend on the PDFs of several techniques. Proposal PDFs and MIS weights should not be differentiated selectively: derive the complete estimator as either detached or attached, then apply that choice consistently to sampling, PDF factors, and weights. Selectively differentiating a PDF denominator or MIS weight while detaching the random choice that produced it is the mixed failure mode described in Example 1 (see {{< figref "fig-mis-decision" >}}).
+
+{{< figure src="/images/diff-rendering/zeltner/MIS_decision.svg" id="fig-mis-decision" caption="The decision of whether to attach or detach a sampling technique and its MIS weight can be made separately for each technique, as illustrated by this derivation sketch. (Zeltner et al., 2021)" width="100%" >}}
 
 ### Explicit Edge Sampling (Li et al.)
 
@@ -1612,7 +1616,7 @@ $$
 where $n_m$ is the surface normal at $m$. Two key differences distinguish this 3D integral from its screen-space counterpart. First, the measure $\sigma'(m)$ is no longer the arc length along the 2D edge; instead it measures the projected length from the edge through the shading point $p$ onto the scene manifold (the semi-transparent triangle in {{< figref "fig-edge-secondary-visibility" >}}(a) illustrates this projection). Second, an additional area-correction factor $\lVert n_m \times n_h \rVert$ appears because the scene surface element must be projected onto the infinitesimal width of the edge ({{< figref "fig-edge-secondary-visibility" >}}(b)).
 
 <iframe src="/interactive/diff-render/secondary_visibility_correction.html" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden; border-radius: 8px; margin: 1.5rem 0; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"></iframe>
-To evaluate this integral with Monte Carlo sampling, we reparameterise from the surface point $m$ to the edge line parameter $t \in [0,1]$, where $m(t)$ is the projection of $v_0 + t(v_1 - v_0)$ onto the scene manifold:
+To evaluate this integral with Monte Carlo sampling, we reparameterize from the surface point $m$ to the edge line parameter $t \in [0,1]$, where $m(t)$ is the projection of $v_0 + t(v_1 - v_0)$ onto the scene manifold:
 $$
 \int_0^1 \frac{\nabla\alpha(p, m(t))}{\lVert \nabla_m\alpha(p, m(t)) \rVert}h(p, m(t))\frac{\lVert J_m(t) \rVert}{\lVert n_m \times n_h \rVert}\mathrm{d}t.
 $$
@@ -2198,7 +2202,7 @@ $$
 \end{aligned}
 $$
 
-> **Note on Static Visibility Boundaries:** In the original Radiative Backpropagation formulation (Nimier-David et al., 2020), differentiation is derived assuming static geometry (fixed visibility boundaries). Because fixed scene geometry does not move as parameter $\pi$ changes ($\partial_\pi \boldsymbol{\omega}_i = \mathbf{0}$), the boundary movement velocity is zero and **the Boundary Integral vanishes ($\mathbf{=0}$)**, reducing the differential transport equation to Direct Emission, Diff. Scattering, and Material Emission.
+> **Note on Static Visibility Boundaries:** Nimier-David et al. [[7]](#ref-7) never actually write down the boundary term above — the general, boundary-aware equation is machinery imported from the Zhang et al. [[14]](#ref-14) framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper's own derivation assumes static geometry from the outset ($\partial_\pi \boldsymbol{\omega}_i = \mathbf{0}$), so for them **the Boundary Integral is simply absent**, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. [[10]](#ref-10) and Loubet et al. [[11]](#ref-11) as compatible options (Section 3.6 of the paper).
 
 Grouping the non-scattering gradient source terms into the **Differential Emission** term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$:
 
@@ -2206,55 +2210,51 @@ $$
 Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_\pi L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
 $$
 
-the full differential transport equation simplifies to:
+the differential transport equation collapses to a single, deceptively simple statement:
 
 $$
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \,\mathrm{d}\sigma
+\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \,\mathrm{d}\sigma .
 $$
 
-To analyze reverse-mode backpropagation abstractly, we express differential light transport using linear operators:
+Read it as an energy balance for a fictitious kind of light: $Q$ is a **source** that "emits" differential radiance wherever a scene parameter directly changes emission or reflectance, and the remaining integral says that whatever differential radiance is already incident keeps **scattering** exactly like ordinary radiance would. This is the whole trick behind radiative backpropagation: instead of differentiating a rendering algorithm line by line, we get to reuse an *ordinary-looking transport equation*, just with $L_e$ swapped out for $Q$.
 
-1. **Ray Transport Operator $\mathcal{G}$:** Maps outgoing differential radiance at the closest surface hit $\mathbf{y} = r(\mathbf{x}, \boldsymbol{\omega}_i)$ to incident differential radiance at $\mathbf{x}$:
-   $$
-   \partial_\pi L_i(\mathbf{x}, \boldsymbol{\omega}_i) = (\mathcal{G} \, \partial_\pi L_o)(\mathbf{x}, \boldsymbol{\omega}_i) = \partial_\pi L_o(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i)
-   $$
+To make that reuse precise — and to set up reverse-mode propagation — the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.'s own notation [[7]](#ref-7) (Section 3.4):
 
-2. **Scattering Operator $\mathcal{K}$:** Scatters an incident directional field $h$ according to the cosine-weighted BSDF $f_s$:
+1. **Scattering operator $\mathcal{K}$.** Takes an incident directional field $h$ and scatters it through the BSDF, exactly the way the ordinary scattering equation treats $L_i$:
    $$
-   (\mathcal{K} h)(\mathbf{x}, \boldsymbol{\omega}_o) = \int_{\mathbb{S}^2} h(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \,\mathrm{d}\sigma(\boldsymbol{\omega}_i)
+   (\mathcal{K} h)(\mathbf{x}, \boldsymbol{\omega}_o) = \int_{\mathbb{S}^2} h(\mathbf{x}, \boldsymbol{\omega}_i) \, f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \,\mathrm{d}\sigma(\boldsymbol{\omega}_i).
    $$
 
-Substituting $\partial_\pi L_i = \mathcal{G} \partial_\pi L_o$ into the differential scattering term allows us to write the entire differential rendering equation in compact operator form:
+2. **Propagation operator $\mathcal{G}$** — this is the paper's own name for it; you'll also see it called a *ray transport operator*, since all it does is walk backward along a ray to the next surface. It turns outgoing radiance at the point you hit into incident radiance at the point you came from:
+   $$
+   (\mathcal{G} h)(\mathbf{x}, \boldsymbol{\omega}_i) = h(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i), \qquad\text{so that}\qquad \partial_\pi L_i = \mathcal{G}\, \partial_\pi L_o.
+   $$
+
+Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport — nothing new had to be invented here, which is precisely the point. Substituting $\partial_\pi L_i = \mathcal{G}\partial_\pi L_o$ into the scattering term folds the whole differential rendering equation into one compact line:
 
 $$
-\partial_\pi L_o = Q + \mathcal{K}\mathcal{G}\,\partial_\pi L_o
+\partial_\pi L_o = Q + \mathcal{K}\mathcal{G}\,\partial_\pi L_o \;\;\Longrightarrow\;\; \partial_\pi L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q,
 $$
 
-Solving this linear operator equation for the outgoing differential radiance yields:
+where $\mathcal{S} = \sum_{k=0}^\infty (\mathcal{K}\mathcal{G})^k$ sums over paths of every length — the operator equivalent of "trace a one-bounce path, then a two-bounce path, then a three-bounce path, and so on."
+
+If $A_e$ is the emitted **adjoint radiance** obtained by back-projecting the loss gradient $\delta\mathbf{y} = \mathbf{J}_g^T(\mathbf{y})$ from the sensor into the scene, the vector-Jacobian product we actually want is the ray-space inner product
 
 $$
-\partial_\pi L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q
+\mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle .
 $$
 
-where $\mathcal{S} = (\mathcal{I} - \mathcal{K}\mathcal{G})^{-1} = \sum_{k=0}^\infty (\mathcal{K}\mathcal{G})^k$ is the full path-scattering solution operator.
+**This next step is where the algorithm's correctness lives, so it's worth being precise about it.** For reciprocal, energy-conserving BSDFs, Veach showed that $\mathcal{G}$, $\mathcal{K}$, and the *composite* operator $\mathcal{G}\mathcal{S}$ are self-adjoint under the ray-space measure — i.e. $\mathcal{G}^\ast = \mathcal{G}$, $\mathcal{K}^\ast = \mathcal{K}$, and $(\mathcal{G}\mathcal{S})^\ast = \mathcal{G}\mathcal{S}$. This is a slightly different (and weaker) claim than saying $\mathcal{S}$ itself is self-adjoint — in general it isn't: since $\mathcal{K}$ and $\mathcal{G}$ don't commute, $\mathcal{S}^\ast = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-\ast} = (\mathcal{I}-\mathcal{G}\mathcal{K})^{-1} \ne \mathcal{S}$ in general. What saves us is that $\mathcal{G}\mathcal{S} = \sum_k (\mathcal{G}\mathcal{K})^k \mathcal{G}$, and this specific combination *does* inherit self-adjointness from $\mathcal{G}$ and $\mathcal{K}$ individually — which is exactly the property the next step relies on.
 
-If $A_e$ is the emitted **adjoint radiance** obtained by back-projecting the loss gradient $\delta\mathbf{y} = \mathbf{J}_g^T(\mathbf{y})$ from the sensor into the scene, the desired vector-Jacobian product for parameter optimization is the inner product:
-
-$$
-\mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle
-$$
-
-For reciprocal, energy-conserving transport under the ray-space measure, the transport operators $\mathcal{G}$, $\mathcal{K}$, and $\mathcal{S}$ are self-adjoint ($\mathcal{G}^* = \mathcal{G}, \mathcal{S}^* = \mathcal{S}$). Transferring the operators to the left side of the inner product yields:
+Self-adjointness of $\mathcal{G}\mathcal{S}$ lets us move it across the inner product for free:
 
 $$
-\mathbf{J}_f^T \delta\mathbf{y} = \langle \mathcal{G}\mathcal{S} A_e, Q \rangle = \langle A, Q \rangle
+\mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle = \langle \mathcal{G}\mathcal{S} A_e, Q \rangle = \langle A, Q \rangle, \qquad A := \mathcal{G}\mathcal{S} A_e.
 $$
 
-where $A = \mathcal{G}\mathcal{S} A_e$ is the **incident adjoint radiance field**. This duality is the central realization of Radiative Backpropagation: rather than transporting a high-dimensional vector field of parameter derivatives $Q$ forward, we simulate a scalar **adjoint path tracing** pass from the camera to compute $A$, and evaluate its inner product with local differential sources $Q$ whenever a path hits a differentiable object or boundary.
+$A$ is the **incident adjoint radiance field**, and this identity is the entire payoff of the operator formulation: instead of pushing the enormous, million-dimensional field $Q$ forward through the scene, we push the *scalar* field $A_e$ backward from the sensor, and only ever touch $Q$ locally — as a cheap inner product — wherever a path happens to land on a differentiable object.
 
-This is the central step: rather than transport the enormous vector-valued field $Q$, transport the scalar adjoint field from the sensor and evaluate its inner product with sparse local derivatives when a path reaches a differentiable object.
-
-The corresponding incident and outgoing adjoint radiance satisfy
+The corresponding incident and outgoing adjoint radiance satisfy the same recursive balance as ordinary light:
 
 $$
 A_i=\mathcal G A_o,
@@ -2262,14 +2262,16 @@ A_i=\mathcal G A_o,
 A_o=A_e+\mathcal K A_i.
 $$
 
-The paper obtains $A_e$ directly from the adjoint image. If $W_k(\mathbf{x},\boldsymbol{\omega}_o)$ is pixel $k$'s sensor importance and $\delta y_k$ is that pixel's objective derivative, then
+The paper obtains $A_e$ directly from the adjoint image: if $W_k(\mathbf{x},\boldsymbol{\omega}_o)$ is pixel $k$'s sensor importance and $\delta y_k$ is that pixel's objective derivative,
 
 $$
 A_e(\mathbf{x},\boldsymbol{\omega}_o)
-=\sum_k \delta y_k W_k(\mathbf{x},\boldsymbol{\omega}_o),
+=\sum_k \delta y_k \, W_k(\mathbf{x},\boldsymbol{\omega}_o),
 $$
 
-which turns the discrete sum over pixel derivatives into the ray-space inner product $\langle A_e,\partial_{\boldsymbol{\pi}}L_i\rangle$. For a pinhole camera, $A_e$ can be viewed as a textured projector that emits the adjoint image into the scene.
+turning the discrete sum over pixel derivatives into the ray-space inner product $\langle A_e,\partial_{\boldsymbol{\pi}}L_i\rangle$. For a pinhole camera, $A_e$ can be pictured as a textured "spotlight" that projects the adjoint image back into the scene from the camera.
+
+> **Quick reference.** $\mathcal{K}$ scatters (BSDF), $\mathcal{G}$ propagates (ray to next surface), $\mathcal{S} = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-1}$ sums over all path lengths, and $Q$ is where a parameter's *local* effect on emission or reflectance enters the equation. Radiative backpropagation runs all of this **backward from the camera**: sample $A_e$, propagate/scatter it exactly like a path tracer would with ordinary radiance ($A_i = \mathcal{G}A_o$, $A_o = A_e + \mathcal{K}A_i$), and at every surface hit accumulate the local contribution of $\langle A, Q\rangle$ into $\delta\boldsymbol{\pi}$.
 
 #### Sampling the Adjoint Transport Problem
 
@@ -2370,38 +2372,150 @@ instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the renderi
 
 #### Limitations
 
-The unbiased algorithm is constant-memory with respect to path length, but its repeated $L_i$ queries make time quadratic. This is prohibitive for highly scattering media with thousands of events. Biased I reduces that cost to linear time but is not a correct derivative. The formulation above omits moving-visibility derivatives and does not handle derivatives through ideal specular BSDF sampling. Faster gradient evaluation also does not remove nonconvexity or poor conditioning from the inverse problem itself.
+The unbiased algorithm is constant-memory with respect to path length, but its repeated $L_i$ queries make time quadratic. Like, if the primal path tracing traces $D$ bounces, then for every differentiable interaction along that path we also need to recursively evaluate the primal incident radiance $L_i$. This means at worst we will have to trace a fresh primal suffix of length $(D - 1) + (D - 2) + \dots + 1 = \mathcal{O}(D^2)$. While you could technically try to restrict this double recursion by probabilistically choosing to evaluate only one of the terms at each bounce, the variance would increase exponentially due to the repeated sub-optimal choices! This is prohibitive for highly scattering media with thousands of events. Biased I reduces that cost to linear time but is not a correct derivative. The formulation above omits moving-visibility derivatives and does not handle derivatives through ideal specular BSDF sampling. Faster gradient evaluation also does not remove nonconvexity or poor conditioning from the inverse problem itself.
 
 ### Path Replay Backpropagation
 
-Radiative backpropagation obtains constant memory by recomputing a fresh primal suffix at each differentiable interaction, causing the quadratic cost above. Vicini et al. [[13]](#ref-13) instead replay the *same complete random walk* and reconstruct all required suffix radiances incrementally. Under the sampling and discontinuity assumptions below, **Path Replay Backpropagation (PRB)** is unbiased, uses memory independent of path length, and takes time linear in the number of scattering events.
+Radiative backpropagation achieves a constant memory footprint by computing a fresh primal suffix at each differentiable interaction. However, this nested recursion causes computation time to grow quadratically ($\mathcal{O}(D^2)$) with the number of scattering events. 
+
+Vicini et al. [[13]](#ref-13) propose an elegant alternative called **Path Replay Backpropagation (PRB)**. By leveraging the mathematical invertibility of local light transport Jacobians, PRB computes exact gradients in **linear time ($\mathcal{O}(D)$) and constant memory ($\mathcal{O}(1)$)**. 
+
+PRB splits gradient evaluation into two separate passes: 
+1. **Primal Pass:** Light paths are sampled as usual, but instead of building a massive automatic differentiation (AD) graph, the renderer only records the total path radiance and the random seed.
+2. **Adjoint Replay Pass:** The random sequence is replayed to trace the exact same path. As the path unfolds, local derivatives are backpropagated to the scene parameters on the fly by dynamically reconstructing the incident illumination.
 
 {{< figure src="/images/diff-rendering/prb/algorithm.png" id="fig-prb-algorithm" caption="Illustration of linear **$\mathcal{O}(D)$** complexity in Path Replay Backpropagation (PRB). Rather than spawning branching quadratic primal suffix trees, PRB replays the exact same random walk (**green rays**) alongside the adjoint path (**black rays**). Local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) are evaluated at each surface hit (**red dots**) in linear time and constant memory." width="100%" >}}
 
-#### Detached Path Replay
+#### Dynamic Suffix Reconstruction
 
-First consider a detached sampling strategy: random samples and sampled directions are constant with respect to $\boldsymbol{\pi}$, emitters are static, and parameter-dependent discontinuities are absent or handled separately. For a path with vertices $0,\ldots,N$, let
+To evaluate exact gradients without incurring a prohibitive memory overhead, the adjoint replay pass must accurately reconstruct the incident illumination suffix arriving at each vertex. Explicitly storing this information per vertex would require $\mathcal{O}(D)$ memory. Instead, PRB algebraically recovers this suffix on the fly in $\mathcal{O}(1)$ time by sequentially peeling off emitted contributions.
 
+Consider the total accumulated radiance $L_N$ over a path of $N$ vertices:
+
+$$ 
+\begin{aligned}
+L_N = \underbrace{L_{e,1} + \beta_1 L_{e,2} + \beta_2 L_{e,3} + \dots + \beta_{N-1} L_{e,N}}_{\text{Total Radiance } L_N} 
+\end{aligned}
 $$
-L_k = L_{k-1} + \beta_{k-1} L_{e,k}, \qquad \beta_k = \beta_{k-1} w_k, \qquad w_k = \frac{f_{s,k}}{p_k},
+
+During the adjoint replay pass, the exact same sequence of vertices is visited in forward order. At the first vertex ($k=1$), the current suffix $L_{\text{current}}$ is obtained by subtracting the local emission $L_{e,1}$ from the total radiance:
+
+$$ 
+\begin{aligned}
+L_N &= L_{e,1} + \underbrace{\beta_1 L_{e,2} + \beta_2 L_{e,3} + \dots + \beta_{N-1} L_{e,N}}_{\text{Reconstructed Suffix } L_{\text{current}}} \\
+&\implies L_{\text{current}} = L_N - L_{e,1}
+\end{aligned}
 $$
 
-with $L_0 = 0$ and $\beta_0 = 1$. The forward evaluation retains only the final accumulated radiance $L_N$. A second evaluation starts from the same random state and therefore visits the exact same vertices in the same camera-to-light order.
+Progressing to the second vertex ($k=2$), the subsequent emission $\beta_1 L_{e,2}$ is subtracted to yield the next suffix:
 
+$$ 
+\begin{aligned}
+L_{\text{current}} &= \beta_1 L_{e,2} + \underbrace{\beta_2 L_{e,3} + \dots + \beta_{N-1} L_{e,N}}_{\text{Next Suffix}} \\
+&\implies L_{\text{next}} = L_{\text{current}} - \beta_1 L_{e,2}
+\end{aligned}
+$$
+
+In general, the suffix dynamically tracks the remaining path radiance by sequentially removing the local emission at each step $k$:
+
+$$ 
+\begin{aligned}
+L_{\text{current}} \leftarrow L_{\text{current}} - \beta_{k-1} L_{e,k} 
+\end{aligned}
+$$
+
+This tracking variable maps directly to the `L_reconstructed = L_total - throughput * L_e(...)` operation within the adjoint pseudocode.
+
+To formally connect this algebraic tracking variable to incident illumination, we first define the physical incident radiance $L_{i,k}$ actually arriving at vertex $k$. It is the sum of all future emissions, weighted by the relative scattering throughput from that point onward:
+
+$$ 
+\begin{aligned}
+L_{i,k} &= \underbrace{L_{e,k+1} + \left(\frac{f_{k+1}}{p_{k+1}}\right) L_{e,k+2} + \left(\frac{f_{k+1}}{p_{k+1}} \frac{f_{k+2}}{p_{k+2}}\right) L_{e,k+3} + \dots}_{\text{Incident Radiance } L_{i,k}} \\
+&= \underbrace{L_{e,k+1} + \frac{\beta_{k+1}}{\beta_k} L_{e,k+2} + \frac{\beta_{k+2}}{\beta_k} L_{e,k+3} + \dots}_{\text{Incident Radiance } L_{i,k}}
+\end{aligned}
+$$
+
+If we multiply this physical incident radiance by the accumulated path throughput up to and including the scattering at $k$ (where $\beta_k = \beta_{k-1} \frac{f_k}{p_k}$), we project it into sensor space. This yields the remaining path radiance $L_k$:
+
+$$ 
+\begin{aligned}
+L_k = \beta_k L_{i,k} = \underbrace{\beta_k L_{e,k+1} + \beta_{k+1} L_{e,k+2} + \beta_{k+2} L_{e,k+3} + \dots}_{\text{Remaining Path Radiance } L_k}
+\end{aligned}
+$$
+
+Notice that this expression for $L_k$ is mathematically identical to our algebraically reconstructed suffix $L_{\text{current}}$. Therefore, we establish the direct relationship:
+
+$$ 
+\begin{aligned}
+L_{\text{current}} = \beta_k L_{i,k} = \beta_{k-1} \frac{f_k}{p_k} L_{i,k}
+\end{aligned}
+$$
+
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Detailed Proof: Differentiating the Radiance Sum</summary>
+<div style="margin-top: 1rem;">
+
+We seek the gradient of the image loss $\mathcal{J}$ with respect to a specific BSDF evaluation $f_k$. By the chain rule, $\frac{\partial \mathcal{J}}{\partial f_k} = \delta L \frac{\partial L_N}{\partial f_k}$, where $\delta L$ is the adjoint radiance from the sensor.
+
+Since throughputs prior to bounce $k$ ($j \leq k$) are independent of $f_k$, their derivatives vanish. Applying the derivative strictly to the subsequent terms yields:
+
+$$ 
+\begin{aligned}
+\frac{\partial L_N}{\partial f_k} = \frac{\partial}{\partial f_k} \sum_{j=k+1}^{N} \beta_{j-1} L_{e,j}
+\end{aligned}
+$$
+
+Because $\beta_{j-1}$ depends linearly on $f_k$, its partial derivative is simply $\frac{\beta_{j-1}}{f_k}$. Factoring out $\frac{1}{f_k}$ reveals our reconstructed suffix:
+
+$$ 
+\begin{aligned}
+\frac{\partial L_N}{\partial f_k} &= \frac{1}{f_k} \sum_{j=k+1}^{N} \beta_{j-1} L_{e,j} \\
+&= \frac{1}{f_k} L_{\text{current}} 
+\end{aligned}
+$$
+
+Substitute the previously established identity $L_{\text{current}} = \beta_{k-1} \frac{f_k}{p_k} L_{i,k}$ back into the chain rule expression:
+
+$$ 
+\begin{aligned}
+\frac{\partial \mathcal{J}}{\partial f_k} &= \delta L \cdot \frac{1}{f_k} \left( \beta_{k-1} \frac{f_k}{p_k} L_{i,k} \right) \\
+&= \delta L \cdot \beta_{k-1} \frac{L_{i,k}}{p_k} 
+\end{aligned}
+$$
+
+The $f_k$ elegantly cancels out. This proves that dynamically tracking $L_{\text{current}}$ and dividing by $f_k$ exactly isolates the correct gradient multiplier. The incident illumination derivative is evaluated perfectly on the fly, bypassing the need to ever construct a global automatic differentiation graph.
+
+</div>
+</details>
+</blockquote>
+
+
+#### Algorithmic Implementation (Detached PRB)
+
+This algebraic collapse maps elegantly into two constant-memory passes.
+
+**Primal Phase:** The first phase determines the total radiance `L` accumulated by the path without tracking gradients.
 ```python
 # Pass 1: Primal path tracing pass
 def sample_path(ray):
-    L = 0; β = 1
+    L = 0
+    β = 1
     for i in range(N):
         L += β * L_e(...)
         ω_i, bsdf_value, bsdf_pdf = sample_bsdf(...)
         β *= bsdf_value / bsdf_pdf
     return L
+```
 
+**Adjoint Phase:** The second phase replays the exact same random walk. By dynamically reconstructing the required radiance suffix on the fly, PRB accumulates the local parameter gradients directly in constant memory, completely bypassing the need to store a global AD computation graph.
 
+```python
 # Pass 2: Adjoint replay pass
 def sample_path_adjoint(ray, L, δL):
-    β = 1; δ_π = 0
+    β = 1
+    δ_π = 0
     for i in range(N):
         L -= β * L_e(...)
         ω_i, bsdf_value, bsdf_pdf = sample_bsdf(...)
@@ -2410,57 +2524,270 @@ def sample_path_adjoint(ray, L, δL):
     return δ_π
 ```
 
-At vertex $k$, replay subtracts the reconstructed emitted contribution. The remaining suffix contribution is
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Path Replay Backpropagation (PRB) PyTorch Implementation</summary>
+<div style="margin-top: 1rem;">
 
+```python
+import torch
+from scene import Scene
+from camera import Camera
+from ray import Ray
+
+
+def relative_grad(x, eps=1e-10):
+    x_d = x.detach()
+    safe = x_d.abs() > eps
+    denom = torch.where(safe, x_d, torch.ones_like(x_d))
+    return torch.where(safe, x / denom, torch.zeros_like(x))
+
+
+def _flip_normal(n, d):
+    """Flip shading normal to face against the ray direction."""
+    return torch.where((n * d).sum(-1, keepdim=True) > 0, -n, n)
+
+
+class PRBPathTracer:
+    def __init__(self, max_depth=5, num_samples=128, chunk_size=4):
+        self.max_depth = max_depth
+        self.num_samples = num_samples
+        self.chunk_size = chunk_size
+
+        self.seed = 42
+        self._primal_chunks = []  # per-chunk L_N, set by sample_path
+
+    def sample_path(self, scene: Scene, camera: Camera, seed: int = 42):
+        self.seed = seed
+        torch.manual_seed(seed)
+
+        rays = camera.sample()
+        self._primal_chunks.clear()
+        accum = torch.zeros_like(rays.origins)
+
+        with torch.no_grad():
+            for s in range(0, self.num_samples, self.chunk_size):
+                c = min(self.chunk_size, self.num_samples - s)
+                ray = Ray(rays.origins.expand(c, -1, -1, -1),
+                          rays.dirs.expand(c, -1, -1, -1))
+
+                L = torch.zeros_like(ray.origins)
+                throughput = torch.ones_like(ray.origins)
+
+                for _ in range(self.max_depth):
+                    si = scene.intersect(ray)
+                    valid = si.is_valid()
+                    n = _flip_normal(si.n, ray.dirs)
+
+                    L += torch.where(valid, throughput * si.emission, 0.0)
+                    wi, w = si.bsdf.sample(-ray.dirs, n)
+                    throughput = torch.where(valid, throughput * w, 0.0)
+                    ray = Ray(si.p + n * 1e-3, wi)
+
+                self._primal_chunks.append(L)
+                accum += L.sum(0)
+
+        return torch.clamp(accum / self.num_samples, 1e-6, 1.0)
+
+    def sample_adjoint(self, scene: Scene, camera: Camera, _primal_img, dL):
+        torch.manual_seed(self.seed)
+
+        rays = camera.sample()
+        scale = dL / self.num_samples
+
+        for idx, s in enumerate(range(0, self.num_samples, self.chunk_size)):
+            c = min(self.chunk_size, self.num_samples - s)
+            ray = Ray(rays.origins.expand(c, -1, -1, -1),
+                      rays.dirs.expand(c, -1, -1, -1))
+
+            L = self._primal_chunks[idx]        # L_N from pass 1
+            throughput = torch.ones_like(ray.origins)
+
+            for _ in range(self.max_depth):
+                si = scene.intersect(ray)
+                valid = si.is_valid()
+                n = _flip_normal(si.n, ray.dirs)
+
+                # L -= β · L_e  ->  L is now suffix radiance R_k
+                Le = throughput.detach() * si.emission
+                Le = torch.where(valid, Le, torch.zeros_like(Le))
+                L = L - Le.detach()
+
+                # same random stream -> identical (wi, w)
+                wi, w = si.bsdf.sample(-ray.dirs, n)
+
+                # differentiable f_s re-evaluation
+                f_s = si.bsdf.eval((-ray.dirs).detach(), n, wi.detach())
+
+                # dπ += J_{Le}^T(dL)  +  J_{f_s}^T(dL * R_k / f_s)
+                Lo = Le + torch.where(valid, L * relative_grad(f_s), 0.0)
+                adj = scale.unsqueeze(0).expand_as(Lo).detach()
+                (adj * Lo).sum().backward()
+
+                # advance (fully detached)
+                with torch.no_grad():
+                    throughput = torch.where(valid, throughput * w,
+                                             torch.zeros_like(throughput))
+                    ray = Ray(si.p + n * 1e-3, wi)
+```
+</div>
+</details>
+</blockquote>
+
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Detailed Proof: Continuous Unrolling and Code Verification</summary>
+<div style="margin-top: 1rem;">
+
+To rigorously prove how PRB calculates exact gradients mathematically in $\mathcal{O}(1)$ memory, we trace the continuous rendering equation integrals down to the `.detach()` operations in the AD framework.
+
+**Color Key for Derivations:**
+*   ${\color{#3b82f6}\text{Term A (Blue)}}$: The gradient of the local material evaluated under existing, unperturbed illumination.
+*   ${\color{#ff6b6b}\text{Term B (Red)}}$: The gradient of the incoming illumination evaluated against the existing, unperturbed local material.
+
+**Note on Notation:** Throughout the PRB derivations below, $f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$ absorbs the cosine foreshortening factor $\cos\theta_i$ (i.e. $f_s$ denotes the **cosine-weighted BSDF**).
+
+---
+
+**Continuous Unrolling Proof in PRB**
+
+To understand how PRB evaluates local derivatives without building recursive computation graphs, let us trace a 2-bounce light path.
+
+**Product Rule Split at a Single Bounce**  
+From the Differential Rendering Equation $\eqref{eq:diff-rendering-equation}$ derived earlier, differentiating outgoing radiance $L_o$ at a surface point $\mathbf{x}_0$ yields two distinct terms via the product rule:
+
+$$ 
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} \Bigg[ {\color{#3b82f6}\underbrace{(\partial_{\boldsymbol{\pi}} f_s) \cdot L_i}_{\text{Term A}}} + {\color{#ff6b6b}\underbrace{f_s \cdot (\partial_{\boldsymbol{\pi}} L_i)}_{\text{Term B}}} \Bigg] \mathrm{d}\boldsymbol{\omega}_1
 $$
-R_k = L_N - \sum_{j=1}^{k}\beta_{j-1}L_{e,j} = \beta_k \widehat L_{i,k},
+
+*   ${\color{#3b82f6}\text{Term A}}$: Local gradient from differentiating the material BSDF $f_s$ at vertex $\mathbf{x}_0$.
+*   ${\color{#ff6b6b}\text{Term B}}$: Recursive gradient from differentiating the incoming illumination $L_i$ arriving at vertex $\mathbf{x}_0$.
+
+**Unrolling a 2-Bounce Path**  
+Consider a 2-bounce path with vertices $\mathbf{x}_0$ (primary hit), $\mathbf{x}_1$ (first bounce), and $\mathbf{x}_2$ (static emitter). Since $L_i(\mathbf{x}_0, \boldsymbol{\omega}_1) = L_o(\mathbf{x}_1, -\boldsymbol{\omega}_1)$, we unroll the radiance integral at $\mathbf{x}_0$:
+
+$$ 
+L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} f_s(\mathbf{x}_0, \boldsymbol{\omega}_1, \boldsymbol{\omega}_0) \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \boldsymbol{\omega}_2, -\boldsymbol{\omega}_1) L_e(\mathbf{x}_2, -\boldsymbol{\omega}_2) \, \mathrm{d}\boldsymbol{\omega}_2 \right] \mathrm{d}\boldsymbol{\omega}_1
 $$
 
-where $\widehat L_{i,k}$ is the radiance contributed by the rest of this particular sampled path, expressed relative to the throughput after vertex $k$. Since $\beta_k = \beta_{k-1} f_{s,k} / p_k$,
+**Differentiating the Unrolled Path**  
+Applying the parameter derivative $\partial_{\boldsymbol{\pi}}$ to the unrolled path gives:
 
-$$
-\frac{R_k}{f_{s,k}} = \frac{\beta_{k-1}}{p_k} \widehat L_{i,k}.
-$$
-
-The local reverse-mode contribution is consequently
-
-$$
-\delta\boldsymbol{\pi} \mathrel{+}= J_{f_{s,k}}^T \left( \delta L\,\frac{R_k}{f_{s,k}} \right),
+$$ 
+\begin{aligned}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) &= \int_{\mathbb{S}^2} {\color{#3b82f6}\underbrace{\partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_0, \dots) \cdot L_i(\mathbf{x}_0, \dots)}_{\text{Term A at vertex } \mathbf{x}_0}} \mathrm{d}\boldsymbol{\omega}_1 \\
+&\quad + \int_{\mathbb{S}^2} {\color{#ff6b6b}\underbrace{f_s(\mathbf{x}_0, \dots) \cdot \partial_{\boldsymbol{\pi}} \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \dots) L_e(\mathbf{x}_2, \dots) \, \mathrm{d}\boldsymbol{\omega}_2 \right]}_{\text{Term B at vertex } \mathbf{x}_0}} \mathrm{d}\boldsymbol{\omega}_1
+\end{aligned}
 $$
 
-which is exactly the Monte Carlo weight for the $L_i\,\partial_{\boldsymbol{\pi}}f_s$ term in the differential rendering equation. Repeating the subtraction updates $R_k$ in constant time, so all suffix-radiance factors are recovered in one replay rather than by $N$ recursive suffix queries.
+**Expanding Term B at Vertex $\mathbf{x}_0$**  
+Now examine the derivative inside ${\color{#ff6b6b}\text{Term B}_{\mathbf{x}_0}}$. Since the light source at $\mathbf{x}_2$ is static ($\partial_{\boldsymbol{\pi}} L_e = 0$), differentiating the inner integral applies only to $f_s(\mathbf{x}_1)$:
 
-Both evaluations traverse the path forward; PRB neither stores and reverses path vertices nor checkpoints the full computation. Given the same random stream, its derivative agrees with conventional reverse-mode AD sample-for-sample, apart from floating-point evaluation order. If the image-space loss derivative is itself estimated from a noisy primal image, that primal estimate must be statistically independent of the correlated replay pair to avoid bias.
+$$ 
+\partial_{\boldsymbol{\pi}} \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \dots) L_e(\mathbf{x}_2, \dots) \, \mathrm{d}\boldsymbol{\omega}_2 \right] = \int_{\mathbb{S}^2} {\color{#3b82f6}\underbrace{\partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_1, \dots) \cdot L_e(\mathbf{x}_2, \dots)}_{\text{Term A at vertex } \mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2
+$$
 
-The subtraction may lose precision when one vertex dominates the complete path contribution. This is the same regime in which the primal radiance sum is already close to floating-point accuracy limits.
+Notice the key result: **${\color{#ff6b6b}\text{Term B}}$ at vertex $\mathbf{x}_0$ is identically equal to ${\color{#3b82f6}\text{Term A}}$ at the next vertex $\mathbf{x}_1$ weighted by the local throughput $f_s(\mathbf{x}_0)$!**
+
+$$ 
+{\color{#ff6b6b}\text{Term B}_{\mathbf{x}_0}} = f_s(\mathbf{x}_0, \dots) \int_{\mathbb{S}^2} {\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2
+$$
+
+**Global Equivalence (Why Detaching Term B is Exact)**  
+Substituting this expansion back into the total derivative yields:
+
+$$ 
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} {\color{#3b82f6}\text{Term A}_{\mathbf{x}_0}} \mathrm{d}\boldsymbol{\omega}_1 + \int_{\mathbb{S}^2} f_s(\mathbf{x}_0, \dots) \left[ \int_{\mathbb{S}^2} {\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2 \right] \mathrm{d}\boldsymbol{\omega}_1
+$$
+
+Mathematically, evaluating ${\color{#ff6b6b}\text{Term B}}$ locally at vertex $\mathbf{x}_0$ is completely redundant because it is automatically fulfilled when the random walk reaches vertex $\mathbf{x}_1$ and evaluates ${\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}}$ weighted by the accumulated throughput. Thus, PRB safely detaches ${\color{#ff6b6b}\text{Term B}}$ at every bounce without losing any parameter gradients.
+
+---
+
+**Bridging Math to the PRB Code**
+
+PRB executes this continuous unrolling dynamically during the adjoint pass. Instead of building a massive computation graph to evaluate ${\color{#ff6b6b}\text{Term B}}$ recursively, PRB detaches ${\color{#ff6b6b}\text{Term B}}$ at vertex $k$ and relies on the fact that ${\color{#ff6b6b}\text{Term B}_k}$ is mathematically identical to ${\color{#3b82f6}\text{Term A}_{k+1}}$ at the next bounce, weighted by throughput.
+
+Here is how each math step translates directly to the code:
+
+**1. Algebraic Reconstruction of $L_{i,k}$**  
+Instead of storing intermediate ray states in memory, PRB takes the total path radiance `L_total` and algebraically peels off the local emission at each step:
+
+    L_reconstructed = L_total - throughput * L_e(...)
+
+Subtracting the local emission leaves the reconstructed incident radiance tail: $L_{\text{reconstructed}} \equiv \beta_k \frac{f_k}{p_k} L_{i,k}$.
+
+**2. Local Evaluation of Term A**  
+To evaluate the local material derivative ${\color{#3b82f6}\text{Term A}_k}$ ($\partial_{\boldsymbol{\pi}} f_k$), PRB evaluates the gradient of the BSDF using a dummy objective `L_o`. Because `L_reconstructed` dynamically contains the factors $\beta_k$ and $f_k/p_k$, we divide by $f_k$ (using the `relative_grad` trick) to isolate the correct multiplier:
+
+    L_o = L_e(...) + L_reconstructed * relative_grad(f_k)
+    L_o.backward(delta_L) 
+
+This evaluates exactly:
+
+$$ 
+\text{Gradient}_k = \delta L \cdot \left( \beta_k \frac{L_{i,k}}{p_k} \right) \nabla_{\boldsymbol{\pi}} f_k 
+$$
+
+This isolates and accumulates ${\color{#3b82f6}\text{Term A}_k}$ into the parameter gradients.
+
+**3. How Term B Becomes Term A at the Next Bounce**  
+Notice that the computation implicitly treats the reconstructed radiance and throughput as detached variables disconnected from the local material gradient (`.detach()` in the pseudocode).
+
+When the loop advances to vertex $k+1$, evaluating ${\color{#3b82f6}\text{Term A}_{k+1}}$ with the updated throughput computes:
+
+$$ 
+\text{Throughput}_k \cdot {\color{#3b82f6}\text{Term A}_{k+1}} = f_s(\mathbf{x}_k) \int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_{k+1}) L_i(\mathbf{x}_{k+1}) \, \mathrm{d}\boldsymbol{\omega}_{k+1}
+$$
+
+Because this product is **identically equal to ${\color{#ff6b6b}\text{Term B}_k}$**, evaluating ${\color{#3b82f6}\text{Term A}}$ sequentially across bounces automatically computes every ${\color{#ff6b6b}\text{Term B}}$ in the unrolled rendering equation. PRB thus achieves exact, unbiased derivatives in $\mathcal{O}(1)$ memory without allocating recursive computation graphs.
+
+</div>
+</details>
+</blockquote>
+
+#### Iterative Jacobian Inversion
+
+The replay principle has a useful algebraic interpretation. Let one path step update the state $\mathbf{z} = (L, \beta)$ through
+
+$$ \mathbf{z}_k = h(\boldsymbol{\pi}, \mathbf{z}_{k-1}), \quad h(\boldsymbol{\pi}, L, \beta) = (L + \beta L_e, \, \beta f_s), $$
+
+where the sampling density is omitted only to simplify notation. After $N$ steps, $\mathbf{z}_N = h^{(N)}(\boldsymbol{\pi}, \mathbf{z}_0)$, and the chain rule gives
+
+$$ \partial_{\boldsymbol{\pi}} \mathbf{z}_N = \sum_{k=1}^N \left( \prod_{j=k+1}^N J_{h,j} \right) \partial_{\boldsymbol{\pi}} h(\boldsymbol{\pi}, \mathbf{z}_{k-1}). $$
+
+For this state update,
+
+$$ J_{h,k} = \begin{pmatrix} 1 & L_{e,k} \\ 0 & f_{s,k} \end{pmatrix}, \quad J_{h,k}^{-1} = \begin{pmatrix} 1 & -L_{e,k}/f_{s,k} \\ 0 & 1/f_{s,k} \end{pmatrix}. $$
+
+The forward evaluation supplies the full suffix Jacobian product. During replay, subtracting emitted radiance and dividing out the current BSDF factor applies $J_{h,k}^{-1}$ one step at a time. PRB therefore reverses the derivative state through small local Jacobian inverses rather than reversing the complete primal program. Attached PRB extends the state with the $4 \times 4$ ray Jacobian and applies the same principle to the path geometry.
 
 #### Attached Sampling and Specular Paths
 
-Detached differentiation cannot optimize parameters that move ideal specular samples, such as the index of refraction, geometry, or normals of smooth dielectrics and conductors. To include these dependencies, write inverse-transform sampling as a parameter-dependent map $\mathbf{x} = T(\mathbf{u}, \boldsymbol{\pi})$ from $\mathbf{u} \in [0,1]^n$ to path space. The reparameterized pixel integral is
+Detached differentiation cannot optimize parameters that move ideal specular samples, such as the index of refraction, geometry, or normals of smooth dielectrics and conductors. To include these dependencies, write inverse-transform sampling as a parameter-dependent map $\mathbf{x} = T(\mathbf{u}, \boldsymbol{\pi})$ from $\mathbf{u} \in [0, 1]^n$ to path space.
+The reparameterized pixel integral is
 
-$$
-I_j(\boldsymbol{\pi}) = \int_{[0,1]^n} \frac{f_j(T(\mathbf{u},\boldsymbol{\pi}),\boldsymbol{\pi})}{p(T(\mathbf{u},\boldsymbol{\pi}),\boldsymbol{\pi})} \,\mathrm{d}\mathbf{u}.
-$$
+$$ I_j(\boldsymbol{\pi}) = \int_{[0,1]^n} \frac{f_j(T(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})}{p(T(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})} \, \mathrm{d}\mathbf{u}. $$
 
 Differentiating while keeping $\mathbf{u}$ fixed gives the attached estimator
 
-$$
-\partial_{\boldsymbol{\pi}}I_j = \int_{[0,1]^n} \partial_{\boldsymbol{\pi}} \left[ \frac{f_j(T(\mathbf{u},\boldsymbol{\pi}),\boldsymbol{\pi})}{p(T(\mathbf{u},\boldsymbol{\pi}),\boldsymbol{\pi})} \right] \mathrm{d}\mathbf{u}.
-$$
+$$ \partial_{\boldsymbol{\pi}} I_j = \int_{[0,1]^n} \partial_{\boldsymbol{\pi}} \left[ \frac{f_j(T(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})}{p(T(\mathbf{u}, \boldsymbol{\pi}), \boldsymbol{\pi})} \right] \mathrm{d}\mathbf{u}. $$
 
 The numerator contains both the explicit material derivative and the motion of the sampled path:
 
-$$
-\partial_{\boldsymbol{\pi}}f_j(T,\boldsymbol{\pi}) = \left.\partial_{\boldsymbol{\pi}}f_j(\mathbf{x},\boldsymbol{\pi})\right|_{\mathbf{x}=T} + \partial_{\mathbf{x}}f_j(T,\boldsymbol{\pi})\, \partial_{\boldsymbol{\pi}}T.
-$$
+$$ \partial_{\boldsymbol{\pi}} f_j(T, \boldsymbol{\pi}) = \partial_{\boldsymbol{\pi}} f_j(\mathbf{x}, \boldsymbol{\pi}) \big|_{\mathbf{x}=T} + \partial_{\mathbf{x}} f_j(T, \boldsymbol{\pi}) \partial_{\boldsymbol{\pi}} T. $$
 
-A perturbation at one interaction therefore changes all later vertices and their BSDF and emission factors. PRB reconstructs this non-local dependence using the differential relationship between adjacent path segments. A ray can be represented by two local surface coordinates at its origin and two at its endpoint, reducing the Jacobian between adjacent segments to a $4\times4$ matrix. Explicitly propagating these small ray, throughput, and radiance Jacobians carries all derivative information between interactions without storing a path-length AD graph. A position-position parameterization keeps the matrix entries dimensionally compatible and is better conditioned than mixing positions and angles.
+A perturbation at one interaction therefore changes all later vertices and their BSDF and emission factors. PRB reconstructs this non-local dependence using the differential relationship between adjacent path segments. A ray can be represented by two local surface coordinates at its origin and two at its endpoint, reducing the Jacobian between adjacent segments to a $4 \times 4$ matrix. Explicitly propagating these small ray, throughput, and radiance Jacobians carries all derivative information between interactions without storing a path-length AD graph. A position-position parameterization keeps the matrix entries dimensionally compatible and is better conditioned than mixing positions and angles.
 
 ```python
 # Pass 1: Primal path tracing pass (Attached)
 def sample_path(ray):
-    L = 0; β = 1
-    J_L = 0_3,4; J_β = 0_3,4; J_ray = I_4
+    L = 0
+    β = 1
+    J_L = 0_3,4
+    J_β = 0_3,4
+    J_ray = I_4
     for i in range(N):
         L += β * L_e(...)
         ω_i, bsdf_value, bsdf_pdf = sample_bsdf(...)
@@ -2480,7 +2807,9 @@ def sample_path(ray):
 
 # Pass 2: Adjoint replay pass (Attached)
 def sample_path_adjoint(ray, L, J_L, δL):
-    β = 1; J_ray = I_4; δ_π = 0
+    β = 1
+    J_ray = I_4
+    δ_π = 0
     for i in range(N):
         L -= β * L_e(...)
         ω_i, bsdf_value, bsdf_pdf = sample_bsdf(...)
@@ -2493,7 +2822,7 @@ def sample_path_adjoint(ray, L, J_L, δL):
         J_ray  = J_ray_prime @ J_ray
 
         # Update the directional radiance derivative
-        J_L -= L / bsdf_value * J_bsdf + β * J_L_e
+        J_L -= L / bsdf_weight * J_bsdf + β * J_L_e
         J_L_prime = J_L @ (J_ray)^-1
 
         # Backpropagate gradients of the current BSDF value
@@ -2509,67 +2838,30 @@ def sample_path_adjoint(ray, L, J_L, δL):
 
 The adjacent-ray Jacobian is singular when a sampling map does not depend on the incident segment, as with diffuse scattering. PRB regularizes it with
 
-$$
-J_{\mathrm{ray}}^{\lambda}
-=J_{\mathrm{ray}}+\lambda I_4\,\operatorname{sign}\left(u-\frac12\right),
-\qquad u\sim\mathcal U(0,1).
-$$
+$$ J_{\text{ray}}^\lambda = J_{\text{ray}} + \lambda I_4 \operatorname{sign}\left(u - \frac{1}{2}\right), \quad u \sim \mathcal{U}(0, 1). $$
 
 The perturbation has zero mean, and the same draw is reused by the correlated evaluations. This regularizes the inversion while preserving the estimator expectation.
 
 Attached sampling may also turn a static discontinuity into one that moves with $\boldsymbol{\pi}$. Replay does not account for the resulting boundary term. An auxiliary reparameterization can slow or stop the sampling-map motion near discontinuities; alternatively, a boundary estimator must supply the missing term if unbiased geometry derivatives are required.
 
-#### Iterative Jacobian Inversion
+#### Differentiable Delta Tracking (Volumetric Rendering)
 
-The replay principle has a useful algebraic interpretation. Let one path step update the state $\mathbf z=(L,\beta)$ through
+Path replay backpropagation is especially crucial for volumetric transport in participating media (e.g., clouds, smoke, tissue), where paths easily reach thousands of scattering interactions. 
 
-$$
-\mathbf z_k=h(\boldsymbol{\pi},\mathbf z_{k-1}),
-\qquad
-h(\boldsymbol{\pi},L,\beta)
-=\left(L+\beta L_e,\;\beta f_s\right),
-$$
-
-where the sampling density is omitted only to simplify notation. After $N$ steps, $\mathbf z_N=h^{(N)}(\boldsymbol{\pi},\mathbf z_0)$, and the chain rule gives
-
-$$
-\partial_{\boldsymbol{\pi}}\mathbf z_N
-=\sum_{k=1}^{N}
-\left(\prod_{j=k+1}^{N}J_{h,j}\right)
-\partial_{\boldsymbol{\pi}}h(\boldsymbol{\pi},\mathbf z_{k-1}).
-$$
-
-For this state update,
-
-$$
-J_{h,k}
-=\begin{pmatrix}
-1 & L_{e,k}\\
-0 & f_{s,k}
-\end{pmatrix},
-\qquad
-J_{h,k}^{-1}
-=\begin{pmatrix}
-1 & -L_{e,k}/f_{s,k}\\
-0 & 1/f_{s,k}
-\end{pmatrix}.
-$$
-
-The forward evaluation supplies the full suffix Jacobian product. During replay, subtracting emitted radiance and dividing out the current BSDF factor applies $J_{h,k}^{-1}$ one step at a time. PRB therefore reverses the derivative state through small local Jacobian inverses rather than reversing the complete primal program. Attached PRB extends the state with the $4\times4$ ray Jacobian and applies the same principle to the path geometry.
-
+The $\mathcal{O}(D^2)$ complexity of standard Radiative Backpropagation is computationally prohibitive for these deep volumes. Furthermore, unbiased null-collision methods (like **delta tracking**) introduce discrete random decisions regarding real vs. fictitious collisions. By applying PRB to the volumetric radiative transfer equation, PRB isolates gradients with respect to the continuous absorption and scattering coefficients, ignoring the discontinuous sampling decisions. This unlocks unbiased volumetric derivatives in strictly linear time.
 
 #### Complexity and Scope
 
-For path length $D$:
+The ultimate payoff of the Path Replay Backpropagation framework is summarized in the table below. For a light path of length $D$:
 
-| Method | Time | Path storage | Unbiased version |
-|---|---:|---:|---|
-| Conventional reverse-mode AD | $O(D)$ | $O(D)$ | Yes, under the estimator assumptions |
-| Radiative backpropagation | $O(D^2)$ | $O(1)$ | Yes |
-| RBP with $L_i=1$ | $O(D)$ | $O(1)$ | No |
-| Path replay backpropagation | $O(D)$ | $O(1)$ | Yes |
+| Method | Time | Path Storage | Unbiased Version | Handles Specular / Volumetric |
+|---|---:|---:|:---:|:---:|
+| Conventional reverse-mode AD | $\mathcal{O}(D)$ | $\mathcal{O}(D)$ | Yes | Yes (Graph memory explodes) |
+| Radiative Backpropagation | $\mathcal{O}(D^2)$ | $\mathcal{O}(1)$ | Yes | No |
+| Biased Radiative Backprop ($L_i = 1$) | $\mathcal{O}(D)$ | $\mathcal{O}(1)$ | No | No |
+| **Path Replay Backpropagation** | **$\mathcal{O}(D)$** | **$\mathcal{O}(1)$** | **Yes** | **Yes** |
 
-PRB removes the path-length memory and time bottlenecks, but its correctness still depends on detached versus attached sampling being chosen deliberately, discrete choices remaining detached, and moving discontinuities receiving their own boundary treatment.
+PRB strictly removes the path-length memory and time bottlenecks, successfully bringing the computational cost of unbiased differentiable rendering down to match that of standard forward path tracing.
 
 ## Modern Advances in Differentiable Rendering
 
@@ -2588,6 +2880,7 @@ To reduce the high variance associated with boundary integrals on complex mesh g
 Inverse rendering optimizations are highly non-convex and easily get trapped in local minima, especially when starting from an empty scene or when objects are completely occluded. **Zhang et al. (2025)** [[6]](#ref-6) introduced **Many-Worlds Inverse Rendering** to address this limitation. Rather than evolving a surface locally via gradient descent, their approach considers adding hypothetical surface patches anywhere in 3D space. They evaluate a superposition of independent, competing surface hypotheses that do not shadow or scatter light from each other, allowing gradients to flow from empty space. This framework combines the optimization robustness of volumetric representations (starting from scratch) with the computational efficiency of surface rendering, avoiding expensive transmittance and multiple scattering evaluations.
 
 *Note: I might create a follow-up post expanding further on these modern advances in differentiable rendering in the near future!*
+
 
 ## References
 
