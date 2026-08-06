@@ -45,14 +45,13 @@ summary: "about"
       </a>
     </div>
   </div>
-  </div>
 </section>
 
-<hr style="margin: 2rem auto; max-width: 900px; border: none; border-top: 1px solid #ddd;">
-<!-- --- -->
-<section style="max-width: 900px; margin: 0 auto; padding: 0 2rem;">
-  <h3 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Projects</h3>
-  <p style="margin: -0.5rem 0 2rem 0; color: #666; line-height: 1.6;">
+<hr style="margin: 1rem auto 3rem auto; max-width: 800px; border: none; border-top: 1px solid rgba(128, 128, 128, 0.3);">
+
+<section style="max-width: 800px; margin: 0 auto; padding: 0 2rem;">
+  <h3 style="margin-bottom: 1rem; font-size: 1.8rem;">Projects</h3>
+  <p style="margin: -0.2rem 0 2rem 0; color: #666; line-height: 1.6;">
     A small selection of projects spanning rendering, computer graphics, and machine learning.
   </p>
   
@@ -70,6 +69,31 @@ summary: "about"
       </p>
       <div class="about-project-actions">
         <a href="https://github.com/USharma002/futaba-renderer" class="about-project-action" target="_blank">Project Link</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nabla Renderer -->
+  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
+    <div class="project-img-hover-split" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0; background-color: #f8f9fa;">
+      <!-- Static Diagonal Split (Base Render + Translation Gradient) -->
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 0.3s;" class="split-static">
+        <!-- Top-right triangle: Translation Gradient -->
+        <img src="/images/about/teapot_fd_grad_x_shift_h_0.01.png" alt="Teapot Translation Gradient" style="position: absolute; width: 100%; height: 100%; object-fit: cover; clip-path: polygon(0 0, 100% 0, 100% 100%);">
+        <!-- Bottom-left triangle: Base Render -->
+        <img src="/images/about/teapot_base.png" alt="Teapot Base Render" style="position: absolute; width: 100%; height: 100%; object-fit: cover; clip-path: polygon(0 0, 100% 100%, 0 100%);">
+      </div>
+      <!-- Hover State: Optimization GIF -->
+      <img src="/images/about/render_timelapse.gif" alt="Optimization GIF" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;" class="hover-gif">
+    </div>
+    <div>
+      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Nabla Renderer (PyTorch)</h4>
+      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
+        A custom differentiable renderer built in PyTorch. Implements automatic differentiation and physics-based rendering formulations (like Path Replay Backpropagation) for inverse rendering tasks.
+      </p>
+      <div class="about-project-actions">
+        <a href="https://github.com/USharma002/nabla-renderer" class="about-project-action" target="_blank">Project Link</a>
+        <a href="/posts/intro-to-differentiable-rendering" class="about-project-action">Blog Post</a>
       </div>
     </div>
   </div>
@@ -92,25 +116,7 @@ summary: "about"
     </div>
   </div>
 
-  <!-- Signed Distance Field Explorer -->
-  <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
-    <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-      <img src="/images/about/sdf-explorer.png" alt="SDF Explorer Static" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; background-color: #f0f0f0;">
-      <img src="/images/about/sdf-explorer.webp" alt="SDF Explorer Hover" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.3s;">
-    </div>
-    <div>
-      <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">Signed Distance Field Explorer (WIP)</h4>
-      <p style="margin: 0.5rem 0 1rem 0; color: #666; line-height: 1.5;">
-        An interactive web-based tool for exploring signed distance fields (SDFs).
-        Real-time visualization and manipulation of geometric primitives and operations using ray marching.
-      </p>
-      <div class="about-project-actions">
-        <a href="https://usharma002.github.io/sdf-explorer/" target="_blank" class="about-project-action">Live Demo</a>
-        <a href="https://github.com/USharma002/sdf-explorer" target="_blank" class="about-project-action">GitHub</a>
-      </div>
-    </div>
-  </div>
-  
+
   <!-- Project 2 -->
   <div class="project-container" style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2.5rem;">
     <div class="project-img-hover" style="position: relative; width: 200px; height: 150px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
@@ -142,7 +148,7 @@ summary: "about"
         <!-- <br><span style="font-style: italic; color: #888;">(Private repository, coming soon)</span> -->
       </p>
       <div class="about-project-actions">
-        <a href="https://usharma002.github.io/posts/transformer-model/" class="about-project-action">Project Link</a>
+        <a href="https://usharma002.github.io/posts/transformer-model/" class="about-project-action">Blog Post</a>
       </div>
     </div>
   </div>
@@ -171,10 +177,11 @@ summary: "about"
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 3rem;
-  padding: 3rem 2rem;
+  justify-content: center;
+  gap: 3.5rem;
+  padding: 1.5rem 1rem;
   font-family: system-ui, -apple-system, sans-serif;
-  max-width: 950px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -214,7 +221,7 @@ summary: "about"
 }
 
 .bio-section {
-  flex: 1;
+  flex: 0 1 450px;
   min-width: 280px;
 }
 
@@ -283,6 +290,13 @@ summary: "about"
   transition: opacity 0.3s;
 }
 
+.project-img-hover-split:hover .split-static {
+  opacity: 0 !important;
+}
+.project-img-hover-split:hover .hover-gif {
+  opacity: 1 !important;
+}
+
 /* Tablet and larger (keep desktop layout) */
 @media (min-width: 769px) {
   .project-container {
@@ -291,7 +305,7 @@ summary: "about"
     gap: 2.25rem !important;
     align-items: stretch !important;
   }
-  .project-img-hover {
+  .project-img-hover, .project-img-hover-split {
     width: 320px !important;
     height: 200px !important;
   }
@@ -310,7 +324,7 @@ summary: "about"
     margin-bottom: 2rem !important;
   }
   
-  .project-img-hover {
+  .project-img-hover, .project-img-hover-split {
     width: 100% !important;
     max-width: 320px !important;
     height: 200px !important;
@@ -341,7 +355,7 @@ summary: "about"
     gap: 0.8rem !important;
   }
   
-  .project-img-hover {
+  .project-img-hover, .project-img-hover-split {
     width: 100% !important;
     max-width: 280px !important;
     height: 176px !important;
