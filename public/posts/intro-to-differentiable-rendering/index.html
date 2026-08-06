@@ -165,6 +165,8 @@
 
         <div class="inner"><ul>
                 <li>
+                    <a href="#introduction" aria-label="Introduction">Introduction</a></li>
+                <li>
                     <a href="#differentiation-methods" aria-label="Differentiation Methods">Differentiation Methods</a><ul>
                         
                 <li>
@@ -241,13 +243,13 @@
                     <a href="#explicit-edge-sampling-li-et-al" aria-label="Explicit Edge Sampling (Li et al.)">Explicit Edge Sampling (Li et al.)</a><ul>
                         
                 <li>
-                    <a href="#primary-visibility" aria-label="Primary visibility.">Primary visibility.</a></li>
+                    <a href="#primary-visibility" aria-label="Primary Visibility">Primary Visibility</a></li>
                 <li>
-                    <a href="#secondary-visibility" aria-label="Secondary visibility">Secondary visibility</a></li>
+                    <a href="#secondary-visibility" aria-label="Secondary Visibility">Secondary Visibility</a></li>
                 <li>
-                    <a href="#selecting-an-edge" aria-label="Selecting an edge">Selecting an edge</a></li>
+                    <a href="#selecting-an-edge" aria-label="Selecting an Edge">Selecting an Edge</a></li>
                 <li>
-                    <a href="#importance-sampling-a-single-edge" aria-label="Importance sampling a single edge">Importance sampling a single edge</a></li></ul>
+                    <a href="#importance-sampling-a-single-edge" aria-label="Importance Sampling a Single Edge">Importance Sampling a Single Edge</a></li></ul>
                 </li>
                 <li>
                     <a href="#reparameterizing-visibility-discontinuities-loubet-et-al" aria-label="Reparameterizing Visibility Discontinuities (Loubet et al.)">Reparameterizing Visibility Discontinuities (Loubet et al.)</a><ul>
@@ -302,7 +304,11 @@
                     <a href="#direct-illumination" aria-label="Direct Illumination">Direct Illumination</a></li>
                 <li>
                     <a href="#differential-rendering-equation" aria-label="Differential Rendering Equation">Differential Rendering Equation</a></li></ul>
+                </li></ul>
                 </li>
+                <li>
+                    <a href="#efficient-reverse-mode-differentiable-rendering" aria-label="Efficient Reverse-Mode Differentiable Rendering">Efficient Reverse-Mode Differentiable Rendering</a><ul>
+                        
                 <li>
                     <a href="#radiative-backpropagation" aria-label="Radiative Backpropagation">Radiative Backpropagation</a><ul>
                         
@@ -343,16 +349,10 @@
                 </li></ul>
                 </li>
                 <li>
-                    <a href="#modern-advances-in-differentiable-rendering" aria-label="Modern Advances in Differentiable Rendering">Modern Advances in Differentiable Rendering</a><ul>
+                    <a href="#conclusion" aria-label="Conclusion">Conclusion</a><ul>
                         
                 <li>
-                    <a href="#1-differentiable-signed-distance-functions-sdfs" aria-label="1. Differentiable Signed Distance Functions (SDFs)">1. Differentiable Signed Distance Functions (SDFs)</a></li>
-                <li>
-                    <a href="#2-exchanging-unbiasedness-for-low-variance" aria-label="2. Exchanging Unbiasedness for Low Variance">2. Exchanging Unbiasedness for Low Variance</a></li>
-                <li>
-                    <a href="#3-projective-silhouette-sampling" aria-label="3. Projective Silhouette Sampling">3. Projective Silhouette Sampling</a></li>
-                <li>
-                    <a href="#4-many-worlds-inverse-rendering" aria-label="4. Many-Worlds Inverse Rendering">4. Many-Worlds Inverse Rendering</a></li></ul>
+                    <a href="#further-reading" aria-label="Further Reading">Further Reading</a></li></ul>
                 </li>
                 <li>
                     <a href="#references" aria-label="References">References</a>
@@ -372,6 +372,7 @@ body.dark img[src$=".svg"]:not(.no-invert),
 <div style="background-color: rgba(220, 38, 38, 0.08); border-left: 4px solid #dc2626; color: #dc2626; padding: 10px 14px; font-weight: 500; border-radius: 4px; margin-bottom: 20px; line-height: 1.5;">
   <strong>Work in Progress:</strong> This post is under active development. I am continuously updating and expanding sections as I explore the literature further.
 </div>
+<h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
 <figure id="fig-diff-render" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/diff-render.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
@@ -561,7 +562,7 @@ body.dark img[src$=".svg"]:not(.no-invert),
 </script>
 <p>Differentiable rendering asks a simple question with surprisingly sharp edges: if a renderer maps scene parameters to an image, can we differentiate that map? If yes, then geometry, materials, lights, and cameras can be optimized from image-space losses such as reconstruction error, perceptual losses, or task-specific objectives.</p>
 <p>The difficulty is that rendering is not just a smooth program. It is an integral over paths, visibility changes discontinuously, and Monte Carlo estimators have sampling choices that may themselves depend on the parameters. This post builds the story in layers: first automatic differentiation, then why naive AD fails for visibility, then boundary-aware Monte Carlo estimators, and finally the physics-based formulations used in modern differentiable renderers.</p>
-<p>I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. This post focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic in <a href="/posts/differentiable-rendering-participating-media/">Differentiable Rendering of Participating Media</a>.</p>
+<p>I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. This post focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic.</p>
 <blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
   <p><em>Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini's PhD thesis <a href="#ref-2">[2]</a>.</em></p>
   <p style="margin-top: 1rem;">I will be using the following custom differentiable renderer to do simplified implementations throughout this post. <em>(The full code is available on <a href="https://github.com/USharma002/nabla-renderer" title="Nabla Renderer on GitHub">GitHub</a>)</em>:</p>
@@ -574,43 +575,41 @@ body.dark img[src$=".svg"]:not(.no-invert),
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PathTracer</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Monte Carlo path tracer.&#34;&#34;&#34;</span>
 </span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="o">=</span> <span class="n">chunk_size</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="n">Camera</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">        <span class="n">primary_rays</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">        <span class="n">accum_L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">primary_rays</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;Render via path tracing.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">accum_L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">sample_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">            <span class="n">chunk</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">-</span> <span class="n">sample_idx</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">primary_rays</span><span class="o">.</span><span class="n">origins</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">primary_rays</span><span class="o">.</span><span class="n">dirs</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="n">β</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">β</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>  <span class="c1"># Path throughput</span>
+</span></span><span class="line"><span class="cl">            <span class="n">L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>  <span class="c1"># Accumulated radiance</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">                <span class="n">si</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">ray</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                
-</span></span><span class="line"><span class="cl">                <span class="c1"># Direct emission</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="c1"># Direct emission from light sources</span>
 </span></span><span class="line"><span class="cl">                <span class="n">Le</span> <span class="o">=</span> <span class="n">β</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">emission</span>
 </span></span><span class="line"><span class="cl">                <span class="n">L</span> <span class="o">=</span> <span class="n">L</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(),</span> <span class="n">Le</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="c1"># Flip normal for rays hitting the back face</span>
 </span></span><span class="line"><span class="cl">                <span class="n">shading_n</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">si</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="n">si</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">si</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                
-</span></span><span class="line"><span class="cl">                <span class="c1"># BSDF Sampling</span>
-</span></span><span class="line"><span class="cl">                <span class="n">bsdf_wi</span><span class="p">,</span> <span class="n">bsdf_val</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">shading_n</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                
-</span></span><span class="line"><span class="cl">                <span class="c1"># Update loop variables</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="c1"># Sample BSDF to get new ray direction and update throughput</span>
+</span></span><span class="line"><span class="cl">                <span class="n">bsdf_wi</span><span class="p">,</span> <span class="n">bsdf_value</span><span class="p">,</span> <span class="n">bsdf_pdf</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">shading_n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="c1"># Update ray for next bounce</span>
 </span></span><span class="line"><span class="cl">                <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">shading_n</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">bsdf_wi</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="n">β</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(),</span> <span class="n">β</span> <span class="o">*</span> <span class="n">bsdf_val</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">β</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(),</span> <span class="n">β</span> <span class="o">*</span> <span class="n">bsdf_value</span> <span class="o">/</span> <span class="n">bsdf_pdf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="n">accum_L</span> <span class="o">+=</span> <span class="n">L</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">accum_L</span> <span class="o">+=</span> <span class="n">L</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">accum_L</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">img</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">accum_L</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
 </span></span></code></pre></div></div></details>
 </blockquote>
 <h2 id="differentiation-methods">Differentiation Methods<a hidden class="anchor" aria-hidden="true" href="#differentiation-methods">#</a></h2>
@@ -1616,16 +1615,31 @@ $$<p>The two terms in $\partial x$ are accumulated because $x$ reaches the outpu
 $$\frac{d}{d\pi}\int f(x,\pi)\,dx = \int \frac{\partial f}{\partial \pi}(x,\pi)\,dx$$<p>However, this interchange is only valid under regularity conditions that justify differentiating under the integral sign, such as a suitable integrable bound on $\partial_\pi f$. Parameter-dependent jumps violate these conditions. In rendering, this frequently happens because of <strong>visibility</strong>: when an object moves, the color changes discontinuously across a moving boundary.</p>
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
   <div>
-    <img src="/images/diff-rendering/base_render.png" alt="Initial Render" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
-    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Initial Render f(x)</span>
+    <figure id="fig-19" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image no-invert" src="/images/diff-rendering/base_render.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
+          Initial Render $f(x)$
+        </figcaption></figure>
+    
+
   </div>
   <div>
-    <img src="/images/diff-rendering/naive_ad_gradient.png" alt="Naive AD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
-    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Naive AD Gradient (Zero)</span>
+    <figure id="fig-20" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image no-invert" src="/images/diff-rendering/naive_ad_gradient.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
+          Naive AD (Zero)
+        </figcaption></figure>
+    
+
   </div>
   <div>
-    <img src="/images/diff-rendering/fd_translated_gradient_map.png" alt="FD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
-    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Finite Difference Gradient</span>
+    <figure id="fig-21" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+      <img class="zoomable-image no-invert" src="/images/diff-rendering/fd_translated_gradient_map.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
+          FD Gradient
+        </figcaption></figure>
+    
+
   </div>
 </div>
 <blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
@@ -1723,7 +1737,7 @@ $$<p>The attached case instead draws $\xi$ from a parameter-independent uniform 
 <p>Consider a simplified rendering problem with two constant-color 2D triangles that can occlude each other. The scene parameters are the six triangle vertices ($12$ numbers) and the two RGB colors ($6$ numbers). Given these 18 values as a vector $\boldsymbol{\pi}$, with vertex parameters $\boldsymbol{\pi}_v$ and color parameters $\boldsymbol{\pi}_c$, we want to generate an image $I(\boldsymbol{\pi})$ and compute $\nabla_{\boldsymbol{\pi}} \mathcal{L}(I(\boldsymbol{\pi}))$ for an image-space loss $\mathcal{L}$.</p>
 <figure id="fig-triangle-a" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/triangles/fig_a_vector.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 19.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
       The continuous imaging function $m(x, y; \boldsymbol{\pi})$ induced by two constant-color triangles.
     </figcaption></figure>
 
@@ -1731,7 +1745,7 @@ $$<p>The attached case instead draws $\xi$ from a parameter-independent uniform 
 <p>The triangles define an <em>imaging function</em> $m(x,y;\boldsymbol{\pi})$ that maps continuous image coordinates to a color according to the visible triangle. Point sampling this discontinuous function at pixel centers aliases its edges:</p>
 <figure id="fig-triangle-b" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/triangles/fig_b_aliased.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 20.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
       Aliasing caused by evaluating $m(x, y; \boldsymbol{\pi})$ only at pixel centers.
     </figcaption></figure>
 
@@ -1741,7 +1755,7 @@ $$
 I_i = \int \int k(x, y)m(x_i + x, y_i + y; \boldsymbol{\pi})\,dx\,dy = \int \int f(x, y; \boldsymbol{\pi})\,dx\,dy.
 $$<figure id="fig-triangle-antialiased" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/triangles/fig_c_antialiased.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 21.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
       Antialiasing evaluates a filtered average over each pixel support instead of one center sample.
     </figcaption></figure>
 
@@ -1764,7 +1778,7 @@ $$<figure id="fig-triangle-antialiased" class="zoomable-figure" style="text-alig
 <p>For a 1D integral of the form $I(\pi) = \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx$ satisfying these conditions, the derivative is:</p>
 $$\frac{d}{d\pi} \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx = \underbrace{{\color{#00d1b2}\int_{a(\pi)}^{b(\pi)} \frac{\partial f}{\partial \pi}(x, \pi) dx}}_{\text{Interior Term}} + \underbrace{{\color{#4facfe}f(b(\pi), \pi) \frac{db}{d\pi}} - {\color{#ff6b6b}f(a(\pi), \pi) \frac{da}{d\pi}}}_{\text{Boundary Term}}$$<figure id="fig-leibniz-visual" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/leibniz-visual.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
       Visual decomposition of the Leibniz Integral Rule into interior and boundary components.
     </figcaption></figure>
 
@@ -1778,7 +1792,7 @@ $$\frac{d}{d\pi} \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx = \underbrace{{\color{#00d1
 </p>
 $$\frac{d}{dt} \int_a^b f(t, x) dx$$<figure id="fig-leibniz-constant" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/leibniz-constant.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
       Visualization of the integral changing with variable $t$ with constant integration limits $a$ and $b$.
     </figcaption></figure>
 
@@ -1789,7 +1803,7 @@ We approximate $f(t+\Delta t, x)$ as $f(t, x) + {\color{#00d1b2}\frac{\partial f
 $$\frac{\int_a^b \left( f(t, x) + {\color{#00d1b2}\frac{\partial f}{\partial t}\Delta t} \right) dx - \int_a^b f(t, x) dx}{\Delta t}$$<p>
 <figure id="fig-leibniz-constant-components" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/leibniz-constant-components.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
       The difference in the area by evaluating $f(t+\Delta t, x) - f(t, x)$ across the integration interval with change $\Delta t$.
     </figcaption></figure>
 
@@ -1807,7 +1821,7 @@ $$\frac{d}{dt} \int_a^b f(t, x) dx = \int_a^b {\color{#00d1b2}\frac{\partial f}{
 <p>Now consider the general case where boundaries depend on time: $I(t) = \int_{a(t)}^{b(t)} f(t, x) dx$.
 <figure id="fig-leibniz-dependent-proof" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/leibniz-dependent.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 25.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
       Visualization of the area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$
     </figcaption></figure>
 
@@ -1818,7 +1832,7 @@ We split the &ldquo;new&rdquo; integral $\int_{a+da}^{b+db}$ into the interior $
 $$\frac{{\color{#00d1b2}\int_a^b (f + \frac{\partial f}{\partial t}\Delta t) dx} - {\color{#ff6b6b}\int_a^{a + a'\Delta t} (f + \frac{\partial f}{\partial t}\Delta t) dx} + {\color{#4facfe}\int_b^{b + b'\Delta t} (f + \frac{\partial f}{\partial t}\Delta t) dx} - \int_a^b f dx}{\Delta t}$$<p>
 <figure id="fig-leibniz-dependent-components" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/leibniz-dependent-components.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 26.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
       The difference in area under curve changed with change in the variable $\Delta t$ with limits $a(t)$ and $b(t)$.
     </figcaption></figure>
 
@@ -1881,7 +1895,7 @@ $$
 I(\pi) = \int_0^1 f(x, \pi)\, dx, \quad \text{where } f(x, \pi) = \begin{cases} 1 & \text{if } x < \pi \\ 0.5 & \text{if } x > \pi \end{cases}
 $$<figure id="fig-step-function-example" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/step-function-example.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 27.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
       Visualization of the step function $f(x, \pi)$ with a discontinuity at $x = \pi$.
     </figcaption></figure>
 
@@ -1924,7 +1938,7 @@ $$
 $$<p>We therefore need the derivative of each pixel color with respect to the scene parameters.</p>
 <figure id="fig-triangle-pixel-support" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/2.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 28.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
       A pixel support overlapping triangle boundaries. We want the derivative of the filtered pixel color with respect to vertex positions.
     </figcaption></figure>
 
@@ -1933,7 +1947,7 @@ $$<p>We therefore need the derivative of each pixel color with respect to the sc
 <p>How do we compute the derivatives of an integral? Recall that we wanted to compute the integral numerically (Equation $\eqref{eq:discretization}$). Unfortunately, we cannot just automatically differentiate the numerical integrator as we saw in <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>. For vertex-position parameters and samples away from edges, naive AD returns a zero derivative almost surely.</p>
 <figure id="fig-triangle-missed-boundary" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/5.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
       Samples away from the boundary see a locally constant color, so naive AD returns zero even though the filtered pixel changes.
     </figcaption></figure>
 
@@ -1944,7 +1958,7 @@ $$
 $$<p>This is the same failure mode as <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>: the discretization and the gradient operator do not commute for discontinuous integrands, since a uniformly placed sample has zero probability of landing exactly on the moving edge where the change actually happens. The fix is also the same: sample the boundary explicitly.</p>
 <figure id="fig-triangle-edge-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/6.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 30.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
       Sampling the boundary captures the missing gradient contribution from moving visibility edges.
     </figcaption></figure>
 
@@ -1952,7 +1966,7 @@ $$<p>This is the same failure mode as <a href="/posts/intro-to-differentiable-re
 <p>In general, we need to evaluate the Reynolds Transport Theorem (Equation $\eqref{eq:reynolds-transport-theorem}$) for this problem:</p>
 <figure id="fig-reynolds-theorem" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/8.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 31.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
       The Reynolds Transport Theorem decomposed into interior and boundary derivatives.
     </figcaption></figure>
 
@@ -1971,7 +1985,7 @@ $$
 $$<p>which can also be approximated with Monte Carlo sampling.</p>
 <figure id="fig-boundary-volume" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/9.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
       The Infinitesimal Boundary Volume. For each point on the boundary, we compute its 2D movement $v$ with respect to the differentiating parameter. This movement is projected onto the normal direction $n$ to yield the normal movement speed $n \cdot v$. This projection accounts for the infinitesimal width of the swept area, allowing us to properly measure the infinitesimal area changes at the boundary. Multiplying this projected width by the differential edge segment $dt$ (length) and the color jump (height) calculates the exact boundary derivative contribution.
     </figcaption></figure>
 
@@ -2203,21 +2217,21 @@ $$<p>which can also be approximated with Monte Carlo sampling.</p>
 <div class="paper-fig-row">
     <figure id="fig-triangle-forward" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
       <img class="zoomable-image no-invert" src="/images/diff-rendering/triangles/1_forward_render.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
           Forward Render Output
         </figcaption></figure>
     
 
     <figure id="fig-triangle-pos" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
       <img class="zoomable-image no-invert" src="/images/diff-rendering/triangles/2_positive_gradient.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 34.</span>
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
           Positive Gradients
         </figcaption></figure>
     
 
     <figure id="fig-triangle-neg" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
       <img class="zoomable-image no-invert" src="/images/diff-rendering/triangles/3_negative_gradient.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 35.</span>
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
           Negative Gradients
         </figcaption></figure>
     
@@ -2238,7 +2252,7 @@ $$ \partial_{\boldsymbol{\pi}} I = \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}
 $$ \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} = \int_{\mathcal{P}} \partial_{\boldsymbol{\pi}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} \approx \frac{1}{N} \sum_{i=1}^N \frac{\partial_{\boldsymbol{\pi}} f(\mathbf{x}_i, \boldsymbol{\pi})}{p(\mathbf{x}_i, \boldsymbol{\pi})}. $$<p>For this estimator, we need to differentiate the evaluation of $f$. We do not have to differentiate the sampling process that produces $\mathbf{x}_i$ or the corresponding PDF $p(\mathbf{x}_i)$. We call this estimator <strong>detached</strong> since both sampling and PDF evaluation are detached from the differentiation process. This is the most commonly used estimator in differentiable rendering. Zeltner et al. (2021) <a href="/posts/intro-to-differentiable-rendering/#ref-12">[12]</a> provide the systematic study of this attached/detached distinction that the next two subsections summarize (see <a href="#fig-taxonomy-estimators">Fig. <span class="auto-fig-ref" data-target="fig-taxonomy-estimators"></span></a> for the overall taxonomy).</p>
 <figure id="fig-taxonomy-estimators" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/zeltner/taxonomy_of_estimators.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 36.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
       A taxonomy of differential estimators. We illustrate key operations that can be applied to a “primal” integral (white box). These include Monte Carlo importance sampling, multiple importance sampling, and differentiation. Non-commutativity of these operations leads to a plethora of differential estimators. We omit the explicit dependence of $f$ and $p$ on $\boldsymbol{\pi}$ for brevity. (Zeltner et al., 2021)
     </figcaption></figure>
 
@@ -2294,7 +2308,7 @@ $$ \partial_{\boldsymbol{\pi}} I = \int_{\mathcal{U}} \partial_{\boldsymbol{\pi}
 <p>The same rule applies to light and lobe selection. MIS adds another layer because its weights depend on the PDFs of several techniques. Proposal PDFs and MIS weights should not be differentiated selectively: derive the complete estimator as either detached or attached, then apply that choice consistently to sampling, PDF factors, and weights. Selectively differentiating a PDF denominator or MIS weight while detaching the random choice that produced it is the mixed failure mode described in Example 1 (see <a href="#fig-mis-decision">Fig. <span class="auto-fig-ref" data-target="fig-mis-decision"></span></a>).</p>
 <figure id="fig-mis-decision" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/zeltner/MIS_decision.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 37.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
       The decision of whether to attach or detach a sampling technique and its MIS weight can be made separately for each technique, as illustrated by this derivation sketch. (Zeltner et al., 2021)
     </figcaption></figure>
 
@@ -2302,14 +2316,14 @@ $$ \partial_{\boldsymbol{\pi}} I = \int_{\mathcal{U}} \partial_{\boldsymbol{\pi}
 <h3 id="explicit-edge-sampling-li-et-al">Explicit Edge Sampling (Li et al.)<a hidden class="anchor" aria-hidden="true" href="#explicit-edge-sampling-li-et-al">#</a></h3>
 <p>While the interior term is straightforward to evaluate with the differentiable Monte Carlo estimators introduced above, the boundary integral poses a greater challenge: derivatives arising from visibility discontinuities must either be integrated explicitly over silhouette edges or reformulated as an equivalent smooth-domain integral.</p>
 <p>Li et al. (2018) <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a> model visibility with Heaviside step functions. Differentiating a step function yields a Dirac delta concentrated on the moving edge, so their estimator naturally decomposes the image derivative into two parts: the smooth interior term, handled by standard Monte Carlo sampling with AD, and the singular boundary term, estimated by a dedicated edge sampler. This decomposition is the distributional counterpart of the Reynolds Transport Theorem split derived above.</p>
-<h4 id="primary-visibility">Primary visibility.<a hidden class="anchor" aria-hidden="true" href="#primary-visibility">#</a></h4>
+<h4 id="primary-visibility">Primary Visibility<a hidden class="anchor" aria-hidden="true" href="#primary-visibility">#</a></h4>
 <p>We begin with the $2D$ pixel filter integral, which for each pixel integrates the pixel filter $k$ against the incoming radiance $L$. The radiance itself may be a further integral over light sources or the hemisphere, but for convenience we absorb everything into a single scene function $f(x,y) = k(x,y)L(x,y)$, the $f$ used throughout the remainder of this section. The pixel color $I$ is then:
 </p>
 $$
 I = \int \int k(x, y) L(x, y)\; dx\; dy.
 $$<figure id="fig-primary-pixel" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/primary_pixel.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 38.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
       2D pixel filter integration over an image plane showing the interior area sample $f(x,y)$ and the moving silhouette edge boundary term.
     </figcaption></figure>
 
@@ -2317,7 +2331,7 @@ $$<figure id="fig-primary-pixel" class="zoomable-figure" style="text-align:cente
 <p>Under the paper&rsquo;s assumptions of non-interpenetrating triangle meshes, finite-area emitters, non-delta BSDFs, and static scenes, the relevant visibility discontinuities occur at projected triangle edges. This makes it possible to integrate over them explicitly. Li et al. were the first to systematically study these discontinuities in the context of differentiable rendering, proposing Monte Carlo integration of the boundary term by directly sampling the edges responsible for visibility jumps. Open boundary edges, view-dependent silhouette edges, and sharp edges where neighbouring faces have differing normals can all define discontinuities; with smooth shading, only edges across which the scene function actually jumps contribute to the boundary estimator.</p>
 <figure id="fig-geometric-edges" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/edges.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
       Three types of edges (drawn in yellow) that can cause geometric discontinuities: (a) boundary, (b) silhouette, and (c) sharp.
     </figcaption></figure>
 
@@ -2335,7 +2349,7 @@ $$<iframe src="/interactive/diff-render/heaviside.html"
 <p>where $f_u$ represents the upper half-space, $f_l$ represents the lower half-space, and $\alpha$ defines the edge equation formed by the triangles. For each edge with two end points $(a_x, a_y), (b_x, b_y),$ we can construct the edge equation by forming the line $\alpha(x, y) = Ax + By + C$. If $\alpha(x, y) > 0$ then the point is at the upper half-space, and vice versa.</p>
 <figure id="fig-edge-silhouette" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/silhouette.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
       Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$.
     </figcaption></figure>
 
@@ -2348,7 +2362,7 @@ $$<iframe src="/interactive/diff-render/heaviside.html"
 </iframe>
 <figure id="fig-edge-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/half_spaces.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 41.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
       (a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. Li et al. estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative.
     </figcaption></figure>
 
@@ -2361,7 +2375,7 @@ $$\int \int f(x,y)\; dx\;dy = \sum_i \iint \theta(\alpha_i(x,y))\,f_i(x,y) dx\;d
   <div>
     <figure id="fig-heaviside-triangle" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
       <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/heaviside_triangle.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
           (a) Triangle formed by product of three Heaviside step functions $\prod_{i=1}^3 \theta(\alpha_i)$.
         </figcaption></figure>
     
@@ -2370,7 +2384,7 @@ $$\int \int f(x,y)\; dx\;dy = \sum_i \iint \theta(\alpha_i(x,y))\,f_i(x,y) dx\;d
   <div>
     <figure id="fig-pixel-partition" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:84%;scroll-margin-top:80px;">
       <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/pixel_partition.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
+          <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
           (b) Pixel domain partition into regions via Heaviside sum $\sum_i \theta(\alpha_i) f_i$.
         </figcaption></figure>
     
@@ -2379,7 +2393,7 @@ $$\int \int f(x,y)\; dx\;dy = \sum_i \iint \theta(\alpha_i(x,y))\,f_i(x,y) dx\;d
 </div>
 <figure id="fig-heaviside-sum" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/heaviside_sum.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 44.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
       Decomposition of the pixel integral into a sum of Heaviside-masked region integrals.
     </figcaption></figure>
 
@@ -2406,7 +2420,7 @@ $$
 \end{equation}
 $$<figure id="fig-area-to-line-integral" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/area_to_line_integral.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 45.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
       Dimensionality collapse converting the 2D Dirac delta area integral into a 1D arc-length line integral along the boundary edge $\alpha_i(x,y) = 0$.
     </figcaption></figure>
 
@@ -2526,10 +2540,10 @@ $$
 \frac{1}{N}\sum_{j=1}^N \frac{\lVert E \rVert}{p(E)} \frac{\nabla\alpha_i(x_j,y_j)\,\big(f_u(x_j,y_j)-f_l(x_j,y_j)\big)}{\lVert \nabla_{x_j,y_j}\alpha_i(x_j,y_j)\rVert}
 $$<p>If a sampled edge point is hidden behind another surface ($(x,y)$ lands on a <em>continuous</em> part of the true image), something else fills that pixel regardless of which side of the edge you&rsquo;re nominally on. So $f_u = f_l$ there and the sample contributes zero as seen in <a href="#fig-edge-sampling">Fig. <span class="auto-fig-ref" data-target="fig-edge-sampling"></span></a>(b).</p>
 <p>In practice, candidate edges are projected and clipped into screen space. Only sampled edge points across which the scene function actually jumps produce a nonzero contribution; occluded edges and smooth internal edges cancel in the two-sided difference. Li et al. sample candidate edges in proportion to their projected length, draw a point along the selected edge, and evaluate this difference. This directly estimates how pixel coverage changes as geometry or the camera moves.</p>
-<h4 id="secondary-visibility">Secondary visibility<a hidden class="anchor" aria-hidden="true" href="#secondary-visibility">#</a></h4>
+<h4 id="secondary-visibility">Secondary Visibility<a hidden class="anchor" aria-hidden="true" href="#secondary-visibility">#</a></h4>
 <figure id="fig-edge-secondary-visibility" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/secondary_visibility.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 46.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 49.</span>
       (a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Loubet et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$).
     </figcaption></figure>
 
@@ -2573,7 +2587,7 @@ $$
 +(v_0-p)\times(m-p).
 \end{aligned}
 $$<p>These are the corrected forms from the paper&rsquo;s published erratum. In particular, $p$ occurs in all three factors of the scalar triple product, so its derivative is not equal to $\nabla_m\alpha$.</p>
-<h4 id="selecting-an-edge">Selecting an edge<a hidden class="anchor" aria-hidden="true" href="#selecting-an-edge">#</a></h4>
+<h4 id="selecting-an-edge">Selecting an Edge<a hidden class="anchor" aria-hidden="true" href="#selecting-an-edge">#</a></h4>
 <p>Explicit edge sampling is attractive for primary visibility because the camera is fixed and projected silhouettes can be precomputed. Secondary visibility is harder: the shading point changes at every path vertex, and performance degrades with geometric and depth complexity. A more general family of approaches works in path space, as in Zhang et al. (2020) <a href="/posts/intro-to-differentiable-rendering/#ref-9">[9]</a>. These methods sample points and directions on silhouette edges and connect them to subpaths from the sensor and light sources. They are complex to implement, but can produce high-quality edge gradients in challenging lighting conditions.</p>
 <p>Three factors govern the importance of an edge at a given shading point: the geometric foreshortening (proportional to inverse squared distance to the edge), the material response between the shading point and the point on the edge, and the incoming radiance from the edge direction (e.g. whether it hits a light source or not).</p>
 <p>To importance-sample edges efficiently, Li et al. build two acceleration hierarchies:</p>
@@ -2582,7 +2596,7 @@ $$<p>These are the corrected forms from the paper&rsquo;s published erratum. In 
 <p>Each hierarchy node stores a cone direction and opening angle covering all possible normal directions within it, enabling quick rejection of non-silhouette edges. The directional components are scaled by $\frac{1}{8}$ the diagonal of the scene&rsquo;s bounding box, and during construction the node is split along the dimension with the longest extent.</p>
 <p>The hierarchy is traversed twice. The first traversal focuses on edges that overlap with the cone subtended by the light source at the shading point, using a box-cone intersection to quickly discard edges that do not intersect the light sources. The second traversal samples all edges. The two sets of samples are combined using multiple importance sampling.</p>
 <p>During traversal, for each node an importance value is computed by upper-bounding the contribution: total edge length $\times$ inverse squared distance $\times$ a Blinn-Phong BRDF bound. Nodes that do not contain any silhouette receive zero importance. Both children are traversed if the shading point lies inside both bounding boxes, the BRDF bound exceeds a threshold (set to $1$), or the angle subtended by the light cone is smaller than $\cos^{-1}(0.95)$.</p>
-<h4 id="importance-sampling-a-single-edge">Importance sampling a single edge<a hidden class="anchor" aria-hidden="true" href="#importance-sampling-a-single-edge">#</a></h4>
+<h4 id="importance-sampling-a-single-edge">Importance Sampling a Single Edge<a hidden class="anchor" aria-hidden="true" href="#importance-sampling-a-single-edge">#</a></h4>
 <p>Once an edge is selected, a point along it must be chosen. With a highly specular BRDF, only a small portion of the edge carries significant contribution. The Linearly Transformed Cosine (LTC) distribution provides a closed-form solution for the integral between a point and a linear light source, weighted by BRDF and geometric foreshortening. The integrated CDF is numerically inverted via Newton&rsquo;s method for importance sampling, using a precomputed table of fitted LTC lobes for the target BRDFs.</p>
 <p>Compared to the baseline of uniformly sampling edges by length, this importance sampling strategy is far more effective at capturing rare events (shadows cast by a small light source or very specular reflections of edges) and produces images with much lower variance. The problem is structurally similar to next-event estimation with many light sources, where the set of important sources depends on the current shading point.</p>
 <h3 id="reparameterizing-visibility-discontinuities-loubet-et-al">Reparameterizing Visibility Discontinuities (Loubet et al.)<a hidden class="anchor" aria-hidden="true" href="#reparameterizing-visibility-discontinuities-loubet-et-al">#</a></h3>
@@ -2609,7 +2623,7 @@ $$<p>Two equivalent interpretations:</p>
 <iframe src="/interactive/diff-render/reparam_1d.html" width="100%" height="360px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 <figure id="fig-reparameterized-domain" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/integral_domain.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 47.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 50.</span>
       Changing the integration domain can turn a moving discontinuity into a smooth differentiable estimator.
     </figcaption></figure>
 
@@ -2617,7 +2631,7 @@ $$<p>Two equivalent interpretations:</p>
 <h4 id="removing-discontinuities-using-rotations">Removing Discontinuities Using Rotations<a hidden class="anchor" aria-hidden="true" href="#removing-discontinuities-using-rotations">#</a></h4>
 <figure id="fig-integrand-discontinuity" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/discontinuity.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 51.</span>
       For integrands with small angular support, visibility discontinuities typically consist of a single object silhouette.
     </figcaption></figure>
 
@@ -2629,7 +2643,7 @@ I = \int_{S^2} f(\omega, \pi) \, \mathrm{d}\omega = \int_{S^2} f(R(\omega, \pi),
 $$<p>makes $f(R(\omega, \pi), \pi)$ continuous with respect to $\pi$ for each direction $\omega$. The rotation determinant is $|\operatorname{det} J_R| = 1$, and $R$ depends explicitly on $\pi$.</p>
 <figure id="fig-conv-zoomed" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/reparam/conv_zoomed.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 49.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 52.</span>
       Zooming into the support of a convolution shows how small-support kernels isolate single geometric edges, making local rotations a good approximation.
     </figcaption></figure>
 
@@ -2641,7 +2655,7 @@ $$<p>where $\omega_i \sim p(\cdot, \pi_0)$ are drawn from the default sampling d
 <h4 id="generalizing-to-functions-with-large-support">Generalizing to Functions with Large Support<a hidden class="anchor" aria-hidden="true" href="#generalizing-to-functions-with-large-support">#</a></h4>
 <figure id="fig-spherical-rotations" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/spherical_rotations.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 50.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 53.</span>
       Spherical rotations (left) approximate silhouette motion, while spherical convolution (right) reduces large-support integrands to narrow kernels.
     </figcaption></figure>
 
@@ -2670,7 +2684,7 @@ $$<p>This is the parameter dependence shown in the paper&rsquo;s Equation 18: th
 which results in bias). Using distance and surface normal information, a heuristic selects a candidate occluder point whose motion under parameter changes tracks that of the silhouette.</p>
 <figure id="fig-reparam-occlusion" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/occlusion_estimate.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 51.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 54.</span>
       From a pair of surface points $p_0$ and $p_1$ that are visible from a point $p$, Loubet et al. estimate the occlusion between the corresponding objects using first-order surface approximations from the normals at $p_0$ and $p_1$. Figures (a) and (b) show cases where one plane occludes the other intersection point from $p$. Figures (c) and (d) illustrate the case of an intersection between objects that can be estimated from the intersection of the planes.
     </figcaption></figure>
 
@@ -2681,7 +2695,7 @@ R(\pi_0) \omega = \omega, \quad \forall \omega \in S^2 \qquad \text{and} \qquad 
 $$<p>Thus $R(\pi_0) = I$ (leaving primal ray tracing unchanged) while its derivative tracks the occluder&rsquo;s motion to first order. Appendix B of Loubet et al. provides a closed-form formula for $R(\pi)$.</p>
 <figure id="fig-reparam-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 52.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 55.</span>
       Overview of the reparameterization algorithm. For each integral, a small number of rays are intersected against the scene geometry (steps 1, 3, 5) and the resulting information is used to construct suitable local rotations (red arcs). These rotations do not affect the primal computation (steps 2, 4, 6) but introduce gradients that correct for the presence of discontinuities.
     </figcaption></figure>
 
@@ -2725,7 +2739,7 @@ r' = \frac{1}{2} \sum_{l=0}^\infty \Big( f_{0,l}(\pi) W_{0,l}(\pi) - f_{1,l}(\pi
 $$<p>Correlated path pairs reuse the random numbers for path-construction steps except those that affect the local reparameterization weights. Those samples remain independent so that $f_{0,l}$ is uncorrelated with $\partial_\pi W_{1,l}$ and vice versa. Under this independence condition, cross-reduction lowers gradient variance for direct and multi-bounce illumination without adding bias, at the cost of tracing paired paths.</p>
 <figure id="fig-reparam-correlated-paths" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/correlated_paths.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 53.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 56.</span>
       Loubet et al.&rsquo;s method samples correlated paths that share some of their random numbers, while others are chosen independently. The gradients associated with the resulting pairs of nearby paths (blue and red) contain uncorrelated terms that they leverage in conjunction with the technique of control variates to reduce variance substantially without adding bias.
     </figcaption></figure>
 
@@ -2734,7 +2748,7 @@ $$<p>Correlated path pairs reuse the random numbers for path-construction steps 
 <p>Bangaru et al. <a href="/posts/intro-to-differentiable-rendering/#ref-8">[8]</a> ask whether the boundary term can be estimated using the same <em>area samples</em> as an ordinary path tracer. Their answer is yes: apply the divergence theorem to replace flux through visibility boundaries by divergence throughout the smooth interior. The resulting method does not enumerate or sample silhouette edges. This is different from merely smoothing visibility; the construction specifies conditions under which the area estimator represents the exact boundary derivative.</p>
 <figure id="fig-bangaru-taxonomy" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/bangaru/taxonomy.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 54.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 57.</span>
       Taxonomy of differentiable rendering techniques categorizing edge sampling, reparameterization, and warped-area methods.
     </figcaption></figure>
 
@@ -2747,7 +2761,7 @@ $$<p>where $D_i'=D_i\setminus\partial D_i$. The first term is the usual interior
 <p>This partition is only a device used in the proof; evaluating the estimator does not require clipping the scene into the regions $D_i$ or enumerating their boundaries.</p>
 <figure id="fig-warparea-pixel-content" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/pixel_content.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 55.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 58.</span>
       Differentiating boundary movements. Bangaru et al.&rsquo;s goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how they partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. They can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals.
     </figcaption></figure>
 
@@ -2784,7 +2798,7 @@ $$
 $$<p>This matrix form incorporates the correction in the paper&rsquo;s 2022 erratum: the denominator is not a Jacobian <em>determinant</em>. The equation is a Jacobian solve, with matrix-valued numerator and denominator when the quantities are multidimensional.</p>
 <figure id="fig-warparea-derivative-field" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/derivative_field.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 56.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 59.</span>
       Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in their derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which they have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative.
     </figcaption></figure>
 
@@ -2806,7 +2820,7 @@ $$
 $$<p>Hence the filtered warp approaches the boundary-consistent direct warp as the primary direction approaches a silhouette. The field may remain undefined exactly on the silhouette, where the harmonic weights become infinite, because the area estimator only evaluates the smooth interior.</p>
 <figure id="fig-warparea-harmonic-conv" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 57.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 60.</span>
       Boundary-aware convolution. (a) The form of the warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathbf{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Bangaru et al.&rsquo;s proposed convolution method $\mathbf{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary.
     </figcaption></figure>
 
@@ -2818,7 +2832,7 @@ $$
 $$<p>This establishes a local relationship between reparameterization and the warp-field formulation, but it does <strong>not</strong> imply that every chosen reparameterization is exact. A spherical rotation has unit Jacobian and therefore produces a divergence-free field. Some boundary motions require nonzero divergence, so a rotation cannot satisfy the boundary conditions in general. Bangaru et al. interpret the approximations of Loubet et al. as producing a field that can be smooth without being boundary-consistent, which explains the remaining bias. Warped-area sampling instead makes continuity and boundary consistency explicit and uses the harmonic construction to satisfy both without enumerating silhouettes.</p>
 <figure id="fig-warparea-formulation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/warp_formulation.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 58.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 61.</span>
       Warp field formulation. Bangaru et al. apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and their area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, their method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering.
     </figcaption></figure>
 
@@ -2830,7 +2844,7 @@ $$<p>The construction is not unique; on the sphere, the appendix also gives a ro
 <h4 id="monte-carlo-estimation-of-the-warp">Monte Carlo Estimation of the Warp<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-estimation-of-the-warp">#</a></h4>
 <figure id="fig-warparea-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 59.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 62.</span>
       Bangaru et al.&rsquo;s algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, they need to estimate the warp function at this point. To achieve this, their method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. They then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Their final step computes the weighted average of the direct warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathbf{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathbf{V}_{\boldsymbol{\pi}}$ at the primary sample.
     </figcaption></figure>
 
@@ -2869,10 +2883,10 @@ $$<p>Only the derivative of $w$ with respect to the <em>primary</em> direction a
 <h2 id="physics-based-differentiable-rendering-theory">Physics-Based Differentiable Rendering Theory<a hidden class="anchor" aria-hidden="true" href="#physics-based-differentiable-rendering-theory">#</a></h2>
 <p>Given the mathematical tools described above, we will discuss the differentiation of the rendering equation (RE) with respect to arbitrary scene parameters.</p>
 <h3 id="differentiable-rendering-of-surfaces">Differentiable Rendering of Surfaces<a hidden class="anchor" aria-hidden="true" href="#differentiable-rendering-of-surfaces">#</a></h3>
-<p>Physically-based rendering of surfaces has been a central topic in computer graphics for decades and is governed by the well-known <em>rendering equation</em> (RE). The RE is an integral equation stating that the (steady-state) radiance $L$ at any surface point $\mathbf{x}$ with direction $\boldsymbol{\omega}_o$ is given by:</p>
+<p>Physically-based rendering of surfaces has been a central topic in computer graphics for decades and is governed by the well-known <em>rendering equation</em> (RE). The RE is an integral equation stating that the (steady-state) outgoing radiance $L_o$ at any surface point $\mathbf{x}$ with direction $\boldsymbol{\omega}_o$ is given by:</p>
 $$
 \begin{equation}
-L(\mathbf{x}, \boldsymbol{\omega}_o) = L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \;\operatorname{d} \sigma (\boldsymbol{\omega}_i) \label{eq:rendering-equation}
+L_o(\mathbf{x}, \boldsymbol{\omega}_o) = L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \;\operatorname{d} \sigma (\boldsymbol{\omega}_i) \label{eq:rendering-equation}
 \end{equation}
 $$<p>where $L_i$ is the incident radiance, $\mathrm{d}\sigma$ is the solid-angle measure, and $f_s$ denotes the BSDF multiplied by the cosine factor $|\mathbf{n}\cdot\boldsymbol{\omega}_i|$. We use a BSDF rather than a reflection-only BRDF because general scenes can include both reflection and transmission, for example at refractive interfaces. Light directions are written as bold unit vectors (e.g., $\boldsymbol{\omega}_i, \boldsymbol{\omega}_o$).</p>
 <p>The RE has no analytical solution in general, and numerous numerical methods have been developed. Some of the widely adopted examples include unbiased methods like unidirectional and bidirectional path tracing, as well as biased ones such as photon mapping and lightcuts.</p>
@@ -2883,18 +2897,18 @@ $$
 L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \int_{\mathbb{S}^2}  L_e(\mathbf{y}, -\boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \; \operatorname{d} \sigma (\boldsymbol{\omega}_i) \label{eq:direct-illumination}
 \end{equation}
 $$<p>where $\mathbf{y}$ represents the closest intersection of a light ray originating at $\mathbf{x}$ with direction $\boldsymbol{\omega}_i$, i.e., $\mathbf{y} = \operatorname{rayTrace}(\mathbf{x}, \boldsymbol{\omega}_i)$. Unlike RE $\eqref{eq:rendering-equation}$, which takes the form of an integral equation, Eq. $\eqref{eq:direct-illumination}$ is a simple spherical integral as its right-hand side involves only known quantities.</p>
-<p>We now consider the problem of calculating the derivative of $L_r(\mathbf{x}, \boldsymbol{\omega}_o)$ with respect to some abstract scene parameter $\pi \in \mathbb{R}$. Given $\mathbf{x}$ and $\boldsymbol{\omega}_o$, let $f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) := L_e(\mathbf{y}, -\boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$. It holds that</p>
+<p>We now consider the problem of calculating the derivative of $L_r(\mathbf{x}, \boldsymbol{\omega}_o)$ with respect to the scene parameter vector $\boldsymbol{\pi}$. Given $\mathbf{x}$ and $\boldsymbol{\omega}_o$, let $f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) := L_e(\mathbf{y}, -\boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$. It holds that</p>
 $$
-\frac{\partial}{\partial \pi} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \frac{\partial}{\partial \pi} \left( \int_{\mathbb{S}^2} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i) \right)  \label{eq:direct-illumination-derivative}
+\partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_{\boldsymbol{\pi}} \left( \int_{\mathbb{S}^2} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i) \right)  \label{eq:direct-illumination-derivative}
 $$<p>By applying Reynolds transport theorem $\eqref{eq:reynolds-transport-theorem}$, we obtain:</p>
 $$
 \begin{equation}
-\partial_\pi L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \langle \partial_\pi \boldsymbol{\omega}_i, \mathbf{n}^{\perp}(\boldsymbol{\omega}_i) \rangle \operatorname{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}} \label{eq:direct-illumination-derivative-reynolds}
+\partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \langle \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i, \mathbf{n}^{\perp}(\boldsymbol{\omega}_i) \rangle \operatorname{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}} \label{eq:direct-illumination-derivative-reynolds}
 \end{equation}
-$$<p>where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT split from before, specialized to a spherical integral: the <em>interior</em> term integrates over the ($\pi$-independent) sphere $\mathbb{S}^2$, and the <em>boundary</em> term picks up the jump of $f_{\text{direct}}$ across the 1D discontinuity curves $\Delta \mathbb{S}^2$, the silhouette-induced jumps in $L_e$, as they move with $\pi$. For any $\boldsymbol{\omega}_i \in \mathbb{S}^2$, $\mathbf{n}^{\perp}(\boldsymbol{\omega}_i)$ is, as before, the tangent-space vector at $\boldsymbol{\omega}_i$ perpendicular to the discontinuity curve.</p>
+$$<p>where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT split from before, specialized to a spherical integral: the <em>interior</em> term integrates over the ($\boldsymbol{\pi}$-independent) sphere $\mathbb{S}^2$, and the <em>boundary</em> term picks up the jump of $f_{\text{direct}}$ across the 1D discontinuity curves $\Delta \mathbb{S}^2$, the silhouette-induced jumps in $L_e$, as they move with $\boldsymbol{\pi}$. For any $\boldsymbol{\omega}_i \in \mathbb{S}^2$, $\mathbf{n}^{\perp}(\boldsymbol{\omega}_i)$ is, as before, the tangent-space vector at $\boldsymbol{\omega}_i$ perpendicular to the discontinuity curve.</p>
 <figure id="fig-rte-normals" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/normals.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 60.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 63.</span>
       The normal directions of arcs and circles (that are respectively the projections of line segments and spheres) as spherical curves.
     </figcaption></figure>
 
@@ -2902,38 +2916,41 @@ $$<p>where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT
 <p>Assuming the (cosine-weighted) BSDF $f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$ to be continuous with respect to $\boldsymbol{\omega}_i$, which is usually the case except for perfectly specular BSDFs, the discontinuities of the integrand $f_{direct}$ fully emerge from those of incident emission $L_e(\mathbf{y}, \boldsymbol{\omega}_i)$, which is generally discontinuous due to occlusions. Therefore,</p>
 $$\Delta f_{direct} (\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) = f_s (\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \; \Delta L_e (\mathbf{y}, -\boldsymbol{\omega}_i).$$<h4 id="differential-rendering-equation">Differential Rendering Equation<a hidden class="anchor" aria-hidden="true" href="#differential-rendering-equation">#</a></h4>
 <p>Based on the analysis above, we now differentiate the full rendering equation (RE) $\eqref{eq:rendering-equation}$ using the Reynolds transport theorem ($\eqref{eq:reynolds-transport-theorem}$). This yields another integral equation, which we call the <em>differential rendering equation</em>.</p>
-<p>We begin by applying the derivative operator $\partial_\pi$ to both sides of the standard rendering equation:</p>
+<p>We begin by applying the derivative operator $\partial_{\boldsymbol{\pi}}$ to both sides of the standard rendering equation:</p>
 $$
-\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_\pi L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \partial_\pi \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \; \mathrm{d}\sigma(\boldsymbol{\omega}_i)
-$$<p>Since the scene geometry may move as the parameter $\pi$ changes, the integration domain inherently contains moving boundaries (i.e., silhouettes). Applying the Reynolds Transport Theorem ($\eqref{eq:reynolds-transport-theorem}$) splits the derivative of this integral into an interior and a boundary component:</p>
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_{\boldsymbol{\pi}} L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \partial_{\boldsymbol{\pi}} \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \; \mathrm{d}\sigma(\boldsymbol{\omega}_i)
+$$<p>Since the scene geometry may move as the parameter $\boldsymbol{\pi}$ changes, the integration domain inherently contains moving boundaries (i.e., silhouettes). Applying the Reynolds Transport Theorem ($\eqref{eq:reynolds-transport-theorem}$) splits the derivative of this integral into an interior and a boundary component:</p>
 $$
 \begin{aligned}
-\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_\pi L_e(\mathbf{x}, \boldsymbol{\omega}_o) &+ \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi \Big( L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Big) \mathrm{d}\sigma(\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} \\
-&+ \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Delta L_i(\mathbf{x}, \boldsymbol{\omega}_i) \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_{\boldsymbol{\pi}} L_e(\mathbf{x}, \boldsymbol{\omega}_o) &+ \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} \Big( L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Big) \mathrm{d}\sigma(\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} \\
+&+ \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Delta L_i(\mathbf{x}, \boldsymbol{\omega}_i) \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}}
 \end{aligned}
 $$<blockquote>
 <p><strong>Note on the boundary term:</strong> Notice that we wrote the jump of the integrand as $f_s \Delta L_i$ rather than $\Delta(L_i f_s)$. This assumes that the cosine-weighted BSDF $f_s$ evaluates smoothly and continuously with respect to the incoming direction $\boldsymbol{\omega}_i$. For typical materials such as diffuse and rough microfacet models, this holds: the discontinuity is caused by the incoming radiance $L_i$ abruptly jumping when an integration ray sweeps past a silhouette edge or shadow boundary. The notable exception is perfectly specular materials, whose BSDFs are Dirac delta functions; handling those requires a different mathematical approach, such as attached sampling.</p></blockquote>
-<p>Inside the interior integral, we expand the derivative of the product $\partial_\pi (L_i f_s)$ using the standard product rule:</p>
+<p>Inside the interior integral, we expand the derivative of the product $\partial_{\boldsymbol{\pi}} (L_i f_s)$ using the standard product rule:</p>
 $$
-{\color{#0f85a5} \partial_\pi(L_i f_s) = (\partial_\pi L_i) f_s + L_i (\partial_\pi f_s) }
+{\color{#0f85a5} \partial_{\boldsymbol{\pi}}(L_i f_s) = (\partial_{\boldsymbol{\pi}} L_i) f_s + L_i (\partial_{\boldsymbol{\pi}} f_s) }
 $$<p>Substituting this expansion back into the equation allows us to regroup the terms into two distinct transport components. We collect the terms acting as &ldquo;sources&rdquo; of differential radiance into one group, and the term representing scattered differential radiance into another:</p>
 $$
 \begin{equation}
 \begin{aligned}
-\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_\pi L_e + {\color{#0f85a5}\int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma} + {\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell} }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\
-&\quad + \underbrace{ {\color{#0f85a5}\int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \mathrm{d}\sigma} }_{\textbf{Differential Scattering}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_{\boldsymbol{\pi}} L_e + {\color{#0f85a5}\int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma} + {\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell} }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\
+&\quad + \underbrace{ {\color{#0f85a5}\int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \mathrm{d}\sigma} }_{\textbf{Differential Scattering}}
 \end{aligned}
 \label{eq:diff-rendering-equation}
 \end{equation}
 $$<p>This final equation shares the exact same structure as the original rendering equation. Instead of standard light emission and scattering, it describes the emission and scattering of <em>differential radiance</em> (gradients).</p>
-<p>The <strong>differential emission</strong> term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$ acts as the source of gradients. It evaluates to a non-zero value at any point where the primary emission changes ($\partial_\pi L_e$), the material scattering properties change ($\partial_\pi f_s$), or a silhouette edge moves to uncover a different object ($f_s \Delta L_i$). During Monte Carlo integration, we compute this local change $Q$ at every path vertex and add it to the running gradient estimate.</p>
-<p>The <strong>differential scattering</strong> term $\int (\partial_\pi L_i) f_s \mathrm{d}\sigma$ handles the propagation of these gradients. Here, $\partial_\pi L_i$ represents the derivative of the incident radiance arriving from the previous bounce. Just like standard radiance, this incoming differential radiance is multiplied by the material&rsquo;s BSDF ($f_s$) and scattered towards the camera.</p>
+<p>The <strong>differential emission</strong> term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$ acts as the source of gradients. It evaluates to a non-zero value at any point where the primary emission changes ($\partial_{\boldsymbol{\pi}} L_e$), the material scattering properties change ($\partial_{\boldsymbol{\pi}} f_s$), or a silhouette edge moves to uncover a different object ($f_s \Delta L_i$). During Monte Carlo integration, we compute this local change $Q$ at every path vertex and add it to the running gradient estimate.</p>
+<p>The <strong>differential scattering</strong> term $\int (\partial_{\boldsymbol{\pi}} L_i) f_s \mathrm{d}\sigma$ handles the propagation of these gradients. Here, $\partial_{\boldsymbol{\pi}} L_i$ represents the derivative of the incident radiance arriving from the previous bounce. Just like standard radiance, this incoming differential radiance is multiplied by the material&rsquo;s BSDF ($f_s$) and scattered towards the camera.</p>
 <p>Consequently, when a Monte Carlo path tracer simulates this process, it unrolls the recursion identical to forward rendering. For a light path with vertices $x_1 \to x_2 \to x_3 \to \text{Camera}$, the total gradient expands mathematically via the chain rule as:</p>
 $$
-\partial_\pi L \approx Q(x_1) + Q(x_2) f_s(x_1) + Q(x_3) f_s(x_2) f_s(x_1)
+\partial_{\boldsymbol{\pi}} L_o \approx Q(x_1) + Q(x_2) f_s(x_1) + Q(x_3) f_s(x_2) f_s(x_1)
 $$<p>In practice, this means we trace a standard light path and, at each bounce, compute the local differential emission $Q$, add it to the accumulated gradient, and multiply the running total by the surface BSDF as the path continues.</p>
+<p>The differential rendering equation tells us <em>what</em> to compute; it says nothing about doing so efficiently. Evaluating this expansion naively — recording every bounce of every traced path onto an autodiff tape and replaying it backward — reintroduces exactly the memory and runtime blowup that made naive AD unsuitable for rendering in the first place (see <a href="/posts/intro-to-differentiable-rendering/#why-is-differentiable-rendering-difficult">Why is Differentiable Rendering Difficult?</a>). For a light path of length $D$, that tape costs $\mathcal{O}(D)$ memory, and with millions of paths per frame it becomes the bottleneck long before the renderer does.</p>
+<h2 id="efficient-reverse-mode-differentiable-rendering">Efficient Reverse-Mode Differentiable Rendering<a hidden class="anchor" aria-hidden="true" href="#efficient-reverse-mode-differentiable-rendering">#</a></h2>
+<p>This section introduces no new theory — it evaluates the differential rendering equation derived above, just without paying for the tape. Radiative Backpropagation and Path Replay Backpropagation both reformulate the backward pass as a second, physically-grounded transport simulation, so reverse-mode gradients can be computed with the same $\mathcal{O}(1)$-memory, single-pass character as forward rendering.</p>
 <h3 id="radiative-backpropagation">Radiative Backpropagation<a hidden class="anchor" aria-hidden="true" href="#radiative-backpropagation">#</a></h3>
-<p>Nimier-David et al. <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> begin from the same differential rendering equation derived above, but reorganize reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.</p>
+<p>Nimier-David et al. <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> introduce <strong>Radiative Backpropagation (RB)</strong>. It begins from the same differential rendering equation derived above, but reorganizes reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.</p>
 <h4 id="the-three-stages">The Three Stages<a hidden class="anchor" aria-hidden="true" href="#the-three-stages">#</a></h4>
 <p>Write the ordinary renderer as $\mathbf y=f(\boldsymbol{\pi})$ and the scalar objective as $g(\mathbf y)$. Radiative backpropagation separates one optimization iteration into:</p>
 <ol>
@@ -2958,7 +2975,7 @@ $$<p>$\delta\mathbf y$ says how each rendered pixel should change to reduce the 
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">radiative_backprop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">δ_y</span><span class="p">)</span>
 </span></span></code></pre></div><figure id="fig-rbp-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/radiative_backpropagation/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 61.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 64.</span>
       Overview of Radiative Backpropagation: Differentiation separates into (1) a fast primal rendering step, (2) objective differentiation yielding adjoint rendering $\delta_\mathbf{y}$, and (3) an adjoint light transport simulation emitting $\delta_\mathbf{y}$ from the sensor to accumulate parameter gradients $\delta_\boldsymbol{\pi}$.
     </figcaption></figure>
 
@@ -2967,24 +2984,24 @@ $$<p>$\delta\mathbf y$ says how each rendered pixel should change to reduce the 
 <p>We begin directly from the differential rendering equation $\eqref{eq:diff-rendering-equation}$ derived above:</p>
 $$
 \begin{aligned}
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_\pi L_e + \int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma + \oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\[0.8em]
-&\quad + \underbrace{ \int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \mathrm{d}\sigma }_{\textbf{Differential Scattering}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_{\boldsymbol{\pi}} L_e + \int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma + \oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\[0.8em]
+&\quad + \underbrace{ \int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \mathrm{d}\sigma }_{\textbf{Differential Scattering}}
 \end{aligned}
 $$<p>Expanding the integrand terms explicitly yields:</p>
 $$
 \begin{aligned}
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{\partial_\pi L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Direct Emission}} \\[0.8em]
-&\quad + \int_{\mathbb{S}^2} \left[ \underbrace{(\partial_\pi L_i) f_s}_{\text{Diff. Scattering}} + \underbrace{L_i (\partial_\pi f_s)}_{\text{Material Emission}} \right] \mathrm{d}\sigma \\[0.8em]
-&\quad + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{\partial_{\boldsymbol{\pi}} L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Direct Emission}} \\[0.8em]
+&\quad + \int_{\mathbb{S}^2} \left[ \underbrace{(\partial_{\boldsymbol{\pi}} L_i) f_s}_{\text{Diff. Scattering}} + \underbrace{L_i (\partial_{\boldsymbol{\pi}} f_s)}_{\text{Material Emission}} \right] \mathrm{d}\sigma \\[0.8em]
+&\quad + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral}}
 \end{aligned}
 $$<blockquote>
-<p><strong>Note on Static Visibility Boundaries:</strong> Nimier-David et al. <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> never actually write down the boundary term above — the general, boundary-aware equation is machinery imported from the Zhang et al. <a href="/posts/intro-to-differentiable-rendering/#ref-14">[14]</a> framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper&rsquo;s own derivation assumes static geometry from the outset ($\partial_\pi \boldsymbol{\omega}_i = \mathbf{0}$), so for them <strong>the Boundary Integral is simply absent</strong>, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a> and Loubet et al. <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a> as compatible options (Section 3.6 of the paper).</p></blockquote>
+<p><strong>Note on Static Visibility Boundaries:</strong> Nimier-David et al. <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> never actually write down the boundary term above — the general, boundary-aware equation is machinery imported from the Zhang et al. <a href="/posts/intro-to-differentiable-rendering/#ref-14">[14]</a> framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper&rsquo;s own derivation assumes static geometry from the outset ($\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i = \mathbf{0}$), so for them <strong>the Boundary Integral is simply absent</strong>, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a> and Loubet et al. <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a> as compatible options (Section 3.6 of the paper).</p></blockquote>
 <p>Grouping the non-scattering gradient source terms into the <strong>Differential Emission</strong> term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$:</p>
 $$
-Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_\pi L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
+Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_{\boldsymbol{\pi}} L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
 $$<p>the differential transport equation collapses to a single, deceptively simple statement:</p>
 $$
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \,\mathrm{d}\sigma .
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \,\mathrm{d}\sigma .
 $$<p>Read it as an energy balance for a fictitious kind of light: $Q$ is a <strong>source</strong> that &ldquo;emits&rdquo; differential radiance wherever a scene parameter directly changes emission or reflectance, and the remaining integral says that whatever differential radiance is already incident keeps <strong>scattering</strong> exactly like ordinary radiance would. This is the whole trick behind radiative backpropagation: instead of differentiating a rendering algorithm line by line, we get to reuse an <em>ordinary-looking transport equation</em>, just with $L_e$ swapped out for $Q$.</p>
 <p>To make that reuse precise — and to set up reverse-mode propagation — the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.&rsquo;s own notation <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> (Section 3.4):</p>
 <ol>
@@ -2998,12 +3015,12 @@ $$
 <p><strong>Propagation operator $\mathcal{G}$</strong> — this is the paper&rsquo;s own name for it; you&rsquo;ll also see it called a <em>ray transport operator</em>, since all it does is walk backward along a ray to the next surface. It turns outgoing radiance at the point you hit into incident radiance at the point you came from:
 </p>
 $$
-   (\mathcal{G} h)(\mathbf{x}, \boldsymbol{\omega}_i) = h(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i), \qquad\text{so that}\qquad \partial_\pi L_i = \mathcal{G}\, \partial_\pi L_o.
+   (\mathcal{G} h)(\mathbf{x}, \boldsymbol{\omega}_i) = h(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i), \qquad\text{so that}\qquad \partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\, \partial_{\boldsymbol{\pi}} L_o.
    $$</li>
 </ol>
-<p>Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport — nothing new had to be invented here, which is precisely the point. Substituting $\partial_\pi L_i = \mathcal{G}\partial_\pi L_o$ into the scattering term folds the whole differential rendering equation into one compact line:</p>
+<p>Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport — nothing new had to be invented here, which is precisely the point. Substituting $\partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\partial_{\boldsymbol{\pi}} L_o$ into the scattering term folds the whole differential rendering equation into one compact line:</p>
 $$
-\partial_\pi L_o = Q + \mathcal{K}\mathcal{G}\,\partial_\pi L_o \;\;\Longrightarrow\;\; \partial_\pi L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q,
+\partial_{\boldsymbol{\pi}} L_o = Q + \mathcal{K}\mathcal{G}\,\partial_{\boldsymbol{\pi}} L_o \;\;\Longrightarrow\;\; \partial_{\boldsymbol{\pi}} L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q,
 $$<p>where $\mathcal{S} = \sum_{k=0}^\infty (\mathcal{K}\mathcal{G})^k$ sums over paths of every length — the operator equivalent of &ldquo;trace a one-bounce path, then a two-bounce path, then a three-bounce path, and so on.&rdquo;</p>
 <p>If $A_e$ is the emitted <strong>adjoint radiance</strong> obtained by back-projecting the loss gradient $\delta\mathbf{y} = \mathbf{J}_g^T(\mathbf{y})$ from the sensor into the scene, the vector-Jacobian product we actually want is the ray-space inner product</p>
 $$
@@ -3059,17 +3076,108 @@ $$<p>turning the discrete sum over pixel derivatives into the ray-space inner pr
 </span></span><span class="line"><span class="cl">    <span class="n">δ_π</span> <span class="o">+=</span> <span class="n">adjoint</span><span class="p">([[</span> <span class="n">f_s</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="n">ω_o</span><span class="p">,</span> <span class="n">ω_i</span><span class="p">)</span> <span class="p">]],</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">L_i</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ω_i</span><span class="p">)</span> <span class="o">/</span> <span class="n">bsdf_pdf</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">    <span class="c1"># Recurse</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">δ_π</span> <span class="o">+</span> <span class="n">radiative_backprop_sample</span><span class="p">(</span><span class="n">π</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ω_i</span><span class="p">,</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">bsdf_value</span> <span class="o">/</span> <span class="n">bsdf_pdf</span><span class="p">)</span>
-</span></span></code></pre></div><p>The paper does not claim that camera-path sampling is the only estimator. It points out that $Q$ may have large components at specific differentiable objects, suggesting connection strategies analogous to next-event estimation. If many of those connections are occluded, scattering them before connection leads to a family of bidirectional strategies. Casting reverse differentiation as transport is useful precisely because ordinary rendering tools such as importance sampling, next-event estimation, and bidirectional connection strategies become available.</p>
+</span></span></code></pre></div><blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Radiative Backpropagation (RB) PyTorch Implementation</summary>
+<div style="margin-top: 1rem;">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">scene</span> <span class="kn">import</span> <span class="n">Scene</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">camera</span> <span class="kn">import</span> <span class="n">Camera</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">ray</span> <span class="kn">import</span> <span class="n">Ray</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">_flip_normal</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Flip shading normal to face against the ray direction.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">n</span> <span class="o">*</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">L_i</span><span class="p">(</span><span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">wi</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Estimate incoming radiance without building an autograd graph.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="n">L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">wi</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_depth</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">si</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">ray</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">valid</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">n</span> <span class="o">=</span> <span class="n">_flip_normal</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">L</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">emission</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">wi</span><span class="p">,</span> <span class="n">bsdf_value</span><span class="p">,</span> <span class="n">bsdf_pdf</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">bsdf_value</span> <span class="o">/</span> <span class="n">bsdf_pdf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">wi</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">L</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">RBPathTracer</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Radiative Backpropagation (Nimier-David et al. 2020).&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sample_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;Primal render, independent of the adjoint pass.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">accum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rays</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">accum</span> <span class="o">+=</span> <span class="n">L_i</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">rays</span><span class="o">.</span><span class="n">origins</span><span class="p">,</span> <span class="n">rays</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">accum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">radiative_backprop_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">wo</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;radiative_backprop_sample(π, x, ω_o, weight), unrolled over max_depth bounces.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">wo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">depth</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">si</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">intersect</span><span class="p">(</span><span class="n">ray</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">valid</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">n</span> <span class="o">=</span> <span class="n">_flip_normal</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">Le</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">si</span><span class="o">.</span><span class="n">emission</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">emission</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">Le</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="p">(</span><span class="n">Le</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="k">break</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">wo</span> <span class="o">=</span> <span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">wi</span><span class="p">,</span> <span class="n">bsdf_value</span><span class="p">,</span> <span class="n">bsdf_pdf</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">wo</span><span class="p">,</span> <span class="n">n</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="n">f_s</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">wo</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">wi</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="n">y</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">+</span> <span class="n">n</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e-3</span>
+</span></span><span class="line"><span class="cl">            <span class="n">Li</span> <span class="o">=</span> <span class="n">L_i</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">wi</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">-</span> <span class="n">depth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">adjoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">Li</span> <span class="o">/</span> <span class="n">bsdf_pdf</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="n">f_s</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">                <span class="p">(</span><span class="n">f_s</span> <span class="o">*</span> <span class="n">adjoint</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">                <span class="n">weight</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">bsdf_value</span> <span class="o">/</span> <span class="n">bsdf_pdf</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">wi</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">radiative_backprop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">dL</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;&#34;&#34;radiative_backprop(π, δ_y): seed each sensor ray with weight = δ_y / num_samples.&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rays</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">weight</span> <span class="o">=</span> <span class="n">dL</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
+</span></span><span class="line"><span class="cl">            <span class="bp">self</span><span class="o">.</span><span class="n">radiative_backprop_sample</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="n">rays</span><span class="o">.</span><span class="n">origins</span><span class="p">,</span> <span class="n">rays</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+</span></span></code></pre></div></div>
+</details>
+</blockquote>
+<p>The paper does not claim that camera-path sampling is the only estimator. It points out that $Q$ may have large components at specific differentiable objects, suggesting connection strategies analogous to next-event estimation. If many of those connections are occluded, scattering them before connection leads to a family of bidirectional strategies. Casting reverse differentiation as transport is useful precisely because ordinary rendering tools such as importance sampling, next-event estimation, and bidirectional connection strategies become available.</p>
 <h4 id="assumptions-and-loose-ends">Assumptions and Loose Ends<a hidden class="anchor" aria-hidden="true" href="#assumptions-and-loose-ends">#</a></h4>
 <p>The derivation and prototype make several explicit assumptions:</p>
 <ul>
 <li><strong>Static Sensor Importance:</strong> Sensor importance $W_k$ is treated as static. A differentiable camera would contribute an additional local derivative term.</li>
 <li><strong>Self-Adjoint Operators:</strong> Surface operators are self-adjoint under reciprocal, energy-conserving BSDFs and the ray-space measure. Nonreciprocal transport (e.g. non-reciprocal BSDFs or camera lenses) would require true adjoint operators rather than reusing primal ones.</li>
-<li><strong>Volumetric Extension:</strong> The same adjoint construction extends directly to participating media by replacing surface transport operators with their volumetric counterparts (RBP paper, Appendix A.1).</li>
+<li><strong>Volumetric Extension:</strong> The same adjoint construction extends directly to participating media by replacing surface transport operators with their volumetric counterparts (RB paper, Appendix A.1).</li>
 <li><strong>Visibility Derivatives (Edge Sampling vs. Reparameterization):</strong>
 <ul>
 <li><strong>Edge Sampling (Li et al., 2018) <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a>:</strong> Explicitly samples silhouette edges, which requires modifying the theoretical formulation to add extra 1D boundary integral terms to the differential emission source $Q$.</li>
-<li><strong>Reparameterization / Change of Variables (Loubet et al., 2019) <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a>:</strong> Performs a parameter-dependent coordinate warp so that discontinuities remain static under scene perturbations ($\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_i = \mathbf{0}$). This allows RBP to compute visibility-aware gradients <strong>without changing any of the adjoint derivations</strong>.</li>
+<li><strong>Reparameterization / Change of Variables (Loubet et al., 2019) <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a>:</strong> Performs a parameter-dependent coordinate warp so that discontinuities remain static under scene perturbations ($\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_i = \mathbf{0}$). This allows RB to compute visibility-aware gradients <strong>without changing any of the adjoint derivations</strong>.</li>
 </ul>
 </li>
 </ul>
@@ -3087,10 +3195,10 @@ $$<p>The path then continues with adjoint throughput multiplied by $f_s/p$. This
 <h5 id="primal-radiance-dependence-and-acceleration">Primal Radiance Dependence and Acceleration<a hidden class="anchor" aria-hidden="true" href="#primal-radiance-dependence-and-acceleration">#</a></h5>
 <p>A key practical bottleneck is that the differential emission term $Q$ depends on the unknown <strong>primal incident radiance $L_i$</strong>. Evaluating $Q$ at every differentiable interaction requires launching a recursive primal path-tracing query. Along a path of depth $D$ with differentiable surfaces at each bounce, these suffix queries have lengths $D, D-1, \ldots, 1$, leading to quadratic time complexity $\mathcal{O}(D^2)$ (a bottleneck also reported by <strong>Zhang et al. (2019)</strong> <a href="/posts/intro-to-differentiable-rendering/#ref-14">[14]</a> for forward AD). Non-differentiated interactions do not trigger this extra work.</p>
 <p>To mitigate this quadratic overhead in long light paths, one can precompute an approximate spatio-directional data structure during the primal phase (such as a <strong>Path Guiding tree</strong> [Müller et al., 2017] <a href="/posts/intro-to-differentiable-rendering/#ref-15">[15]</a>) to perform fast $\mathcal{O}(1)$ interpolant queries of $L_i$ during adjoint backpropagation.</p>
-<p>Thus, RBP solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.</p>
+<p>Thus, RB solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.</p>
 <figure id="fig-rbp-algorithm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/radiative_backpropagation/algorithm.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 62.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 65.</span>
       Illustration of the quadratic <strong>$\mathcal{O}(D^2)$</strong> complexity in Radiative Backpropagation. An adjoint path launched from the camera (<strong>black rays</strong>) evaluates local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) at each differentiable surface hit (<strong>red dots</strong>). To estimate the unknown primal incident radiance $L_i$ in $Q$, a recursive primal path-tracing query (<strong>gray rays</strong>) is launched at every bounce.
     </figcaption></figure>
 
@@ -3101,7 +3209,7 @@ $$<p>The path then continues with adjoint throughput multiplied by $f_s/p$. This
 <li><strong>Biased I:</strong> replace $L_i$ in $Q$ by $1$. This removes recursive radiance queries and reduces time to $O(D)$, but changes the gradient.</li>
 <li><strong>Biased II:</strong> pipeline optimization by using the previous iteration&rsquo;s adjoint rendering with the current iteration&rsquo;s rendering Jacobian. This overlaps primal and adjoint work but introduces an intentional one-iteration mismatch.</li>
 </ul>
-<p>The RBP paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. <a href="/posts/intro-to-differentiable-rendering/#ref-13">[13]</a> give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.</p>
+<p>The RB paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. <a href="/posts/intro-to-differentiable-rendering/#ref-13">[13]</a> give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.</p>
 <p>For Biased II, if superscripts denote optimization iterations, the propagated quantity is</p>
 $$
 \delta\boldsymbol{\pi}^{(i)}
@@ -3119,7 +3227,7 @@ $$<p>instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the re
 </ol>
 <figure id="fig-prb-algorithm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/prb/algorithm.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 63.</span>
+      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 66.</span>
       Illustration of linear <strong>$\mathcal{O}(D)$</strong> complexity in Path Replay Backpropagation (PRB). Rather than spawning branching quadratic primal suffix trees, PRB replays the exact same random walk (<strong>green rays</strong>) alongside the adjoint path (<strong>black rays</strong>). Local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) are evaluated at each surface hit (<strong>red dots</strong>) in linear time and constant memory.
     </figcaption></figure>
 
@@ -3237,28 +3345,25 @@ $$<p>The $f_k$ elegantly cancels out. This proves that dynamically tracking $L_{
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">PRBPathTracer</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;&#34;&#34;Path Replay Backpropagation (Vicini et al. 2021).&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_depth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="o">=</span> <span class="n">chunk_size</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_primal_chunks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># per-chunk L_N, set by sample_path</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_primal_samples</span> <span class="o">=</span> <span class="p">[]</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sample_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
 </span></span><span class="line"><span class="cl">        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">rays</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_primal_chunks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">        <span class="n">accum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rays</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_primal_samples</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">accum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">camera</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">):</span>
-</span></span><span class="line"><span class="cl">                <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">rays</span><span class="o">.</span><span class="n">origins</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-</span></span><span class="line"><span class="cl">                          <span class="n">rays</span><span class="o">.</span><span class="n">dirs</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ray</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">                <span class="n">L</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">                <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
@@ -3268,27 +3373,24 @@ $$<p>The $f_k$ elegantly cancels out. This proves that dynamically tracking $L_{
 </span></span><span class="line"><span class="cl">                    <span class="n">n</span> <span class="o">=</span> <span class="n">_flip_normal</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">                    <span class="n">L</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">si</span><span class="o">.</span><span class="n">emission</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">wi</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">w</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">wi</span><span class="p">,</span> <span class="n">bsdf_value</span><span class="p">,</span> <span class="n">bsdf_pdf</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">bsdf_pdf</span> <span class="o">&gt;</span> <span class="mf">1e-8</span><span class="p">),</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">bsdf_value</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">bsdf_pdf</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">                    <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">wi</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">_primal_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="n">accum</span> <span class="o">+=</span> <span class="n">L</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="bp">self</span><span class="o">.</span><span class="n">_primal_samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">accum</span> <span class="o">+=</span> <span class="n">L</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">accum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">accum</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">sample_adjoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="n">Scene</span><span class="p">,</span> <span class="n">camera</span><span class="p">:</span> <span class="n">Camera</span><span class="p">,</span> <span class="n">_primal_img</span><span class="p">,</span> <span class="n">dL</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="n">rays</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">        <span class="n">scale</span> <span class="o">=</span> <span class="n">dL</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">)):</span>
-</span></span><span class="line"><span class="cl">            <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">rays</span><span class="o">.</span><span class="n">origins</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-</span></span><span class="line"><span class="cl">                      <span class="n">rays</span><span class="o">.</span><span class="n">dirs</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="n">L</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primal_chunks</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>        <span class="c1"># L_N from pass 1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="n">sample_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">camera</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="n">L</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_primal_samples</span><span class="p">[</span><span class="n">sample_idx</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl">            <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ray</span><span class="o">.</span><span class="n">origins</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">):</span>
@@ -3302,21 +3404,20 @@ $$<p>The $f_k$ elegantly cancels out. This proves that dynamically tracking $L_{
 </span></span><span class="line"><span class="cl">                <span class="n">L</span> <span class="o">=</span> <span class="n">L</span> <span class="o">-</span> <span class="n">Le</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">                <span class="c1"># same random stream -&gt; identical (wi, w)</span>
-</span></span><span class="line"><span class="cl">                <span class="n">wi</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">wi</span><span class="p">,</span> <span class="n">bsdf_value</span><span class="p">,</span> <span class="n">bsdf_pdf</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">                <span class="c1"># differentiable f_s re-evaluation</span>
 </span></span><span class="line"><span class="cl">                <span class="n">f_s</span> <span class="o">=</span> <span class="n">si</span><span class="o">.</span><span class="n">bsdf</span><span class="o">.</span><span class="n">eval</span><span class="p">((</span><span class="o">-</span><span class="n">ray</span><span class="o">.</span><span class="n">dirs</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">n</span><span class="p">,</span> <span class="n">wi</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">                <span class="c1"># dπ += J_{Le}^T(dL)  +  J_{f_s}^T(dL * R_k / f_s)</span>
 </span></span><span class="line"><span class="cl">                <span class="n">Lo</span> <span class="o">=</span> <span class="n">Le</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">L</span> <span class="o">*</span> <span class="n">relative_grad</span><span class="p">(</span><span class="n">f_s</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">                <span class="n">adj</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">Lo</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">                <span class="p">(</span><span class="n">adj</span> <span class="o">*</span> <span class="n">Lo</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="p">(</span><span class="n">scale</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">*</span> <span class="n">Lo</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">                <span class="c1"># advance (fully detached)</span>
 </span></span><span class="line"><span class="cl">                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">w</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">throughput</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">bsdf_pdf</span> <span class="o">&gt;</span> <span class="mf">1e-8</span><span class="p">),</span> <span class="n">throughput</span> <span class="o">*</span> <span class="n">bsdf_value</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">bsdf_pdf</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">),</span>
 </span></span><span class="line"><span class="cl">                                             <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">throughput</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">wi</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">ray</span> <span class="o">=</span> <span class="n">Ray</span><span class="p">((</span><span class="n">si</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">1e-3</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="n">wi</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
 </span></span></code></pre></div></div>
 </details>
 </blockquote>
@@ -3505,17 +3606,18 @@ $$ J_{\text{ray}}^\lambda = J_{\text{ray}} + \lambda I_4 \operatorname{sign}\lef
   </tbody>
 </table>
 <p>PRB strictly removes the path-length memory and time bottlenecks, successfully bringing the computational cost of unbiased differentiable rendering down to match that of standard forward path tracing.</p>
-<h2 id="modern-advances-in-differentiable-rendering">Modern Advances in Differentiable Rendering<a hidden class="anchor" aria-hidden="true" href="#modern-advances-in-differentiable-rendering">#</a></h2>
-<p>While the foundational theory of differentiable Monte Carlo rendering operates on standard geometric representations and path-tracing operators, translating these concepts into robust, scalable, and low-variance algorithms is a subject of active research. The resources in this area highlight several significant shifts in how geometry is represented and differentiated:</p>
-<h3 id="1-differentiable-signed-distance-functions-sdfs">1. Differentiable Signed Distance Functions (SDFs)<a hidden class="anchor" aria-hidden="true" href="#1-differentiable-signed-distance-functions-sdfs">#</a></h3>
-<p>Traditional mesh representations suffer from topological constraints during optimization: they cannot easily split, merge, or change genus without complex manual re-meshing. To solve this, <strong>Vicini et al. (2022)</strong> <a href="/posts/intro-to-differentiable-rendering/#ref-3">[3]</a> introduced a method for <strong>Differentiable Signed Distance Function Rendering</strong>. By representing the scene geometry implicitly via the zero-level set of an SDF, the geometry can undergo topological changes during image-based optimization. The authors extend sphere tracing so that its intermediate SDF evaluations construct a valid reparameterization of visibility discontinuities. Under the paper&rsquo;s assumptions, this yields an unbiased gradient estimator and enables shape and texture reconstruction using only a per-pixel RGB loss, without silhouette or mask supervision.</p>
-<h3 id="2-exchanging-unbiasedness-for-low-variance">2. Exchanging Unbiasedness for Low Variance<a hidden class="anchor" aria-hidden="true" href="#2-exchanging-unbiasedness-for-low-variance">#</a></h3>
-<p>Unbiased boundary integrals (Reynolds Transport Theorem) require tracing additional rays to explicitly sample silhouette edges. For implicit surfaces like SDFs, detecting these edges can be extremely expensive and complex. <strong>Wang et al. (2024)</strong> <a href="/posts/intro-to-differentiable-rendering/#ref-4">[4]</a> proposed <strong>A Simple Approach to Differentiable Rendering of SDFs</strong>, which explores a key trade-off: accepting a small, controlled amount of numerical bias in exchange for a massive reduction in variance and code complexity. Their formulation expands the 2D boundary integral into a thin 3D band around the surface where the occupancy function is smoothed. Inside this band, standard automatic differentiation can be applied directly. This method is structurally simple, requires no silhouette-searching data structures, and achieves competitive results on practical inverse rendering tasks.</p>
-<h3 id="3-projective-silhouette-sampling">3. Projective Silhouette Sampling<a hidden class="anchor" aria-hidden="true" href="#3-projective-silhouette-sampling">#</a></h3>
-<p>To reduce the high variance associated with boundary integrals on complex mesh geometry, <strong>Zhang et al. (2023)</strong> <a href="/posts/intro-to-differentiable-rendering/#ref-5">[5]</a> introduced <strong>Projective Sampling for Differentiable Rendering</strong>. Instead of relying on complex hierarchical structures to find silhouette edges beforehand, they proposed to project light path segments generated during standard primal path tracing onto nearby silhouette edges. This local geometric projection transforms the boundary derivative into a simple, local integral that is easy to evaluate. Compared to prior edge sampling techniques, uniform guiding alone cuts gradient estimation error (RMSE) by roughly 8x on average, and adding adaptive guiding compounds this to roughly 22x.</p>
-<h3 id="4-many-worlds-inverse-rendering">4. Many-Worlds Inverse Rendering<a hidden class="anchor" aria-hidden="true" href="#4-many-worlds-inverse-rendering">#</a></h3>
-<p>Inverse rendering optimizations are highly non-convex and easily get trapped in local minima, especially when starting from an empty scene or when objects are completely occluded. <strong>Zhang et al. (2025)</strong> <a href="/posts/intro-to-differentiable-rendering/#ref-6">[6]</a> introduced <strong>Many-Worlds Inverse Rendering</strong> to address this limitation. Rather than evolving a surface locally via gradient descent, their approach considers adding hypothetical surface patches anywhere in 3D space. They evaluate a superposition of independent, competing surface hypotheses that do not shadow or scatter light from each other, allowing gradients to flow from empty space. This framework combines the optimization robustness of volumetric representations (starting from scratch) with the computational efficiency of surface rendering, avoiding expensive transmittance and multiple scattering evaluations.</p>
-<p><em>Note: I might create a follow-up post expanding further on these modern advances in differentiable rendering in the near future!</em></p>
+<h2 id="conclusion">Conclusion<a hidden class="anchor" aria-hidden="true" href="#conclusion">#</a></h2>
+<p>Differentiable rendering bridges the gap between physics-based light transport and gradient-based optimization. As we have seen, taking the derivative of a rendering algorithm is far from trivial. From the fundamental problem of discontinuous visibility requiring the Reynolds Transport Theorem, to the memory-intensive challenges of differentiating recursive light paths, the field has developed elegant mathematical solutions like Radiative Backpropagation and Path Replay Backpropagation to achieve $\mathcal{O}(1)$-memory unbiased gradients.</p>
+<p>While the foundational theory operates on standard geometric representations and path-tracing operators, translating these concepts into robust, scalable, and low-variance algorithms remains an exciting area of active research.</p>
+<h3 id="further-reading">Further Reading<a hidden class="anchor" aria-hidden="true" href="#further-reading">#</a></h3>
+<p>For those interested in exploring state-of-the-art developments and modern inverse rendering frameworks, consider the following resources:</p>
+<ul>
+<li><strong>Mitsuba 3 Documentation:</strong> A highly flexible, retargetable forward and differentiable renderer. <a href="https://mitsuba.readthedocs.io/en/stable/">Read the docs</a></li>
+<li><strong>Differentiable Signed Distance Function Rendering</strong> (Vicini et al., 2022): Optimizing geometry using implicit SDFs to allow topological changes. <a href="https://doi.org/10.1145/3528223.3530139">DOI: 10.1145/3528223.3530139</a></li>
+<li><strong>Projective Sampling for Differentiable Rendering of Geometry</strong> (Zhang et al., 2023): Reducing variance via local geometric projection of light paths onto silhouette edges. <a href="https://doi.org/10.1145/3618385">DOI: 10.1145/3618385</a></li>
+<li><strong>A Simple Approach to Differentiable Rendering of SDFs</strong> (Wang et al., 2024): Exchanging unbiasedness for low variance and structural simplicity in SDF rendering. <a href="https://doi.org/10.1145/3680528.3687573">DOI: 10.1145/3680528.3687573</a></li>
+<li><strong>Many-Worlds Inverse Rendering</strong> (Zhang et al., 2025): Avoiding local minima by evaluating a superposition of independent surface hypotheses. <a href="https://doi.org/10.1145/3767318">DOI: 10.1145/3767318</a></li>
+</ul>
 <h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <ol>
 <li>

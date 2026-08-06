@@ -25,6 +25,8 @@ body.dark img[src$=".svg"]:not(.no-invert),
   <strong>Work in Progress:</strong> This post is under active development. I am continuously updating and expanding sections as I explore the literature further.
 </div>
 
+## Introduction
+
 {{< figure src="/images/diff-rendering/diff-render.svg" id="fig-diff-render" caption="High-level overview of the differentiable rendering pipeline mapping scene parameters to images and propagating loss gradients back to parameters." width="100%" >}}
 
 
@@ -34,7 +36,7 @@ Differentiable rendering asks a simple question with surprisingly sharp edges: i
 
 The difficulty is that rendering is not just a smooth program. It is an integral over paths, visibility changes discontinuously, and Monte Carlo estimators have sampling choices that may themselves depend on the parameters. This post builds the story in layers: first automatic differentiation, then why naive AD fails for visibility, then boundary-aware Monte Carlo estimators, and finally the physics-based formulations used in modern differentiable renderers.
 
-I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. This post focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic in [Differentiable Rendering of Participating Media](/posts/differentiable-rendering-participating-media/).
+I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. This post focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic.
 
 <blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
   <p><em>Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini's PhD thesis <a href="#ref-2">[2]</a>.</em></p>
@@ -50,43 +52,41 @@ from ray import Ray
 
 
 class PathTracer:
-    def __init__(self, max_depth=5, num_samples=128, chunk_size=4):
-        self.max_depth = max_depth
+    """Monte Carlo path tracer."""
 
+    def __init__(self, max_depth=5, num_samples=128):
+        self.max_depth = max_depth
         self.num_samples = num_samples
-        self.chunk_size = chunk_size
 
     def sample(self, scene: Scene, camera: Camera):
-        primary_rays = camera.sample()
-        accum_L = torch.zeros_like(primary_rays.origins)
+        """Render via path tracing."""
+        accum_L = torch.zeros_like(camera.origins)
 
-        for sample_idx in range(0, self.num_samples, self.chunk_size):
-            chunk = min(self.chunk_size, self.num_samples - sample_idx)
-            ray = Ray(primary_rays.origins.expand(chunk, -1, -1, -1), primary_rays.dirs.expand(chunk, -1, -1, -1))
-
-            β = torch.ones_like(ray.origins)
-            L = torch.zeros_like(ray.origins)
+        for _ in range(self.num_samples):
+            ray = camera.sample()
+            β = torch.ones_like(ray.origins)  # Path throughput
+            L = torch.zeros_like(ray.origins)  # Accumulated radiance
 
             for depth in range(self.max_depth):
                 si = scene.intersect(ray)
-                
-                # Direct emission
+
+                # Direct emission from light sources
                 Le = β * si.emission
                 L = L + torch.where(si.is_valid(), Le, 0.0)
 
+                # Flip normal for rays hitting the back face
                 shading_n = torch.where((si.n * ray.dirs).sum(-1, keepdim=True) > 0.0, -si.n, si.n)
-                
-                # BSDF Sampling
-                bsdf_wi, bsdf_val = si.bsdf.sample(-ray.dirs, shading_n)
-                
-                # Update loop variables
+
+                # Sample BSDF to get new ray direction and update throughput
+                bsdf_wi, bsdf_value, bsdf_pdf = si.bsdf.sample(-ray.dirs, shading_n)
+
+                # Update ray for next bounce
                 ray = Ray(si.p + shading_n * 1e-3, bsdf_wi)
-                β = torch.where(si.is_valid(), β * bsdf_val, 0.0)
+                β = torch.where(si.is_valid(), β * bsdf_value / bsdf_pdf, 0.0)
 
-            accum_L += L.sum(dim=0)
+            accum_L += L
 
-        img = torch.clamp(accum_L / self.num_samples, 1e-6, 1.0)
-        return img ** (1.0 / 2.2)
+        return accum_L / self.num_samples
 ```
 
 </div></details>
@@ -656,16 +656,13 @@ However, this interchange is only valid under regularity conditions that justify
 
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
   <div>
-    <img src="/images/diff-rendering/base_render.png" alt="Initial Render" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
-    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Initial Render f(x)</span>
+    {{< figure src="/images/diff-rendering/base_render.png" caption="Initial Render $f(x)$" width="100%" >}}
   </div>
   <div>
-    <img src="/images/diff-rendering/naive_ad_gradient.png" alt="Naive AD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
-    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Naive AD Gradient (Zero)</span>
+    {{< figure src="/images/diff-rendering/naive_ad_gradient.png" caption="Naive AD (Zero)" width="100%" >}}
   </div>
   <div>
-    <img src="/images/diff-rendering/fd_translated_gradient_map.png" alt="FD Gradient" style="width: 100%; height: auto; border-radius: 8px; display: block;" />
-    <span style="font-size: 0.85rem; color: #888; display: block; margin-top: 6px;">Finite Difference Gradient</span>
+    {{< figure src="/images/diff-rendering/fd_translated_gradient_map.png" caption="FD Gradient" width="100%" >}}
   </div>
 </div>
 
@@ -1365,7 +1362,7 @@ While the interior term is straightforward to evaluate with the differentiable M
 
 Li et al. (2018) [[10]](#ref-10) model visibility with Heaviside step functions. Differentiating a step function yields a Dirac delta concentrated on the moving edge, so their estimator naturally decomposes the image derivative into two parts: the smooth interior term, handled by standard Monte Carlo sampling with AD, and the singular boundary term, estimated by a dedicated edge sampler. This decomposition is the distributional counterpart of the Reynolds Transport Theorem split derived above.
 
-#### Primary visibility.
+#### Primary Visibility
 
 We begin with the $2D$ pixel filter integral, which for each pixel integrates the pixel filter $k$ against the incoming radiance $L$. The radiance itself may be a further integral over light sources or the hemisphere, but for convenience we absorb everything into a single scene function $f(x,y) = k(x,y)L(x,y)$, the $f$ used throughout the remainder of this section. The pixel color $I$ is then:
 $$
@@ -1592,7 +1589,7 @@ If a sampled edge point is hidden behind another surface ($(x,y)$ lands on a *co
 
 In practice, candidate edges are projected and clipped into screen space. Only sampled edge points across which the scene function actually jumps produce a nonzero contribution; occluded edges and smooth internal edges cancel in the two-sided difference. Li et al. sample candidate edges in proportion to their projected length, draw a point along the selected edge, and evaluate this difference. This directly estimates how pixel coverage changes as geometry or the camera moves.
 
-#### Secondary visibility
+#### Secondary Visibility
 
 {{< figure src="/images/diff-rendering/reparam/secondary_visibility.svg" id="fig-edge-secondary-visibility" caption="(a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Loubet et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$)." width="100%" >}}
 
@@ -1637,7 +1634,7 @@ $$
 These are the corrected forms from the paper's published erratum. In particular, $p$ occurs in all three factors of the scalar triple product, so its derivative is not equal to $\nabla_m\alpha$.
 
 
-#### Selecting an edge
+#### Selecting an Edge
 
 Explicit edge sampling is attractive for primary visibility because the camera is fixed and projected silhouettes can be precomputed. Secondary visibility is harder: the shading point changes at every path vertex, and performance degrades with geometric and depth complexity. A more general family of approaches works in path space, as in Zhang et al. (2020) [[9]](#ref-9). These methods sample points and directions on silhouette edges and connect them to subpaths from the sensor and light sources. They are complex to implement, but can produce high-quality edge gradients in challenging lighting conditions.
 
@@ -1655,7 +1652,7 @@ The hierarchy is traversed twice. The first traversal focuses on edges that over
 
 During traversal, for each node an importance value is computed by upper-bounding the contribution: total edge length $\times$ inverse squared distance $\times$ a Blinn-Phong BRDF bound. Nodes that do not contain any silhouette receive zero importance. Both children are traversed if the shading point lies inside both bounding boxes, the BRDF bound exceeds a threshold (set to $1$), or the angle subtended by the light cone is smaller than $\cos^{-1}(0.95)$.
 
-#### Importance sampling a single edge
+#### Importance Sampling a Single Edge
 
 Once an edge is selected, a point along it must be chosen. With a highly specular BRDF, only a small portion of the edge carries significant contribution. The Linearly Transformed Cosine (LTC) distribution provides a closed-form solution for the integral between a point and a linear light source, weighted by BRDF and geometric foreshortening. The integrated CDF is numerically inverted via Newton's method for importance sampling, using a precomputed table of fitted LTC lobes for the target BRDFs.
 
@@ -2044,11 +2041,11 @@ Given the mathematical tools described above, we will discuss the differentiatio
 
 ### Differentiable Rendering of Surfaces
 
-Physically-based rendering of surfaces has been a central topic in computer graphics for decades and is governed by the well-known *rendering equation* (RE). The RE is an integral equation stating that the (steady-state) radiance $L$ at any surface point $\mathbf{x}$ with direction $\boldsymbol{\omega}_o$ is given by:
+Physically-based rendering of surfaces has been a central topic in computer graphics for decades and is governed by the well-known *rendering equation* (RE). The RE is an integral equation stating that the (steady-state) outgoing radiance $L_o$ at any surface point $\mathbf{x}$ with direction $\boldsymbol{\omega}_o$ is given by:
 
 $$
 \begin{equation}
-L(\mathbf{x}, \boldsymbol{\omega}_o) = L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \;\operatorname{d} \sigma (\boldsymbol{\omega}_i) \label{eq:rendering-equation}
+L_o(\mathbf{x}, \boldsymbol{\omega}_o) = L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \;\operatorname{d} \sigma (\boldsymbol{\omega}_i) \label{eq:rendering-equation}
 \end{equation}
 $$
 
@@ -2068,21 +2065,21 @@ $$
 
 where $\mathbf{y}$ represents the closest intersection of a light ray originating at $\mathbf{x}$ with direction $\boldsymbol{\omega}_i$, i.e., $\mathbf{y} = \operatorname{rayTrace}(\mathbf{x}, \boldsymbol{\omega}_i)$. Unlike RE $\eqref{eq:rendering-equation}$, which takes the form of an integral equation, Eq. $\eqref{eq:direct-illumination}$ is a simple spherical integral as its right-hand side involves only known quantities.
 
-We now consider the problem of calculating the derivative of $L_r(\mathbf{x}, \boldsymbol{\omega}_o)$ with respect to some abstract scene parameter $\pi \in \mathbb{R}$. Given $\mathbf{x}$ and $\boldsymbol{\omega}_o$, let $f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) := L_e(\mathbf{y}, -\boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$. It holds that
+We now consider the problem of calculating the derivative of $L_r(\mathbf{x}, \boldsymbol{\omega}_o)$ with respect to the scene parameter vector $\boldsymbol{\pi}$. Given $\mathbf{x}$ and $\boldsymbol{\omega}_o$, let $f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) := L_e(\mathbf{y}, -\boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$. It holds that
 
 $$
-\frac{\partial}{\partial \pi} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \frac{\partial}{\partial \pi} \left( \int_{\mathbb{S}^2} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i) \right)  \label{eq:direct-illumination-derivative}
+\partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_{\boldsymbol{\pi}} \left( \int_{\mathbb{S}^2} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i) \right)  \label{eq:direct-illumination-derivative}
 $$
 
 By applying Reynolds transport theorem $\eqref{eq:reynolds-transport-theorem}$, we obtain:
 
 $$
 \begin{equation}
-\partial_\pi L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \langle \partial_\pi \boldsymbol{\omega}_i, \mathbf{n}^{\perp}(\boldsymbol{\omega}_i) \rangle \operatorname{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}} \label{eq:direct-illumination-derivative-reynolds}
+\partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \langle \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i, \mathbf{n}^{\perp}(\boldsymbol{\omega}_i) \rangle \operatorname{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}} \label{eq:direct-illumination-derivative-reynolds}
 \end{equation}
 $$
 
-where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT split from before, specialized to a spherical integral: the *interior* term integrates over the ($\pi$-independent) sphere $\mathbb{S}^2$, and the *boundary* term picks up the jump of $f_{\text{direct}}$ across the 1D discontinuity curves $\Delta \mathbb{S}^2$, the silhouette-induced jumps in $L_e$, as they move with $\pi$. For any $\boldsymbol{\omega}_i \in \mathbb{S}^2$, $\mathbf{n}^{\perp}(\boldsymbol{\omega}_i)$ is, as before, the tangent-space vector at $\boldsymbol{\omega}_i$ perpendicular to the discontinuity curve.
+where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT split from before, specialized to a spherical integral: the *interior* term integrates over the ($\boldsymbol{\pi}$-independent) sphere $\mathbb{S}^2$, and the *boundary* term picks up the jump of $f_{\text{direct}}$ across the 1D discontinuity curves $\Delta \mathbb{S}^2$, the silhouette-induced jumps in $L_e$, as they move with $\boldsymbol{\pi}$. For any $\boldsymbol{\omega}_i \in \mathbb{S}^2$, $\mathbf{n}^{\perp}(\boldsymbol{\omega}_i)$ is, as before, the tangent-space vector at $\boldsymbol{\omega}_i$ perpendicular to the discontinuity curve.
 
 {{< figure src="/images/diff-rendering/normals.svg"  id="fig-rte-normals" caption="The normal directions of arcs and circles (that are respectively the projections of line segments and spheres) as spherical curves." width="100%">}}
 
@@ -2094,27 +2091,27 @@ $$\Delta f_{direct} (\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) =
 
 Based on the analysis above, we now differentiate the full rendering equation (RE) $\eqref{eq:rendering-equation}$ using the Reynolds transport theorem ($\eqref{eq:reynolds-transport-theorem}$). This yields another integral equation, which we call the *differential rendering equation*.
 
-We begin by applying the derivative operator $\partial_\pi$ to both sides of the standard rendering equation:
+We begin by applying the derivative operator $\partial_{\boldsymbol{\pi}}$ to both sides of the standard rendering equation:
 
 $$
-\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_\pi L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \partial_\pi \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \; \mathrm{d}\sigma(\boldsymbol{\omega}_i)
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_{\boldsymbol{\pi}} L_e(\mathbf{x}, \boldsymbol{\omega}_o) + \partial_{\boldsymbol{\pi}} \int_{\mathbb{S}^2}  L_i(\mathbf{x}, \boldsymbol{\omega}_i) \; f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \; \mathrm{d}\sigma(\boldsymbol{\omega}_i)
 $$
 
-Since the scene geometry may move as the parameter $\pi$ changes, the integration domain inherently contains moving boundaries (i.e., silhouettes). Applying the Reynolds Transport Theorem ($\eqref{eq:reynolds-transport-theorem}$) splits the derivative of this integral into an interior and a boundary component:
+Since the scene geometry may move as the parameter $\boldsymbol{\pi}$ changes, the integration domain inherently contains moving boundaries (i.e., silhouettes). Applying the Reynolds Transport Theorem ($\eqref{eq:reynolds-transport-theorem}$) splits the derivative of this integral into an interior and a boundary component:
 
 $$
 \begin{aligned}
-\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_\pi L_e(\mathbf{x}, \boldsymbol{\omega}_o) &+ \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_\pi \Big( L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Big) \mathrm{d}\sigma(\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} \\
-&+ \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Delta L_i(\mathbf{x}, \boldsymbol{\omega}_i) \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \partial_{\boldsymbol{\pi}} L_e(\mathbf{x}, \boldsymbol{\omega}_o) &+ \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} \Big( L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Big) \mathrm{d}\sigma(\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} \\
+&+ \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \Delta L_i(\mathbf{x}, \boldsymbol{\omega}_i) \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}}
 \end{aligned}
 $$
 
 > **Note on the boundary term:** Notice that we wrote the jump of the integrand as $f_s \Delta L_i$ rather than $\Delta(L_i f_s)$. This assumes that the cosine-weighted BSDF $f_s$ evaluates smoothly and continuously with respect to the incoming direction $\boldsymbol{\omega}_i$. For typical materials such as diffuse and rough microfacet models, this holds: the discontinuity is caused by the incoming radiance $L_i$ abruptly jumping when an integration ray sweeps past a silhouette edge or shadow boundary. The notable exception is perfectly specular materials, whose BSDFs are Dirac delta functions; handling those requires a different mathematical approach, such as attached sampling.
 
-Inside the interior integral, we expand the derivative of the product $\partial_\pi (L_i f_s)$ using the standard product rule:
+Inside the interior integral, we expand the derivative of the product $\partial_{\boldsymbol{\pi}} (L_i f_s)$ using the standard product rule:
 
 $$
-{\color{#0f85a5} \partial_\pi(L_i f_s) = (\partial_\pi L_i) f_s + L_i (\partial_\pi f_s) }
+{\color{#0f85a5} \partial_{\boldsymbol{\pi}}(L_i f_s) = (\partial_{\boldsymbol{\pi}} L_i) f_s + L_i (\partial_{\boldsymbol{\pi}} f_s) }
 $$
 
 Substituting this expansion back into the equation allows us to regroup the terms into two distinct transport components. We collect the terms acting as "sources" of differential radiance into one group, and the term representing scattered differential radiance into another:
@@ -2122,8 +2119,8 @@ Substituting this expansion back into the equation allows us to regroup the term
 $$
 \begin{equation}
 \begin{aligned}
-\partial_\pi L(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_\pi L_e + {\color{#0f85a5}\int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma} + {\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell} }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\
-&\quad + \underbrace{ {\color{#0f85a5}\int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \mathrm{d}\sigma} }_{\textbf{Differential Scattering}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_{\boldsymbol{\pi}} L_e + {\color{#0f85a5}\int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma} + {\color{#e69138}\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell} }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\
+&\quad + \underbrace{ {\color{#0f85a5}\int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \mathrm{d}\sigma} }_{\textbf{Differential Scattering}}
 \end{aligned}
 \label{eq:diff-rendering-equation}
 \end{equation}
@@ -2131,22 +2128,27 @@ $$
 
 This final equation shares the exact same structure as the original rendering equation. Instead of standard light emission and scattering, it describes the emission and scattering of *differential radiance* (gradients).
 
-The **differential emission** term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$ acts as the source of gradients. It evaluates to a non-zero value at any point where the primary emission changes ($\partial_\pi L_e$), the material scattering properties change ($\partial_\pi f_s$), or a silhouette edge moves to uncover a different object ($f_s \Delta L_i$). During Monte Carlo integration, we compute this local change $Q$ at every path vertex and add it to the running gradient estimate.
+The **differential emission** term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$ acts as the source of gradients. It evaluates to a non-zero value at any point where the primary emission changes ($\partial_{\boldsymbol{\pi}} L_e$), the material scattering properties change ($\partial_{\boldsymbol{\pi}} f_s$), or a silhouette edge moves to uncover a different object ($f_s \Delta L_i$). During Monte Carlo integration, we compute this local change $Q$ at every path vertex and add it to the running gradient estimate.
 
-The **differential scattering** term $\int (\partial_\pi L_i) f_s \mathrm{d}\sigma$ handles the propagation of these gradients. Here, $\partial_\pi L_i$ represents the derivative of the incident radiance arriving from the previous bounce. Just like standard radiance, this incoming differential radiance is multiplied by the material's BSDF ($f_s$) and scattered towards the camera.
+The **differential scattering** term $\int (\partial_{\boldsymbol{\pi}} L_i) f_s \mathrm{d}\sigma$ handles the propagation of these gradients. Here, $\partial_{\boldsymbol{\pi}} L_i$ represents the derivative of the incident radiance arriving from the previous bounce. Just like standard radiance, this incoming differential radiance is multiplied by the material's BSDF ($f_s$) and scattered towards the camera.
 
 Consequently, when a Monte Carlo path tracer simulates this process, it unrolls the recursion identical to forward rendering. For a light path with vertices $x_1 \to x_2 \to x_3 \to \text{Camera}$, the total gradient expands mathematically via the chain rule as:
 
 $$
-\partial_\pi L \approx Q(x_1) + Q(x_2) f_s(x_1) + Q(x_3) f_s(x_2) f_s(x_1)
+\partial_{\boldsymbol{\pi}} L_o \approx Q(x_1) + Q(x_2) f_s(x_1) + Q(x_3) f_s(x_2) f_s(x_1)
 $$
 
 In practice, this means we trace a standard light path and, at each bounce, compute the local differential emission $Q$, add it to the accumulated gradient, and multiply the running total by the surface BSDF as the path continues.
 
+The differential rendering equation tells us *what* to compute; it says nothing about doing so efficiently. Evaluating this expansion naively — recording every bounce of every traced path onto an autodiff tape and replaying it backward — reintroduces exactly the memory and runtime blowup that made naive AD unsuitable for rendering in the first place (see [Why is Differentiable Rendering Difficult?](#why-is-differentiable-rendering-difficult)). For a light path of length $D$, that tape costs $\mathcal{O}(D)$ memory, and with millions of paths per frame it becomes the bottleneck long before the renderer does.
+
+## Efficient Reverse-Mode Differentiable Rendering
+
+This section introduces no new theory — it evaluates the differential rendering equation derived above, just without paying for the tape. Radiative Backpropagation and Path Replay Backpropagation both reformulate the backward pass as a second, physically-grounded transport simulation, so reverse-mode gradients can be computed with the same $\mathcal{O}(1)$-memory, single-pass character as forward rendering.
 
 ### Radiative Backpropagation
 
-Nimier-David et al. [[7]](#ref-7) begin from the same differential rendering equation derived above, but reorganize reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.
+Nimier-David et al. [[7]](#ref-7) introduce **Radiative Backpropagation (RB)**. It begins from the same differential rendering equation derived above, but reorganizes reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.
 
 #### The Three Stages
 
@@ -2187,8 +2189,8 @@ We begin directly from the differential rendering equation $\eqref{eq:diff-rende
 
 $$
 \begin{aligned}
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_\pi L_e + \int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma + \oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\[0.8em]
-&\quad + \underbrace{ \int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \mathrm{d}\sigma }_{\textbf{Differential Scattering}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{ \partial_{\boldsymbol{\pi}} L_e + \int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma + \oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell }_{\textbf{Differential Emission } (Q(\mathbf{x}, \boldsymbol{\omega}_o))} \\[0.8em]
+&\quad + \underbrace{ \int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \mathrm{d}\sigma }_{\textbf{Differential Scattering}}
 \end{aligned}
 $$
 
@@ -2196,24 +2198,24 @@ Expanding the integrand terms explicitly yields:
 
 $$
 \begin{aligned}
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{\partial_\pi L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Direct Emission}} \\[0.8em]
-&\quad + \int_{\mathbb{S}^2} \left[ \underbrace{(\partial_\pi L_i) f_s}_{\text{Diff. Scattering}} + \underbrace{L_i (\partial_\pi f_s)}_{\text{Material Emission}} \right] \mathrm{d}\sigma \\[0.8em]
-&\quad + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral}}
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{\partial_{\boldsymbol{\pi}} L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Direct Emission}} \\[0.8em]
+&\quad + \int_{\mathbb{S}^2} \left[ \underbrace{(\partial_{\boldsymbol{\pi}} L_i) f_s}_{\text{Diff. Scattering}} + \underbrace{L_i (\partial_{\boldsymbol{\pi}} f_s)}_{\text{Material Emission}} \right] \mathrm{d}\sigma \\[0.8em]
+&\quad + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral}}
 \end{aligned}
 $$
 
-> **Note on Static Visibility Boundaries:** Nimier-David et al. [[7]](#ref-7) never actually write down the boundary term above — the general, boundary-aware equation is machinery imported from the Zhang et al. [[14]](#ref-14) framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper's own derivation assumes static geometry from the outset ($\partial_\pi \boldsymbol{\omega}_i = \mathbf{0}$), so for them **the Boundary Integral is simply absent**, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. [[10]](#ref-10) and Loubet et al. [[11]](#ref-11) as compatible options (Section 3.6 of the paper).
+> **Note on Static Visibility Boundaries:** Nimier-David et al. [[7]](#ref-7) never actually write down the boundary term above — the general, boundary-aware equation is machinery imported from the Zhang et al. [[14]](#ref-14) framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper's own derivation assumes static geometry from the outset ($\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i = \mathbf{0}$), so for them **the Boundary Integral is simply absent**, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. [[10]](#ref-10) and Loubet et al. [[11]](#ref-11) as compatible options (Section 3.6 of the paper).
 
 Grouping the non-scattering gradient source terms into the **Differential Emission** term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$:
 
 $$
-Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_\pi L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_\pi f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_\pi \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
+Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_{\boldsymbol{\pi}} L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
 $$
 
 the differential transport equation collapses to a single, deceptively simple statement:
 
 $$
-\partial_\pi L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_\pi L_i) f_s \,\mathrm{d}\sigma .
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \,\mathrm{d}\sigma .
 $$
 
 Read it as an energy balance for a fictitious kind of light: $Q$ is a **source** that "emits" differential radiance wherever a scene parameter directly changes emission or reflectance, and the remaining integral says that whatever differential radiance is already incident keeps **scattering** exactly like ordinary radiance would. This is the whole trick behind radiative backpropagation: instead of differentiating a rendering algorithm line by line, we get to reuse an *ordinary-looking transport equation*, just with $L_e$ swapped out for $Q$.
@@ -2227,13 +2229,13 @@ To make that reuse precise — and to set up reverse-mode propagation — the pa
 
 2. **Propagation operator $\mathcal{G}$** — this is the paper's own name for it; you'll also see it called a *ray transport operator*, since all it does is walk backward along a ray to the next surface. It turns outgoing radiance at the point you hit into incident radiance at the point you came from:
    $$
-   (\mathcal{G} h)(\mathbf{x}, \boldsymbol{\omega}_i) = h(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i), \qquad\text{so that}\qquad \partial_\pi L_i = \mathcal{G}\, \partial_\pi L_o.
+   (\mathcal{G} h)(\mathbf{x}, \boldsymbol{\omega}_i) = h(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i), \qquad\text{so that}\qquad \partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\, \partial_{\boldsymbol{\pi}} L_o.
    $$
 
-Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport — nothing new had to be invented here, which is precisely the point. Substituting $\partial_\pi L_i = \mathcal{G}\partial_\pi L_o$ into the scattering term folds the whole differential rendering equation into one compact line:
+Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport — nothing new had to be invented here, which is precisely the point. Substituting $\partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\partial_{\boldsymbol{\pi}} L_o$ into the scattering term folds the whole differential rendering equation into one compact line:
 
 $$
-\partial_\pi L_o = Q + \mathcal{K}\mathcal{G}\,\partial_\pi L_o \;\;\Longrightarrow\;\; \partial_\pi L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q,
+\partial_{\boldsymbol{\pi}} L_o = Q + \mathcal{K}\mathcal{G}\,\partial_{\boldsymbol{\pi}} L_o \;\;\Longrightarrow\;\; \partial_{\boldsymbol{\pi}} L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q,
 $$
 
 where $\mathcal{S} = \sum_{k=0}^\infty (\mathcal{K}\mathcal{G})^k$ sums over paths of every length — the operator equivalent of "trace a one-bounce path, then a two-bounce path, then a three-bounce path, and so on."
@@ -2312,6 +2314,101 @@ def radiative_backprop_sample(π, x, ω_o, weight):
     return δ_π + radiative_backprop_sample(π, y, ω_i, weight * bsdf_value / bsdf_pdf)
 ```
 
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Radiative Backpropagation (RB) PyTorch Implementation</summary>
+<div style="margin-top: 1rem;">
+
+```python
+import torch
+from scene import Scene
+from camera import Camera
+from ray import Ray
+
+
+def _flip_normal(n, d):
+    """Flip shading normal to face against the ray direction."""
+    return torch.where((n * d).sum(-1, keepdim=True) > 0, -n, n)
+
+
+def L_i(scene: Scene, x, wi, max_depth):
+    """Estimate incoming radiance without building an autograd graph."""
+    with torch.no_grad():
+        L = torch.zeros_like(x)
+        throughput = torch.ones_like(x)
+        ray = Ray(x, wi)
+        for _ in range(max_depth):
+            si = scene.intersect(ray)
+            valid = si.is_valid()
+            n = _flip_normal(si.n, ray.dirs)
+
+            L += torch.where(valid, throughput * si.emission, 0.0)
+            wi, bsdf_value, bsdf_pdf = si.bsdf.sample(-ray.dirs, n)
+            throughput = torch.where(valid, throughput * bsdf_value / bsdf_pdf, 0.0)
+            ray = Ray(si.p + n * 1e-3, wi)
+        return L
+
+
+class RBPathTracer:
+    """Radiative Backpropagation (Nimier-David et al. 2020)."""
+
+    def __init__(self, max_depth=5, num_samples=128):
+        self.max_depth = max_depth
+        self.num_samples = num_samples
+
+    def sample_path(self, scene: Scene, camera: Camera, seed: int = 42):
+        """Primal render, independent of the adjoint pass."""
+        torch.manual_seed(seed)
+        accum = torch.zeros_like(camera.origins)
+
+        for _ in range(self.num_samples):
+            rays = camera.sample()
+            accum += L_i(scene, rays.origins, rays.dirs, self.max_depth)
+
+        return accum / self.num_samples
+
+    def radiative_backprop_sample(self, scene: Scene, x, wo, weight):
+        """radiative_backprop_sample(π, x, ω_o, weight), unrolled over max_depth bounces."""
+        weight = weight.detach()
+        ray = Ray(x, wo)
+
+        for depth in range(self.max_depth):
+            si = scene.intersect(ray)
+            valid = si.is_valid()
+            n = _flip_normal(si.n, ray.dirs)
+
+            Le = torch.where(valid, si.emission, torch.zeros_like(si.emission))
+            if Le.requires_grad:
+                (Le * weight).sum().backward()
+
+            if depth + 1 == self.max_depth:
+                break
+
+            wo = -ray.dirs.detach()
+            wi, bsdf_value, bsdf_pdf = si.bsdf.sample(wo, n.detach())
+            f_s = si.bsdf.eval(wo, n, wi.detach())
+            y = si.p.detach() + n.detach() * 1e-3
+            Li = L_i(scene, y, wi.detach(), self.max_depth - depth - 1)
+
+            adjoint = torch.where(valid, weight * Li / bsdf_pdf.detach(), 0.0)
+            if f_s.requires_grad:
+                (f_s * adjoint.detach()).sum().backward()
+
+            with torch.no_grad():
+                weight = torch.where(valid, weight * bsdf_value / bsdf_pdf, 0.0)
+                ray = Ray(si.p + n * 1e-3, wi)
+
+    def radiative_backprop(self, scene: Scene, camera: Camera, dL):
+        """radiative_backprop(π, δ_y): seed each sensor ray with weight = δ_y / num_samples."""
+        for _ in range(self.num_samples):
+            rays = camera.sample()
+            weight = dL / self.num_samples
+            self.radiative_backprop_sample(scene, rays.origins, rays.dirs, weight)
+```
+</div>
+</details>
+</blockquote>
+
 The paper does not claim that camera-path sampling is the only estimator. It points out that $Q$ may have large components at specific differentiable objects, suggesting connection strategies analogous to next-event estimation. If many of those connections are occluded, scattering them before connection leads to a family of bidirectional strategies. Casting reverse differentiation as transport is useful precisely because ordinary rendering tools such as importance sampling, next-event estimation, and bidirectional connection strategies become available.
 
 #### Assumptions and Loose Ends
@@ -2320,10 +2417,10 @@ The derivation and prototype make several explicit assumptions:
 
 - **Static Sensor Importance:** Sensor importance $W_k$ is treated as static. A differentiable camera would contribute an additional local derivative term.
 - **Self-Adjoint Operators:** Surface operators are self-adjoint under reciprocal, energy-conserving BSDFs and the ray-space measure. Nonreciprocal transport (e.g. non-reciprocal BSDFs or camera lenses) would require true adjoint operators rather than reusing primal ones.
-- **Volumetric Extension:** The same adjoint construction extends directly to participating media by replacing surface transport operators with their volumetric counterparts (RBP paper, Appendix A.1).
+- **Volumetric Extension:** The same adjoint construction extends directly to participating media by replacing surface transport operators with their volumetric counterparts (RB paper, Appendix A.1).
 - **Visibility Derivatives (Edge Sampling vs. Reparameterization):** 
   - **Edge Sampling (Li et al., 2018) [[10]](#ref-10):** Explicitly samples silhouette edges, which requires modifying the theoretical formulation to add extra 1D boundary integral terms to the differential emission source $Q$.
-  - **Reparameterization / Change of Variables (Loubet et al., 2019) [[11]](#ref-11):** Performs a parameter-dependent coordinate warp so that discontinuities remain static under scene perturbations ($\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_i = \mathbf{0}$). This allows RBP to compute visibility-aware gradients **without changing any of the adjoint derivations**.
+  - **Reparameterization / Change of Variables (Loubet et al., 2019) [[11]](#ref-11):** Performs a parameter-dependent coordinate warp so that discontinuities remain static under scene perturbations ($\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_i = \mathbf{0}$). This allows RB to compute visibility-aware gradients **without changing any of the adjoint derivations**.
 
 At an intersection $\mathbf{y} = r(\mathbf{x}, \boldsymbol{\omega}_o)$, an adjoint path contributes two local VJPs corresponding to the terms of $Q$:
 
@@ -2348,7 +2445,7 @@ A key practical bottleneck is that the differential emission term $Q$ depends on
 
 To mitigate this quadratic overhead in long light paths, one can precompute an approximate spatio-directional data structure during the primal phase (such as a **Path Guiding tree** [Müller et al., 2017] [[15]](#ref-15)) to perform fast $\mathcal{O}(1)$ interpolant queries of $L_i$ during adjoint backpropagation.
 
-Thus, RBP solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.
+Thus, RB solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.
 
 {{< figure src="/images/diff-rendering/radiative_backpropagation/algorithm.png" id="fig-rbp-algorithm" caption="Illustration of the quadratic **$\mathcal{O}(D^2)$** complexity in Radiative Backpropagation. An adjoint path launched from the camera (**black rays**) evaluates local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) at each differentiable surface hit (**red dots**). To estimate the unknown primal incident radiance $L_i$ in $Q$, a recursive primal path-tracing query (**gray rays**) is launched at every bounce." width="100%" >}}
 
@@ -2359,7 +2456,7 @@ The paper studies two faster approximations:
 - **Biased I:** replace $L_i$ in $Q$ by $1$. This removes recursive radiance queries and reduces time to $O(D)$, but changes the gradient.
 - **Biased II:** pipeline optimization by using the previous iteration's adjoint rendering with the current iteration's rendering Jacobian. This overlaps primal and adjoint work but introduces an intentional one-iteration mismatch.
 
-The RBP paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. [[13]](#ref-13) give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.
+The RB paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. [[13]](#ref-13) give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.
 
 For Biased II, if superscripts denote optimization iterations, the propagated quantity is
 
@@ -2549,28 +2646,25 @@ def _flip_normal(n, d):
 
 
 class PRBPathTracer:
-    def __init__(self, max_depth=5, num_samples=128, chunk_size=4):
+    """Path Replay Backpropagation (Vicini et al. 2021)."""
+
+    def __init__(self, max_depth=5, num_samples=128):
         self.max_depth = max_depth
         self.num_samples = num_samples
-        self.chunk_size = chunk_size
 
         self.seed = 42
-        self._primal_chunks = []  # per-chunk L_N, set by sample_path
+        self._primal_samples = []
 
     def sample_path(self, scene: Scene, camera: Camera, seed: int = 42):
         self.seed = seed
         torch.manual_seed(seed)
 
-        rays = camera.sample()
-        self._primal_chunks.clear()
-        accum = torch.zeros_like(rays.origins)
+        self._primal_samples.clear()
+        accum = torch.zeros_like(camera.origins)
 
         with torch.no_grad():
-            for s in range(0, self.num_samples, self.chunk_size):
-                c = min(self.chunk_size, self.num_samples - s)
-                ray = Ray(rays.origins.expand(c, -1, -1, -1),
-                          rays.dirs.expand(c, -1, -1, -1))
-
+            for _ in range(self.num_samples):
+                ray = camera.sample()
                 L = torch.zeros_like(ray.origins)
                 throughput = torch.ones_like(ray.origins)
 
@@ -2580,27 +2674,24 @@ class PRBPathTracer:
                     n = _flip_normal(si.n, ray.dirs)
 
                     L += torch.where(valid, throughput * si.emission, 0.0)
-                    wi, w = si.bsdf.sample(-ray.dirs, n)
-                    throughput = torch.where(valid, throughput * w, 0.0)
+                    wi, bsdf_value, bsdf_pdf = si.bsdf.sample(-ray.dirs, n)
+                    throughput = torch.where(valid & (bsdf_pdf > 1e-8), throughput * bsdf_value / torch.clamp(bsdf_pdf, min=1e-8), 0.0)
                     ray = Ray(si.p + n * 1e-3, wi)
 
-                self._primal_chunks.append(L)
-                accum += L.sum(0)
+                self._primal_samples.append(L)
+                accum += L
 
-        return torch.clamp(accum / self.num_samples, 1e-6, 1.0)
+        return accum / self.num_samples
 
     def sample_adjoint(self, scene: Scene, camera: Camera, _primal_img, dL):
         torch.manual_seed(self.seed)
 
-        rays = camera.sample()
         scale = dL / self.num_samples
 
-        for idx, s in enumerate(range(0, self.num_samples, self.chunk_size)):
-            c = min(self.chunk_size, self.num_samples - s)
-            ray = Ray(rays.origins.expand(c, -1, -1, -1),
-                      rays.dirs.expand(c, -1, -1, -1))
-
-            L = self._primal_chunks[idx]        # L_N from pass 1
+        for sample_idx in range(self.num_samples):
+            ray = camera.sample()
+            ray = Ray(ray.origins.detach(), ray.dirs.detach())
+            L = self._primal_samples[sample_idx]
             throughput = torch.ones_like(ray.origins)
 
             for _ in range(self.max_depth):
@@ -2614,21 +2705,20 @@ class PRBPathTracer:
                 L = L - Le.detach()
 
                 # same random stream -> identical (wi, w)
-                wi, w = si.bsdf.sample(-ray.dirs, n)
+                wi, bsdf_value, bsdf_pdf = si.bsdf.sample(-ray.dirs, n)
 
                 # differentiable f_s re-evaluation
                 f_s = si.bsdf.eval((-ray.dirs).detach(), n, wi.detach())
 
                 # dπ += J_{Le}^T(dL)  +  J_{f_s}^T(dL * R_k / f_s)
                 Lo = Le + torch.where(valid, L * relative_grad(f_s), 0.0)
-                adj = scale.unsqueeze(0).expand_as(Lo).detach()
-                (adj * Lo).sum().backward()
+                (scale.detach() * Lo).sum().backward()
 
                 # advance (fully detached)
                 with torch.no_grad():
-                    throughput = torch.where(valid, throughput * w,
+                    throughput = torch.where(valid & (bsdf_pdf > 1e-8), throughput * bsdf_value / torch.clamp(bsdf_pdf, min=1e-8),
                                              torch.zeros_like(throughput))
-                    ray = Ray(si.p + n * 1e-3, wi)
+                    ray = Ray((si.p + n * 1e-3).detach(), wi.detach())
 ```
 </div>
 </details>
@@ -2863,23 +2953,20 @@ The ultimate payoff of the Path Replay Backpropagation framework is summarized i
 
 PRB strictly removes the path-length memory and time bottlenecks, successfully bringing the computational cost of unbiased differentiable rendering down to match that of standard forward path tracing.
 
-## Modern Advances in Differentiable Rendering
+## Conclusion
 
-While the foundational theory of differentiable Monte Carlo rendering operates on standard geometric representations and path-tracing operators, translating these concepts into robust, scalable, and low-variance algorithms is a subject of active research. The resources in this area highlight several significant shifts in how geometry is represented and differentiated:
+Differentiable rendering bridges the gap between physics-based light transport and gradient-based optimization. As we have seen, taking the derivative of a rendering algorithm is far from trivial. From the fundamental problem of discontinuous visibility requiring the Reynolds Transport Theorem, to the memory-intensive challenges of differentiating recursive light paths, the field has developed elegant mathematical solutions like Radiative Backpropagation and Path Replay Backpropagation to achieve $\mathcal{O}(1)$-memory unbiased gradients.
 
-### 1. Differentiable Signed Distance Functions (SDFs)
-Traditional mesh representations suffer from topological constraints during optimization: they cannot easily split, merge, or change genus without complex manual re-meshing. To solve this, **Vicini et al. (2022)** [[3]](#ref-3) introduced a method for **Differentiable Signed Distance Function Rendering**. By representing the scene geometry implicitly via the zero-level set of an SDF, the geometry can undergo topological changes during image-based optimization. The authors extend sphere tracing so that its intermediate SDF evaluations construct a valid reparameterization of visibility discontinuities. Under the paper's assumptions, this yields an unbiased gradient estimator and enables shape and texture reconstruction using only a per-pixel RGB loss, without silhouette or mask supervision.
+While the foundational theory operates on standard geometric representations and path-tracing operators, translating these concepts into robust, scalable, and low-variance algorithms remains an exciting area of active research. 
 
-### 2. Exchanging Unbiasedness for Low Variance
-Unbiased boundary integrals (Reynolds Transport Theorem) require tracing additional rays to explicitly sample silhouette edges. For implicit surfaces like SDFs, detecting these edges can be extremely expensive and complex. **Wang et al. (2024)** [[4]](#ref-4) proposed **A Simple Approach to Differentiable Rendering of SDFs**, which explores a key trade-off: accepting a small, controlled amount of numerical bias in exchange for a massive reduction in variance and code complexity. Their formulation expands the 2D boundary integral into a thin 3D band around the surface where the occupancy function is smoothed. Inside this band, standard automatic differentiation can be applied directly. This method is structurally simple, requires no silhouette-searching data structures, and achieves competitive results on practical inverse rendering tasks.
+### Further Reading
+For those interested in exploring state-of-the-art developments and modern inverse rendering frameworks, consider the following resources:
 
-### 3. Projective Silhouette Sampling
-To reduce the high variance associated with boundary integrals on complex mesh geometry, **Zhang et al. (2023)** [[5]](#ref-5) introduced **Projective Sampling for Differentiable Rendering**. Instead of relying on complex hierarchical structures to find silhouette edges beforehand, they proposed to project light path segments generated during standard primal path tracing onto nearby silhouette edges. This local geometric projection transforms the boundary derivative into a simple, local integral that is easy to evaluate. Compared to prior edge sampling techniques, uniform guiding alone cuts gradient estimation error (RMSE) by roughly 8x on average, and adding adaptive guiding compounds this to roughly 22x.
-
-### 4. Many-Worlds Inverse Rendering
-Inverse rendering optimizations are highly non-convex and easily get trapped in local minima, especially when starting from an empty scene or when objects are completely occluded. **Zhang et al. (2025)** [[6]](#ref-6) introduced **Many-Worlds Inverse Rendering** to address this limitation. Rather than evolving a surface locally via gradient descent, their approach considers adding hypothetical surface patches anywhere in 3D space. They evaluate a superposition of independent, competing surface hypotheses that do not shadow or scatter light from each other, allowing gradients to flow from empty space. This framework combines the optimization robustness of volumetric representations (starting from scratch) with the computational efficiency of surface rendering, avoiding expensive transmittance and multiple scattering evaluations.
-
-*Note: I might create a follow-up post expanding further on these modern advances in differentiable rendering in the near future!*
+*   **Mitsuba 3 Documentation:** A highly flexible, retargetable forward and differentiable renderer. [Read the docs](https://mitsuba.readthedocs.io/en/stable/)
+*   **Differentiable Signed Distance Function Rendering** (Vicini et al., 2022): Optimizing geometry using implicit SDFs to allow topological changes. [DOI: 10.1145/3528223.3530139](https://doi.org/10.1145/3528223.3530139)
+*   **Projective Sampling for Differentiable Rendering of Geometry** (Zhang et al., 2023): Reducing variance via local geometric projection of light paths onto silhouette edges. [DOI: 10.1145/3618385](https://doi.org/10.1145/3618385)
+*   **A Simple Approach to Differentiable Rendering of SDFs** (Wang et al., 2024): Exchanging unbiasedness for low variance and structural simplicity in SDF rendering. [DOI: 10.1145/3680528.3687573](https://doi.org/10.1145/3680528.3687573)
+*   **Many-Worlds Inverse Rendering** (Zhang et al., 2025): Avoiding local minima by evaluating a superposition of independent surface hypotheses. [DOI: 10.1145/3767318](https://doi.org/10.1145/3767318)
 
 
 ## References
