@@ -30,7 +30,9 @@
     border-radius: 6px;
   }
   #{{ $id }} .mj-dim{ color: #9ca3af; }
-  #{{ $id }} .eq-stack{ display: grid; gap: 10px; }
+  #{{ $id }} .eq-stack{ display: block; }
+  #{{ $id }} .eq-stack > * { margin-bottom: 10px; }
+  #{{ $id }} .eq-stack > *:last-child { margin-bottom: 0; }
 </style>
 
 <div class="step-slider-container {{ if eq $animate "false" }}no-anim{{ end }}"

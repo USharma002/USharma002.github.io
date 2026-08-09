@@ -97,7 +97,7 @@ class PathTracer:
 
 ### Finite Differences and Simultaneous Perturbation
 
-The simplest approach to derivative estimation is the **finite difference (FD)** method. For a scalar function $f: \mathbb{R} \to \mathbb{R}$, the forward difference estimator approximates the derivative at $x$ using a small step size $h > 0$:
+The simplest approach to gradient computation is the **finite difference (FD)** method. For a scalar function $f: \mathbb{R} \to \mathbb{R}$, the forward difference estimator approximates the derivative at $x$ using a small step size $h > 0$:
 
 $$
 f'(x) \approx \frac{f(x + h) - f(x)}{h}
@@ -130,7 +130,7 @@ where $K_h(u) = \frac{1}{2h}\mathbf{1}_{[-h,h]}(u)$ is a rectangular boxcar kern
 
 This blurring can produce inaccurate gradients when $f$ contains high-frequency features or discontinuities. The bias vanishes as $h \to 0$, but infinitely small steps are numerically fragile: in floating-point arithmetic, catastrophic cancellation degrades precision, and in Monte Carlo rendering, small differences become overwhelmed by stochastic sampling noise.
 
-It is straightforward to apply finite differences to a renderer by generating the image once with the original parameter and once with the perturbed parameter. With a Monte Carlo renderer, though, the evaluation of $f$ is noisy, and if $f(x + h)$ and $f(x)$ are evaluated independently, the FD estimator needs an enormous number of samples to converge. Using **Common Random Numbers (CRN)**—seeding both evaluations with identical random number generator streams—resolves this: because the Monte Carlo noise in $f(x+h)$ and $f(x)$ becomes strongly correlated, a significant portion of the variance cancels out.
+It is straightforward to apply finite differences to a renderer by generating the image once with the original parameter and once with the perturbed parameter. With a Monte Carlo renderer, though, the evaluation of $f$ is noisy, and if $f(x + h)$ and $f(x)$ are evaluated independently, the FD estimator needs an enormous number of samples to converge. Using **Common Random Numbers (CRN)** (seeding both evaluations with identical random number generator streams) resolves this because the Monte Carlo noise in $f(x+h)$ and $f(x)$ becomes strongly correlated, a significant portion of the variance cancels out.
 
 Fundamentally, finite differences do not scale to functions with many input parameters due to the **curse of dimensionality**. For inverse rendering with a scene parameter vector $\mathbf{x} = (x_1, \dots, x_n)^T \in \mathbb{R}^n$ (such as meshes, textures, and volumes with millions of degrees of freedom), central differences would require rendering the image $2n$ times per gradient step ($f(x_1, \dots, x_i \pm h, \dots, x_n)$ for every parameter $i$). This is computationally impractical. An alternative is **Simultaneous Perturbation Stochastic Approximation (SPSA)**, which estimates high-dimensional gradients by randomly offsetting all parameters at once.
 
@@ -146,7 +146,7 @@ $$
 \hat{g}_i(\mathbf{x}) = \frac{f(\mathbf{x} + h \cdot \boldsymbol{\Delta}) - f(\mathbf{x} - h \cdot \boldsymbol{\Delta})}{2h \, \Delta_i}
 $$
 
-The random perturbation vector $\boldsymbol{\Delta}$ has entries drawn independently from a mean-zero, symmetric distribution with bounded inverse moments—in practice, almost always a **Rademacher distribution** (each entry $\Delta_i = \pm 1$ with equal probability). A Gaussian $\boldsymbol{\Delta}$ cannot be used here: its probability density is non-zero at $0$, so $\Delta_i^{-1}$ has infinite variance and the estimator blows up.
+The random perturbation vector $\boldsymbol{\Delta}$ has entries drawn independently from a mean-zero, symmetric distribution with bounded inverse moments, in practice, almost always a **Rademacher distribution** (each entry $\Delta_i = \pm 1$ with equal probability). A Gaussian $\boldsymbol{\Delta}$ cannot be used here: its probability density is non-zero at $0$, so $\Delta_i^{-1}$ has infinite variance and the estimator blows up.
 
 <iframe src="/interactive/diff-render/spsa.html" width="100%" height="540px" frameborder="0" style="border:none; width:100%; overflow:hidden;"></iframe>
 
@@ -226,6 +226,43 @@ plot_fd(img_base, img_pert, fd_grad, "Albedo", h, vmin=-0.5, vmax=0.5)
 </details>
 </blockquote>
 
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
+  <div>
+    {{< figure src="/images/diff-rendering/base_render.png" caption="Teapot Initial Render" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/perturbed_roughness_render.png" caption="Perturbed Render (Roughness)" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/fd_roughness_gradient_map.png" caption="Gradient w.r.t Roughness (Interior Integral)" width="100%" >}}
+  </div>
+</div>
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Generating roughness gradient</summary>
+<div style="margin-top: 1rem;">
+
+```python
+scene_path = 'scenes/teapot/teapot.xml'
+if not os.path.exists(scene_path): scene_path = 'scenes/teapot/scene.xml'
+scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
+img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh = scene.get_mesh("teapot")
+
+h = 0.1
+mesh.roughness += torch.tensor([h], device=device)
+img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh.roughness -= torch.tensor([h], device=device)
+
+fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
+plot_fd(img_base, img_pert, fd_grad, "Roughness", h, vmin=-25, vmax=25)
+```
+</div>
+</details>
+</blockquote>
+
 {{< figure src="/images/diff-rendering/cube_optimization_fd.gif" id="fig-cube-opt" caption="Optimization process mapping scene parameters to target image using finite differences." width="100%" >}}
 
 ### Automatic Differentiation
@@ -235,13 +272,18 @@ $$
 \frac{d}{dx}g(f(x)) = g'(f(x))f'(x).
 $$
 
-For vector-valued functions, the same rule becomes a product of Jacobian matrices. AD evaluates the required Jacobian products without constructing the full matrices.
+For vector-valued functions, the same rule becomes a product of Jacobian matrices.
+$$
+\partial_{\mathbf{x}} [g(f(\mathbf{x}))] = \mathbf{J}_g(f(\mathbf{x})) \mathbf{J}_f(\mathbf{x}),
+$$
+
+AD evaluates the required Jacobian products without constructing the full matrices.
 
 {{< figure src="/images/diff-rendering/svgtex/auto-diff.svg" id="fig-auto-diff-graph" caption="Example computation graph corresponding to the expression $x^2 \sin(2xy)$. The edge weights are the derivative of the operation applied to the input node." width="100%" >}}
 
-This evaluates the chain rule without finite-difference truncation error, though the computation remains subject to ordinary floating-point roundoff. Automatic differentiation was introduced between the 1950s and 1970s and later became widely used for neural network training. The following overview focuses on the parts that matter for inverse rendering. A nice implementation of this concept by Andrej Karpathy can be found on YouTube [here](https://www.youtube.com/watch?v=VMj-3S1tku0).
+This evaluates the chain rule without finite-difference truncation error, though the computation remains subject to ordinary floating-point roundoff. Automatic differentiation was introduced between the 1950s and 1970s and later became widely used for neural network training. The following overview focuses on the parts that matter for inverse rendering. A good resource on implementation of this concept by Andrej Karpathy can be found on YouTube [here](https://www.youtube.com/watch?v=VMj-3S1tku0).
 
-**Computation graphs.** The central idea is to view a computation as a graph of operations. The individual operations are nodes, and the derivatives of individual steps are assigned to the graph's edges. For example, consider:
+**Computation graphs.** The central idea is to view a computation as a *graph* of operations. The individual operations are nodes, and the derivatives of individual steps are assigned to the graph's edges. For example, consider:
 
 $$
 \begin{equation}
@@ -249,7 +291,7 @@ x^2 \sin(2xy) \label{eq:forward-mode}
 \end{equation}
 $$
 
-In a computer program, we could implement the evaluation of this expression as a sequence of steps:
+In a computer program, the evaluation of this expression could be implemented as a sequence of steps:
 ```python
 a = 2 * x
 b = a * y
@@ -260,18 +302,19 @@ e = d * c
 
 The corresponding computation graph is shown in {{< figref "fig-auto-diff-graph" >}}. Each edge stores a *local derivative*. For example, because $b=ay$, the edge from $a$ to $b$ has derivative $\partial b/\partial a=y$. AD combines these local derivatives to obtain the derivative of the final output. The ordinary evaluation of the function is called the *primal* computation, and the saved operations are often called a *tape* or *Wengert tape*.
 
+
 #### Forward-mode Differentiation
 
-A key choice in AD is the direction in which derivatives move through the graph. **Forward mode** starts at one input and carries its derivative toward the outputs. It is most efficient when there are few inputs and many outputs.
+A key choice in AD algorithms is the *directionality* of the gradient computation. **Forward mode** starts at one input and carries its derivative toward the outputs. If the computation has a single differentiable input variable, but many outputs, it is efficient to evaluate gradients from the variable to the output in the forward direction. 
 
-For a function $\mathbf{y}=f(\mathbf{x})$, forward mode computes a Jacobian-vector product (JVP):
+Mathematically, the differentiation turns into a series of *Jacobian-vector products* (JVP). For a function $\mathbf{y}=f(\mathbf{x})$, forward-mode AD computes the output gradient $\delta_{\mathbf{y}}$ as the product of the Jacobian $\mathbf{J}_f$ with the input gradient $\delta_{\mathbf{x}}$:
 $$
-\partial_{\mathbf{v}}\mathbf{y} = \mathbf{J}_f(\mathbf{x})\mathbf{v}.
+\delta_{\mathbf{y}} = \mathbf{J}_f\delta_{\mathbf{x}}.
 $$
 
-Here, $\mathbf{v}$ selects the input direction. For a scalar input $x$, we write $\partial_x a := \partial a/\partial x$ for the derivative of an intermediate value $a$. To differentiate with respect to $x$, we seed $\partial_x x=1$ and $\partial_x y=0$. Every later $\partial_x v$ is computed alongside its ordinary value $v$.
+Here and in the following, we use $\delta$ to denote vectors and scalars that are inputs and outputs of Jacobian products. To differentiate with respect to $x$, we first initialize a variable $\delta x = 1$ (and $\delta y = 0$) and then traverse the graph from left to right, in each step multiplying the derivative value by the stored edge weights. Every later $\delta v$ is computed alongside its ordinary primal value $v$.
 
-The interactive simulation below first computes $\partial e/\partial x$, then repeats the sweep for $\partial e/\partial y$:
+The interactive simulation below first computes the derivative of the output $e$ with respect to $x$, then repeats the sweep for $y$:
 
 {{< step-slider animate="false" >}}
 
@@ -285,96 +328,96 @@ The interactive simulation below first computes $\partial e/\partial x$, then re
 - image: "/images/diff-rendering/svgtex/forward_ad/step-02svg.svg"
   description: |
     <div class="eq-stack">
-                Set $\partial_x x=1$ and $\partial_x y=0$ to start the derivative with respect to $x$.
+      Set $\delta x=1$ and $\delta y=0$ to start the derivative with respect to $x$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-03svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_x a=2\,\partial_x x=2$.
+                $\delta a=\delta x \cdot 2 = 1(2)=2$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-04svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_x b=y\,\partial_x a+a\,\partial_x y=3(2)+4(0)=6$.
+      $\delta b=\delta a \cdot y+a \cdot \delta y=2(3)+4(0)=6$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-05svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_x c=\cos(b)\,\partial_x b=\cos(12)(6)\approx5.06$.
+                $\delta c=\delta b \cdot \cos(b)=6\cos(12)\approx5.06$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-06svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_x d=2x\,\partial_x x=2(2)(1)=4$.
+                $\delta d=\delta x \cdot 2x=1(4)=4$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-07svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_x e=c\,\partial_x d+d\,\partial_x c\approx(-0.54)(4)+4(5.06)=18.11$.
+                $\delta e=\delta c \cdot d+c \cdot \delta d \approx 5.06(4)+(-0.54)(4)=18.11$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-08svg.svg"
   description: |
     <div class="eq-stack">
-        To compute $\partial e/\partial y$, reset the derivatives and run the graph again.
+        To compute the derivative with respect to $y$, reset the gradients and run the graph again.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-09svg.svg"
   description: |
     <div class="eq-stack">
-                Set $\partial_y x=0$ and $\partial_y y=1$ to start the derivative with respect to $y$.
+                Set $\delta x=0$ and $\delta y=1$ to start the derivative with respect to $y$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-10svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_y a=2\,\partial_y x=0$.
+                $\delta a=\delta x \cdot 2=0$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-11svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_y b=y\,\partial_y a+a\,\partial_y y=3(0)+4(1)=4$.
+                $\delta b=\delta a \cdot y+a \cdot \delta y=0(3)+4(1)=4$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-12svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_y c=\cos(b)\,\partial_y b=\cos(12)(4)\approx3.38$.
+                $\delta c=\delta b \cdot \cos(b)=4\cos(12)\approx3.38$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-13svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_y d=2x\,\partial_y x=0$.
+                $\delta d=\delta x \cdot 2x=0$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/forward_ad/step-14svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial_y e=c\,\partial_y d+d\,\partial_y c=0+4(3.38)=13.50$.
+                $\delta e=\delta c \cdot d+c \cdot \delta d=3.38(4)+0=13.50$.
     </div>
 
 {{< /step-slider >}}
 
-Each forward sweep gives the derivative with respect to one chosen input. It never constructs the full Jacobian $\mathbf{J}_f$, but its cost grows with the number of inputs because the graph must be traversed again for each one. Forward mode is therefore a good fit for functions with a small number of inputs and many outputs.
+Each forward sweep gives the derivative with respect to one chosen input. In the end, the variable $\delta e$ contains the full derivative. Forward mode never explicitly computes and stores the full Jacobian $\mathbf{J}_f$ of the program, but its cost grows with the number of inputs because the graph must be traversed again for each one. 
 
-Forward mode can be implemented with *dual numbers*. A dual number $a + \epsilon b$ stores an ordinary value $a$ and its derivative $b$, with the rule $\epsilon^2 = 0$. Multiplication then gives:
+Forward-mode differentiation can be formalized by using *dual numbers*. Similar to a complex number, a dual number $a + \epsilon b$ stores a real part $a$ and a dual part $b$. The symbol $\epsilon$ satisfies $\epsilon^2 = 0$ and hence the product of two dual numbers is:
 $$
-(a + \epsilon b)(c + \epsilon d) = ac + \epsilon (ad + bc).
+(a + \epsilon b)(c + \epsilon d) = ac + (ad + bc)\epsilon.
 $$
-The first part, $ac$, is the ordinary product. The coefficient of $\epsilon$, $ad+bc$, is exactly the product rule for its derivative. More generally, $f(a+\epsilon b)=f(a)+\epsilon b f'(a)$, so evaluating a program with dual numbers computes each value and derivative together.
+The first part, $ac$, is the ordinary product. The coefficient of $\epsilon$, $ad+bc$, is exactly the product rule for its derivative. For a function $f$, we can use a Taylor expansion around $a$ to see that $f(a+\epsilon b)=f(a)+\epsilon b f'(a)$. All higher-order terms contain a factor $\epsilon^2$ and vanish. Therefore, we can compute both the used edge weights and their application to the gradient variables alongside the primal computation.
 
-The main issue with forward-mode differentiation is that the entire derivative computation needs to be carried out separately for *each* input variable. Similar to finite differences, this does not scale to the large number of input parameters for inverse rendering.
+The main issue with forward-mode differentiation is that the entire derivative computation needs to be carried out separately for *each* input variable. Similar to finite differences, this does not scale to the large number of parameters encountered in inverse rendering.
 
 #### Forward AD Code Example
 
-Here is the code for the above example:
+Here is the code for the above example using operator overloading for dual numbers:
 
 ```python
 import math
@@ -395,7 +438,7 @@ class Dual:
         other_real = other.real if isinstance(other, Dual) else other
         other_dual = other.dual if isinstance(other, Dual) else 0.0
 
-        # (a + eb) * (c + ed) = (ac) + e(ad + bc)
+        # (a + eb) * (c + ed) = (ac) + (ad + bc)e
         real = self.real * other_real
         dual = self.real * other_dual + self.dual * other_real
         return Dual(real, dual)
@@ -430,35 +473,33 @@ print("Result:", e)
 ```
 
 #### Reverse-mode Differentiation
-**Reverse mode** traverses the graph in the opposite direction. It starts at one output and asks how sensitive that output is to every earlier value. For the scalar output $e$, define
+The solution to the forward-mode scaling limitation is to traverse the computation graph in *reverse* order. Given a sequence of operations, **reverse-mode** AD will start by evaluating the chain rule for the last operation and proceed toward the input of the algorithm.
+
+Mathematically, reverse-mode computation evaluates *vector-Jacobian products* (VJP) from the output end of the computation. For a function $f$, it evaluates:
 $$
-\partial v := \frac{\partial e}{\partial v}.
-$$
-In this reverse-mode section, the compact symbol $\partial v$ means "the derivative of the final output $e$ with respect to $v$." For example, $\partial x=\partial e/\partial x$. Reverse mode initializes $\partial e=1$ and propagates these derivatives backward using the chain rule. In vector notation this is a vector-Jacobian product (VJP):
-$$
-\partial\mathbf{x}=\mathbf{J}_f(\mathbf{x})^T\partial\mathbf{y}.
+\delta_{\mathbf{x}} = \delta_{\mathbf{y}}^T\mathbf{J}_f.
 $$
 
-A single reverse traversal computes the gradients for all inputs that affect the chosen output. This is why reverse mode is effective for inverse rendering, where millions of scene parameters contribute to one scalar loss. It is also the method used by **backpropagation** in neural networks.
+The advantage of this evaluation order is that the gradient computation no longer needs to be duplicated for each input variable. A single reverse traversal computes the gradients for all inputs that affect the chosen output, which is why reverse mode (also known as **backpropagation**) is effective for optimization problems with millions of parameters.
 
 For the graph $a=2x$, $b=ay$, $c=\sin(b)$, $d=x^2$, and $e=dc$, the complete reverse pass is:
 
 $$
 \begin{aligned}
-\partial e &= 1, \\
-\partial d &= (\partial e)c, & \partial c &= (\partial e)d, \\
-\partial b &= (\partial c)\cos(b), \\
-\partial a &= (\partial b)y, \\
-\partial x &= (\partial d)2x+(\partial a)2, \\
-\partial y &= (\partial b)a=(\partial b)2x.
+\delta e &= 1, \\
+\delta d &= \delta e \cdot c, & \delta c &= \delta e \cdot d, \\
+\delta b &= \delta c \cdot \cos(b), \\
+\delta a &= \delta b \cdot y, \\
+\delta x &= \delta d \cdot 2x + \delta a \cdot 2, \\
+\delta y &= \delta b \cdot a.
 \end{aligned}
 $$
 
-The two terms in $\partial x$ are accumulated because $x$ reaches the output through both $a$ and $d$. Notice that the final line uses $\partial b$: $y$ is an input to $b=ay$, whereas $\partial a$ already includes the separate local factor $y$.
+The two terms in $\delta x$ are accumulated because $x$ reaches the output through both $a$ and $d$. Notice that the final line uses $\delta b$: $y$ is an input to $b=ay$, whereas $\delta a$ already encompasses the specific local factor $y$ and corresponds only to the $a$ branch.
 
-Reverse mode is more difficult to implement because the backward pass needs values from the earlier primal computation. These values and operations are stored on the tape.
+Reverse mode is generally more difficult to implement than forward mode. Since it propagates gradients *opposite* to the primal program's computation order, it requires storing some of the edge weights of the computation graph in memory to be able to run efficiently. 
 
-A naïve implementation that doesn't store weights would require re-running the primal computation for every node, leading to quadratic complexity. Conversely, storing the entire graph can easily exceed system memory for complex simulations. The standard remedy is **checkpointing**, where the program state is only stored at a sparse set of points. Derivative terms are then recomputed locally between these checkpoints during the backward traversal. As we will see, even checkpointing is often insufficient for physically-based differentiable rendering, requiring more specialized solutions.
+If we naïvely implemented reverse-mode AD without storing any edge weights, each gradient step would require re-running the primal computation up to the current node. This quadratic complexity is unusable in practice. Conversely, storing the entire graph can easily exceed system memory. The standard remedy is **checkpointing**, where the program state is only stored at a sparse set of points. As we will see, even checkpointing is often insufficient for physically-based differentiable rendering, requiring more specialized solutions.
 
 {{< step-slider animate="false" >}}
 
@@ -472,31 +513,31 @@ A naïve implementation that doesn't store weights would require re-running the 
 - image: "/images/diff-rendering/svgtex/backward_ad/step-02svg.svg"
   description: |
     <div class="eq-stack">
-                Set $\partial e=\partial e/\partial e=1$. Here, $\partial v$ abbreviates $\partial e/\partial v$.
+                Set the output gradient $\delta e=1$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/backward_ad/step-03svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial c=(\partial e)d=4$ and $\partial d=(\partial e)c\approx-0.54$.
+                $\delta c=\delta e \cdot d=4$ and $\delta d=\delta e \cdot c\approx-0.54$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/backward_ad/step-04svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial b=(\partial c)\cos(b)=4\cos(12)\approx3.38$.
+                $\delta b=\delta c \cdot \cos(b)=4\cos(12)\approx3.38$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/backward_ad/step-05svg.svg"
   description: |
     <div class="eq-stack">
-                $\partial a=(\partial b)y\approx10.13$ and $\partial y=(\partial b)a\approx13.50$.
+                $\delta a=\delta b \cdot y\approx10.13$ and $\delta y=\delta b \cdot a\approx13.50$.
     </div>
 
 - image: "/images/diff-rendering/svgtex/backward_ad/step-06svg.svg"
   description: |
     <div class="eq-stack">
-                Since $x$ affects both $a=2x$ and $d=x^2$, add both contributions: $\partial x=2\,\partial a+2x\,\partial d\approx18.11$.
+                Since $x$ affects both $a=2x$ and $d=x^2$, add both contributions: $\delta x=\delta d \cdot 2x + \delta a \cdot 2\approx18.11$.
     </div>
 
 {{< /step-slider >}}
@@ -587,42 +628,6 @@ print("Grad y:", y)
 # Grad y: Var(val=3.0000, grad=13.5016)
 ```
 
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
-  <div>
-    {{< figure src="/images/diff-rendering/base_render.png" caption="Teapot Initial Render" width="100%" >}}
-  </div>
-  <div>
-    {{< figure src="/images/diff-rendering/perturbed_roughness_render.png" caption="Perturbed Render (Roughness)" width="100%" >}}
-  </div>
-  <div>
-    {{< figure src="/images/diff-rendering/fd_roughness_gradient_map.png" caption="Gradient w.r.t Roughness (Interior Integral)" width="100%" >}}
-  </div>
-</div>
-
-<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
-<details>
-<summary style="cursor: pointer; font-weight: 600;">Code: Generating roughness gradient (Valid for AD)</summary>
-<div style="margin-top: 1rem;">
-
-```python
-scene_path = 'scenes/teapot/teapot.xml'
-if not os.path.exists(scene_path): scene_path = 'scenes/teapot/scene.xml'
-scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
-img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
-mesh = scene.get_mesh("teapot")
-
-h = 0.1
-mesh.roughness += torch.tensor([h], device=device)
-img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
-mesh.roughness -= torch.tensor([h], device=device)
-
-fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
-plot_fd(img_base, img_pert, fd_grad, "Roughness", h, vmin=-25, vmax=25)
-```
-</div>
-</details>
-</blockquote>
-
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center; align-items: end;">
   <div>
     {{< figure src="/images/diff-rendering/planets/initial_render.png" caption="Initial Render" width="100%" >}}
@@ -652,46 +657,6 @@ The core of the issue lies in the interchange of the derivative and the integral
 $$\frac{d}{d\pi}\int f(x,\pi)\,dx = \int \frac{\partial f}{\partial \pi}(x,\pi)\,dx$$
 
 However, this interchange is only valid under regularity conditions that justify differentiating under the integral sign, such as a suitable integrable bound on $\partial_\pi f$. Parameter-dependent jumps violate these conditions. In rendering, this frequently happens because of **visibility**: when an object moves, the color changes discontinuously across a moving boundary.
-
-
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
-  <div>
-    {{< figure src="/images/diff-rendering/base_render.png" caption="Initial Render $f(x)$" width="100%" >}}
-  </div>
-  <div>
-    {{< figure src="/images/diff-rendering/naive_ad_gradient.png" caption="Naive AD (Zero)" width="100%" >}}
-  </div>
-  <div>
-    {{< figure src="/images/diff-rendering/fd_translated_gradient_map.png" caption="FD Gradient" width="100%" >}}
-  </div>
-</div>
-
-<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
-<details>
-<summary style="cursor: pointer; font-weight: 600;">Code: Generating translation gradient via Finite Difference</summary>
-
-<div style="margin-top: 1rem;">
-
-```python
-scene_path = 'scenes/teapot/teapot.xml'
-if not os.path.exists(scene_path): scene_path = 'scenes/teapot/scene.xml'
-scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
-
-img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
-
-mesh = scene.get_mesh("teapot")
-h = 0.01
-mesh.translate([h, 0.0, 0.0])
-img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
-mesh.translate([-h, 0.0, 0.0])
-
-fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
-plot_fd(img_base, img_pert, fd_grad, "X-shift", h, vmin=-25, vmax=25)
-```
-
-</div>
-</details>
-</blockquote>
 
 ### Example 1: Distributional Parameters
 
@@ -791,6 +756,45 @@ For discontinuous integrands, the fundamental challenge is that the derivative a
 **What goes wrong?** The function $f(x, \pi) = (x < \pi\ ?\ 1 : 0.5)$ is a step function: constant everywhere *except* at the single point $x = \pi$, where it jumps. Any random sample $X$ almost surely lands away from that jump, where the derivative with respect to $\pi$ is exactly zero. The gradient information lives entirely at the moving boundary $x = \pi$, which has probability zero of being hit. So our estimator confidently returns zero every single time, while the true answer is $1/2$.
 
 This is precisely the visibility problem in rendering: when a surface edge moves, the boundary between lit and shadowed regions shifts, but standard path tracing samples almost never land exactly on an edge. The gradient signal is invisible to naive AD.
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 1.5rem 0; text-align: center;">
+  <div>
+    {{< figure src="/images/diff-rendering/base_render.png" caption="Initial Render $f(x)$" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/naive_ad_gradient.png" caption="Naive AD (Zero)" width="100%" >}}
+  </div>
+  <div>
+    {{< figure src="/images/diff-rendering/fd_translated_gradient_map.png" caption="FD Gradient" width="100%" >}}
+  </div>
+</div>
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Code: Generating translation gradient via Finite Difference</summary>
+
+<div style="margin-top: 1rem;">
+
+```python
+scene_path = 'scenes/teapot/teapot.xml'
+if not os.path.exists(scene_path): scene_path = 'scenes/teapot/scene.xml'
+scene, cam, _ = load_scene_from_xml(scene_path, device=device, override_res=512)
+
+img_base = render_crn(scene, cam, integrator_fd).cpu().numpy()
+
+mesh = scene.get_mesh("teapot")
+h = 0.01
+mesh.translate([h, 0.0, 0.0])
+img_pert = render_crn(scene, cam, integrator_fd).cpu().numpy()
+mesh.translate([-h, 0.0, 0.0])
+
+fd_grad = np.mean((img_pert - img_base) / h, axis=-1)
+plot_fd(img_base, img_pert, fd_grad, "X-shift", h, vmin=-25, vmax=25)
+```
+
+</div>
+</details>
+</blockquote>
 
 ## Motivating Example: Differentiating Visibility
 
@@ -931,7 +935,7 @@ which edges are true silhouettes, so we can include all triangle edges and let t
 term naturally zero out the non-contributing ones.
 
 This is the key formula for differentiable rendering. It tells us that the standard interior derivative
-must be supplemented with the boundary contribution. Explicit edge sampling evaluates this term
+must be supplemented with the boundary contribution. As we will see, explicit edge sampling evaluates this term
 directly; reparameterization and warped-area methods convert it into an equivalent interior estimator.
 
 Continuing [Example 2](#example-2-discontinuities-the-visibility-problem), let's see how this
@@ -1310,7 +1314,7 @@ $$ \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}
 
 For this estimator, we need to differentiate the evaluation of $f$. We do not have to differentiate the sampling process that produces $\mathbf{x}_i$ or the corresponding PDF $p(\mathbf{x}_i)$. We call this estimator **detached** since both sampling and PDF evaluation are detached from the differentiation process. This is the most commonly used estimator in differentiable rendering. Zeltner et al. (2021) [[12]](#ref-12) provide the systematic study of this attached/detached distinction that the next two subsections summarize (see {{< figref "fig-taxonomy-estimators" >}} for the overall taxonomy).
 
-{{< figure src="/images/diff-rendering/zeltner/taxonomy_of_estimators.svg" id="fig-taxonomy-estimators" caption="A taxonomy of differential estimators. We illustrate key operations that can be applied to a “primal” integral (white box). These include Monte Carlo importance sampling, multiple importance sampling, and differentiation. Non-commutativity of these operations leads to a plethora of differential estimators. We omit the explicit dependence of $f$ and $p$ on $\boldsymbol{\pi}$ for brevity. (Zeltner et al., 2021)" width="100%" >}}
+{{< figure src="/images/diff-rendering/zeltner/taxonomy_of_estimators.svg" id="fig-taxonomy-estimators" caption="A taxonomy of differential estimators. We illustrate key operations that can be applied to a “primal” integral. These include Monte Carlo importance sampling, multiple importance sampling, and differentiation. Non-commutativity of these operations leads to a plethora of differential estimators. We omit the explicit dependence of $f$ and $p$ on $\boldsymbol{\pi}$ for brevity. (Zeltner et al., 2021)" width="100%" >}}
 
 If $f$ contains $\boldsymbol{\pi}$-dependent discontinuities, additional precautions are required (e.g., edge sampling or reparameterization). Similarly, if the path space $\mathcal{P}$ is parameter-dependent, we need to account for changes in its geometry or switch to a parameterization of the integration domain that is independent of $\boldsymbol{\pi}$.
 
@@ -1591,7 +1595,7 @@ In practice, candidate edges are projected and clipped into screen space. Only s
 
 #### Secondary Visibility
 
-{{< figure src="/images/diff-rendering/reparam/secondary_visibility.svg" id="fig-edge-secondary-visibility" caption="(a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Loubet et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$)." width="100%" >}}
+{{< figure src="/images/diff-rendering/reparam/secondary_visibility.svg" id="fig-edge-secondary-visibility" caption="(a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Li et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$)." width="100%" >}}
 
 This method can be generalized to handle shadows, reflections, and indirect illumination by integrating over the $3D$ scene.
 
@@ -1743,7 +1747,7 @@ $$
 where $k$ is a normalized spherical convolution kernel. With the argument order used above, preservation of the integral requires:
 
 $$
-\int_{S^2} k(\mu, \omega) \, \mathrm{d}\omega = 1, \quad \forall \mu \in S^2
+\int_{S^2} k(\mu, \omega) \, \mathrm{d}\mu = 1, \quad \forall \omega \in S^2
 $$
 
 By choosing $k$ to be a smooth, concentrated distribution (such as a von Mises-Fisher distribution) with small angular support, the inner integral is restricted to a small domain, restoring compatibility with local rotations.
@@ -2140,11 +2144,11 @@ $$
 
 In practice, this means we trace a standard light path and, at each bounce, compute the local differential emission $Q$, add it to the accumulated gradient, and multiply the running total by the surface BSDF as the path continues.
 
-The differential rendering equation tells us *what* to compute; it says nothing about doing so efficiently. Evaluating this expansion naively — recording every bounce of every traced path onto an autodiff tape and replaying it backward — reintroduces exactly the memory and runtime blowup that made naive AD unsuitable for rendering in the first place (see [Why is Differentiable Rendering Difficult?](#why-is-differentiable-rendering-difficult)). For a light path of length $D$, that tape costs $\mathcal{O}(D)$ memory, and with millions of paths per frame it becomes the bottleneck long before the renderer does.
+The differential rendering equation tells us *what* to compute; it says nothing about doing so efficiently. Evaluating this expansion naively ie., recording every bounce of every traced path onto an autodiff tape and replaying it backward, reintroduces exactly the memory and runtime blowup that made naive AD unsuitable for rendering in the first place (see [Why is Differentiable Rendering Difficult?](#why-is-differentiable-rendering-difficult)). For a light path of length $D$, that tape costs $\mathcal{O}(D)$ memory, and with millions of paths per frame it becomes the bottleneck long before the renderer does.
 
 ## Efficient Reverse-Mode Differentiable Rendering
 
-This section introduces no new theory — it evaluates the differential rendering equation derived above, just without paying for the tape. Radiative Backpropagation and Path Replay Backpropagation both reformulate the backward pass as a second, physically-grounded transport simulation, so reverse-mode gradients can be computed with the same $\mathcal{O}(1)$-memory, single-pass character as forward rendering.
+This section evaluates the differential rendering equation derived above, just without paying for the tape. Radiative Backpropagation and Path Replay Backpropagation both reformulate the backward pass as a second, physically-grounded transport simulation, so reverse-mode gradients can be computed with the same $\mathcal{O}(1)$-memory, single-pass character as forward rendering.
 
 ### Radiative Backpropagation
 
@@ -2204,7 +2208,8 @@ $$
 \end{aligned}
 $$
 
-> **Note on Static Visibility Boundaries:** Nimier-David et al. [[7]](#ref-7) never actually write down the boundary term above — the general, boundary-aware equation is machinery imported from the Zhang et al. [[14]](#ref-14) framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper's own derivation assumes static geometry from the outset ($\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i = \mathbf{0}$), so for them **the Boundary Integral is simply absent**, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. [[10]](#ref-10) and Loubet et al. [[11]](#ref-11) as compatible options (Section 3.6 of the paper).
+
+> **Note on Static Visibility Boundaries:** Nimier-David et al. [[7]](#ref-7) never actually write down the boundary term above, the general, boundary-aware equation is machinery imported from the Zhang et al. [[14]](#ref-14) framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper's own derivation assumes static geometry from the outset ($\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i = \mathbf{0}$), so for them <b>the Boundary Integral is simply absent</b>, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. [[10]](#ref-10) and Loubet et al. [[11]](#ref-11) as compatible options (Section 3.6 of the paper).
 
 Grouping the non-scattering gradient source terms into the **Differential Emission** term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$:
 
@@ -2220,25 +2225,25 @@ $$
 
 Read it as an energy balance for a fictitious kind of light: $Q$ is a **source** that "emits" differential radiance wherever a scene parameter directly changes emission or reflectance, and the remaining integral says that whatever differential radiance is already incident keeps **scattering** exactly like ordinary radiance would. This is the whole trick behind radiative backpropagation: instead of differentiating a rendering algorithm line by line, we get to reuse an *ordinary-looking transport equation*, just with $L_e$ swapped out for $Q$.
 
-To make that reuse precise — and to set up reverse-mode propagation — the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.'s own notation [[7]](#ref-7) (Section 3.4):
+To make that reuse precise and to set up reverse-mode propagation, the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.'s own notation [[7]](#ref-7) (Section 3.4):
 
 1. **Scattering operator $\mathcal{K}$.** Takes an incident directional field $h$ and scatters it through the BSDF, exactly the way the ordinary scattering equation treats $L_i$:
    $$
    (\mathcal{K} h)(\mathbf{x}, \boldsymbol{\omega}_o) = \int_{\mathbb{S}^2} h(\mathbf{x}, \boldsymbol{\omega}_i) \, f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o) \,\mathrm{d}\sigma(\boldsymbol{\omega}_i).
    $$
 
-2. **Propagation operator $\mathcal{G}$** — this is the paper's own name for it; you'll also see it called a *ray transport operator*, since all it does is walk backward along a ray to the next surface. It turns outgoing radiance at the point you hit into incident radiance at the point you came from:
+2. **Propagation operator $\mathcal{G}$.** This is the paper's own name for it; you'll also see it called a *ray transport operator*, since all it does is walk backward along a ray to the next surface. It turns outgoing radiance at the point you hit into incident radiance at the point you came from:
    $$
    (\mathcal{G} h)(\mathbf{x}, \boldsymbol{\omega}_i) = h(r(\mathbf{x}, \boldsymbol{\omega}_i), -\boldsymbol{\omega}_i), \qquad\text{so that}\qquad \partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\, \partial_{\boldsymbol{\pi}} L_o.
    $$
 
-Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport — nothing new had to be invented here, which is precisely the point. Substituting $\partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\partial_{\boldsymbol{\pi}} L_o$ into the scattering term folds the whole differential rendering equation into one compact line:
+Because differential radiance scatters and propagates exactly like ordinary radiance, $\mathcal{K}$ and $\mathcal{G}$ are the very same operators Veach used to analyze primal light transport (nothing new had to be invented here, which is precisely the point). Substituting $\partial_{\boldsymbol{\pi}} L_i = \mathcal{G}\partial_{\boldsymbol{\pi}} L_o$ into the scattering term folds the whole differential rendering equation into one compact line:
 
 $$
 \partial_{\boldsymbol{\pi}} L_o = Q + \mathcal{K}\mathcal{G}\,\partial_{\boldsymbol{\pi}} L_o \;\;\Longrightarrow\;\; \partial_{\boldsymbol{\pi}} L_o = \underbrace{(\mathcal{I} - \mathcal{K}\mathcal{G})^{-1}}_{\mathcal{S}} Q = \mathcal{S} Q,
 $$
 
-where $\mathcal{S} = \sum_{k=0}^\infty (\mathcal{K}\mathcal{G})^k$ sums over paths of every length — the operator equivalent of "trace a one-bounce path, then a two-bounce path, then a three-bounce path, and so on."
+where $\mathcal{S} = \sum_{k=0}^\infty (\mathcal{K}\mathcal{G})^k$ sums over paths of every length, the operator equivalent of "trace a one-bounce path, then a two-bounce path, then a three-bounce path, and so on."
 
 If $A_e$ is the emitted **adjoint radiance** obtained by back-projecting the loss gradient $\delta\mathbf{y} = \mathbf{J}_g^T(\mathbf{y})$ from the sensor into the scene, the vector-Jacobian product we actually want is the ray-space inner product
 
@@ -2246,7 +2251,7 @@ $$
 \mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle .
 $$
 
-**This next step is where the algorithm's correctness lives, so it's worth being precise about it.** For reciprocal, energy-conserving BSDFs, Veach showed that $\mathcal{G}$, $\mathcal{K}$, and the *composite* operator $\mathcal{G}\mathcal{S}$ are self-adjoint under the ray-space measure — i.e. $\mathcal{G}^\ast = \mathcal{G}$, $\mathcal{K}^\ast = \mathcal{K}$, and $(\mathcal{G}\mathcal{S})^\ast = \mathcal{G}\mathcal{S}$. This is a slightly different (and weaker) claim than saying $\mathcal{S}$ itself is self-adjoint — in general it isn't: since $\mathcal{K}$ and $\mathcal{G}$ don't commute, $\mathcal{S}^\ast = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-\ast} = (\mathcal{I}-\mathcal{G}\mathcal{K})^{-1} \ne \mathcal{S}$ in general. What saves us is that $\mathcal{G}\mathcal{S} = \sum_k (\mathcal{G}\mathcal{K})^k \mathcal{G}$, and this specific combination *does* inherit self-adjointness from $\mathcal{G}$ and $\mathcal{K}$ individually — which is exactly the property the next step relies on.
+**This next step is where the algorithm's correctness lives, so it's worth being precise about it.** For reciprocal, energy-conserving BSDFs, Veach showed that $\mathcal{G}$, $\mathcal{K}$, and the *composite* operator $\mathcal{G}\mathcal{S}$ are self-adjoint under the ray-space measure i.e. $\mathcal{G}^\ast = \mathcal{G}$, $\mathcal{K}^\ast = \mathcal{K}$, and $(\mathcal{G}\mathcal{S})^\ast = \mathcal{G}\mathcal{S}$. This is a slightly different (and weaker) claim than saying $\mathcal{S}$ itself is self-adjoint, in general it isn't: since $\mathcal{K}$ and $\mathcal{G}$ don't commute, $\mathcal{S}^\ast = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-\ast} = (\mathcal{I}-\mathcal{G}\mathcal{K})^{-1} \ne \mathcal{S}$ in general. What saves us is that $\mathcal{G}\mathcal{S} = \sum_k (\mathcal{G}\mathcal{K})^k \mathcal{G}$, and this specific combination *does* inherit self-adjointness from $\mathcal{G}$ and $\mathcal{K}$ individually, which is the property the next step relies on.
 
 Self-adjointness of $\mathcal{G}\mathcal{S}$ lets us move it across the inner product for free:
 
@@ -2254,7 +2259,7 @@ $$
 \mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle = \langle \mathcal{G}\mathcal{S} A_e, Q \rangle = \langle A, Q \rangle, \qquad A := \mathcal{G}\mathcal{S} A_e.
 $$
 
-$A$ is the **incident adjoint radiance field**, and this identity is the entire payoff of the operator formulation: instead of pushing the enormous, million-dimensional field $Q$ forward through the scene, we push the *scalar* field $A_e$ backward from the sensor, and only ever touch $Q$ locally — as a cheap inner product — wherever a path happens to land on a differentiable object.
+$A$ is the **incident adjoint radiance field**, and this identity is the entire payoff of the operator formulation: instead of pushing the enormous, million-dimensional field $Q$ forward through the scene, we push the *scalar* field $A_e$ backward from the sensor, and only ever touch $Q$ locally as a cheap inner product wherever a path happens to land on a differentiable object.
 
 The corresponding incident and outgoing adjoint radiance satisfy the same recursive balance as ordinary light:
 
@@ -2273,7 +2278,7 @@ $$
 
 turning the discrete sum over pixel derivatives into the ray-space inner product $\langle A_e,\partial_{\boldsymbol{\pi}}L_i\rangle$. For a pinhole camera, $A_e$ can be pictured as a textured "spotlight" that projects the adjoint image back into the scene from the camera.
 
-> **Quick reference.** $\mathcal{K}$ scatters (BSDF), $\mathcal{G}$ propagates (ray to next surface), $\mathcal{S} = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-1}$ sums over all path lengths, and $Q$ is where a parameter's *local* effect on emission or reflectance enters the equation. Radiative backpropagation runs all of this **backward from the camera**: sample $A_e$, propagate/scatter it exactly like a path tracer would with ordinary radiance ($A_i = \mathcal{G}A_o$, $A_o = A_e + \mathcal{K}A_i$), and at every surface hit accumulate the local contribution of $\langle A, Q\rangle$ into $\delta\boldsymbol{\pi}$.
+> **Quick reference.** $\mathcal{K}$ scatters (BSDF), $\mathcal{G}$ propagates (ray to next surface), $\mathcal{S} = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-1}$ sums over all path lengths, and $Q$ is where a parameter's *local* effect on emission or reflectance enters the equation. Radiative backpropagation runs all of this <b>backward from the camera</b>: sample $A_e$, propagate/scatter it exactly like a path tracer would with ordinary radiance ($A_i = \mathcal{G}A_o$, $A_o = A_e + \mathcal{K}A_i$), and at every surface hit accumulate the local contribution of $\langle A, Q\rangle$ into $\delta\boldsymbol{\pi}$.
 
 #### Sampling the Adjoint Transport Problem
 
