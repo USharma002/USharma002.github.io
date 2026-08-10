@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vMF Distribution</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --text: #374151;
+  --text-sub: #6b7280;
+  --accent: #f39c12;
+  --border: #d1d5db;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 16px;
+}
+
+.shell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  height: 100%;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.canvas-box {
+  flex: 1 1 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 420px;
+  width: 100%;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 420 / 360;
+  cursor: crosshair;
+  background: transparent;
+}
+
+.hint {
+  font-size: 11.5px;
+  text-align: center;
+  color: var(--text-sub);
+  margin: 10px 0 0;
+}
+
+.controls {
+  flex: 1 1 280px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row { display: flex; align-items: center; gap: 8px; }
+.row label { font-size: 13px; width: 100px; color: var(--text-sub); flex-shrink: 0; }
+.row input[type=range] { flex: 1; margin: 0; cursor: pointer; accent-color: var(--accent); }
+.row .val { font-size: 13px; min-width: 34px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+.toggle-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.toggle-row label.head { font-size: 13px; width: 100px; color: var(--text-sub); flex-shrink: 0; }
+.toggle-row label.opt { font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-right: 8px; }
+
+@media (max-width: 640px) {
+  html, body { overflow: hidden; height: 100%; }
+  .shell { flex-direction: column; justify-content: center; flex-wrap: nowrap; gap: 10px; }
+  .canvas-box { flex: 1 1 auto; min-height: 0; width: 100%; }
+  canvas { max-width: 100%; max-height: 220px; height: auto; width: auto; margin: 0 auto; }
+  .controls { flex: 0 0 auto; width: 100%; max-width: 320px; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <div class="canvas-box">
+    <canvas id="c" width="420" height="360"></canvas>
+    <p class="hint">drag on sphere to move mode direction &mu;</p>
+  </div>
+
+  <div class="controls">
+    <div class="row">
+      <label>Concentration (&tau;)</label>
+      <input type="range" id="tau" min="1" max="200" step="1" value="10">
+      <span class="val" id="tau-v">10</span>
+    </div>
+    <div class="toggle-row">
+      <label class="head">View Model</label>
+      <label class="opt"><input type="radio" name="vw" value="3d" checked> 3D Sphere</label>
+      <label class="opt"><input type="radio" name="vw" value="2d"> 2D Lobe</label>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Theme detection ── */
+function detectTheme(){
+  try{
+    const s=window.parent.document.body?getComputedStyle(window.parent.document.body):null;
+    if(!s)return;
+    const rgb=s.backgroundColor.match(/\d+/g);
+    if(!rgb)return;
+    const bright=(parseInt(rgb[0])*299+parseInt(rgb[1])*587+parseInt(rgb[2])*114)/1000;
+    const dark=bright<128;
+    const r=document.documentElement.style;
+    r.setProperty('--bg', s.backgroundColor);
+    r.setProperty('--text',dark?'#e5e7eb':'#374151');
+    r.setProperty('--text-sub',dark?'#9ca3af':'#6b7280');
+    r.setProperty('--border',dark?'#444':'#d1d5db');
+    r.setProperty('--accent',dark?'#f39c12':'#e67e22');
+    draw();
+  }catch(e){}
+}
+setInterval(detectTheme,1000);
+detectTheme();
+
+/* ── Vector helpers ── */
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+function vscale(a,s){return[a[0]*s,a[1]*s,a[2]*s];}
+function vnorm(a){const l=Math.sqrt(dot(a,a))||1e-9;return vscale(a,1/l);}
+
+/* ── Canvas setup ── */
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+const W=canvas.width, H=canvas.height;
+const CX=W/2, CY=H/2-10, R=130;
+
+/* ── Mode direction (unit vector) ── */
+let modeDir=vnorm([0.0, 0.6, 0.8]);
+
+/* ── Heatmap Colormap for vMF Density ── */
+function vmfColor(density, diff) {
+  const t = Math.min(1, Math.max(0, density));
+  let r, g, b;
+
+  if (t < 0.2) {
+    const s = t / 0.2;
+    r = 65 + s * 105;
+    g = 65 + s * 15;
+    b = 70 - s * 10;
+  } else if (t < 0.6) {
+    const s = (t - 0.2) / 0.4;
+    r = 170 + s * 75;
+    g = 80 + s * 60;
+    b = 60 - s * 45;
+  } else if (t < 0.9) {
+    const s = (t - 0.6) / 0.3;
+    r = 245 + s * 10;
+    g = 140 + s * 100;
+    b = 15 + s * 75;
+  } else {
+    const s = (t - 0.9) / 0.1;
+    r = 255;
+    g = 240 + s * 15;
+    b = 90 + s * 165;
+  }
+
+  const f = 0.35 + 0.65 * diff;
+  return [
+    Math.min(255, Math.round(r * f)),
+    Math.min(255, Math.round(g * f)),
+    Math.min(255, Math.round(b * f))
+  ];
+}
+
+function draw(){
+  const tau=+document.getElementById('tau').value;
+  const view3D=document.querySelector('input[name="vw"]:checked').value==='3d';
+  const M=modeDir;
+  const L=vnorm([0.5,0.6,0.65]);
+
+  ctx.clearRect(0,0,W,H);
+
+  if (view3D) {
+    const img=ctx.createImageData(W,H);
+    const d=img.data;
+
+    for(let py=0;py<H;py++){
+      for(let px=0;px<W;px++){
+        const x=px-CX, y=CY-py;
+        const r2=x*x+y*y;
+        if(r2>R*R){continue;}
+
+        const z=Math.sqrt(R*R-r2);
+        const N=[x/R,y/R,z/R];
+
+        const ndm=dot(N,M);
+        const density=Math.exp(tau*(ndm-1));
+        const diff=Math.max(0,dot(N,L));
+
+        const col=vmfColor(density,diff);
+        const i=(py*W+px)*4;
+        d[i]=col[0];
+        d[i+1]=col[1];
+        d[i+2]=col[2];
+        d[i+3]=255;
+      }
+    }
+
+    ctx.putImageData(img,0,0);
+
+    // Mode vector indicator arrow on sphere
+    const mx=CX+M[0]*R;
+    const my=CY-M[1]*R;
+
+    ctx.beginPath();
+    ctx.moveTo(CX,CY);
+    ctx.lineTo(mx,my);
+    ctx.strokeStyle='#3498db';
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(mx,my,5,0,Math.PI*2);
+    ctx.fillStyle='#2980b9';
+    ctx.fill();
+    ctx.strokeStyle='#ffffff';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+  } else {
+    // 2D Polar Lobe
+    const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    
+    ctx.beginPath();
+    ctx.arc(CX,CY,R*0.7,0,Math.PI*2);
+    ctx.strokeStyle=isDark?'#6b7280':'#9ca3af';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    const angleM = Math.atan2(M[1], M[0]);
+    const rBase = R * 0.7;
+    const lobeMax = R * 0.45;
+
+    ctx.beginPath();
+    const steps = 120;
+    for (let i = 0; i <= steps; i++) {
+      const th = (i / steps) * Math.PI * 2;
+      const cosDiff = Math.cos(th - angleM);
+      const pdfRel = Math.exp(tau * (cosDiff - 1));
+      const r = rBase + lobeMax * pdfRel;
+      const px = CX + r * Math.cos(th);
+      const py = CY - r * Math.sin(th);
+
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+
+    ctx.fillStyle = isDark ? 'rgba(52, 152, 219, 0.25)' : 'rgba(52, 152, 219, 0.2)';
+    ctx.fill();
+    ctx.strokeStyle = '#3498db';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const ax = CX + rBase * Math.cos(angleM);
+    const ay = CY - rBase * Math.sin(angleM);
+
+    ctx.beginPath();
+    ctx.moveTo(CX, CY);
+    ctx.lineTo(ax, ay);
+    ctx.strokeStyle = isDark ? '#ffffff' : '#374151';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(ax, ay, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#2980b9';
+    ctx.fill();
+  }
+}
+
+/* ── Drag interaction ── */
+let dragging=false;
+
+function updateMode(ex,ey){
+  const rect=canvas.getBoundingClientRect();
+  const mx=((ex-rect.left)/rect.width)*2-1;
+  const my=-(((ey-rect.top)/rect.height)*2-1);
+  const r2=mx*mx+my*my;
+  let lx=mx,ly=my,lz;
+  if(r2>1){const r=Math.sqrt(r2);lx/=r;ly/=r;lz=0.05;}
+  else{lz=Math.sqrt(1-r2);}
+  modeDir=vnorm([lx,ly,lz]);
+  draw();
+}
+
+canvas.addEventListener('mousedown',e=>{dragging=true;updateMode(e.clientX,e.clientY);});
+window.addEventListener('mousemove',e=>{if(dragging)updateMode(e.clientX,e.clientY);});
+window.addEventListener('mouseup',()=>{dragging=false;});
+canvas.addEventListener('touchstart',e=>{dragging=true;updateMode(e.touches[0].clientX,e.touches[0].clientY);e.preventDefault();},{passive:false});
+window.addEventListener('touchmove',e=>{if(dragging&&e.touches.length)updateMode(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+window.addEventListener('touchend',()=>{dragging=false;});
+
+/* ── Bindings ── */
+const tauEl=document.getElementById('tau'), tauOut=document.getElementById('tau-v');
+tauEl.addEventListener('input',()=>{tauOut.textContent=tauEl.value;draw();});
+document.querySelectorAll('input[name="vw"]').forEach(r=>r.addEventListener('change',draw));
+
+draw();
+</script>
+</body>
+</html>

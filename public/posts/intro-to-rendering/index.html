@@ -154,7 +154,7 @@
     <div class="post-description">
       A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering.
     </div>
-    <div class="post-meta"><span title='2026-04-30 00:00:00 +0000 UTC'>April 30, 2026</span>&nbsp;·&nbsp;94 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2026-04-30 00:00:00 +0000 UTC'>April 30, 2026</span>&nbsp;·&nbsp;88 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -321,16 +321,6 @@
                 <li>
                     <a href="#sphere-tracing" aria-label="Sphere Tracing">Sphere Tracing</a></li>
                 <li>
-                    <a href="#volume-rendering" aria-label="Volume Rendering">Volume Rendering</a><ul>
-                        
-                <li>
-                    <a href="#participating-media" aria-label="Participating Media">Participating Media</a></li>
-                <li>
-                    <a href="#beer-lambert-law" aria-label="Beer-Lambert Law">Beer-Lambert Law</a></li>
-                <li>
-                    <a href="#radiative-transfer" aria-label="Radiative Transfer">Radiative Transfer</a></li></ul>
-                </li>
-                <li>
                     <a href="#references" aria-label="References">References</a>
                 </li>
             </ul>
@@ -359,7 +349,6 @@ Light mode is recommended for this post to avoid color incoherency within SVG fi
 <li><strong>Ray Tracing, Geometry, and Shading</strong></li>
 <li><strong>Path Tracing Basics</strong> <em>(I have a separate, detailed post on this!)</em></li>
 <li><strong>Signed Distance Functions (SDF) &amp; Sphere Tracing</strong></li>
-<li><strong>Volume Rendering</strong></li>
 </ul>
 <p>Along the way, I’ll provide the GLSL code for these concepts so you can see exactly how the math translates into practice.</p>
 <hr>
@@ -1325,10 +1314,10 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 
 <style>
  
-#editor-19862048 .highlight,
-#editor-19862048 .chroma,
-#editor-19862048 pre,
-#editor-19862048 code {
+#editor-d04544b3 .highlight,
+#editor-d04544b3 .chroma,
+#editor-d04544b3 pre,
+#editor-d04544b3 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1343,92 +1332,92 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
 }
 
  
-#editor-19862048 .copy-code,
-#editor-19862048 .chroma .copy-btn { 
+#editor-d04544b3 .copy-code,
+#editor-d04544b3 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-19862048 {
+.glsl-code-panel-d04544b3 {
     background-color: #1e1e1e !important;
 }
 
-#editor-19862048,
-#editor-19862048 .chroma {
+#editor-d04544b3,
+#editor-d04544b3 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-19862048 .chroma .k,
-#editor-19862048 .chroma .kd,
-#editor-19862048 .chroma .kn,
-#editor-19862048 .chroma .kp,
-#editor-19862048 .chroma .kr,
-#editor-19862048 .chroma .ow,
-#editor-19862048 .chroma .cp,
-#editor-19862048 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-d04544b3 .chroma .k,
+#editor-d04544b3 .chroma .kd,
+#editor-d04544b3 .chroma .kn,
+#editor-d04544b3 .chroma .kp,
+#editor-d04544b3 .chroma .kr,
+#editor-d04544b3 .chroma .ow,
+#editor-d04544b3 .chroma .cp,
+#editor-d04544b3 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-19862048 .chroma .kt,
-#editor-19862048 .chroma .nb,
-#editor-19862048 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-d04544b3 .chroma .kt,
+#editor-d04544b3 .chroma .nb,
+#editor-d04544b3 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-19862048 .chroma .nf,
-#editor-19862048 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-d04544b3 .chroma .nf,
+#editor-d04544b3 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-19862048 .chroma .m,
-#editor-19862048 .chroma .mb,
-#editor-19862048 .chroma .mf,
-#editor-19862048 .chroma .mh,
-#editor-19862048 .chroma .mi,
-#editor-19862048 .chroma .il,
-#editor-19862048 .chroma .mo,
-#editor-19862048 .chroma .kc { color: #b5cea8 !important; }
+#editor-d04544b3 .chroma .m,
+#editor-d04544b3 .chroma .mb,
+#editor-d04544b3 .chroma .mf,
+#editor-d04544b3 .chroma .mh,
+#editor-d04544b3 .chroma .mi,
+#editor-d04544b3 .chroma .il,
+#editor-d04544b3 .chroma .mo,
+#editor-d04544b3 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-19862048 .chroma .s,
-#editor-19862048 .chroma .sa,
-#editor-19862048 .chroma .sb,
-#editor-19862048 .chroma .sc,
-#editor-19862048 .chroma .dl,
-#editor-19862048 .chroma .sd,
-#editor-19862048 .chroma .s2,
-#editor-19862048 .chroma .se,
-#editor-19862048 .chroma .sh,
-#editor-19862048 .chroma .si,
-#editor-19862048 .chroma .sx,
-#editor-19862048 .chroma .sr,
-#editor-19862048 .chroma .s1,
-#editor-19862048 .chroma .ss { color: #ce9178 !important; }
+#editor-d04544b3 .chroma .s,
+#editor-d04544b3 .chroma .sa,
+#editor-d04544b3 .chroma .sb,
+#editor-d04544b3 .chroma .sc,
+#editor-d04544b3 .chroma .dl,
+#editor-d04544b3 .chroma .sd,
+#editor-d04544b3 .chroma .s2,
+#editor-d04544b3 .chroma .se,
+#editor-d04544b3 .chroma .sh,
+#editor-d04544b3 .chroma .si,
+#editor-d04544b3 .chroma .sx,
+#editor-d04544b3 .chroma .sr,
+#editor-d04544b3 .chroma .s1,
+#editor-d04544b3 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-19862048 .chroma .c,
-#editor-19862048 .chroma .ch,
-#editor-19862048 .chroma .cm,
-#editor-19862048 .chroma .c1,
-#editor-19862048 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-d04544b3 .chroma .c,
+#editor-d04544b3 .chroma .ch,
+#editor-d04544b3 .chroma .cm,
+#editor-d04544b3 .chroma .c1,
+#editor-d04544b3 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-19862048 .chroma .o { color: #d4d4d4 !important; }
-#editor-19862048 .chroma .p { color: #d4d4d4 !important; }
+#editor-d04544b3 .chroma .o { color: #d4d4d4 !important; }
+#editor-d04544b3 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-19862048 .chroma .n,
-#editor-19862048 .chroma .nx,
-#editor-19862048 .chroma .nv,
-#editor-19862048 .chroma .vc,
-#editor-19862048 .chroma .vg,
-#editor-19862048 .chroma .vi,
-#editor-19862048 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-d04544b3 .chroma .n,
+#editor-d04544b3 .chroma .nx,
+#editor-d04544b3 .chroma .nv,
+#editor-d04544b3 .chroma .vc,
+#editor-d04544b3 .chroma .vg,
+#editor-d04544b3 .chroma .vi,
+#editor-d04544b3 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-19862048" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-19862048" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-d04544b3" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-d04544b3" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -1472,11 +1461,11 @@ $$<p>We will use this $M_{camera}$ matrix to transform these rays into the world
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-19862048" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-d04544b3" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-19862048" style="display: none;">
+<textarea id="fs-d04544b3" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -1522,8 +1511,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-19862048');
-    const editor = document.getElementById('editor-19862048');
+    const canvas = document.getElementById('glcanvas-d04544b3');
+    const editor = document.getElementById('editor-d04544b3');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -1712,7 +1701,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-19862048').value.trim();
+    const rawSource = document.getElementById('fs-d04544b3').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -1862,10 +1851,10 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 
 <style>
  
-#editor-824f8987 .highlight,
-#editor-824f8987 .chroma,
-#editor-824f8987 pre,
-#editor-824f8987 code {
+#editor-d62c923f .highlight,
+#editor-d62c923f .chroma,
+#editor-d62c923f pre,
+#editor-d62c923f code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -1880,92 +1869,92 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
 }
 
  
-#editor-824f8987 .copy-code,
-#editor-824f8987 .chroma .copy-btn { 
+#editor-d62c923f .copy-code,
+#editor-d62c923f .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-824f8987 {
+.glsl-code-panel-d62c923f {
     background-color: #1e1e1e !important;
 }
 
-#editor-824f8987,
-#editor-824f8987 .chroma {
+#editor-d62c923f,
+#editor-d62c923f .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-824f8987 .chroma .k,
-#editor-824f8987 .chroma .kd,
-#editor-824f8987 .chroma .kn,
-#editor-824f8987 .chroma .kp,
-#editor-824f8987 .chroma .kr,
-#editor-824f8987 .chroma .ow,
-#editor-824f8987 .chroma .cp,
-#editor-824f8987 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-d62c923f .chroma .k,
+#editor-d62c923f .chroma .kd,
+#editor-d62c923f .chroma .kn,
+#editor-d62c923f .chroma .kp,
+#editor-d62c923f .chroma .kr,
+#editor-d62c923f .chroma .ow,
+#editor-d62c923f .chroma .cp,
+#editor-d62c923f .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-824f8987 .chroma .kt,
-#editor-824f8987 .chroma .nb,
-#editor-824f8987 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-d62c923f .chroma .kt,
+#editor-d62c923f .chroma .nb,
+#editor-d62c923f .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-824f8987 .chroma .nf,
-#editor-824f8987 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-d62c923f .chroma .nf,
+#editor-d62c923f .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-824f8987 .chroma .m,
-#editor-824f8987 .chroma .mb,
-#editor-824f8987 .chroma .mf,
-#editor-824f8987 .chroma .mh,
-#editor-824f8987 .chroma .mi,
-#editor-824f8987 .chroma .il,
-#editor-824f8987 .chroma .mo,
-#editor-824f8987 .chroma .kc { color: #b5cea8 !important; }
+#editor-d62c923f .chroma .m,
+#editor-d62c923f .chroma .mb,
+#editor-d62c923f .chroma .mf,
+#editor-d62c923f .chroma .mh,
+#editor-d62c923f .chroma .mi,
+#editor-d62c923f .chroma .il,
+#editor-d62c923f .chroma .mo,
+#editor-d62c923f .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-824f8987 .chroma .s,
-#editor-824f8987 .chroma .sa,
-#editor-824f8987 .chroma .sb,
-#editor-824f8987 .chroma .sc,
-#editor-824f8987 .chroma .dl,
-#editor-824f8987 .chroma .sd,
-#editor-824f8987 .chroma .s2,
-#editor-824f8987 .chroma .se,
-#editor-824f8987 .chroma .sh,
-#editor-824f8987 .chroma .si,
-#editor-824f8987 .chroma .sx,
-#editor-824f8987 .chroma .sr,
-#editor-824f8987 .chroma .s1,
-#editor-824f8987 .chroma .ss { color: #ce9178 !important; }
+#editor-d62c923f .chroma .s,
+#editor-d62c923f .chroma .sa,
+#editor-d62c923f .chroma .sb,
+#editor-d62c923f .chroma .sc,
+#editor-d62c923f .chroma .dl,
+#editor-d62c923f .chroma .sd,
+#editor-d62c923f .chroma .s2,
+#editor-d62c923f .chroma .se,
+#editor-d62c923f .chroma .sh,
+#editor-d62c923f .chroma .si,
+#editor-d62c923f .chroma .sx,
+#editor-d62c923f .chroma .sr,
+#editor-d62c923f .chroma .s1,
+#editor-d62c923f .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-824f8987 .chroma .c,
-#editor-824f8987 .chroma .ch,
-#editor-824f8987 .chroma .cm,
-#editor-824f8987 .chroma .c1,
-#editor-824f8987 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-d62c923f .chroma .c,
+#editor-d62c923f .chroma .ch,
+#editor-d62c923f .chroma .cm,
+#editor-d62c923f .chroma .c1,
+#editor-d62c923f .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-824f8987 .chroma .o { color: #d4d4d4 !important; }
-#editor-824f8987 .chroma .p { color: #d4d4d4 !important; }
+#editor-d62c923f .chroma .o { color: #d4d4d4 !important; }
+#editor-d62c923f .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-824f8987 .chroma .n,
-#editor-824f8987 .chroma .nx,
-#editor-824f8987 .chroma .nv,
-#editor-824f8987 .chroma .vc,
-#editor-824f8987 .chroma .vg,
-#editor-824f8987 .chroma .vi,
-#editor-824f8987 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-d62c923f .chroma .n,
+#editor-d62c923f .chroma .nx,
+#editor-d62c923f .chroma .nv,
+#editor-d62c923f .chroma .vc,
+#editor-d62c923f .chroma .vg,
+#editor-d62c923f .chroma .vi,
+#editor-d62c923f .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-824f8987" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-824f8987" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-d62c923f" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-d62c923f" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2013,11 +2002,11 @@ $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathb
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-824f8987" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-d62c923f" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-824f8987" style="display: none;">
+<textarea id="fs-d62c923f" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2067,8 +2056,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-824f8987');
-    const editor = document.getElementById('editor-824f8987');
+    const canvas = document.getElementById('glcanvas-d62c923f');
+    const editor = document.getElementById('editor-d62c923f');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2257,7 +2246,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-824f8987').value.trim();
+    const rawSource = document.getElementById('fs-d62c923f').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2366,10 +2355,10 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 <style>
  
-#editor-1642fc56 .highlight,
-#editor-1642fc56 .chroma,
-#editor-1642fc56 pre,
-#editor-1642fc56 code {
+#editor-7f4e4834 .highlight,
+#editor-7f4e4834 .chroma,
+#editor-7f4e4834 pre,
+#editor-7f4e4834 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2384,92 +2373,92 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 }
 
  
-#editor-1642fc56 .copy-code,
-#editor-1642fc56 .chroma .copy-btn { 
+#editor-7f4e4834 .copy-code,
+#editor-7f4e4834 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-1642fc56 {
+.glsl-code-panel-7f4e4834 {
     background-color: #1e1e1e !important;
 }
 
-#editor-1642fc56,
-#editor-1642fc56 .chroma {
+#editor-7f4e4834,
+#editor-7f4e4834 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-1642fc56 .chroma .k,
-#editor-1642fc56 .chroma .kd,
-#editor-1642fc56 .chroma .kn,
-#editor-1642fc56 .chroma .kp,
-#editor-1642fc56 .chroma .kr,
-#editor-1642fc56 .chroma .ow,
-#editor-1642fc56 .chroma .cp,
-#editor-1642fc56 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-7f4e4834 .chroma .k,
+#editor-7f4e4834 .chroma .kd,
+#editor-7f4e4834 .chroma .kn,
+#editor-7f4e4834 .chroma .kp,
+#editor-7f4e4834 .chroma .kr,
+#editor-7f4e4834 .chroma .ow,
+#editor-7f4e4834 .chroma .cp,
+#editor-7f4e4834 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-1642fc56 .chroma .kt,
-#editor-1642fc56 .chroma .nb,
-#editor-1642fc56 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-7f4e4834 .chroma .kt,
+#editor-7f4e4834 .chroma .nb,
+#editor-7f4e4834 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-1642fc56 .chroma .nf,
-#editor-1642fc56 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-7f4e4834 .chroma .nf,
+#editor-7f4e4834 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-1642fc56 .chroma .m,
-#editor-1642fc56 .chroma .mb,
-#editor-1642fc56 .chroma .mf,
-#editor-1642fc56 .chroma .mh,
-#editor-1642fc56 .chroma .mi,
-#editor-1642fc56 .chroma .il,
-#editor-1642fc56 .chroma .mo,
-#editor-1642fc56 .chroma .kc { color: #b5cea8 !important; }
+#editor-7f4e4834 .chroma .m,
+#editor-7f4e4834 .chroma .mb,
+#editor-7f4e4834 .chroma .mf,
+#editor-7f4e4834 .chroma .mh,
+#editor-7f4e4834 .chroma .mi,
+#editor-7f4e4834 .chroma .il,
+#editor-7f4e4834 .chroma .mo,
+#editor-7f4e4834 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-1642fc56 .chroma .s,
-#editor-1642fc56 .chroma .sa,
-#editor-1642fc56 .chroma .sb,
-#editor-1642fc56 .chroma .sc,
-#editor-1642fc56 .chroma .dl,
-#editor-1642fc56 .chroma .sd,
-#editor-1642fc56 .chroma .s2,
-#editor-1642fc56 .chroma .se,
-#editor-1642fc56 .chroma .sh,
-#editor-1642fc56 .chroma .si,
-#editor-1642fc56 .chroma .sx,
-#editor-1642fc56 .chroma .sr,
-#editor-1642fc56 .chroma .s1,
-#editor-1642fc56 .chroma .ss { color: #ce9178 !important; }
+#editor-7f4e4834 .chroma .s,
+#editor-7f4e4834 .chroma .sa,
+#editor-7f4e4834 .chroma .sb,
+#editor-7f4e4834 .chroma .sc,
+#editor-7f4e4834 .chroma .dl,
+#editor-7f4e4834 .chroma .sd,
+#editor-7f4e4834 .chroma .s2,
+#editor-7f4e4834 .chroma .se,
+#editor-7f4e4834 .chroma .sh,
+#editor-7f4e4834 .chroma .si,
+#editor-7f4e4834 .chroma .sx,
+#editor-7f4e4834 .chroma .sr,
+#editor-7f4e4834 .chroma .s1,
+#editor-7f4e4834 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-1642fc56 .chroma .c,
-#editor-1642fc56 .chroma .ch,
-#editor-1642fc56 .chroma .cm,
-#editor-1642fc56 .chroma .c1,
-#editor-1642fc56 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-7f4e4834 .chroma .c,
+#editor-7f4e4834 .chroma .ch,
+#editor-7f4e4834 .chroma .cm,
+#editor-7f4e4834 .chroma .c1,
+#editor-7f4e4834 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-1642fc56 .chroma .o { color: #d4d4d4 !important; }
-#editor-1642fc56 .chroma .p { color: #d4d4d4 !important; }
+#editor-7f4e4834 .chroma .o { color: #d4d4d4 !important; }
+#editor-7f4e4834 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-1642fc56 .chroma .n,
-#editor-1642fc56 .chroma .nx,
-#editor-1642fc56 .chroma .nv,
-#editor-1642fc56 .chroma .vc,
-#editor-1642fc56 .chroma .vg,
-#editor-1642fc56 .chroma .vi,
-#editor-1642fc56 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-7f4e4834 .chroma .n,
+#editor-7f4e4834 .chroma .nx,
+#editor-7f4e4834 .chroma .nv,
+#editor-7f4e4834 .chroma .vc,
+#editor-7f4e4834 .chroma .vg,
+#editor-7f4e4834 .chroma .vi,
+#editor-7f4e4834 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-1642fc56" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-1642fc56" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-7f4e4834" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-7f4e4834" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -2529,11 +2518,11 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-1642fc56" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-7f4e4834" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-1642fc56" style="display: none;">
+<textarea id="fs-7f4e4834" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -2595,8 +2584,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-1642fc56');
-    const editor = document.getElementById('editor-1642fc56');
+    const canvas = document.getElementById('glcanvas-7f4e4834');
+    const editor = document.getElementById('editor-7f4e4834');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -2785,7 +2774,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-1642fc56').value.trim();
+    const rawSource = document.getElementById('fs-7f4e4834').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -2914,10 +2903,10 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 
 <style>
  
-#editor-4126ae84 .highlight,
-#editor-4126ae84 .chroma,
-#editor-4126ae84 pre,
-#editor-4126ae84 code {
+#editor-ecf9141d .highlight,
+#editor-ecf9141d .chroma,
+#editor-ecf9141d pre,
+#editor-ecf9141d code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -2932,92 +2921,92 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
 }
 
  
-#editor-4126ae84 .copy-code,
-#editor-4126ae84 .chroma .copy-btn { 
+#editor-ecf9141d .copy-code,
+#editor-ecf9141d .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-4126ae84 {
+.glsl-code-panel-ecf9141d {
     background-color: #1e1e1e !important;
 }
 
-#editor-4126ae84,
-#editor-4126ae84 .chroma {
+#editor-ecf9141d,
+#editor-ecf9141d .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-4126ae84 .chroma .k,
-#editor-4126ae84 .chroma .kd,
-#editor-4126ae84 .chroma .kn,
-#editor-4126ae84 .chroma .kp,
-#editor-4126ae84 .chroma .kr,
-#editor-4126ae84 .chroma .ow,
-#editor-4126ae84 .chroma .cp,
-#editor-4126ae84 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-ecf9141d .chroma .k,
+#editor-ecf9141d .chroma .kd,
+#editor-ecf9141d .chroma .kn,
+#editor-ecf9141d .chroma .kp,
+#editor-ecf9141d .chroma .kr,
+#editor-ecf9141d .chroma .ow,
+#editor-ecf9141d .chroma .cp,
+#editor-ecf9141d .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-4126ae84 .chroma .kt,
-#editor-4126ae84 .chroma .nb,
-#editor-4126ae84 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-ecf9141d .chroma .kt,
+#editor-ecf9141d .chroma .nb,
+#editor-ecf9141d .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-4126ae84 .chroma .nf,
-#editor-4126ae84 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-ecf9141d .chroma .nf,
+#editor-ecf9141d .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-4126ae84 .chroma .m,
-#editor-4126ae84 .chroma .mb,
-#editor-4126ae84 .chroma .mf,
-#editor-4126ae84 .chroma .mh,
-#editor-4126ae84 .chroma .mi,
-#editor-4126ae84 .chroma .il,
-#editor-4126ae84 .chroma .mo,
-#editor-4126ae84 .chroma .kc { color: #b5cea8 !important; }
+#editor-ecf9141d .chroma .m,
+#editor-ecf9141d .chroma .mb,
+#editor-ecf9141d .chroma .mf,
+#editor-ecf9141d .chroma .mh,
+#editor-ecf9141d .chroma .mi,
+#editor-ecf9141d .chroma .il,
+#editor-ecf9141d .chroma .mo,
+#editor-ecf9141d .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-4126ae84 .chroma .s,
-#editor-4126ae84 .chroma .sa,
-#editor-4126ae84 .chroma .sb,
-#editor-4126ae84 .chroma .sc,
-#editor-4126ae84 .chroma .dl,
-#editor-4126ae84 .chroma .sd,
-#editor-4126ae84 .chroma .s2,
-#editor-4126ae84 .chroma .se,
-#editor-4126ae84 .chroma .sh,
-#editor-4126ae84 .chroma .si,
-#editor-4126ae84 .chroma .sx,
-#editor-4126ae84 .chroma .sr,
-#editor-4126ae84 .chroma .s1,
-#editor-4126ae84 .chroma .ss { color: #ce9178 !important; }
+#editor-ecf9141d .chroma .s,
+#editor-ecf9141d .chroma .sa,
+#editor-ecf9141d .chroma .sb,
+#editor-ecf9141d .chroma .sc,
+#editor-ecf9141d .chroma .dl,
+#editor-ecf9141d .chroma .sd,
+#editor-ecf9141d .chroma .s2,
+#editor-ecf9141d .chroma .se,
+#editor-ecf9141d .chroma .sh,
+#editor-ecf9141d .chroma .si,
+#editor-ecf9141d .chroma .sx,
+#editor-ecf9141d .chroma .sr,
+#editor-ecf9141d .chroma .s1,
+#editor-ecf9141d .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-4126ae84 .chroma .c,
-#editor-4126ae84 .chroma .ch,
-#editor-4126ae84 .chroma .cm,
-#editor-4126ae84 .chroma .c1,
-#editor-4126ae84 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-ecf9141d .chroma .c,
+#editor-ecf9141d .chroma .ch,
+#editor-ecf9141d .chroma .cm,
+#editor-ecf9141d .chroma .c1,
+#editor-ecf9141d .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-4126ae84 .chroma .o { color: #d4d4d4 !important; }
-#editor-4126ae84 .chroma .p { color: #d4d4d4 !important; }
+#editor-ecf9141d .chroma .o { color: #d4d4d4 !important; }
+#editor-ecf9141d .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-4126ae84 .chroma .n,
-#editor-4126ae84 .chroma .nx,
-#editor-4126ae84 .chroma .nv,
-#editor-4126ae84 .chroma .vc,
-#editor-4126ae84 .chroma .vg,
-#editor-4126ae84 .chroma .vi,
-#editor-4126ae84 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-ecf9141d .chroma .n,
+#editor-ecf9141d .chroma .nx,
+#editor-ecf9141d .chroma .nv,
+#editor-ecf9141d .chroma .vc,
+#editor-ecf9141d .chroma .vg,
+#editor-ecf9141d .chroma .vi,
+#editor-ecf9141d .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-4126ae84" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-4126ae84" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ecf9141d" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ecf9141d" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3080,11 +3069,11 @@ $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$<p>If the g
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-4126ae84" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ecf9141d" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-4126ae84" style="display: none;">
+<textarea id="fs-ecf9141d" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3149,8 +3138,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-4126ae84');
-    const editor = document.getElementById('editor-4126ae84');
+    const canvas = document.getElementById('glcanvas-ecf9141d');
+    const editor = document.getElementById('editor-ecf9141d');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3339,7 +3328,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-4126ae84').value.trim();
+    const rawSource = document.getElementById('fs-ecf9141d').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -3425,10 +3414,10 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 
 <style>
  
-#editor-04a83534 .highlight,
-#editor-04a83534 .chroma,
-#editor-04a83534 pre,
-#editor-04a83534 code {
+#editor-6481a2e9 .highlight,
+#editor-6481a2e9 .chroma,
+#editor-6481a2e9 pre,
+#editor-6481a2e9 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -3443,92 +3432,92 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
 }
 
  
-#editor-04a83534 .copy-code,
-#editor-04a83534 .chroma .copy-btn { 
+#editor-6481a2e9 .copy-code,
+#editor-6481a2e9 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-04a83534 {
+.glsl-code-panel-6481a2e9 {
     background-color: #1e1e1e !important;
 }
 
-#editor-04a83534,
-#editor-04a83534 .chroma {
+#editor-6481a2e9,
+#editor-6481a2e9 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-04a83534 .chroma .k,
-#editor-04a83534 .chroma .kd,
-#editor-04a83534 .chroma .kn,
-#editor-04a83534 .chroma .kp,
-#editor-04a83534 .chroma .kr,
-#editor-04a83534 .chroma .ow,
-#editor-04a83534 .chroma .cp,
-#editor-04a83534 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-6481a2e9 .chroma .k,
+#editor-6481a2e9 .chroma .kd,
+#editor-6481a2e9 .chroma .kn,
+#editor-6481a2e9 .chroma .kp,
+#editor-6481a2e9 .chroma .kr,
+#editor-6481a2e9 .chroma .ow,
+#editor-6481a2e9 .chroma .cp,
+#editor-6481a2e9 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-04a83534 .chroma .kt,
-#editor-04a83534 .chroma .nb,
-#editor-04a83534 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-6481a2e9 .chroma .kt,
+#editor-6481a2e9 .chroma .nb,
+#editor-6481a2e9 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-04a83534 .chroma .nf,
-#editor-04a83534 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-6481a2e9 .chroma .nf,
+#editor-6481a2e9 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-04a83534 .chroma .m,
-#editor-04a83534 .chroma .mb,
-#editor-04a83534 .chroma .mf,
-#editor-04a83534 .chroma .mh,
-#editor-04a83534 .chroma .mi,
-#editor-04a83534 .chroma .il,
-#editor-04a83534 .chroma .mo,
-#editor-04a83534 .chroma .kc { color: #b5cea8 !important; }
+#editor-6481a2e9 .chroma .m,
+#editor-6481a2e9 .chroma .mb,
+#editor-6481a2e9 .chroma .mf,
+#editor-6481a2e9 .chroma .mh,
+#editor-6481a2e9 .chroma .mi,
+#editor-6481a2e9 .chroma .il,
+#editor-6481a2e9 .chroma .mo,
+#editor-6481a2e9 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-04a83534 .chroma .s,
-#editor-04a83534 .chroma .sa,
-#editor-04a83534 .chroma .sb,
-#editor-04a83534 .chroma .sc,
-#editor-04a83534 .chroma .dl,
-#editor-04a83534 .chroma .sd,
-#editor-04a83534 .chroma .s2,
-#editor-04a83534 .chroma .se,
-#editor-04a83534 .chroma .sh,
-#editor-04a83534 .chroma .si,
-#editor-04a83534 .chroma .sx,
-#editor-04a83534 .chroma .sr,
-#editor-04a83534 .chroma .s1,
-#editor-04a83534 .chroma .ss { color: #ce9178 !important; }
+#editor-6481a2e9 .chroma .s,
+#editor-6481a2e9 .chroma .sa,
+#editor-6481a2e9 .chroma .sb,
+#editor-6481a2e9 .chroma .sc,
+#editor-6481a2e9 .chroma .dl,
+#editor-6481a2e9 .chroma .sd,
+#editor-6481a2e9 .chroma .s2,
+#editor-6481a2e9 .chroma .se,
+#editor-6481a2e9 .chroma .sh,
+#editor-6481a2e9 .chroma .si,
+#editor-6481a2e9 .chroma .sx,
+#editor-6481a2e9 .chroma .sr,
+#editor-6481a2e9 .chroma .s1,
+#editor-6481a2e9 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-04a83534 .chroma .c,
-#editor-04a83534 .chroma .ch,
-#editor-04a83534 .chroma .cm,
-#editor-04a83534 .chroma .c1,
-#editor-04a83534 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-6481a2e9 .chroma .c,
+#editor-6481a2e9 .chroma .ch,
+#editor-6481a2e9 .chroma .cm,
+#editor-6481a2e9 .chroma .c1,
+#editor-6481a2e9 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-04a83534 .chroma .o { color: #d4d4d4 !important; }
-#editor-04a83534 .chroma .p { color: #d4d4d4 !important; }
+#editor-6481a2e9 .chroma .o { color: #d4d4d4 !important; }
+#editor-6481a2e9 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-04a83534 .chroma .n,
-#editor-04a83534 .chroma .nx,
-#editor-04a83534 .chroma .nv,
-#editor-04a83534 .chroma .vc,
-#editor-04a83534 .chroma .vg,
-#editor-04a83534 .chroma .vi,
-#editor-04a83534 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-6481a2e9 .chroma .n,
+#editor-6481a2e9 .chroma .nx,
+#editor-6481a2e9 .chroma .nv,
+#editor-6481a2e9 .chroma .vc,
+#editor-6481a2e9 .chroma .vg,
+#editor-6481a2e9 .chroma .vi,
+#editor-6481a2e9 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-04a83534" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-04a83534" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-6481a2e9" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-6481a2e9" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -3601,11 +3590,11 @@ $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varep
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-04a83534" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-6481a2e9" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-04a83534" style="display: none;">
+<textarea id="fs-6481a2e9" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -3680,8 +3669,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-04a83534');
-    const editor = document.getElementById('editor-04a83534');
+    const canvas = document.getElementById('glcanvas-6481a2e9');
+    const editor = document.getElementById('editor-6481a2e9');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -3870,7 +3859,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-04a83534').value.trim();
+    const rawSource = document.getElementById('fs-6481a2e9').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4007,10 +3996,10 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 
 <style>
  
-#editor-de84b8c3 .highlight,
-#editor-de84b8c3 .chroma,
-#editor-de84b8c3 pre,
-#editor-de84b8c3 code {
+#editor-bba9e619 .highlight,
+#editor-bba9e619 .chroma,
+#editor-bba9e619 pre,
+#editor-bba9e619 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4025,92 +4014,92 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
 }
 
  
-#editor-de84b8c3 .copy-code,
-#editor-de84b8c3 .chroma .copy-btn { 
+#editor-bba9e619 .copy-code,
+#editor-bba9e619 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-de84b8c3 {
+.glsl-code-panel-bba9e619 {
     background-color: #1e1e1e !important;
 }
 
-#editor-de84b8c3,
-#editor-de84b8c3 .chroma {
+#editor-bba9e619,
+#editor-bba9e619 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-de84b8c3 .chroma .k,
-#editor-de84b8c3 .chroma .kd,
-#editor-de84b8c3 .chroma .kn,
-#editor-de84b8c3 .chroma .kp,
-#editor-de84b8c3 .chroma .kr,
-#editor-de84b8c3 .chroma .ow,
-#editor-de84b8c3 .chroma .cp,
-#editor-de84b8c3 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-bba9e619 .chroma .k,
+#editor-bba9e619 .chroma .kd,
+#editor-bba9e619 .chroma .kn,
+#editor-bba9e619 .chroma .kp,
+#editor-bba9e619 .chroma .kr,
+#editor-bba9e619 .chroma .ow,
+#editor-bba9e619 .chroma .cp,
+#editor-bba9e619 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-de84b8c3 .chroma .kt,
-#editor-de84b8c3 .chroma .nb,
-#editor-de84b8c3 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-bba9e619 .chroma .kt,
+#editor-bba9e619 .chroma .nb,
+#editor-bba9e619 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-de84b8c3 .chroma .nf,
-#editor-de84b8c3 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-bba9e619 .chroma .nf,
+#editor-bba9e619 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-de84b8c3 .chroma .m,
-#editor-de84b8c3 .chroma .mb,
-#editor-de84b8c3 .chroma .mf,
-#editor-de84b8c3 .chroma .mh,
-#editor-de84b8c3 .chroma .mi,
-#editor-de84b8c3 .chroma .il,
-#editor-de84b8c3 .chroma .mo,
-#editor-de84b8c3 .chroma .kc { color: #b5cea8 !important; }
+#editor-bba9e619 .chroma .m,
+#editor-bba9e619 .chroma .mb,
+#editor-bba9e619 .chroma .mf,
+#editor-bba9e619 .chroma .mh,
+#editor-bba9e619 .chroma .mi,
+#editor-bba9e619 .chroma .il,
+#editor-bba9e619 .chroma .mo,
+#editor-bba9e619 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-de84b8c3 .chroma .s,
-#editor-de84b8c3 .chroma .sa,
-#editor-de84b8c3 .chroma .sb,
-#editor-de84b8c3 .chroma .sc,
-#editor-de84b8c3 .chroma .dl,
-#editor-de84b8c3 .chroma .sd,
-#editor-de84b8c3 .chroma .s2,
-#editor-de84b8c3 .chroma .se,
-#editor-de84b8c3 .chroma .sh,
-#editor-de84b8c3 .chroma .si,
-#editor-de84b8c3 .chroma .sx,
-#editor-de84b8c3 .chroma .sr,
-#editor-de84b8c3 .chroma .s1,
-#editor-de84b8c3 .chroma .ss { color: #ce9178 !important; }
+#editor-bba9e619 .chroma .s,
+#editor-bba9e619 .chroma .sa,
+#editor-bba9e619 .chroma .sb,
+#editor-bba9e619 .chroma .sc,
+#editor-bba9e619 .chroma .dl,
+#editor-bba9e619 .chroma .sd,
+#editor-bba9e619 .chroma .s2,
+#editor-bba9e619 .chroma .se,
+#editor-bba9e619 .chroma .sh,
+#editor-bba9e619 .chroma .si,
+#editor-bba9e619 .chroma .sx,
+#editor-bba9e619 .chroma .sr,
+#editor-bba9e619 .chroma .s1,
+#editor-bba9e619 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-de84b8c3 .chroma .c,
-#editor-de84b8c3 .chroma .ch,
-#editor-de84b8c3 .chroma .cm,
-#editor-de84b8c3 .chroma .c1,
-#editor-de84b8c3 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-bba9e619 .chroma .c,
+#editor-bba9e619 .chroma .ch,
+#editor-bba9e619 .chroma .cm,
+#editor-bba9e619 .chroma .c1,
+#editor-bba9e619 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-de84b8c3 .chroma .o { color: #d4d4d4 !important; }
-#editor-de84b8c3 .chroma .p { color: #d4d4d4 !important; }
+#editor-bba9e619 .chroma .o { color: #d4d4d4 !important; }
+#editor-bba9e619 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-de84b8c3 .chroma .n,
-#editor-de84b8c3 .chroma .nx,
-#editor-de84b8c3 .chroma .nv,
-#editor-de84b8c3 .chroma .vc,
-#editor-de84b8c3 .chroma .vg,
-#editor-de84b8c3 .chroma .vi,
-#editor-de84b8c3 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-bba9e619 .chroma .n,
+#editor-bba9e619 .chroma .nx,
+#editor-bba9e619 .chroma .nv,
+#editor-bba9e619 .chroma .vc,
+#editor-bba9e619 .chroma .vg,
+#editor-bba9e619 .chroma .vi,
+#editor-bba9e619 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-de84b8c3" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-de84b8c3" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-bba9e619" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-bba9e619" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4184,11 +4173,11 @@ $$<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchprio
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-de84b8c3" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-bba9e619" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-de84b8c3" style="display: none;">
+<textarea id="fs-bba9e619" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4264,8 +4253,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-de84b8c3');
-    const editor = document.getElementById('editor-de84b8c3');
+    const canvas = document.getElementById('glcanvas-bba9e619');
+    const editor = document.getElementById('editor-bba9e619');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4454,7 +4443,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-de84b8c3').value.trim();
+    const rawSource = document.getElementById('fs-bba9e619').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -4549,10 +4538,10 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 
 <style>
  
-#editor-7146d205 .highlight,
-#editor-7146d205 .chroma,
-#editor-7146d205 pre,
-#editor-7146d205 code {
+#editor-ae3e126a .highlight,
+#editor-ae3e126a .chroma,
+#editor-ae3e126a pre,
+#editor-ae3e126a code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -4567,92 +4556,92 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
 }
 
  
-#editor-7146d205 .copy-code,
-#editor-7146d205 .chroma .copy-btn { 
+#editor-ae3e126a .copy-code,
+#editor-ae3e126a .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-7146d205 {
+.glsl-code-panel-ae3e126a {
     background-color: #1e1e1e !important;
 }
 
-#editor-7146d205,
-#editor-7146d205 .chroma {
+#editor-ae3e126a,
+#editor-ae3e126a .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-7146d205 .chroma .k,
-#editor-7146d205 .chroma .kd,
-#editor-7146d205 .chroma .kn,
-#editor-7146d205 .chroma .kp,
-#editor-7146d205 .chroma .kr,
-#editor-7146d205 .chroma .ow,
-#editor-7146d205 .chroma .cp,
-#editor-7146d205 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-ae3e126a .chroma .k,
+#editor-ae3e126a .chroma .kd,
+#editor-ae3e126a .chroma .kn,
+#editor-ae3e126a .chroma .kp,
+#editor-ae3e126a .chroma .kr,
+#editor-ae3e126a .chroma .ow,
+#editor-ae3e126a .chroma .cp,
+#editor-ae3e126a .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-7146d205 .chroma .kt,
-#editor-7146d205 .chroma .nb,
-#editor-7146d205 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-ae3e126a .chroma .kt,
+#editor-ae3e126a .chroma .nb,
+#editor-ae3e126a .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-7146d205 .chroma .nf,
-#editor-7146d205 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-ae3e126a .chroma .nf,
+#editor-ae3e126a .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-7146d205 .chroma .m,
-#editor-7146d205 .chroma .mb,
-#editor-7146d205 .chroma .mf,
-#editor-7146d205 .chroma .mh,
-#editor-7146d205 .chroma .mi,
-#editor-7146d205 .chroma .il,
-#editor-7146d205 .chroma .mo,
-#editor-7146d205 .chroma .kc { color: #b5cea8 !important; }
+#editor-ae3e126a .chroma .m,
+#editor-ae3e126a .chroma .mb,
+#editor-ae3e126a .chroma .mf,
+#editor-ae3e126a .chroma .mh,
+#editor-ae3e126a .chroma .mi,
+#editor-ae3e126a .chroma .il,
+#editor-ae3e126a .chroma .mo,
+#editor-ae3e126a .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-7146d205 .chroma .s,
-#editor-7146d205 .chroma .sa,
-#editor-7146d205 .chroma .sb,
-#editor-7146d205 .chroma .sc,
-#editor-7146d205 .chroma .dl,
-#editor-7146d205 .chroma .sd,
-#editor-7146d205 .chroma .s2,
-#editor-7146d205 .chroma .se,
-#editor-7146d205 .chroma .sh,
-#editor-7146d205 .chroma .si,
-#editor-7146d205 .chroma .sx,
-#editor-7146d205 .chroma .sr,
-#editor-7146d205 .chroma .s1,
-#editor-7146d205 .chroma .ss { color: #ce9178 !important; }
+#editor-ae3e126a .chroma .s,
+#editor-ae3e126a .chroma .sa,
+#editor-ae3e126a .chroma .sb,
+#editor-ae3e126a .chroma .sc,
+#editor-ae3e126a .chroma .dl,
+#editor-ae3e126a .chroma .sd,
+#editor-ae3e126a .chroma .s2,
+#editor-ae3e126a .chroma .se,
+#editor-ae3e126a .chroma .sh,
+#editor-ae3e126a .chroma .si,
+#editor-ae3e126a .chroma .sx,
+#editor-ae3e126a .chroma .sr,
+#editor-ae3e126a .chroma .s1,
+#editor-ae3e126a .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-7146d205 .chroma .c,
-#editor-7146d205 .chroma .ch,
-#editor-7146d205 .chroma .cm,
-#editor-7146d205 .chroma .c1,
-#editor-7146d205 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-ae3e126a .chroma .c,
+#editor-ae3e126a .chroma .ch,
+#editor-ae3e126a .chroma .cm,
+#editor-ae3e126a .chroma .c1,
+#editor-ae3e126a .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-7146d205 .chroma .o { color: #d4d4d4 !important; }
-#editor-7146d205 .chroma .p { color: #d4d4d4 !important; }
+#editor-ae3e126a .chroma .o { color: #d4d4d4 !important; }
+#editor-ae3e126a .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-7146d205 .chroma .n,
-#editor-7146d205 .chroma .nx,
-#editor-7146d205 .chroma .nv,
-#editor-7146d205 .chroma .vc,
-#editor-7146d205 .chroma .vg,
-#editor-7146d205 .chroma .vi,
-#editor-7146d205 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-ae3e126a .chroma .n,
+#editor-ae3e126a .chroma .nx,
+#editor-ae3e126a .chroma .nv,
+#editor-ae3e126a .chroma .vc,
+#editor-ae3e126a .chroma .vg,
+#editor-ae3e126a .chroma .vi,
+#editor-ae3e126a .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-7146d205" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-7146d205" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ae3e126a" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ae3e126a" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -4726,11 +4715,11 @@ $$<figure id="fig-blinn-vectors" class="zoomable-figure" style="text-align:cente
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-7146d205" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ae3e126a" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-7146d205" style="display: none;">
+<textarea id="fs-ae3e126a" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -4806,8 +4795,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-7146d205');
-    const editor = document.getElementById('editor-7146d205');
+    const canvas = document.getElementById('glcanvas-ae3e126a');
+    const editor = document.getElementById('editor-ae3e126a');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -4996,7 +4985,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-7146d205').value.trim();
+    const rawSource = document.getElementById('fs-ae3e126a').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5098,10 +5087,10 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 
 <style>
  
-#editor-ae286aa7 .highlight,
-#editor-ae286aa7 .chroma,
-#editor-ae286aa7 pre,
-#editor-ae286aa7 code {
+#editor-00e8ba56 .highlight,
+#editor-00e8ba56 .chroma,
+#editor-00e8ba56 pre,
+#editor-00e8ba56 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5116,92 +5105,92 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
 }
 
  
-#editor-ae286aa7 .copy-code,
-#editor-ae286aa7 .chroma .copy-btn { 
+#editor-00e8ba56 .copy-code,
+#editor-00e8ba56 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-ae286aa7 {
+.glsl-code-panel-00e8ba56 {
     background-color: #1e1e1e !important;
 }
 
-#editor-ae286aa7,
-#editor-ae286aa7 .chroma {
+#editor-00e8ba56,
+#editor-00e8ba56 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-ae286aa7 .chroma .k,
-#editor-ae286aa7 .chroma .kd,
-#editor-ae286aa7 .chroma .kn,
-#editor-ae286aa7 .chroma .kp,
-#editor-ae286aa7 .chroma .kr,
-#editor-ae286aa7 .chroma .ow,
-#editor-ae286aa7 .chroma .cp,
-#editor-ae286aa7 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-00e8ba56 .chroma .k,
+#editor-00e8ba56 .chroma .kd,
+#editor-00e8ba56 .chroma .kn,
+#editor-00e8ba56 .chroma .kp,
+#editor-00e8ba56 .chroma .kr,
+#editor-00e8ba56 .chroma .ow,
+#editor-00e8ba56 .chroma .cp,
+#editor-00e8ba56 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-ae286aa7 .chroma .kt,
-#editor-ae286aa7 .chroma .nb,
-#editor-ae286aa7 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-00e8ba56 .chroma .kt,
+#editor-00e8ba56 .chroma .nb,
+#editor-00e8ba56 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-ae286aa7 .chroma .nf,
-#editor-ae286aa7 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-00e8ba56 .chroma .nf,
+#editor-00e8ba56 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-ae286aa7 .chroma .m,
-#editor-ae286aa7 .chroma .mb,
-#editor-ae286aa7 .chroma .mf,
-#editor-ae286aa7 .chroma .mh,
-#editor-ae286aa7 .chroma .mi,
-#editor-ae286aa7 .chroma .il,
-#editor-ae286aa7 .chroma .mo,
-#editor-ae286aa7 .chroma .kc { color: #b5cea8 !important; }
+#editor-00e8ba56 .chroma .m,
+#editor-00e8ba56 .chroma .mb,
+#editor-00e8ba56 .chroma .mf,
+#editor-00e8ba56 .chroma .mh,
+#editor-00e8ba56 .chroma .mi,
+#editor-00e8ba56 .chroma .il,
+#editor-00e8ba56 .chroma .mo,
+#editor-00e8ba56 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-ae286aa7 .chroma .s,
-#editor-ae286aa7 .chroma .sa,
-#editor-ae286aa7 .chroma .sb,
-#editor-ae286aa7 .chroma .sc,
-#editor-ae286aa7 .chroma .dl,
-#editor-ae286aa7 .chroma .sd,
-#editor-ae286aa7 .chroma .s2,
-#editor-ae286aa7 .chroma .se,
-#editor-ae286aa7 .chroma .sh,
-#editor-ae286aa7 .chroma .si,
-#editor-ae286aa7 .chroma .sx,
-#editor-ae286aa7 .chroma .sr,
-#editor-ae286aa7 .chroma .s1,
-#editor-ae286aa7 .chroma .ss { color: #ce9178 !important; }
+#editor-00e8ba56 .chroma .s,
+#editor-00e8ba56 .chroma .sa,
+#editor-00e8ba56 .chroma .sb,
+#editor-00e8ba56 .chroma .sc,
+#editor-00e8ba56 .chroma .dl,
+#editor-00e8ba56 .chroma .sd,
+#editor-00e8ba56 .chroma .s2,
+#editor-00e8ba56 .chroma .se,
+#editor-00e8ba56 .chroma .sh,
+#editor-00e8ba56 .chroma .si,
+#editor-00e8ba56 .chroma .sx,
+#editor-00e8ba56 .chroma .sr,
+#editor-00e8ba56 .chroma .s1,
+#editor-00e8ba56 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-ae286aa7 .chroma .c,
-#editor-ae286aa7 .chroma .ch,
-#editor-ae286aa7 .chroma .cm,
-#editor-ae286aa7 .chroma .c1,
-#editor-ae286aa7 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-00e8ba56 .chroma .c,
+#editor-00e8ba56 .chroma .ch,
+#editor-00e8ba56 .chroma .cm,
+#editor-00e8ba56 .chroma .c1,
+#editor-00e8ba56 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-ae286aa7 .chroma .o { color: #d4d4d4 !important; }
-#editor-ae286aa7 .chroma .p { color: #d4d4d4 !important; }
+#editor-00e8ba56 .chroma .o { color: #d4d4d4 !important; }
+#editor-00e8ba56 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-ae286aa7 .chroma .n,
-#editor-ae286aa7 .chroma .nx,
-#editor-ae286aa7 .chroma .nv,
-#editor-ae286aa7 .chroma .vc,
-#editor-ae286aa7 .chroma .vg,
-#editor-ae286aa7 .chroma .vi,
-#editor-ae286aa7 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-00e8ba56 .chroma .n,
+#editor-00e8ba56 .chroma .nx,
+#editor-00e8ba56 .chroma .nv,
+#editor-00e8ba56 .chroma .vc,
+#editor-00e8ba56 .chroma .vg,
+#editor-00e8ba56 .chroma .vi,
+#editor-00e8ba56 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-ae286aa7" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-ae286aa7" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-00e8ba56" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-00e8ba56" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5288,11 +5277,11 @@ $$<p>Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function �
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-ae286aa7" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-00e8ba56" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-ae286aa7" style="display: none;">
+<textarea id="fs-00e8ba56" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -5381,8 +5370,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-ae286aa7');
-    const editor = document.getElementById('editor-ae286aa7');
+    const canvas = document.getElementById('glcanvas-00e8ba56');
+    const editor = document.getElementById('editor-00e8ba56');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -5571,7 +5560,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-ae286aa7').value.trim();
+    const rawSource = document.getElementById('fs-00e8ba56').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -5699,10 +5688,10 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 
 <style>
  
-#editor-ab014e14 .highlight,
-#editor-ab014e14 .chroma,
-#editor-ab014e14 pre,
-#editor-ab014e14 code {
+#editor-ed0d0e54 .highlight,
+#editor-ed0d0e54 .chroma,
+#editor-ed0d0e54 pre,
+#editor-ed0d0e54 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -5717,92 +5706,92 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
 }
 
  
-#editor-ab014e14 .copy-code,
-#editor-ab014e14 .chroma .copy-btn { 
+#editor-ed0d0e54 .copy-code,
+#editor-ed0d0e54 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-ab014e14 {
+.glsl-code-panel-ed0d0e54 {
     background-color: #1e1e1e !important;
 }
 
-#editor-ab014e14,
-#editor-ab014e14 .chroma {
+#editor-ed0d0e54,
+#editor-ed0d0e54 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-ab014e14 .chroma .k,
-#editor-ab014e14 .chroma .kd,
-#editor-ab014e14 .chroma .kn,
-#editor-ab014e14 .chroma .kp,
-#editor-ab014e14 .chroma .kr,
-#editor-ab014e14 .chroma .ow,
-#editor-ab014e14 .chroma .cp,
-#editor-ab014e14 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-ed0d0e54 .chroma .k,
+#editor-ed0d0e54 .chroma .kd,
+#editor-ed0d0e54 .chroma .kn,
+#editor-ed0d0e54 .chroma .kp,
+#editor-ed0d0e54 .chroma .kr,
+#editor-ed0d0e54 .chroma .ow,
+#editor-ed0d0e54 .chroma .cp,
+#editor-ed0d0e54 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-ab014e14 .chroma .kt,
-#editor-ab014e14 .chroma .nb,
-#editor-ab014e14 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-ed0d0e54 .chroma .kt,
+#editor-ed0d0e54 .chroma .nb,
+#editor-ed0d0e54 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-ab014e14 .chroma .nf,
-#editor-ab014e14 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-ed0d0e54 .chroma .nf,
+#editor-ed0d0e54 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-ab014e14 .chroma .m,
-#editor-ab014e14 .chroma .mb,
-#editor-ab014e14 .chroma .mf,
-#editor-ab014e14 .chroma .mh,
-#editor-ab014e14 .chroma .mi,
-#editor-ab014e14 .chroma .il,
-#editor-ab014e14 .chroma .mo,
-#editor-ab014e14 .chroma .kc { color: #b5cea8 !important; }
+#editor-ed0d0e54 .chroma .m,
+#editor-ed0d0e54 .chroma .mb,
+#editor-ed0d0e54 .chroma .mf,
+#editor-ed0d0e54 .chroma .mh,
+#editor-ed0d0e54 .chroma .mi,
+#editor-ed0d0e54 .chroma .il,
+#editor-ed0d0e54 .chroma .mo,
+#editor-ed0d0e54 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-ab014e14 .chroma .s,
-#editor-ab014e14 .chroma .sa,
-#editor-ab014e14 .chroma .sb,
-#editor-ab014e14 .chroma .sc,
-#editor-ab014e14 .chroma .dl,
-#editor-ab014e14 .chroma .sd,
-#editor-ab014e14 .chroma .s2,
-#editor-ab014e14 .chroma .se,
-#editor-ab014e14 .chroma .sh,
-#editor-ab014e14 .chroma .si,
-#editor-ab014e14 .chroma .sx,
-#editor-ab014e14 .chroma .sr,
-#editor-ab014e14 .chroma .s1,
-#editor-ab014e14 .chroma .ss { color: #ce9178 !important; }
+#editor-ed0d0e54 .chroma .s,
+#editor-ed0d0e54 .chroma .sa,
+#editor-ed0d0e54 .chroma .sb,
+#editor-ed0d0e54 .chroma .sc,
+#editor-ed0d0e54 .chroma .dl,
+#editor-ed0d0e54 .chroma .sd,
+#editor-ed0d0e54 .chroma .s2,
+#editor-ed0d0e54 .chroma .se,
+#editor-ed0d0e54 .chroma .sh,
+#editor-ed0d0e54 .chroma .si,
+#editor-ed0d0e54 .chroma .sx,
+#editor-ed0d0e54 .chroma .sr,
+#editor-ed0d0e54 .chroma .s1,
+#editor-ed0d0e54 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-ab014e14 .chroma .c,
-#editor-ab014e14 .chroma .ch,
-#editor-ab014e14 .chroma .cm,
-#editor-ab014e14 .chroma .c1,
-#editor-ab014e14 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-ed0d0e54 .chroma .c,
+#editor-ed0d0e54 .chroma .ch,
+#editor-ed0d0e54 .chroma .cm,
+#editor-ed0d0e54 .chroma .c1,
+#editor-ed0d0e54 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-ab014e14 .chroma .o { color: #d4d4d4 !important; }
-#editor-ab014e14 .chroma .p { color: #d4d4d4 !important; }
+#editor-ed0d0e54 .chroma .o { color: #d4d4d4 !important; }
+#editor-ed0d0e54 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-ab014e14 .chroma .n,
-#editor-ab014e14 .chroma .nx,
-#editor-ab014e14 .chroma .nv,
-#editor-ab014e14 .chroma .vc,
-#editor-ab014e14 .chroma .vg,
-#editor-ab014e14 .chroma .vi,
-#editor-ab014e14 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-ed0d0e54 .chroma .n,
+#editor-ed0d0e54 .chroma .nx,
+#editor-ed0d0e54 .chroma .nv,
+#editor-ed0d0e54 .chroma .vc,
+#editor-ed0d0e54 .chroma .vg,
+#editor-ed0d0e54 .chroma .vi,
+#editor-ed0d0e54 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-ab014e14" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-ab014e14" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-ed0d0e54" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-ed0d0e54" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -5935,11 +5924,11 @@ $$<p>If the expression under the square root is <strong>negative</strong>, $\cos
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-ab014e14" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-ed0d0e54" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-ab014e14" style="display: none;">
+<textarea id="fs-ed0d0e54" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6074,8 +6063,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-ab014e14');
-    const editor = document.getElementById('editor-ab014e14');
+    const canvas = document.getElementById('glcanvas-ed0d0e54');
+    const editor = document.getElementById('editor-ed0d0e54');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6264,7 +6253,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-ab014e14').value.trim();
+    const rawSource = document.getElementById('fs-ed0d0e54').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6372,10 +6361,10 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 
 <style>
  
-#editor-d0c8667e .highlight,
-#editor-d0c8667e .chroma,
-#editor-d0c8667e pre,
-#editor-d0c8667e code {
+#editor-23eff847 .highlight,
+#editor-23eff847 .chroma,
+#editor-23eff847 pre,
+#editor-23eff847 code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6390,92 +6379,92 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
 }
 
  
-#editor-d0c8667e .copy-code,
-#editor-d0c8667e .chroma .copy-btn { 
+#editor-23eff847 .copy-code,
+#editor-23eff847 .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-d0c8667e {
+.glsl-code-panel-23eff847 {
     background-color: #1e1e1e !important;
 }
 
-#editor-d0c8667e,
-#editor-d0c8667e .chroma {
+#editor-23eff847,
+#editor-23eff847 .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-d0c8667e .chroma .k,
-#editor-d0c8667e .chroma .kd,
-#editor-d0c8667e .chroma .kn,
-#editor-d0c8667e .chroma .kp,
-#editor-d0c8667e .chroma .kr,
-#editor-d0c8667e .chroma .ow,
-#editor-d0c8667e .chroma .cp,
-#editor-d0c8667e .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-23eff847 .chroma .k,
+#editor-23eff847 .chroma .kd,
+#editor-23eff847 .chroma .kn,
+#editor-23eff847 .chroma .kp,
+#editor-23eff847 .chroma .kr,
+#editor-23eff847 .chroma .ow,
+#editor-23eff847 .chroma .cp,
+#editor-23eff847 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-d0c8667e .chroma .kt,
-#editor-d0c8667e .chroma .nb,
-#editor-d0c8667e .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-23eff847 .chroma .kt,
+#editor-23eff847 .chroma .nb,
+#editor-23eff847 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-d0c8667e .chroma .nf,
-#editor-d0c8667e .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-23eff847 .chroma .nf,
+#editor-23eff847 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-d0c8667e .chroma .m,
-#editor-d0c8667e .chroma .mb,
-#editor-d0c8667e .chroma .mf,
-#editor-d0c8667e .chroma .mh,
-#editor-d0c8667e .chroma .mi,
-#editor-d0c8667e .chroma .il,
-#editor-d0c8667e .chroma .mo,
-#editor-d0c8667e .chroma .kc { color: #b5cea8 !important; }
+#editor-23eff847 .chroma .m,
+#editor-23eff847 .chroma .mb,
+#editor-23eff847 .chroma .mf,
+#editor-23eff847 .chroma .mh,
+#editor-23eff847 .chroma .mi,
+#editor-23eff847 .chroma .il,
+#editor-23eff847 .chroma .mo,
+#editor-23eff847 .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-d0c8667e .chroma .s,
-#editor-d0c8667e .chroma .sa,
-#editor-d0c8667e .chroma .sb,
-#editor-d0c8667e .chroma .sc,
-#editor-d0c8667e .chroma .dl,
-#editor-d0c8667e .chroma .sd,
-#editor-d0c8667e .chroma .s2,
-#editor-d0c8667e .chroma .se,
-#editor-d0c8667e .chroma .sh,
-#editor-d0c8667e .chroma .si,
-#editor-d0c8667e .chroma .sx,
-#editor-d0c8667e .chroma .sr,
-#editor-d0c8667e .chroma .s1,
-#editor-d0c8667e .chroma .ss { color: #ce9178 !important; }
+#editor-23eff847 .chroma .s,
+#editor-23eff847 .chroma .sa,
+#editor-23eff847 .chroma .sb,
+#editor-23eff847 .chroma .sc,
+#editor-23eff847 .chroma .dl,
+#editor-23eff847 .chroma .sd,
+#editor-23eff847 .chroma .s2,
+#editor-23eff847 .chroma .se,
+#editor-23eff847 .chroma .sh,
+#editor-23eff847 .chroma .si,
+#editor-23eff847 .chroma .sx,
+#editor-23eff847 .chroma .sr,
+#editor-23eff847 .chroma .s1,
+#editor-23eff847 .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-d0c8667e .chroma .c,
-#editor-d0c8667e .chroma .ch,
-#editor-d0c8667e .chroma .cm,
-#editor-d0c8667e .chroma .c1,
-#editor-d0c8667e .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-23eff847 .chroma .c,
+#editor-23eff847 .chroma .ch,
+#editor-23eff847 .chroma .cm,
+#editor-23eff847 .chroma .c1,
+#editor-23eff847 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-d0c8667e .chroma .o { color: #d4d4d4 !important; }
-#editor-d0c8667e .chroma .p { color: #d4d4d4 !important; }
+#editor-23eff847 .chroma .o { color: #d4d4d4 !important; }
+#editor-23eff847 .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-d0c8667e .chroma .n,
-#editor-d0c8667e .chroma .nx,
-#editor-d0c8667e .chroma .nv,
-#editor-d0c8667e .chroma .vc,
-#editor-d0c8667e .chroma .vg,
-#editor-d0c8667e .chroma .vi,
-#editor-d0c8667e .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-23eff847 .chroma .n,
+#editor-23eff847 .chroma .nx,
+#editor-23eff847 .chroma .nv,
+#editor-23eff847 .chroma .vc,
+#editor-23eff847 .chroma .vg,
+#editor-23eff847 .chroma .vi,
+#editor-23eff847 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-d0c8667e" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-d0c8667e" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-23eff847" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-23eff847" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -6551,11 +6540,11 @@ $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-d0c8667e" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-23eff847" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-d0c8667e" style="display: none;">
+<textarea id="fs-23eff847" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -6633,8 +6622,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-d0c8667e');
-    const editor = document.getElementById('editor-d0c8667e');
+    const canvas = document.getElementById('glcanvas-23eff847');
+    const editor = document.getElementById('editor-23eff847');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -6823,7 +6812,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-d0c8667e').value.trim();
+    const rawSource = document.getElementById('fs-23eff847').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -6903,10 +6892,10 @@ void main() {
 
 <style>
  
-#editor-010b8748 .highlight,
-#editor-010b8748 .chroma,
-#editor-010b8748 pre,
-#editor-010b8748 code {
+#editor-7e9986bb .highlight,
+#editor-7e9986bb .chroma,
+#editor-7e9986bb pre,
+#editor-7e9986bb code {
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
@@ -6921,92 +6910,92 @@ void main() {
 }
 
  
-#editor-010b8748 .copy-code,
-#editor-010b8748 .chroma .copy-btn { 
+#editor-7e9986bb .copy-code,
+#editor-7e9986bb .chroma .copy-btn { 
     display: none !important; 
 }
 
  
-.glsl-code-panel-010b8748 {
+.glsl-code-panel-7e9986bb {
     background-color: #1e1e1e !important;
 }
 
-#editor-010b8748,
-#editor-010b8748 .chroma {
+#editor-7e9986bb,
+#editor-7e9986bb .chroma {
     color: #d4d4d4 !important;
     background-color: #1e1e1e !important;
 }
 
  
-#editor-010b8748 .chroma .k,
-#editor-010b8748 .chroma .kd,
-#editor-010b8748 .chroma .kn,
-#editor-010b8748 .chroma .kp,
-#editor-010b8748 .chroma .kr,
-#editor-010b8748 .chroma .ow,
-#editor-010b8748 .chroma .cp,
-#editor-010b8748 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
+#editor-7e9986bb .chroma .k,
+#editor-7e9986bb .chroma .kd,
+#editor-7e9986bb .chroma .kn,
+#editor-7e9986bb .chroma .kp,
+#editor-7e9986bb .chroma .kr,
+#editor-7e9986bb .chroma .ow,
+#editor-7e9986bb .chroma .cp,
+#editor-7e9986bb .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
 
  
-#editor-010b8748 .chroma .kt,
-#editor-010b8748 .chroma .nb,
-#editor-010b8748 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
+#editor-7e9986bb .chroma .kt,
+#editor-7e9986bb .chroma .nb,
+#editor-7e9986bb .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
 
  
-#editor-010b8748 .chroma .nf,
-#editor-010b8748 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
+#editor-7e9986bb .chroma .nf,
+#editor-7e9986bb .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
 
  
-#editor-010b8748 .chroma .m,
-#editor-010b8748 .chroma .mb,
-#editor-010b8748 .chroma .mf,
-#editor-010b8748 .chroma .mh,
-#editor-010b8748 .chroma .mi,
-#editor-010b8748 .chroma .il,
-#editor-010b8748 .chroma .mo,
-#editor-010b8748 .chroma .kc { color: #b5cea8 !important; }
+#editor-7e9986bb .chroma .m,
+#editor-7e9986bb .chroma .mb,
+#editor-7e9986bb .chroma .mf,
+#editor-7e9986bb .chroma .mh,
+#editor-7e9986bb .chroma .mi,
+#editor-7e9986bb .chroma .il,
+#editor-7e9986bb .chroma .mo,
+#editor-7e9986bb .chroma .kc { color: #b5cea8 !important; }
 
  
-#editor-010b8748 .chroma .s,
-#editor-010b8748 .chroma .sa,
-#editor-010b8748 .chroma .sb,
-#editor-010b8748 .chroma .sc,
-#editor-010b8748 .chroma .dl,
-#editor-010b8748 .chroma .sd,
-#editor-010b8748 .chroma .s2,
-#editor-010b8748 .chroma .se,
-#editor-010b8748 .chroma .sh,
-#editor-010b8748 .chroma .si,
-#editor-010b8748 .chroma .sx,
-#editor-010b8748 .chroma .sr,
-#editor-010b8748 .chroma .s1,
-#editor-010b8748 .chroma .ss { color: #ce9178 !important; }
+#editor-7e9986bb .chroma .s,
+#editor-7e9986bb .chroma .sa,
+#editor-7e9986bb .chroma .sb,
+#editor-7e9986bb .chroma .sc,
+#editor-7e9986bb .chroma .dl,
+#editor-7e9986bb .chroma .sd,
+#editor-7e9986bb .chroma .s2,
+#editor-7e9986bb .chroma .se,
+#editor-7e9986bb .chroma .sh,
+#editor-7e9986bb .chroma .si,
+#editor-7e9986bb .chroma .sx,
+#editor-7e9986bb .chroma .sr,
+#editor-7e9986bb .chroma .s1,
+#editor-7e9986bb .chroma .ss { color: #ce9178 !important; }
 
  
-#editor-010b8748 .chroma .c,
-#editor-010b8748 .chroma .ch,
-#editor-010b8748 .chroma .cm,
-#editor-010b8748 .chroma .c1,
-#editor-010b8748 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
+#editor-7e9986bb .chroma .c,
+#editor-7e9986bb .chroma .ch,
+#editor-7e9986bb .chroma .cm,
+#editor-7e9986bb .chroma .c1,
+#editor-7e9986bb .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
 
  
-#editor-010b8748 .chroma .o { color: #d4d4d4 !important; }
-#editor-010b8748 .chroma .p { color: #d4d4d4 !important; }
+#editor-7e9986bb .chroma .o { color: #d4d4d4 !important; }
+#editor-7e9986bb .chroma .p { color: #d4d4d4 !important; }
 
  
-#editor-010b8748 .chroma .n,
-#editor-010b8748 .chroma .nx,
-#editor-010b8748 .chroma .nv,
-#editor-010b8748 .chroma .vc,
-#editor-010b8748 .chroma .vg,
-#editor-010b8748 .chroma .vi,
-#editor-010b8748 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
+#editor-7e9986bb .chroma .n,
+#editor-7e9986bb .chroma .nx,
+#editor-7e9986bb .chroma .nv,
+#editor-7e9986bb .chroma .vc,
+#editor-7e9986bb .chroma .vg,
+#editor-7e9986bb .chroma .vi,
+#editor-7e9986bb .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
 </style>
 
 <div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
     
-    <div class="glsl-code-panel-010b8748" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-010b8748" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
+    <div class="glsl-code-panel-7e9986bb" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
+        <div id="editor-7e9986bb" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
 </span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
@@ -7090,11 +7079,11 @@ void main() {
     </div>
     
     <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-010b8748" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
+        <canvas id="glcanvas-7e9986bb" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
     </div>
 </div>
 
-<textarea id="fs-010b8748" style="display: none;">
+<textarea id="fs-7e9986bb" style="display: none;">
 #version 300 es
 precision highp float;
 
@@ -7180,8 +7169,8 @@ void main() {
 
 <script>
 (function() {
-    const canvas = document.getElementById('glcanvas-010b8748');
-    const editor = document.getElementById('editor-010b8748');
+    const canvas = document.getElementById('glcanvas-7e9986bb');
+    const editor = document.getElementById('editor-7e9986bb');
     let gl = null;
     let positionBuffer = null;
     let initialized = false;
@@ -7370,595 +7359,7 @@ void main() {
         return true;
     }
 
-    const rawSource = document.getElementById('fs-010b8748').value.trim();
-    pendingSource = rawSource.replace(/\u00A0/g, ' ');
-
-    
-    editor.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const sel = window.getSelection();
-            if (sel.rangeCount) {
-                const range = sel.getRangeAt(0);
-                range.deleteContents();
-                const node = document.createTextNode('    ');
-                range.insertNode(node);
-                range.collapse(false);
-                sel.removeAllRanges();
-                sel.addRange(range);
-            }
-            editor.dispatchEvent(new Event('input'));
-        }
-    });
-
-    editor.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text');
-        const sel = window.getSelection();
-        if (sel.rangeCount) {
-            const range = sel.getRangeAt(0);
-            range.deleteContents();
-            const node = document.createTextNode(text);
-            range.insertNode(node);
-            range.collapse(false);
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
-        editor.dispatchEvent(new Event('input'));
-    });
-
-    editor.addEventListener('input', () => {
-        const newSource = editor.innerText.trim().replace(/\u00A0/g, ' ');
-        buildProgram(newSource);
-    });
-
-    
-    function render(time) {
-        renderFrameId = null;
-        if (!shouldRender() || !initialized || !gl || !program) return;
-
-        
-        
-        const displayWidth  = Math.round(canvas.clientWidth  * dpr);
-        const displayHeight = Math.round(canvas.clientHeight * dpr);
-        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-            canvas.width  = displayWidth;
-            canvas.height = displayHeight;
-        }
-
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-        gl.useProgram(program);
-
-        gl.enableVertexAttribArray(positionAttributeLocation);
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-
-        if (resolutionUniformLocation) gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-        if (timeUniformLocation)       gl.uniform1f(timeUniformLocation, time * 0.001);
-        if (mouseUniformLocation)      gl.uniform2f(mouseUniformLocation, mouseX, mouseY);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        scheduleRender();
-    }
-
-    syncRenderState();
-})();
-</script>
-<hr>
-<h2 id="volume-rendering">Volume Rendering<a hidden class="anchor" aria-hidden="true" href="#volume-rendering">#</a></h2>
-<p>All of the techniques above assume that rays interact only with hard surfaces. <strong>Volume rendering</strong> removes that assumption: instead of stopping at the first intersection, rays sample a continuous density field along their path. At each sample point, the ray may be absorbed (Beer-Lambert attenuation), scattered in a new direction, or emit light.</p>
-<h3 id="participating-media">Participating Media<a hidden class="anchor" aria-hidden="true" href="#participating-media">#</a></h3>
-<p>Volume rendering treats the scene as a participating medium rather than a set of opaque surfaces. As a ray travels through that medium, light can be absorbed, scattered out of the ray, scattered into the ray, or emitted by the medium itself.</p>
-<ul>
-<li>Absorption removes energy from the ray.</li>
-<li>Out-scattering redirects photons away from the viewing direction.</li>
-<li>In-scattering adds energy from other directions into the ray.</li>
-<li>Emission adds radiance generated by the medium.</li>
-</ul>
-<figure id="fig-volume-scatter" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:800px;scroll-margin-top:80px;">
-  <img class="zoomable-image" src="/images/intro-to-rendering/volume-rendering/volume-scatter.svg" alt="Volume scattering interactions: absorption, out-scattering, in-scattering, emission" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
-      <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 29.</span>
-      The four types of volume interactions in participating media: (a) Absorption, (b) Out-scattering, (c) In-scattering, and (d) Emission.
-    </figcaption></figure>
-
-
-<p>To keep the notation compact, graphics texts usually group absorption and out-scattering into an extinction coefficient $\sigma_t$:</p>
-$$
-\sigma_t = \sigma_a + \sigma_s
-$$<p>where $\sigma_a$ is the absorption coefficient and $\sigma_s$ is the scattering coefficient.</p>
-<h3 id="beer-lambert-law">Beer-Lambert Law<a hidden class="anchor" aria-hidden="true" href="#beer-lambert-law">#</a></h3>
-<p>If we ignore scattering into the ray for a moment, the remaining light along a ray decays exponentially as it travels through the medium. For a homogeneous medium with constant extinction $\sigma_t$, the transmittance over distance $s$ is</p>
-$$
-T(s) = e^{-\sigma_t s}.
-$$<p>For a heterogeneous medium, extinction varies along the ray, so we integrate it instead:</p>
-$$
-T(s) = \exp\left(-\int_0^s \sigma_t(x_u)\,du\right).
-$$<p>The quantity inside the exponent is often called the optical depth $\tau(s)$:</p>
-$$
-\operatorname{OD}(s) = \int_0^s \sigma_t(x_u)\,du, \qquad T(s) = e^{-\operatorname{OD}(s)}.
-$$<blockquote>
-<details>
-<summary style="cursor: pointer;">Proof: Beer-Lambert Law</summary>
-<p>Consider the homogeneous case first, where the extinction coefficient is constant along the ray. The radiance $L(s)$ obeys</p>
-$$
-\frac{dL(s)}{ds} = -\sigma_t L(s).
-$$<p>This says the rate of energy loss is proportional to the current radiance and the local extinction coefficient. Separate variables:</p>
-$$
-\frac{dL(s)}{L(s)} = -\sigma_t \, ds
-$$<p>Integrate both sides from the entry point $0$ to the current distance $s$:</p>
-$$
-\int_{L(0)}^{L(s)} \frac{dL'}{L'} = -\int_0^s \sigma_t \, du
-$$<p>The left-hand side becomes a logarithm:</p>
-$$
-\ln L(s) - \ln L(0) = -\sigma_t s
-$$<p>Exponentiating both sides gives the attenuation law:</p>
-$$
-L(s) = L(0)e^{-\sigma_t s}.
-$$<p>Since transmittance is the surviving fraction of the incoming radiance,</p>
-$$
-T(s) = \frac{L(s)}{L(0)},
-$$<p>we obtain</p>
-$$
-T(s) = e^{-\sigma_t s}.
-$$<p>For a heterogeneous medium, $\sigma_t$ varies along the ray, so we replace the constant product by an integral:</p>
-$$
-T(s) = \exp\left(-\int_0^s \sigma_t(x_u)\,du\right).
-$$<p>Special cases are immediate: if $\sigma_t = 0$, then $T = 1$; if $\sigma_t$ is constant, then we recover the usual exponential falloff.</p>
-</details></blockquote>
-<h3 id="radiative-transfer">Radiative Transfer<a hidden class="anchor" aria-hidden="true" href="#radiative-transfer">#</a></h3>
-<p>The full light transport model adds in-scattering and emission back into the ray. In ray parameter form, the radiance changes as</p>
-$$
-\frac{dL(x_s,\omega)}{ds} = -\sigma_t(x_s)L(x_s,\omega) + \sigma_s(x_s)L_s(x_s,\omega) + j(x_s,\omega),
-$$<p>where $L_s$ denotes light scattered into the ray from other directions and $j$ is the emitted radiance of the medium.</p>
-<p>The corresponding volume rendering equation can be written as</p>
-$$
-L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + j(x_{s'},\omega)\big]\,ds' + T(s)L(0).
-$$<p>The result follows from a standard integrating-factor derivation.</p>
-<blockquote>
-<details>
-<summary style="cursor: pointer;">Proof: from the RTE to the VRE</summary>
-<p>Define the source term as</p>
-$$
-q(s) = \sigma_s(x_s)L_s(x_s,\omega) + j(x_s,\omega).
-$$<p>Then the radiance equation can be written in standard linear ODE form:</p>
-$$
- \frac{dL(s)}{ds} + \sigma_t(x_s)L(s) = q(s).
-$$<p>The integrating factor is</p>
-$$
- I(s) = \exp\left(\int_0^s \sigma_t(x_u)\,du\right).
-$$<p>Multiplying the ODE by $I(s)$ gives</p>
-$$
- I(s)\frac{dL(s)}{ds} + I(s)\sigma_t(x_s)L(s) = I(s)q(s).
-$$<p>By the product rule, the left-hand side is exactly</p>
-$$
- \frac{d}{ds}\big[I(s)L(s)\big] = I(s)q(s),
-$$<p>because $I'(s) = I(s)\sigma_t(x_s)$.</p>
-<p>Integrate from the ray entry point $0$ to the current distance $s$:</p>
-$$
- I(s)L(s) - I(0)L(0) = \int_0^s I(s')q(s')\,ds'.
-> $$<p>Since $I(0)=1$, solve for $L(s)$:</p>
-$$
- L(s) = I(s)^{-1}\int_0^s I(s')q(s')\,ds' + I(s)^{-1}L(0).
-$$<p>Substituting the integrating factor back in and using</p>
-$$
- I(s)^{-1} = \exp\left(-\int_0^s \sigma_t(x_u)\,du\right) = T(s),
- $$<p>we get</p>
-$$
-L(s) = \int_0^s T(s')q(s')\,ds' + T(s)L(0).
-$$<p>Replacing $q(s')$ with the emission and in-scattering source terms yields the volume rendering equation:</p>
-$$
-L(x,\omega) = \int_0^s T(s')\big[\sigma_s(x_{s'})L_s(x_{s'},\omega) + j(x_{s'},\omega)\big]\,ds' + T(s)L(0).
-$$<p>In practice, this is why front-to-back marching works: each sample contributes a local source term, and every contribution is discounted by the transmittance accumulated before that point.</p>
-</details></blockquote>
-<p>That completes the basic participating-media model. The GLSL example below uses the simpler absorption-plus-emission case, which is enough to visualize a soft volumetric cloud.</p>
-<p>Here is a live GLSL example of a volumetric density field. As rays step through the medium, transmittance decays via the Beer-Lambert law, while emitted light is accumulated along the path to produce a soft, cloud-like glow. In the code below, <code>emission</code> plays the role of the source term $j$.</p>
-
-
-
-<style>
- 
-#editor-1ed101b1 .highlight,
-#editor-1ed101b1 .chroma,
-#editor-1ed101b1 pre,
-#editor-1ed101b1 code {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    outline: none !important;
-    overflow: visible !important;
-    display: block !important;
-    width: auto !important;
-    max-width: none !important;
-}
-
- 
-#editor-1ed101b1 .copy-code,
-#editor-1ed101b1 .chroma .copy-btn { 
-    display: none !important; 
-}
-
- 
-.glsl-code-panel-1ed101b1 {
-    background-color: #1e1e1e !important;
-}
-
-#editor-1ed101b1,
-#editor-1ed101b1 .chroma {
-    color: #d4d4d4 !important;
-    background-color: #1e1e1e !important;
-}
-
- 
-#editor-1ed101b1 .chroma .k,
-#editor-1ed101b1 .chroma .kd,
-#editor-1ed101b1 .chroma .kn,
-#editor-1ed101b1 .chroma .kp,
-#editor-1ed101b1 .chroma .kr,
-#editor-1ed101b1 .chroma .ow,
-#editor-1ed101b1 .chroma .cp,
-#editor-1ed101b1 .chroma .cs { color: #c586c0 !important; font-weight: normal !important; }
-
- 
-#editor-1ed101b1 .chroma .kt,
-#editor-1ed101b1 .chroma .nb,
-#editor-1ed101b1 .chroma .bp { color: #569cd6 !important; font-weight: normal !important; }
-
- 
-#editor-1ed101b1 .chroma .nf,
-#editor-1ed101b1 .chroma .fm { color: #dcdcaa !important; font-weight: normal !important; }
-
- 
-#editor-1ed101b1 .chroma .m,
-#editor-1ed101b1 .chroma .mb,
-#editor-1ed101b1 .chroma .mf,
-#editor-1ed101b1 .chroma .mh,
-#editor-1ed101b1 .chroma .mi,
-#editor-1ed101b1 .chroma .il,
-#editor-1ed101b1 .chroma .mo,
-#editor-1ed101b1 .chroma .kc { color: #b5cea8 !important; }
-
- 
-#editor-1ed101b1 .chroma .s,
-#editor-1ed101b1 .chroma .sa,
-#editor-1ed101b1 .chroma .sb,
-#editor-1ed101b1 .chroma .sc,
-#editor-1ed101b1 .chroma .dl,
-#editor-1ed101b1 .chroma .sd,
-#editor-1ed101b1 .chroma .s2,
-#editor-1ed101b1 .chroma .se,
-#editor-1ed101b1 .chroma .sh,
-#editor-1ed101b1 .chroma .si,
-#editor-1ed101b1 .chroma .sx,
-#editor-1ed101b1 .chroma .sr,
-#editor-1ed101b1 .chroma .s1,
-#editor-1ed101b1 .chroma .ss { color: #ce9178 !important; }
-
- 
-#editor-1ed101b1 .chroma .c,
-#editor-1ed101b1 .chroma .ch,
-#editor-1ed101b1 .chroma .cm,
-#editor-1ed101b1 .chroma .c1,
-#editor-1ed101b1 .chroma .cpf { color: #6a9955 !important; font-style: normal !important; }
-
- 
-#editor-1ed101b1 .chroma .o { color: #d4d4d4 !important; }
-#editor-1ed101b1 .chroma .p { color: #d4d4d4 !important; }
-
- 
-#editor-1ed101b1 .chroma .n,
-#editor-1ed101b1 .chroma .nx,
-#editor-1ed101b1 .chroma .nv,
-#editor-1ed101b1 .chroma .vc,
-#editor-1ed101b1 .chroma .vg,
-#editor-1ed101b1 .chroma .vi,
-#editor-1ed101b1 .chroma .vm { color: #9cdcfe !important; font-weight: normal !important; }
-</style>
-
-<div class="glsl-wrapper" style="display: flex; flex-wrap: wrap; margin: 2rem 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
-    
-    <div class="glsl-code-panel-1ed101b1" style="flex: 1 1 350px; background: #1e1e1e; overflow: auto; border-right: 1px solid var(--border); font-size: 0.85rem; max-height: 500px;">
-        <div id="editor-1ed101b1" contenteditable="true" spellcheck="false" style="outline: none; min-width: max-content; min-height: 100%; display: block; caret-color: white; padding: 0.75rem 0.5rem; box-sizing: border-box; font-family: monospace; white-space: pre;"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#version 300 es</span>
-</span></span><span class="line"><span class="cl"><span class="k">precision</span> <span class="k">highp</span> <span class="k">float</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">uniform</span> <span class="k">vec2</span> <span class="n">u_resolution</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="k">out</span> <span class="k">vec4</span> <span class="n">fragColor</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">uv</span> <span class="o">=</span> <span class="p">(</span><span class="n">gl_FragCoord</span><span class="p">.</span><span class="n">xy</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u_resolution</span><span class="p">)</span> <span class="o">/</span> <span class="n">u_resolution</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">ro</span>   <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">rd</span>   <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="n">uv</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">));</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="c1">// Ray-sphere intersection</span>
-</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">b</span>    <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">rd</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">c</span>    <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">ro</span><span class="p">,</span> <span class="n">ro</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">disc</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span>  <span class="n">bgCol</span>    <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span>  <span class="n">col</span>      <span class="o">=</span> <span class="n">bgCol</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">disc</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">tNear</span> <span class="o">=</span> <span class="o">-</span><span class="n">b</span> <span class="o">-</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">disc</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">tFar</span>  <span class="o">=</span> <span class="o">-</span><span class="n">b</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">disc</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// Raymarch: discrete approximation of the VRE integral</span>
-</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="k">int</span>   <span class="n">STEPS</span>      <span class="o">=</span> <span class="mi">32</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="k">float</span> <span class="n">sigma_t</span>    <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>  <span class="c1">// extinction coefficient</span>
-</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="k">vec3</span>  <span class="n">emission</span>    <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">dt</span> <span class="o">=</span> <span class="p">(</span><span class="n">tFar</span> <span class="o">-</span> <span class="n">tNear</span><span class="p">)</span> <span class="o">/</span> <span class="k">float</span><span class="p">(</span><span class="n">STEPS</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">T</span>  <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span> <span class="c1">// transmittance, starts at 1</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">STEPS</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">            <span class="c1">// T(s&#39;) * j * dt  (emission contribution from the VRE)</span>
-</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">dT</span>  <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">sigma_t</span> <span class="o">*</span> <span class="n">dt</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">col</span>      <span class="o">+=</span> <span class="n">emission</span> <span class="o">*</span> <span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">dT</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">T</span>        <span class="o">*=</span> <span class="n">dT</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">T</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span> <span class="k">break</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// T(s) * L(0)  — background attenuated by remaining transmittance</span>
-</span></span><span class="line"><span class="cl">        <span class="n">col</span> <span class="o">+=</span> <span class="n">bgCol</span> <span class="o">*</span> <span class="n">T</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="n">col</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">clamp</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.2</span><span class="p">));</span>
-</span></span><span class="line"><span class="cl">    <span class="n">fragColor</span> <span class="o">=</span> <span class="k">vec4</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></div></div>
-    </div>
-    
-    <div class="glsl-canvas-panel" style="flex: 1 1 350px; background: #000; position: relative; min-height: 350px;">
-        <canvas id="glcanvas-1ed101b1" style="width: 100%; height: 100%; display: block; position: absolute; top: 0; left: 0;"></canvas>
-    </div>
-</div>
-
-<textarea id="fs-1ed101b1" style="display: none;">
-#version 300 es
-precision highp float;
-
-uniform vec2 u_resolution;
-out vec4 fragColor;
-
-void main() {
-    vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / u_resolution.y;
-
-    vec3 ro   = vec3(0.0, 0.0, 3.0);
-    vec3 rd   = normalize(vec3(uv, -1.0));
-
-    // Ray-sphere intersection
-    float b    = dot(ro, rd);
-    float c    = dot(ro, ro) - 1.0;
-    float disc = b * b - c;
-
-    vec3  bgCol    = vec3(0.05, 0.05, 0.08);
-    vec3  col      = bgCol;
-
-    if (disc &gt; 0.0) {
-        float tNear = -b - sqrt(disc);
-        float tFar  = -b &#43; sqrt(disc);
-
-        // Raymarch: discrete approximation of the VRE integral
-        const int   STEPS      = 32;
-        const float sigma_t    = 0.5;  // extinction coefficient
-        const vec3  emission    = vec3(0.5, 0.7, 1.0);
-
-        float dt = (tFar - tNear) / float(STEPS);
-        float T  = 1.0; // transmittance, starts at 1
-
-        for (int i = 0; i &lt; STEPS; i&#43;&#43;) {
-            // T(s&#39;) * j * dt  (emission contribution from the VRE)
-            float dT  = exp(-sigma_t * dt);
-            col      &#43;= emission * T * (1.0 - dT);
-            T        *= dT;
-
-            if (T &lt; 0.01) break;
-        }
-
-        // T(s) * L(0)  — background attenuated by remaining transmittance
-        col &#43;= bgCol * T;
-    }
-
-    col = pow(clamp(col, 0.0, 1.0), vec3(1.0 / 2.2));
-    fragColor = vec4(col, 1.0);
-}
-</textarea>
-
-<script>
-(function() {
-    const canvas = document.getElementById('glcanvas-1ed101b1');
-    const editor = document.getElementById('editor-1ed101b1');
-    let gl = null;
-    let positionBuffer = null;
-    let initialized = false;
-    let pendingSource = '';
-
-    const vsSource = `#version 300 es
-    in vec4 aVertexPosition;
-    void main() {
-        gl_Position = aVertexPosition;
-    }`;
-
-    function createShader(gl, type, source) {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.error('Shader compile error:', gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            return null;
-        }
-        return shader;
-    }
-
-    let program = null;
-    let positionAttributeLocation = -1;
-    let resolutionUniformLocation = null;
-    let timeUniformLocation = null;
-    let mouseUniformLocation = null;
-    let renderFrameId = null;
-    let isCanvasVisible = false;
-    let isPageVisible = !document.hidden;
-
-    
-    
-    
-    const dpr = window.devicePixelRatio || 1;
-
-    let mouseX = 0.0;
-    let mouseY = 0.0;
-
-    function shouldRender() {
-        return isCanvasVisible && isPageVisible;
-    }
-
-    function scheduleRender() {
-        if (renderFrameId !== null || !shouldRender()) return;
-        renderFrameId = requestAnimationFrame(render);
-    }
-
-    function cancelRender() {
-        if (renderFrameId !== null) {
-            cancelAnimationFrame(renderFrameId);
-            renderFrameId = null;
-        }
-    }
-
-    function syncRenderState() {
-        if (shouldRender()) {
-            if (!initialized) {
-                if (!initializeWidget()) return;
-            }
-            scheduleRender();
-        } else {
-            cancelRender();
-        }
-    }
-
-    function initializeWidget() {
-        if (initialized) return !!gl;
-
-        gl = canvas.getContext('webgl2');
-        if (!gl) {
-            console.error('WebGL2 not supported');
-            initialized = true;
-            return false;
-        }
-
-        initialized = true;
-
-        positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1.0,  1.0,
-             1.0,  1.0,
-            -1.0, -1.0,
-             1.0, -1.0,
-        ]), gl.STATIC_DRAW);
-
-        return buildProgram(pendingSource);
-    }
-
-    
-    canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        mouseX = (e.clientX - rect.left)  * dpr;
-        mouseY = (rect.height - (e.clientY - rect.top)) * dpr;
-    });
-
-    canvas.addEventListener('mouseleave', () => {
-        mouseX = 0.0;
-        mouseY = 0.0;
-    });
-
-    
-    
-    
-    function setMouseFromTouch(e) {
-        if (e.touches.length === 0) return;
-        e.preventDefault(); 
-        const touch = e.touches[0];
-        const rect  = canvas.getBoundingClientRect();
-        mouseX = (touch.clientX - rect.left)  * dpr;
-        mouseY = (rect.height - (touch.clientY - rect.top)) * dpr;
-    }
-
-    canvas.addEventListener('touchstart', setMouseFromTouch, { passive: false });
-    canvas.addEventListener('touchmove',  setMouseFromTouch, { passive: false });
-    canvas.addEventListener('touchend',   () => { mouseX = 0.0; mouseY = 0.0; }, { passive: true });
-
-    
-    
-    
-    
-    
-    
-    
-    if (typeof IntersectionObserver !== 'undefined') {
-        const visibilityObserver = new IntersectionObserver((entries) => {
-            for (const entry of entries) {
-                if (entry.target === canvas) {
-                    isCanvasVisible = entry.isIntersecting;
-                    syncRenderState();
-                }
-            }
-        }, { rootMargin: '200px' });
-
-        visibilityObserver.observe(canvas);
-
-        window.addEventListener('beforeunload', () => {
-            visibilityObserver.disconnect();
-        }, { once: true });
-    } else {
-        
-        isCanvasVisible = true;
-    }
-
-    document.addEventListener('visibilitychange', () => {
-        isPageVisible = !document.hidden;
-        syncRenderState();
-    });
-
-    
-    function buildProgram(fsSourceRaw) {
-        const vertexShader   = createShader(gl, gl.VERTEX_SHADER,   vsSource);
-        const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSourceRaw);
-
-        if (!fragmentShader) {
-            if (vertexShader) gl.deleteShader(vertexShader);
-            return false;
-        }
-
-        const newProgram = gl.createProgram();
-        gl.attachShader(newProgram, vertexShader);
-        gl.attachShader(newProgram, fragmentShader);
-        gl.linkProgram(newProgram);
-
-        if (!gl.getProgramParameter(newProgram, gl.LINK_STATUS)) {
-            console.error('Program link error:', gl.getProgramInfoLog(newProgram));
-            gl.deleteShader(vertexShader);
-            gl.deleteShader(fragmentShader);
-            gl.deleteProgram(newProgram);
-            return false;
-        }
-
-        if (program) gl.deleteProgram(program);
-        program = newProgram;
-
-        positionAttributeLocation = gl.getAttribLocation(program, 'aVertexPosition');
-        resolutionUniformLocation  = gl.getUniformLocation(program, 'u_resolution');
-        timeUniformLocation        = gl.getUniformLocation(program, 'u_time');
-        mouseUniformLocation       = gl.getUniformLocation(program, 'u_mouse');
-
-        gl.deleteShader(vertexShader);
-        gl.deleteShader(fragmentShader);
-        syncRenderState();
-        return true;
-    }
-
-    const rawSource = document.getElementById('fs-1ed101b1').value.trim();
+    const rawSource = document.getElementById('fs-7e9986bb').value.trim();
     pendingSource = rawSource.replace(/\u00A0/g, ' ');
 
     
@@ -8044,7 +7445,6 @@ void main() {
 <li>Bui Tuong Phong, <em>Illumination for Computer Generated Pictures</em>.</li>
 <li>Turner Whitted, <em>An Improved Illumination Model for Shaded Display</em>.</li>
 <li>James Kajiya, <em>The Rendering Equation</em>.</li>
-<li>Scratchapixel, <a href="https://www.scratchapixel.com/lessons/advanced-rendering/volume-rendering/introduction.html">Volume Rendering</a>.</li>
 <li>Indian Institute of Science (IISc), <a href="https://www.csa.iisc.ac.in/~vijayn/courses/Graphics/index.html">E0 271: Graphics and Visualization</a>.</li>
 </ul>
 
