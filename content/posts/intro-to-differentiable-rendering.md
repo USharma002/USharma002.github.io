@@ -1010,7 +1010,7 @@ How do we compute the derivatives of an integral? Recall that we wanted to compu
 However, the derivative of the integral with respect to a vertex position parameter $\mathbf{\pi}_v$ is not 0.
 
 $$
-\frac{\partial}{\partial \pi_v} I_i(\boldsymbol{\pi}) = \frac{\partial}{\partial \pi_v} \iint f(x, y; \boldsymbol{\pi}) dx dy \neq \frac{1}{N}\sum_{j=1}^{N}\frac{\partial f(x_j, y_j; \boldsymbol{\pi})}{\partial \pi_v} = 0
+\frac{\partial I_i}{\partial \pi_v} = \frac{\partial}{\partial \pi_v} \iint f(x, y; \boldsymbol{\pi}) \,\mathrm{d}x\mathrm{d}y \neq \iint \frac{\partial f}{\partial \pi_v}(x, y; \boldsymbol{\pi}) \,\mathrm{d}x\mathrm{d}y \approx \frac{1}{N}\sum_{j=1}^N 0 = 0
 $$
 
 This is the same failure mode as [Example 2](#example-2-discontinuities-the-visibility-problem): the discretization and the gradient operator do not commute for discontinuous integrands, since a uniformly placed sample has zero probability of landing exactly on the moving edge where the change actually happens. The fix is also the same: sample the boundary explicitly.
@@ -1639,7 +1639,7 @@ $$\omega(t) = v_0 + (v_1 - v_0)t - p$$
 
 $$\tau(t) = \frac{(m - p) \cdot n_m}{\omega(t) \cdot n_m}$$
 
-$$m(t) = \tau(t)\omega(t).$$
+$$m(t) = p + \tau(t)\omega(t).$$
 
 We can then derive the derivative $J_m(t) = \frac{\partial m(t)}{\partial t}$ as:
 
@@ -1662,10 +1662,7 @@ $$
 
 These are the corrected forms from the paper's published erratum. In particular, $p$ occurs in all three factors of the scalar triple product, so its derivative is not equal to $\nabla_m\alpha$.
 
-Unlike primary visibility where the viewpoint does not
-change much, shading point $p$ can be anywhere in the scene. The
-consequence is that we need a more sophisticated data structure
-to prune the edges with zero contribution.
+Unlike primary visibility where the camera viewpoint is fixed, the shading point $\mathbf{p}$ varies across bounces throughout the scene. Consequently, an acceleration structure is required to prune non-contributing silhouette edges efficiently.
 
 #### Selecting an Edge
 
@@ -1751,42 +1748,42 @@ To preserve the primal computation of $I$, the transformation $\mathcal{T}$ shou
 
 A typical shading integral can contain complex parameter-dependent discontinuities. However, when the integrand has small angular support (e.g., narrow pixel reconstruction filters, glossy BSDF lobes, or small light sources), the discontinuity within the support reduces to the silhouette of a single object, as shown in {{< figref "fig-integrand-discontinuity" >}}.
 
-The displacement of a silhouette on $S^2$ under infinitesimal perturbations of $\pi$ is well approximated by a spherical rotation (the spherical counterpart of a planar domain translation). As the support shrinks, this approximation improves, becoming exact in the limit. Assuming a suitable rotation $R(\omega, \pi)$ exists, the change of variables
+The displacement of a silhouette on $\mathbb{S}^2$ under infinitesimal perturbations of $\pi$ is well approximated by a spherical rotation (the spherical counterpart of a planar domain translation). As the support shrinks, this approximation improves, becoming exact in the limit. Assuming a suitable rotation $R(\boldsymbol{\omega}, \pi)$ exists, the change of variables
 
 $$
-I = \int_{S^2} f(\omega, \pi) \, \mathrm{d}\omega = \int_{S^2} f(R(\omega, \pi), \pi) \, \mathrm{d}\omega
+I = \int_{\mathbb{S}^2} f(\boldsymbol{\omega}, \pi) \, \mathrm{d}\boldsymbol{\omega} = \int_{\mathbb{S}^2} f(R(\boldsymbol{\omega}, \pi), \pi) \, \mathrm{d}\boldsymbol{\omega}
 $$
 
-makes $f(R(\omega, \pi), \pi)$ continuous with respect to $\pi$ for each direction $\omega$. The rotation determinant is $|\operatorname{det} J_R| = 1$, and $R$ depends explicitly on $\pi$.
+makes $f(R(\boldsymbol{\omega}, \pi), \pi)$ continuous with respect to $\pi$ for each direction $\boldsymbol{\omega}$. The rotation determinant is $|\operatorname{det} J_R| = 1$, and $R$ depends explicitly on $\pi$.
 
 {{< figure src="/images/diff-rendering/reparam/conv_zoomed.png" id="fig-conv-zoomed" caption="Zooming into the support of a convolution shows how small-support kernels isolate single geometric edges, making local rotations a good approximation." width="100%" >}}
 
 Rotations are simple to compute and accurately track local boundary movements. Using $R$ to reparameterize the integral yields the Monte Carlo estimator:
 
 $$
-E = \frac{1}{N} \sum_{i=1}^N \frac{f(R(\omega_i, \pi), \pi)}{p(\omega_i, \pi_0)} \approx I
+E = \frac{1}{N} \sum_{i=1}^N \frac{f(R(\boldsymbol{\omega}_i, \pi), \pi)}{p(\boldsymbol{\omega}_i, \pi_0)} \approx I
 $$
 
-where $\omega_i \sim p(\cdot, \pi_0)$ are drawn from the default sampling distribution (e.g., BSDF sampling) evaluated at $\pi_0$ rather than $\pi$, removing sample dependency on $\pi$.
+where $\boldsymbol{\omega}_i \sim p(\cdot, \pi_0)$ are drawn from the default sampling distribution (e.g., BSDF sampling) evaluated at $\pi_0$ rather than $\pi$, removing sample dependency on $\pi$.
 
 #### Generalizing to Functions with Large Support
 
 {{< figure src="/images/diff-rendering/reparam/spherical_rotations.svg" id="fig-spherical-rotations" caption="Spherical rotations (left) approximate silhouette motion, while spherical convolution (right) reduces large-support integrands to narrow kernels." width="100%" >}}
 
-When integrands have large support on $S^2$, they contain multiple interacting silhouettes that violate the single-object assumption, causing bias in local rotation estimates.
+When integrands have large support on $\mathbb{S}^2$, they contain multiple interacting silhouettes that violate the single-object assumption, causing bias in local rotation estimates.
 
 To resolve this, we leverage the property that the integral of a function $f$ equals the integral of its spherical convolution:
 
 $$
 \begin{equation}
-\int_{S^2} f(\omega) \, \mathrm{d}\omega = \int_{S^2} \int_{S^2} f(\mu) k(\mu, \omega) \, \mathrm{d}\mu \, \mathrm{d}\omega \label{eq:reparam_conv}
+\int_{\mathbb{S}^2} f(\boldsymbol{\omega}) \, \mathrm{d}\boldsymbol{\omega} = \int_{\mathbb{S}^2} \int_{\mathbb{S}^2} f(\boldsymbol{\mu}) k(\boldsymbol{\mu}, \boldsymbol{\omega}) \, \mathrm{d}\boldsymbol{\mu} \, \mathrm{d}\boldsymbol{\omega} \label{eq:reparam_conv}
 \end{equation}
 $$
 
 where $k$ is a normalized spherical convolution kernel. With the argument order used above, preservation of the integral requires:
 
 $$
-\int_{S^2} k(\mu, \omega) \, \mathrm{d}\mu = 1, \quad \forall \omega \in S^2
+\int_{\mathbb{S}^2} k(\boldsymbol{\mu}, \boldsymbol{\omega}) \, \mathrm{d}\boldsymbol{\mu} = 1, \quad \forall \boldsymbol{\omega} \in \mathbb{S}^2
 $$
 
 By choosing $k$ to be a smooth, concentrated distribution (such as a von Mises-Fisher distribution) with small angular support, the inner integral is restricted to a small domain, restoring compatibility with local rotations.
@@ -1867,8 +1864,7 @@ Determining rotation matrices that track boundary motion without explicitly sear
 
 A central insight of Loubet et al. is that finding a suitable change of variables does not require identifying silhouette edges or even knowing whether an integrand contains a discontinuity. The only required information is how surface points move under infinitesimal perturbations of scene parameters $\pi$.
 
-Because the integrand has small support, the displacement of points on silhouette edges closely approximates the displacement of other nearby surface positions on the same object. We exploit this by tracing a *small* batch of auxiliary rays within the integrand's support (this number has an impact on the probability of missing a discontinuity by sampling only one of the objects of the integrand,
-which results in bias). Using distance and surface normal information, a heuristic selects a candidate occluder point whose motion under parameter changes tracks that of the silhouette.
+Because the integrand has small support, the displacement of points on silhouette edges closely approximates the displacement of nearby surface positions on the same object. We exploit this by tracing a small batch of auxiliary rays within the integrand's support (where the ray count controls the trade-off between variance and the probability of missing a discontinuity). Using distance and surface normal information, a heuristic selects a candidate occluder point whose motion under parameter changes tracks that of the silhouette.
 
 {{< figure src="/images/diff-rendering/reparam/occlusion_estimate.svg" id="fig-reparam-occlusion" caption="From a pair of surface points $p_0$ and $p_1$ that are visible from a point $p$, Loubet et al. estimate the occlusion between the corresponding objects using first-order surface approximations from the normals at $p_0$ and $p_1$. Figures (a) and (b) show cases where one plane occludes the other intersection point from $p$. Figures (c) and (d) illustrate the case of an intersection between objects that can be estimated from the intersection of the planes." width="100%" >}}
 
@@ -1886,15 +1882,15 @@ Thus $R(\pi_0) = I$ (leaving primal ray tracing unchanged) while its derivative 
 <summary style="cursor: pointer; font-weight: 600;">Differentiable Rotation Matrices</summary>
 <div style="margin-top: 1rem;">
 
-Our differentiable path tracer requires differentiable rotation matrices $R$ built from two directions $\mathbf{\omega}_a$ and $\mathbf{\omega}_b$, such that $R\mathbf{\omega}_a = \mathbf{\omega}_b$. Moreover, we need to build such matrices in the special case $\mathbf{\omega}_a = \mathbf{\omega}_b$, that is, when these matrices are equal to the identity matrix but their gradients depend on both $\mathbf{\omega}_a$ and $\mathbf{\omega}_b$. The widely used Rodrigues' rotation formula [Belongie 2019] [[16]](#ref-16) is not defined in this case because it involves a normalized rotation axis. The norm of the rotation axis can be factored out from this formula and simplified, leading to a more general expression:
+Evaluating local reparameterizations requires differentiable rotation matrices $R$ that map direction $\mathbf{\omega}_a$ to $\mathbf{\omega}_b$ such that $R\mathbf{\omega}_a = \mathbf{\omega}_b$. In particular, these matrices must be evaluated in the limit $\mathbf{\omega}_a \to \mathbf{\omega}_b$—where $R$ equals the identity matrix, but its gradients with respect to $\mathbf{\omega}_a$ and $\mathbf{\omega}_b$ remain non-trivial. Standard Rodrigues' rotation [Belongie 2019] [[16]](#ref-16) suffers from a singularity at $\mathbf{\omega}_a = \mathbf{\omega}_b$ because it divides by the norm of the rotation axis. Loubet et al. factor out and simplify this norm, yielding the smooth expression:
 
 $$R = \alpha I + [\mathbf{\beta}]_\times + \frac{1}{1 + \alpha} \mathbf{\beta} \mathbf{\beta}^T$$
 
-with $\alpha = \mathbf{\omega}_a \cdot \mathbf{\omega}_b$, $\mathbf{\beta} = \mathbf{\omega}_a \times \mathbf{\omega}_b$ and
+where $\alpha = \mathbf{\omega}_a \cdot \mathbf{\omega}_b$, $\mathbf{\beta} = \mathbf{\omega}_a \times \mathbf{\omega}_b$ and
 
 $$[\mathbf{u}]_\times = \begin{bmatrix} 0 & -u_z & u_y \\ u_z & 0 & -u_x \\ -u_y & u_x & 0 \end{bmatrix}$$
 
-The resulting matrices are differentiable in the case $\mathbf{\omega}_a = \mathbf{\omega}_b$.
+This formulation is well-defined and differentiable even when $\mathbf{\omega}_a = \mathbf{\omega}_b$.
 </div>
 </details>
 </blockquote>
@@ -1971,7 +1967,12 @@ where $W_{i,l}(\pi)$ is the product of reparameterization weights along path $i$
 By using $\alpha=-f_{1,l}$ for path 0 and $\alpha=-f_{0,l}$ for path 1, the cross-reduced path contribution $r'$ is:
 
 $$
-r' = \frac{1}{2} \sum_{l=0}^\infty \Big( f_{0,l}(\pi) W_{0,l}(\pi) - f_{1,l}(\pi) \big(W_{0,l}(\pi) - W_{0,l}(\pi_0)\big) + f_{1,l}(\pi) W_{1,l}(\pi) - f_{0,l}(\pi) \big(W_{1,l}(\pi) - W_{1,l}(\pi_0)\big) \Big)
+\begin{equation}
+\begin{split}
+r' &= \frac{1}{2} \sum_{l=0}^\infty \Big( f_{0,l}(\pi) W_{0,l}(\pi) - f_{1,l}(\pi) \big(W_{0,l}(\pi) - W_{0,l}(\pi_0)\big) \\\\
+&\qquad\qquad + f_{1,l}(\pi) W_{1,l}(\pi) - f_{0,l}(\pi) \big(W_{1,l}(\pi) - W_{1,l}(\pi_0)\big) \Big)
+\end{split}
+\end{equation}
 $$
 
 Correlated path pairs reuse the random numbers for path-construction steps except those that affect the local reparameterization weights. Those samples remain independent so that $f_{0,l}$ is uncorrelated with $\partial_\pi W_{1,l}$ and vice versa. Under this independence condition, cross-reduction lowers gradient variance for direct and multi-bounce illumination without adding bias, at the cost of tracing paired paths.
@@ -2016,7 +2017,7 @@ This partition is only a device used in the proof; evaluating the estimator does
 
 {{< figure src="/images/diff-rendering/warparea/pixel_content.svg" id="fig-warparea-pixel-content" caption="Differentiating boundary movements. Bangaru et al.'s goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how they partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. They can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals." width="100%" >}}
 
-Introduce a vector field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ that interpolates the boundary velocity into the interior. Applying the divergence theorem to $f\mathbf{V}_{\boldsymbol{\pi}}$ rewrites the boundary contribution as:
+Introduce a vector field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ that interpolates the boundary velocity into the interior. Applying the divergence theorem to $f\mathcal{V}_{\boldsymbol{\pi}}$ rewrites the boundary contribution as:
 
 #### Area Form of the Boundary Derivative
 
@@ -2026,155 +2027,364 @@ $$
 \oint_{\partial A} \mathbf{f} \cdot \mathbf{n} \mathrm{d}\mathbf{s} = \iint_{A - \partial A} \nabla_{\omega} \cdot \mathbf{f} \mathrm{d}\omega. \label{eq:divergence-theorem}
 $$
 
-We apply the divergence theorem to rewrite the *boundary derivative integral* in the same domain as the *interior derivative integral*:
+Bangaru et al. apply the divergence theorem to rewrite the *boundary derivative integral* in the same domain as the *interior derivative integral*:
 
 $$
 \begin{aligned}
 I_B &= \oint_{\partial D} f(\boldsymbol{\omega};\boldsymbol{\pi}) \left\langle\partial_{\boldsymbol{\pi}}\boldsymbol{\omega},\mathbf{n}_\perp\right\rangle\,\mathrm{d}\ell && [\text{Boundary flux from Reynolds transport theorem}] \\
-&= \oint_{\partial D} \left( f(\boldsymbol{\omega};\boldsymbol{\pi})\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) \right) \cdot \mathbf{n}_\perp\,\mathrm{d}\ell && [\text{Replace boundary velocity with warp field } \mathbf{V}_{\boldsymbol{\pi}}] \\&= \iint_{D'} \nabla_{\boldsymbol{\omega}}\!\cdot \left(f(\boldsymbol{\omega};\boldsymbol{\pi})\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})\right) \,\mathrm{d}\boldsymbol{\omega} && [\text{Apply Divergence Theorem over interior domain } D'] \\
-&= \iint_{D'} \left[ \left(\nabla_{\boldsymbol{\omega}}f\right)\cdot\mathbf{V}_{\boldsymbol{\pi}} + f\,\nabla_{\boldsymbol{\omega}}\!\cdot\mathbf{V}_{\boldsymbol{\pi}} \right]\mathrm{d}\boldsymbol{\omega} && [\text{Expand divergence via vector product rule}]
+&= \oint_{\partial D} \left( f(\boldsymbol{\omega};\boldsymbol{\pi})\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) \right) \cdot \mathbf{n}_\perp\,\mathrm{d}\ell && [\text{Replace boundary velocity with warp field } \mathcal{V}_{\boldsymbol{\pi}}] \\
+&= \iint_{D'} \nabla_{\boldsymbol{\omega}}\!\cdot \left(f(\boldsymbol{\omega};\boldsymbol{\pi})\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})\right) \,\mathrm{d}\boldsymbol{\omega} && [\text{Apply Divergence Theorem over interior domain } D'] \\
+&= \iint_{D'} \left[ \left(\nabla_{\boldsymbol{\omega}}f\right)\cdot\mathcal{V}_{\boldsymbol{\pi}} + f\,\nabla_{\boldsymbol{\omega}}\!\cdot\mathcal{V}_{\boldsymbol{\pi}} \right]\mathrm{d}\boldsymbol{\omega} && [\text{Expand divergence via vector product rule}]
 \end{aligned}
 $$
 
-where the warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ is a *smooth interpolation* of the boundary velocity $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$. The last step expands the divergence product rule to separate the advection and domain-change terms for the Monte Carlo estimation set up later.
+where the warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ is a *smooth interpolation* of the boundary velocity $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$. The last step expands the divergence product rule to separate the advection and domain-change terms for the Monte Carlo estimation set up later.
 
 Consequently, an area sample contributes three conceptually different derivatives:
 
 $$
-\partial_{\boldsymbol{\pi}} f + \left(\nabla_{\boldsymbol{\omega}}f\right)\cdot\mathbf{V}_{\boldsymbol{\pi}} + f\,\nabla_{\boldsymbol{\omega}}\!\cdot\mathbf{V}_{\boldsymbol{\pi}}.
+\partial_{\boldsymbol{\pi}} f + \left(\nabla_{\boldsymbol{\omega}}f\right)\cdot\mathcal{V}_{\boldsymbol{\pi}} + f\,\nabla_{\boldsymbol{\omega}}\!\cdot\mathcal{V}_{\boldsymbol{\pi}}.
 $$
 
 The first is the ordinary interior derivative. The second moves the sample with the warp. The third accounts for local expansion or contraction of the warped domain. Dropping the divergence term is only valid for volume-preserving warps.
 
 #### Validity Conditions for the Warp
 
-There are infinitely many warp fields that satisfy the divergence equivalence. To ensure the applicability of the divergence theorem, a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ is defined as **valid** for a boundary velocity $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}^{(b)}$ if and only if it satisfies two strict criteria:
+There are infinitely many warp fields that satisfy the divergence equivalence. To ensure the applicability of the divergence theorem, a warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ is defined as **valid** for a boundary velocity $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}^{(b)}$ if and only if it satisfies two strict criteria:
 
 1. **Interior Continuity ($C^0$ Continuity):** The field must be continuous everywhere inside the open interior domain $D' = D \setminus \partial D$:
-   $$\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) \in C^0(D'), \quad \forall \boldsymbol{\omega} \in D'$$
+   $$\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) \in C^0(D'), \quad \forall \boldsymbol{\omega} \in D'$$
 
 2. **Boundary Consistency ($\epsilon$-$\delta$ Limit):** As an interior direction $\boldsymbol{\omega}$ approaches any boundary point $\boldsymbol{\omega}_b \in \partial D$, the warp field must converge to the true boundary velocity $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_b$:
    $$
    \begin{aligned}
    &\forall \boldsymbol{\omega}_b \in \partial D \quad \text{and} \quad \forall \delta \in \mathbb{R}^+, \quad \exists \epsilon > 0 \quad \text{such that} \\
-   &\forall \boldsymbol{\omega} \in D' \text{ with } \|\boldsymbol{\omega} - \boldsymbol{\omega}_b\| < \epsilon \implies \|\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) - \partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_b\| < \delta
+   &\forall \boldsymbol{\omega} \in D' \text{ with } \|\boldsymbol{\omega} - \boldsymbol{\omega}_b\| < \epsilon \implies \|\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) - \partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_b\| < \delta
    \end{aligned}
    $$
 
    Or equivalently in limit notation:
-   $$\lim_{\boldsymbol{\omega} \to \boldsymbol{\omega}_b} \mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = \partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_b, \quad \forall \boldsymbol{\omega}_b \in \partial D$$
+   $$\lim_{\boldsymbol{\omega} \to \boldsymbol{\omega}_b} \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = \partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_b, \quad \forall \boldsymbol{\omega}_b \in \partial D$$
 
-The continuity condition guarantees that no spurious interior jump discontinuities are introduced during differentiation. The boundary consistency condition enforces that the field smoothly interpolates the exact boundary motion near silhouettes. Satisfying both conditions guarantees that inserting $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ into the area integral yields an exact, unbiased representation of the boundary derivative.
+The continuity condition guarantees that no spurious interior jump discontinuities are introduced during differentiation. The boundary consistency condition enforces that the field smoothly interpolates the exact boundary motion near silhouettes. Satisfying both conditions guarantees that inserting $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ into the area integral yields an exact, unbiased representation of the boundary derivative.
 
 The equality is required as a limit from the smooth regions; the field need not be defined on the measure-zero boundary itself. These conditions are the central correctness criterion of the paper. A smooth field with the wrong boundary value remains biased, and a field that is correct at a silhouette but discontinuous in the interior cannot be inserted into the area formula above.
 
-#### Constructing a Valid Warp without Finding Edges
+#### Valid warp fields for the rendering integral
 
-For a ray from $\mathbf{x}$ in direction $\boldsymbol{\omega}$, write the first scene intersection as
+The smooth boundary interpolation problem of constructing the warp field $\mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x})$ presents a unique challenge in rendering. In many other fields such as geometry processing or numerical computation, it is often possible to identify all the boundaries a priori, and then discretize the interior in order to construct the smooth field. However, in the area-based rendering formulation, the goal is to avoid explicit discontinuity enumeration (like explicit boundary sampling) in the first place.
 
-$$
-\mathbf{y}=\operatorname{Intersect}(\mathbf{x},\boldsymbol{\omega};\boldsymbol{\pi}).
-$$
+More concretely, this is a *blind interpolation problem*: the method must construct a valid warp field that can be computed without explicit samples on the boundary.
 
-Differentiating the intersection gives $\partial_{\boldsymbol{\pi}}\mathbf{y}$ and $\partial_{\boldsymbol{\omega}}\mathbf{y}$. The paper's *direct warp* is the angular motion whose projection produces the surface motion:
+***Exploiting structure in the scene.*** Bangaru et al.'s approach exploits the manifold structure of the 3D scene, by observing that the derivative of a 3D scene point $\partial_{\boldsymbol{\pi}} \mathbf{x}$ is continuous for all surface points $\mathbf{x} \in \mathcal{X}$. The discontinuities in the visibility term only arise when the geometry is projected to the solid angle space $\mathcal{X} \to \Omega$ of the point where the radiance is being evaluated.
 
-$$
-\left(\partial_{\boldsymbol{\omega}}\mathbf{y}\right) \mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}(\boldsymbol{\omega}) = \partial_{\boldsymbol{\pi}}\mathbf{y}.
-$$
+***Selecting the warp field.*** The goal is to define a field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ for all $\boldsymbol{\omega} \in \Omega$ such that the continuity and boundary consistency conditions are satisfied. Bangaru et al.'s strategy is to construct a field that satisfies the boundary consistency, but is not necessarily continuous, by differentiating the ray-geometry intersection procedure.
 
-Equivalently, in local two-dimensional coordinates,
+The rendering integral maps a solid angle $\boldsymbol{\omega}$ at position $\mathbf{x}$ to a scene point $\mathbf{y}$ through the ray-scene intersection operator, denoted $\mathbf{y} = \text{INTERSECT}(\mathbf{x}, \boldsymbol{\omega}; \boldsymbol{\pi})$. Specifically, the derivatives of the intersection function with respect to the scene parameters $\boldsymbol{\pi}$ serve as the initial (invalid) warp field, obtained by automatically differentiating the intersection function to get $\mathbf{y}, \partial_{\boldsymbol{\pi}} \mathbf{y}, \partial_{\boldsymbol{\omega}} \mathbf{y} = \text{DIFF-INTERSECT}(\mathbf{x}, \boldsymbol{\omega}; \boldsymbol{\pi})$. Concretely, the direct warp field is:
 
-$$
-\mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}} = \left(\partial_{\boldsymbol{\omega}}\mathbf{y}\right)^{-1} \partial_{\boldsymbol{\pi}}\mathbf{y}.
-$$
+$$\mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega}) = \frac{\partial_{\boldsymbol{\pi}} \mathbf{y}}{\vert{}\partial_{\boldsymbol{\omega}} \mathbf{y}\vert{}}.$$
 
-This matrix form incorporates the correction in the paper's 2022 erratum: the denominator is not a Jacobian *determinant*. The equation is a Jacobian solve, with matrix-valued numerator and denominator when the quantities are multidimensional.
+The division by the Jacobian $\vert{}\partial_{\boldsymbol{\omega}} \mathbf{y}\vert{}$ converts the measure of $\partial_{\boldsymbol{\pi}} \mathbf{y}$ from area measure to solid angle measure. This projection term is the same as the *geometry* term for converting between solid angle and area formulations in path-space rendering methods. It projects the derivative instead of the radiance.
+
+The warp field $\mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega})$ satisfies the boundary consistency criterion, since at the points close to the boundary, the derivative $\frac{\partial_{\boldsymbol{\pi}} \mathbf{y}}{\vert{}\partial_{\boldsymbol{\omega}} \mathbf{y}\vert{}}$ approaches the boundary derivative $\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_b$.
 
 {{< figure src="/images/diff-rendering/warparea/derivative_field.svg" id="fig-warparea-derivative-field" caption="Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in their derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which they have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative." width="100%" >}}
 
-The direct warp has the correct limiting motion on a silhouette, but it jumps when neighboring directions hit different surfaces. Bangaru et al. therefore filter it using a normalized, boundary-aware harmonic convolution:
+Intuitively, this states that the rate at which a given point $\boldsymbol{\omega}$ moves is equal to the motion of the corresponding 3D point adjusted by the Jacobian of the projection between the spaces ({{< figref "fig-warparea-derivative-field" >}}). Unfortunately, this warp field is *not* valid since it breaks the continuity criterion. For example, consider two angles close together on either side of a boundary, but which intersect different surfaces, and therefore have very different warps.
 
-$$
-\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = \frac{\int w(\boldsymbol{\omega},\boldsymbol{\omega}') \mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}(\boldsymbol{\omega}') \,\mathrm{d}\boldsymbol{\omega}'}{\int w(\boldsymbol{\omega},\boldsymbol{\omega}') \,\mathrm{d}\boldsymbol{\omega}'},
-$$
+The discontinuity of the warp field $\mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega})$ is also why it is difficult to differentiate the visibility function. In general, for a discontinuity in the visibility function, only one side is representative of the edge. Evaluating the warp at a point on the other side of the discontinuity yields the motion of a completely independent 3D point. Still, in order to create a continuous warp, the field must somehow be made continuous.
 
-with
+Bangaru et al.'s solution is to convolve the direct warp field with weights that ensure boundary consistency. This rectifies the underlying discontinuous field $\mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega}')$ to produce a smooth and continuous field $\mathcal{V}_{\boldsymbol{\pi}}^{(\text{filtered})}(\boldsymbol{\omega}; w)$:
 
-$$
-w(\boldsymbol{\omega},\boldsymbol{\omega}') = \frac{1}{D(\boldsymbol{\omega},\boldsymbol{\omega}')+B(\boldsymbol{\omega}')}.
-$$
+$$\mathcal{V}_{\boldsymbol{\pi}}^{(\text{filtered})}(\boldsymbol{\omega}; w) = \frac{\int_{\Omega'} w(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega}') \mathrm{d}\boldsymbol{\omega}'}{\int_{\Omega'} w(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathrm{d}\boldsymbol{\omega}'}.$$
 
-$D$ is a smooth angular distance, such as one induced by a von Mises-Fisher kernel ($D(\boldsymbol{\omega},\boldsymbol{\omega}') = e^{\kappa(1-\langle\boldsymbol{\omega},\boldsymbol{\omega}'\rangle)} - 1$). $B$ is a **boundary test**: a non-negative scalar function that approaches zero at any visibility boundary ($B(\boldsymbol{\omega}') \to 0$ as $\boldsymbol{\omega}' \to \partial \Omega$). Crucially, evaluating $B$ is far cheaper than searching for silhouette edges explicitly.
+{{< figure src="/images/diff-rendering/warparea/warp_formulation.svg" id="fig-warparea-formulation" caption="Warp field formulation. Bangaru et al. apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and their area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, their method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering." width="100%" >}}
 
-For triangle meshes, Bangaru et al. construct $B$ at each mesh vertex $v$ using the dot product between the ray direction $\boldsymbol{\omega}'$ and the vertex normal $\mathbf{n}$:
 
-$$
-\mathcal{B}_v = \frac{1 - (1 - \langle\boldsymbol{\omega}', \mathbf{n}\rangle^2)}{1 - (1-\beta)(1 - \langle\boldsymbol{\omega}', \mathbf{n}\rangle^2)},
-$$
+Next, the question is how to choose the weights $w$ such that boundary consistency is preserved.
 
-where $\beta = 0.01$ controls the spread rate. At a silhouette point, the ray direction is perpendicular to the normal ($\langle\boldsymbol{\omega}', \mathbf{n}\rangle = 0$), forcing $\mathcal{B}_v = 0$. Vertex values $\mathcal{B}_v$ are then interpolated across triangle faces via barycentric coordinates. Because the harmonic weight becomes singular ($w \to \infty$) near a boundary, the normalized convolution collapses to the direct warp there. It therefore preserves boundary consistency while smoothing the field in the interior.
+***Boundary-aware convolution.*** It is not immediately obvious what the weights should be. As a counter example, a warp field obtained using weights from a normal distribution deviates heavily from the true warp at the boundary, and this field is still not valid since it violates boundary consistency. The warp at a point very close to the boundary would be the average of the warp on both sides, which is not, in general, equal to (or even close to) the warp at the boundary.
 
-The precise limiting property is
+{{< figure src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" id="fig-warparea-harmonic-conv" caption="Boundary-aware convolution. (a) The form of the warp $\mathcal{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathcal{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Bangaru et al.'s proposed convolution method $\mathcal{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary." width="100%" >}}
 
-$$
-\lim_{\boldsymbol{\omega}^{(b)}\to\partial D} \frac{w(\boldsymbol{\omega}^{(b)},\boldsymbol{\omega})}{\int w(\boldsymbol{\omega}^{(b)},\boldsymbol{\omega}') \,\mathrm{d}\boldsymbol{\omega}'} = \delta\!\left(\left\lVert \boldsymbol{\omega}^{(b)}-\boldsymbol{\omega} \right\rVert\right).
-$$
 
-Hence the filtered warp approaches the boundary-consistent direct warp as the primary direction approaches a silhouette. The field may remain undefined exactly on the silhouette, where the harmonic weights become infinite, because the area estimator only evaluates the smooth interior.
+The weights need to converge to the derivative at points close to the boundary to produce a valid interpolation. That is, $w(\boldsymbol{\omega}, \boldsymbol{\omega}')$ should grow to infinity when $\boldsymbol{\omega}$ is on the boundary while $\boldsymbol{\omega}'$ approaches $\boldsymbol{\omega}$. The weight should also be small when $\boldsymbol{\omega}$ is far from the boundary. Drawing inspiration from harmonic interpolation, Bangaru et al. select weights using the inverse distance to the boundaries.
 
-{{< figure src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" id="fig-warparea-harmonic-conv" caption="Boundary-aware convolution. (a) The form of the warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathbf{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Bangaru et al.'s proposed convolution method $\mathbf{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary." width="100%" >}}
+Unfortunately, the true distance to the nearest boundary point is unknown because finding the boundary is difficult. Instead, the paper introduces the concept of a *boundary-test* $\mathcal{B}(\boldsymbol{\omega}')$, which serves as a weaker definition of a boundary. $\mathcal{B}(\boldsymbol{\omega}')$ is essentially a soft indicator function which takes zero value at the boundary and non-negative everywhere else, i.e., $\boldsymbol{\omega}' \in \partial\Omega \implies \mathcal{B}(\boldsymbol{\omega}') = 0$. This is the only key requirement that $\mathcal{B}(\boldsymbol{\omega}')$ needs to satisfy, which gives great flexibility over its form. 
 
-#### Relation to Loubet et al.
+The harmonic weights then take the form:
 
-A differentiable reparameterization $\mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi})$ induces the infinitesimal warp
+$$w^{(\text{harmonic})}(\boldsymbol{\omega}, \boldsymbol{\omega}') = \frac{1}{\left( \mathcal{D}(\boldsymbol{\omega}, \boldsymbol{\omega}') + \mathcal{B}(\boldsymbol{\omega}') \right)}$$
 
-$$
-\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = \left.\partial_{\boldsymbol{\pi}}\mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi})\right|_{\boldsymbol{\pi}=\boldsymbol{\pi}_0}.
-$$
+where $\mathcal{D}(\boldsymbol{\omega}, \boldsymbol{\omega}')$ is the distance between $\boldsymbol{\omega}$ and $\boldsymbol{\omega}'$. The paper uses the von-Mises Fisher distance $\mathcal{D}(\boldsymbol{\omega}, \boldsymbol{\omega}') = e^{\kappa (1 - \langle\boldsymbol{\omega}, \boldsymbol{\omega}'\rangle)} - 1$, but any smooth function that satisfies $\mathcal{D}(\boldsymbol{\omega}, \boldsymbol{\omega}) = 0$ can be used.
 
-This establishes a local relationship between reparameterization and the warp-field formulation, but it does **not** imply that every chosen reparameterization is exact. A spherical rotation has unit Jacobian and therefore produces a divergence-free field. Some boundary motions require nonzero divergence, so a rotation cannot satisfy the boundary conditions in general. Bangaru et al. interpret the approximations of Loubet et al. as producing a field that can be smooth without being boundary-consistent, which explains the remaining bias. Warped-area sampling instead makes continuity and boundary consistency explicit and uses the harmonic construction to satisfy both without enumerating silhouettes.
+These weights satisfy the handy asymptotic property that in the limit where a point $\boldsymbol{\omega}^{(b)}$ approaches a boundary (denoted by $\partial\Omega$),
 
-{{< figure src="/images/diff-rendering/warparea/warp_formulation.svg" id="fig-warparea-formulation" caption="Warp field formulation. Bangaru et al. apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and their area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, their method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering." width="100%" >}}
+$$\lim_{\boldsymbol{\omega}^{(b)} \to \partial\Omega} \frac{w(\boldsymbol{\omega}^{(b)}, \boldsymbol{\omega})}{\int_{\Omega'} w(\boldsymbol{\omega}^{(b)}, \boldsymbol{\omega}')} = \delta(\vert{}\boldsymbol{\omega}^{(b)} - \boldsymbol{\omega}\vert{}),$$
 
-Appendix C proves both directions of this relationship. A transformation $\mathcal{T}$ induces the field above by differentiating at the evaluation point $\boldsymbol{\pi}_0$. Conversely, one possible Euclidean transformation generated by a given field is
+where $\delta(\cdot)$ is the Dirac delta function. This implies that for a point $\boldsymbol{\omega}^{(b)}$ very close to the boundary, the weights are such that the resulting warp at $\boldsymbol{\omega}^{(b)}$ is equal to the direct warp. As shown above, the direct warp is consistent at the boundaries, which implies that the convolution with harmonic weights is also consistent. 
 
-$$
-\mathcal{T}(\boldsymbol{\omega};\boldsymbol{\pi}) = \boldsymbol{\omega}+(\boldsymbol{\pi}-\boldsymbol{\pi}_0)\mathbf{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}).
-$$
+The analysis uses a limit near the boundary and not the boundary itself, since the warp field only needs to be defined in the smooth interior region $\Omega - \partial\Omega$. This allows the warp field to be undefined at points on the boundary, and the proposed harmonic weights are infinite at such points.
 
-The construction is not unique; on the sphere, the appendix also gives a rotational solution. This equivalence concerns the infinitesimal field induced by a transformation. Unbiasedness still depends on whether that field is continuous and has the correct limiting boundary velocity.
+***Pixel prefiltering.*** While, in principle, this method could handle discontinuous pixel prefiltering such as a box filter, Bangaru et al. always opt for a continuous filter. For a discontinuous filter, the pixel filter integral $\int_A f(\boldsymbol{\omega})\mathrm{d}\boldsymbol{\omega}$ over the pixel support $A$ needs to take the discontinuity at the support's boundary into account for the divergence theorem to hold. This means the boundary test $\mathcal{B}(\boldsymbol{\omega}')$ needs to return $0$ at such boundaries. To simplify the boundary test implementation, the paper always uses a Gaussian pixel filter truncated at a radius of 4 times the standard deviation, where the kernel contribution is indistinguishable from the floating point error.
 
-#### Monte Carlo Estimation of the Warp
 
-{{< figure src="/images/diff-rendering/warparea/overview.svg" id="fig-warparea-overview" caption="Bangaru et al.'s algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, they need to estimate the warp function at this point. To achieve this, their method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. They then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Their final step computes the weighted average of the direct warp $\mathbf{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathbf{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathbf{V}_{\boldsymbol{\pi}}$ at the primary sample." width="100%" >}}
 
-At each ordinary path-tracing direction $\boldsymbol{\omega}$, the algorithm:
+### Relation to the reparameterization method
 
-1. traces the primary ray and recursively evaluates radiance $L$, its parameter derivative $\partial_{\boldsymbol{\pi}} L$, and directional derivative $\partial_{\boldsymbol{\omega}}L$;
-2. samples auxiliary directions $\boldsymbol{\omega}'_i$ around $\boldsymbol{\omega}$ from a von Mises-Fisher distribution;
-3. differentiates each auxiliary ray intersection, evaluates $B_i$, and forms importance-corrected harmonic weights $w_i$;
-4. estimates both $\widehat{\mathbf{V}}_{\boldsymbol{\pi}}$ and $\nabla_{\boldsymbol{\omega}}\cdot\widehat{\mathbf{V}}_{\boldsymbol{\pi}}$ from the weighted samples; and
-5. adds the boundary contribution
+Before moving to the Monte Carlo sampling algorithm for solving the harmonic convolution integral, Bangaru et al. discuss the relation of their method to Loubet et al.'s reparameterization.
 
-$$
-\widehat{\partial_{\boldsymbol{\pi}} I_B} = \left\langle\partial_{\boldsymbol{\omega}}L, \widehat{\mathbf{V}}_{\boldsymbol{\pi}}\right\rangle + L\,\nabla_{\boldsymbol{\omega}}\!\cdot\widehat{\mathbf{V}}_{\boldsymbol{\pi}}
-$$
+Although the area form of the boundary term is derived in a different way, Loubet et al.'s method of transforming the samples using a rotation is actually a special case of this formulation. Bangaru et al. show that it can be interpreted as applying a particular warp field that does *not* satisfy the boundary consistency requirement, thus introducing bias to the result.
 
-to the ordinary interior derivative $\partial_{\boldsymbol{\pi}} L$.
+The reparameterization method applies a transformation $\mathbf{x} = \mathcal{T}(\mathbf{y}; \boldsymbol{\pi})$ in an attempt to remove the discontinuities of the integral:
 
-There is an important qualification in the paper's title. With a fixed number $N'$ of auxiliary rays, replacing both integrals in the normalized convolution by sample averages creates a ratio estimator. Since $\mathbb E[1/Z]\neq1/\mathbb E[Z]$, this finite-$N'$ version is **consistent but not unbiased**. It converges to the exact warp as $N'\to\infty$.
+$$\mathbb{I} = \int f(\mathbf{x}; \boldsymbol{\pi})\mathrm{d}\mathbf{x} = \int f(\mathcal{T}(\mathbf{y}; \boldsymbol{\pi}); \boldsymbol{\pi}) \left\vert{} \partial_\mathbf{y} \mathcal{T}(\mathbf{y}; \boldsymbol{\pi}) \right\vert{} \mathrm{d}\mathbf{y}$$
 
-The provably unbiased variant applies Russian-roulette debiasing to the convergent sequence of normalization estimates. If $T_0,T_1,\ldots$ converges to $T$, write
+Bangaru et al. prove that this transformation can be converted to an equivalent warp field $\mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x})$ using the relationship,
 
-$$
-T=T_0+\sum_{i=1}^{\infty}(T_i-T_{i-1})
-$$
+$$\mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x}) = \left[ \partial_{\boldsymbol{\pi}} \mathcal{T}(\mathbf{x}; \boldsymbol{\pi}) \right]_{\boldsymbol{\pi} = \boldsymbol{\pi}_0},$$
 
-and randomly truncate this telescoping series using a geometric distribution, dividing each retained difference by its survival probability. This makes the warp estimate, and hence the derivative estimate, unbiased, at the cost of a random amount of work.
+where $\boldsymbol{\pi}_0$ is the point at which the derivative is to be computed.
+
+Given a warp field, it can also be converted back into a transformation by finding a solution for the right-hand side of this differential equation. There exist many possibilities for $\mathcal{T}(\mathbf{x}; \boldsymbol{\pi})$'s basic form, depending on the coordinate system (e.g., linear solutions for 2D Euclidean or rotational solutions for 3D unit-sphere coordinate systems). The rotational solution represents the basic transformation that Loubet et al. uses.
+
+Denoting the rotational solutions by $\mathcal{R}(\boldsymbol{\omega}; \boldsymbol{\pi})$, this limits the set of possible transformations to those with a unit Jacobian $\vert{}\partial_{\boldsymbol{\omega}} \mathcal{R}(\boldsymbol{\omega}; \boldsymbol{\pi})\vert{} = 1$, independent of $\boldsymbol{\pi}$. It follows that the corresponding warp satisfies $\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = 0$. Unfortunately, this means that simple rotation-based reparameterization cannot always be a valid warp, as some scenarios explicitly require a non-zero divergence.
+
+Loubet et al. recognize this drawback and propose a more complex transformation that samples nearby rays using a von-Mises Fisher distribution (spherical analog of the Gaussian) and constructs a transformation that is the average of these rotations. This can generally be expressed using $\mathcal{R}'(\boldsymbol{\omega}; \boldsymbol{\pi}) = \int k(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathcal{R}(\boldsymbol{\omega}'; \boldsymbol{\pi})$. Since the transformation and the warp field are linearly related, the warp field of a convolved transformation $\mathcal{V}_{\boldsymbol{\pi}}'(\mathbf{x}) = [\partial_{\boldsymbol{\pi}} \mathcal{R}'(\boldsymbol{\omega}; \boldsymbol{\pi})]_{\boldsymbol{\pi}=\boldsymbol{\pi}_0}$ is equivalent to the convolution over the warp field of the original transformation $\mathcal{V}_{\boldsymbol{\pi}}'(\mathbf{x}) = \int k(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x})$. This leads to a scenario where the resulting transformation is smooth but fails to meet the boundary consistency criterion.
+
+To compensate for this bias, Loubet et al. introduce a heuristic on top of this convolution. Since the heuristic involves discrete operations such as sorting and comparing object IDs, it is difficult to analytically express the resulting warp field and study its properties.
+
+### Monte Carlo Estimation of the Derivative
+
+With the theory of area sampling and the formulation for the convolutional warp field established, the next step is to develop a Monte Carlo estimator for the divergence area integral. 
+
+Because the convolutional warp field is *itself* an integral, a **nested Monte Carlo estimator** is required. The process works as follows: a primary sample $\boldsymbol{\omega}$ is first generated for the outer divergence integral, and then a set of auxiliary samples $\{\boldsymbol{\omega}_1' \cdots \boldsymbol{\omega}_N'\}$ is generated to estimate the inner convolution integral precisely at $\boldsymbol{\omega}$. 
+
+{{< figure src="/images/diff-rendering/warparea/overview.svg" id="fig-warparea-overview" caption="Bangaru et al.'s algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, they need to estimate the warp function at this point. To achieve this, their method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. They then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Their final step computes the weighted average of the direct warp $\mathcal{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathcal{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}$ at the primary sample." width="100%" >}}
+
+A major mathematical hurdle arises here: the convolution integral of the warp field contains a division for normalization. A naïve Monte Carlo estimator of the reciprocal of an integral is inherently **biased**, because the expected value of a reciprocal is not equal to the reciprocal of the expected value ($\mathbb{E}[1/f] \neq 1/\mathbb{E}[f]$). 
+
+Fortunately, an unbiased Monte Carlo estimator can be constructed from a consistent one using Russian Roulette de-biasing. 
+
+#### Estimating the Warp Field $\mathcal{V}_{\boldsymbol{\pi}}(\cdot)$
+
+The goal is to estimate the divergence area integral, whose integrand is:
+$$(\nabla_{\boldsymbol{\omega}} f(\boldsymbol{\omega}; \boldsymbol{\pi})) \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) + \left(\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})\right) f(\boldsymbol{\omega}; \boldsymbol{\pi}) \mathrm{d}\boldsymbol{\omega}$$
+
+For each direction sample $\boldsymbol{\omega}$ for the outer divergence integral, $N'$ auxiliary directions $\boldsymbol{\omega}_i'$ are sampled to estimate the warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$. The warp field relies on a kernel of harmonic weights. While the distribution of these weights depends on the configuration of silhouette edges, it is heavily correlated with a normal distribution centered exactly at the outer directional sample $\boldsymbol{\omega}$. 
+
+Therefore, Bangaru et al. importance-sample from a normal distribution around the outer directional sample. For spherical or hemispherical sampling, the von Mises-Fisher (vMF) distribution is used.
+
+If we use a finite, fixed number of auxiliary rays $N'$, the estimator is **consistent** (meaning it converges to the true derivative as $N' \to \infty$) but strictly **biased** due to the division by the integral in the harmonic convolution. In practice, a fixed auxiliary ray count between 4 and 64 provides a highly robust, albeit biased, estimate.
+<br>
+
+<div class="paper-algorithm-wrap">
+<div class="paper-algorithm-header"><span>Algorithm 1</span><span>Monte Carlo estimator of the derivative</span></div>
+<table class="paper-algorithm paper-algorithm-auto">
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> RADIANCE $(\mathbf{x}, \omega_{\text{in}})$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;Sample outgoing radiance direction $\omega$ with incoming direction $\omega_{\text{in}}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\mathbf{y} \leftarrow \text{INTERSECT} (\mathbf{x}, \omega)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$L, \partial_\pi L, \partial_\omega L \leftarrow \text{RADIANCE} (\mathbf{y}, \omega)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\hat{\mathcal{V}}_\pi(\omega), \nabla_\omega \cdot \hat{\mathcal{V}}_\pi(\omega) \leftarrow \text{ESTIMATE-WARP} (\omega, \mathbf{y}, N')$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\partial_\pi^b \mathbb{I} \leftarrow \langle \partial_\omega L, \hat{\mathcal{V}}_\pi(\omega) \rangle + L \nabla_\omega \cdot \hat{\mathcal{V}}_\pi(\omega)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\widehat{\partial_\pi \mathbb{I}} \leftarrow \partial_\pi^b \mathbb{I} + \partial_\pi L$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\hat{\mathbb{I}} \leftarrow f_p(\omega_{\text{in}}, \omega)L$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\widehat{\partial_{\omega_{\text{in}}} \mathbb{I}} \leftarrow \partial_{\omega_{\text{in}}} (f_p(\omega_{\text{in}}, \omega)L)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>return</strong> $\hat{\mathbb{I}}, \widehat{\partial_\pi \mathbb{I}}, \widehat{\partial_{\omega_{\text{in}}} \mathbb{I}}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>end function</strong></td>
+</tr>
+</table>
+</div>
+
+<br>
+
+<div class="paper-algorithm-wrap">
+<div class="paper-algorithm-header"><span>Algorithm 2</span><span>Consistent Monte Carlo estimator of the warp field</span></div>
+<table class="paper-algorithm paper-algorithm-auto">
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> ESTIMATE-WARP $(\omega, \mathbf{y}, N')$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> $i \leftarrow (1 \cdots N')$ <strong>do</strong></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample $\omega'_i$ from vMF distribution with mean $\omega$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathbf{y}'_i, \partial_\pi \mathbf{y}'_i, \partial_\omega \mathbf{y}'_i \leftarrow \text{DIFF-INTERSECT} (\mathbf{x}, \omega'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{B}_i \leftarrow \text{BOUNDARY-DISTANCE} (\mathbf{y}'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$w_i \leftarrow \frac{1}{(\exp (\kappa-\kappa\langle\omega,\omega'_i\rangle)-1)+\mathcal{B}_i} \big/ \text{PDF}(\omega'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\partial_\omega w_i \leftarrow \left( \partial_\omega \frac{1}{(\exp (\kappa-\kappa\langle\omega,\omega'_i\rangle)-1)+\mathcal{B}_i} \right) \big/ \text{PDF}(\omega'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{V}_i^{(1)} \leftarrow \frac{\partial_\pi \mathbf{y}'_i}{|\partial_\omega \mathbf{y}'_i|}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\hat{Z} \leftarrow \sum w_i$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\widehat{\partial Z} \leftarrow \sum \partial_\omega w_i$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\hat{\mathcal{V}}_\pi(\omega) \leftarrow \frac{\sum \left( w_i \mathcal{V}_i^{(1)} \right)}{\hat{Z}}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\nabla_\omega \cdot \hat{\mathcal{V}}_\pi(\omega) \leftarrow \frac{\sum \langle \partial_\omega w_i, \mathcal{V}_i^{(1)} \rangle}{\hat{Z}} - \frac{\sum w_i \langle \mathcal{V}_i^{(1)}, \widehat{\partial Z} \rangle}{\hat{Z}^2}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>return</strong> $\hat{\mathcal{V}}_\pi(\omega), \nabla_\omega \cdot \hat{\mathcal{V}}_\pi(\omega)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>end function</strong></td>
+</tr>
+</table>
+</div>
+
+<br>
+
+
+#### De-biasing the Estimator
+
+To completely eliminate bias, we utilize a Russian Roulette technique introduced by McLeish, commonly used in Bayesian inference and physically-based rendering. 
+
+The intuition is to take a converging sequence $T_0, T_1, T_2, \dots$ produced by a consistent estimator and construct an infinite series:
+
+$$\hat{T} = T_0 + \sum_{i=1}^{\infty} (T_i - T_{i-1})$$
+
+Since $\hat{T}$ algebraically collapses to $T_\infty$ (the right answer), building an unbiased estimator for this infinite series turns our consistent estimator into a perfectly unbiased one.
+
+<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
+<details>
+<summary style="cursor: pointer; font-weight: 600;">Step-by-Step Derivation: McLeish Debiasing</summary>
+<div style="margin-top: 1rem;">
+
+1. Let $T_i$ be our biased estimate of $1/\mathbb{E}[f]$ using $i$ samples. 
+2. Let $\Delta_i = T_i - T_{i-1}$ be the difference between successive estimates.
+3. The true value is $T_\infty = T_0 + \sum_{i=1}^{\infty} \Delta_i$.
+4. To estimate this infinite sum without infinite compute time, we introduce a random integer $N'$ drawn from a distribution with probability mass function $\mathbb{P}(N'=n) = p_n$, and cumulative survival probability $\mathbb{P}(N' \ge i) = P_i$.
+5. We construct the randomized estimator: $\hat{T} = T_0 + \sum_{i=1}^{N'} \frac{\Delta_i}{P_i}$.
+6. Taking the expected value of $\hat{T}$, the probabilities cancel out: 
+   $\mathbb{E}[\hat{T}] = T_0 + \sum_{i=1}^{\infty} P_i \left( \frac{\Delta_i}{P_i} \right) = T_0 + \sum_{i=1}^{\infty} \Delta_i = T_\infty$.
+7. Thus, $\hat{T}$ is entirely unbiased.
+
+</div>
+</details>
+</blockquote>
+
+To implement this, $N'$ is treated as a random variable following a geometric distribution. For every path bounce, during the auxiliary sampling step, a new $N'$ is sampled for the estimation of the warp field, which makes the derivative estimate unbiased. 
+
+Below are the algorithms detailing both the standard consistent estimator and the fully unbiased Russian Roulette formulation.
+
+<div class="paper-algorithm-wrap">
+<div class="paper-algorithm-header"><span>Algorithm 3</span><span>Unbiased Monte Carlo estimator of the warp field</span></div>
+<table class="paper-algorithm paper-algorithm-auto">
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> ESTIMATE-WARP-RR $(\omega, \mathbf{y}, p)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;Draw $N'$ from $\text{Geom}(.; p)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>for</strong> $i \leftarrow (1 \cdots N')$ <strong>do</strong></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sample $\omega'_i$ from vMF distribution with mean $\omega$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathbf{y}'_i, \partial_\pi \mathbf{y}'_i, \partial_\omega \mathbf{y}'_i \leftarrow \text{DIFF-INTERSECT} (\mathbf{x}, \omega'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{B}_i \leftarrow \text{BOUNDARY-DISTANCE} (\mathbf{y}'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$w_i \leftarrow \frac{1}{(\exp (\kappa-\kappa\langle\omega,\omega'_i\rangle)-1)+\mathcal{B}_i} \big/ \text{PDF}(\omega'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\partial_\omega w_i \leftarrow \left( \partial_\omega \frac{1}{(\exp (\kappa-\kappa\langle\omega,\omega'_i\rangle)-1)+\mathcal{B}_i} \right) \big/ \text{PDF}(\omega'_i)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\mathcal{V}_i^{(1)} \leftarrow \frac{\partial_\pi \mathbf{y}'_i}{|\partial_\omega \mathbf{y}'_i|}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\hat{Z}_i \leftarrow \hat{Z}_{i-1} + w_i$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\widehat{\partial Z}_i \leftarrow \widehat{\partial Z}_{i-1} + \partial_\omega w_i$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\hat{T}_i \leftarrow \frac{1}{\hat{Z}_i} - \frac{1}{\hat{Z}_{i-1}}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\widehat{\partial T}_i \leftarrow \frac{\widehat{\partial Z}_i}{\hat{Z}_i^2} - \frac{\widehat{\partial Z}_{i-1}}{\hat{Z}_{i-1}^2}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>end for</strong></td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\hat{T} \leftarrow \sum \frac{\hat{T}_i}{\text{Geom}(i; p)}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\widehat{\partial T} \leftarrow \sum \frac{\widehat{\partial T}_i}{\text{Geom}(i; p)}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\hat{\mathcal{V}}_\pi(\omega) \leftarrow \frac{\sum \left( w_i \mathcal{V}_i^{(1)} \right)}{\hat{Z}}$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;$\nabla_\omega \cdot \hat{\mathcal{V}}_\pi(\omega) \leftarrow \sum \langle \partial_\omega w_i, \mathcal{V}_i^{(1)} \rangle \hat{T} - \sum w_i \langle \mathcal{V}_i^{(1)}, \widehat{\partial T} \rangle$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp;<strong>return</strong> $\hat{\mathcal{V}}_\pi(\omega), \nabla_\omega \cdot \hat{\mathcal{V}}_\pi(\omega)$</td>
+</tr>
+<tr style="border: none !important;">
+<td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>end function</strong></td>
+</tr>
+</table>
+</div>
+
+<br>
+
+*(Note: In practice, using the consistent version with a high $N'$ to strictly reduce bias is often faster than Russian Roulette, since managing a dynamic number of rays per pixel can cause warp divergence and performance bottlenecks on memory-constrained GPUs).*
 
 #### Variance Reduction
 
-The raw area estimator has substantial variance even in smooth regions. Auxiliary directions are paired antithetically by rotating them $180^\circ$ around the kernel center, making the derivatives of symmetric weights negatively correlated. A locally linear approximation of the warp is then used as a control variate. These operations reduce variance without changing the expectation and are separate from the Russian-roulette construction that establishes unbiasedness.
+Even when unbiased, some parts of this estimator exhibit exceptionally high variance if used without explicit variance reduction. Surprisingly, *smooth* regions suffer significantly due to the structural variation of both the harmonic weights and the warp field divergence.
+
+To understand why, consider an infinite, flat emitter facing the camera directly, where the scene parameter $\pi$ is its spatial translation. Since it faces the camera uniformly, the expected gradient of the image is exactly 0. However, the spatial weight derivatives $\nabla_{\boldsymbol{\omega}} w(\boldsymbol{\omega}, \boldsymbol{\omega}')$ evaluated at individual samples can be extremely large depending on their location relative to the distribution center. Thus, the estimator bounces around wildly with high variance, even in a scene with zero geometric complexity and a true gradient of 0.
+
+**Antithetic Variates.**
+To counter this, Bangaru et al. apply *antithetic variates*, pairing each auxiliary sample with its 180°-rotated counterpart about the distribution center. The resulting pair is negatively correlated, so when averaged, the symmetric noise components of the harmonic weight derivatives cancel each other, dramatically collapsing variance in smooth regions.
+
+**Control Variates.** When the underlying geometry is at an angle (so the warp field varies approximately linearly rather than uniformly), antithetic variates alone are insufficient. In this regime, the intersection derivative $\partial_\pi \boldsymbol{\omega}$ varies linearly, and the divergence of a locally planar surface can be computed analytically. Bangaru et al. use this closed-form linear approximation as a control variate, subtracting its known-mean residual from the Monte Carlo estimator to absorb the dominant source of noise without introducing bias. Together, antithetic and control variates are indispensable for the low sample counts typical of iterative inverse rendering.
 
 #### Generalization and Limitations
 
@@ -2188,7 +2398,7 @@ The paper is explicit about where its unbiasedness guarantee does and does not a
 The continuity argument can be made directly from the normalized convolution. Writing $Z(\boldsymbol{\omega})=\int w(\boldsymbol{\omega},\boldsymbol{\omega}')\,\mathrm d\boldsymbol{\omega}'$, the quotient rule gives
 
 $$
-\nabla_{\boldsymbol{\omega}}\!\cdot\mathbf{V}_{\boldsymbol{\pi}} = \frac{\int \left\langle\partial_{\boldsymbol{\omega}}w, \mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}\right\rangle \,\mathrm d\boldsymbol{\omega}'}{Z} - \frac{\left(\int w\mathbf{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}\,\mathrm d\boldsymbol{\omega}'\right) \cdot\partial_{\boldsymbol{\omega}}Z}{Z^2}.
+\nabla_{\boldsymbol{\omega}}\!\cdot\mathcal{V}_{\boldsymbol{\pi}} = \frac{\int \left\langle\partial_{\boldsymbol{\omega}}w, \mathcal{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}\right\rangle \,\mathrm d\boldsymbol{\omega}'}{Z} - \frac{\left(\int w\mathcal{V}_{\boldsymbol{\pi}}^{\mathrm{direct}}\,\mathrm d\boldsymbol{\omega}'\right) \cdot\partial_{\boldsymbol{\omega}}Z}{Z^2}.
 $$
 
 Only the derivative of $w$ with respect to the *primary* direction appears. Therefore $B(\boldsymbol{\omega}')$ itself need not be differentiable or even continuous across visibility boundaries: a differentiable distance function $D(\boldsymbol{\omega},\boldsymbol{\omega}')$ is sufficient to keep the divergence finite at interior points.
@@ -2201,11 +2411,11 @@ A discontinuous pixel filter (such as a box filter) introduces another moving bo
 
 Boundary-sampling methods like Li et al.'s edge sampling place additional Monte Carlo samples directly on silhouettes, while the reparameterization methods above trade that explicit search for a warp field that absorbs the boundary term into the interior integral. Zhang, Roussel, and Jakob (2023) [[5]](#ref-5) propose a hybrid of the two: instead of building a dedicated sampler for the boundary, or reparameterizing the whole domain, they *repurpose* the ordinary primal samples that a path tracer already generates (BSDF, emitter, and MIS samples) by *projecting* each resulting ray segment onto a nearby silhouette. Whatever primal sampling strategy is good for the image is thereby automatically put to work on its derivative too.
 
-{{< figure src="/images/diff-rendering/projective_sampling/overview.svg" id="fig-projective-overview" caption="**Fig. 5. High-level overview.** **(a)** Rendering of a bunny with translation parameter $\theta$. Increasing the value of $\theta$ brightens the partially shadowed surface position $\mathbf{x}_a$. Image **(b)** shows the spherical integral that determines the reflectance at $\mathbf{x}_a$, which shows how increasing $\theta$ shifts the silhouettes (red curves) towards the left and reveals more of the partially blocked light source. To account for this effect during differentiation, one can place additional Monte Carlo samples directly onto the boundary by generating tangential path segments $(\mathbf{x}_a, \mathbf{x}_b, \mathbf{x}_c)$. Our method leverages standard primal sampling techniques to find relevant parts of this boundary. The example in **(c)** shows a sample from a direct illumination strategy (blue) that was ultimately unsuccessful due to occlusion. Our method takes this segment and projects it onto a nearby silhouette." width="100%" >}}
+{{< figure src="/images/diff-rendering/projective_sampling/overview.svg" id="fig-projective-overview" caption="**Fig. 5. High-level overview.** **(a)** Rendering of a bunny with translation parameter $\boldsymbol{\pi}$. Increasing the value of $\boldsymbol{\pi}$ brightens the partially shadowed surface position $\mathbf{x}_a$. Image **(b)** shows the spherical integral that determines the reflectance at $\mathbf{x}_a$, which shows how increasing $\boldsymbol{\pi}$ shifts the silhouettes (red curves) towards the left and reveals more of the partially blocked light source. To account for this effect during differentiation, one can place additional Monte Carlo samples directly onto the boundary by generating tangential path segments $(\mathbf{x}_a, \mathbf{x}_b, \mathbf{x}_c)$. Zhang et al.'s method leverages standard primal sampling techniques to find relevant parts of this boundary. The example in **(c)** shows a sample from a direct illumination strategy (blue) that was ultimately unsuccessful due to occlusion. Their method takes this segment and projects it onto a nearby silhouette." width="100%" >}}
 
 #### A Local Boundary Integral
 
-To appreciate the simplification offered by Projective Sampling, it helps to understand the complexity of the method it builds upon. The path-space differentiable rendering approach of Zhang et al. (2020) [[9]](#ref-9) explicitly samples points on silhouette edges and connects them to full light paths to handle secondary visibility. Finding these relevant edges in a complex 3D scene is computationally demanding, often requiring the construction of heavy auxiliary data structures (such as spatio-angular photon maps) prior to rendering just to guide samples toward important boundaries. *(For the complete derivation of the path-space framework, please see Zhang et al. (2020) [[9]](#ref-9)).*
+To place Projective Sampling in context, consider the path-space differentiable rendering approach of Zhang et al. (2020) [[9]](#ref-9), which explicitly samples points on silhouette edges and connects them to full light paths to handle secondary visibility. Finding these relevant edges in a complex 3D scene is computationally demanding, often requiring the construction of heavy auxiliary data structures (such as spatio-angular photon maps) prior to rendering to guide samples toward important boundaries. *(For the complete derivation of the path-space framework, please see Zhang et al. (2020) [[9]](#ref-9)).*
 
 The theoretical starting point for Zhang et al. (2023) is this same path-space formulation, which decouples the effect of boundaries from their interior. Expressed with respect to a path segment $(\mathbf{x}_a, \mathbf{x}_c)$, the pixel derivative with respect to a scene parameter $\boldsymbol{\pi}$ states:
 
@@ -2218,9 +2428,9 @@ $$
 
 The integral is over segments $(\mathbf{x}_a, \mathbf{x}_c)$ that make contact with surface boundary along the way. The domain $\mathcal{B}(\mathbf{x}_a)$ describes the "shadow" of this boundary and is further composed of $\mathcal{B}(\mathbf{x}_a) = \cup_i \mathcal{B}_i(\mathbf{x}_a)$ (one set $\mathcal{B}_i$ per edge) when the scene consists of discrete geometry. $L_i$ and $W_i$ refer to incident radiance and importance, and $G$ is the standard geometric term. The inner product measures the perpendicular speed of the "shadow" at $\mathbf{x}_c$.
 
-Their derivation is incomplete in the sense that the final equation contains derivatives arising from a ray tracing operation performed using autodiff. The presence of this complex step obscures simplification opportunities that can bring this equation into its ultimate reduced form.
+In earlier path-space formulations, the final boundary integral expressions retained implicit derivatives through ray-tracing operations evaluated via automatic differentiation, which obscured potential analytical simplifications.
 
-The authors re-derive the local formulation of the perimeter to reveal its inherent simplicity, and propose the first local formulation of the interior. Combining both sources of derivatives leads to the following complete expression, which provides the theoretical basis of their method:
+Zhang et al. (2023) re-derive the boundary integral into an explicit local formulation for both perimeter and interior components, yielding the following reduced expression:
 
 $$
 \begin{aligned}
@@ -2231,7 +2441,7 @@ $$
 
 The term $L_d$ stands for the radiance difference between foreground and background $L_d(\mathbf{x}_b, \boldsymbol{\omega}) = L_o(\mathbf{x}_b, \boldsymbol{\omega}) - L_i(\mathbf{x}_b, -\boldsymbol{\omega})$. In the perimeter term (top integral), $\sin\phi$ refers to the angle between $\boldsymbol{\omega}$ and the boundary tangent $\mathbf{t}_b$. In the interior term, the angle $\phi \in \mathcal{S}^1$ parameterizes all relevant quantities over tangential directions at the surface position $\mathbf{x}_b$, and $\kappa(\phi)$ denotes the normal curvature. 
 
-{{< figure src="/images/diff-rendering/projective_sampling/formulation.svg" id="fig-projective-formulation" caption="**Fig. 8. Formulations and terms of the boundary integral.** Visibility-related derivatives arise from the perimeter (e.g., discrete edges of a triangle mesh) and the interior of shapes (e.g. the surface of an ellipsoid). Path-space methods compute an integral over tangential path segments to account for them. Decomposing the integration domain (blue and orange sets) reveals different formulations: **(a)** For the perimeter component, one can integrate over source points $\mathbf{x}_a \in \mathcal{A}$ and the “shadow” $\mathbf{x}_c \in \mathcal{B}_i(\mathbf{x}_a)$ cast by a discrete edge $i$. **(b)** This also generalizes to the interior, but parameterizing and sampling the projected boundary $\mathcal{B}(\mathbf{x}_a)$ is difficult in general. **(c)** The local formulation instead evaluates a spherical integral at boundaries $\mathbf{x}_b \in \partial\mathcal{A}$ without explicit consideration of the neighboring vertices $\mathbf{x}_a$ and $\mathbf{x}_c$. **(d)** The interior can be handled analogously but requires a different partition into an integral over surface positions (orange) and tangential directions (blue). We propose a new local boundary integral that accounts for this component." width="100%" >}}
+{{< figure src="/images/diff-rendering/projective_sampling/formulation.svg" id="fig-projective-formulation" caption="**Fig. 8. Formulations and terms of the boundary integral.** Visibility-related derivatives arise from the perimeter (e.g., discrete edges of a triangle mesh) and the interior of shapes (e.g. the surface of an ellipsoid). Path-space methods compute an integral over tangential path segments to account for them. Decomposing the integration domain (blue and orange sets) reveals different formulations: **(a)** For the perimeter component, one can integrate over source points $\mathbf{x}_a \in \mathcal{A}$ and the “shadow” $\mathbf{x}_c \in \mathcal{B}_i(\mathbf{x}_a)$ cast by a discrete edge $i$. **(b)** This also generalizes to the interior, but parameterizing and sampling the projected boundary $\mathcal{B}(\mathbf{x}_a)$ is difficult in general. **(c)** The local formulation instead evaluates a spherical integral at boundaries $\mathbf{x}_b \in \partial\mathcal{A}$ without explicit consideration of the neighboring vertices $\mathbf{x}_a$ and $\mathbf{x}_c$. **(d)** The interior can be handled analogously but requires a different partition into an integral over surface positions (orange) and tangential directions (blue). Zhang et al. propose a new local boundary integral that accounts for this component." width="100%" >}}
 
 The following aspects are noteworthy:
 
@@ -2275,12 +2485,12 @@ This strategy only requires a single ray tracing step and produces high-quality 
 
 The new local formulation of the boundary derivative enables differentiable rendering of smooth geometry, where previous methods struggled.
 
-{{< figure src="/images/diff-rendering/projective_sampling/smooth_geometry.svg" id="fig-projective-smooth" caption="**Fig. 12. Smooth geometry.** Our new local formulation of the boundary derivative (Equation 4) enables differentiable rendering of smooth geometry, such as cylindrical fibers based on Bézier curves (left) and implicitly defined surfaces represented using a signed distance function (right). The latter case involves derivatives arising from the curved interior and potential normal discontinuities at voxel perimeters." width="100%" >}}
+{{< figure src="/images/diff-rendering/projective_sampling/smooth_geometry.svg" id="fig-projective-smooth" caption="**Fig. 12. Smooth geometry.** The new local formulation of the boundary derivative enables differentiable rendering of smooth geometry, such as cylindrical fibers based on Bézier curves (left) and implicitly defined surfaces represented using a signed distance function (right). The latter case involves derivatives arising from the curved interior and potential normal discontinuities at voxel perimeters." width="100%" >}}
 
 ##### Fiber curves
 
 Modeled using a parametric base curve $\mathbf{C}(v)$ and radius $r(v)$, which are both given by cubic B-spline interpolants. The cross-section of the surface for a fixed value of $v$ yields a circle with center $\mathbf{C}(v)$, radius $r(v)$, and normal $\mathbf{C}'(v)$. Assigning an azimuth angle parameter $u$ to this circle yields a $C^1$-continuous surface $\mathbf{M}(u, v)$. Ignoring the curve endpoints, only the curved interior part of the local boundary integral matters.
-Given a viewpoint $\mathbf{O}$ and surface position $\mathbf{P} = \mathbf{M}(u_0, v_0)$, we fix $v_0$ and find the value of $u$ that yields a silhouette projection, i.e., $\langle \mathbf{M}(u, v_0) - \mathbf{O}, \mathbf{n}(u, v_0) \rangle = 0$. This equation can be expanded into the form:
+Given a viewpoint $\mathbf{O}$ and surface position $\mathbf{P} = \mathbf{M}(u_0, v_0)$, fixing $v_0$ yields the value of $u$ that produces a silhouette projection, i.e., $\langle \mathbf{M}(u, v_0) - \mathbf{O}, \mathbf{n}(u, v_0) \rangle = 0$. This equation can be expanded into the form:
 $$
 A \cos^2 u + B \cos u \sin u + C \cos u + D \sin u + E = 0
 $$
@@ -2344,11 +2554,8 @@ $$
 
 By applying Reynolds transport theorem $\eqref{eq:reynolds-transport-theorem}$, we obtain:
 
-$$
-\begin{equation}
-\partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \langle \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i, \mathbf{n}^{\perp}(\boldsymbol{\omega}_i) \rangle \operatorname{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}} \label{eq:direct-illumination-derivative-reynolds}
-\end{equation}
-$$
+
+$$\begin{equation} \begin{split} \partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \boldsymbol{\omega}_o) &= \underbrace{{\color{#0f85a5}\int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \operatorname{d} \sigma (\boldsymbol{\omega}_i)}}_{\text{Interior derivative}} \\ &\quad + \underbrace{{\color{#e69138}\oint_{\Delta \mathbb{S}^2} \Delta f_{direct}(\boldsymbol{\omega}_i; \mathbf{x}, \boldsymbol{\omega}_o) \langle \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i, \mathbf{n}^{\perp}(\boldsymbol{\omega}_i) \rangle \operatorname{d}\ell(\boldsymbol{\omega}_i)}}_{\text{Boundary derivative}} \end{split} \label{eq:direct-illumination-derivative-reynolds} \end{equation}$$
 
 where $\mathrm{d}\ell$ is the curve-length measure. This is exactly the RTT split from before, specialized to a spherical integral: the *interior* term integrates over the ($\boldsymbol{\pi}$-independent) sphere $\mathbb{S}^2$, and the *boundary* term picks up the jump of $f_{\text{direct}}$ across the 1D discontinuity curves $\Delta \mathbb{S}^2$, the silhouette-induced jumps in $L_e$, as they move with $\boldsymbol{\pi}$. For any $\boldsymbol{\omega}_i \in \mathbb{S}^2$, $\mathbf{n}^{\perp}(\boldsymbol{\omega}_i)$ is, as before, the tangent-space vector at $\boldsymbol{\omega}_i$ perpendicular to the discontinuity curve.
 
@@ -2486,13 +2693,13 @@ $$
 Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_{\boldsymbol{\pi}} L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
 $$
 
-the differential transport equation collapses to a single, deceptively simple statement:
+the differential transport equation simplifies to:
 
 $$
 \partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \,\mathrm{d}\sigma .
 $$
 
-Read it as an energy balance for a fictitious kind of light: $Q$ is a **source** that "emits" differential radiance wherever a scene parameter directly changes emission or reflectance, and the remaining integral says that whatever differential radiance is already incident keeps **scattering** exactly like ordinary radiance would. This is the whole trick behind radiative backpropagation: instead of differentiating a rendering algorithm line by line, we get to reuse an *ordinary-looking transport equation*, just with $L_e$ swapped out for $Q$.
+This equation expresses an energy balance for differential radiance: $Q$ acts as a **source** of differential emission wherever a scene parameter directly alters emission or reflectance, while the integral describes how incident differential radiance undergoes standard physical **scattering**. Radiative backpropagation leverages this structure by evaluating gradients through an adjoint transport simulation governed by the same linear transport operators as primal rendering, with $L_e$ replaced by $Q$.
 
 To make that reuse precise and to set up reverse-mode propagation, the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.'s own notation [[7]](#ref-7) (Section 3.4):
 
@@ -2520,15 +2727,15 @@ $$
 \mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle .
 $$
 
-**This next step is where the algorithm's correctness lives, so it's worth being precise about it.** For reciprocal, energy-conserving BSDFs, Veach showed that $\mathcal{G}$, $\mathcal{K}$, and the *composite* operator $\mathcal{G}\mathcal{S}$ are self-adjoint under the ray-space measure i.e. $\mathcal{G}^\ast = \mathcal{G}$, $\mathcal{K}^\ast = \mathcal{K}$, and $(\mathcal{G}\mathcal{S})^\ast = \mathcal{G}\mathcal{S}$. This is a slightly different (and weaker) claim than saying $\mathcal{S}$ itself is self-adjoint, in general it isn't: since $\mathcal{K}$ and $\mathcal{G}$ don't commute, $\mathcal{S}^\ast = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-\ast} = (\mathcal{I}-\mathcal{G}\mathcal{K})^{-1} \ne \mathcal{S}$ in general. What saves us is that $\mathcal{G}\mathcal{S} = \sum_k (\mathcal{G}\mathcal{K})^k \mathcal{G}$, and this specific combination *does* inherit self-adjointness from $\mathcal{G}$ and $\mathcal{K}$ individually, which is the property the next step relies on.
+For reciprocal, energy-conserving BSDFs, Veach [1997] established that the propagation operator $\mathcal{G}$, the scattering operator $\mathcal{K}$, and the *composite* transport operator $\mathcal{G}\mathcal{S}$ are self-adjoint under the ray-space measure: $\mathcal{G}^\ast = \mathcal{G}$, $\mathcal{K}^\ast = \mathcal{K}$, and $(\mathcal{G}\mathcal{S})^\ast = \mathcal{G}\mathcal{S}$. Note that $\mathcal{S}$ alone is not generally self-adjoint because $\mathcal{K}$ and $\mathcal{G}$ do not commute ($\mathcal{S}^\ast = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-\ast} = (\mathcal{I}-\mathcal{G}\mathcal{K})^{-1} \ne \mathcal{S}$). However, the composite operator expands as $\mathcal{G}\mathcal{S} = \sum_k (\mathcal{G}\mathcal{K})^k \mathcal{G}$, which inherits self-adjointness directly from the individual symmetry of $\mathcal{G}$ and $\mathcal{K}$.
 
-Self-adjointness of $\mathcal{G}\mathcal{S}$ lets us move it across the inner product for free:
+Using the self-adjointness of $\mathcal{G}\mathcal{S}$, the inner product shifts from forward differential emission to backward adjoint transport:
 
 $$
 \mathbf{J}_f^T \delta\mathbf{y} = \langle A_e, \mathcal{G}\mathcal{S} Q \rangle = \langle \mathcal{G}\mathcal{S} A_e, Q \rangle = \langle A, Q \rangle, \qquad A := \mathcal{G}\mathcal{S} A_e.
 $$
 
-$A$ is the **incident adjoint radiance field**, and this identity is the entire payoff of the operator formulation: instead of pushing the enormous, million-dimensional field $Q$ forward through the scene, we push the *scalar* field $A_e$ backward from the sensor, and only ever touch $Q$ locally as a cheap inner product wherever a path happens to land on a differentiable object.
+Here $A$ is the **incident adjoint radiance field**. This identity establishes the central computational advantage of the adjoint formulation: rather than propagating high-dimensional differential emission $Q$ forward through the scene for every parameter, a single scalar adjoint field $A_e$ is propagated backward from the sensor, and the parameter gradient $\delta\boldsymbol{\pi}$ is accumulated locally as an inner product $\langle A, Q \rangle$ at active surface interactions.
 
 The corresponding incident and outgoing adjoint radiance satisfy the same recursive balance as ordinary light:
 
@@ -2547,7 +2754,7 @@ $$
 
 turning the discrete sum over pixel derivatives into the ray-space inner product $\langle A_e,\partial_{\boldsymbol{\pi}}L_i\rangle$. For a pinhole camera, $A_e$ can be pictured as a textured "spotlight" that projects the adjoint image back into the scene from the camera.
 
-> **Quick reference.** $\mathcal{K}$ scatters (BSDF), $\mathcal{G}$ propagates (ray to next surface), $\mathcal{S} = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-1}$ sums over all path lengths, and $Q$ is where a parameter's *local* effect on emission or reflectance enters the equation. Radiative backpropagation runs all of this <b>backward from the camera</b>: sample $A_e$, propagate/scatter it exactly like a path tracer would with ordinary radiance ($A_i = \mathcal{G}A_o$, $A_o = A_e + \mathcal{K}A_i$), and at every surface hit accumulate the local contribution of $\langle A, Q\rangle$ into $\delta\boldsymbol{\pi}$.
+> **Summary of Operator Roles:** $\mathcal{K}$ represents local BSDF scattering, $\mathcal{G}$ performs ray propagation to the next surface, $\mathcal{S} = (\mathcal{I}-\mathcal{K}\mathcal{G})^{-1}$ computes the infinite path-length Neumann series, and $Q$ evaluates local parameter derivatives of emission and reflectance. Radiative backpropagation executes adjoint transport backward from the sensor ($A_i = \mathcal{G}A_o$, $A_o = A_e + \mathcal{K}A_i$), accumulating $\langle A, Q\rangle$ into $\delta\boldsymbol{\pi}$ at differentiable surface hits.
 
 #### Sampling the Adjoint Transport Problem
 
@@ -2743,7 +2950,7 @@ instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the renderi
 
 #### Limitations
 
-The unbiased algorithm is constant-memory with respect to path length, but its repeated $L_i$ queries make time quadratic. Like, if the primal path tracing traces $D$ bounces, then for every differentiable interaction along that path we also need to recursively evaluate the primal incident radiance $L_i$. This means at worst we will have to trace a fresh primal suffix of length $(D - 1) + (D - 2) + \dots + 1 = \mathcal{O}(D^2)$. While you could technically try to restrict this double recursion by probabilistically choosing to evaluate only one of the terms at each bounce, the variance would increase exponentially due to the repeated sub-optimal choices! This is prohibitive for highly scattering media with thousands of events. Biased I reduces that cost to linear time but is not a correct derivative. The formulation above omits moving-visibility derivatives and does not handle derivatives through ideal specular BSDF sampling. Faster gradient evaluation also does not remove nonconvexity or poor conditioning from the inverse problem itself.
+While the unbiased algorithm requires constant memory with respect to path length, repeated evaluation of $L_i$ leads to quadratic time complexity. Specifically, along an adjoint path of depth $D$ where every bounce interacts with a differentiable surface, evaluating $Q$ requires launching a recursive primal path-tracing query of depth $D - d$ at each bounce $d$. Summing over all bounces yields $(D - 1) + (D - 2) + \dots + 1 = \mathcal{O}(D^2)$ ray intersections. Although one could attempt to mitigate this overhead by randomly sampling a single evaluation branch per bounce, the resulting estimator suffers from exponential variance growth over deep paths. This is prohibitive for highly scattering media with thousands of events. Biased I reduces that cost to linear time but is not a correct derivative. The formulation above omits moving-visibility derivatives and does not handle derivatives through ideal specular BSDF sampling. Faster gradient evaluation also does not remove nonconvexity or poor conditioning from the inverse problem itself.
 
 ---
 
@@ -2827,38 +3034,60 @@ $$
 
 <blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
 <details>
-<summary style="cursor: pointer; font-weight: 600;">Detailed Proof: Differentiating the Radiance Sum</summary>
+<summary style="cursor: pointer; font-weight: 600;">Proof: Exactness of Constant-Memory Path Replay Backpropagation</summary>
 <div style="margin-top: 1rem;">
 
-We seek the gradient of the image loss $\mathcal{J}$ with respect to a specific BSDF evaluation $f_k$. By the chain rule, $\frac{\partial \mathcal{J}}{\partial f_k} = \delta L \frac{\partial L_N}{\partial f_k}$, where $\delta L$ is the adjoint radiance from the sensor.
+We seek the gradient of the scalar image loss $\mathcal{J}$ with respect to a specific BSDF evaluation $f_k$. By the chain rule:
+$$ \frac{\partial \mathcal{J}}{\partial f_k} = \delta L \frac{\partial L_N}{\partial f_k} $$
+where $\delta L$ is the incoming adjoint radiance from the sensor.
 
-Since throughputs prior to bounce $k$ ($j \leq k$) are independent of $f_k$, their derivatives vanish. Applying the derivative strictly to the subsequent terms yields:
-
+Because path throughputs prior to bounce $k$ ($j \leq k$) are independent of $f_k$, their derivatives vanish identically. Applying the derivative strictly to the subsequent terms of the total radiance sum yields:
 $$ 
-\begin{aligned}
 \frac{\partial L_N}{\partial f_k} = \frac{\partial}{\partial f_k} \sum_{j=k+1}^{N} \beta_{j-1} L_{e,j}
-\end{aligned}
 $$
 
-Because $\beta_{j-1}$ depends linearly on $f_k$, its partial derivative is simply $\frac{\beta_{j-1}}{f_k}$. Factoring out $\frac{1}{f_k}$ reveals our reconstructed suffix:
-
+Since each downstream throughput $\beta_{j-1}$ depends linearly on $f_k$, its partial derivative is simply $\frac{\beta_{j-1}}{f_k}$. Factoring out $\frac{1}{f_k}$ isolates the reconstructed suffix $L_{\text{current}}$:
 $$ 
-\begin{aligned}
-\frac{\partial L_N}{\partial f_k} &= \frac{1}{f_k} \sum_{j=k+1}^{N} \beta_{j-1} L_{e,j} \\
-&= \frac{1}{f_k} L_{\text{current}} 
-\end{aligned}
+\frac{\partial L_N}{\partial f_k} = \frac{1}{f_k} \sum_{j=k+1}^{N} \beta_{j-1} L_{e,j} = \frac{1}{f_k} L_{\text{current}}
 $$
 
-Substitute the previously established identity $L_{\text{current}} = \beta_{k-1} \frac{f_k}{p_k} L_{i,k}$ back into the chain rule expression:
-
+Substituting the identity $L_{\text{current}} = \beta_{k-1} \frac{f_k}{p_k} L_{i,k}$ into the chain rule expression:
 $$ 
-\begin{aligned}
-\frac{\partial \mathcal{J}}{\partial f_k} &= \delta L \cdot \frac{1}{f_k} \left( \beta_{k-1} \frac{f_k}{p_k} L_{i,k} \right) \\
-&= \delta L \cdot \beta_{k-1} \frac{L_{i,k}}{p_k} 
-\end{aligned}
+\frac{\partial \mathcal{J}}{\partial f_k} = \delta L \cdot \frac{1}{f_k} \left( \beta_{k-1} \frac{f_k}{p_k} L_{i,k} \right) = \delta L \cdot \beta_{k-1} \frac{L_{i,k}}{p_k}
 $$
 
-The $f_k$ elegantly cancels out. This proves that dynamically tracking $L_{\text{current}}$ and dividing by $f_k$ exactly isolates the correct gradient multiplier. The incident illumination derivative is evaluated perfectly on the fly, bypassing the need to ever construct a global automatic differentiation graph.
+The factor $f_k$ cancels out. This algebraic result proves that dynamically tracking $L_{\text{current}}$ and dividing by $f_k$ evaluates the exact gradient multiplier on the fly, eliminating the need to construct or retain an automatic differentiation graph.
+
+**Continuous Path Unrolling and Intermediate Gradient Flow**
+
+This discrete index cancellation has a direct physical analogue in the continuous formulation of light transport. Differentiating outgoing radiance $L_o$ at a surface point $\mathbf{x}_0$ splits the integral into two components via the product rule:
+$$ 
+\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} \Bigg[ {\color{#3b82f6}\underbrace{(\partial_{\boldsymbol{\pi}} f_s) \cdot L_i}_{\text{Term A}}} + {\color{#ff6b6b}\underbrace{f_s \cdot (\partial_{\boldsymbol{\pi}} L_i)}_{\text{Term B}}} \Bigg] \mathrm{d}\boldsymbol{\omega}_1
+$$
+
+Here, ${\color{#3b82f6}\text{Term A}}$ captures the local material derivative under unperturbed incident illumination, while ${\color{#ff6b6b}\text{Term B}}$ accounts for the recursive change in incoming radiance. 
+
+To see why detaching the incident illumination state during local backpropagation does not lose multi-bounce gradient flow, consider unrolling a two-bounce path ($\mathbf{x}_0 \to \mathbf{x}_1 \to \mathbf{x}_2$):
+$$ 
+L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} f_s(\mathbf{x}_0, \boldsymbol{\omega}_1, \boldsymbol{\omega}_0) \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \boldsymbol{\omega}_2, -\boldsymbol{\omega}_1) L_e(\mathbf{x}_2, -\boldsymbol{\omega}_2) \, \mathrm{d}\boldsymbol{\omega}_2 \right] \mathrm{d}\boldsymbol{\omega}_1
+$$
+
+Differentiating the unrolled integral under the assumption of a static emitter ($\partial_{\boldsymbol{\pi}} L_e = 0$) evaluates ${\color{#ff6b6b}\text{Term B}}$ at $\mathbf{x}_0$ as:
+$$ 
+{\color{#ff6b6b}\text{Term B}_{\mathbf{x}_0}} = f_s(\mathbf{x}_0) \int_{\mathbb{S}^2} {\color{#3b82f6}\underbrace{\partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_1) \cdot L_e(\mathbf{x}_2)}_{\text{Term A at vertex } \mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2
+$$
+
+Notice the equivalence: **${\color{#ff6b6b}\text{Term B}}$ at vertex $\mathbf{x}_0$ is identically equal to ${\color{#3b82f6}\text{Term A}}$ at the subsequent vertex $\mathbf{x}_1$, scaled by the local throughput $f_s(\mathbf{x}_0)$.** 
+
+Evaluating ${\color{#ff6b6b}\text{Term B}}$ recursively at $\mathbf{x}_0$ is therefore redundant: when the adjoint replay pass advances to $\mathbf{x}_1$, evaluating ${\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}}$ with accumulated throughput $\beta_0 = f_s(\mathbf{x}_0)$ automatically computes the exact contribution required by ${\color{#ff6b6b}\text{Term B}_{\mathbf{x}_0}}$. Consequently, PRB detaches the illumination state at each bounce without discarding any downstream gradient signal.
+
+---
+
+**Implementation in Adjoint Replay**
+
+In practical code, these mathematical properties translate directly into two localized operations per bounce:
+1. **Dynamic Suffix Peeling:** The total radiance accumulator is decremented by local emission, `L = L - Le.detach()`, maintaining $L_{\text{current}} = \beta_k \frac{f_k}{p_k} L_{i,k}$.
+2. **Local Backward Step:** Dividing $L_{\text{current}}$ by $f_k$ via `relative_grad(f_s)` isolates $\beta_{k-1} \frac{L_{i,k}}{p_k}$, accumulating ${\color{#3b82f6}\text{Term A}_k}$ directly into parameter gradients with zero graph retention.
 
 </div>
 </details>
@@ -3001,133 +3230,69 @@ class PRBPathTracer:
 </blockquote>
 
 
-<blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
-<details>
-<summary style="cursor: pointer; font-weight: 600;">Recursive Expansion of the Differential Rendering Equation</summary>
-<div style="margin-top: 1rem;">
+#### Iterative Jacobian Inversion
 
-To rigorously prove how PRB calculates exact gradients mathematically in $\mathcal{O}(1)$ memory, we trace the continuous rendering equation integrals down to the `.detach()` operations in the AD framework.
+The replay principle has an elegant algebraic interpretation in terms of loop state transitions and local Jacobian inversion.
 
-**Color Key for Derivations:**
-*   ${\color{#3b82f6}\text{Term A (Blue)}}$: The gradient of the local material evaluated under existing, unperturbed illumination.
-*   ${\color{#ff6b6b}\text{Term B (Red)}}$: The gradient of the incoming illumination evaluated against the existing, unperturbed local material.
+Consider path tracing as the repeated composition of a loop transition function $h$. In a basic path tracer, the loop state is $\mathbf{z} = (L, \beta)$ initialized to $\mathbf{z}_0 = (0, 1)$. At step $k$, $h$ updates the state:
 
-**Note on Notation:** Throughout the PRB derivations below, $f_s(\mathbf{x}, \boldsymbol{\omega}_i, \boldsymbol{\omega}_o)$ absorbs the cosine foreshortening factor $\cos\theta_i$ (i.e. $f_s$ denotes the **cosine-weighted BSDF**).
-
----
-
-**Continuous Unrolling Proof in PRB**
-
-To understand how PRB evaluates local derivatives without building recursive computation graphs, let us trace a 2-bounce light path.
-
-**Product Rule Split at a Single Bounce**  
-From the Differential Rendering Equation $\eqref{eq:diff-rendering-equation}$ derived earlier, differentiating outgoing radiance $L_o$ at a surface point $\mathbf{x}_0$ yields two distinct terms via the product rule:
-
-$$ 
-\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} \Bigg[ {\color{#3b82f6}\underbrace{(\partial_{\boldsymbol{\pi}} f_s) \cdot L_i}_{\text{Term A}}} + {\color{#ff6b6b}\underbrace{f_s \cdot (\partial_{\boldsymbol{\pi}} L_i)}_{\text{Term B}}} \Bigg] \mathrm{d}\boldsymbol{\omega}_1
+$$
+\mathbf{z}_k = h(\boldsymbol{\pi}, \mathbf{z}_{k-1}), \qquad h(\boldsymbol{\pi}, L, \beta) = \big(L + \beta L_e(\dots), \, \beta f_s(\dots)\big)
 $$
 
-*   ${\color{#3b82f6}\text{Term A}}$: Local gradient from differentiating the material BSDF $f_s$ at vertex $\mathbf{x}_0$.
-*   ${\color{#ff6b6b}\text{Term B}}$: Recursive gradient from differentiating the incoming illumination $L_i$ arriving at vertex $\mathbf{x}_0$.
+(omitting the division by sampling density for clarity). After $N$ bounces, the accumulated state is the $N$-fold composition:
 
-**Unrolling a 2-Bounce Path**  
-Consider a 2-bounce path with vertices $\mathbf{x}_0$ (primary hit), $\mathbf{x}_1$ (first bounce), and $\mathbf{x}_2$ (static emitter). Since $L_i(\mathbf{x}_0, \boldsymbol{\omega}_1) = L_o(\mathbf{x}_1, -\boldsymbol{\omega}_1)$, we unroll the radiance integral at $\mathbf{x}_0$:
-
-$$ 
-L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} f_s(\mathbf{x}_0, \boldsymbol{\omega}_1, \boldsymbol{\omega}_0) \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \boldsymbol{\omega}_2, -\boldsymbol{\omega}_1) L_e(\mathbf{x}_2, -\boldsymbol{\omega}_2) \, \mathrm{d}\boldsymbol{\omega}_2 \right] \mathrm{d}\boldsymbol{\omega}_1
+$$
+(L(\boldsymbol{\pi}), \beta(\boldsymbol{\pi})) = h^{(N)}(\boldsymbol{\pi}, L_0, \beta_0) = h(\boldsymbol{\pi}, h(\boldsymbol{\pi}, \dots h(\boldsymbol{\pi}, L_0, \beta_0)\dots))
 $$
 
-**Differentiating the Unrolled Path**  
-Applying the parameter derivative $\partial_{\boldsymbol{\pi}}$ to the unrolled path gives:
+Differentiating this composition with respect to scene parameters $\boldsymbol{\pi}$ via the multivariate chain rule gives:
 
-$$ 
+$$
+\partial_{\boldsymbol{\pi}} (L(\boldsymbol{\pi}), \beta(\boldsymbol{\pi})) = \sum_{k=1}^N \left[ \prod_{j=k+1}^N J_h(L_j, \beta_j) \right] \partial_{\boldsymbol{\pi}} h(\boldsymbol{\pi}, L_{k-1}, \beta_{k-1})
+$$
+
+There are three architectural ways to evaluate this chain-rule expression:
+1. **Conventional Reverse-Mode AD:** Store all intermediate activations $(L_k, \beta_k)$ in memory and backpropagate in reverse order (requiring $\mathcal{O}(D)$ memory).
+2. **Primal Program Inversion (Reversible Computing):** Invert the entire forward computation to re-evaluate states during the backward pass (as in Reversible Residual Networks [Gomez et al. 2017]).
+3. **Local Jacobian Inversion (PRB):** Rather than inverting the primal program, invert the low-dimensional *local Jacobian matrix* $J_h$ relating adjacent loop states.
+
+For the transition function $h$, the single-step Jacobian is:
+
+$$
+J_h = \begin{pmatrix} 1 & L_e(\dots) \\ 0 & f_s(\dots) \end{pmatrix}
+$$
+
+Multiplying these matrices over the suffix from vertex $k+1$ to $N$ yields the suffix Jacobian product:
+
+$$
+J_{h,k} = \prod_{j=k+1}^N J_h(L_j, \beta_j) = \begin{pmatrix} 1 & L_{k,N} \\ 0 & \beta_{k,N} \end{pmatrix}
+$$
+
+where $L_{k,N}$ and $\beta_{k,N}$ denote the accumulated incident radiance and throughput from vertex $k$ to $N$. This reveals that the physical indirect illumination suffix is literally an entry of the accumulated Jacobian product.
+
+Expanding the parametric derivative $\partial_{\boldsymbol{\pi}} h(\boldsymbol{\pi}, L_{k-1}, \beta_{k-1}) = \begin{pmatrix} \beta_{k-1}\partial_{\boldsymbol{\pi}} L_e \\ \beta_{k-1}\partial_{\boldsymbol{\pi}} f_s \end{pmatrix}$ into the chain rule yields:
+
+$$
 \begin{aligned}
-\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) &= \int_{\mathbb{S}^2} {\color{#3b82f6}\underbrace{\partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_0, \dots) \cdot L_i(\mathbf{x}_0, \dots)}_{\text{Term A at vertex } \mathbf{x}_0}} \mathrm{d}\boldsymbol{\omega}_1 \\
-&\quad + \int_{\mathbb{S}^2} {\color{#ff6b6b}\underbrace{f_s(\mathbf{x}_0, \dots) \cdot \partial_{\boldsymbol{\pi}} \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \dots) L_e(\mathbf{x}_2, \dots) \, \mathrm{d}\boldsymbol{\omega}_2 \right]}_{\text{Term B at vertex } \mathbf{x}_0}} \mathrm{d}\boldsymbol{\omega}_1
+\partial_{\boldsymbol{\pi}} (L(\boldsymbol{\pi}), \beta(\boldsymbol{\pi})) &= \sum_{k=1}^N \begin{pmatrix} 1 & L_{k,N} \\ 0 & \beta_{k,N} \end{pmatrix} \left[ \begin{pmatrix} \beta_{k-1} \\ 0 \end{pmatrix} \partial_{\boldsymbol{\pi}} L_e + \begin{pmatrix} 0 \\ \beta_{k-1} \end{pmatrix} \partial_{\boldsymbol{\pi}} f_s \right] \\
+&= \sum_{k=1}^N \beta_{k-1} \begin{pmatrix} 1 & L_{k,N} \\ 0 & \beta_{k,N} \end{pmatrix} \begin{pmatrix} \partial_{\boldsymbol{\pi}} L_e \\ \partial_{\boldsymbol{\pi}} f_s \end{pmatrix}
 \end{aligned}
 $$
 
-**Expanding Term B at Vertex $\mathbf{x}_0$**  
-Now examine the derivative inside ${\color{#ff6b6b}\text{Term B}_{\mathbf{x}_0}}$. Since the light source at $\mathbf{x}_2$ is static ($\partial_{\boldsymbol{\pi}} L_e = 0$), differentiating the inner integral applies only to $f_s(\mathbf{x}_1)$:
+In rendering, only the first component ($\partial_{\boldsymbol{\pi}} L$) is needed. Extracting the top row gives:
 
-$$ 
-\partial_{\boldsymbol{\pi}} \left[ \int_{\mathbb{S}^2} f_s(\mathbf{x}_1, \dots) L_e(\mathbf{x}_2, \dots) \, \mathrm{d}\boldsymbol{\omega}_2 \right] = \int_{\mathbb{S}^2} {\color{#3b82f6}\underbrace{\partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_1, \dots) \cdot L_e(\mathbf{x}_2, \dots)}_{\text{Term A at vertex } \mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2
+$$
+\partial_{\boldsymbol{\pi}} L = \sum_{k=1}^N \beta_{k-1} \Big( \partial_{\boldsymbol{\pi}} L_e + L_{k,N} \partial_{\boldsymbol{\pi}} f_s \Big)
 $$
 
-Notice the key result: **${\color{#ff6b6b}\text{Term B}}$ at vertex $\mathbf{x}_0$ is identically equal to ${\color{#3b82f6}\text{Term A}}$ at the next vertex $\mathbf{x}_1$ weighted by the local throughput $f_s(\mathbf{x}_0)$!**
+During the adjoint replay pass, as we sequentially subtract the current emitted radiance and divide by $f_s$, we are iteratively applying the inverse Jacobian matrix:
 
-$$ 
-{\color{#ff6b6b}\text{Term B}_{\mathbf{x}_0}} = f_s(\mathbf{x}_0, \dots) \int_{\mathbb{S}^2} {\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2
+$$
+J_h^{-1} = \begin{pmatrix} 1 & -L_e(\dots)/f_s(\dots) \\ 0 & 1/f_s(\dots) \end{pmatrix}
 $$
 
-**Global Equivalence (Why Detaching Term B is Exact)**  
-Substituting this expansion back into the total derivative yields:
-
-$$ 
-\partial_{\boldsymbol{\pi}} L_o(\mathbf{x}_0, \boldsymbol{\omega}_0) = \int_{\mathbb{S}^2} {\color{#3b82f6}\text{Term A}_{\mathbf{x}_0}} \mathrm{d}\boldsymbol{\omega}_1 + \int_{\mathbb{S}^2} f_s(\mathbf{x}_0, \dots) \left[ \int_{\mathbb{S}^2} {\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}} \mathrm{d}\boldsymbol{\omega}_2 \right] \mathrm{d}\boldsymbol{\omega}_1
-$$
-
-Mathematically, evaluating ${\color{#ff6b6b}\text{Term B}}$ locally at vertex $\mathbf{x}_0$ is completely redundant because it is automatically fulfilled when the random walk reaches vertex $\mathbf{x}_1$ and evaluates ${\color{#3b82f6}\text{Term A}_{\mathbf{x}_1}}$ weighted by the accumulated throughput. Thus, PRB safely detaches ${\color{#ff6b6b}\text{Term B}}$ at every bounce without losing any parameter gradients.
-
----
-
-**Bridging Math to the PRB Code**
-
-PRB executes this continuous unrolling dynamically during the adjoint pass. Instead of building a massive computation graph to evaluate ${\color{#ff6b6b}\text{Term B}}$ recursively, PRB detaches ${\color{#ff6b6b}\text{Term B}}$ at vertex $k$ and relies on the fact that ${\color{#ff6b6b}\text{Term B}_k}$ is mathematically identical to ${\color{#3b82f6}\text{Term A}_{k+1}}$ at the next bounce, weighted by throughput.
-
-Here is how each math step translates directly to the code:
-
-**1. Algebraic Reconstruction of $L_{i,k}$**  
-Instead of storing intermediate ray states in memory, PRB takes the total path radiance `L_total` and algebraically peels off the local emission at each step:
-
-    L_reconstructed = L_total - throughput * L_e(...)
-
-Subtracting the local emission leaves the reconstructed incident radiance tail: $L_{\text{reconstructed}} \equiv \beta_k \frac{f_k}{p_k} L_{i,k}$.
-
-**2. Local Evaluation of Term A**  
-To evaluate the local material derivative ${\color{#3b82f6}\text{Term A}_k}$ ($\partial_{\boldsymbol{\pi}} f_k$), PRB evaluates the gradient of the BSDF using a dummy objective `L_o`. Because `L_reconstructed` dynamically contains the factors $\beta_k$ and $f_k/p_k$, we divide by $f_k$ (using the `relative_grad` trick) to isolate the correct multiplier:
-
-    L_o = L_e(...) + L_reconstructed * relative_grad(f_k)
-    L_o.backward(delta_L) 
-
-This evaluates exactly:
-
-$$ 
-\text{Gradient}_k = \delta L \cdot \left( \beta_k \frac{L_{i,k}}{p_k} \right) \nabla_{\boldsymbol{\pi}} f_k 
-$$
-
-This isolates and accumulates ${\color{#3b82f6}\text{Term A}_k}$ into the parameter gradients.
-
-**3. How Term B Becomes Term A at the Next Bounce**  
-Notice that the computation implicitly treats the reconstructed radiance and throughput as detached variables disconnected from the local material gradient (`.detach()` in the pseudocode).
-
-When the loop advances to vertex $k+1$, evaluating ${\color{#3b82f6}\text{Term A}_{k+1}}$ with the updated throughput computes:
-
-$$ 
-\text{Throughput}_k \cdot {\color{#3b82f6}\text{Term A}_{k+1}} = f_s(\mathbf{x}_k) \int_{\mathbb{S}^2} \partial_{\boldsymbol{\pi}} f_s(\mathbf{x}_{k+1}) L_i(\mathbf{x}_{k+1}) \, \mathrm{d}\boldsymbol{\omega}_{k+1}
-$$
-
-Because this product is **identically equal to ${\color{#ff6b6b}\text{Term B}_k}$**, evaluating ${\color{#3b82f6}\text{Term A}}$ sequentially across bounces automatically computes every ${\color{#ff6b6b}\text{Term B}}$ in the unrolled rendering equation. PRB thus achieves exact, unbiased derivatives in $\mathcal{O}(1)$ memory without allocating recursive computation graphs.
-
-</div>
-</details>
-</blockquote>
-
-#### Iterative Jacobian Inversion
-
-The replay principle has a useful algebraic interpretation. Let one path step update the state $\mathbf{z} = (L, \beta)$ through
-
-$$ \mathbf{z}_k = h(\boldsymbol{\pi}, \mathbf{z}_{k-1}), \quad h(\boldsymbol{\pi}, L, \beta) = (L + \beta L_e, \, \beta f_s), $$
-
-where the sampling density is omitted only to simplify notation. After $N$ steps, $\mathbf{z}_N = h^{(N)}(\boldsymbol{\pi}, \mathbf{z}_0)$, and the chain rule gives
-
-$$ \partial_{\boldsymbol{\pi}} \mathbf{z}_N = \sum_{k=1}^N \left( \prod_{j=k+1}^N J_{h,j} \right) \partial_{\boldsymbol{\pi}} h(\boldsymbol{\pi}, \mathbf{z}_{k-1}). $$
-
-For this state update,
-
-$$ J_{h,k} = \begin{pmatrix} 1 & L_{e,k} \\ 0 & f_{s,k} \end{pmatrix}, \quad J_{h,k}^{-1} = \begin{pmatrix} 1 & -L_{e,k}/f_{s,k} \\ 0 & 1/f_{s,k} \end{pmatrix}. $$
-
-The forward evaluation supplies the full suffix Jacobian product. During replay, subtracting emitted radiance and dividing out the current BSDF factor applies $J_{h,k}^{-1}$ one step at a time. PRB therefore reverses the derivative state through small local Jacobian inverses rather than reversing the complete primal program. Attached PRB extends the state with the $4 \times 4$ ray Jacobian and applies the same principle to the path geometry.
+Because $J_h$ is only $2\times 2$ (or $4\times 4$ in attached rendering with ray differential Jacobians), inverting it is exact, numerically stable, and computationally trivial.
 
 #### Attached Sampling and Specular Paths
 
@@ -3218,7 +3383,7 @@ The $\mathcal{O}(D^2)$ complexity of standard Radiative Backpropagation is compu
 
 #### Complexity and Scope
 
-The ultimate payoff of the Path Replay Backpropagation framework is summarized in the table below. For a light path of length $D$:
+The computational complexity and capabilities of the Path Replay Backpropagation framework are summarized below. For a light path of length $D$:
 
 | Method | Time | Path Storage | Unbiased Version | Handles Specular / Volumetric |
 |---|---:|---:|:---:|:---:|
