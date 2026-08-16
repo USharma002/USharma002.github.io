@@ -2128,7 +2128,7 @@ The analysis uses a limit near the boundary and not the boundary itself, since t
 
 
 
-### Relation to the reparameterization method
+#### Relation to the Reparameterization Method
 
 Before moving to the Monte Carlo sampling algorithm for solving the harmonic convolution integral, Bangaru et al. discuss the relation of their method to Loubet et al.'s reparameterization.
 
@@ -2152,7 +2152,7 @@ Loubet et al. recognize this drawback and propose a more complex transformation 
 
 To compensate for this bias, Loubet et al. introduce a heuristic on top of this convolution. Since the heuristic involves discrete operations such as sorting and comparing object IDs, it is difficult to analytically express the resulting warp field and study its properties.
 
-### Monte Carlo Estimation of the Derivative
+#### Monte Carlo Estimation of the Derivative
 
 With the theory of area sampling and the formulation for the convolutional warp field established, the next step is to develop a Monte Carlo estimator for the divergence area integral. 
 
@@ -2164,7 +2164,7 @@ A major mathematical hurdle arises here: the convolution integral of the warp fi
 
 Fortunately, an unbiased Monte Carlo estimator can be constructed from a consistent one using Russian Roulette de-biasing. 
 
-#### Estimating the Warp Field $\mathcal{V}_{\boldsymbol{\pi}}(\cdot)$
+##### Estimating the Warp Field $\mathcal{V}_{\boldsymbol{\pi}}(\cdot)$
 
 The goal is to estimate the divergence area integral, whose integrand is:
 $$(\nabla_{\boldsymbol{\omega}} f(\boldsymbol{\omega}; \boldsymbol{\pi})) \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) + \left(\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})\right) f(\boldsymbol{\omega}; \boldsymbol{\pi}) \mathrm{d}\boldsymbol{\omega}$$
@@ -2177,7 +2177,7 @@ If we use a finite, fixed number of auxiliary rays $N'$, the estimator is **cons
 <br>
 
 <div class="paper-algorithm-wrap">
-<div class="paper-algorithm-header"><span>Algorithm 1</span><span>Monte Carlo estimator of the derivative</span></div>
+<div class="paper-algorithm-header"><span>Algorithm 1</span><span>Monte Carlo estimator of the derivative (Bangaru et al. <a href="#ref-8">[8]</a>)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> RADIANCE $(\mathbf{x}, \omega_{\text{in}})$</td>
@@ -2218,7 +2218,7 @@ If we use a finite, fixed number of auxiliary rays $N'$, the estimator is **cons
 <br>
 
 <div class="paper-algorithm-wrap">
-<div class="paper-algorithm-header"><span>Algorithm 2</span><span>Consistent Monte Carlo estimator of the warp field</span></div>
+<div class="paper-algorithm-header"><span>Algorithm 2</span><span>Consistent Monte Carlo estimator of the warp field (Bangaru et al. <a href="#ref-8">[8]</a>)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> ESTIMATE-WARP $(\omega, \mathbf{y}, N')$</td>
@@ -2271,7 +2271,7 @@ If we use a finite, fixed number of auxiliary rays $N'$, the estimator is **cons
 <br>
 
 
-#### De-biasing the Estimator
+##### De-biasing the Estimator
 
 To completely eliminate bias, we utilize a Russian Roulette technique introduced by McLeish, commonly used in Bayesian inference and physically-based rendering. 
 
@@ -2304,7 +2304,7 @@ To implement this, $N'$ is treated as a random variable following a geometric di
 Below are the algorithms detailing both the standard consistent estimator and the fully unbiased Russian Roulette formulation.
 
 <div class="paper-algorithm-wrap">
-<div class="paper-algorithm-header"><span>Algorithm 3</span><span>Unbiased Monte Carlo estimator of the warp field</span></div>
+<div class="paper-algorithm-header"><span>Algorithm 3</span><span>Unbiased Monte Carlo estimator of the warp field (Bangaru et al. <a href="#ref-8">[8]</a>)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> ESTIMATE-WARP-RR $(\omega, \mathbf{y}, p)$</td>
@@ -2373,7 +2373,7 @@ Below are the algorithms detailing both the standard consistent estimator and th
 
 *(Note: In practice, using the consistent version with a high $N'$ to strictly reduce bias is often faster than Russian Roulette, since managing a dynamic number of rays per pixel can cause warp divergence and performance bottlenecks on memory-constrained GPUs).*
 
-#### Variance Reduction
+##### Variance Reduction
 
 Even when unbiased, some parts of this estimator exhibit exceptionally high variance if used without explicit variance reduction. Surprisingly, *smooth* regions suffer significantly due to the structural variation of both the harmonic weights and the warp field divergence.
 
@@ -2624,7 +2624,7 @@ This section evaluates the differential rendering equation derived above, just w
 
 ---
 
-### Radiative Backpropagation
+### Radiative Backpropagation (Nimier-David et al., 2020)
 
 Nimier-David et al. [[7]](#ref-7) introduce **Radiative Backpropagation (RB)**. It begins from the same differential rendering equation derived above, but reorganizes reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.
 
@@ -2952,7 +2952,7 @@ While the unbiased algorithm requires constant memory with respect to path lengt
 
 ---
 
-### Path Replay Backpropagation
+### Path Replay Backpropagation (Vicini et al., 2021)
 
 Radiative backpropagation achieves a constant memory footprint by computing a fresh primal suffix at each differentiable interaction. However, this nested recursion causes computation time to grow quadratically ($\mathcal{O}(D^2)$) with the number of scattering events. 
 

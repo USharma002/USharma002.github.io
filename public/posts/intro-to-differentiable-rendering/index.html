@@ -124,7 +124,7 @@
     "Differentiable Rendering", "Computer Graphics"
   ],
   "articleBody": "Differentiable rendering techniques for computer graphics and vision",
-  "wordCount" : "28358",
+  "wordCount" : "28378",
   "inLanguage": "en",
   "datePublished": "2026-07-23T00:00:00Z",
   "dateModified": "2026-07-23T00:00:00Z",
@@ -355,10 +355,9 @@
                 <li>
                     <a href="#validity-conditions-for-the-warp" aria-label="Validity Conditions for the Warp">Validity Conditions for the Warp</a></li>
                 <li>
-                    <a href="#valid-warp-fields-for-the-rendering-integral" aria-label="Valid warp fields for the rendering integral">Valid warp fields for the rendering integral</a></li></ul>
-                </li>
+                    <a href="#valid-warp-fields-for-the-rendering-integral" aria-label="Valid warp fields for the rendering integral">Valid warp fields for the rendering integral</a></li>
                 <li>
-                    <a href="#relation-to-the-reparameterization-method" aria-label="Relation to the reparameterization method">Relation to the reparameterization method</a></li>
+                    <a href="#relation-to-the-reparameterization-method" aria-label="Relation to the Reparameterization Method">Relation to the Reparameterization Method</a></li>
                 <li>
                     <a href="#monte-carlo-estimation-of-the-derivative" aria-label="Monte Carlo Estimation of the Derivative">Monte Carlo Estimation of the Derivative</a><ul>
                         
@@ -367,7 +366,8 @@
                 <li>
                     <a href="#de-biasing-the-estimator" aria-label="De-biasing the Estimator">De-biasing the Estimator</a></li>
                 <li>
-                    <a href="#variance-reduction" aria-label="Variance Reduction">Variance Reduction</a></li>
+                    <a href="#variance-reduction" aria-label="Variance Reduction">Variance Reduction</a></li></ul>
+                </li>
                 <li>
                     <a href="#generalization-and-limitations" aria-label="Generalization and Limitations">Generalization and Limitations</a></li></ul>
                 </li>
@@ -404,7 +404,7 @@
                     <a href="#efficient-reverse-mode-differentiable-rendering" aria-label="Efficient Reverse-Mode Differentiable Rendering">Efficient Reverse-Mode Differentiable Rendering</a><ul>
                         
                 <li>
-                    <a href="#radiative-backpropagation" aria-label="Radiative Backpropagation">Radiative Backpropagation</a><ul>
+                    <a href="#radiative-backpropagation-nimier-david-et-al-2020" aria-label="Radiative Backpropagation (Nimier-David et al., 2020)">Radiative Backpropagation (Nimier-David et al., 2020)</a><ul>
                         
                 <li>
                     <a href="#the-three-stages" aria-label="The Three Stages">The Three Stages</a></li>
@@ -424,7 +424,7 @@
                     <a href="#limitations-3" aria-label="Limitations">Limitations</a></li></ul>
                 </li>
                 <li>
-                    <a href="#path-replay-backpropagation" aria-label="Path Replay Backpropagation">Path Replay Backpropagation</a><ul>
+                    <a href="#path-replay-backpropagation-vicini-et-al-2021" aria-label="Path Replay Backpropagation (Vicini et al., 2021)">Path Replay Backpropagation (Vicini et al., 2021)</a><ul>
                         
                 <li>
                     <a href="#dynamic-suffix-reconstruction" aria-label="Dynamic Suffix Reconstruction">Dynamic Suffix Reconstruction</a></li>
@@ -3021,7 +3021,7 @@ $$w^{(\text{harmonic})}(\boldsymbol{\omega}, \boldsymbol{\omega}') = \frac{1}{\l
 $$\lim_{\boldsymbol{\omega}^{(b)} \to \partial\Omega} \frac{w(\boldsymbol{\omega}^{(b)}, \boldsymbol{\omega})}{\int_{\Omega'} w(\boldsymbol{\omega}^{(b)}, \boldsymbol{\omega}')} = \delta(\vert{}\boldsymbol{\omega}^{(b)} - \boldsymbol{\omega}\vert{}),$$<p>where $\delta(\cdot)$ is the Dirac delta function. This implies that for a point $\boldsymbol{\omega}^{(b)}$ very close to the boundary, the weights are such that the resulting warp at $\boldsymbol{\omega}^{(b)}$ is equal to the direct warp. As shown above, the direct warp is consistent at the boundaries, which implies that the convolution with harmonic weights is also consistent.</p>
 <p>The analysis uses a limit near the boundary and not the boundary itself, since the warp field only needs to be defined in the smooth interior region $\Omega - \partial\Omega$. This allows the warp field to be undefined at points on the boundary, and the proposed harmonic weights are infinite at such points.</p>
 <p><em><strong>Pixel prefiltering.</strong></em> While, in principle, this method could handle discontinuous pixel prefiltering such as a box filter, Bangaru et al. always opt for a continuous filter. For a discontinuous filter, the pixel filter integral $\int_A f(\boldsymbol{\omega})\mathrm{d}\boldsymbol{\omega}$ over the pixel support $A$ needs to take the discontinuity at the support&rsquo;s boundary into account for the divergence theorem to hold. This means the boundary test $\mathcal{B}(\boldsymbol{\omega}')$ needs to return $0$ at such boundaries. To simplify the boundary test implementation, the paper always uses a Gaussian pixel filter truncated at a radius of 4 times the standard deviation, where the kernel contribution is indistinguishable from the floating point error.</p>
-<h3 id="relation-to-the-reparameterization-method">Relation to the reparameterization method<a hidden class="anchor" aria-hidden="true" href="#relation-to-the-reparameterization-method">#</a></h3>
+<h4 id="relation-to-the-reparameterization-method">Relation to the Reparameterization Method<a hidden class="anchor" aria-hidden="true" href="#relation-to-the-reparameterization-method">#</a></h4>
 <p>Before moving to the Monte Carlo sampling algorithm for solving the harmonic convolution integral, Bangaru et al. discuss the relation of their method to Loubet et al.&rsquo;s reparameterization.</p>
 <p>Although the area form of the boundary term is derived in a different way, Loubet et al.&rsquo;s method of transforming the samples using a rotation is actually a special case of this formulation. Bangaru et al. show that it can be interpreted as applying a particular warp field that does <em>not</em> satisfy the boundary consistency requirement, thus introducing bias to the result.</p>
 <p>The reparameterization method applies a transformation $\mathbf{x} = \mathcal{T}(\mathbf{y}; \boldsymbol{\pi})$ in an attempt to remove the discontinuities of the integral:</p>
@@ -3031,7 +3031,7 @@ $$\mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x}) = \left[ \partial_{\boldsymbol{\pi}
 <p>Denoting the rotational solutions by $\mathcal{R}(\boldsymbol{\omega}; \boldsymbol{\pi})$, this limits the set of possible transformations to those with a unit Jacobian $\vert{}\partial_{\boldsymbol{\omega}} \mathcal{R}(\boldsymbol{\omega}; \boldsymbol{\pi})\vert{} = 1$, independent of $\boldsymbol{\pi}$. It follows that the corresponding warp satisfies $\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) = 0$. Unfortunately, this means that simple rotation-based reparameterization cannot always be a valid warp, as some scenarios explicitly require a non-zero divergence.</p>
 <p>Loubet et al. recognize this drawback and propose a more complex transformation that samples nearby rays using a von-Mises Fisher distribution (spherical analog of the Gaussian) and constructs a transformation that is the average of these rotations. This can generally be expressed using $\mathcal{R}'(\boldsymbol{\omega}; \boldsymbol{\pi}) = \int k(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathcal{R}(\boldsymbol{\omega}'; \boldsymbol{\pi})$. Since the transformation and the warp field are linearly related, the warp field of a convolved transformation $\mathcal{V}_{\boldsymbol{\pi}}'(\mathbf{x}) = [\partial_{\boldsymbol{\pi}} \mathcal{R}'(\boldsymbol{\omega}; \boldsymbol{\pi})]_{\boldsymbol{\pi}=\boldsymbol{\pi}_0}$ is equivalent to the convolution over the warp field of the original transformation $\mathcal{V}_{\boldsymbol{\pi}}'(\mathbf{x}) = \int k(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x})$. This leads to a scenario where the resulting transformation is smooth but fails to meet the boundary consistency criterion.</p>
 <p>To compensate for this bias, Loubet et al. introduce a heuristic on top of this convolution. Since the heuristic involves discrete operations such as sorting and comparing object IDs, it is difficult to analytically express the resulting warp field and study its properties.</p>
-<h3 id="monte-carlo-estimation-of-the-derivative">Monte Carlo Estimation of the Derivative<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-estimation-of-the-derivative">#</a></h3>
+<h4 id="monte-carlo-estimation-of-the-derivative">Monte Carlo Estimation of the Derivative<a hidden class="anchor" aria-hidden="true" href="#monte-carlo-estimation-of-the-derivative">#</a></h4>
 <p>With the theory of area sampling and the formulation for the convolutional warp field established, the next step is to develop a Monte Carlo estimator for the divergence area integral.</p>
 <p>Because the convolutional warp field is <em>itself</em> an integral, a <strong>nested Monte Carlo estimator</strong> is required. The process works as follows: a primary sample $\boldsymbol{\omega}$ is first generated for the outer divergence integral, and then a set of auxiliary samples $\{\boldsymbol{\omega}_1' \cdots \boldsymbol{\omega}_N'\}$ is generated to estimate the inner convolution integral precisely at $\boldsymbol{\omega}$.</p>
 <figure id="fig-warparea-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
@@ -3043,7 +3043,7 @@ $$\mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x}) = \left[ \partial_{\boldsymbol{\pi}
 
 <p>A major mathematical hurdle arises here: the convolution integral of the warp field contains a division for normalization. A naïve Monte Carlo estimator of the reciprocal of an integral is inherently <strong>biased</strong>, because the expected value of a reciprocal is not equal to the reciprocal of the expected value ($\mathbb{E}[1/f] \neq 1/\mathbb{E}[f]$).</p>
 <p>Fortunately, an unbiased Monte Carlo estimator can be constructed from a consistent one using Russian Roulette de-biasing.</p>
-<h4 id="estimating-the-warp-field">Estimating the Warp Field $\mathcal{V}_{\boldsymbol{\pi}}(\cdot)$<a hidden class="anchor" aria-hidden="true" href="#estimating-the-warp-field">#</a></h4>
+<h5 id="estimating-the-warp-field">Estimating the Warp Field $\mathcal{V}_{\boldsymbol{\pi}}(\cdot)$<a hidden class="anchor" aria-hidden="true" href="#estimating-the-warp-field">#</a></h5>
 <p>The goal is to estimate the divergence area integral, whose integrand is:
 </p>
 $$(\nabla_{\boldsymbol{\omega}} f(\boldsymbol{\omega}; \boldsymbol{\pi})) \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega}) + \left(\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})\right) f(\boldsymbol{\omega}; \boldsymbol{\pi}) \mathrm{d}\boldsymbol{\omega}$$<p>For each direction sample $\boldsymbol{\omega}$ for the outer divergence integral, $N'$ auxiliary directions $\boldsymbol{\omega}_i'$ are sampled to estimate the warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$. The warp field relies on a kernel of harmonic weights. While the distribution of these weights depends on the configuration of silhouette edges, it is heavily correlated with a normal distribution centered exactly at the outer directional sample $\boldsymbol{\omega}$.</p>
@@ -3051,7 +3051,7 @@ $$(\nabla_{\boldsymbol{\omega}} f(\boldsymbol{\omega}; \boldsymbol{\pi})) \cdot 
 <p>If we use a finite, fixed number of auxiliary rays $N'$, the estimator is <strong>consistent</strong> (meaning it converges to the true derivative as $N' \to \infty$) but strictly <strong>biased</strong> due to the division by the integral in the harmonic convolution. In practice, a fixed auxiliary ray count between 4 and 64 provides a highly robust, albeit biased, estimate.
 <br></p>
 <div class="paper-algorithm-wrap">
-<div class="paper-algorithm-header"><span>Algorithm 1</span><span>Monte Carlo estimator of the derivative</span></div>
+<div class="paper-algorithm-header"><span>Algorithm 1</span><span>Monte Carlo estimator of the derivative (Bangaru et al. <a href="#ref-8">[8]</a>)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> RADIANCE $(\mathbf{x}, \omega_{\text{in}})$</td>
@@ -3090,7 +3090,7 @@ $$(\nabla_{\boldsymbol{\omega}} f(\boldsymbol{\omega}; \boldsymbol{\pi})) \cdot 
 </div>
 <br>
 <div class="paper-algorithm-wrap">
-<div class="paper-algorithm-header"><span>Algorithm 2</span><span>Consistent Monte Carlo estimator of the warp field</span></div>
+<div class="paper-algorithm-header"><span>Algorithm 2</span><span>Consistent Monte Carlo estimator of the warp field (Bangaru et al. <a href="#ref-8">[8]</a>)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> ESTIMATE-WARP $(\omega, \mathbf{y}, N')$</td>
@@ -3140,7 +3140,7 @@ $$(\nabla_{\boldsymbol{\omega}} f(\boldsymbol{\omega}; \boldsymbol{\pi})) \cdot 
 </table>
 </div>
 <br>
-<h4 id="de-biasing-the-estimator">De-biasing the Estimator<a hidden class="anchor" aria-hidden="true" href="#de-biasing-the-estimator">#</a></h4>
+<h5 id="de-biasing-the-estimator">De-biasing the Estimator<a hidden class="anchor" aria-hidden="true" href="#de-biasing-the-estimator">#</a></h5>
 <p>To completely eliminate bias, we utilize a Russian Roulette technique introduced by McLeish, commonly used in Bayesian inference and physically-based rendering.</p>
 <p>The intuition is to take a converging sequence $T_0, T_1, T_2, \dots$ produced by a consistent estimator and construct an infinite series:</p>
 $$\hat{T} = T_0 + \sum_{i=1}^{\infty} (T_i - T_{i-1})$$<p>Since $\hat{T}$ algebraically collapses to $T_\infty$ (the right answer), building an unbiased estimator for this infinite series turns our consistent estimator into a perfectly unbiased one.</p>
@@ -3164,7 +3164,7 @@ $\mathbb{E}[\hat{T}] = T_0 + \sum_{i=1}^{\infty} P_i \left( \frac{\Delta_i}{P_i}
 <p>To implement this, $N'$ is treated as a random variable following a geometric distribution. For every path bounce, during the auxiliary sampling step, a new $N'$ is sampled for the estimation of the warp field, which makes the derivative estimate unbiased.</p>
 <p>Below are the algorithms detailing both the standard consistent estimator and the fully unbiased Russian Roulette formulation.</p>
 <div class="paper-algorithm-wrap">
-<div class="paper-algorithm-header"><span>Algorithm 3</span><span>Unbiased Monte Carlo estimator of the warp field</span></div>
+<div class="paper-algorithm-header"><span>Algorithm 3</span><span>Unbiased Monte Carlo estimator of the warp field (Bangaru et al. <a href="#ref-8">[8]</a>)</span></div>
 <table class="paper-algorithm paper-algorithm-auto">
 <tr style="border: none !important;">
 <td style="border: none !important; padding: 2px 0 !important; text-align: left;"><strong>function</strong> ESTIMATE-WARP-RR $(\omega, \mathbf{y}, p)$</td>
@@ -3230,7 +3230,7 @@ $\mathbb{E}[\hat{T}] = T_0 + \sum_{i=1}^{\infty} P_i \left( \frac{\Delta_i}{P_i}
 </div>
 <br>
 <p><em>(Note: In practice, using the consistent version with a high $N'$ to strictly reduce bias is often faster than Russian Roulette, since managing a dynamic number of rays per pixel can cause warp divergence and performance bottlenecks on memory-constrained GPUs).</em></p>
-<h4 id="variance-reduction">Variance Reduction<a hidden class="anchor" aria-hidden="true" href="#variance-reduction">#</a></h4>
+<h5 id="variance-reduction">Variance Reduction<a hidden class="anchor" aria-hidden="true" href="#variance-reduction">#</a></h5>
 <p>Even when unbiased, some parts of this estimator exhibit exceptionally high variance if used without explicit variance reduction. Surprisingly, <em>smooth</em> regions suffer significantly due to the structural variation of both the harmonic weights and the warp field divergence.</p>
 <p>To understand why, consider an infinite, flat emitter facing the camera directly, where the scene parameter $\pi$ is its spatial translation. Since it faces the camera uniformly, the expected gradient of the image is exactly 0. However, the spatial weight derivatives $\nabla_{\boldsymbol{\omega}} w(\boldsymbol{\omega}, \boldsymbol{\omega}')$ evaluated at individual samples can be extremely large depending on their location relative to the distribution center. Thus, the estimator bounces around wildly with high variance, even in a scene with zero geometric complexity and a true gradient of 0.</p>
 <p><strong>Antithetic Variates.</strong>
@@ -3415,7 +3415,7 @@ $$<p>In practice, this means we trace a standard light path and, at each bounce,
 <h2 id="efficient-reverse-mode-differentiable-rendering">Efficient Reverse-Mode Differentiable Rendering<a hidden class="anchor" aria-hidden="true" href="#efficient-reverse-mode-differentiable-rendering">#</a></h2>
 <p>This section evaluates the differential rendering equation derived above, just without paying for the tape. Radiative Backpropagation and Path Replay Backpropagation both reformulate the backward pass as a second, physically-grounded transport simulation, so reverse-mode gradients can be computed with the same $\mathcal{O}(1)$-memory, single-pass character as forward rendering.</p>
 <hr>
-<h3 id="radiative-backpropagation">Radiative Backpropagation<a hidden class="anchor" aria-hidden="true" href="#radiative-backpropagation">#</a></h3>
+<h3 id="radiative-backpropagation-nimier-david-et-al-2020">Radiative Backpropagation (Nimier-David et al., 2020)<a hidden class="anchor" aria-hidden="true" href="#radiative-backpropagation-nimier-david-et-al-2020">#</a></h3>
 <p>Nimier-David et al. <a href="#ref-7">[7]</a> introduce <strong>Radiative Backpropagation (RB)</strong>. It begins from the same differential rendering equation derived above, but reorganizes reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.</p>
 <h4 id="the-three-stages">The Three Stages<a hidden class="anchor" aria-hidden="true" href="#the-three-stages">#</a></h4>
 <p>Write the ordinary renderer as $\mathbf y=f(\boldsymbol{\pi})$ and the scalar objective as $g(\mathbf y)$. Radiative backpropagation separates one optimization iteration into:</p>
@@ -3684,7 +3684,7 @@ $$<p>instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the re
 <h4 id="limitations-3">Limitations<a hidden class="anchor" aria-hidden="true" href="#limitations-3">#</a></h4>
 <p>While the unbiased algorithm requires constant memory with respect to path length, repeated evaluation of $L_i$ leads to quadratic time complexity. Specifically, along an adjoint path of depth $D$ where every bounce interacts with a differentiable surface, evaluating $Q$ requires launching a recursive primal path-tracing query of depth $D - d$ at each bounce $d$. Summing over all bounces yields $(D - 1) + (D - 2) + \dots + 1 = \mathcal{O}(D^2)$ ray intersections. Although one could attempt to mitigate this overhead by randomly sampling a single evaluation branch per bounce, the resulting estimator suffers from exponential variance growth over deep paths. This is prohibitive for highly scattering media with thousands of events. Biased I reduces that cost to linear time but is not a correct derivative. The formulation above omits moving-visibility derivatives and does not handle derivatives through ideal specular BSDF sampling. Faster gradient evaluation also does not remove nonconvexity or poor conditioning from the inverse problem itself.</p>
 <hr>
-<h3 id="path-replay-backpropagation">Path Replay Backpropagation<a hidden class="anchor" aria-hidden="true" href="#path-replay-backpropagation">#</a></h3>
+<h3 id="path-replay-backpropagation-vicini-et-al-2021">Path Replay Backpropagation (Vicini et al., 2021)<a hidden class="anchor" aria-hidden="true" href="#path-replay-backpropagation-vicini-et-al-2021">#</a></h3>
 <p>Radiative backpropagation achieves a constant memory footprint by computing a fresh primal suffix at each differentiable interaction. However, this nested recursion causes computation time to grow quadratically ($\mathcal{O}(D^2)$) with the number of scattering events.</p>
 <p>Vicini et al. <a href="#ref-13">[13]</a> propose an elegant alternative called <strong>Path Replay Backpropagation (PRB)</strong>. By leveraging the mathematical invertibility of local light transport Jacobians, PRB computes exact gradients in <strong>linear time ($\mathcal{O}(D)$) and constant memory ($\mathcal{O}(1)$)</strong>.</p>
 <p>PRB splits gradient evaluation into two separate passes:</p>
