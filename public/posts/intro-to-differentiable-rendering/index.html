@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">
 <title>Introduction to Differentiable Rendering | USharma Notes</title>
 <meta name="keywords" content="Differentiable Rendering, Computer Graphics">
 <meta name="description" content="An introduction to differentiable rendering techniques for computer graphics and vision">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.fca3f056e7a225d4c87bd8ff804ab024727bdcf3d542ddb687b278e1431005ed.css" integrity="sha256-/KPwVueiJdTIe9j/gEqwJHJ73PPVQt22h7J44UMQBe0=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="canonical" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.f0ca161328904bafa7e4c976e1ff460214546890e38ba32912dcac236d24d35d.css" integrity="sha256-8MoWEyiQS6&#43;n5Ml24f9GAhRUaJDji6MpEtysI20k010=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://USharma002.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/intro-to-differentiable-rendering/">
+<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
 <noscript>
     <style>
         #theme-toggle,
@@ -60,10 +60,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload"
   as="style"
-  href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;700&family=Source+Code+Pro:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap"
   onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;700&family=Source+Code+Pro:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
 </noscript>
 
 <script>
@@ -77,7 +77,75 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/intro-to-differentiable-rendering/">
+  <meta property="og:site_name" content="USharma Notes">
+  <meta property="og:title" content="Introduction to Differentiable Rendering">
+  <meta property="og:description" content="An introduction to differentiable rendering techniques for computer graphics and vision">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-07-23T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-07-23T00:00:00+00:00">
+    <meta property="article:tag" content="Differentiable Rendering">
+    <meta property="article:tag" content="Computer Graphics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Introduction to Differentiable Rendering">
+<meta name="twitter:description" content="An introduction to differentiable rendering techniques for computer graphics and vision">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://USharma002.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Introduction to Differentiable Rendering",
+      "item": "https://USharma002.github.io/posts/intro-to-differentiable-rendering/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Introduction to Differentiable Rendering",
+  "name": "Introduction to Differentiable Rendering",
+  "description": "An introduction to differentiable rendering techniques for computer graphics and vision",
+  "keywords": [
+    "Differentiable Rendering", "Computer Graphics"
+  ],
+  "articleBody": "Differentiable rendering techniques for computer graphics and vision",
+  "wordCount" : "28358",
+  "inLanguage": "en",
+  "datePublished": "2026-07-23T00:00:00Z",
+  "dateModified": "2026-07-23T00:00:00Z",
+  "author":[{
+    "@type": "Person",
+    "name": "Utkarsh Sharma"
+  }],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://USharma002.github.io/posts/intro-to-differentiable-rendering/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "USharma Notes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://USharma002.github.io/favicon.ico"
+    }
+  }
+}
+</script>
 </head>
 
 <body class="" id="top">
@@ -95,7 +163,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -121,22 +189,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/" title="Posts">
+                <a href="https://USharma002.github.io/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/archives/" title="Archive">
+                <a href="https://USharma002.github.io/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/tags/" title="Tags">
+                <a href="https://USharma002.github.io/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/about/" title="About">
+                <a href="https://USharma002.github.io/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -147,14 +215,14 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Introduction to Differentiable Rendering
     </h1>
     <div class="post-description">
       An introduction to differentiable rendering techniques for computer graphics and vision
     </div>
-    <div class="post-meta"><span title='2026-07-23 00:00:00 +0000 UTC'>July 23, 2026</span>&nbsp;·&nbsp;133 min&nbsp;·&nbsp;Utkarsh Sharma
+    <div class="post-meta"><span title='2026-07-23 00:00:00 +0000 UTC'>July 23, 2026</span>&nbsp;·&nbsp;134 min&nbsp;·&nbsp;Utkarsh Sharma
 
 </div>
   </header> <div class="toc">
@@ -393,16 +461,15 @@ html.dark img[src$=".svg"]:not(.no-invert),
 body.dark img[src$=".svg"]:not(.no-invert),
 [data-theme="dark"] img[src$=".svg"]:not(.no-invert) {
     filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.2) !important;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 </style>
-<div style="background-color: rgba(220, 38, 38, 0.08); border-left: 4px solid #dc2626; color: #dc2626; padding: 10px 14px; font-weight: 500; border-radius: 4px; margin-bottom: 20px; line-height: 1.5;">
-  <strong>Work in Progress:</strong> This post is under active development. I am continuously updating and expanding sections as I explore the literature further.
-</div>
 <h2 id="introduction">Introduction<a hidden class="anchor" aria-hidden="true" href="#introduction">#</a></h2>
 <figure id="fig-diff-render" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/diff-render.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 1.</span>
-      High-level overview of the differentiable rendering pipeline mapping scene parameters to images and propagating loss gradients back to parameters.
+      High-level overview of the differentiable rendering pipeline mapping scene parameters to images and propagating loss gradients back to parameters. (Image by Zhao et al. <a href="#ref-1">[1]</a>)
     </figcaption></figure>
 
 <style>
@@ -854,7 +921,7 @@ $$<p>AD evaluates the required Jacobian products without constructing the full m
     </figcaption></figure>
 
 
-<p>This evaluates the chain rule without finite-difference truncation error, though the computation remains subject to ordinary floating-point roundoff. Automatic differentiation was introduced between the 1950s and 1970s and later became widely used for neural network training. The following overview focuses on the parts that matter for inverse rendering. A good resource on the implementation of this concept by Andrej Karpathy can be found on YouTube <a href="https://www.youtube.com/watch?v=VMj-3S1tku0">here</a>.</p>
+<p>This evaluates the chain rule without finite-difference truncation error, though the computation remains subject to ordinary floating-point roundoff. Automatic differentiation was introduced between the 1950s and 1970s and later became widely used for neural network training. The following overview focuses on the parts that matter for inverse rendering. A good resource on the implementation of this concept by Andrej Karpathy can be found on YouTube <a href="https://www.youtube.com/watch?v=VMj-3S1tku0" target="_blank" rel="noopener noreferrer">here</a>.</p>
 <p><strong>Computation graphs.</strong> The central idea is to view a computation as a <em>graph</em> of operations. The individual operations are nodes, and the derivatives of individual steps are assigned to the graph&rsquo;s edges. For example, consider:</p>
 $$
 \begin{equation}
@@ -1637,7 +1704,7 @@ $$<p>The two terms in $\delta x$ are accumulated because $x$ reaches the output 
 <p><strong>Symbolically differentiating a Monte Carlo path tracer does not generally work.</strong></p>
 <p>As the SIGGRAPH 2020 course notes on physically based differentiable rendering put it:</p>
 <blockquote>
-<p><em>&ldquo;Naïve combination of integral discretization and automatic differentiation does not compute the correct derivatives that converge in the limit.&rdquo;</em> <a href="/posts/intro-to-differentiable-rendering/#ref-1">[1]</a></p></blockquote>
+<p><em>&ldquo;Naïve combination of integral discretization and automatic differentiation does not compute the correct derivatives that converge in the limit.&rdquo;</em> <a href="#ref-1">[1]</a></p></blockquote>
 <p>There are two distinct reasons this happens, and we will look at both in turn: the integrand can be discontinuous in the parameter we are differentiating (the classic visibility problem), or the sampling process used to evaluate the integral can itself depend on that parameter.</p>
 <h3 id="the-illegal-swap">The Illegal Swap<a hidden class="anchor" aria-hidden="true" href="#the-illegal-swap">#</a></h3>
 <p>The core of the issue lies in the interchange of the derivative and the integral. In calculus, we often assume that:
@@ -1768,7 +1835,7 @@ $$<p>The attached case instead draws $\xi$ from a parameter-independent uniform 
 <figure id="fig-triangle-a" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/triangles/fig_a_vector.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 22.</span>
-      The continuous imaging function $m(x, y; \boldsymbol{\pi})$ induced by two constant-color triangles.
+      The continuous imaging function $m(x, y; \boldsymbol{\pi})$ induced by two constant-color triangles. (Image by Zhao et al. <a href="#ref-1">[1]</a>)
     </figcaption></figure>
 
 
@@ -1776,7 +1843,7 @@ $$<p>The attached case instead draws $\xi$ from a parameter-independent uniform 
 <figure id="fig-triangle-b" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/triangles/fig_b_aliased.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 23.</span>
-      Aliasing caused by evaluating $m(x, y; \boldsymbol{\pi})$ only at pixel centers.
+      Aliasing caused by evaluating $m(x, y; \boldsymbol{\pi})$ only at pixel centers. (Image by Zhao et al. <a href="#ref-1">[1]</a>)
     </figcaption></figure>
 
 
@@ -1786,7 +1853,7 @@ I_i = \int \int k(x, y)m(x_i + x, y_i + y; \boldsymbol{\pi})\,dx\,dy = \int \int
 $$<figure id="fig-triangle-antialiased" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/triangles/fig_c_antialiased.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 24.</span>
-      Antialiasing evaluates a filtered average over each pixel support instead of one center sample.
+      Antialiasing evaluates a filtered average over each pixel support instead of one center sample. (Image by Zhao et al. <a href="#ref-1">[1]</a>)
     </figcaption></figure>
 
 
@@ -1887,7 +1954,7 @@ $$\boxed{\frac{d}{d\pi} \int_{a(\pi)}^{b(\pi)} f(x, \pi) dx = \underbrace{{\colo
 <blockquote>
 <details>
 <summary style="cursor: pointer;"><strong>Regularity Conditions</strong></summary>
-<p>As in the 1D case, a convenient sufficient set of regularity assumptions for RTT is (see Delio Vicini&rsquo;s PhD Thesis <a href="/posts/intro-to-differentiable-rendering/#ref-2">[2]</a>):</p>
+<p>As in the 1D case, a convenient sufficient set of regularity assumptions for RTT is (see Delio Vicini&rsquo;s PhD Thesis <a href="#ref-2">[2]</a>):</p>
 <ol>
 <li><strong>Differentiability everywhere in the subdomains:</strong> The integrand $f(\mathbf{x}, \pi)$ must be continuously differentiable ($\mathcal{C}^1$) with respect to both $\mathbf{x}$ and $\pi$ <em>everywhere in the interior</em> of the domains separated by the boundary/discontinuity surfaces $\Gamma(\pi)$.</li>
 <li><strong>Lipschitz Continuity:</strong> The boundary motion mapping (the trajectory of boundary points $\mathbf{x}(\pi)$) is Lipschitz continuous, so the boundary velocity field $\partial_\pi \mathbf{x}$ exists almost everywhere.</li>
@@ -1919,7 +1986,7 @@ term naturally zero out the non-contributing ones.</p>
 <p>This is the key formula for differentiable rendering. It tells us that the standard interior derivative
 must be supplemented with the boundary contribution. As we will see, explicit edge sampling evaluates this term
 directly; reparameterization and warped-area methods convert it into an equivalent interior estimator.</p>
-<p>Continuing <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>, let&rsquo;s see how this
+<p>Continuing <a href="#example-2-discontinuities-the-visibility-problem">Example 2</a>, let&rsquo;s see how this
 resolves the failure of naïve AD. The function is:</p>
 $$
 I(\pi) = \int_0^1 f(x, \pi)\, dx, \quad \text{where } f(x, \pi) = \begin{cases} 1 & \text{if } x < \pi \\ 0.5 & \text{if } x > \pi \end{cases}
@@ -1974,7 +2041,7 @@ $$<p>We therefore need the derivative of each pixel color with respect to the sc
 
 
 <p>A common misconception is that a discontinuous visibility function makes the filtered pixel value non-differentiable everywhere. Recall that $I_i$ averages color over the filter support. Away from degenerate events such as topology changes or coincident edges, moving a triangle changes this average smoothly. <strong>The rendering integrand can be discontinuous even when its integral is differentiable.</strong> Rendering was not turned into an integral merely to obtain this property; image formation is already an integration problem, and rendering algorithms are numerical approximations of that integral.</p>
-<p>How do we compute the derivatives of an integral? Recall that we wanted to compute the integral numerically (Equation $\eqref{eq:discretization}$). Unfortunately, we cannot just automatically differentiate the numerical integrator as we saw in <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>. For vertex-position parameters and samples away from edges, naive AD returns a zero derivative almost surely.</p>
+<p>How do we compute the derivatives of an integral? Recall that we wanted to compute the integral numerically (Equation $\eqref{eq:discretization}$). Unfortunately, we cannot just automatically differentiate the numerical integrator as we saw in <a href="#example-2-discontinuities-the-visibility-problem">Example 2</a>. For vertex-position parameters and samples away from edges, naive AD returns a zero derivative almost surely.</p>
 <figure id="fig-triangle-missed-boundary" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/5.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 32.</span>
@@ -1985,7 +2052,7 @@ $$<p>We therefore need the derivative of each pixel color with respect to the sc
 <p>However, the derivative of the integral with respect to a vertex position parameter $\mathbf{\pi}_v$ is not 0.</p>
 $$
 \frac{\partial I_i}{\partial \pi_v} = \frac{\partial}{\partial \pi_v} \iint f(x, y; \boldsymbol{\pi}) \,\mathrm{d}x\mathrm{d}y \neq \iint \frac{\partial f}{\partial \pi_v}(x, y; \boldsymbol{\pi}) \,\mathrm{d}x\mathrm{d}y \approx \frac{1}{N}\sum_{j=1}^N 0 = 0
-$$<p>This is the same failure mode as <a href="/posts/intro-to-differentiable-rendering/#example-2-discontinuities-the-visibility-problem">Example 2</a>: the discretization and the gradient operator do not commute for discontinuous integrands, since a uniformly placed sample has zero probability of landing exactly on the moving edge where the change actually happens. The fix is also the same: sample the boundary explicitly.</p>
+$$<p>This is the same failure mode as <a href="#example-2-discontinuities-the-visibility-problem">Example 2</a>: the discretization and the gradient operator do not commute for discontinuous integrands, since a uniformly placed sample has zero probability of landing exactly on the moving edge where the change actually happens. The fix is also the same: sample the boundary explicitly.</p>
 <figure id="fig-triangle-edge-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/svgtex/triangles/6.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 33.</span>
@@ -2279,11 +2346,11 @@ $$ \mathbb{E} \big[ g'(\hat{I}^p) \partial_{\boldsymbol{\pi}} \hat{I}^a \big] = 
 <h3 id="detached-estimator">Detached Estimator<a hidden class="anchor" aria-hidden="true" href="#detached-estimator">#</a></h3>
 <p>The remaining challenge is to estimate $\partial_{\boldsymbol{\pi}} I$ itself. The following derivation assumes that the integrand has no $\boldsymbol{\pi}$-dependent discontinuities. Mathematically, we need to differentiate a parameter-dependent, high-dimensional integral over light paths:</p>
 $$ \partial_{\boldsymbol{\pi}} I = \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x}, $$<p>Here, a path $\mathbf{x}=(\mathbf{x}_0,\ldots,\mathbf{x}_k)$ is a sequence of sensor, surface, and emitter vertices, and $\mathcal{P}$ denotes the union of these path spaces over possible lengths $k$. A renderer also makes discrete choices, including path length, light or BSDF lobe selection, and Russian roulette; we return to those choices below. The function $f$ is the parameter-dependent contribution of a path. If $f$ does not contain parameter-dependent discontinuities, we can directly estimate its derivative using Monte Carlo integration. The derivative operator can be moved into the integral:</p>
-$$ \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} = \int_{\mathcal{P}} \partial_{\boldsymbol{\pi}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} \approx \frac{1}{N} \sum_{i=1}^N \frac{\partial_{\boldsymbol{\pi}} f(\mathbf{x}_i, \boldsymbol{\pi})}{p(\mathbf{x}_i, \boldsymbol{\pi})}. $$<p>For this estimator, we need to differentiate the evaluation of $f$. We do not have to differentiate the sampling process that produces $\mathbf{x}_i$ or the corresponding PDF $p(\mathbf{x}_i)$. We call this estimator <strong>detached</strong> since both sampling and PDF evaluation are detached from the differentiation process. This is the most commonly used estimator in differentiable rendering. Zeltner et al. (2021) <a href="/posts/intro-to-differentiable-rendering/#ref-12">[12]</a> provide the systematic study of this attached/detached distinction that the next two subsections summarize (see <a href="#fig-taxonomy-estimators">Fig. <span class="auto-fig-ref" data-target="fig-taxonomy-estimators"></span></a> for the overall taxonomy).</p>
+$$ \partial_{\boldsymbol{\pi}} \int_{\mathcal{P}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} = \int_{\mathcal{P}} \partial_{\boldsymbol{\pi}} f(\mathbf{x}, \boldsymbol{\pi}) \, \mathrm{d}\mathbf{x} \approx \frac{1}{N} \sum_{i=1}^N \frac{\partial_{\boldsymbol{\pi}} f(\mathbf{x}_i, \boldsymbol{\pi})}{p(\mathbf{x}_i, \boldsymbol{\pi})}. $$<p>For this estimator, we need to differentiate the evaluation of $f$. We do not have to differentiate the sampling process that produces $\mathbf{x}_i$ or the corresponding PDF $p(\mathbf{x}_i)$. We call this estimator <strong>detached</strong> since both sampling and PDF evaluation are detached from the differentiation process. This is the most commonly used estimator in differentiable rendering. Zeltner et al. (2021) <a href="#ref-12">[12]</a> provide the systematic study of this attached/detached distinction that the next two subsections summarize (see <a href="#fig-taxonomy-estimators">Fig. <span class="auto-fig-ref" data-target="fig-taxonomy-estimators"></span></a> for the overall taxonomy).</p>
 <figure id="fig-taxonomy-estimators" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/zeltner/taxonomy_of_estimators.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 39.</span>
-      A taxonomy of differential estimators. We illustrate key operations that can be applied to a “primal” integral. These include Monte Carlo importance sampling, multiple importance sampling, and differentiation. Non-commutativity of these operations leads to a plethora of differential estimators. We omit the explicit dependence of $f$ and $p$ on $\boldsymbol{\pi}$ for brevity. (Zeltner et al., 2021)
+      A taxonomy of differential estimators. We illustrate key operations that can be applied to a “primal” integral. These include Monte Carlo importance sampling, multiple importance sampling, and differentiation. Non-commutativity of these operations leads to a plethora of differential estimators. We omit the explicit dependence of $f$ and $p$ on $\boldsymbol{\pi}$ for brevity. (Image by Zeltner et al. <a href="#ref-12">[12]</a>)
     </figcaption></figure>
 
 
@@ -2339,14 +2406,14 @@ $$ \partial_{\boldsymbol{\pi}} I = \int_{\mathcal{U}} \partial_{\boldsymbol{\pi}
 <figure id="fig-mis-decision" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/zeltner/MIS_decision.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 40.</span>
-      The decision of whether to attach or detach a sampling technique and its MIS weight can be made separately for each technique, as illustrated by this derivation sketch. (Zeltner et al., 2021)
+      The decision of whether to attach or detach a sampling technique and its MIS weight can be made separately for each technique, as illustrated by this derivation sketch. (Image by Zeltner et al. <a href="#ref-12">[12]</a>)
     </figcaption></figure>
 
 
 <hr>
 <h3 id="explicit-edge-sampling-li-et-al">Explicit Edge Sampling (Li et al.)<a hidden class="anchor" aria-hidden="true" href="#explicit-edge-sampling-li-et-al">#</a></h3>
 <p>While the interior term is straightforward to evaluate with the differentiable Monte Carlo estimators introduced above, the boundary integral poses a greater challenge: derivatives arising from visibility discontinuities must either be integrated explicitly over silhouette edges or reformulated as an equivalent smooth-domain integral.</p>
-<p>Li et al. (2018) <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a> model visibility with Heaviside step functions. Differentiating a step function yields a Dirac delta concentrated on the moving edge, so their estimator naturally decomposes the image derivative into two parts: the smooth interior term, handled by standard Monte Carlo sampling with AD, and the singular boundary term, estimated by a dedicated edge sampler. This decomposition is the distributional counterpart of the Reynolds Transport Theorem split derived above.</p>
+<p>Li et al. (2018) <a href="#ref-10">[10]</a> model visibility with Heaviside step functions. Differentiating a step function yields a Dirac delta concentrated on the moving edge, so their estimator naturally decomposes the image derivative into two parts: the smooth interior term, handled by standard Monte Carlo sampling with AD, and the singular boundary term, estimated by a dedicated edge sampler. This decomposition is the distributional counterpart of the Reynolds Transport Theorem split derived above.</p>
 <h4 id="primary-visibility">Primary Visibility<a hidden class="anchor" aria-hidden="true" href="#primary-visibility">#</a></h4>
 <p>We begin with the $2D$ pixel filter integral, which for each pixel integrates the pixel filter $k$ against the incoming radiance $L$. The radiance itself may be a further integral over light sources or the hemisphere, but for convenience we absorb everything into a single scene function $f(x,y) = k(x,y)L(x,y)$, the $f$ used throughout the remainder of this section. The pixel color $I$ is then:
 </p>
@@ -2363,7 +2430,7 @@ $$<figure id="fig-primary-pixel" class="zoomable-figure" style="text-align:cente
 <figure id="fig-geometric-edges" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/edges.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 42.</span>
-      Three types of edges (drawn in yellow) that can cause geometric discontinuities: (a) boundary, (b) silhouette, and (c) sharp.
+      Three types of edges (drawn in yellow) that can cause geometric discontinuities: (a) boundary, (b) silhouette, and (c) sharp. (Image by Li et al. <a href="#ref-10">[10]</a>)
     </figcaption></figure>
 
 
@@ -2381,7 +2448,7 @@ $$<iframe src="/interactive/diff-render/heaviside.html"
 <figure id="fig-edge-silhouette" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/silhouette.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 43.</span>
-      Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$.
+      Silhouette edges are the main cause of the discontinuities in rendering. Given a viewpoint $v$ and an edge associated with two faces, the edge is a silhouette if for any point $p$ on it, the vector $p - v$ is facing towards different directions with respect to the two normals, that is, $\text{sign}(\langle p - v, n_f \rangle) \neq \text{sign}(\langle p - v, n_b \rangle)$. (Image by Li et al. <a href="#ref-10">[10]</a>)
     </figcaption></figure>
 
 
@@ -2566,7 +2633,7 @@ $$<p>If a sampled edge point is hidden behind another surface ($(x,y)$ lands on 
 <figure id="fig-edge-sampling" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/edge_sampling/half_spaces.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 48.</span>
-      (a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. Li et al. estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative.
+      (a) Edge sampling: An edge splits the space into half-spaces $f_u$ and $f_l$. Li et al. estimate the boundary gradient by sampling a point on the edge (blue) and evaluating the difference between the two sides. (b) Occlusion handling: Occluded samples (grey) land on continuous regions, producing identical values on both sides that cancel out in the boundary derivative. (Image by Li et al. <a href="#ref-10">[10]</a>)
     </figcaption></figure>
 
 
@@ -2575,7 +2642,7 @@ $$<p>If a sampled edge point is hidden behind another surface ($(x,y)$ lands on 
 <figure id="fig-edge-secondary-visibility" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/secondary_visibility.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 49.</span>
-      (a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Li et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$).
+      (a) Secondary visibility: a geometry edge $(v_0, v_1)$ and shading point $p$ split the 3D space into two half-spaces $h_u$ and $h_l$ and introduce discontinuity. Assuming the blocker is moving right, Li et al. integrate over the edge to compute the difference. By doing so, they take account of the increase in blocker area and the decrease in light source area looking from the shading point. The integration over edge is defined on the intersection between the scene manifold and the plane formed by the shading point and the edge (the semi-transparent triangle). (b) Width correction: the orientation of the infinitesimal width of the edge differs from the scene surface element the edge intersects with. During integration they project the scene surface element width onto the edge surface element. The ratio of the widths between the two is determined by $\frac{1}{\sin\theta}$, which is one over the length of the cross product between the normal of the edge plane and the scene surface ($\frac{1}{\lVert n_m \times n_h \rVert}$). (Image by Li et al. <a href="#ref-10">[10]</a>)
     </figcaption></figure>
 
 
@@ -2631,7 +2698,7 @@ $$
 $$<p>These are the corrected forms from the paper&rsquo;s published erratum. In particular, $p$ occurs in all three factors of the scalar triple product, so its derivative is not equal to $\nabla_m\alpha$.</p>
 <p>Unlike primary visibility where the camera viewpoint is fixed, the shading point $\mathbf{p}$ varies across bounces throughout the scene. Consequently, an acceleration structure is required to prune non-contributing silhouette edges efficiently.</p>
 <h4 id="selecting-an-edge">Selecting an Edge<a hidden class="anchor" aria-hidden="true" href="#selecting-an-edge">#</a></h4>
-<p>Explicit edge sampling is attractive for primary visibility because the camera is fixed and projected silhouettes can be precomputed. Secondary visibility is harder: the shading point changes at every path vertex, and performance degrades with geometric and depth complexity. A more general family of approaches works in path space, as in Zhang et al. (2020) <a href="/posts/intro-to-differentiable-rendering/#ref-9">[9]</a>. These methods sample points and directions on silhouette edges and connect them to subpaths from the sensor and light sources. They are complex to implement, but can produce high-quality edge gradients in challenging lighting conditions.</p>
+<p>Explicit edge sampling is attractive for primary visibility because the camera is fixed and projected silhouettes can be precomputed. Secondary visibility is harder: the shading point changes at every path vertex, and performance degrades with geometric and depth complexity. A more general family of approaches works in path space, as in Zhang et al. (2020) <a href="#ref-9">[9]</a>. These methods sample points and directions on silhouette edges and connect them to subpaths from the sensor and light sources. They are complex to implement, but can produce high-quality edge gradients in challenging lighting conditions.</p>
 <p>Three factors govern the importance of an edge at a given shading point: the geometric foreshortening (proportional to inverse squared distance to the edge), the material response between the shading point and the point on the edge, and the incoming radiance from the edge direction (e.g. whether it hits a light source or not).</p>
 <p>To importance-sample edges efficiently, Li et al. build two acceleration hierarchies:</p>
 <p><strong>3D BVH</strong> for triangle edges associated with only one face (boundary edges) and meshes without smooth shading normals, built from the 3D positions of each edge&rsquo;s two endpoints.</p>
@@ -2650,7 +2717,7 @@ $$<p>These are the corrected forms from the paper&rsquo;s published erratum. In 
 <hr>
 <h3 id="reparameterizing-visibility-discontinuities-loubet-et-al">Reparameterizing Visibility Discontinuities (Loubet et al.)<a hidden class="anchor" aria-hidden="true" href="#reparameterizing-visibility-discontinuities-loubet-et-al">#</a></h3>
 <p>Explicit edge sampling does not always scale efficiently and is difficult to generalize to implicit surface representations, where discontinuities are not simply a discrete set of mesh edges.</p>
-<p>Loubet et al. <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a> instead apply a change of variables that removes or reduces the parameter-dependence of discontinuity locations. If the transformation fixes every moving discontinuity exactly, the derivative operator can be moved inside the transformed integral and accounting for its Jacobian yields an unbiased gradient estimator. Their practical rotations approximate this ideal transformation, however, so the paper describes the resulting gradients as low-bias rather than unbiased.</p>
+<p>Loubet et al. <a href="#ref-11">[11]</a> instead apply a change of variables that removes or reduces the parameter-dependence of discontinuity locations. If the transformation fixes every moving discontinuity exactly, the derivative operator can be moved inside the transformed integral and accounting for its Jacobian yields an unbiased gradient estimator. Their practical rotations approximate this ideal transformation, however, so the paper describes the resulting gradients as low-bias rather than unbiased.</p>
 <p>Given a transformation $\mathcal{T}:\mathcal{Y}\rightarrow\mathcal{X}$, the reparameterized integral</p>
 $$
 \int_\mathcal{X} f(x, \pi)\; \mathrm{d}x = \int_\mathcal{Y} f(\mathcal{T}(y, \pi), \pi) |\operatorname{det} J_\mathcal{T}| \, \mathrm{d}y
@@ -2673,7 +2740,7 @@ $$<p>Two equivalent interpretations:</p>
 <figure id="fig-reparameterized-domain" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/integral_domain.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 50.</span>
-      Changing the integration domain can turn a moving discontinuity into a smooth differentiable estimator.
+      Changing the integration domain can turn a moving discontinuity into a smooth differentiable estimator. (Image by Delio Vicini <a href="#ref-2">[2]</a>)
     </figcaption></figure>
 
 
@@ -2681,7 +2748,7 @@ $$<p>Two equivalent interpretations:</p>
 <figure id="fig-integrand-discontinuity" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/discontinuity.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 51.</span>
-      For integrands with small angular support, visibility discontinuities typically consist of a single object silhouette.
+      For integrands with small angular support, visibility discontinuities typically consist of a single object silhouette. (Image by Loubet et al. <a href="#ref-11">[11]</a>)
     </figcaption></figure>
 
 
@@ -2693,7 +2760,7 @@ $$<p>makes $f(R(\boldsymbol{\omega}, \pi), \pi)$ continuous with respect to $\pi
 <figure id="fig-conv-zoomed" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/reparam/conv_zoomed.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 52.</span>
-      Zooming into the support of a convolution shows how small-support kernels isolate single geometric edges, making local rotations a good approximation.
+      Zooming into the support of a convolution shows how small-support kernels isolate single geometric edges, making local rotations a good approximation. (Image by Loubet et al. <a href="#ref-11">[11]</a>)
     </figcaption></figure>
 
 
@@ -2705,7 +2772,7 @@ $$<p>where $\boldsymbol{\omega}_i \sim p(\cdot, \pi_0)$ are drawn from the defau
 <figure id="fig-spherical-rotations" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/spherical_rotations.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 53.</span>
-      Spherical rotations (left) approximate silhouette motion, while spherical convolution (right) reduces large-support integrands to narrow kernels.
+      Spherical rotations (left) approximate silhouette motion, while spherical convolution (right) reduces large-support integrands to narrow kernels. (Image by Loubet et al. <a href="#ref-11">[11]</a>)
     </figcaption></figure>
 
 
@@ -2768,7 +2835,7 @@ $$<p>The size of the spherical kernel $k$ provides a trade-off between variance 
 <figure id="fig-reparam-occlusion" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/occlusion_estimate.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 54.</span>
-      From a pair of surface points $p_0$ and $p_1$ that are visible from a point $p$, Loubet et al. estimate the occlusion between the corresponding objects using first-order surface approximations from the normals at $p_0$ and $p_1$. Figures (a) and (b) show cases where one plane occludes the other intersection point from $p$. Figures (c) and (d) illustrate the case of an intersection between objects that can be estimated from the intersection of the planes.
+      From a pair of surface points $p_0$ and $p_1$ that are visible from a point $p$, Loubet et al. estimate the occlusion between the corresponding objects using first-order surface approximations from the normals at $p_0$ and $p_1$. Figures (a) and (b) show cases where one plane occludes the other intersection point from $p$. Figures (c) and (d) illustrate the case of an intersection between objects that can be estimated from the intersection of the planes. (Image by Loubet et al. <a href="#ref-11">[11]</a>)
     </figcaption></figure>
 
 
@@ -2780,7 +2847,7 @@ $$<p>Thus $R(\pi_0) = I$ (leaving primal ray tracing unchanged) while its deriva
 <details>
 <summary style="cursor: pointer; font-weight: 600;">Differentiable Rotation Matrices</summary>
 <div style="margin-top: 1rem;">
-<p>Evaluating local reparameterizations requires differentiable rotation matrices $R$ that map direction $\mathbf{\omega}_a$ to $\mathbf{\omega}_b$ such that $R\mathbf{\omega}_a = \mathbf{\omega}_b$. In particular, these matrices must be evaluated in the limit $\mathbf{\omega}_a \to \mathbf{\omega}_b$—where $R$ equals the identity matrix, but its gradients with respect to $\mathbf{\omega}_a$ and $\mathbf{\omega}_b$ remain non-trivial. Standard Rodrigues&rsquo; rotation [Belongie 2019] <a href="/posts/intro-to-differentiable-rendering/#ref-16">[16]</a> suffers from a singularity at $\mathbf{\omega}_a = \mathbf{\omega}_b$ because it divides by the norm of the rotation axis. Loubet et al. factor out and simplify this norm, yielding the smooth expression:</p>
+<p>Evaluating local reparameterizations requires differentiable rotation matrices $R$ that map direction $\mathbf{\omega}_a$ to $\mathbf{\omega}_b$ such that $R\mathbf{\omega}_a = \mathbf{\omega}_b$. In particular, these matrices must be evaluated in the limit $\mathbf{\omega}_a \to \mathbf{\omega}_b$—where $R$ equals the identity matrix, but its gradients with respect to $\mathbf{\omega}_a$ and $\mathbf{\omega}_b$ remain non-trivial. Standard Rodrigues&rsquo; rotation [Belongie 2019] <a href="#ref-16">[16]</a> suffers from a singularity at $\mathbf{\omega}_a = \mathbf{\omega}_b$ because it divides by the norm of the rotation axis. Loubet et al. factor out and simplify this norm, yielding the smooth expression:</p>
 $$R = \alpha I + [\mathbf{\beta}]_\times + \frac{1}{1 + \alpha} \mathbf{\beta} \mathbf{\beta}^T$$<p>where $\alpha = \mathbf{\omega}_a \cdot \mathbf{\omega}_b$, $\mathbf{\beta} = \mathbf{\omega}_a \times \mathbf{\omega}_b$ and</p>
 $$[\mathbf{u}]_\times = \begin{bmatrix} 0 & -u_z & u_y \\ u_z & 0 & -u_x \\ -u_y & u_x & 0 \end{bmatrix}$$<p>This formulation is well-defined and differentiable even when $\mathbf{\omega}_a = \mathbf{\omega}_b$.</p>
 </div>
@@ -2789,7 +2856,7 @@ $$[\mathbf{u}]_\times = \begin{bmatrix} 0 & -u_z & u_y \\ u_z & 0 & -u_x \\ -u_y
 <figure id="fig-reparam-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 55.</span>
-      Overview of the reparameterization algorithm. For each integral, a small number of rays are intersected against the scene geometry (steps 1, 3, 5) and the resulting information is used to construct suitable local rotations (red arcs). These rotations do not affect the primal computation (steps 2, 4, 6) but introduce gradients that correct for the presence of discontinuities.
+      Overview of the reparameterization algorithm. For each integral, a small number of rays are intersected against the scene geometry (steps 1, 3, 5) and the resulting information is used to construct suitable local rotations (red arcs). These rotations do not affect the primal computation (steps 2, 4, 6) but introduce gradients that correct for the presence of discontinuities. (Image by Loubet et al. <a href="#ref-11">[11]</a>)
     </figcaption></figure>
 
 
@@ -2838,7 +2905,7 @@ $$<p>Correlated path pairs reuse the random numbers for path-construction steps 
 <figure id="fig-reparam-correlated-paths" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/reparam/correlated_paths.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 56.</span>
-      Loubet et al.&rsquo;s method samples correlated paths that share some of their random numbers, while others are chosen independently. The gradients associated with the resulting pairs of nearby paths (blue and red) contain uncorrelated terms that they leverage in conjunction with the technique of control variates to reduce variance substantially without adding bias.
+      Loubet et al.&rsquo;s method samples correlated paths that share some of their random numbers, while others are chosen independently. The gradients associated with the resulting pairs of nearby paths (blue and red) contain uncorrelated terms that they leverage in conjunction with the technique of control variates to reduce variance substantially without adding bias. (Image by Loubet et al. <a href="#ref-11">[11]</a>)
     </figcaption></figure>
 
 
@@ -2849,11 +2916,11 @@ $$<p>Correlated path pairs reuse the random numbers for path-construction steps 
 <p>The method does not support perfectly specular materials and degenerate light sources containing Dirac delta functions.</p>
 <hr>
 <h3 id="unbiased-warped-area-sampling-bangaru-et-al-2020">Unbiased Warped-Area Sampling (Bangaru et al., 2020)<a hidden class="anchor" aria-hidden="true" href="#unbiased-warped-area-sampling-bangaru-et-al-2020">#</a></h3>
-<p>Bangaru et al. <a href="/posts/intro-to-differentiable-rendering/#ref-8">[8]</a> ask whether the boundary term can be estimated using the same <em>area samples</em> as an ordinary path tracer. Their answer is yes: apply the divergence theorem to replace flux through visibility boundaries by divergence throughout the smooth interior. The resulting method does not enumerate or sample silhouette edges. This is different from merely smoothing visibility; the construction specifies conditions under which the area estimator represents the exact boundary derivative.</p>
+<p>Bangaru et al. <a href="#ref-8">[8]</a> ask whether the boundary term can be estimated using the same <em>area samples</em> as an ordinary path tracer. Their answer is yes: apply the divergence theorem to replace flux through visibility boundaries by divergence throughout the smooth interior. The resulting method does not enumerate or sample silhouette edges. This is different from merely smoothing visibility; the construction specifies conditions under which the area estimator represents the exact boundary derivative.</p>
 <figure id="fig-bangaru-taxonomy" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/bangaru/taxonomy.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 57.</span>
-      Taxonomy of differentiable rendering. Both boundary sampling techniques rely on complex importance sampling data structures. Li et al. [2018] use a 6D Hough tree to find silhouettes and Zhang et al. [2020] pre-compute a spatio-angular photon map in order to find important segments. In contrast, the reparameterization method (Loubet et al. [2019]) is lightweight, and only needs to compute a rotation on-the-fly during the standard Monte Carlo rendering process, but it is biased. Our technique retains the simplicity and flexibility of the reparameterization method, while solving its bias problem.
+      Taxonomy of differentiable rendering. Both boundary sampling techniques rely on complex importance sampling data structures. Li et al. [2018] use a 6D Hough tree to find silhouettes and Zhang et al. [2020] pre-compute a spatio-angular photon map in order to find important segments. In contrast, the reparameterization method (Loubet et al. [2019]) is lightweight, and only needs to compute a rotation on-the-fly during the standard Monte Carlo rendering process, but it is biased. Our technique retains the simplicity and flexibility of the reparameterization method, while solving its bias problem. (Image by Bangaru et al. <a href="#ref-8">[8]</a>)
     </figcaption></figure>
 
 
@@ -2869,7 +2936,7 @@ $$<p>where $D_i'=D_i\setminus\partial D_i$. The first term is the usual interior
 <figure id="fig-warparea-pixel-content" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/pixel_content.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 58.</span>
-      Differentiating boundary movements. Bangaru et al.&rsquo;s goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how they partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. They can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals.
+      Differentiating boundary movements. Bangaru et al.&rsquo;s goal is to compute the derivative of the average color inside domain $D$ with respect to scene parameter $\boldsymbol{\pi}$. (a) shows an example of the geometric contents of a pixel, (b) illustrates how they partition domain $D$ into disjoint regions such that all the discontinuities are at the boundaries $\partial D_i(\boldsymbol{\pi})$. They can then properly take the change of the boundaries into consideration when computing derivatives of discontinuous functions inside the integrals. (Image by Bangaru et al. <a href="#ref-8">[8]</a>)
     </figcaption></figure>
 
 
@@ -2923,7 +2990,7 @@ $$\mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega}) = \frac{
 <figure id="fig-warparea-derivative-field" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/derivative_field.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 59.</span>
-      Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in their derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which they have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative.
+      Projecting the derivative field. (a) and (b) illustrate the difference between a directional derivative $\partial_{\boldsymbol{\omega}}\mathbf{y}$ and the parametric derivative $\partial_{\boldsymbol{\pi}}\mathbf{y}$, since these are important components in their derivation. (a) also shows that the parametric derivative is continuous at points on surface $\mathbf{y}$. (c) shows the computation of the parametric derivative of a point in solid angle space $\Omega$ in terms of the derivatives of the associated scene point $\mathbf{y}$, which they have easy access to. As illustrated, the Jacobian term of the transformation $\boldsymbol{\omega} \to \mathbf{y}$ is used to find the projected version of the parametric derivative. (Image by Bangaru et al. <a href="#ref-8">[8]</a>)
     </figcaption></figure>
 
 
@@ -2933,7 +3000,7 @@ $$\mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega}) = \frac{
 $$\mathcal{V}_{\boldsymbol{\pi}}^{(\text{filtered})}(\boldsymbol{\omega}; w) = \frac{\int_{\Omega'} w(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathcal{V}_{\boldsymbol{\pi}}^{(\text{direct})}(\boldsymbol{\omega}') \mathrm{d}\boldsymbol{\omega}'}{\int_{\Omega'} w(\boldsymbol{\omega}, \boldsymbol{\omega}') \mathrm{d}\boldsymbol{\omega}'}.$$<figure id="fig-warparea-formulation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/warp_formulation.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 60.</span>
-      Warp field formulation. Bangaru et al. apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and their area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, their method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering.
+      Warp field formulation. Bangaru et al. apply the divergence theorem that shows the equivalence between the boundary integral of Reynolds transport theorem and their area integral. The theorem relates the outgoing flux at the boundary $\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}$ to the divergence of a warp field $\mathcal{V}_{\boldsymbol{\pi}}(\boldsymbol{\omega})$ over the domain. Unlike the reparameterization technique [Loubet et al. 2019], which uses a uniform rotation to reparameterize the domain, their method produces a spatially varying warp for which this equivalence holds. This introduces a divergence term that intuitively moves the boundary contribution into the interior of the derivative, where it can be computed using standard Monte Carlo rendering. (Image by Bangaru et al. <a href="#ref-8">[8]</a>)
     </figcaption></figure>
 
 
@@ -2942,7 +3009,7 @@ $$\mathcal{V}_{\boldsymbol{\pi}}^{(\text{filtered})}(\boldsymbol{\omega}; w) = \
 <figure id="fig-warparea-harmonic-conv" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/boundary_aware_convolution.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 61.</span>
-      Boundary-aware convolution. (a) The form of the warp $\mathcal{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathcal{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Bangaru et al.&rsquo;s proposed convolution method $\mathcal{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary.
+      Boundary-aware convolution. (a) The form of the warp $\mathcal{V}_{\boldsymbol{\pi}}^{\text{direct}}$ obtained by using the ray-scene intersection function to transform the domain $\boldsymbol{\omega}$. It is discontinuous at the silhouettes (shown using blue circles) but it is equal to the correct derivative at the boundary (denoted by green lines). (b) The warp field $\mathcal{V}_{\boldsymbol{\pi}}^{\text{Gaussian}}$ produced by convolving the warp field using a Gaussian kernel. This field is continuous and smooth everywhere, but we see that it does not match the true derivative at the boundary. More specifically, in this case the warp at the boundary is an average of the warp on either side of the boundary, only one of which is representative of the warp at the boundary. (c) Bangaru et al.&rsquo;s proposed convolution method $\mathcal{V}_{\boldsymbol{\pi}}^{\text{harmonic}}$ uses inverse distance weights to force the field to match the true warp at the boundary. The resulting warp field is both continuous and consistent at the boundary. (Image by Bangaru et al. <a href="#ref-8">[8]</a>)
     </figcaption></figure>
 
 
@@ -2970,7 +3037,7 @@ $$\mathcal{V}_{\boldsymbol{\pi}}(\mathbf{x}) = \left[ \partial_{\boldsymbol{\pi}
 <figure id="fig-warparea-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/warparea/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 62.</span>
-      Bangaru et al.&rsquo;s algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, they need to estimate the warp function at this point. To achieve this, their method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. They then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Their final step computes the weighted average of the direct warp $\mathcal{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathcal{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}$ at the primary sample.
+      Bangaru et al.&rsquo;s algorithm first samples a ray $\boldsymbol{\omega}$ based on simple path tracing. To compute the boundary contribution to the derivative, they need to estimate the warp function at this point. To achieve this, their method samples a certain number $N'$ of auxiliary rays around this sample $\boldsymbol{\omega}$ using the von-Mises Fisher distribution. They then compute the boundary test at each auxiliary sample $B(\boldsymbol{\omega}')$ based on surface normals. These boundary values are further processed to produce weights for the samples. Their final step computes the weighted average of the direct warp $\mathcal{V}_{\boldsymbol{\pi}}^{\text{direct}}$ at the auxiliary samples to produce estimates for the warp field $\mathcal{V}_{\boldsymbol{\pi}}$ and its divergence $\nabla_{\boldsymbol{\omega}} \cdot \mathcal{V}_{\boldsymbol{\pi}}$ at the primary sample. (Image by Bangaru et al. <a href="#ref-8">[8]</a>)
     </figcaption></figure>
 
 
@@ -3184,16 +3251,16 @@ $$<p>Only the derivative of $w$ with respect to the <em>primary</em> direction a
 <p>A discontinuous pixel filter (such as a box filter) introduces another moving boundary at the edge of its support. To ensure the divergence theorem holds across pixel boundaries without requiring a dedicated pixel boundary test, Bangaru et al. enforce a continuous pixel prefilter using a truncated Gaussian filter (truncated at a radius of $4\sigma$, where kernel values drop below floating-point precision).</p>
 <hr>
 <h3 id="projective-sampling-for-differentiable-rendering-of-geometry-zhang-et-al-2023">Projective Sampling for Differentiable Rendering of Geometry (Zhang et al., 2023)<a hidden class="anchor" aria-hidden="true" href="#projective-sampling-for-differentiable-rendering-of-geometry-zhang-et-al-2023">#</a></h3>
-<p>Boundary-sampling methods like Li et al.&rsquo;s edge sampling place additional Monte Carlo samples directly on silhouettes, while the reparameterization methods above trade that explicit search for a warp field that absorbs the boundary term into the interior integral. Zhang, Roussel, and Jakob (2023) <a href="/posts/intro-to-differentiable-rendering/#ref-5">[5]</a> propose a hybrid of the two: instead of building a dedicated sampler for the boundary, or reparameterizing the whole domain, they <em>repurpose</em> the ordinary primal samples that a path tracer already generates (BSDF, emitter, and MIS samples) by <em>projecting</em> each resulting ray segment onto a nearby silhouette. Whatever primal sampling strategy is good for the image is thereby automatically put to work on its derivative too.</p>
+<p>Boundary-sampling methods like Li et al.&rsquo;s edge sampling place additional Monte Carlo samples directly on silhouettes, while the reparameterization methods above trade that explicit search for a warp field that absorbs the boundary term into the interior integral. Zhang, Roussel, and Jakob (2023) <a href="#ref-5">[5]</a> propose a hybrid of the two: instead of building a dedicated sampler for the boundary, or reparameterizing the whole domain, they <em>repurpose</em> the ordinary primal samples that a path tracer already generates (BSDF, emitter, and MIS samples) by <em>projecting</em> each resulting ray segment onto a nearby silhouette. Whatever primal sampling strategy is good for the image is thereby automatically put to work on its derivative too.</p>
 <figure id="fig-projective-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/projective_sampling/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 63.</span>
-      <strong>Fig. 5. High-level overview.</strong> <strong>(a)</strong> Rendering of a bunny with translation parameter $\boldsymbol{\pi}$. Increasing the value of $\boldsymbol{\pi}$ brightens the partially shadowed surface position $\mathbf{x}_a$. Image <strong>(b)</strong> shows the spherical integral that determines the reflectance at $\mathbf{x}_a$, which shows how increasing $\boldsymbol{\pi}$ shifts the silhouettes (red curves) towards the left and reveals more of the partially blocked light source. To account for this effect during differentiation, one can place additional Monte Carlo samples directly onto the boundary by generating tangential path segments $(\mathbf{x}_a, \mathbf{x}_b, \mathbf{x}_c)$. Zhang et al.&rsquo;s method leverages standard primal sampling techniques to find relevant parts of this boundary. The example in <strong>(c)</strong> shows a sample from a direct illumination strategy (blue) that was ultimately unsuccessful due to occlusion. Their method takes this segment and projects it onto a nearby silhouette.
+      <strong>Fig. 5. High-level overview.</strong> <strong>(a)</strong> Rendering of a bunny with translation parameter $\boldsymbol{\pi}$. Increasing the value of $\boldsymbol{\pi}$ brightens the partially shadowed surface position $\mathbf{x}_a$. Image <strong>(b)</strong> shows the spherical integral that determines the reflectance at $\mathbf{x}_a$, which shows how increasing $\boldsymbol{\pi}$ shifts the silhouettes (red curves) towards the left and reveals more of the partially blocked light source. To account for this effect during differentiation, one can place additional Monte Carlo samples directly onto the boundary by generating tangential path segments $(\mathbf{x}_a, \mathbf{x}_b, \mathbf{x}_c)$. Zhang et al.&rsquo;s method leverages standard primal sampling techniques to find relevant parts of this boundary. The example in <strong>(c)</strong> shows a sample from a direct illumination strategy (blue) that was ultimately unsuccessful due to occlusion. Their method takes this segment and projects it onto a nearby silhouette. (Image by Zhang et al. <a href="#ref-5">[5]</a>)
     </figcaption></figure>
 
 
 <h4 id="a-local-boundary-integral">A Local Boundary Integral<a hidden class="anchor" aria-hidden="true" href="#a-local-boundary-integral">#</a></h4>
-<p>To place Projective Sampling in context, consider the path-space differentiable rendering approach of Zhang et al. (2020) <a href="/posts/intro-to-differentiable-rendering/#ref-9">[9]</a>, which explicitly samples points on silhouette edges and connects them to full light paths to handle secondary visibility. Finding these relevant edges in a complex 3D scene is computationally demanding, often requiring the construction of heavy auxiliary data structures (such as spatio-angular photon maps) prior to rendering to guide samples toward important boundaries. <em>(For the complete derivation of the path-space framework, please see Zhang et al. (2020) <a href="/posts/intro-to-differentiable-rendering/#ref-9">[9]</a>).</em></p>
+<p>To place Projective Sampling in context, consider the path-space differentiable rendering approach of Zhang et al. (2020) <a href="#ref-9">[9]</a>, which explicitly samples points on silhouette edges and connects them to full light paths to handle secondary visibility. Finding these relevant edges in a complex 3D scene is computationally demanding, often requiring the construction of heavy auxiliary data structures (such as spatio-angular photon maps) prior to rendering to guide samples toward important boundaries. <em>(For the complete derivation of the path-space framework, please see Zhang et al. (2020) <a href="#ref-9">[9]</a>).</em></p>
 <p>The theoretical starting point for Zhang et al. (2023) is this same path-space formulation, which decouples the effect of boundaries from their interior. Expressed with respect to a path segment $(\mathbf{x}_a, \mathbf{x}_c)$, the pixel derivative with respect to a scene parameter $\boldsymbol{\pi}$ states:</p>
 $$
 \begin{equation}
@@ -3212,7 +3279,7 @@ $$<p>The term $L_d$ stands for the radiance difference between foreground and ba
 <figure id="fig-projective-formulation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/projective_sampling/formulation.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 64.</span>
-      <strong>Fig. 8. Formulations and terms of the boundary integral.</strong> Visibility-related derivatives arise from the perimeter (e.g., discrete edges of a triangle mesh) and the interior of shapes (e.g. the surface of an ellipsoid). Path-space methods compute an integral over tangential path segments to account for them. Decomposing the integration domain (blue and orange sets) reveals different formulations: <strong>(a)</strong> For the perimeter component, one can integrate over source points $\mathbf{x}_a \in \mathcal{A}$ and the “shadow” $\mathbf{x}_c \in \mathcal{B}_i(\mathbf{x}_a)$ cast by a discrete edge $i$. <strong>(b)</strong> This also generalizes to the interior, but parameterizing and sampling the projected boundary $\mathcal{B}(\mathbf{x}_a)$ is difficult in general. <strong>(c)</strong> The local formulation instead evaluates a spherical integral at boundaries $\mathbf{x}_b \in \partial\mathcal{A}$ without explicit consideration of the neighboring vertices $\mathbf{x}_a$ and $\mathbf{x}_c$. <strong>(d)</strong> The interior can be handled analogously but requires a different partition into an integral over surface positions (orange) and tangential directions (blue). Zhang et al. propose a new local boundary integral that accounts for this component.
+      <strong>Fig. 8. Formulations and terms of the boundary integral.</strong> Visibility-related derivatives arise from the perimeter (e.g., discrete edges of a triangle mesh) and the interior of shapes (e.g. the surface of an ellipsoid). Path-space methods compute an integral over tangential path segments to account for them. Decomposing the integration domain (blue and orange sets) reveals different formulations: <strong>(a)</strong> For the perimeter component, one can integrate over source points $\mathbf{x}_a \in \mathcal{A}$ and the “shadow” $\mathbf{x}_c \in \mathcal{B}_i(\mathbf{x}_a)$ cast by a discrete edge $i$. <strong>(b)</strong> This also generalizes to the interior, but parameterizing and sampling the projected boundary $\mathcal{B}(\mathbf{x}_a)$ is difficult in general. <strong>(c)</strong> The local formulation instead evaluates a spherical integral at boundaries $\mathbf{x}_b \in \partial\mathcal{A}$ without explicit consideration of the neighboring vertices $\mathbf{x}_a$ and $\mathbf{x}_c$. <strong>(d)</strong> The interior can be handled analogously but requires a different partition into an integral over surface positions (orange) and tangential directions (blue). Zhang et al. propose a new local boundary integral that accounts for this component. (Image by Zhang et al. <a href="#ref-5">[5]</a>)
     </figcaption></figure>
 
 
@@ -3254,7 +3321,7 @@ Two strategies rely on local differential information:</p>
 <figure id="fig-projective-smooth" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/projective_sampling/smooth_geometry.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 65.</span>
-      <strong>Fig. 12. Smooth geometry.</strong> The new local formulation of the boundary derivative enables differentiable rendering of smooth geometry, such as cylindrical fibers based on Bézier curves (left) and implicitly defined surfaces represented using a signed distance function (right). The latter case involves derivatives arising from the curved interior and potential normal discontinuities at voxel perimeters.
+      <strong>Fig. 12. Smooth geometry.</strong> The new local formulation of the boundary derivative enables differentiable rendering of smooth geometry, such as cylindrical fibers based on Bézier curves (left) and implicitly defined surfaces represented using a signed distance function (right). The latter case involves derivatives arising from the curved interior and potential normal discontinuities at voxel perimeters. (Image by Zhang et al. <a href="#ref-5">[5]</a>)
     </figcaption></figure>
 
 
@@ -3307,7 +3374,7 @@ $$\begin{equation} \begin{split} \partial_{\boldsymbol{\pi}} L_r(\mathbf{x}, \bo
 <figure id="fig-rte-normals" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/normals.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 66.</span>
-      The normal directions of arcs and circles (that are respectively the projections of line segments and spheres) as spherical curves.
+      The normal directions of arcs and circles (that are respectively the projections of line segments and spheres) as spherical curves. (Image by Zhang et al. <a href="#ref-14">[14]</a>)
     </figcaption></figure>
 
 
@@ -3344,12 +3411,12 @@ $$<p>This final equation shares the exact same structure as the original renderi
 $$
 \partial_{\boldsymbol{\pi}} L_o \approx Q(x_1) + Q(x_2) f_s(x_1) + Q(x_3) f_s(x_2) f_s(x_1)
 $$<p>In practice, this means we trace a standard light path and, at each bounce, compute the local differential emission $Q$, add it to the accumulated gradient, and multiply the running total by the surface BSDF as the path continues.</p>
-<p>The differential rendering equation tells us <em>what</em> to compute; it says nothing about doing so efficiently. Evaluating this expansion naively ie., recording every bounce of every traced path onto an autodiff tape and replaying it backward, reintroduces exactly the memory and runtime blowup that made naive AD unsuitable for rendering in the first place (see <a href="/posts/intro-to-differentiable-rendering/#why-is-differentiable-rendering-difficult">Why is Differentiable Rendering Difficult?</a>). For a light path of length $D$, that tape costs $\mathcal{O}(D)$ memory, and with millions of paths per frame it becomes the bottleneck long before the renderer does.</p>
+<p>The differential rendering equation tells us <em>what</em> to compute; it says nothing about doing so efficiently. Evaluating this expansion naively ie., recording every bounce of every traced path onto an autodiff tape and replaying it backward, reintroduces exactly the memory and runtime blowup that made naive AD unsuitable for rendering in the first place (see <a href="#why-is-differentiable-rendering-difficult">Why is Differentiable Rendering Difficult?</a>). For a light path of length $D$, that tape costs $\mathcal{O}(D)$ memory, and with millions of paths per frame it becomes the bottleneck long before the renderer does.</p>
 <h2 id="efficient-reverse-mode-differentiable-rendering">Efficient Reverse-Mode Differentiable Rendering<a hidden class="anchor" aria-hidden="true" href="#efficient-reverse-mode-differentiable-rendering">#</a></h2>
 <p>This section evaluates the differential rendering equation derived above, just without paying for the tape. Radiative Backpropagation and Path Replay Backpropagation both reformulate the backward pass as a second, physically-grounded transport simulation, so reverse-mode gradients can be computed with the same $\mathcal{O}(1)$-memory, single-pass character as forward rendering.</p>
 <hr>
 <h3 id="radiative-backpropagation">Radiative Backpropagation<a hidden class="anchor" aria-hidden="true" href="#radiative-backpropagation">#</a></h3>
-<p>Nimier-David et al. <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> introduce <strong>Radiative Backpropagation (RB)</strong>. It begins from the same differential rendering equation derived above, but reorganizes reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.</p>
+<p>Nimier-David et al. <a href="#ref-7">[7]</a> introduce <strong>Radiative Backpropagation (RB)</strong>. It begins from the same differential rendering equation derived above, but reorganizes reverse-mode differentiation as a second physical transport simulation. The objective is not a Jacobian image for one parameter. It is the vector-Jacobian product required by optimization: the derivative of one scalar objective with respect to all active scene parameters.</p>
 <h4 id="the-three-stages">The Three Stages<a hidden class="anchor" aria-hidden="true" href="#the-three-stages">#</a></h4>
 <p>Write the ordinary renderer as $\mathbf y=f(\boldsymbol{\pi})$ and the scalar objective as $g(\mathbf y)$. Radiative backpropagation separates one optimization iteration into:</p>
 <ol>
@@ -3375,7 +3442,7 @@ $$<p>$\delta\mathbf y$ says how each rendered pixel should change to reduce the 
 </span></span></code></pre></div><figure id="fig-rbp-overview" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/diff-rendering/radiative_backpropagation/overview.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 67.</span>
-      Overview of Radiative Backpropagation: Differentiation separates into (1) a fast primal rendering step, (2) objective differentiation yielding adjoint rendering $\delta_\mathbf{y}$, and (3) an adjoint light transport simulation emitting $\delta_\mathbf{y}$ from the sensor to accumulate parameter gradients $\delta_\boldsymbol{\pi}$.
+      Overview of Radiative Backpropagation: Differentiation separates into (1) a fast primal rendering step, (2) objective differentiation yielding adjoint rendering $\delta_\mathbf{y}$, and (3) an adjoint light transport simulation emitting $\delta_\mathbf{y}$ from the sensor to accumulate parameter gradients $\delta_\boldsymbol{\pi}$. (Image by Nimier-David et al. <a href="#ref-7">[7]</a>)
     </figcaption></figure>
 
 
@@ -3394,7 +3461,7 @@ $$
 &\quad + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral}}
 \end{aligned}
 $$<blockquote>
-<p><strong>Note on Static Visibility Boundaries:</strong> Nimier-David et al. <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> never actually write down the boundary term above, the general, boundary-aware equation is machinery imported from the Zhang et al. <a href="/posts/intro-to-differentiable-rendering/#ref-14">[14]</a> framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper&rsquo;s own derivation assumes static geometry from the outset ($\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i = \mathbf{0}$), so for them <b>the Boundary Integral is simply absent</b>, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a> and Loubet et al. <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a> as compatible options (Section 3.6 of the paper).</p></blockquote>
+<p><strong>Note on Static Visibility Boundaries:</strong> Nimier-David et al. <a href="#ref-7">[7]</a> never actually write down the boundary term above, the general, boundary-aware equation is machinery imported from the Zhang et al. <a href="#ref-14">[14]</a> framework developed concurrently in the literature, not something the RB paper derives and then discards. The RB paper&rsquo;s own derivation assumes static geometry from the outset ($\partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i = \mathbf{0}$), so for them <b>the Boundary Integral is simply absent</b>, leaving Direct Emission, Diff. Scattering, and Material Emission. The paper is explicit that this is a limitation of its prototype rather than something it resolves: visibility-related gradients are left to future work, pointing at Li et al. <a href="#ref-10">[10]</a> and Loubet et al. <a href="#ref-11">[11]</a> as compatible options (Section 3.6 of the paper).</p></blockquote>
 <p>Grouping the non-scattering gradient source terms into the <strong>Differential Emission</strong> term $Q(\mathbf{x}, \boldsymbol{\omega}_o)$:</p>
 $$
 Q(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{\partial_{\boldsymbol{\pi}} L_e}_{\text{Direct Emission}} + \underbrace{\int_{\mathbb{S}^2} L_i (\partial_{\boldsymbol{\pi}} f_s) \mathrm{d}\sigma}_{\text{Material Emission}} + \underbrace{\oint_{\Delta \mathbb{S}^2} f_s \Delta L_i \langle \mathbf{n}_\perp, \partial_{\boldsymbol{\pi}} \boldsymbol{\omega}_i \rangle \mathrm{d}\ell}_{\text{Boundary Integral (if geometry moves)}}
@@ -3402,7 +3469,7 @@ $$<p>the differential transport equation simplifies to:</p>
 $$
 \partial_{\boldsymbol{\pi}} L_o(\mathbf{x}, \boldsymbol{\omega}_o) = Q(\mathbf{x}, \boldsymbol{\omega}_o) + \int_{\mathbb{S}^2} (\partial_{\boldsymbol{\pi}} L_i) f_s \,\mathrm{d}\sigma .
 $$<p>This equation expresses an energy balance for differential radiance: $Q$ acts as a <strong>source</strong> of differential emission wherever a scene parameter directly alters emission or reflectance, while the integral describes how incident differential radiance undergoes standard physical <strong>scattering</strong>. Radiative backpropagation leverages this structure by evaluating gradients through an adjoint transport simulation governed by the same linear transport operators as primal rendering, with $L_e$ replaced by $Q$.</p>
-<p>To make that reuse precise and to set up reverse-mode propagation, the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.&rsquo;s own notation <a href="/posts/intro-to-differentiable-rendering/#ref-7">[7]</a> (Section 3.4):</p>
+<p>To make that reuse precise and to set up reverse-mode propagation, the paper packages the two remaining physical processes (scattering at a surface, and propagating along a ray to the next one) into two linear operators. Using Nimier-David et al.&rsquo;s own notation <a href="#ref-7">[7]</a> (Section 3.4):</p>
 <ol>
 <li>
 <p><strong>Scattering operator $\mathcal{K}$.</strong> Takes an incident directional field $h$ and scatters it through the BSDF, exactly the way the ordinary scattering equation treats $L_i$:
@@ -3575,8 +3642,8 @@ $$<p>turning the discrete sum over pixel derivatives into the ray-space inner pr
 <li><strong>Volumetric Extension:</strong> The same adjoint construction extends directly to participating media by replacing surface transport operators with their volumetric counterparts (RB paper, Appendix A.1).</li>
 <li><strong>Visibility Derivatives (Edge Sampling vs. Reparameterization):</strong>
 <ul>
-<li><strong>Edge Sampling (Li et al., 2018) <a href="/posts/intro-to-differentiable-rendering/#ref-10">[10]</a>:</strong> Explicitly samples silhouette edges, which requires modifying the theoretical formulation to add extra 1D boundary integral terms to the differential emission source $Q$.</li>
-<li><strong>Reparameterization / Change of Variables (Loubet et al., 2019) <a href="/posts/intro-to-differentiable-rendering/#ref-11">[11]</a>:</strong> Performs a parameter-dependent coordinate warp so that discontinuities remain static under scene perturbations ($\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_i = \mathbf{0}$). This allows RB to compute visibility-aware gradients <strong>without changing any of the adjoint derivations</strong>.</li>
+<li><strong>Edge Sampling (Li et al., 2018) <a href="#ref-10">[10]</a>:</strong> Explicitly samples silhouette edges, which requires modifying the theoretical formulation to add extra 1D boundary integral terms to the differential emission source $Q$.</li>
+<li><strong>Reparameterization / Change of Variables (Loubet et al., 2019) <a href="#ref-11">[11]</a>:</strong> Performs a parameter-dependent coordinate warp so that discontinuities remain static under scene perturbations ($\partial_{\boldsymbol{\pi}}\boldsymbol{\omega}_i = \mathbf{0}$). This allows RB to compute visibility-aware gradients <strong>without changing any of the adjoint derivations</strong>.</li>
 </ul>
 </li>
 </ul>
@@ -3592,13 +3659,13 @@ $$
 \right).
 $$<p>The path then continues with adjoint throughput multiplied by $f_s/p$. This is the Monte Carlo realization of $\langle\mathcal G\mathcal S A_e,Q\rangle$, not a reversal of stored primal vertices.</p>
 <h5 id="primal-radiance-dependence-and-acceleration">Primal Radiance Dependence and Acceleration<a hidden class="anchor" aria-hidden="true" href="#primal-radiance-dependence-and-acceleration">#</a></h5>
-<p>A key practical bottleneck is that the differential emission term $Q$ depends on the unknown <strong>primal incident radiance $L_i$</strong>. Evaluating $Q$ at every differentiable interaction requires launching a recursive primal path-tracing query. Along a path of depth $D$ with differentiable surfaces at each bounce, these suffix queries have lengths $D, D-1, \ldots, 1$, leading to quadratic time complexity $\mathcal{O}(D^2)$ (a bottleneck also reported by <strong>Zhang et al. (2019)</strong> <a href="/posts/intro-to-differentiable-rendering/#ref-14">[14]</a> for forward AD). Non-differentiated interactions do not trigger this extra work.</p>
-<p>To mitigate this quadratic overhead in long light paths, one can precompute an approximate spatio-directional data structure during the primal phase (such as a <strong>Path Guiding tree</strong> [Müller et al., 2017] <a href="/posts/intro-to-differentiable-rendering/#ref-15">[15]</a>) to perform fast $\mathcal{O}(1)$ interpolant queries of $L_i$ during adjoint backpropagation.</p>
+<p>A key practical bottleneck is that the differential emission term $Q$ depends on the unknown <strong>primal incident radiance $L_i$</strong>. Evaluating $Q$ at every differentiable interaction requires launching a recursive primal path-tracing query. Along a path of depth $D$ with differentiable surfaces at each bounce, these suffix queries have lengths $D, D-1, \ldots, 1$, leading to quadratic time complexity $\mathcal{O}(D^2)$ (a bottleneck also reported by <strong>Zhang et al. (2019)</strong> <a href="#ref-14">[14]</a> for forward AD). Non-differentiated interactions do not trigger this extra work.</p>
+<p>To mitigate this quadratic overhead in long light paths, one can precompute an approximate spatio-directional data structure during the primal phase (such as a <strong>Path Guiding tree</strong> [Müller et al., 2017] <a href="#ref-15">[15]</a>) to perform fast $\mathcal{O}(1)$ interpolant queries of $L_i$ during adjoint backpropagation.</p>
 <p>Thus, RB solves the reverse-mode storage and transport problem; it is not by itself a solution to moving visibility discontinuities unless paired with reparameterization or boundary sampling.</p>
 <figure id="fig-rbp-algorithm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/radiative_backpropagation/algorithm.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 68.</span>
-      Illustration of the quadratic <strong>$\mathcal{O}(D^2)$</strong> complexity in Radiative Backpropagation. An adjoint path launched from the camera (<strong>black rays</strong>) evaluates local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) at each differentiable surface hit (<strong>red dots</strong>). To estimate the unknown primal incident radiance $L_i$ in $Q$, a recursive primal path-tracing query (<strong>gray rays</strong>) is launched at every bounce.
+      Illustration of the quadratic <strong>$\mathcal{O}(D^2)$</strong> complexity in Radiative Backpropagation. An adjoint path launched from the camera (<strong>black rays</strong>) evaluates local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) at each differentiable surface hit (<strong>red dots</strong>). To estimate the unknown primal incident radiance $L_i$ in $Q$, a recursive primal path-tracing query (<strong>gray rays</strong>) is launched at every bounce. (Image by Vicini et al. <a href="#ref-13">[13]</a>)
     </figcaption></figure>
 
 
@@ -3608,7 +3675,7 @@ $$<p>The path then continues with adjoint throughput multiplied by $f_s/p$. This
 <li><strong>Biased I:</strong> replace $L_i$ in $Q$ by $1$. This removes recursive radiance queries and reduces time to $O(D)$, but changes the gradient.</li>
 <li><strong>Biased II:</strong> pipeline optimization by using the previous iteration&rsquo;s adjoint rendering with the current iteration&rsquo;s rendering Jacobian. This overlaps primal and adjoint work but introduces an intentional one-iteration mismatch.</li>
 </ul>
-<p>The RB paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. <a href="/posts/intro-to-differentiable-rendering/#ref-13">[13]</a> give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.</p>
+<p>The RB paper originally claimed that Biased I preserves gradient signs. Its published erratum withdraws this claim, and Vicini et al. <a href="#ref-13">[13]</a> give an explicit counterexample: each local product preserves its sign when multiplied by positive radiance, but globally summing many differently weighted signed contributions need not preserve the sign. Biased I can still work well and often reduces variance, but it must be described as a heuristic rather than a directionally correct gradient estimator.</p>
 <p>For Biased II, if superscripts denote optimization iterations, the propagated quantity is</p>
 $$
 \delta\boldsymbol{\pi}^{(i)}
@@ -3619,7 +3686,7 @@ $$<p>instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the re
 <hr>
 <h3 id="path-replay-backpropagation">Path Replay Backpropagation<a hidden class="anchor" aria-hidden="true" href="#path-replay-backpropagation">#</a></h3>
 <p>Radiative backpropagation achieves a constant memory footprint by computing a fresh primal suffix at each differentiable interaction. However, this nested recursion causes computation time to grow quadratically ($\mathcal{O}(D^2)$) with the number of scattering events.</p>
-<p>Vicini et al. <a href="/posts/intro-to-differentiable-rendering/#ref-13">[13]</a> propose an elegant alternative called <strong>Path Replay Backpropagation (PRB)</strong>. By leveraging the mathematical invertibility of local light transport Jacobians, PRB computes exact gradients in <strong>linear time ($\mathcal{O}(D)$) and constant memory ($\mathcal{O}(1)$)</strong>.</p>
+<p>Vicini et al. <a href="#ref-13">[13]</a> propose an elegant alternative called <strong>Path Replay Backpropagation (PRB)</strong>. By leveraging the mathematical invertibility of local light transport Jacobians, PRB computes exact gradients in <strong>linear time ($\mathcal{O}(D)$) and constant memory ($\mathcal{O}(1)$)</strong>.</p>
 <p>PRB splits gradient evaluation into two separate passes:</p>
 <ol>
 <li><strong>Primal Pass:</strong> Light paths are sampled as usual, but instead of building a massive automatic differentiation (AD) graph, the renderer only records the total path radiance and the random seed.</li>
@@ -3628,7 +3695,7 @@ $$<p>instead of using $\delta\mathbf y^{(i)}$. It is reasonable only when the re
 <figure id="fig-prb-algorithm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/diff-rendering/prb/algorithm.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 69.</span>
-      Illustration of linear <strong>$\mathcal{O}(D)$</strong> complexity in Path Replay Backpropagation (PRB). Rather than spawning branching quadratic primal suffix trees, PRB replays the exact same random walk (<strong>green rays</strong>) alongside the adjoint path (<strong>black rays</strong>). Local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) are evaluated at each surface hit (<strong>red dots</strong>) in linear time and constant memory.
+      Illustration of linear <strong>$\mathcal{O}(D)$</strong> complexity in Path Replay Backpropagation (PRB). Rather than spawning branching quadratic primal suffix trees, PRB replays the exact same random walk (<strong>green rays</strong>) alongside the adjoint path (<strong>black rays</strong>). Local parameter derivatives ($\frac{\partial f_s}{\partial \boldsymbol{\pi}}$, $\frac{\partial L_e}{\partial \boldsymbol{\pi}}$) are evaluated at each surface hit (<strong>red dots</strong>) in linear time and constant memory. (Image by Vicini et al. <a href="#ref-13">[13]</a>)
     </figcaption></figure>
 
 
@@ -3993,60 +4060,60 @@ $$ J_{\text{ray}}^\lambda = J_{\text{ray}} + \lambda I_4 \operatorname{sign}\lef
 <h3 id="further-reading">Further Reading<a hidden class="anchor" aria-hidden="true" href="#further-reading">#</a></h3>
 <p>For those interested in exploring state-of-the-art developments and modern inverse rendering frameworks, consider the following resources:</p>
 <ul>
-<li><strong>Mitsuba 3 Documentation:</strong> A highly flexible, retargetable forward and differentiable renderer. <a href="https://mitsuba.readthedocs.io/en/stable/">Read the docs</a></li>
-<li><strong>Differentiable Signed Distance Function Rendering</strong> (Vicini et al., 2022) <a href="/posts/intro-to-differentiable-rendering/#ref-3">[3]</a>: Optimizing geometry using implicit SDFs to allow topological changes. <a href="https://doi.org/10.1145/3528223.3530139">DOI: 10.1145/3528223.3530139</a></li>
-<li><strong>A Simple Approach to Differentiable Rendering of SDFs</strong> (Wang et al., 2024) <a href="/posts/intro-to-differentiable-rendering/#ref-4">[4]</a>: Exchanging unbiasedness for low variance and structural simplicity in SDF rendering. <a href="https://doi.org/10.1145/3680528.3687573">DOI: 10.1145/3680528.3687573</a></li>
-<li><strong>Many-Worlds Inverse Rendering</strong> (Zhang et al., 2025) <a href="/posts/intro-to-differentiable-rendering/#ref-6">[6]</a>: Avoiding local minima by evaluating a superposition of independent surface hypotheses. <a href="https://doi.org/10.1145/3767318">DOI: 10.1145/3767318</a></li>
+<li><strong>Mitsuba 3 Documentation:</strong> A highly flexible, retargetable forward and differentiable renderer. <a href="https://mitsuba.readthedocs.io/en/stable/" target="_blank" rel="noopener noreferrer">Read the docs</a></li>
+<li><strong>Differentiable Signed Distance Function Rendering</strong> (Vicini et al., 2022) <a href="#ref-3">[3]</a>: Optimizing geometry using implicit SDFs to allow topological changes. <a href="https://doi.org/10.1145/3528223.3530139" target="_blank" rel="noopener noreferrer">DOI: 10.1145/3528223.3530139</a></li>
+<li><strong>A Simple Approach to Differentiable Rendering of SDFs</strong> (Wang et al., 2024) <a href="#ref-4">[4]</a>: Exchanging unbiasedness for low variance and structural simplicity in SDF rendering. <a href="https://doi.org/10.1145/3680528.3687573" target="_blank" rel="noopener noreferrer">DOI: 10.1145/3680528.3687573</a></li>
+<li><strong>Many-Worlds Inverse Rendering</strong> (Zhang et al., 2025) <a href="#ref-6">[6]</a>: Avoiding local minima by evaluating a superposition of independent surface hypotheses. <a href="https://doi.org/10.1145/3767318" target="_blank" rel="noopener noreferrer">DOI: 10.1145/3767318</a></li>
 </ul>
 <h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <ol>
 <li>
-<p><span id="ref-1"></span>Zhao, Shuang, Wenzel Jakob, and Tzu-Mao Li. <em>“Physics-Based Differentiable Rendering: A Comprehensive Introduction.”</em> <em>ACM SIGGRAPH 2020 Courses</em>, 2020. <a href="https://dl.acm.org/doi/10.1145/3388769.3407454">https://dl.acm.org/doi/10.1145/3388769.3407454</a>.</p>
+<p><span id="ref-1"></span>Zhao, Shuang, Wenzel Jakob, and Tzu-Mao Li. <em>“Physics-Based Differentiable Rendering: A Comprehensive Introduction.”</em> <em>ACM SIGGRAPH 2020 Courses</em>, 2020. <a href="https://dl.acm.org/doi/10.1145/3388769.3407454" target="_blank" rel="noopener noreferrer">https://dl.acm.org/doi/10.1145/3388769.3407454</a>.</p>
 </li>
 <li>
-<p><span id="ref-2"></span>Vicini, Delio. <em>“Efficient and Accurate Physically-Based Differentiable Rendering.”</em> <em>EPFL PhD Thesis</em>, 2022. <a href="https://dvicini.github.io/phdthesis/">https://dvicini.github.io/phdthesis/</a>.</p>
+<p><span id="ref-2"></span>Vicini, Delio. <em>“Efficient and Accurate Physically-Based Differentiable Rendering.”</em> <em>EPFL PhD Thesis</em>, 2022. <a href="https://dvicini.github.io/phdthesis/" target="_blank" rel="noopener noreferrer">https://dvicini.github.io/phdthesis/</a>.</p>
 </li>
 <li>
-<p><span id="ref-3"></span>Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. <em>“Differentiable Signed Distance Function Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 41(4), 2022. <a href="https://rgl.epfl.ch/publications/Vicini2022SDF">https://rgl.epfl.ch/publications/Vicini2022SDF</a>.</p>
+<p><span id="ref-3"></span>Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. <em>“Differentiable Signed Distance Function Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 41(4), 2022. <a href="https://rgl.epfl.ch/publications/Vicini2022SDF" target="_blank" rel="noopener noreferrer">https://rgl.epfl.ch/publications/Vicini2022SDF</a>.</p>
 </li>
 <li>
-<p><span id="ref-4"></span>Wang, Zichen, Xi Deng, Ziyi Zhang, Wenzel Jakob, and Steve Marschner. <em>“A Simple Approach to Differentiable Rendering of SDFs.”</em> <em>SIGGRAPH Asia 2024 Conference Papers</em>, Article 119, 2024. <a href="https://doi.org/10.1145/3680528.3687573">https://doi.org/10.1145/3680528.3687573</a>.</p>
+<p><span id="ref-4"></span>Wang, Zichen, Xi Deng, Ziyi Zhang, Wenzel Jakob, and Steve Marschner. <em>“A Simple Approach to Differentiable Rendering of SDFs.”</em> <em>SIGGRAPH Asia 2024 Conference Papers</em>, Article 119, 2024. <a href="https://doi.org/10.1145/3680528.3687573" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3680528.3687573</a>.</p>
 </li>
 <li>
-<p><span id="ref-5"></span>Zhang, Ziyi, Nicolas Roussel, and Wenzel Jakob. <em>“Projective Sampling for Differentiable Rendering of Geometry.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 42(6), Article 212, 2023. <a href="https://rgl.epfl.ch/publications/Zhang2023Projective">https://rgl.epfl.ch/publications/Zhang2023Projective</a>.</p>
+<p><span id="ref-5"></span>Zhang, Ziyi, Nicolas Roussel, and Wenzel Jakob. <em>“Projective Sampling for Differentiable Rendering of Geometry.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 42(6), Article 212, 2023. <a href="https://rgl.epfl.ch/publications/Zhang2023Projective" target="_blank" rel="noopener noreferrer">https://rgl.epfl.ch/publications/Zhang2023Projective</a>.</p>
 </li>
 <li>
-<p><span id="ref-6"></span>Zhang, Ziyi, Nicolas Roussel, and Wenzel Jakob. <em>“Many-Worlds Inverse Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 45(1), 2026 (published online 2025). <a href="https://rgl.epfl.ch/publications/Zhang2025MW">https://rgl.epfl.ch/publications/Zhang2025MW</a>.</p>
+<p><span id="ref-6"></span>Zhang, Ziyi, Nicolas Roussel, and Wenzel Jakob. <em>“Many-Worlds Inverse Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 45(1), 2026 (published online 2025). <a href="https://rgl.epfl.ch/publications/Zhang2025MW" target="_blank" rel="noopener noreferrer">https://rgl.epfl.ch/publications/Zhang2025MW</a>.</p>
 </li>
 <li>
-<p><span id="ref-7"></span>Nimier-David, Merlin, Sébastien Speierer, Benoît Ruiz, and Wenzel Jakob. <em>“Radiative Backpropagation: An Adjoint Method for Lightning-Fast Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 39(4), 2020. <a href="https://rgl.epfl.ch/publications/NimierDavid2020Radiative">https://rgl.epfl.ch/publications/NimierDavid2020Radiative</a>.</p>
+<p><span id="ref-7"></span>Nimier-David, Merlin, Sébastien Speierer, Benoît Ruiz, and Wenzel Jakob. <em>“Radiative Backpropagation: An Adjoint Method for Lightning-Fast Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 39(4), 2020. <a href="https://rgl.epfl.ch/publications/NimierDavid2020Radiative" target="_blank" rel="noopener noreferrer">https://rgl.epfl.ch/publications/NimierDavid2020Radiative</a>.</p>
 </li>
 <li>
-<p><span id="ref-8"></span>Bangaru, Sai Praveen, Tzu-Mao Li, and Frédo Durand. <em>“Unbiased Warped-Area Sampling for Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 39(6), 2020. <a href="https://doi.org/10.1145/3414685.3417833">https://doi.org/10.1145/3414685.3417833</a>. <a href="https://people.csail.mit.edu/sbangaru/projects/was-2020/index.html">Author version and errata</a>.</p>
+<p><span id="ref-8"></span>Bangaru, Sai Praveen, Tzu-Mao Li, and Frédo Durand. <em>“Unbiased Warped-Area Sampling for Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 39(6), 2020. <a href="https://doi.org/10.1145/3414685.3417833" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3414685.3417833</a>. <a href="https://people.csail.mit.edu/sbangaru/projects/was-2020/index.html" target="_blank" rel="noopener noreferrer">Author version and errata</a>.</p>
 </li>
 <li>
-<p><span id="ref-9"></span>Zhang, Cheng, Bailey Miller, Kai Yan, Ioannis Gkioulekas, and Shuang Zhao. <em>“Path-Space Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 39(4), Article 143, 2020. <a href="https://doi.org/10.1145/3386569.3392383">https://doi.org/10.1145/3386569.3392383</a>.</p>
+<p><span id="ref-9"></span>Zhang, Cheng, Bailey Miller, Kai Yan, Ioannis Gkioulekas, and Shuang Zhao. <em>“Path-Space Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 39(4), Article 143, 2020. <a href="https://doi.org/10.1145/3386569.3392383" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3386569.3392383</a>.</p>
 </li>
 <li>
-<p><span id="ref-10"></span>Li, Tzu-Mao, Miika Aittala, Frédo Durand, and Jaakko Lehtinen. <em>“Differentiable Monte Carlo Ray Tracing through Edge Sampling.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 37(6), Article 222, 2018. <a href="https://doi.org/10.1145/3272127.3275109">https://doi.org/10.1145/3272127.3275109</a>.</p>
+<p><span id="ref-10"></span>Li, Tzu-Mao, Miika Aittala, Frédo Durand, and Jaakko Lehtinen. <em>“Differentiable Monte Carlo Ray Tracing through Edge Sampling.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 37(6), Article 222, 2018. <a href="https://doi.org/10.1145/3272127.3275109" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3272127.3275109</a>.</p>
 </li>
 <li>
-<p><span id="ref-11"></span>Loubet, Guillaume, Nicolas Holzschuch, and Wenzel Jakob. <em>“Reparameterizing Discontinuous Integrands for Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 38(6), Article 228, 2019. <a href="https://doi.org/10.1145/3355089.3356510">https://doi.org/10.1145/3355089.3356510</a>.</p>
+<p><span id="ref-11"></span>Loubet, Guillaume, Nicolas Holzschuch, and Wenzel Jakob. <em>“Reparameterizing Discontinuous Integrands for Differentiable Rendering.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 38(6), Article 228, 2019. <a href="https://doi.org/10.1145/3355089.3356510" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3355089.3356510</a>.</p>
 </li>
 <li>
-<p><span id="ref-12"></span>Zeltner, Tizian, Sébastien Speierer, Iliyan Georgiev, and Wenzel Jakob. <em>“Monte Carlo Estimators for Differential Light Transport.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 40(4), Article 78, 2021. <a href="https://doi.org/10.1145/3450626.3459807">https://doi.org/10.1145/3450626.3459807</a>.</p>
+<p><span id="ref-12"></span>Zeltner, Tizian, Sébastien Speierer, Iliyan Georgiev, and Wenzel Jakob. <em>“Monte Carlo Estimators for Differential Light Transport.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 40(4), Article 78, 2021. <a href="https://doi.org/10.1145/3450626.3459807" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3450626.3459807</a>.</p>
 </li>
 <li>
-<p><span id="ref-13"></span>Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. <em>“Path Replay Backpropagation: Differentiating Light Paths using Constant Memory and Linear Time.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 40(4), Article 108, 2021. <a href="https://doi.org/10.1145/3450626.3459804">https://doi.org/10.1145/3450626.3459804</a>.</p>
+<p><span id="ref-13"></span>Vicini, Delio, Sébastien Speierer, and Wenzel Jakob. <em>“Path Replay Backpropagation: Differentiating Light Paths using Constant Memory and Linear Time.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 40(4), Article 108, 2021. <a href="https://doi.org/10.1145/3450626.3459804" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3450626.3459804</a>.</p>
 </li>
 <li>
-<p><span id="ref-14"></span>Zhang, Cheng, Lifan Wu, Changxi Zheng, Ioannis Gkioulekas, Ravi Ramamoorthi, and Shuang Zhao. <em>“A Differential Theory of Radiative Transfer.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 38(6), Article 227, 2019. <a href="https://doi.org/10.1145/3355089.3356522">https://doi.org/10.1145/3355089.3356522</a>.</p>
+<p><span id="ref-14"></span>Zhang, Cheng, Lifan Wu, Changxi Zheng, Ioannis Gkioulekas, Ravi Ramamoorthi, and Shuang Zhao. <em>“A Differential Theory of Radiative Transfer.”</em> <em>ACM Transactions on Graphics (TOG)</em>, 38(6), Article 227, 2019. <a href="https://doi.org/10.1145/3355089.3356522" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3355089.3356522</a>.</p>
 </li>
 <li>
-<p><span id="ref-15"></span>Müller, Thomas, Markus Gross, and Jan Novák. <em>“Practical Path Guiding for Efficient Light Transport Simulation.”</em> <em>Computer Graphics Forum (Proc. EGSR)</em>, 36(4), 91–100, 2017. <a href="https://doi.org/10.1111/cgf.13227">https://doi.org/10.1111/cgf.13227</a>.</p>
+<p><span id="ref-15"></span>Müller, Thomas, Markus Gross, and Jan Novák. <em>“Practical Path Guiding for Efficient Light Transport Simulation.”</em> <em>Computer Graphics Forum (Proc. EGSR)</em>, 36(4), 91–100, 2017. <a href="https://doi.org/10.1111/cgf.13227" target="_blank" rel="noopener noreferrer">https://doi.org/10.1111/cgf.13227</a>.</p>
 </li>
 <li>
-<p><span id="ref-16"></span>Belongie, Serge. <em>“Rodrigues&rsquo; Rotation Formula.”</em> <em>MathWorld&ndash;A Wolfram Web Resource</em>, 2019. <a href="https://mathworld.wolfram.com/RodriguesRotationFormula.html">https://mathworld.wolfram.com/RodriguesRotationFormula.html</a>.</p>
+<p><span id="ref-16"></span>Belongie, Serge. <em>“Rodrigues&rsquo; Rotation Formula.”</em> <em>MathWorld&ndash;A Wolfram Web Resource</em>, 2019. <a href="https://mathworld.wolfram.com/RodriguesRotationFormula.html" target="_blank" rel="noopener noreferrer">https://mathworld.wolfram.com/RodriguesRotationFormula.html</a>.</p>
 </li>
 </ol>
 
@@ -4055,14 +4122,14 @@ $$ J_{\text{ray}}^\lambda = J_{\text{ray}} + \lambda I_4 \operatorname{sign}\lef
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/differentiable-rendering/">Differentiable Rendering</a></li>
-      <li><a href="http://localhost:1313/tags/computer-graphics/">Computer Graphics</a></li>
+      <li><a href="https://USharma002.github.io/tags/differentiable-rendering/">Differentiable Rendering</a></li>
+      <li><a href="https://USharma002.github.io/tags/computer-graphics/">Computer Graphics</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="http://localhost:1313/posts/differentiable-rendering-participating-media/">
+  <a class="prev" href="https://USharma002.github.io/posts/intro-to-rendering/">
     <span class="title">« Prev</span>
     <br>
-    <span>Differentiable Rendering of Participating Media</span>
+    <span>Introduction to 3D Rendering</span>
   </a>
 </nav>
 
@@ -4071,7 +4138,7 @@ $$ J_{\text{ray}}^\lambda = J_{\text{ray}} + \lambda I_4 \operatorname{sign}\lef
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
 
     <span>
         Powered by
@@ -4259,8 +4326,166 @@ document.addEventListener("DOMContentLoaded", function() {
             ref.style.color = "red";
         }
     });
+
+    
+    document.addEventListener("click", function(e) {
+        var link = e.target.closest('a[href^="#ref-"]');
+        if (!link || link.classList.contains('ref-backlink')) return;
+        var refId = link.getAttribute("href").slice(1);
+        var target = document.getElementById(refId);
+        if (target) {
+            e.preventDefault();
+            var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+            var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 20);
+            window.scrollTo({
+                top: targetTop,
+                behavior: "smooth"
+            });
+            if (history.pushState) {
+                history.pushState(null, null, '#' + refId);
+            }
+            var li = target.closest("li");
+            if (li) {
+                li.classList.remove("ref-highlight");
+                void li.offsetWidth;
+                li.classList.add("ref-highlight");
+            }
+        }
+    });
+
+    
+    var refSpans = document.querySelectorAll('span[id^="ref-"]');
+    if (refSpans.length) {
+        var refMap = {};
+        var citations = document.querySelectorAll('.post-content a[href^="#ref-"]');
+
+        citations.forEach(function(citeLink) {
+            if (citeLink.closest('ol') && citeLink.closest('ol').querySelector('span[id^="ref-"]')) return;
+            if (citeLink.classList.contains('ref-backlink')) return;
+
+            var refId = citeLink.getAttribute('href').slice(1);
+            if (!refMap[refId]) refMap[refId] = [];
+
+            var index = refMap[refId].length + 1;
+            var srcId = 'ref-src-' + refId.replace('ref-', '') + '-' + index;
+            citeLink.id = srcId;
+            citeLink.classList.add('citation-source');
+            refMap[refId].push(srcId);
+        });
+
+        refSpans.forEach(function(span) {
+            var refId = span.id;
+            var sources = refMap[refId] || [];
+            if (!sources.length) return;
+
+            var wrap = document.createElement('span');
+            wrap.className = 'ref-backlinks';
+
+            if (sources.length === 1) {
+                wrap.innerHTML = '<a href="#' + sources[0] + '" class="ref-backlink" title="Jump back to citation">↩</a>';
+            } else {
+                var linksHtml = sources.map(function(srcId, idx) {
+                    return '<a href="#' + srcId + '" class="ref-backlink" title="Jump to citation ' + (idx + 1) + '">' + (idx + 1) + '</a>';
+                }).join('');
+                wrap.innerHTML = '<span class="ref-backlink-icon" title="Jump back to citations">↩</span> ' + linksHtml;
+            }
+
+            var li = span.closest('li');
+            var targetContainer = (li ? (li.querySelector('p:last-of-type') || li) : span.parentNode);
+            targetContainer.appendChild(wrap);
+        });
+
+        
+        document.addEventListener("click", function(e) {
+            var link = e.target.closest('a.ref-backlink, a[href^="#ref-src-"]');
+            if (!link) return;
+            var srcId = link.getAttribute("href").slice(1);
+            var target = document.getElementById(srcId);
+            if (target) {
+                e.preventDefault();
+                var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+                var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 60);
+                window.scrollTo({
+                    top: targetTop,
+                    behavior: "smooth"
+                });
+                if (history.pushState) {
+                    history.pushState(null, null, '#' + srcId);
+                }
+                target.classList.remove("cite-highlight");
+                void target.offsetWidth;
+                target.classList.add("cite-highlight");
+            }
+        });
+    }
 });
 </script>
+
+<style>
+[id^="ref-"], span[id^="ref-"] {
+    scroll-margin-top: calc(var(--header-height, 60px) + 30px);
+    display: inline-block;
+}
+.ref-highlight {
+    animation: refGlow 2s ease-out;
+}
+@keyframes refGlow {
+    0% { background-color: rgba(66, 165, 245, 0.35); border-radius: 4px; }
+    100% { background-color: transparent; }
+}
+.ref-backlinks {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    font-size: 0.82rem;
+    vertical-align: baseline;
+    user-select: none;
+}
+.ref-backlink-icon {
+    color: var(--secondary, #8b8b8b);
+    font-size: 0.88rem;
+    margin-right: 2px;
+    font-weight: bold;
+}
+.ref-backlinks a.ref-backlink {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background-color: var(--code-bg, rgba(0, 0, 0, 0.05));
+    border: 1px solid var(--border, #e0e0e0);
+    color: var(--site-link-color, #1565c0) !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    transition: all 0.15s ease;
+}
+.ref-backlinks a.ref-backlink:hover {
+    background-color: var(--site-link-color, #1565c0);
+    color: #ffffff !important;
+    border-color: var(--site-link-color, #1565c0);
+    text-decoration: none !important;
+    transform: translateY(-1px);
+}
+.dark .ref-backlinks a.ref-backlink {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--site-link-color, #64b5f6) !important;
+}
+.dark .ref-backlinks a.ref-backlink:hover {
+    background-color: var(--site-link-color, #64b5f6);
+    color: #1a1a1a !important;
+    border-color: var(--site-link-color, #64b5f6);
+}
+.cite-highlight {
+    animation: citeGlow 2.5s ease-out;
+}
+@keyframes citeGlow {
+    0% { background-color: rgba(255, 235, 59, 0.65); border-radius: 4px; box-shadow: 0 0 8px rgba(255, 235, 59, 0.5); }
+    100% { background-color: transparent; }
+}
+</style>
 
 <script>
     let menu = document.getElementById('menu')

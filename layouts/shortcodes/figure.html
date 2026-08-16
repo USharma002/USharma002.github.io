@@ -38,7 +38,7 @@
   {{- if $caption -}}
     <figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure {{ $num }}.</span>
-      {{ $caption | markdownify }}
+      {{ $.Page.RenderString (dict "display" "inline") $caption }}
     </figcaption>
   {{- end -}}
 </figure>

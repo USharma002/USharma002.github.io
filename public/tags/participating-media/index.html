@@ -10,7 +10,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/tags/participating-media/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.fca3f056e7a225d4c87bd8ff804ab024727bdcf3d542ddb687b278e1431005ed.css" integrity="sha256-/KPwVueiJdTIe9j/gEqwJHJ73PPVQt22h7J44UMQBe0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.f0ca161328904bafa7e4c976e1ff460214546890e38ba32912dcac236d24d35d.css" integrity="sha256-8MoWEyiQS6&#43;n5Ml24f9GAhRUaJDji6MpEtysI20k010=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -61,10 +61,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload"
   as="style"
-  href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;700&family=Source+Code+Pro:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap"
   onload="this.onload=null;this.rel='stylesheet'">
 <noscript>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@300;700&family=Source+Code+Pro:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
 </noscript>
 </head>
 
@@ -346,8 +346,48 @@ document.addEventListener("DOMContentLoaded", function() {
             ref.style.color = "red";
         }
     });
+
+    
+    document.addEventListener("click", function(e) {
+        var link = e.target.closest('a[href^="#ref-"]');
+        if (!link) return;
+        var refId = link.getAttribute("href").slice(1);
+        var target = document.getElementById(refId);
+        if (target) {
+            e.preventDefault();
+            var headerHeight = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 60);
+            var targetTop = target.getBoundingClientRect().top + window.scrollY - (headerHeight + 20);
+            window.scrollTo({
+                top: targetTop,
+                behavior: "smooth"
+            });
+            if (history.pushState) {
+                history.pushState(null, null, '#' + refId);
+            }
+            var li = target.closest("li");
+            if (li) {
+                li.classList.remove("ref-highlight");
+                void li.offsetWidth;
+                li.classList.add("ref-highlight");
+            }
+        }
+    });
 });
 </script>
+
+<style>
+[id^="ref-"], span[id^="ref-"] {
+    scroll-margin-top: calc(var(--header-height, 60px) + 30px);
+    display: inline-block;
+}
+.ref-highlight {
+    animation: refGlow 2s ease-out;
+}
+@keyframes refGlow {
+    0% { background-color: rgba(66, 165, 245, 0.35); border-radius: 4px; }
+    100% { background-color: transparent; }
+}
+</style>
 
 <script>
     let menu = document.getElementById('menu')

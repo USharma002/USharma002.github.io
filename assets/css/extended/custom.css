@@ -631,6 +631,8 @@ body:not(.dark) .chroma .p {
 
 .dark img[src$=".svg"]:not(.no-invert) {
     filter: invert(1) hue-rotate(180deg);
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 
