@@ -28,13 +28,12 @@ body.dark img[src$=".svg"]:not(.no-invert),
 {{< figure src="/images/diff-rendering/diff-render.svg" id="fig-diff-render" caption="High-level overview of the differentiable rendering pipeline mapping scene parameters to images and propagating loss gradients back to parameters. (Image by Zhao et al. [[1]](#ref-1))" width="100%" >}}
 
 
-Differentiable rendering asks a simple question with surprisingly sharp edges: if a renderer maps scene parameters to an image, can we differentiate that map? If yes, then geometry, materials, lights, and cameras can be optimized from image-space losses such as reconstruction error, perceptual losses, or task-specific objectives.
+Differentiable rendering asks a simple question: if a renderer maps scene parameters to an image, can we differentiate that map? If yes, then geometry, materials, lights, and cameras can be optimized from image-space losses such as reconstruction error, perceptual losses, or task-specific objectives.
 
 
+The difficulty is that rendering is not just a smooth program. It is an integral over paths, visibility changes discontinuously, and Monte Carlo estimators have sampling choices that may themselves depend on the parameters. These notes has the following flow: automatic differentiation, why naive AD fails for visibility, then boundary-aware Monte Carlo estimators, and finally the physics-based formulations used in modern differentiable renderers (Mitsuba).
 
-The difficulty is that rendering is not just a smooth program. It is an integral over paths, visibility changes discontinuously, and Monte Carlo estimators have sampling choices that may themselves depend on the parameters. This post builds the story in layers: first automatic differentiation, then why naive AD fails for visibility, then boundary-aware Monte Carlo estimators, and finally the physics-based formulations used in modern differentiable renderers.
-
-I will assume basic familiarity with physically based rendering and the rendering equation. The goal here is not to rederive all of light transport, but to make the differentiable part clear enough that the papers become much easier to read. This post focuses on surface transport; participating media and null-collision estimators are treated as a separate advanced topic.
+The notes assume basic familiarity with physically based rendering and the rendering equation. The goal here is to make the differentiable part clear enough that the papers become much easier to read. I focused on surface transport; participating media and null-collision estimators are treated as a separate advanced topic (will probably make separate notes in future).
 
 <blockquote style="margin: 1.5rem 0; padding: 0.8rem 1.2rem; border-left: 4px solid var(--site-link-color, #1565c0); background: var(--site-blockquote-bg, #f4f6fb); border-radius: 8px;">
   <p><em>Note: Many of the diagrams and visualizations in this post are adapted from the respective original research papers and Delio Vicini's PhD thesis <a href="#ref-2">[2]</a>.</em></p>
