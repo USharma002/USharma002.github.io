@@ -14,8 +14,6 @@ math: true
 
 ## Principal Component Analysis
 
-The following are my notes on the PCA based on various resources. I will update the resouces later
-
 **Motivating Problem:**  
 Imagine you have 10,000-dimensional vectors (like flattened MNIST images which would be 768 dimensional) but most dimensions contain redundant information.  
 Can we compress these to, say, 50 dimensions while retaining 95% of the variation?  
@@ -360,7 +358,7 @@ where $U$ contains the **top-$K$ eigenvectors** of the covariance matrix $S$, or
 
 ---
 
-##Implementation
+### Implementation
 
 Here's a minimal PCA implementation from scratch:
 
@@ -426,9 +424,6 @@ Let's see how PCA works on above dataset:
 plt.scatter(X[:, 0], X[:, 1], c=y, edgecolor="k", cmap="coolwarm", s=40, linewidth=0.8)
 plt.savefig("pca_scatter_original.png", dpi=300)
 ```
-
-<!-- ![Original Data](/images/pca/pca_scatter_original.png)
-*Original 2D data with two classes* -->
 
 {{< 
 figure src="/images/pca/pca_scatter_original.png"

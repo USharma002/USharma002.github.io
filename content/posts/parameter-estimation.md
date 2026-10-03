@@ -14,17 +14,17 @@ math: true
 
 ## Estimating probabilities of data
 
-Suppose we have a coin and I want to know the probability of heads coming up when I throw it. One natural way to estimate this is to toss is $n$ (let's say $n = 10$) times, collect the outcomes/data $\mathcal{D}=\{H, T, H, T, T, H, T, H, T, T\}$ where we got $n_H=4$ heads and $n_T=6$ tails, so intuitively we can do following:
+Suppose we have a coin and I want to know the probability of heads coming up when I throw it. One natural way to estimate this is to toss it $n$ (let's say $n = 10$) times, collect the outcomes/data $\mathcal{D}=\{H, T, H, T, T, H, T, H, T, T\}$ where we got $n_H=4$ heads and $n_T=6$ tails, so intuitively we can do following:
 $$P(H) = \frac{n_H}{n_H + n_T}$$
 
-Can we derive th above more formally ?
+Can we derive the above more formally?
 
 ---
 
 ### Maximum Likelihood Estimate
 The idea behind the maximum likelihood estimate (MLE) is to define a function of parameters that enable us to find a model that fits the data well. 
 
-Given observations $\mathcal{D}=\lbrace x_1,\dots,x_n \rbrace $ and for a family of probability densities $p(x\mid \theta)$ parametrized by $\theta$, the likelihood of the data is given by $p(\mathcal{D}\mid \theta)$. The MLE principle is to find a $\hat{\theta}$ that maximzes the likelihood of data, $p(\mathcal{D}\mid \theta)$
+Given observations $\mathcal{D}=\lbrace x_1,\dots,x_n \rbrace $ and for a family of probability densities $p(x\mid \theta)$ parametrized by $\theta$, the likelihood of the data is given by $p(\mathcal{D}\mid \theta)$. The MLE principle is to find a $\hat{\theta}$ that maximizes the likelihood of data, $p(\mathcal{D}\mid \theta)$
 
 $$\hat{\theta}_{MLE} = \arg\max_{\theta} p(\mathcal{D}\mid  \theta)$$
 
@@ -67,11 +67,11 @@ We can check that $\theta\in[0,1]$
 - If $n$ is large and model/distribution is correct (i.e., hypotheses class $\mathcal{H}$ includes the true model), then MLE finds the **true** parameters.
 - MLE can overfit the data if $n$ is small but works well when $n$ is large (Asymptotic consistency).
 - If you do not have the correct model (and $n$ is small) then MLE can be terribly wrong!
-- MLE follows the frequentist statistis view where $\theta$ is a parameter so we can't have prior information associated directly.
+- MLE follows the frequentist statistics view where $\theta$ is a parameter so we can't have prior information associated directly.
 
 **Continuing Example: Coin toss with prior knowledge**
 
-Assume we have a hunch that $\theta$ is close to 0.5, but the sample size is small so you don't trst the estimate. How can we fix this using the prior/knwoledge?
+Assume we have a hunch that $\theta$ is close to 0.5, but the sample size is small so you don't trust the estimate. How can we fix this using the prior knowledge?
 
 Simple Fix: Add $m$ imaginary throws that would result in $\theta'$ (e.g. $\theta=0.5$). Add $m$ Heads and $m$ Tails to the data:
 $$\hat\theta = \frac{n_H + m}{n_H + n_T + 2m}$$
@@ -80,20 +80,20 @@ $$\hat\theta = \frac{n_H + m}{n_H + n_T + 2m}$$
 
 ### The Bayesian Way
 
-Model $\theta$ as a **random variable**, draw form a distribution $p(\theta)$. <ins>Note</ins> that $\theta$ is **not** a random variable associated with an even in a sample space. In frequentist statistics, this is forbidden but in Bayesian statiscs, we can specify a prior belief $p(\theta)$ defining what values we believe $\theta$ is likely to take on.
+Model $\theta$ as a **random variable**, drawn from a distribution $p(\theta)$. <ins>Note</ins> that $\theta$ is **not** a random variable associated with an event in a sample space. In frequentist statistics, this is forbidden but in Bayesian statistics, we can specify a prior belief $p(\theta)$ defining what values we believe $\theta$ is likely to take on.
 
 Now, we can look at following:
 $$p(\theta\mid  \mathcal{D}) = \frac{p(\mathcal{D}\mid \theta)p(\theta)}{p(\mathcal{D})} $$
 where
-- $p(\theta)$ us the **prior** distribution over the parameter(s) $\theta$, before we see any data.
+- $p(\theta)$ is the **prior** distribution over the parameter(s) $\theta$, before we see any data.
 - $p(\mathcal{D}\mid \theta)$ is the **likelihood** of the data given the parameter(s) $\theta$
-- $p(\theta\mid \mathcal{D})$ is the **posterior** distribution over the parameter(s) **after** we have observerd the data.
+- $p(\theta\mid \mathcal{D})$ is the **posterior** distribution over the parameter(s) **after** we have observed the data.
 
 A natural choice for the prior $p(\theta)$ is the Beta distribution:
 
 $$p(\theta) = \frac{\theta^{\alpha - 1}(1-\theta)^{\beta - 1}}{B(\alpha,\beta)}$$
 
-where $B(\alpha, \beta) = \frac{\Gamma(\alpha) \Gamma(\beta)}{\Gamma(\alpha + \beta)}$ is the normalization constant. Note that here we only need a distribution over a singly binary random variable $\theta$
+where $B(\alpha, \beta) = \frac{\Gamma(\alpha) \Gamma(\beta)}{\Gamma(\alpha + \beta)}$ is the normalization constant. Note that here we only need a distribution over a single binary random variable $\theta$
 
 Why is Beta distribution a good fit?
 - it models probabilities ($\theta\in[0, 1]$)
@@ -120,7 +120,7 @@ For the coin toss example, we assumed a Beta distribution, so we get the followi
 
 $$p(\theta\mid \mathcal{D})\propto p(\mathcal{D}\mid \theta)p(\theta) \propto \theta^{n_H + \alpha - 1}(1 - \theta)^{n_T + \beta - 1}$$
 
-Thus we get the folowing:
+Thus we get the following:
 $$
 \begin{aligned}
 \hat{\theta}_{MAP} &= \arg\max_{\theta} p(\theta\mid \mathcal{D}) \\
@@ -135,16 +135,16 @@ $$
 \end{aligned}
 $$
 Some observation and properties:
-- THE MAP estimate is identical to MLE with extra $-\log p(\theta)$ when minimizing NLL. This term is independent of the data and penalizes if the parameters, θ deviate too much from what we believe is reasonable (as a regularizer)
-- MAP is a great estimator if an accurate prior beleif is available (and mathematically tractable).
-- If $n$ is small, MAP can be very wrong if prior beleif if wrong.
+- The MAP estimate is identical to MLE with extra $-\log p(\theta)$ when minimizing NLL. This term is independent of the data and penalizes if the parameters, θ deviate too much from what we believe is reasonable (as a regularizer)
+- MAP is a great estimator if an accurate prior belief is available (and mathematically tractable).
+- If $n$ is small, MAP can be very wrong if the prior belief is wrong.
 
 
 ### "True" Bayesian Approach
 
-Both MLE and MAP are point estimators, i.e., in both cases we obtain a single-best value for $\theta$ so that the key algorithmic problem is solving an optimization problem. Once these point estimates $\theta^{\star}$ are knwon, we use them to make predictions. 
+Both MLE and MAP are point estimators, i.e., in both cases we obtain a single-best value for $\theta$ so that the key algorithmic problem is solving an optimization problem. Once these point estimates $\theta^{\star}$ are known, we use them to make predictions. 
 
-Focusing solely on some static of the posterior distribution (such as the parameter $\theta^{\star}$ that maximizes the posterior) leads to loss of informtaion, which can be critical in a system that uses the prediction $p(x\mid \theta^{\star})$ to make decisions. There is much more information  in the $p(\theta\mid \mathcal{D})$ and we are simply computing mode and throwing all other information away. A true Bayesian approach is to use the posterior predictive distribution directly to make prediction about the label $\mathcal{Y}$ of a test sample with features $\mathcal{X}$:
+Focusing solely on some statistic of the posterior distribution (such as the parameter $\theta^{\star}$ that maximizes the posterior) leads to loss of information, which can be critical in a system that uses the prediction $p(x\mid \theta^{\star})$ to make decisions. There is much more information  in the $p(\theta\mid \mathcal{D})$ and we are simply computing mode and throwing all other information away. A true Bayesian approach is to use the posterior predictive distribution directly to make prediction about the label $\mathcal{Y}$ of a test sample with features $\mathcal{X}$:
 
 $$p(\mathcal{Y\mid \mathcal{D, X}}) = \int_{\theta}p(\mathcal{Y}, \theta\mid \mathcal{D}, \mathcal{X})d\theta = \int_{\theta}p(\mathcal{Y}\mid  \theta,\mathcal{D}, \mathcal{X})p(\theta\mid \mathcal{D})d\theta$$
 
@@ -178,7 +178,7 @@ In practice, it is sometimes useful to have additional *latent* variables $z$ (b
 
 Learning in latent-variable models (at least via MLE) can be done in a principled way using the expectation maximization (EM) algorithm.
 
-Since latent-variable models allow use to define the process that generates data from parameters, let us have look at this generative process. We can get the distribution
+Since latent-variable models allow us to define the process that generates data from parameters, let us have look at this generative process. We can get the distribution
 
 $$p(\mathcal{D}\mid z, \theta)$$
 
@@ -192,12 +192,12 @@ Note that the likelihood must not depend on the latent variables $z$, but it is 
 
 One challenge we have in this latent-variable model is that likelihood $p(\mathcal{D}\mid \theta)$ requires marginalization of the latent variables. Except when we choose a conjugate prior $p(z)$, the marginalization is not analytically tractable and we need to resort to approximations.
 
-Similar to parameter posterios, we can compute a posterior on the latent variables according to 
+Similar to parameter posteriors, we can compute a posterior on the latent variables according to 
 
 $$p(z\mid \mathcal{D}) = \frac{p(\mathcal{D}\mid z)p(z)}{p(\mathcal{D})},  p(\mathcal{D}\mid z) = \int p(\mathcal{D}\mid z, \theta)p(\theta)d\theta$$
 
 
-A quantity that is  easier to compute is the posterios distribution on the latent variables, but conditioned on the model parameters, i.e.,
+A quantity that is easier to compute is the posterior distribution on the latent variables, but conditioned on the model parameters, i.e.,
 
 $$p(z\mid \mathcal{D}, \theta) = \frac{p(\mathcal{D}\mid z, \theta)p(z)}{p(\mathcal{D}\mid \theta)}$$
 

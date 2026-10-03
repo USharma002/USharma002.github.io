@@ -12,9 +12,9 @@ TocOpen: true
 math: true
 ---
 
-# Basics
+## Basics
 
-## Camera Transformations
+### Camera Transformations
 
 To map a 3D world point to the image, we use two steps:
 
@@ -23,7 +23,7 @@ To map a 3D world point to the image, we use two steps:
 
 ---
 
-### 1. World $\rightarrow$ Camera Coordinates
+#### 1. World $\rightarrow$ Camera Coordinates
 
 Let the camera center be $C$ and orientation be $R$.  
 A world point $X$ is mapped into camera coordinates by
@@ -60,7 +60,7 @@ $$
 
 ---
 
-### 2. Camera $\rightarrow$ Pixel Coordinates
+#### 2. Camera $\rightarrow$ Pixel Coordinates
 
 A point in the camera frame projects via
 
@@ -98,11 +98,11 @@ $$
 
 ---
 
-### 3. Pixel $\rightarrow$ Camera Ray (Back-Projection)
+#### 3. Pixel $\rightarrow$ Camera Ray (Back-Projection)
 
 To go from pixel $(u, v)$ **back into camera space**, we recover the **ray direction**.
 
-#### Step 1: Remove intrinsics
+##### Step 1: Remove intrinsics
 
 $$
 \begin{bmatrix}
@@ -130,7 +130,7 @@ x \\ y \\ 1
 \end{bmatrix}.
 $$
 
-#### Step 2: Form the 3D ray
+##### Step 2: Form the 3D ray
 
 All 3D points along that pixel’s ray in **camera space** are:
 
@@ -150,7 +150,7 @@ Here
 This is the complete back-projection from pixel $\rightarrow$ ray in camera space.
 
 ---
-## Forward and Inverse Camera Projection Pipeline
+### Forward and Inverse Camera Projection Pipeline
 
 <div style="font-size: 0.7em;">
 $$
@@ -194,7 +194,7 @@ R & t \\
 $$
 </div>
 
-### Interactive World 2 Cam
+#### Interactive World 2 Cam
 
 <iframe src="/interactive/world2cam.html"
         width="100%"
@@ -205,9 +205,9 @@ $$
 
 ---
 
-## Volume Rendering
+### Volume Rendering
 
-### The Physics of Light Transport
+#### The Physics of Light Transport
 
 Unlike standard mesh rendering, where light bounces off a hard surface at a specific depth $z$, volume rendering assumes the scene is composed of particles that can **emit** and **absorb** light at any point in space (**assuming no scattering** of light).
 
@@ -219,7 +219,7 @@ Unlike standard mesh rendering, where light bounces off a hard surface at a spec
 >}}
 
 
-#### The Differential Equation
+##### The Differential Equation
 Let a ray $\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$ travel through a volume. At any point $t$, the radiance (light energy) $L(t)$ changes based on two competing forces:
 
 1.  **Attenuation (Extinction):** The medium attenuates some existing light. While often simplified colloquially as 'absorption', this formally represents *extinction* (the sum of true absorption and out-scattering). The amount of light lost depends on the **volume density** $\sigma(t)$.
@@ -231,7 +231,7 @@ $$
 \frac{d L(t)}{dt} = \underbrace{\sigma(t)\mathbf{c}(t)}_{\text{Gained Light}} - \underbrace{\sigma(t)L(t)}_{\text{Lost Light}}
 $$
 
-#### The Integral Form
+##### The Integral Form
 Solving this differential equation from the near plane $t_n$ to the far plane $t_f$ gives us the **Volume Rendering Equation**:
 
 $$
@@ -240,7 +240,7 @@ $$
 
 Where $T(t)$ is the **Transmittance**.
 
-#### Intuition: Transmittance
+##### Intuition: Transmittance
 Transmittance $T(t)$ represents the probability that a photon travels from the camera origin $t_n$ to the current point $t$ **without being absorbed**.
 
 $$
@@ -338,13 +338,13 @@ $$
 
 ---
 
-### Discretization (Numerical Quadrature)
+#### Discretization (Numerical Quadrature)
 
 To estimate the above integral we must approximate it by breaking the ray into $N$ discrete segments (bins).
 
 Let the ray be split into segments $[t_i, t_{i+1}]$. We assume the density $\sigma_i$ and color $\mathbf{c}_i$ are constant within each segment of length $\delta_i = t_{i+1} - t_i$.
 
-#### 1. From Density to Alpha ($\alpha$)
+##### 1. From Density to Alpha ($\alpha$)
 The probability that light is occluded within a *single* segment $i$ is given by standard exponential decay:
 
 $$
@@ -355,14 +355,14 @@ Here, $\alpha_i$ ranges from $[0, 1]$.
 - $\sigma \to 0 \implies \alpha \to 0$ (Transparent)
 - $\sigma \to \infty \implies \alpha \to 1$ (Opaque)
 
-#### 2. Discrete Transmittance
+##### 2. Discrete Transmittance
 The transmittance $T_i$ (probability of reaching segment $i$) is the product of the "survival probabilities" of all previous segments:
 
 $$
 T_i = \prod_{j=1}^{i-1} (1 - \alpha_j)
 $$
 
-#### 3. The Compositing Formula
+##### 3. The Compositing Formula
 Substituting these into the integral gives the standard alpha-compositing formula used in NeRF, 3DGS, and traditional graphics:
 
 $$
@@ -383,7 +383,7 @@ width="100%"
 
 ---
 
-### Proof: Summation of Weights
+#### Proof: Summation of Weights
 
 A common question is whether the weights $w_i = T_i \alpha_i$ sum to 1. This is crucial for treating the rendering process as an expectation.
 
@@ -442,10 +442,10 @@ $$
 The weights sum to exactly **1** if and only if the remaining transmittance $T_{N+1}$ is **0**. This happens if the ray eventually hits an opaque surface ($\alpha_{background} = 1$) or accumulates enough density along the path to fully block light.
 
 
-# Radiance Fields
-## NeRF
+## Radiance Fields
+### NeRF
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/nerf-overview.png"
 num="1"
@@ -472,7 +472,7 @@ $$
 - Render using NeRF along the ray for that pixel; use an MLP to sample along the ray  
 - Use a loss (e.g., MSE or PSNR) to compare the rendered output and backpropagate to train
 
-### Positional Encoding
+#### Positional Encoding
 
 Despite the fact that neural networks are universal function approximators, having the network $F_\Theta$ directly operate on $xyz\theta\phi$ input coordinates results in renderings that perform poorly at representing high-frequency variation in color and geometry because deep networks are biased towards learning lower frequency functions.
 
@@ -501,9 +501,9 @@ width="80%"
 
 ---
 
-## Inverse Transform Sampling
+### Inverse Transform Sampling
 
-### Definition
+#### Definition
 Let $U \sim \mathrm{Unif}[0,1]$. We want to generate a random variable $X$ with CDF $F_X(x)$.  
 Assume $F_X$ is continuous and strictly increasing so that it has a well-defined inverse.
 
@@ -550,7 +550,7 @@ $$
 X = F_X^{-1}(U).
 $$
 
-### Interactive Simulation
+#### Interactive Simulation
 <iframe src="/interactive/inverse_transform_sampling.html"
         width="100%"
         height="280"
@@ -561,7 +561,7 @@ $$
 
 ---
 
-### Hierarchical Sampling
+#### Hierarchical Sampling
 
 To render using the NeRF we need to sample along the ray for the pixel. A ray is defined as:
 
@@ -601,7 +601,7 @@ We then sample a second set of $N_f$ locations from this distribution using inve
 
 ---
 
-### Loss Function
+#### Loss Function
 
 During training, the loss is simply the total squared error between the rendered and true pixel colors for both the coarse and fine renderings:
 
@@ -619,9 +619,9 @@ width="100%"
 
 ---
 
-## Plenoxels: Radiance Fields without Neural Networks
+### Plenoxels: Radiance Fields without Neural Networks
 
-### Overview
+#### Overview
 {{< figure src="/images/3dvis/plenoxel-overview.png"
 num="3"
 caption="Plenoxels Overview"
@@ -630,11 +630,11 @@ width="100%"
 
 In light of the substantial computational requirements of NeRF for both training and rendering, many recent papers have proposed methods to improve efficiency, particularly for rendering.
 
-### Method
+#### Method
 
 Plenoxels (plenoptic voxels) represent a scene as a sparse 3D grid with spherical harmonics. This representation can be optimized from calibrated images via gradient methods and regularization without any neural components.
 
-### Spherical Harmonics
+#### Spherical Harmonics
 
 Uses spherical harmonic coefficients $\mathbf{k}$, rather than RGB values:
 
@@ -652,7 +652,7 @@ width="60%"
 
 ---
 
-### Interactive Spherical Harmonics Viewer
+#### Interactive Spherical Harmonics Viewer
 {{< 
 fullscreen-iframe 
 id="sh_2d_iframe" 
@@ -661,13 +661,13 @@ height="500"
 >}}
 
 
-### Interpolation
+#### Interpolation
 
 So, each vertex of the grid has the SH coefficients and opacity $\sigma$.
 
 The opacity and color at each sample point along ray are computed by trilinear interpolation of opacity and harmonic coefficients stored at nearest 8 voxels.
 
-### Coarse to Fine 
+#### Coarse to Fine 
 
 Achieves high resolution via coarse-to-fine strategy that begins with a dense grid at lower resolution, optimizes, prunes unnecessary voxels, refines the remaining voxels by subdividing each in half in each dimension, and continues optimizing.
 
@@ -681,7 +681,7 @@ width="60%"
 
 Due to trilinear interpolation, naively pruning can adversely impact the color and density near surfaces since values at these points interpolate with the voxels in the immediate exterior. To solve this, they performed a dilation operation so that voxel is only pruned if both itself and its neighbors are deemed unoccupied.
 
-### Interactive PlenOctree
+#### Interactive PlenOctree
 
 {{< 
 fullscreen-iframe 
@@ -690,7 +690,7 @@ src="/interactive/plenoctree.html"
 height="600" 
 >}}
 
-### Optimization
+#### Optimization
 
 Optimize the voxel opacities and spherical harmonic coefficients with respect to the mean squared error (MSE) over rendered pixel colors with total variation (TV) regularization. Specifically, the loss is:
 
@@ -708,9 +708,9 @@ Plenoxels achieves **significantly faster training** than NeRF while maintaining
 
 ---
 
-## TensoRF
+### TensoRF
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/tensorf-overview.png"
 num="6"
@@ -723,7 +723,7 @@ Unlike NeRF that purely uses MLPs, TensoRF models the radiance field of a scene 
 
 TensoRF presents a novel vector-matrix (VM) decomposition technique that effectively reduces the number of components required for the same expression capacity, leading to faster reconstruction and better rendering than the classic CANDECOMP/PARAFAC (CP) decomposition.
 
-### CP Decomposition
+#### CP Decomposition
 
 Given a 3D tensor $\mathcal{T} \in \mathbb{R}^{I \times J \times K}$, CP decomposition factorizes it into a sum of outer products of vectors:
 
@@ -748,7 +748,7 @@ caption="CP decomposition, which factorizes a tensor as a sum of vector outer pr
 width="60%" 
 >}}
 
-### Vector-Matrix (VM) Decomposition
+#### Vector-Matrix (VM) Decomposition
 
 Unlike CP decomposition that utilizes pure vector factors, VM decomposition factorizes a tensor into multiple vectors and matrices. This is expressed by:
 
@@ -766,14 +766,14 @@ caption="vector-matrix decomposition, which factorizes a tensor as a sum of vect
 width="100%" 
 >}}
 
-#### Comparison
+##### Comparison
 {{< figure src="/images/3dvis/cp_vm_factorization.png"
 num="7"
 caption="Tensor factorization. Left: CP decomposition, which factorizes a tensor as a sum of vector outer products. Right: our vector-matrix decomposition, which factorizes a tensor as a sum of vector-matrix outer products."
 width="100%" 
 >}}
 
-### Tensor for Scene Modeling
+#### Tensor for Scene Modeling
 
 In this work, we focus on the task of modeling and reconstructing radiance fields. We can view the image [below](#scene-tensorf). In this case, the three tensor modes correspond to the XYZ axes, and we thus directly denote the modes with XYZ to make it intuitive. Meanwhile, in the context of 3D scene representation, we consider $R_1 = R_2 = R_3 = R$ for most scenes, reflecting the fact that a scene can distribute and appear equally complex along its three axes. Therefore, the previous equation can be re-written as:
 
@@ -791,7 +791,7 @@ $$
 
 where $m \in \{X, Y, Z\}$, $A_{r,ijk}^{X} = v_{r,i}^{X} M_{r,jk}^{Y,Z}$, $A_{r,ijk}^{Y} = v_{r,j}^{Y} M_{r,ik}^{X,Z}$, and $A_{r,ijk}^{Z} = v_{r,k}^{Z} M_{r,ij}^{X,Y}$.
 
-### Feature Grids and Radiance Field
+#### Feature Grids and Radiance Field
 
 We leverage a regular 3D grid G with per-voxel multi-channel features to model such a function. We split it (by feature channels) into a geometry grid $\mathcal{G}_{\sigma}$ and an appearance grid $\mathcal{G}_{c}$, separately modelling the volume density $\sigma$ and view-dependent color $c$:
 
@@ -806,7 +806,7 @@ caption="TensoRF using CP decomposition and VM decomposition"
 width="100%" 
 >}}
 
-### Factorizing Radiance Fields
+#### Factorizing Radiance Fields
 
 While $\mathcal{G}_{\sigma} \in \mathbb{R}^{I \times J \times K}$ is a 3D tensor, $\mathcal{G}_{c} \in \mathbb{R}^{I \times J \times K \times P}$ is a 4D tensor. Here $I, J, K$ correspond to the resolutions of the feature grid along the X, Y, Z axes, and $P$ is the number of appearance feature channels.
 
@@ -836,7 +836,7 @@ In essence, the XYZ-mode vector and matrix factors $\mathbf{v}_{\sigma,r}^{X}, \
 
 By stacking all $\mathbf{b}_{r}$ as columns together, we have a $P \times 3R_{c}$ matrix $\mathbf{B}$; this matrix $\mathbf{B}$ can also be seen as a global appearance dictionary that abstracts the appearance commonalities across the entire scene.
 
-### Interpolation
+#### Interpolation
 
 Naively achieving trilinear interpolation is costly, as it requires evaluation of 8 tensor values and interpolating them, increasing computation by a factor of 8 compared to computing a single tensor element. However, we find that trilinearly interpolating a component tensor is naturally equivalent to interpolating its vector/matrix factors linearly/bilinearly for the corresponding modes, thanks to the beauty of linearity of the trilinear interpolation and the outer product.
 
@@ -848,7 +848,7 @@ width="100%"
 >}}
 
 ---
-### Interactive Overview of TensoRF
+#### Interactive Overview of TensoRF
 
 {{< 
 fullscreen-iframe 
@@ -857,7 +857,7 @@ src="/interactive/tensorf.html"
 height="600" 
 >}}
 
-### Rendering Process
+#### Rendering Process
 
 For a 3D point $\mathbf{x}$ and viewing direction $\mathbf{d}$:
 
@@ -874,7 +874,7 @@ For a 3D point $\mathbf{x}$ and viewing direction $\mathbf{d}$:
    $$\mathbf{c}(\mathbf{x}, \mathbf{d}) = \text{MLP/SH}([\mathbf{f}_{c}, \mathbf{d}])$$
 
 
-### Training Objective
+#### Training Objective
 
 The optimization minimizes a composite loss:
 
@@ -894,9 +894,9 @@ TV regularization prevents overfitting and removes floaters/artifacts by enforci
 
 ---
 
-## Instant NGP
+### Instant NGP
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/instant-ngp-overview.png"
 num="9"
@@ -907,7 +907,7 @@ width="100%"
 
 Given a fully connected neural network $m(y; \Phi)$, we are interested in an encoding of its inputs $y = \text{enc}(x; \theta)$ that improves the approximation quality and training speed across a wide range of applications without incurring a notable performance overhead.
 
-### Multiresolution Hash Encoding
+#### Multiresolution Hash Encoding
 
 Our neural network not only has trainable weight parameters $\Phi$, but also trainable encoding parameters $\theta$. These are arranged into $L$ levels, each containing up to $T$ feature vectors with dimensionality $F$.
 
@@ -923,7 +923,7 @@ $$
 
 $N_{\max}$ is chosen to match the finest detail in the training data. Due to the large number of levels $L$, the growth factor is usually small.
 
-#### Interactive Demo for Multi Resolution Hash Encoding
+##### Interactive Demo for Multi Resolution Hash Encoding
 <iframe src="/interactive/instantngp_hashenc.html"
         width="100%"
         height="620"
@@ -931,7 +931,7 @@ $N_{\max}$ is chosen to match the finest detail in the training data. Due to the
         style="border-radius:0px; min-width: 600px;">
 </iframe>
 
-### Growth Factor Derivation
+#### Growth Factor Derivation
 
 To create a geometric progression of resolutions from $N_{\min}$ to $N_{\max}$ over $L$ levels:
 
@@ -970,7 +970,7 @@ $$
 
 where $\pi_i$ are unique large prime numbers (e.g., $\pi_1 = 1$, $\pi_2 = 2654435761$, $\pi_3 = 805459861$).
 
-### Feature Lookup and Interpolation
+#### Feature Lookup and Interpolation
 
 For a query point $\mathbf{x}$, the encoding process at each resolution level $l$ involves:
 
@@ -991,7 +991,7 @@ $$
 
 This encoded feature vector $y$ is then fed to the MLP $m(y; \Phi)$ for final prediction.
 
-### Network Architecture
+#### Network Architecture
 
 After hash encoding, a **compact MLP** processes the concatenated features. For NeRF applications:
 
@@ -1008,7 +1008,7 @@ $$
 
 The dramatically smaller network (2 layers vs 8) is enabled by the expressive hash encoding, which offloads spatial feature learning from the MLP to the trainable hash table.
 
-### Collision Handling
+#### Collision Handling
 
 When multiple voxel corners hash to the same index in the hash table (a collision), no explicit resolution mechanism is used. Instead:
 
@@ -1019,7 +1019,7 @@ When multiple voxel corners hash to the same index in the hash table (a collisio
 
 This implicit collision handling is what allows a fixed-size hash table ($T \approx 2^{19}$ entries) to represent arbitrarily fine detail without explicit collision resolution overhead.
 
-### Hyperparameter Configuration
+#### Hyperparameter Configuration
 
 Typical values for NeRF applications:
 
@@ -1033,9 +1033,9 @@ Total trainable parameters (encoding + MLP) is still much smaller than original 
 
 ---
 
-## 3DGS
+### 3DGS
 
-### Overview
+#### Overview
 {{< figure src="/images/3dvis/3dgs-overview.png"
 num="10"
 caption="3DGS Overview"
@@ -1044,7 +1044,7 @@ width="100%"
 
 The input to the method is a set of images of a static scene, together with the corresponding cameras calibrated by Structure-from-Motion (SfM), which produces a sparse point cloud as a side-effect.
 
-### Gaussian Parametrization
+#### Gaussian Parametrization
 
 From these sparse points, a set of 3D Gaussians is created, where each Gaussian is parametrized by:
 
@@ -1068,7 +1068,7 @@ where:
 
 This parametrization ensures the covariance $\Sigma$ is positive semi-definite (PSD), which is required for valid Gaussians.
 
-### Rendering using Gaussians
+#### Rendering using Gaussians
 
 3DGS uses **spherical harmonics (SH)** to encode view-dependent appearance and uses $\alpha$-blending. Point-based $\alpha$-blending and NeRF-style volumetric rendering share essentially the same image formation model. The color $C$ along a ray is given by:
 
@@ -1100,7 +1100,7 @@ $$\alpha_i = o_i \cdot e^{-\frac{1}{2}(\mathbf{x} - \mu_i)^T \Sigma_i^{-1} (\mat
 
 where $o_i$ is the learned opacity parameter, ensuring $\alpha_i$ decreases as we move away from the Gaussian center $\mu_i$.
 
-### Projection to Screen Space
+#### Projection to Screen Space
 
 To render 3D Gaussians, they must be projected to 2D screen space. Given camera extrinsic matrix $T$ and intrinsic matrix $K$:
 
@@ -1238,7 +1238,7 @@ width="100%"
 >}}
 
 
-### Adaptive Density Control
+#### Adaptive Density Control
 
 Starting from the initial sparse SfM point cloud, the method adaptively controls the number of Gaussians and their density through densification and pruning operations.
 
@@ -1246,18 +1246,18 @@ Two main scenarios require density adjustment:
 - **Under-reconstruction**: Regions with missing geometric features
 - **Over-reconstruction**: Regions where Gaussians cover excessively large areas
 
-#### Clone (Under-Reconstruction)
+##### Clone (Under-Reconstruction)
 
 For under-reconstructed regions, Gaussians with high positional gradients are **cloned**: a copy is created and moved in the direction of the positional gradient.
 
-#### Split (Over-Reconstruction)
+##### Split (Over-Reconstruction)
 
 For over-reconstructed regions with large Gaussians:
 - Replace the original Gaussian with two smaller ones
 - Divide each scale component by 1.6 (as specified in the paper)
 - Initialize positions by sampling from the PDF of the original Gaussian
 
-#### Pruning
+##### Pruning
 
 Gaussians are removed to maintain efficiency:
 - Remove Gaussians with opacity $o < \epsilon$ (typically $\epsilon = 0.005$)
@@ -1272,7 +1272,7 @@ width="100%"
 
 
 ---
-### Algorithm: Optimization and Densification
+#### Algorithm: Optimization and Densification
 $w, h$: width and height of the training images
 
 <div class="paper-algorithm-wrap">
@@ -1377,7 +1377,7 @@ $w, h$: width and height of the training images
 </div>
 <hr>
 
-### Training Loss
+#### Training Loss
 
 The optimization uses a combination of L1 and SSIM losses:
 
@@ -1387,7 +1387,7 @@ where $\lambda = 0.2$. This balances:
 - **L1 loss**: Pixel-wise color difference
 - **D-SSIM**: Structural similarity (captures perceptual quality)
 
-### Interactive Gaussian Viewer
+#### Interactive Gaussian Viewer
 
 
 {{< 
@@ -1399,12 +1399,12 @@ height="600"
 
 ---
 
-# Sparse Input
-## Depth-supervised NeRF
+## Sparse Input
+### Depth-supervised NeRF
 
 A commonly observed failure mode of Neural Radiance Field (NeRF) is fitting incorrect geometries when given an insufficient number of input views. One potential reason is that standard volumetric rendering does not enforce the constraint that most of a scene’s geometry consist of empty space and opaque surfaces.
 
-### Overview
+#### Overview
 
 **Key idea** Leverage the fact that current NeRF pipelines require images with known camera poses that are typically estimated by running structure-from-motion (SFM), which also produces sparse 3D points that can be used as "free" depth super-
 vision during training: 
@@ -1415,7 +1415,7 @@ caption="Depth Supervised NeRF Overview"
 width="100%" 
 >}}
 
-### Volumetric Rendering Revisited
+#### Volumetric Rendering Revisited
 To render a 2D image given a pose $P$, we cast rays $r(t)$ originating from the center of projection $o$ in directions $d$ derived from its intrinsics. We then integrate the implicit radiance field along each ray to compute the incoming radiance contributed by any object intersected along $d$:
 
 $$
@@ -1424,7 +1424,7 @@ $$
 
 Here, $t$ parameterizes the aforementioned ray as $r(t) = o + t d$, and $T(t) = \exp\!\left(-\int_0^{t} \sigma(s)\, ds\right)$ checks for occlusions by integrating the differential density from $0$ to $t$.
 
-### Ray Distribution
+#### Ray Distribution
 
 $h(t) = T(t)\sigma{(t)}$ is a continuous probability distribution over ray distance $t$ that describes the likelihood of a ray terminating at $t$. Due to practical constraints, NeRFs assume scene lies between a near and far bound $(t_n, t_f)$ to ensure $h(t)$ sums to one, NeRF implementation often treat $t_f$ as opaque wall. With this definition, the rendered color can be written as an expectation:
 
@@ -1435,10 +1435,10 @@ $$
 
 
 
-### Idealized distribution
+#### Idealized distribution
 The distribution $h(t)$ describes the weighted contribution of sampled radiances along a ray to the final rendered value. Most scene consist of empty spaces and opaque surfaces that restrict the weighted contribution to stem from the closest surface. This implies that the ideal ray distribution of image  point with a closes-surface depth of $D$ should be $\delta (t - D)$. This insight motivates the depth-supervised ray termination loss.
 
-### Deriving Depth Supervision
+#### Deriving Depth Supervision
 
 Most NeRF pipelines require images together with their camera matrices $(P_1, P_2, \dots)$, typically estimated using an SfM system such as COLMAP. SfM uses bundle adjustment, which also outputs:
 
@@ -1468,7 +1468,7 @@ $$
 
 ---
 
-#### Ray Distribution Loss
+##### Ray Distribution Loss
 
 This leads to the following probabilistic depth-supervision loss:
 
@@ -1504,9 +1504,9 @@ $$
 
 ---
 
-## ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields
+### ViP-NeRF: Visibility Prior for Sparse Input Neural Radiance Fields
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/vipnerf-overview.png"
 num="16"
@@ -1518,7 +1518,7 @@ Neural radiance fields (NeRF) require hundreds of images to synthesize photo-rea
 
 ViP-NeRF addresses this by introducing **visibility regularization** - instead of relying on dense depth priors that may suffer from generalization errors, it uses the visibility of pixels across different views as a more reliable form of dense supervision.
 
-### The Visibility Prior Concept
+#### The Visibility Prior Concept
 
 **Key Insight:** When given sparse input views, it is easier to estimate whether a pixel is visible in another view (relative depth) than to estimate its absolute depth accurately.
 
@@ -1528,7 +1528,7 @@ For any pixel $q$ in a primary view, the visibility prior $\tau'(q) \in \{0, 1\}
 
 This visibility information relates to the **relative depth** of scene objects - foreground objects are typically visible in multiple views, while background objects may be partially occluded.
 
-### Computing Visibility Prior using Plane Sweep Volumes
+#### Computing Visibility Prior using Plane Sweep Volumes
 
 ViP-NeRF estimates the visibility prior using **plane sweep volumes (PSV)** without requiring any pre-training:
 
@@ -1558,7 +1558,7 @@ width="100%"
 
 **Intuition:** A low error at any plane indicates a matching pixel exists in the secondary view (pixel is visible). High error across all planes suggests occlusion or highly specular surfaces. The visibility prior is only used for pixels where a match is found, avoiding unreliable regions.
 
-### Visibility Regularization Loss
+#### Visibility Regularization Loss
 
 For a randomly selected pixel $q$ in the primary view, ViP-NeRF samples $N$ candidate 3D points $p_1, p_2, ..., p_N$ along the ray. The visibility of pixel $q$ in the secondary view is computed as:
 
@@ -1574,7 +1574,7 @@ $$\mathcal{L}_{\text{vip}}(q) = \max(\tau'(q) - t'(q), 0)$$
 
 This loss is only applied when $\tau'(q) = 1$ (pixel is reliably visible), avoiding supervision on uncertain occluded regions.
 
-### Efficient Visibility Prediction
+#### Efficient Visibility Prediction
 
 <table align="center">
   <tr>
@@ -1618,7 +1618,7 @@ where $\text{SG}(\cdot)$ denotes stop-gradient operation. The bidirectional loss
 - First term: brings $\hat{T}_i$ closer to $T_i$
 - Second term: transfers updates from visibility prior back to $\mathcal{F}_1$ efficiently
 
-### Complete Loss Function
+#### Complete Loss Function
 
 ViP-NeRF combines multiple loss terms:
 
@@ -1638,7 +1638,7 @@ Hyperparameters are set as: $\lambda_1 = 1$, $\lambda_2 = 0.1$, $\lambda_3 = 0.0
 - Learning rate: $5 \times 10^{-4}$ exponentially decaying to $5 \times 10^{-6}$
 - Plane sweep volume parameters: $D = 64$ planes, $\gamma = 10$
 
-### Why Visibility Over Dense Depth?
+#### Why Visibility Over Dense Depth?
 
 **Advantages of Visibility Prior:**
 
@@ -1652,7 +1652,7 @@ Hyperparameters are set as: $\lambda_1 = 1$, $\lambda_2 = 0.1$, $\lambda_3 = 0.0
 - Visibility prior constrains relative depth ordering, providing more freedom for NeRF to reconstruct correct 3D geometry
 - Visibility is inherently easier to estimate reliably without sophisticated pre-trained networks
 
-### Complementary Supervision
+#### Complementary Supervision
 
 ViP-NeRF uses visibility prior **in conjunction with** sparse depth from SfM:
 - **Sparse depth ($\mathcal{L}_{\text{sd}}$):** Provides accurate but sparse supervision on absolute depth (at SfM keypoints)
@@ -1666,9 +1666,9 @@ Ablation studies show that removing either prior degrades performance, confirmin
 
 ---
 
-## DUSt3R: Geometric 3D Vision Made Easy
+### DUSt3R: Geometric 3D Vision Made Easy
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/dust3r-arch.png"
 num="13"
@@ -1678,7 +1678,7 @@ width="100%"
 
 DUSt3R (Dense Unconstrained Stereo 3D Reconstruction) represents a paradigm shift from the traditional "SfM $\rightarrow$ MVS $\rightarrow$ Meshing" pipeline. Instead of solving for camera parameters (intrinsics/extrinsics) explicitly to then triangulate points, DUSt3R treats 3D reconstruction as a direct **regression problem** of dense 3D pointmaps from uncalibrated images.
 
-### The Pointmap Representation
+#### The Pointmap Representation
 
 For an image $I \in \mathbb{R}^{H \times W \times 3}$, the network outputs a **Pointmap** $X \in \mathbb{R}^{H \times W \times 3}$:
 
@@ -1690,7 +1690,7 @@ This vector represents the 3D coordinates of the pixel $(i,j)$ in the scene.
 
 Crucially, for a pair of images $I^1$ and $I^2$, the network predicts two pointmaps $X^{1,1}$ and $X^{2,1}$ where **both are expressed in the coordinate frame of the first image $I^1$**. This implicitly solves the pixel matching and relative pose estimation problems simultaneously without explicit geometric constraints.
 
-### Network Architecture
+#### Network Architecture
 
 The model uses a Transformer-based architecture inspired by CroCo:
 
@@ -1702,7 +1702,7 @@ The model uses a Transformer-based architecture inspired by CroCo:
 
 3. **Regression Heads:** Outputs the pointmaps $X$ and a **Confidence Map** $C$ (which learns to identify invalid regions like sky or translucent objects). The confidence is defined as $C^{v,1}_i = 1 + \exp(g^{C^{v,1}_i}) > 1$, ensuring strictly positive values.
 
-### Training Objective
+#### Training Objective
 
 The network is trained with a simple 3D regression loss:
 
@@ -1726,7 +1726,7 @@ $$
 
 where $\alpha$ is a hyperparameter controlling the regularization term, encouraging the network to extrapolate in harder areas.
 
-### Global Alignment
+#### Global Alignment
 
 Since the network operates pairwise, reconstructing a full scene requires fusing predictions from multiple pairs. DUSt3R constructs a connectivity graph $\mathcal{G}(\mathcal{V}, \mathcal{E})$ where vertices are images and edges indicate shared visual content between image pairs.
 
@@ -1740,7 +1740,7 @@ To avoid the trivial optimum where $\sigma_e = 0, \forall e \in \mathcal{E}$, th
 
 This optimization aligns all pairwise pointmaps in 3D space directly, avoiding the complexity of traditional Bundle Adjustment or 2D reprojection errors. The optimization is fast and simple, typically converging in a few hundred steps using standard gradient descent.
 
-### Downstream Applications
+#### Downstream Applications
 
 From the predicted pointmaps, various geometric quantities can be straightforwardly extracted:
 
@@ -1754,9 +1754,9 @@ From the predicted pointmaps, various geometric quantities can be straightforwar
 
 ---
 
-## InstantSplat: Sparse-view 3D Reconstruction in Seconds
+### InstantSplat: Sparse-view 3D Reconstruction in Seconds
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/instantsplat-pipeline.png"
 num="14"
@@ -1766,7 +1766,7 @@ width="100%"
 
 InstantSplat achieves sparse-view 3D reconstruction in **seconds** by removing the reliance on COLMAP SfM, which is slow and often fragile in sparse settings. It synergizes a geometric foundation model (MASt3R) for dense initialization with a fast 3DGS-based joint optimization.
 
-### The Problem with Traditional Approaches
+#### The Problem with Traditional Approaches
 
 Standard 3D-GS relies on COLMAP for:
 1. Camera pose estimation
@@ -1777,7 +1777,7 @@ However, COLMAP is:
 - **Fragile:** Often fails with sparse views due to insufficient feature matches
 - **Error-prone:** Small perturbations in poses or point distribution significantly degrade 3D-GS quality
 
-### Co-visible Global Geometry Initialization
+#### Co-visible Global Geometry Initialization
 
 Instead of starting from a sparse SfM cloud, InstantSplat initializes using **MASt3R** (a stereo prior model based on DUSt3R). This provides:
 
@@ -1827,7 +1827,7 @@ $$
 
 This simple step significantly improves visual quality.
 
-### Joint Optimization
+#### Joint Optimization
 
 With the scene initialized, InstantSplat performs a **Gaussian-based Bundle Adjustment**. It jointly optimizes the Gaussian parameters $G$ and the camera poses $T$ by minimizing the photometric error between rendered and observed images:
 
@@ -1859,9 +1859,9 @@ This approach allows InstantSplat to reconstruct scenes in $\approx 7.5$ seconds
 
 ---
 
-## FSGS: Real-Time Few-shot View Synthesis
+### FSGS: Real-Time Few-shot View Synthesis
 
-### Overview
+#### Overview
 
 {{< figure src="/images/3dvis/fsgs-overview.png"
 num="12"
@@ -1873,7 +1873,7 @@ Standard 3DGS relies heavily on the density of the initial Point Cloud (from SfM
 
 FSGS introduces a **Proximity-guided Gaussian Unpooling** to densify the initialization and uses **Pseudo-view Depth Priors** to constrain the geometry.
 
-### Proximity-guided Gaussian Unpooling
+#### Proximity-guided Gaussian Unpooling
 
 To address the limited 3D scene coverage, FSGS constructs a directed graph (the "proximity graph") connecting each existing Gaussian $G_i$ to its $K$ nearest neighbors (typically $K=3$).
 
@@ -1911,7 +1911,7 @@ caption="**Gaussian Unpooling Illustration.** We show a 2D toy case for visualiz
 width="60%" 
 >}}
 
-### Pseudo-view & Depth Regularization
+#### Pseudo-view & Depth Regularization
 
 To prevent overfitting to the few training views, FSGS synthesizes **Pseudo-views** $P'$ by interpolating between the two closest training cameras in Euclidean space.
 
@@ -1956,7 +1956,7 @@ $$
 
 where $\lambda_1 = 0.8$, $\lambda_2 = 0.2$, and $\lambda_3 = 0.05$. This loss is applied to both training views and synthesized pseudo-views.
 
-### Optimization Strategy
+#### Optimization Strategy
 
 **Spherical Harmonic Progression:**
 
@@ -1971,7 +1971,7 @@ At specific iterations (e.g., 2000, 5000, 7000), opacity for all Gaussians is re
 Gaussian unpooling occurs every 100 iterations, starting after iteration 500, allowing the model to first stabilize before adding complexity.
 
 ---
-### Algorithm: The training pipeline of FSGS
+#### Algorithm: The training pipeline of FSGS
 
 <div class="paper-algorithm-wrap">
 <div class="paper-algorithm-header"><span>Algorithm 2</span><span>FSGS Training Pipeline</span></div>
@@ -2116,9 +2116,9 @@ Gaussian unpooling occurs every 100 iterations, starting after iteration 500, al
 
 ---
 
-## CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization
+### CoR-GS: Sparse-View 3D Gaussian Splatting via Co-Regularization
 
-### Overview
+#### Overview
 
 Two 3D Gaussian radiance fields trained from the same sparse set of views can exhibit different behaviors. By training two fields simultaneously and measuring their disagreement throughout training, one can analyze the consistency of the learned geometry and appearance. Because ground-truth supervision is applied only on training views, rendering disagreement is evaluated on unseen views.
 
@@ -2132,7 +2132,7 @@ caption="Overview of CoR-GS. We train two 3D Gaussian radiance fields simultaneo
 width="100%" 
 >}}
 
-### Point Disagreement
+#### Point Disagreement
 
 When treating the 3D positions of Gaussians in two radiance fields as point clouds, their geometric differences can be quantified using **Fitness** and **RMSE**, metrics commonly used in point-cloud registration.
 
@@ -2141,7 +2141,7 @@ When treating the 3D positions of Gaussians in two radiance fields as point clou
 
 ---
 
-### Rendering Disagreement
+#### Rendering Disagreement
 
 Differences between radiance fields can also be evaluated in image space.
 
@@ -2150,7 +2150,7 @@ Differences between radiance fields can also be evaluated in image space.
 
 ---
 
-### Reconstruction Quality Evaluation
+#### Reconstruction Quality Evaluation
 
 Reconstruction fidelity is typically measured by comparing rendered test-view images against ground-truth images using **PSNR**.
 
@@ -2159,7 +2159,7 @@ For a more comprehensive assessment, ground-truth Gaussian positions and depth m
 - **Fitness** and **RMSE** for geometric accuracy.  
 - **absErrorRel** for depth accuracy.
 
-### Method
+#### Method
 
 CoR-GS identifies and suppresses inaccurate reconstructions using **point disagreement** and **rendering disagreement**. Two 3D Gaussian radiance fields are trained in parallel:
 $$
@@ -2171,7 +2171,7 @@ The following describes the process for $\Theta_1$ (the procedure for $\Theta_2$
 
 ---
 
-### Co-pruning
+#### Co-pruning
 
 Densification may create Gaussians that are poorly aligned with scene geometry, especially under sparse-view supervision.  
 Co-pruning removes Gaussians whose positions disagree across the two fields.
@@ -2202,9 +2202,9 @@ Co-pruning is performed every few (e.g., 5) optimization/density-control interle
 
 ---
 
-### Pseudo-view Co-regularization
+#### Pseudo-view Co-regularization
 
-#### Sampling pseudo-views
+##### Sampling pseudo-views
 Pseudo-views are sampled using nearby training cameras:
 $$
 P' = (t + \epsilon,\, q),
@@ -2212,7 +2212,7 @@ $$
 where $t$ is a training camera position, $\epsilon \sim \mathcal{N}(0,\sigma^2)$,  
 and $q$ is an averaged quaternion from the two nearest cameras.
 
-### Color co-regularization
+#### Color co-regularization
 
 Render $I'^1$ and $I'^2$ from $\Theta_1$ and $\Theta_2$ at the pseudo-view, and enforce consistency:
 $$
@@ -2221,7 +2221,7 @@ $$
 \lambda\,\mathcal{L}_{\mathrm{D\text{-}SSIM}}(I'^1, I'^2).
 $$
 
-### Ground-truth supervision
+#### Ground-truth supervision
 At training views:
 $$
 \mathcal{L}_{color}=
@@ -2229,7 +2229,7 @@ $$
 \lambda\,\mathcal{L}_{\mathrm{D\text{-}SSIM}}(I^1, I^*).
 $$
 
-### Final loss
+#### Final loss
 $$
 \mathcal{L}=
 \mathcal{L}_{color}+
@@ -2239,7 +2239,7 @@ $$
 
 ---
 
-# References
+## References
 
 1. Zhou, T., Tucker, R., Flynn, J., Fyffe, G., & Snavely, N. (2018). **Stereo Magnification: High-Resolution View Synthesis.** SIGGRAPH 2018.
 

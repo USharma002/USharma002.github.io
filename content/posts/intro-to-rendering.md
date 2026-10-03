@@ -13,9 +13,6 @@ math: true
 ---
 
 
-<span style="color:#3b82f6;font-weight:700;font-size:1.0em">
-Light mode is recommended for this post to avoid color incoherency within SVG files.
-</span>
 
 <!-- <div style="background: var(--code-bg, #f6f8fa); border-left: 3px solid #3b82f6; border-radius: 6px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.95rem;">
 <strong>This series</strong><br>
@@ -27,6 +24,8 @@ Light mode is recommended for this post to avoid color incoherency within SVG fi
 
 
 ## Introduction to Rendering
+
+These notes draw throughout on Szeliski [[1]](#ref-1), Lengyel [[2]](#ref-2), and the IISc graphics course notes [[13]](#ref-13).
 
 What is rendering? At its core, rendering is the process of generating a 2D image from a 3D scene. The generated image can be realistic or stylized.
 
@@ -146,7 +145,7 @@ The translation column is multiplied by $w=0$, so it vanishes. That is exactly w
 
 ## 2D Transformations
 
-We classify transformations by their **degrees of freedom (DoF)** and the geometric properties they **preserve**.
+We classify transformations by their **degrees of freedom (DoF)** and the geometric properties they **preserve**. The hierarchy below follows Szeliski [[1]](#ref-1); Lengyel [[2]](#ref-2) covers the same material with a game-engine emphasis.
 
 ---
 
@@ -545,7 +544,7 @@ The view volume is a **rectangular box** bounded by left ($l$), right ($r$), bot
 
 {{< figure src="/images/intro-to-rendering/camera/orthographic.svg" id="fig-orthographic-volume" caption="An orthographic view volume is already a box. Projection only has to translate and scale it into the canonical NDC cube." title="Orthographic View Volume" alt="Orthographic cuboid view volume" align="center" >}}
 
-The goal is to map this box to the **NDC cube** $[-1, 1]^3$. Each coordinate is just an affine map between two intervals:
+The goal is to map this box to the **NDC cube** (this derivation follows Ahn [[3]](#ref-3)) $[-1, 1]^3$. Each coordinate is just an affine map between two intervals:
 
 $$
 \begin{aligned}
@@ -854,7 +853,7 @@ The interactive below shows this compression directly: evenly spaced planes in C
 
 ### Window Space
 
-The **Viewport Transform** maps NDC to pixel coordinates. This is another set of line maps. For:
+The **Viewport Transform** maps NDC to pixel coordinates [[4]](#ref-4). This is another set of line maps. For:
 
 ```cpp
 glViewport(X, Y, W, H)
@@ -971,7 +970,7 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 >
 > The following Python code shows how we can implement a `camera` class in order to create rays:
 >
-> The code below uses [drjit](https://drjit.readthedocs.io/), the same array library that powers the Mitsuba renderer.
+> The code below uses [drjit](https://drjit.readthedocs.io/) [[14]](#ref-14), the same array library that powers the Mitsuba renderer.
 >
 > ```python
 > import math
@@ -1135,7 +1134,7 @@ In computer graphics, geometry is typically represented in three main ways:
 
 - **Analytic primitives** such as spheres, planes, and cylinders are defined by exact mathematical equations. Their intersections usually have closed-form algebraic solutions. While they are lightning-fast to intersect, they are not very flexible for modeling complex real-world objects.
 - **Triangles (Explicit Geometry)** are the fundamental building blocks of 3D graphics. They are explicit surface primitives that can approximate any shape. They are widely used in rasterization because they project cleanly to screen space, but ray tracers also intersect them directly using highly optimized ray-triangle tests.
-- **Signed Distance Functions (Implicit Geometry)** are continuous mathematical fields. Instead of storing a mesh of explicit vertices, an SDF returns the shortest distance from any point in space to the nearest surface. It returns a positive value outside the object, zero exactly on the surface, and a negative value inside. Intersecting with an SDF is done through an iterative process called *ray marching*, as there is no explicit surface to algebraically intersect with.
+- **Signed Distance Functions (Implicit Geometry)** are continuous mathematical fields. Instead of storing a mesh of explicit vertices, an SDF returns the shortest distance from any point in space to the nearest surface. It returns a positive value outside the object, zero exactly on the surface, and a negative value inside. Intersecting with an SDF is done through an iterative process called *ray marching* [[6]](#ref-6), as there is no explicit surface to algebraically intersect with.
 
 Let's dive into the mathematics and code for each of these representations.
 
@@ -1255,7 +1254,7 @@ $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\m
 
 {{< figure src="/images/intro-to-rendering/representation/triangle_intersection.svg" id="fig-triangle-intersection" caption="Möller-Trumbore Algorithm: We equate the ray and triangle equations and solve for the intersection distance $t$ and barycentric coordinates $(u, v)$ simultaneously." title="Ray-Triangle Intersection" alt="Diagram showing ray hitting a triangle with basis vectors and s-vector labeled" align="center" >}}
 
-This translates to the famous **Möller-Trumbore algorithm**. To make it computationally efficient, we define cross products that we can reuse:
+This translates to the famous **Möller-Trumbore algorithm** [[5]](#ref-5). To make it computationally efficient, we define cross products that we can reuse:
 
 1.  Let $\mathbf{p} = {\color{#FF4B4B}\mathbf{d}} \times \mathbf{e}_2$. The denominator becomes $\mathbf{e}_1 \cdot \mathbf{p}$. If this is $0$, the ray is parallel to the triangle.
 2.  The $u$ coordinate becomes $u = (\mathbf{s} \cdot \mathbf{p}) / (\mathbf{e}_1 \cdot \mathbf{p})$.
@@ -1344,7 +1343,7 @@ The sign convention dictates that $f(\mathbf{p})$ is positive outside the object
 
 Because $f(\mathbf{p})$ guarantees the exact distance to the nearest surface, it provides a strictly bound spatial radius. If $f(\mathbf{p}) = d$, a sphere of radius $d$ centered at $\mathbf{p}$ is guaranteed to be entirely empty. This property allows ray marching algorithms to safely advance along a ray by distance $d$ without prematurely overshooting the surface.
 
-{{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere Tracing: By evaluating the SDF, the algorithm derives a safe distance to march along the ray. Because the field obeys the Eikonal equation, the circles represent exact bounds of empty space." title="Signed Distance Field" alt="SDF contour visualization" align="center" noinvert=true >}}
+{{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere Tracing: By evaluating the SDF, the algorithm derives a safe distance to march along the ray. Because the field obeys the Eikonal equation, the circles represent exact bounds of empty space." title="Signed Distance Field" alt="SDF contour visualization" align="center" >}}
 
 #### The Eikonal Equation and Lipschitz Continuity
 
@@ -1363,7 +1362,7 @@ If the gradient magnitude exceeds 1 ($\|\nabla f\| > 1$), the function overestim
 
 #### Constructive Solid Geometry (CSG)
 
-Complex scenes can be constructed from primitive SDFs using Boolean operations. If $a = f_1(\mathbf{p})$ and $b = f_2(\mathbf{p})$ represent the signed distances to two individual shapes at a given point, standard **Constructive Solid Geometry (CSG)** operations can be formulated as combinations of `min` and `max` functions:
+Complex scenes can be constructed from primitive SDFs using Boolean operations. Quilez catalogues both the 2D [[7]](#ref-7) and 3D [[8]](#ref-8) primitives and the operators below. If $a = f_1(\mathbf{p})$ and $b = f_2(\mathbf{p})$ represent the signed distances to two individual shapes at a given point, standard **Constructive Solid Geometry (CSG)** operations can be formulated as combinations of `min` and `max` functions:
 
 ```glsl
 float opUnion(float a, float b) {
@@ -1551,13 +1550,13 @@ void main() {
 
 Intersection algorithms tell us *where* a ray hits and *which way* the surface faces. Shading models answer the next question: *what color should that point be?*
 
-When light strikes a surface, part of its energy is absorbed and part is scattered. The physics of this interaction is captured by the **Rendering Equation**:
+When light strikes a surface, part of its energy is absorbed and part is scattered. The physics of this interaction is captured by the **Rendering Equation** [[12]](#ref-12):
 
 $$ L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Emitted Radiance}} + \underbrace{\int_{\Omega} L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) (\mathbf{n} \cdot \boldsymbol{\omega}_i) \, d\boldsymbol{\omega}_i}_{\text{Reflected Radiance}} $$
 
 The outgoing radiance $L_o$ toward the viewer equals the emitted light $L_e$ plus the integral of all incoming light $L_i$ scattered by the surface. We integrate over $\Omega$ (the upper hemisphere defined by the surface normal) because opaque surfaces only receive light from their exterior side. The function $f_s$ is the **Bidirectional Reflectance Distribution Function (BRDF)**, which encodes how a material distributes incoming light, and the dot product $(\mathbf{n} \cdot \boldsymbol{\omega}_i)$ accounts for foreshortening via Lambert's cosine law.
 
-Evaluating this integral is computationally immense — it involves infinite recursive scattering between all objects in the scene. Real-time graphics have therefore historically relied on simpler, empirical models that approximate the result locally.
+Evaluating this integral is computationally immense — it involves infinite recursive scattering between all objects in the scene. Real-time graphics have therefore historically relied on simpler, empirical models that approximate the result locally. Whitted's recursive ray tracer [[11]](#ref-11) was the first to combine local shading with traced reflection and shadow rays.
 
 > **Gamma Correction:** Before we look at the code, it is important to remember that physical light calculations are linear, but our computer monitors display light non-linearly. To fix this, we apply a $1/2.2$ power function to our final color at the very end of our shaders—a process known as gamma correction.
 
@@ -1574,9 +1573,9 @@ $$ I_{attenuated} = \frac{1}{k_c + k_l d + k_q d^2} I_{source} $$
 
 ### The Phong Reflection Model
 
-With the incoming light intensity established, we can now compute how the surface responds. The most famous empirical model is the **Phong reflection model**, which decomposes local illumination into three physically motivated components: **Ambient**, **Diffuse**, and **Specular**.
+With the incoming light intensity established, we can now compute how the surface responds. The most famous empirical model is the **Phong reflection model** [[9]](#ref-9), which decomposes local illumination into three physically motivated components: **Ambient**, **Diffuse**, and **Specular**.
 
-{{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" noinvert=true >}}
+{{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" >}}
 
 #### 1. Ambient Light
 In the real world, light bounces off walls, floors, and other objects, filling the environment with indirect illumination. Instead of simulating these complex global bounces, the ambient term provides a constant base level of light so that objects in shadow are not completely pitch black.
@@ -1706,7 +1705,7 @@ void main() {
 
 ### The Blinn-Phong Modification
 
-Calculating the exact reflection vector $\mathbf{r}$ at every pixel requires several vector operations. Jim Blinn proposed a cheaper approximation that produces nearly identical results: the **halfway vector**.
+Calculating the exact reflection vector $\mathbf{r}$ at every pixel requires several vector operations. Jim Blinn proposed a cheaper approximation that produces nearly identical results: the **halfway vector** [[10]](#ref-10).
 
 Instead of finding the angle between the reflection ${\color{#4CAF50}\mathbf{r}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$, we calculate the vector that sits exactly halfway between the light ${\color{#FF9800}\mathbf{l}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$:
 
@@ -2319,13 +2318,30 @@ void main() {
 
 ## References
 
-- Richard Szeliski, *Computer Vision: Algorithms and Applications*.
-- Eric Lengyel, *Mathematics for 3D Game Programming and Computer Graphics*.
-- Song Ho Ahn, [OpenGL Projection Matrix](https://www.songho.ca/opengl/gl_projectionmatrix.html).
-- Song Ho Ahn, [OpenGL Viewport Transform](https://www.songho.ca/opengl/gl_viewport.html).
-- Inigo Quilez, [2D Distance Functions](https://iquilezles.org/articles/distfunctions2d/).
-- Inigo Quilez, [3D Distance Functions](https://iquilezles.org/articles/distfunctions/).
-- Bui Tuong Phong, *Illumination for Computer Generated Pictures*.
-- Turner Whitted, *An Improved Illumination Model for Shaded Display*.
-- James Kajiya, *The Rendering Equation*.
-- Indian Institute of Science (IISc), [E0 271: Graphics and Visualization](https://www.csa.iisc.ac.in/~vijayn/courses/Graphics/index.html).
+1. <span id="ref-1"></span>Szeliski, Richard. *Computer Vision: Algorithms and Applications*. 2nd ed., Springer, 2022. [https://szeliski.org/Book/](https://szeliski.org/Book/).
+
+2. <span id="ref-2"></span>Lengyel, Eric. *Mathematics for 3D Game Programming and Computer Graphics*. 3rd ed., Course Technology, 2011.
+
+3. <span id="ref-3"></span>Ahn, Song Ho. *"OpenGL Projection Matrix."* [https://www.songho.ca/opengl/gl_projectionmatrix.html](https://www.songho.ca/opengl/gl_projectionmatrix.html).
+
+4. <span id="ref-4"></span>Ahn, Song Ho. *"OpenGL Viewport Transform."* [https://www.songho.ca/opengl/gl_viewport.html](https://www.songho.ca/opengl/gl_viewport.html).
+
+5. <span id="ref-5"></span>Möller, Tomas, and Ben Trumbore. *"Fast, Minimum Storage Ray-Triangle Intersection."* *Journal of Graphics Tools*, 2(1), 21–28, 1997. [https://doi.org/10.1080/10867651.1997.10487468](https://doi.org/10.1080/10867651.1997.10487468).
+
+6. <span id="ref-6"></span>Hart, John C. *"Sphere Tracing: A Geometric Method for the Antialiased Ray Tracing of Implicit Surfaces."* *The Visual Computer*, 12(10), 527–545, 1996.
+
+7. <span id="ref-7"></span>Quilez, Inigo. *"2D Distance Functions."* [https://iquilezles.org/articles/distfunctions2d/](https://iquilezles.org/articles/distfunctions2d/).
+
+8. <span id="ref-8"></span>Quilez, Inigo. *"3D Distance Functions."* [https://iquilezles.org/articles/distfunctions/](https://iquilezles.org/articles/distfunctions/).
+
+9. <span id="ref-9"></span>Phong, Bui Tuong. *"Illumination for Computer Generated Pictures."* *Communications of the ACM*, 18(6), 311–317, 1975. [https://doi.org/10.1145/360825.360839](https://doi.org/10.1145/360825.360839).
+
+10. <span id="ref-10"></span>Blinn, James F. *"Models of Light Reflection for Computer Synthesized Pictures."* *SIGGRAPH '77*, 192–198, 1977. [https://doi.org/10.1145/563858.563893](https://doi.org/10.1145/563858.563893).
+
+11. <span id="ref-11"></span>Whitted, Turner. *"An Improved Illumination Model for Shaded Display."* *Communications of the ACM*, 23(6), 343–349, 1980. [https://doi.org/10.1145/358876.358882](https://doi.org/10.1145/358876.358882).
+
+12. <span id="ref-12"></span>Kajiya, James T. *"The Rendering Equation."* *SIGGRAPH '86*, 143–150, 1986. [https://doi.org/10.1145/15922.15902](https://doi.org/10.1145/15922.15902).
+
+13. <span id="ref-13"></span>Indian Institute of Science (IISc). *"E0 271: Graphics and Visualization."* [https://www.csa.iisc.ac.in/~vijayn/courses/Graphics/index.html](https://www.csa.iisc.ac.in/~vijayn/courses/Graphics/index.html).
+
+14. <span id="ref-14"></span>Jakob, Wenzel, et al. *"Dr.Jit: A Just-In-Time Compiler for Differentiable Rendering."* [https://drjit.readthedocs.io/](https://drjit.readthedocs.io/).

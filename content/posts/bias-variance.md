@@ -12,7 +12,7 @@ TocOpen: true
 math: true
 ---
 
-# Introduction
+## Introduction
 All we assume is that data comes from some unknown joint distribution:
 
 $$(x_i, y_i)\sim p(x, y)$$
@@ -21,7 +21,7 @@ $$(x_i, y_i)\sim p(x, y)$$
 
 Our learning algorithm samples a dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ i.i.d from this distribution.
 
-### Bayes Optimal Predictor
+#### Bayes Optimal Predictor
 If we wanted to pick a deterministic predictor $g(x)$ that minimizes the expected squared error under $p(x, y)$:
 $$g^*(x) = \arg \min_g \mathbb{E}_{p(x, y)}\left[ (y - g(x))^2\right]$$
 
@@ -41,12 +41,12 @@ $$
 $$
 where $\hat{f}(x)$ is the learned model, $\text{Bias}^2$ measures systematic error, $\text{Var}$ is the variance across datasets, and $\sigma^2$ is the irreducible noise.
 
-## Conceptual Definition
+### Conceptual Definition
 - **Error due to Bias:** The error due to bias is taken as the difference between the expected (or average) prediction of our model and the correct value which we are trying to predict. Of course you only have one model so talking about expected or average prediction values might seem a little strange. However, imagine you could repeat the whole model building process more than once: each time you gather new data and run a new analysis creating a new model. Due to randomness in the underlying data sets, the resulting models will have a range of predictions. Bias measures how far off in general these models' predictions are from the correct value.
 - **Error due to Variance:** The error due to variance is taken as the variability of a model prediction for a given data point. Again, imagine you can repeat the entire model building process multiple times. The variance is how much the predictions for a given point vary between different realizations of the model.
 
 
-## Graphical Definition
+### Graphical Definition
 We can create a graphical visualization of bias and variance using a bulls-eye diagram. Imagine that the center of the target is a model that perfectly predicts the correct values. As we move away from the bulls-eye, our predictions get worse and worse. Imagine we can repeat our entire model building process to get a number of separate hits on the target. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well and we are close to the bulls-eye, while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. These different realizations result in a scatter of hits on the target.
 
 We can plot four different cases representing combinations of both high and low bias and variance.
@@ -68,7 +68,7 @@ width="70%"
 >}}
 
 
-## Mathematical Definition
+### Mathematical Definition
 
 Assuming we are in a regression setting with dataset $\mathcal{D} = \lbrace (x_1, y_1), \dots, (x_N, y_N)\rbrace$ with $y\in \mathbb{R}$, we define the following:
 
@@ -133,7 +133,7 @@ We are interested in this expression, because it evaluates the quality of a mach
 
 
 
-### Decomposition of Expected Test Error
+#### Decomposition of Expected Test Error
 
 $$
 \begin{aligned}
@@ -208,7 +208,7 @@ $$
 
 - **Noise:** How big is the data-intrinsic noise? This error measures ambiguity due to your data distribution and feature representation. You can never beat this, it is an aspect of the data. 
 
-### For a simplified version:
+#### For a simplified version:
 
 If we denote the variable we are trying to predict as $Y$ and our covariates as $X$, we may assume that there is a relationship relating one to the other such as:
 
@@ -246,7 +246,7 @@ Given the true model and infinite data to calibrate it, we should be able to red
 However, in a world with imperfect models and finite data, there is a **tradeoff between minimizing bias and minimizing variance** as seen in [Figure 2.](#fig-complexity).
 
 
-# Experimentation
+## Experimentation
 
 For the following experiments, I am calculting the best fit as follows:
 $$\boxed{\theta_{\text{MAP}} = (X^\top X + \alpha I)^{-1}X^\top y}$$
@@ -278,7 +278,7 @@ width="100%"
 
 ---
 
-## Interactive Demo
+### Interactive Demo
 
 *Experiment with polynomial degree and regularization below:*
 
@@ -292,14 +292,14 @@ width="100%"
 
 ---
 
-## Experimental Results
+### Experimental Results
 
 **Setup:**  
 500 random datasets, each with 100 training points ($N=100$); noise: $\sigma=0.5$.
 
 ---
 
-### Without Regularization ($\alpha = 0$)
+#### Without Regularization ($\alpha = 0$)
 
 | Degree | Bias²   | Variance | Condition Number |
 |:------:|:-------:|:--------:|:----------------:|
@@ -332,7 +332,7 @@ width="100%"
 
 ---
 
-### With Regularization ($\alpha = 0.1$ × degree)
+#### With Regularization ($\alpha = 0.1$ × degree)
 
 | Degree | $\alpha$ | Bias²   | Variance | Condition Number |
 |:------:|:-------:|:-------:|:--------:|:----------------:|
@@ -366,7 +366,7 @@ width="100%"
 
 ---
 
-### K-Nearest Neighbor Interactive Example
+#### K-Nearest Neighbor Interactive Example
 
 <iframe src="/interactive/knn.html"
         width="100%"
@@ -377,7 +377,7 @@ width="100%"
 
 ---
 
-# Conclusion
+## Conclusion
 
 The **bias-variance tradeoff** is clearly illustrated by these experiments:
 
@@ -386,7 +386,7 @@ The **bias-variance tradeoff** is clearly illustrated by these experiments:
 - Regularization ($\alpha$ increasing with degree) stabilizes high-degree fits, keeping variance and condition number controlled.
 - The table and figures above reveal the subtle interplay between bias, variance, model complexity, and regularization.
 
-## References
+### References
 
 1. Bishop, C. M. (2006). *Pattern Recognition and Machine Learning*. Springer.  
 2. Cornell University CS4780/5780: Machine Learning for Intelligent Systems Lecture Notes. (Lecture 12: Bias‑Variance Tradeoff) Retrieved from: [https://www.cs.cornell.edu/courses/cs4780/2024sp/lectures/lecturenote12.html](https://www.cs.cornell.edu/courses/cs4780/2024sp/lectures/lecturenote12.html)  

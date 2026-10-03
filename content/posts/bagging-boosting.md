@@ -17,16 +17,16 @@ This post is a work in progress and may be updated or expanded soon!
 </span>
 
 
-# Bias Variance Decomposition
+## Bias Variance Decomposition
 
 Remember the Bias / Variance decomposition: 
 $$
 \underbrace{\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2}
 $$
 
-Out goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.
+Our goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.
 
-# Reducing Variance
+## Reducing Variance
 > ### Weak Law of Large Numbers
 >
 > Given $X_1, X_2, \dots$ an infinite sequence of i.i.d. random variables with finite expected value
@@ -102,7 +102,7 @@ We refer to such an average of multiple predictors as an ensemble of predictors.
 
 **Problem:** We don't have $m$ data sets $D1,\dots,D_m$, we only have $D$.
 
-## Bagging (Bootstrap Aggregating)
+### Bagging (Bootstrap Aggregating)
 
 Simulate drawing from $p$ by drawing uniformly with replacement from the set $D$.
 i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training sample $(x_i,y_i)$ from $D$ uniformly at random. More formally, 
@@ -120,7 +120,7 @@ $$
 because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.
 
 
-## Analysis
+### Analysis
 Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let's ignore the label for now for simplicity) 
 
 $$
@@ -144,7 +144,7 @@ Consider that you first use $q$ to reserve a "spot" in $D$, i.e. a number from $
 
 ---
 
-### Variance of Bagged Estimator
+#### Variance of Bagged Estimator
 The variance of the bagged estimator is:
 
 $$Var(\hat{h}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$
@@ -198,9 +198,9 @@ $$
 Notice that we can have 3 cases here:
 - **Models are Independent**, in which case the variance is reduced by a factor of $m$ since $\rho = 0$
 
-- **Modela are not prefectly correlated**, in which case the reduction depends on $\rho$
+- **Models are not perfectly correlated**, in which case the reduction depends on $\rho$
 
-- **Modela are prefectly correlated**, so no variance reduction at all.
+- **Models are perfectly correlated**, so no variance reduction at all.
 
 **Why the models are not independent**  
 Even though the bootstrap sampling is random, the models $h_{D_i}$ are **not independent** because:  
@@ -223,7 +223,7 @@ be the number of **distinct original items** that appear in both bootstrap sampl
 
 ---
 
-### Derivation
+#### Derivation
 
 For a fixed original item $k$ (one of the $n$ items), let
 
@@ -270,7 +270,7 @@ $$
 
 ---
 
-### Large-$n$ Approximation
+#### Large-$n$ Approximation
 
 As $n \to \infty$,
 
@@ -290,7 +290,7 @@ So about **40% of the original items (on average)** appear in both bootstrap sam
 
 ---
 
-### Intuition
+#### Intuition
 
 - Probability that an item appears in one bootstrap sample: $p \approx 0.632$
 - Probability that it appears in both: $p^2 \approx 0.3996$
@@ -298,7 +298,7 @@ So about **40% of the original items (on average)** appear in both bootstrap sam
 
 ----
 
-## Bagging Summary
+### Bagging Summary
 
 You have a dataset $
 D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.
@@ -322,10 +322,10 @@ D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.
 In practice larger $m$ results in a better ensemble, however at some point you will obtain **diminishing returns**. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier. 
 
 
-## Advantages of Bagging
+### Advantages of Bagging
 - Easy to implement
 - Reduces variance, so has a strong beneficial effect on high variance classifiers.
-- As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)
+- As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainty of the prediction (especially in regression tasks)
 
 - Bagging provides an unbiased estimate of the test error, which we refer to as the **out-of-bag error**. The idea is that each training point was not picked and all the data sets $D_k$. If we average the classifiers $h_k$ of all such data sets, we obtain a classifier (with a slightly smaller $m$) that was not trained on $(x_i, y_i)$ ever and it is therefore equivalent to a test sample. If we compute the error of all these classifiers, we obtain an estimate of the true test error. The beauty is that we can do this without reducing the training set. We just run bagging as it is intended and obtain this so called out-of-bag error for free.
 
@@ -350,14 +350,14 @@ In practice larger $m$ results in a better ensemble, however at some point you w
 
   This is an estimate of the test error, because for each training point we used the subset of classifiers that never saw that training point during training. If $m$ is sufficiently large, the fact that we take out some classifiers has no significant effect and the estimate is pretty reliable.
 
-## Random Forest
+### Random Forest
 
 One of the most famous and useful bagged algorithms is the **Random Forest**!  
 A Random Forest is essentially nothing else but **bagged decision trees**, with a slightly modified splitting criterion.
 
 ---
 
-### Algorithm
+#### Algorithm
 
 1. **Bootstrap Sampling**
 
@@ -382,7 +382,7 @@ A Random Forest is essentially nothing else but **bagged decision trees**, with 
 
 ---
 
-### Why Random Forests Work So Well
+#### Why Random Forests Work So Well
 
 The Random Forest (RF) is one of the **best, most popular, and easiest-to-use out-of-the-box classifiers**.  
 There are two main reasons for this:

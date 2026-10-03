@@ -12,7 +12,7 @@ TocOpen: true
 math: true
 ---
 
-# Transformer Model
+## Transformer Model
 
 It uses encoder-decoder structure where both encoder block and decoder block have an attention mechanism.
 
@@ -22,7 +22,7 @@ caption="Transformer Architecture"
 width="50%" 
 >}}
 
-## Positional Encoding
+### Positional Encoding
 
 If $d_{model}$ is our embedding dimension, and $T$ is the sequence length, the input can be represented as
 $$X\in\mathbb{R}^{T \times d_{model}}$$
@@ -93,7 +93,7 @@ width="90%"
 >}}
 
 
-## Attention
+### Attention
 
 The attention mechanism describes how "important" some features are and how much we want to "attend" to them. The kind of attention we use here *describes a weighted average of (sequence) elements with the weights dynamically computed based on an input query and element's keys*.
 
@@ -123,7 +123,7 @@ width="65%"
 
 
 
-## Scaled Dot Product Attention
+### Scaled Dot Product Attention
 
 The core concept behind self-attention is the scaled dot product attention. Our goal is to have an attention mechanism with which any element in a sequence can attend to any other while being efficient to compute.
 
@@ -243,7 +243,7 @@ class SelfAttentionBlock(nn.Module):
         return torch.matmul(self.attention, V)  # (B, L, d_k)
 ```
 
-## Multi Head Attention
+### Multi Head Attention
 
 The scaled dot product attention allows a network to attend over a sequence. However, often there are multiple different aspects a sequence element wants to attend to, and a single weighted average is not a good option for it. So, we extend the attention mechanism to multiple heads, i.e., multiple query-key-value triples on the same features.
 
@@ -321,9 +321,9 @@ class MultiHeadAttention(nn.Module):
         return O                                              # residual
 ```
 
-### Multi-head attention is Permutation Invariant
+#### Multi-head attention is Permutation Invariant
 
-One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it's inputs. This means if we switch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.
+One crucial characteristic of multi-head attention is that it is permutation invariant with respect to it's inputs. This means if we switch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.
 
 **Proof :** Let $P$ be a permutation matrix and $X$ the input.
 
@@ -359,10 +359,10 @@ $$
 Hence, self-attention (without positional encodings) is **permutation-equivariant**.
 
 
-Hence, the multi-head attention is actually looking at the input not as a sequence, but as a set of elements, that's why we need to encode the position int hte input features.
+Hence, the multi-head attention is actually looking at the input not as a sequence, but as a set of elements, that's why we need to encode the position in the input features.
 
 
-## Feed Forward Network
+### Feed Forward Network
 
 Additionally to the Multi-Head Attention, a small fully connected feed-forward network is added to the model, which is applied to each position separately and identically. Specifically, the model uses a Linear $\rightarrow$ ReLU (GeLU in this case) $\rightarrow$ Linear MLP. The full transformation including the residual connection can be expressed as:
 
@@ -390,13 +390,13 @@ class FeedForwardLayer(nn.Module):
         return x
 ```
 
-## Encoder Block
+### Encoder Block
 
 Originally, the Transformer model was designed for machine translation. Hence, it got an encoder-decoder structure where the encoder takes as input the sentence in the original language and generates an attention-based representation. On the other hand, the decoder attends over the encoded information and generates the translated sentence in an autoregressive manner, as in a standard RNN. While this structure is extremely useful for Sequence-to-Sequence tasks with the necessity of autoregressive decoding, we will focus here on the encoder part
 
 The encoder consists of $N$ identical blocks that are applied in sequence. Taking as input $x$, it is first passed through a Multi-Head Attention block as we have implemented above. The output is added to the original input using a residual connection, and we apply a consecutive Layer Normalization on the sum. Overall it calculates $LayerNorm(x + multihead(Q, K, V))$
 
-The residual connection in crucial in Transformer architecture for two reasonfs:
+The residual connection is crucial in the Transformer architecture for two reasons:
 
 1. The residual connections are crucial for enabling a smooth gradient flow through the deep model.
 
@@ -431,7 +431,7 @@ class Encoder(nn.Module):
 ```
 
 
-## Decoder Block
+### Decoder Block
 Now that we’ve covered most of the concepts on the encoder side, we basically know how the components of decoders work as well. But let’s take a look at how they work together.
 
 The encoder start by processing the input sequence. The output of the top encoder is then transformed into a set of attention vectors $K$ and $V$. These are to be used by each decoder in its "encoder-decoder attention"/Cross Attention layer which helps the decoder focus on appropriate places in the input sequence. 
@@ -448,13 +448,13 @@ The “Encoder-Decoder Attention” layer works just like multiheaded self-atten
 In the decoder, the self-attention layer is only allowed to attend to earlier positions in the output sequence. This is done by masking future positions (setting them to $-\infty$) before the softmax step in the self-attention calculation.
 
 
-# Vision Transformer (ViT)
+## Vision Transformer (ViT)
 
-To apply Transformders to sequences, we ahve simply added a positional encoding to the input feature vectors, and the model learned by itself what to do with it. So, why not do the same thing on images?
+To apply Transformers to sequences, we have simply added a positional encoding to the input feature vectors, and the model learned by itself what to do with it. So, why not do the same thing on images?
 
 This is what the paper "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale". Specifically, the Vision transformer is a model for image classification that views images as sequence of smaller patches.
 
-Each of thise patches is considered to be a "word"/"token" and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.
+Each of these patches is considered to be a "word"/"token" and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.
 
 {{< 
 figure src="/images/transformer/vit.gif"
@@ -499,7 +499,7 @@ class LearnablePositionalEmbedding(nn.Module):
 
 - An **MLP head** that takes the output feature vector of the CLS token, and maps it to a classification prediction. This is usually implemented by a small feed-forward network or even a single linear layer.
 
-### Implementation
+#### Implementation
 We use the Pre-Layer Normalization version of the Transformer blocks proposed by <a href="http://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf">Ruibin Xiong et al.</a> in 2020. The idea is to apply Layer Normalization not in between residual blocks, but instead as a first layer in the residual blocks. This reorganization of the layers supports better gradient flow and removes the necessity of a warm-up stage. A visualization of the difference between the standard Post-LN and the Pre-LN version is shown below.
 
 {{< 
@@ -569,7 +569,7 @@ class ViTClassifier(nn.Module):
         return logits
 ```
 
-## Visualizing Attention
+### Visualizing Attention
 I trained the above ViT on STL10 Images using the following hyperparams:
 
 | **Configuration** | **Value** |
@@ -604,13 +604,13 @@ caption="Attention visualization overlayed on the corresponding STL10 Images"
 width="100%" 
 >}}
 
-From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to "attend" more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some "shortcuts" like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model **might** be trying to do but is not an explaination of why it predicted a certain class for an image.
+From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to "attend" more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some "shortcuts" like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model **might** be trying to do but is not an explanation of why it predicted a certain class for an image.
 
-## ViT Decoder
+### ViT Decoder
 
 The ViT Decoder generates or reconstructs image patches by attending to both its own tokens and the encoded image features. It consists of three main components and can operate in two modes: parallel reconstruction or autoregressive generation.
 
-### Masked Self Attention BLock
+#### Masked Self-Attention Block
 
 This allows the decoder to consider only past tokens in the sequence by applying a causal mask, ensuring predictions are autoregressive and do not peek into the future. The mask sets the upper triangular attention scores to $-\infty$, effectively preventing access to future positions.
 
@@ -624,9 +624,8 @@ Note:
 
 {{< 
 figure src="/images/transformer/attention_comparison.png"
-num="17"
-id="fig-attention-viz"
-caption="Masked Self Attention"
+id="fig-masked-attention"
+caption="Masked self-attention: the causal mask sets the upper-triangular scores to $-\infty$ so a position cannot attend to future tokens."
 width="100%" 
 >}}
 
@@ -676,7 +675,7 @@ class MaskedMultiHeadAttention(nn.Module):
 ```
 
 
-### Cross Attention
+#### Cross Attention
 The cross-attention layer allows the decoder to query information from the encoder's output. The decoder's queries ($Q$) attend to keys ($K$) and values ($V$) derived from the encoder, integrating the rich image representations with the decoding process.
 
 Key difference from self-attention: $K$ and $V$ come from the encoder output, while $Q$ comes from the decoder's hidden state.
@@ -724,7 +723,7 @@ class CrossMultiHeadAttention(nn.Module):
         return O                                              # residual
 ```
 
-### Decoder Block
+#### Decoder Block
 
 Putting everything together in a decoder block. The architecture follows the standard Transformer decoder design:
 
@@ -802,7 +801,7 @@ class ViTDecoder(nn.Module):
         return self.norm(x)
 ```
 
-## References
+### References
 
 1. Vaswani, Ashish, et al. *“Attention Is All You Need.”* *Advances in Neural Information Processing Systems (NeurIPS 2017)*, 2017. [arXiv:1706.03762](https://arxiv.org/abs/1706.03762).
 

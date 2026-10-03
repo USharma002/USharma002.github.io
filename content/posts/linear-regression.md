@@ -48,7 +48,7 @@ where we defined $\mathcal{X} = \lbrace x_1, \dots, x_N \rbrace$ and $\mathcal{Y
 
 ### Estimating with MLE
 
-To find the desired parameterss $\theta_{MLE}$ we can use maximum likelihood estimate. Intuitively, this means maximizing the predictive distribution of training data given the model parameters. We obtain the maximum likelihood parameters as:
+To find the desired parameters $\theta_{MLE}$ we can use maximum likelihood estimate. Intuitively, this means maximizing the predictive distribution of training data given the model parameters. We obtain the maximum likelihood parameters as:
 
 $$\theta_{ML} = \arg\max_\theta p(\mathcal{Y}\mid\mathcal{X}, \theta)$$
 
@@ -209,14 +209,14 @@ $$
 ## Summary
 
 - **Ordinary Least Squares (OLS)**  
-  - Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2$  
+  - Objective: $\displaystyle \min_\theta \frac{1}{n}\sum_{i=1}^n (x_i^\top \theta - y_i)^2$  
   - Regularization: None  
-  - Closed form: $\displaystyle w = (X X^\top)^{-1} X y^\top$
+  - Closed form: $\displaystyle \theta = (X^\top X)^{-1} X^\top y$
 
 - **Ridge Regression**  
-  - Objective: $\displaystyle \min_w \frac{1}{n}\sum_{i=1}^n (x_i^\top w - y_i)^2 + \lambda\|w\|_2^2$  
+  - Objective: $\displaystyle \min_\theta \frac{1}{n}\sum_{i=1}^n (x_i^\top \theta - y_i)^2 + \lambda\|\theta\|_2^2$  
   - Regularization: $L_2$  
-  - Closed form: $\displaystyle w = (X X^\top + \lambda I)^{-1} X y^\top$
+  - Closed form: $\displaystyle \theta = (X^\top X + \lambda I)^{-1} X^\top y$
 
 ---
 
