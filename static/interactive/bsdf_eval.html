@@ -536,7 +536,6 @@ select option {
           }
         });
       });
-      if (patched) console.log("Patched slices:", patched);
     }
 
     const clamp01 = x => Math.max(0, Math.min(1, x));
@@ -856,7 +855,6 @@ select option {
         const r0 = rays[0];
         const p0s = project({x:0,y:0,z:0});
         const p0e = project({x:r0.x*CFG.rayLen, y:r0.y*CFG.rayLen, z:r0.z*CFG.rayLen});
-        console.log(`Ray0 screen: (${p0s.x.toFixed(0)},${p0s.y.toFixed(0)}) -> (${p0e.x.toFixed(0)},${p0e.y.toFixed(0)})`);
         hasLoggedFrame = true;
       }
 

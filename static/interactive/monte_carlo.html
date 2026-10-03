@@ -1,14 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-window.MathJax = {
-    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-    svg: { fontCache: 'global' }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <title>Monte Carlo Simulation</title>
     <style>
         :root {
@@ -21,18 +14,18 @@ window.MathJax = {
             --canvas-bg: #f3f4f6;
             
             /* UI Colors */
-            --primary: #2563eb;
+            --primary: #b45309;      /* matches the post's light-mode accent */
             --primary-fg: #ffffff;
-            --btn-bg: #e5e7eb;
+            --btn-bg: rgba(0,0,0,0.05);
             --btn-text: #374151;
-            --danger: #ef4444;
+            --danger: #b91c1c;
             
             /* Viz Colors */
             --circle-stroke: #d1d5db;
-            --dot-in: rgba(37, 99, 235, 0.5);
-            --dot-out: rgba(156, 163, 175, 0.3);
-            --graph-target: #dc2626;
-            --graph-est: #2563eb;
+            --dot-in: rgba(180, 83, 9, 0.55);
+            --dot-out: rgba(156, 163, 175, 0.30);
+            --graph-target: #6b7280;   /* reference value: neutral */
+            --graph-est: #b45309;      /* the estimate: accent */
         }
 
         html, body { 
@@ -45,7 +38,7 @@ window.MathJax = {
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            background: var(--theme);
+            background: transparent;
             color: var(--text);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
@@ -53,15 +46,11 @@ window.MathJax = {
         .wrapper { 
             display: flex; 
             flex-wrap: wrap; 
-            gap: 20px; 
-            background: var(--card-bg); 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
-            border: 1px solid var(--border); 
-            max-width: 600px; 
+            gap: 22px; 
+            background: transparent; 
+            padding: 4px; 
+            max-width: 620px; 
             justify-content: center; 
-            transition: background-color 0.3s, border-color 0.3s;
         }
         
         .panel { display: flex; flex-direction: column; align-items: center; }
@@ -72,6 +61,8 @@ window.MathJax = {
             border: 1px solid var(--border); 
             transition: background-color 0.3s, border-color 0.3s;
         }
+        .panel-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+                       color: var(--text-sub); margin-bottom: 7px; font-weight: 600; }
         
         .stats-container { 
             margin-top: 10px; 
@@ -110,6 +101,7 @@ window.MathJax = {
     <div class="wrapper">
         <!-- Left: Visual Simulation -->
         <div class="panel">
+            <div class="panel-label">Sampling the unit square</div>
             <canvas id="simCanvas" width="260" height="260"></canvas>
             <div class="stats-container">
                 <div class="stat-item">
@@ -125,6 +117,7 @@ window.MathJax = {
 
         <!-- Right: Convergence Graph -->
         <div class="panel">
+            <div class="panel-label">Convergence of the estimate</div>
             <canvas id="graphCanvas" width="280" height="260"></canvas>
             <div class="stats-container">
                 <div class="stat-item">
@@ -132,7 +125,7 @@ window.MathJax = {
                     <span class="stat-val" id="est" style="color: var(--graph-est)">0.0000</span>
                 </div>
                 <div class="stat-item">
-                    <span>Target ($\pi$)</span>
+                    <span>Target (&pi;)</span>
                     <span class="stat-val" style="color: var(--graph-target)">3.14159</span>
                 </div>
             </div>
@@ -160,40 +153,40 @@ window.MathJax = {
                 
                 if (isDark) {
                     // Dark Mode
-                    document.documentElement.style.setProperty('--bg', '#1a1a1a');
-                    document.documentElement.style.setProperty('--card-bg', '#262626');
+                    document.documentElement.style.setProperty('--bg', 'transparent');
+                    document.documentElement.style.setProperty('--card-bg', 'transparent');
                     document.documentElement.style.setProperty('--text', '#e5e7eb');
                     document.documentElement.style.setProperty('--text-sub', '#9ca3af');
-                    document.documentElement.style.setProperty('--border', '#404040');
-                    document.documentElement.style.setProperty('--canvas-bg', '#333333');
+                    document.documentElement.style.setProperty('--border', 'rgba(255,255,255,0.13)');
+                    document.documentElement.style.setProperty('--canvas-bg', 'rgba(255,255,255,0.03)');
                     
-                    document.documentElement.style.setProperty('--primary', '#3b82f6');
-                    document.documentElement.style.setProperty('--btn-bg', '#404040');
+                    document.documentElement.style.setProperty('--primary', '#e69138');
+                    document.documentElement.style.setProperty('--btn-bg', 'rgba(255,255,255,0.09)');
                     document.documentElement.style.setProperty('--btn-text', '#e5e7eb');
                     
-                    document.documentElement.style.setProperty('--circle-stroke', '#555555');
-                    document.documentElement.style.setProperty('--dot-in', 'rgba(96, 165, 250, 0.6)'); 
+                    document.documentElement.style.setProperty('--circle-stroke', 'rgba(255,255,255,0.22)');
+                    document.documentElement.style.setProperty('--dot-in', 'rgba(240, 163, 85, 0.65)'); 
                     document.documentElement.style.setProperty('--dot-out', 'rgba(255, 255, 255, 0.15)');
-                    document.documentElement.style.setProperty('--graph-target', '#f87171');
-                    document.documentElement.style.setProperty('--graph-est', '#60a5fa');
+                    document.documentElement.style.setProperty('--graph-target', '#9ca3af');
+                    document.documentElement.style.setProperty('--graph-est', '#e69138');
                 } else {
                     // Light Mode
-                    document.documentElement.style.setProperty('--bg', '#f8f9fa');
-                    document.documentElement.style.setProperty('--card-bg', '#ffffff');
+                    document.documentElement.style.setProperty('--bg', 'transparent');
+                    document.documentElement.style.setProperty('--card-bg', 'transparent');
                     document.documentElement.style.setProperty('--text', '#374151');
                     document.documentElement.style.setProperty('--text-sub', '#6b7280');
-                    document.documentElement.style.setProperty('--border', '#e5e7eb');
-                    document.documentElement.style.setProperty('--canvas-bg', '#f3f4f6');
+                    document.documentElement.style.setProperty('--border', 'rgba(0,0,0,0.12)');
+                    document.documentElement.style.setProperty('--canvas-bg', 'rgba(0,0,0,0.025)');
                     
-                    document.documentElement.style.setProperty('--primary', '#2563eb');
-                    document.documentElement.style.setProperty('--btn-bg', '#e5e7eb');
+                    document.documentElement.style.setProperty('--primary', '#b45309');
+                    document.documentElement.style.setProperty('--btn-bg', 'rgba(0,0,0,0.06)');
                     document.documentElement.style.setProperty('--btn-text', '#374151');
                     
                     document.documentElement.style.setProperty('--circle-stroke', '#d1d5db');
-                    document.documentElement.style.setProperty('--dot-in', 'rgba(37, 99, 235, 0.5)');
+                    document.documentElement.style.setProperty('--dot-in', 'rgba(180, 83, 9, 0.55)');
                     document.documentElement.style.setProperty('--dot-out', 'rgba(156, 163, 175, 0.3)');
-                    document.documentElement.style.setProperty('--graph-target', '#dc2626');
-                    document.documentElement.style.setProperty('--graph-est', '#2563eb');
+                    document.documentElement.style.setProperty('--graph-target', '#6b7280');
+                    document.documentElement.style.setProperty('--graph-est', '#b45309');
                 }
                 
                 drawCircleOutline();

@@ -67,13 +67,6 @@
         .val { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
         .highlight { color: var(--accent); }
     </style>
-        <script>
-window.MathJax = {
-    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-    svg: { fontCache: 'global' }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
 
@@ -81,15 +74,15 @@ window.MathJax = {
     <div class="overlay">
         <h3>Inverse Square Law (Radial)</h3>
         <div class="stat-row">
-            <span>Radius ($r$):</span>
+            <span>Radius (<i>r</i>):</span>
             <span class="val" id="dispDist">1.00</span>
         </div>
         <div class="stat-row">
-            <span>Intensity Density ($1/r^2$):</span>
+            <span>Intensity Density (1/r&sup2;):</span>
             <span class="val highlight" id="dispInt">100%</span>
         </div>
         <div class="stat-row">
-            <span>Sector Area ($r^2$):</span>
+            <span>Sector Area (r&sup2;):</span>
             <span class="val" id="dispArea">1.00x</span>
         </div>
     </div>

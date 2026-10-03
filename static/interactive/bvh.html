@@ -211,11 +211,26 @@ const treePanel = document.getElementById('tree-panel');
 let triangles = [], rootNode = null, buildSteps = [], currentStepIdx = -1, isPlaying = false;
 let hoveredTriIdx = -1, hoveredNodeId = -1, activePath = new Set(), dpr = window.devicePixelRatio || 1;
 
+// The scene is generated once in canvas pixels sized to the viewport at that
+// moment. Opening the sidebar takes 240px off the viewport, so without a view
+// transform the canvas shrinks underneath fixed coordinates and the geometry
+// appears to slide out of frame. sceneW/sceneH record the space the triangles
+// were laid out in; viewTransform() fits that box into whatever size the
+// viewport currently is, preserving aspect and centring the result.
+let sceneW = 0, sceneH = 0;
+
+function viewTransform() {
+    const w = viewport.clientWidth, h = viewport.clientHeight;
+    if (!sceneW || !sceneH) return { s: 1, ox: 0, oy: 0 };
+    const s = Math.min(w / sceneW, h / sceneH);
+    return { s, ox: (w - sceneW * s) / 2, oy: (h - sceneH * s) / 2 };
+}
+
 // Layout Watchers
 const resizer = new ResizeObserver(() => {
     canvas.width = viewport.clientWidth * dpr; canvas.height = viewport.clientHeight * dpr;
     ctx.resetTransform(); ctx.scale(dpr, dpr);
-    draw(); if(rootNode) renderTreeSVG(); 
+    draw(); if(rootNode) renderTreeSVG();
 });
 resizer.observe(viewport); resizer.observe(treePanel);
 
@@ -238,7 +253,11 @@ function toggleTreeSize(e) { e.stopPropagation(); const isMin = treePanel.classL
 // --- BVH Engine ---
 function initScene() {
     const n = parseInt(document.getElementById('triCount').value); triangles = [];
-    const w = viewport.clientWidth, h = viewport.clientHeight;
+    // Lay the scene out in the *open-sidebar* width so the framing is stable
+    // regardless of whether the menu happens to be open when Generate is hit.
+    const sidebarOpen = !document.getElementById('sidebar').classList.contains('closed');
+    const w = viewport.clientWidth + (sidebarOpen ? 0 : 240), h = viewport.clientHeight;
+    sceneW = w; sceneH = h;
     for(let i=0; i<n; i++) {
         const cx = 80 + Math.random()*(w-160), cy = 80 + Math.random()*(h-160);
         const pts = []; for(let j=0; j<3; j++) pts.push(new Vector2(cx+(Math.random()-0.5)*70, cy+(Math.random()-0.5)*70));
@@ -319,6 +338,11 @@ function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const txt = getVar('--text'), acc = getVar('--accent'), spl = getVar('--split');
 
+    const view = viewTransform();
+    ctx.save();
+    ctx.translate(view.ox, view.oy);
+    ctx.scale(view.s, view.s);
+
     triangles.forEach((t, i) => {
         ctx.beginPath(); ctx.moveTo(t.p1.x, t.p1.y); ctx.lineTo(t.p2.x, t.p2.y); ctx.lineTo(t.p3.x, t.p3.y); ctx.closePath();
         const isHov = (i === hoveredTriIdx);
@@ -338,6 +362,8 @@ function draw() {
             ctx.stroke(); ctx.restore();
         }
     }
+
+    ctx.restore();
 }
 
 function drawNode(n) {
@@ -371,7 +397,11 @@ function isNodeVisible(n) {
 function handleHover(e) {
     if (!rootNode) return;
     const rect = canvas.getBoundingClientRect();
-    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    // Invert the view transform applied in draw(), so hit-testing stays in the
+    // same scene space the AABBs and triangles live in.
+    const view = viewTransform();
+    const mx = (e.clientX - rect.left - view.ox) / view.s,
+          my = (e.clientY - rect.top  - view.oy) / view.s;
     hoveredTriIdx = -1; activePath.clear();
     const find = (n) => {
         if (!n || !isNodeVisible(n)) return false;

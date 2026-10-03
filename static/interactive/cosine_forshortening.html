@@ -66,13 +66,6 @@
         .val { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); }
         .highlight { color: var(--accent); }
     </style>
-        <script>
-window.MathJax = {
-    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-    svg: { fontCache: 'global' }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
 
@@ -80,15 +73,15 @@ window.MathJax = {
     <div class="overlay">
         <h3>Lambert's Cosine Law</h3>
         <div class="stat-row">
-            <span>Angle ($\theta$):</span>
+            <span>Angle (&theta;):</span>
             <span class="val" id="dispAngle">0°</span>
         </div>
         <div class="stat-row">
-            <span>Intensity ($\cos \theta$):</span>
+            <span>Intensity (cos&nbsp;&theta;):</span>
             <span class="val highlight" id="dispCos">100%</span>
         </div>
         <div class="stat-row">
-            <span>Area Spread ($1/\cos$):</span>
+            <span>Area Spread (1/cos&nbsp;&theta;):</span>
             <span class="val" id="dispArea">1.0x</span>
         </div>
     </div>
