@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SD-tree Splatting</title>
+<style>
+  :root {
+    --bg: #ffffff; --card: #ffffff; --text: #212529; --sub: #6c757d; --border: #dee2e6;
+    --grid: #f2a541; --cell-lo: #fffaf0; --cell-hi: #f7b543; --sample: #111111; --foot: #c2185b; --btn: #f1f3f5;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  [data-theme="dark"] {
+    --bg: #1d1e20; --card: #2d2d2d; --text: #e4e4e4; --sub: #a0a0a0; --border: #404040;
+    --grid: #c98522; --cell-lo: #2b2620; --cell-hi: #f2a541; --sample: #ffffff; --foot: #ff6fa8; --btn: #3a3a3a;
+  }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
+  .wrap { display: flex; flex-wrap: wrap; gap: 14px; padding: 6px; box-sizing: border-box; }
+  .panel { flex: 1 1 300px; min-width: 260px; }
+  canvas { width: 100%; max-width: 420px; aspect-ratio: 1; display: block; border: 1px solid var(--border); border-radius: 6px; cursor: crosshair; background: var(--card); }
+  .modes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  button { font: inherit; font-size: 0.85rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--btn); color: var(--text); cursor: pointer; }
+  button.on { border-color: var(--grid); box-shadow: inset 0 0 0 1px var(--grid); font-weight: 600; }
+  .info { font-size: 0.85rem; line-height: 1.45; }
+  .info b { font-weight: 600; }
+  .stat { font-variant-numeric: tabular-nums; }
+  .note { font-size: 0.75rem; color: var(--sub); margin-top: 8px; }
+  label { font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; margin-right: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="panel">
+    <canvas id="cv" width="840" height="840" aria-label="Directional quadtree; click to splat a radiance sample"></canvas>
+  </div>
+  <div class="panel">
+    <div class="modes">
+      <button data-mode="nn" class="on">Nearest neighbour</button>
+      <button data-mode="filter">Filtered (box overlap)</button>
+      <button data-mode="stoch">Stochastic filtered</button>
+    </div>
+    <div class="modes">
+      <button id="spray">Splat 300 samples</button>
+      <button id="reset">Reset</button>
+      <label><input type="checkbox" id="showTarget"> show target</label>
+    </div>
+    <div class="info" id="info">Click inside the quadtree to splat one radiance sample.</div>
+    <div class="note">
+      The square is the directional domain of one SD-tree leaf (cylindrical coordinates). The quadtree is built with PPG's rule: a node is subdivided while it holds more than 1% of the total flux of a synthetic radiance function. Cell colour shows the learned radiance density (deposited energy ÷ cell area). Switching mode replays the same samples, so the three schemes can be compared directly.
+      Filter footprint = the size of the leaf the sample fell into, centred on the sample. In this demo, the part of a footprint that falls outside the square is renormalised away; that border handling is a simplification of the demo.
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  const info = document.getElementById('info');
+  let mode = 'nn', showTarget = false, last = null;
+  let history = [];                                  // sample positions, replayed when the mode changes
+
+  // ---- synthetic incident radiance: a narrow bright lobe + a broad dim lobe ----
+  const target = (x, y) =>
+    6.0 * Math.exp(-((x - 0.68) ** 2 + (y - 0.30) ** 2) / (2 * 0.035 ** 2)) +
+    0.6 * Math.exp(-((x - 0.30) ** 2 + (y - 0.62) ** 2) / (2 * 0.16 ** 2)) + 0.05;
+  function integrate(x0, y0, s, n = 12) {          // midpoint rule over a square node
+    let acc = 0, h = s / n;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) acc += target(x0 + (i + 0.5) * h, y0 + (j + 0.5) * h);
+    return acc * h * h;
+  }
+  // ---- build adaptive quadtree: subdivide while node flux > rho * total (PPG, rho = 0.01) ----
+  const RHO = 0.01, MAXD = 7, total = integrate(0, 0, 1, 200);
+  const leaves = [];
+  (function build(x0, y0, s, d) {
+    if (d < MAXD && integrate(x0, y0, s) > RHO * total) {
+      const h = s / 2;
+      build(x0, y0, h, d + 1); build(x0 + h, y0, h, d + 1); build(x0, y0 + h, h, d + 1); build(x0 + h, y0 + h, h, d + 1);
+    } else leaves.push({ x0, y0, s, e: 0 });
+  })(0, 0, 1, 0);
+  const leafAt = (x, y) => leaves.find(l => x >= l.x0 && x < l.x0 + l.s && y >= l.y0 && y < l.y0 + l.s);
+  const overlap = (a0, a1, b0, b1) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
+
+  function splat(x, y, record = true) {
+    const leaf = leafAt(x, y); if (!leaf) return;
+    const r = leaf.s / 2;                             // footprint = leaf size, centred on the sample
+    const fx0 = x - r, fx1 = x + r, fy0 = y - r, fy1 = y + r;
+    const res = { x, y, leaf, r, deposits: [], jitter: null };
+    if (mode === 'nn') {
+      leaf.e += 1; res.deposits.push([leaf, 1]);
+    } else if (mode === 'filter') {
+      const inside = overlap(fx0, fx1, 0, 1) * overlap(fy0, fy1, 0, 1);  // renormalise to the in-domain part
+      for (const l of leaves) {
+        const o = overlap(fx0, fx1, l.x0, l.x0 + l.s) * overlap(fy0, fy1, l.y0, l.y0 + l.s);
+        if (o > 0) { const w = o / inside; l.e += w; res.deposits.push([l, w]); }
+      }
+    } else {                                          // stochastic: jitter inside footprint, deposit into one leaf
+      let jx, jy;
+      do { jx = fx0 + Math.random() * 2 * r; jy = fy0 + Math.random() * 2 * r; } while (jx < 0 || jx >= 1 || jy < 0 || jy >= 1);
+      const l = leafAt(jx, jy); l.e += 1; res.deposits.push([l, 1]); res.jitter = [jx, jy];
+    }
+    if (record) last = res;
+    return res;
+  }
+
+  function sampleTarget() {                           // rejection sampling from the synthetic radiance
+    for (;;) { const x = Math.random(), y = Math.random(); if (Math.random() * 6.2 < target(x, y)) return [x, y]; }
+  }
+
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function mix(a, b, t) {
+    const pa = a.match(/\w\w/g).map(h => parseInt(h, 16)), pb = b.match(/\w\w/g).map(h => parseInt(h, 16));
+    return 'rgb(' + pa.map((v, i) => Math.round(v + (pb[i] - v) * t)).join(',') + ')';
+  }
+
+  function draw() {
+    const W = cv.width, P = 20, S = W - 2 * P, X = v => P + v * S, Y = v => P + (1 - v) * S;
+    ctx.clearRect(0, 0, W, W);
+    const lo = css('--cell-lo'), hi = css('--cell-hi');
+    if (showTarget) {
+      const n = 120, img = ctx.createImageData(n, n), c0 = lo.match(/\w\w/g).map(h => parseInt(h, 16)), c1 = hi.match(/\w\w/g).map(h => parseInt(h, 16));
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+        const t = Math.min(1, Math.log1p(target((i + 0.5) / n, 1 - (j + 0.5) / n)) / Math.log1p(6.05)), k = 4 * (j * n + i);
+        for (let c = 0; c < 3; c++) img.data[k + c] = c0[c] + (c1[c] - c0[c]) * t; img.data[k + 3] = 255;
+      }
+      const tmp = document.createElement('canvas'); tmp.width = tmp.height = n; tmp.getContext('2d').putImageData(img, 0, 0);
+      ctx.imageSmoothingEnabled = true; ctx.drawImage(tmp, P, P, S, S);
+    } else {
+      const dens = leaves.map(l => l.e / (l.s * l.s)), mx = Math.max(1e-9, ...dens);
+      leaves.forEach((l, i) => { ctx.fillStyle = mix(lo, hi, Math.log1p(dens[i]) / Math.log1p(mx)); ctx.fillRect(X(l.x0), Y(l.y0 + l.s), l.s * S, l.s * S); });
+    }
+    ctx.strokeStyle = css('--grid'); ctx.lineWidth = 2;
+    leaves.forEach(l => ctx.strokeRect(X(l.x0), Y(l.y0 + l.s), l.s * S, l.s * S));
+    if (last && !showTarget) {
+      ctx.strokeStyle = css('--foot'); ctx.lineWidth = 3;
+      if (mode !== 'nn') { ctx.setLineDash([10, 7]); ctx.strokeRect(X(last.x - last.r), Y(last.y + last.r), 2 * last.r * S, 2 * last.r * S); ctx.setLineDash([]); }
+      last.deposits.forEach(([l]) => ctx.strokeRect(X(l.x0) + 2, Y(l.y0 + l.s) + 2, l.s * S - 4, l.s * S - 4));
+      ctx.fillStyle = css('--sample'); ctx.beginPath(); ctx.arc(X(last.x), Y(last.y), 7, 0, 7); ctx.fill();
+      if (last.jitter) {
+        const [jx, jy] = last.jitter; ctx.strokeStyle = css('--sample'); ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(X(last.x), Y(last.y)); ctx.lineTo(X(jx), Y(jy)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X(jx) - 8, Y(jy) - 8); ctx.lineTo(X(jx) + 8, Y(jy) + 8); ctx.moveTo(X(jx) - 8, Y(jy) + 8); ctx.lineTo(X(jx) + 8, Y(jy) - 8); ctx.stroke();
+      }
+    }
+  }
+  window.draw = draw;
+
+  function describe() {
+    if (!last) { info.innerHTML = 'Click inside the quadtree to splat one radiance sample.'; return; }
+    const n = last.deposits.length, ws = last.deposits.map(d => d[1]).sort((a, b) => b - a);
+    const txt = {
+      nn: 'The whole sample goes into the leaf it fell in. Leaves learn unevenly: a leaf is only updated by samples inside it, so the approximation is best near leaf centres and worst at their borders.',
+      filter: 'A box the size of the containing leaf is centred on the sample, and its energy is shared among all overlapped leaves in proportion to the overlapped area (V<sub>o</sub>/V). Smaller leaves get a higher <i>density</i> because a larger fraction of their area is covered.',
+      stoch: 'The sample is jittered uniformly inside the same footprint and deposited, unweighted, into the single leaf it lands in. In expectation this equals deterministic filtering, at the cost of two lookups per splat.'
+    }[mode];
+    info.innerHTML = `<p>${txt}</p><p class="stat"><b>Leaves touched by this splat:</b> ${n}` +
+      (mode === 'filter' ? `<br><b>Largest weights:</b> ${ws.slice(0, 4).map(w => w.toFixed(3)).join(', ')}${n > 4 ? ', …' : ''}` : '') +
+      `<br><b>Total leaves:</b> ${leaves.length}</p>`;
+  }
+
+  function toUnit(ev) {
+    const r = cv.getBoundingClientRect(), P = 20 / cv.width;
+    return [((ev.clientX - r.left) / r.width - P) / (1 - 2 * P), 1 - ((ev.clientY - r.top) / r.height - P) / (1 - 2 * P)];
+  }
+  cv.addEventListener('click', ev => { const [x, y] = toUnit(ev); if (x >= 0 && x < 1 && y >= 0 && y < 1) { history.push([x, y]); splat(x, y); describe(); draw(); } });
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-mode]').forEach(o => o.classList.toggle('on', o === b));
+    mode = b.dataset.mode; leaves.forEach(l => l.e = 0); last = null;
+    history.forEach(([x, y], i) => splat(x, y, i === history.length - 1)); describe(); draw();
+  }));
+  document.getElementById('spray').addEventListener('click', () => { for (let i = 0; i < 300; i++) { const [x, y] = sampleTarget(); history.push([x, y]); splat(x, y, i === 299); } describe(); draw(); });
+  document.getElementById('reset').addEventListener('click', () => { leaves.forEach(l => l.e = 0); last = null; history = []; describe(); draw(); });
+  document.getElementById('showTarget').addEventListener('change', e => { showTarget = e.target.checked; draw(); });
+
+  // ---- theme sync with the parent page (same approach as the site's other widgets) ----
+  function detect() {
+    let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    try {
+      const pd = window.parent.document;
+      if (pd.documentElement.dataset.theme) dark = pd.documentElement.dataset.theme === 'dark';
+      else if (pd.body.classList.contains('dark')) dark = true;
+      else { const m = getComputedStyle(pd.body).backgroundColor.match(/\d+/g); if (m) dark = (m[0] * 299 + m[1] * 587 + m[2] * 114) / 1000 < 128; }
+    } catch (e) {}
+    return dark;
+  }
+  function apply() {
+    const root = document.documentElement, dark = detect();
+    if (dark !== (root.getAttribute('data-theme') === 'dark')) {   // only touch the attribute on change
+      if (dark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
+    }
+    draw();
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
+  try {
+    if (window.parent !== window) {                                  // embedded: follow the host page's theme toggle
+      const pd = window.parent.document, opts = { attributes: true, attributeFilter: ['class', 'data-theme'] };
+      new MutationObserver(apply).observe(pd.body, opts);
+      new MutationObserver(apply).observe(pd.documentElement, opts);
+    }
+  } catch (e) {}
+  apply(); describe();
+})();
+</script>
+</body>
+</html>

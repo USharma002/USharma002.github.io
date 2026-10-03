@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Bagging and Boosting | USharma Notes</title>
 <meta name="keywords" content="Bias-Variance, Model Generalization, Machine Learning">
 <meta name="description" content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="https://USharma002.github.io/posts/bagging-boosting/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.f0ca161328904bafa7e4c976e1ff460214546890e38ba32912dcac236d24d35d.css" integrity="sha256-8MoWEyiQS6&#43;n5Ml24f9GAhRUaJDji6MpEtysI20k010=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://USharma002.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
+<link rel="canonical" href="http://localhost:1313/posts/bagging-boosting/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0f75ca824028a06e5e6ed3271b5bf0fec07a1625dd122492902b2d7827b2ebf5.css" integrity="sha256-D3XKgkAooG5ebtMnG1vw/sB6FiXdEiSSkCsteCey6/U=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/bagging-boosting/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/bagging-boosting/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,76 +77,7 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/bagging-boosting/">
-  <meta property="og:site_name" content="USharma Notes">
-  <meta property="og:title" content="Bagging and Boosting">
-  <meta property="og:description" content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2025-11-08T00:00:00+00:00">
-    <meta property="article:modified_time" content="2025-11-08T00:00:00+00:00">
-    <meta property="article:tag" content="Bias-Variance">
-    <meta property="article:tag" content="Model Generalization">
-    <meta property="article:tag" content="Machine Learning">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Bagging and Boosting">
-<meta name="twitter:description" content="Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://USharma002.github.io/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Bagging and Boosting",
-      "item": "https://USharma002.github.io/posts/bagging-boosting/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Bagging and Boosting",
-  "name": "Bagging and Boosting",
-  "description": "Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction",
-  "keywords": [
-    "Bias-Variance", "Model Generalization", "Machine Learning"
-  ],
-  "articleBody": "Explore bagging and boosting in machine learning, including variance reduction, bias management, and ensemble classifier construction",
-  "wordCount" : "1823",
-  "inLanguage": "en",
-  "datePublished": "2025-11-08T00:00:00Z",
-  "dateModified": "2025-11-08T00:00:00Z",
-  "author":[{
-    "@type": "Person",
-    "name": "Utkarsh Sharma"
-  }],
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://USharma002.github.io/posts/bagging-boosting/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "USharma Notes",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://USharma002.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="" id="top">
@@ -164,7 +95,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -190,22 +121,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://USharma002.github.io/" title="Posts">
+                <a href="http://localhost:1313/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/archives/" title="Archive">
+                <a href="http://localhost:1313/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/tags/" title="Tags">
+                <a href="http://localhost:1313/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -216,7 +147,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Bagging and Boosting
     </h1>
@@ -237,11 +168,9 @@
                     <a href="#bias-variance-decomposition" aria-label="Bias Variance Decomposition">Bias Variance Decomposition</a></li>
                 <li>
                     <a href="#reducing-variance" aria-label="Reducing Variance">Reducing Variance</a><ul>
-                        <ul>
                         
                 <li>
-                    <a href="#weak-law-of-large-numbers" aria-label="Weak Law of Large Numbers">Weak Law of Large Numbers</a></li></ul>
-                    
+                    <a href="#weak-law-of-large-numbers" aria-label="Weak Law of Large Numbers">Weak Law of Large Numbers</a></li>
                 <li>
                     <a href="#bagging-bootstrap-aggregating" aria-label="Bagging (Bootstrap Aggregating)">Bagging (Bootstrap Aggregating)</a></li>
                 <li>
@@ -280,13 +209,13 @@
   <div class="post-content"><span style="color:red;font-weight:700;font-size:1.05em">
 This post is a work in progress and may be updated or expanded soon!
 </span>
-<h1 id="bias-variance-decomposition">Bias Variance Decomposition<a hidden class="anchor" aria-hidden="true" href="#bias-variance-decomposition">#</a></h1>
+<h2 id="bias-variance-decomposition">Bias Variance Decomposition<a hidden class="anchor" aria-hidden="true" href="#bias-variance-decomposition">#</a></h2>
 <p>Remember the Bias / Variance decomposition:
 </p>
 $$
 \underbrace{\mathbb{E}_{x, y, D}\!\left[\left(h_{D}(x) - y\right)^{2}\right]}_{\text{Expected Test Error}} = \underbrace{\mathbb{E}_{x, D}\!\left[\left(h_{D}(x) - \bar{h}(x)\right)^{2}\right]}_{\text{Variance}} + \underbrace{\mathbb{E}_{x, y}\!\left[\left(\bar{y}(x) - y\right)^{2}\right]}_{\text{Noise}} + \underbrace{\mathbb{E}_{x}\!\left[\left(\bar{h}(x) - \bar{y}(x)\right)^{2}\right]}_{\text{Bias}^2}
-$$<p>Out goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.</p>
-<h1 id="reducing-variance">Reducing Variance<a hidden class="anchor" aria-hidden="true" href="#reducing-variance">#</a></h1>
+$$<p>Our goal is to reduce the Error, while we cannot reduce the inherent noise, we can try to reduce the bias or the variance.</p>
+<h2 id="reducing-variance">Reducing Variance<a hidden class="anchor" aria-hidden="true" href="#reducing-variance">#</a></h2>
 <blockquote>
 <h3 id="weak-law-of-large-numbers">Weak Law of Large Numbers<a hidden class="anchor" aria-hidden="true" href="#weak-law-of-large-numbers">#</a></h3>
 <p>Given $X_1, X_2, \dots$ an infinite sequence of i.i.d. random variables with finite expected value</p>
@@ -330,7 +259,7 @@ $$
 $$<p>We refer to such an average of multiple predictors as an ensemble of predictors.</p>
 <p><strong>Good news:</strong> If $\hat{h}\rightarrow\bar{h}$ the variance component of the error must also vanish, i.e. </p>
 $$\mathbb{E}_{x,D}\left[\left(h_D(x) - \bar{h}(x)\right)^2\right] \rightarrow 0 $$<p><strong>Problem:</strong> We don&rsquo;t have $m$ data sets $D1,\dots,D_m$, we only have $D$.</p>
-<h2 id="bagging-bootstrap-aggregating">Bagging (Bootstrap Aggregating)<a hidden class="anchor" aria-hidden="true" href="#bagging-bootstrap-aggregating">#</a></h2>
+<h3 id="bagging-bootstrap-aggregating">Bagging (Bootstrap Aggregating)<a hidden class="anchor" aria-hidden="true" href="#bagging-bootstrap-aggregating">#</a></h3>
 <p>Simulate drawing from $p$ by drawing uniformly with replacement from the set $D$.
 i.e. let $q(x_i,y_i\mid D)$ be a probability distribution that picks a training sample $(x_i,y_i)$ from $D$ uniformly at random. More formally,
 </p>
@@ -341,7 +270,7 @@ $$\hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i}$$<p>Notice that for the bagged pre
 $$
 \hat{h} =\frac{1}{m} \sum_{i=1}^{m} h_{D_i} \nrightarrow \bar{h}
 $$<p>because the samples are not i.i.d. so cannot use W.L.L.N here, W.L.L.N only works for i.i.d. samples.</p>
-<h2 id="analysis">Analysis<a hidden class="anchor" aria-hidden="true" href="#analysis">#</a></h2>
+<h3 id="analysis">Analysis<a hidden class="anchor" aria-hidden="true" href="#analysis">#</a></h3>
 <p>Although we cannot prove that the new samples are i.i.d., we can show that they are drawn from the original distribution $p$. Assume $p$ is discrete, with $p(X=x_i)=p_i$ over some set $\Omega = x_1,\dots, x_N$ ($N$ very large) (let&rsquo;s ignore the label for now for simplicity)</p>
 $$
 \begin{equation*}
@@ -356,7 +285,7 @@ $$<p>There is a simple intuitive argument why $p(X=x_i)=q(X=x_i)$.</p>
 <p>So far we assumed that you draw $D$ from $p^n$ and then $q$ picks a sample from $D$. However, you don&rsquo;t have to do it in that order. You can also view sampling from $q$ in reverse order:</p>
 <p>Consider that you first use $q$ to reserve a &ldquo;spot&rdquo; in $D$, i.e. a number from $1,\dots,n$ where $i$ means that you sampled the $i^{th}$ data point in $D$. So far you only have the slot, $i$, and you still need to fill it with a data point $(x_i,y_i)$. You do this by sampling $(x_i,y_i)$ from $p$. It is now obvious that which slot you picked doesn&rsquo;t really matter, so we have $q(X=x)=p(X=x)$.</p>
 <hr>
-<h3 id="variance-of-bagged-estimator">Variance of Bagged Estimator<a hidden class="anchor" aria-hidden="true" href="#variance-of-bagged-estimator">#</a></h3>
+<h4 id="variance-of-bagged-estimator">Variance of Bagged Estimator<a hidden class="anchor" aria-hidden="true" href="#variance-of-bagged-estimator">#</a></h4>
 <p>The variance of the bagged estimator is:</p>
 $$Var(\hat{h}(x)) = Var\left( \frac{1}{m}\sum_{i=1}^{m} h_{D_i} \right)$$<p>If each model has variance $\sigma^2$ and pairwise correlation $\rho$, then:</p>
 $$Var(\hat{h}(x)) = \rho \sigma^2 + \frac{1 - \rho}{m}\sigma^2$$<blockquote>
@@ -391,10 +320,10 @@ $$<p>(Proof of equivalence:  $\rho + \frac{1-\rho}{m} = \frac{\rho m + 1 - \rho}
 <p><strong>Models are Independent</strong>, in which case the variance is reduced by a factor of $m$ since $\rho = 0$</p>
 </li>
 <li>
-<p><strong>Modela are not prefectly correlated</strong>, in which case the reduction depends on $\rho$</p>
+<p><strong>Models are not perfectly correlated</strong>, in which case the reduction depends on $\rho$</p>
 </li>
 <li>
-<p><strong>Modela are prefectly correlated</strong>, so no variance reduction at all.</p>
+<p><strong>Models are perfectly correlated</strong>, so no variance reduction at all.</p>
 </li>
 </ul>
 <p><strong>Why the models are not independent</strong><br>
@@ -412,7 +341,7 @@ S = |\text{unique}(D_i) \cap \text{unique}(D_j)|
 $$<p>be the number of <strong>distinct original items</strong> that appear in both bootstrap samples.<br>
 (This is the usual meaning of “intersection” in the bagging context.)</p>
 <hr>
-<h3 id="derivation">Derivation<a hidden class="anchor" aria-hidden="true" href="#derivation">#</a></h3>
+<h4 id="derivation">Derivation<a hidden class="anchor" aria-hidden="true" href="#derivation">#</a></h4>
 <p>For a fixed original item $k$ (one of the $n$ items), let</p>
 $$
 I_k =
@@ -439,7 +368,7 @@ $$<p>Hence,</p>
 $$
 \boxed{\mathbb{E}[\,|D_i \cap D_j|\,] = n \left( 1 - \left(1 - \frac{1}{n}\right)^{n} \right)^2.}
 $$<hr>
-<h3 id="large--approximation">Large-$n$ Approximation<a hidden class="anchor" aria-hidden="true" href="#large--approximation">#</a></h3>
+<h4 id="large--approximation">Large-$n$ Approximation<a hidden class="anchor" aria-hidden="true" href="#large--approximation">#</a></h4>
 <p>As $n \to \infty$,</p>
 $$
 \left(1 - \frac{1}{n}\right)^{n} \to e^{-1}.
@@ -450,14 +379,14 @@ $$
    \approx 0.3996\,n.
 $$<p>So about <strong>40% of the original items (on average)</strong> appear in both bootstrap samples.</p>
 <hr>
-<h3 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h3>
+<h4 id="intuition">Intuition<a hidden class="anchor" aria-hidden="true" href="#intuition">#</a></h4>
 <ul>
 <li>Probability that an item appears in one bootstrap sample: $p \approx 0.632$</li>
 <li>Probability that it appears in both: $p^2 \approx 0.3996$</li>
 <li>Thus, two bootstrap samples share roughly <strong>$0.4n$</strong> distinct items on average.</li>
 </ul>
 <hr>
-<h2 id="bagging-summary">Bagging Summary<a hidden class="anchor" aria-hidden="true" href="#bagging-summary">#</a></h2>
+<h3 id="bagging-summary">Bagging Summary<a hidden class="anchor" aria-hidden="true" href="#bagging-summary">#</a></h3>
 <p>You have a dataset $
 D = \{(x_1, y_1), \dots, (x_n, y_n)\}$ of size $n$.</p>
 <ol>
@@ -481,7 +410,7 @@ $$
    $$</li>
 </ol>
 <p>In practice larger $m$ results in a better ensemble, however at some point you will obtain <strong>diminishing returns</strong>. Note that setting $m$ unnecessarily high will only slow down your classifier but will not increase the error of your classifier.</p>
-<h2 id="advantages-of-bagging">Advantages of Bagging<a hidden class="anchor" aria-hidden="true" href="#advantages-of-bagging">#</a></h2>
+<h3 id="advantages-of-bagging">Advantages of Bagging<a hidden class="anchor" aria-hidden="true" href="#advantages-of-bagging">#</a></h3>
 <ul>
 <li>
 <p>Easy to implement</p>
@@ -490,7 +419,7 @@ $$
 <p>Reduces variance, so has a strong beneficial effect on high variance classifiers.</p>
 </li>
 <li>
-<p>As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainity of the prediction (especially in regression tasks)</p>
+<p>As prediction is an average of many classifier, we can obtain a mean score and variance which can be interpreted as the uncertainty of the prediction (especially in regression tasks)</p>
 </li>
 <li>
 <p>Bagging provides an unbiased estimate of the test error, which we refer to as the <strong>out-of-bag error</strong>. The idea is that each training point was not picked and all the data sets $D_k$. If we average the classifiers $h_k$ of all such data sets, we obtain a classifier (with a slightly smaller $m$) that was not trained on $(x_i, y_i)$ ever and it is therefore equivalent to a test sample. If we compute the error of all these classifiers, we obtain an estimate of the true test error. The beauty is that we can do this without reducing the training set. We just run bagging as it is intended and obtain this so called out-of-bag error for free.</p>
@@ -509,11 +438,11 @@ $$
   $$<p>This is an estimate of the test error, because for each training point we used the subset of classifiers that never saw that training point during training. If $m$ is sufficiently large, the fact that we take out some classifiers has no significant effect and the estimate is pretty reliable.</p>
 </li>
 </ul>
-<h2 id="random-forest">Random Forest<a hidden class="anchor" aria-hidden="true" href="#random-forest">#</a></h2>
+<h3 id="random-forest">Random Forest<a hidden class="anchor" aria-hidden="true" href="#random-forest">#</a></h3>
 <p>One of the most famous and useful bagged algorithms is the <strong>Random Forest</strong>!<br>
 A Random Forest is essentially nothing else but <strong>bagged decision trees</strong>, with a slightly modified splitting criterion.</p>
 <hr>
-<h3 id="algorithm">Algorithm<a hidden class="anchor" aria-hidden="true" href="#algorithm">#</a></h3>
+<h4 id="algorithm">Algorithm<a hidden class="anchor" aria-hidden="true" href="#algorithm">#</a></h4>
 <ol>
 <li>
 <p><strong>Bootstrap Sampling</strong></p>
@@ -537,7 +466,7 @@ $$
    $$</li>
 </ol>
 <hr>
-<h3 id="why-random-forests-work-so-well">Why Random Forests Work So Well<a hidden class="anchor" aria-hidden="true" href="#why-random-forests-work-so-well">#</a></h3>
+<h4 id="why-random-forests-work-so-well">Why Random Forests Work So Well<a hidden class="anchor" aria-hidden="true" href="#why-random-forests-work-so-well">#</a></h4>
 <p>The Random Forest (RF) is one of the <strong>best, most popular, and easiest-to-use out-of-the-box classifiers</strong>.<br>
 There are two main reasons for this:</p>
 <ol>
@@ -576,17 +505,17 @@ This post or widget may be updated further - more notes, findings, and backgroun
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://USharma002.github.io/tags/bias-variance/">Bias-Variance</a></li>
-      <li><a href="https://USharma002.github.io/tags/model-generalization/">Model Generalization</a></li>
-      <li><a href="https://USharma002.github.io/tags/machine-learning/">Machine Learning</a></li>
+      <li><a href="http://localhost:1313/tags/bias-variance/">Bias-Variance</a></li>
+      <li><a href="http://localhost:1313/tags/model-generalization/">Model Generalization</a></li>
+      <li><a href="http://localhost:1313/tags/machine-learning/">Machine Learning</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="https://USharma002.github.io/posts/bias-variance/">
+  <a class="prev" href="http://localhost:1313/posts/bias-variance/">
     <span class="title">« Prev</span>
     <br>
     <span>Bias–Variance Tradeoff</span>
   </a>
-  <a class="next" href="https://USharma002.github.io/posts/3d-reconstruction/">
+  <a class="next" href="http://localhost:1313/posts/3d-reconstruction/">
     <span class="title">Next »</span>
     <br>
     <span>3D Reconstruction with 3DGS, NeRF, and Their Variants</span>
@@ -598,7 +527,7 @@ This post or widget may be updated further - more notes, findings, and backgroun
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
 
     <span>
         Powered by

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Vision Transformer (ViT) - Architecture and Implementation | USharma Notes</title>
 <meta name="keywords" content="Transformer, Attention, Self-Attention, Deep Learning">
 <meta name="description" content="Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture">
 <meta name="author" content="Utkarsh Sharma">
-<link rel="canonical" href="https://USharma002.github.io/posts/transformer-model/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.f0ca161328904bafa7e4c976e1ff460214546890e38ba32912dcac236d24d35d.css" integrity="sha256-8MoWEyiQS6&#43;n5Ml24f9GAhRUaJDji6MpEtysI20k010=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://USharma002.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://USharma002.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://USharma002.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://USharma002.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://USharma002.github.io/safari-pinned-tab.svg">
+<link rel="canonical" href="http://localhost:1313/posts/transformer-model/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0f75ca824028a06e5e6ed3271b5bf0fec07a1625dd122492902b2d7827b2ebf5.css" integrity="sha256-D3XKgkAooG5ebtMnG1vw/sB6FiXdEiSSkCsteCey6/U=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://USharma002.github.io/posts/transformer-model/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/transformer-model/">
 <noscript>
     <style>
         #theme-toggle,
@@ -77,77 +77,7 @@
   };
 </script>
 
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script><meta property="og:url" content="https://USharma002.github.io/posts/transformer-model/">
-  <meta property="og:site_name" content="USharma Notes">
-  <meta property="og:title" content="Vision Transformer (ViT) - Architecture and Implementation">
-  <meta property="og:description" content="Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture">
-  <meta property="og:locale" content="en">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2025-11-04T00:00:00+00:00">
-    <meta property="article:modified_time" content="2025-11-04T00:00:00+00:00">
-    <meta property="article:tag" content="Transformer">
-    <meta property="article:tag" content="Attention">
-    <meta property="article:tag" content="Self-Attention">
-    <meta property="article:tag" content="Deep Learning">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Vision Transformer (ViT) - Architecture and Implementation">
-<meta name="twitter:description" content="Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://USharma002.github.io/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Vision Transformer (ViT) - Architecture and Implementation",
-      "item": "https://USharma002.github.io/posts/transformer-model/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Vision Transformer (ViT) - Architecture and Implementation",
-  "name": "Vision Transformer (ViT) - Architecture and Implementation",
-  "description": "Exploring the Multi-Head Self-Attention mechanism and the Transformer architecture",
-  "keywords": [
-    "Transformer", "Attention", "Self-Attention", "Deep Learning"
-  ],
-  "articleBody": "Understanding how transformers use scaled dot-product attention with multiple heads to process sequential data efficiently",
-  "wordCount" : "3976",
-  "inLanguage": "en",
-  "datePublished": "2025-11-04T00:00:00Z",
-  "dateModified": "2025-11-04T00:00:00Z",
-  "author":[{
-    "@type": "Person",
-    "name": "Utkarsh Sharma"
-  }],
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://USharma002.github.io/posts/transformer-model/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "USharma Notes",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://USharma002.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="" id="top">
@@ -165,7 +95,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://USharma002.github.io/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
+            <a href="http://localhost:1313/" accesskey="h" title="USharma Notes (Alt + H)">USharma Notes</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -191,22 +121,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://USharma002.github.io/" title="Posts">
+                <a href="http://localhost:1313/" title="Posts">
                     <span>Posts</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/archives/" title="Archive">
+                <a href="http://localhost:1313/archives/" title="Archive">
                     <span>Archive</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/tags/" title="Tags">
+                <a href="http://localhost:1313/tags/" title="Tags">
                     <span>Tags</span>
                 </a>
             </li>
             <li>
-                <a href="https://USharma002.github.io/about/" title="About">
+                <a href="http://localhost:1313/about/" title="About">
                     <span>About</span>
                 </a>
             </li>
@@ -217,7 +147,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://USharma002.github.io/">Home</a>&nbsp;»&nbsp;<a href="https://USharma002.github.io/posts/">Posts</a></div>
+    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a>&nbsp;»&nbsp;<a href="http://localhost:1313/posts/">Posts</a></div>
     <h1 class="post-title entry-hint-parent">
       Vision Transformer (ViT) - Architecture and Implementation
     </h1>
@@ -269,7 +199,7 @@
                     <a href="#vit-decoder" aria-label="ViT Decoder">ViT Decoder</a><ul>
                         
                 <li>
-                    <a href="#masked-self-attention-block" aria-label="Masked Self Attention BLock">Masked Self Attention BLock</a></li>
+                    <a href="#masked-self-attention-block" aria-label="Masked Self-Attention Block">Masked Self-Attention Block</a></li>
                 <li>
                     <a href="#cross-attention" aria-label="Cross Attention">Cross Attention</a></li>
                 <li>
@@ -285,7 +215,7 @@
     </details>
 </div>
 
-  <div class="post-content"><h1 id="transformer-model">Transformer Model<a hidden class="anchor" aria-hidden="true" href="#transformer-model">#</a></h1>
+  <div class="post-content"><h2 id="transformer-model">Transformer Model<a hidden class="anchor" aria-hidden="true" href="#transformer-model">#</a></h2>
 <p>It uses encoder-decoder structure where both encoder block and decoder block have an attention mechanism.</p>
 <figure id="fig-1" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:50%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/transformer/transformer_architecture.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
@@ -474,7 +404,7 @@
   });
 })();
 </script>
-<h2 id="positional-encoding">Positional Encoding<a hidden class="anchor" aria-hidden="true" href="#positional-encoding">#</a></h2>
+<h3 id="positional-encoding">Positional Encoding<a hidden class="anchor" aria-hidden="true" href="#positional-encoding">#</a></h3>
 <p>If $d_{model}$ is our embedding dimension, and $T$ is the sequence length, the input can be represented as
 </p>
 $$X\in\mathbb{R}^{T \times d_{model}}$$<p>As an example, we have $d_{model}=768$ and a sequence length $T=9$, for the following:</p>
@@ -530,7 +460,7 @@ $$ PE(pos, 2i + 1) = cos(pos/ 10000^{2i/d_{model}}) $$<p>where $pos$ is the posi
     </figcaption></figure>
 
 
-<h2 id="attention">Attention<a hidden class="anchor" aria-hidden="true" href="#attention">#</a></h2>
+<h3 id="attention">Attention<a hidden class="anchor" aria-hidden="true" href="#attention">#</a></h3>
 <p>The attention mechanism describes how &ldquo;important&rdquo; some features are and how much we want to &ldquo;attend&rdquo; to them. The kind of attention we use here <em>describes a weighted average of (sequence) elements with the weights dynamically computed based on an input query and element&rsquo;s keys</em>.</p>
 <ul>
 <li>
@@ -558,7 +488,7 @@ $$<p>What queries to use, how the key and value vectors are defined and what sco
     </figcaption></figure>
 
 
-<h2 id="scaled-dot-product-attention">Scaled Dot Product Attention<a hidden class="anchor" aria-hidden="true" href="#scaled-dot-product-attention">#</a></h2>
+<h3 id="scaled-dot-product-attention">Scaled Dot Product Attention<a hidden class="anchor" aria-hidden="true" href="#scaled-dot-product-attention">#</a></h3>
 <p>The core concept behind self-attention is the scaled dot product attention. Our goal is to have an attention mechanism with which any element in a sequence can attend to any other while being efficient to compute.</p>
 <p>The dot product attention takes as input the following:</p>
 <ul>
@@ -654,7 +584,7 @@ $$<p>If we do not scale down variance back to $\sim\sigma^2$, the softmax over t
 </span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">attention</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> 
 </span></span><span class="line"><span class="cl">    
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attention</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>  <span class="c1"># (B, L, d_k)</span>
-</span></span></code></pre></div><h2 id="multi-head-attention">Multi Head Attention<a hidden class="anchor" aria-hidden="true" href="#multi-head-attention">#</a></h2>
+</span></span></code></pre></div><h3 id="multi-head-attention">Multi Head Attention<a hidden class="anchor" aria-hidden="true" href="#multi-head-attention">#</a></h3>
 <p>The scaled dot product attention allows a network to attend over a sequence. However, often there are multiple different aspects a sequence element wants to attend to, and a single weighted average is not a good option for it. So, we extend the attention mechanism to multiple heads, i.e., multiple query-key-value triples on the same features.</p>
 <p>Specifically, given a query, key, and value matrix, we transform $h$ subqueries, sub-keys, and sub-values, which we pass through the scaled dot product attention independently. Afterward, we concatenate the heads, combine them with a final weight matrix. Mathematically, this can be expressed as:</p>
 $$
@@ -718,8 +648,8 @@ $$<p>We refer to this as Multi-Head Attention layer with the learnable parameter
 </span></span><span class="line"><span class="cl">        <span class="n">Z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">head_outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>                   <span class="c1"># (B, L, num_heads*d_v)</span>
 </span></span><span class="line"><span class="cl">        <span class="n">O</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wo</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>                                        <span class="c1"># (B, L, d_model)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">O</span>                                              <span class="c1"># residual</span>
-</span></span></code></pre></div><h3 id="multi-head-attention-is-permutation-invariant">Multi-head attention is Permutation Invariant<a hidden class="anchor" aria-hidden="true" href="#multi-head-attention-is-permutation-invariant">#</a></h3>
-<p>One curcial characteristic of the mlti head attention is that it is permutation invariant with respect to it&rsquo;s inputs. This means if we switch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.</p>
+</span></span></code></pre></div><h4 id="multi-head-attention-is-permutation-invariant">Multi-head attention is Permutation Invariant<a hidden class="anchor" aria-hidden="true" href="#multi-head-attention-is-permutation-invariant">#</a></h4>
+<p>One crucial characteristic of multi-head attention is that it is permutation invariant with respect to it&rsquo;s inputs. This means if we switch two input elements in sequence, e.g. $X_1\leftrightarrow X_2$ (neglecting the batch dimension for now), the output is exactly the same besides the elements 1 and 2 switched.</p>
 <p><strong>Proof :</strong> Let $P$ be a permutation matrix and $X$ the input.</p>
 $$
 Q = XW^Q,\quad K = XW^K,\quad V = XW^V
@@ -738,8 +668,8 @@ $$
 $$$$
 \boxed{\text{Att}(PX) = P\,\text{Att}(X)}
 $$<p>Hence, self-attention (without positional encodings) is <strong>permutation-equivariant</strong>.</p>
-<p>Hence, the multi-head attention is actually looking at the input not as a sequence, but as a set of elements, that&rsquo;s why we need to encode the position int hte input features.</p>
-<h2 id="feed-forward-network">Feed Forward Network<a hidden class="anchor" aria-hidden="true" href="#feed-forward-network">#</a></h2>
+<p>Hence, the multi-head attention is actually looking at the input not as a sequence, but as a set of elements, that&rsquo;s why we need to encode the position in the input features.</p>
+<h3 id="feed-forward-network">Feed Forward Network<a hidden class="anchor" aria-hidden="true" href="#feed-forward-network">#</a></h3>
 <p>Additionally to the Multi-Head Attention, a small fully connected feed-forward network is added to the model, which is applied to each position separately and identically. Specifically, the model uses a Linear $\rightarrow$ ReLU (GeLU in this case) $\rightarrow$ Linear MLP. The full transformation including the residual connection can be expressed as:</p>
 $$
 \begin{align*}
@@ -759,10 +689,10 @@ $$<p>This MLP adds extra complexity to the model and allows transformations on e
 </span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 </span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span>
-</span></span></code></pre></div><h2 id="encoder-block">Encoder Block<a hidden class="anchor" aria-hidden="true" href="#encoder-block">#</a></h2>
+</span></span></code></pre></div><h3 id="encoder-block">Encoder Block<a hidden class="anchor" aria-hidden="true" href="#encoder-block">#</a></h3>
 <p>Originally, the Transformer model was designed for machine translation. Hence, it got an encoder-decoder structure where the encoder takes as input the sentence in the original language and generates an attention-based representation. On the other hand, the decoder attends over the encoded information and generates the translated sentence in an autoregressive manner, as in a standard RNN. While this structure is extremely useful for Sequence-to-Sequence tasks with the necessity of autoregressive decoding, we will focus here on the encoder part</p>
 <p>The encoder consists of $N$ identical blocks that are applied in sequence. Taking as input $x$, it is first passed through a Multi-Head Attention block as we have implemented above. The output is added to the original input using a residual connection, and we apply a consecutive Layer Normalization on the sum. Overall it calculates $LayerNorm(x + multihead(Q, K, V))$</p>
-<p>The residual connection in crucial in Transformer architecture for two reasonfs:</p>
+<p>The residual connection is crucial in the Transformer architecture for two reasons:</p>
 <ol>
 <li>
 <p>The residual connections are crucial for enabling a smooth gradient flow through the deep model.</p>
@@ -795,7 +725,7 @@ $$<p>This MLP adds extra complexity to the model and allows transformations on e
 </span></span><span class="line"><span class="cl">        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff_norm</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feed_forward</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
 </span></span><span class="line"><span class="cl">        
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">x</span>
-</span></span></code></pre></div><h2 id="decoder-block">Decoder Block<a hidden class="anchor" aria-hidden="true" href="#decoder-block">#</a></h2>
+</span></span></code></pre></div><h3 id="decoder-block">Decoder Block<a hidden class="anchor" aria-hidden="true" href="#decoder-block">#</a></h3>
 <p>Now that we’ve covered most of the concepts on the encoder side, we basically know how the components of decoders work as well. But let’s take a look at how they work together.</p>
 <p>The encoder start by processing the input sequence. The output of the top encoder is then transformed into a set of attention vectors $K$ and $V$. These are to be used by each decoder in its &ldquo;encoder-decoder attention&rdquo;/Cross Attention layer which helps the decoder focus on appropriate places in the input sequence.</p>
 <figure id="fig-decoding" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
@@ -807,10 +737,10 @@ $$<p>This MLP adds extra complexity to the model and allows transformations on e
 
 <p>The “Encoder-Decoder Attention” layer works just like multiheaded self-attention, except it creates its Queries matrix from the layer below it, and takes the Keys and Values matrix from the output of the encoder stack.
 In the decoder, the self-attention layer is only allowed to attend to earlier positions in the output sequence. This is done by masking future positions (setting them to $-\infty$) before the softmax step in the self-attention calculation.</p>
-<h1 id="vision-transformer-vit">Vision Transformer (ViT)<a hidden class="anchor" aria-hidden="true" href="#vision-transformer-vit">#</a></h1>
-<p>To apply Transformders to sequences, we ahve simply added a positional encoding to the input feature vectors, and the model learned by itself what to do with it. So, why not do the same thing on images?</p>
+<h2 id="vision-transformer-vit">Vision Transformer (ViT)<a hidden class="anchor" aria-hidden="true" href="#vision-transformer-vit">#</a></h2>
+<p>To apply Transformers to sequences, we have simply added a positional encoding to the input feature vectors, and the model learned by itself what to do with it. So, why not do the same thing on images?</p>
 <p>This is what the paper &ldquo;An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale&rdquo;. Specifically, the Vision transformer is a model for image classification that views images as sequence of smaller patches.</p>
-<p>Each of thise patches is considered to be a &ldquo;word&rdquo;/&ldquo;token&rdquo; and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.</p>
+<p>Each of these patches is considered to be a &ldquo;word&rdquo;/&ldquo;token&rdquo; and projected to a feature space. With adding positional encodings and a token for classification on top, we can apply a Transformer as usual to this sequence and start training it for our task.</p>
 <figure id="fig-vit-animation" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/transformer/vit.gif" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 14.</span>
@@ -853,7 +783,7 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </span></span></code></pre></div><ul>
 <li>An <strong>MLP head</strong> that takes the output feature vector of the CLS token, and maps it to a classification prediction. This is usually implemented by a small feed-forward network or even a single linear layer.</li>
 </ul>
-<h3 id="implementation">Implementation<a hidden class="anchor" aria-hidden="true" href="#implementation">#</a></h3>
+<h4 id="implementation">Implementation<a hidden class="anchor" aria-hidden="true" href="#implementation">#</a></h4>
 <p>We use the Pre-Layer Normalization version of the Transformer blocks proposed by <a href="http://proceedings.mlr.press/v119/xiong20b/xiong20b.pdf">Ruibin Xiong et al.</a> in 2020. The idea is to apply Layer Normalization not in between residual blocks, but instead as a first layer in the residual blocks. This reorganization of the layers supports better gradient flow and removes the necessity of a warm-up stage. A visualization of the difference between the standard Post-LN and the Pre-LN version is shown below.</p>
 <figure id="fig-pre-layer-norm" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image" src="/images/transformer/pre_layer_norm.svg" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
@@ -912,7 +842,7 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </span></span><span class="line"><span class="cl">        <span class="n">cls_output</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 </span></span><span class="line"><span class="cl">        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">cls_output</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">logits</span>
-</span></span></code></pre></div><h2 id="visualizing-attention">Visualizing Attention<a hidden class="anchor" aria-hidden="true" href="#visualizing-attention">#</a></h2>
+</span></span></code></pre></div><h3 id="visualizing-attention">Visualizing Attention<a hidden class="anchor" aria-hidden="true" href="#visualizing-attention">#</a></h3>
 <p>I trained the above ViT on STL10 Images using the following hyperparams:</p>
 <table>
   <thead>
@@ -983,10 +913,10 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
     </figcaption></figure>
 
 
-<p>From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to &ldquo;attend&rdquo; more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some &ldquo;shortcuts&rdquo; like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model <strong>might</strong> be trying to do but is not an explaination of why it predicted a certain class for an image.</p>
-<h2 id="vit-decoder">ViT Decoder<a hidden class="anchor" aria-hidden="true" href="#vit-decoder">#</a></h2>
+<p>From the attention visualization, we can see that for some images (Deer, airplane, Car), the model is trying to &ldquo;attend&rdquo; more on the object that we are trying to classify thus suggesting that it has learnt to look at more semantically meaningful regions but that is not the case for all images, and this might be due to model trying to find some &ldquo;shortcuts&rdquo; like texture/background to predict instead of correctly identifying pattern. Thus, this visualization can give us a hint of what model <strong>might</strong> be trying to do but is not an explanation of why it predicted a certain class for an image.</p>
+<h3 id="vit-decoder">ViT Decoder<a hidden class="anchor" aria-hidden="true" href="#vit-decoder">#</a></h3>
 <p>The ViT Decoder generates or reconstructs image patches by attending to both its own tokens and the encoded image features. It consists of three main components and can operate in two modes: parallel reconstruction or autoregressive generation.</p>
-<h3 id="masked-self-attention-block">Masked Self Attention BLock<a hidden class="anchor" aria-hidden="true" href="#masked-self-attention-block">#</a></h3>
+<h4 id="masked-self-attention-block">Masked Self-Attention Block<a hidden class="anchor" aria-hidden="true" href="#masked-self-attention-block">#</a></h4>
 <p>This allows the decoder to consider only past tokens in the sequence by applying a causal mask, ensuring predictions are autoregressive and do not peek into the future. The mask sets the upper triangular attention scores to $-\infty$, effectively preventing access to future positions.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">causal_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </span></span></code></pre></div><p>Note:</p>
@@ -994,10 +924,10 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 <li>The causal mask is only required for autoregressive generation where patches are predicted sequentially. For parallel reconstruction tasks (like image reconstruction or masked autoencoding), set <code>mask=None</code> to allow bidirectional attention, which is more suitable for vision tasks where spatial relationships are non-sequential.</li>
 <li>When <code>mask=None</code>, this behaves as standard self-attention (suitable for parallel reconstruction).</li>
 </ul>
-<figure id="fig-attention-viz" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
+<figure id="fig-masked-attention" class="zoomable-figure" style="text-align:center;margin:2em auto;max-width:100%;scroll-margin-top:80px;">
   <img class="zoomable-image no-invert" src="/images/transformer/attention_comparison.png" alt="" loading="eager" decoding="async" style="width:100%;height:auto;border-radius:8px;cursor:zoom-in;"><figcaption style="margin-top:0.5em;font-size:0.9em;color:var(--secondary);">
       <span style="font-weight:600;user-select:none;color:var(--primary);">Figure 18.</span>
-      Masked Self Attention
+      Masked self-attention: the causal mask sets the upper-triangular scores to $-\infty$ so a position cannot attend to future tokens.
     </figcaption></figure>
 
 
@@ -1039,7 +969,7 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </span></span><span class="line"><span class="cl">        <span class="n">Z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">head_outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>                   <span class="c1"># (B, T, num_heads*d_v)</span>
 </span></span><span class="line"><span class="cl">        <span class="n">O</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wo</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>                                        <span class="c1"># (B, T, d_model)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">O</span>                                              <span class="c1"># residual</span>
-</span></span></code></pre></div><h3 id="cross-attention">Cross Attention<a hidden class="anchor" aria-hidden="true" href="#cross-attention">#</a></h3>
+</span></span></code></pre></div><h4 id="cross-attention">Cross Attention<a hidden class="anchor" aria-hidden="true" href="#cross-attention">#</a></h4>
 <p>The cross-attention layer allows the decoder to query information from the encoder&rsquo;s output. The decoder&rsquo;s queries ($Q$) attend to keys ($K$) and values ($V$) derived from the encoder, integrating the rich image representations with the decoding process.</p>
 <p>Key difference from self-attention: $K$ and $V$ come from the encoder output, while $Q$ comes from the decoder&rsquo;s hidden state.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">CrossAttentionBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -1077,7 +1007,7 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </span></span><span class="line"><span class="cl">        <span class="n">Z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">head_outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>                   <span class="c1"># (B, T, num_heads*d_v)</span>
 </span></span><span class="line"><span class="cl">        <span class="n">O</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Wo</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>                                        <span class="c1"># (B, T, d_model)</span>
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">O</span>                                              <span class="c1"># residual</span>
-</span></span></code></pre></div><h3 id="decoder-block-1">Decoder Block<a hidden class="anchor" aria-hidden="true" href="#decoder-block-1">#</a></h3>
+</span></span></code></pre></div><h4 id="decoder-block-1">Decoder Block<a hidden class="anchor" aria-hidden="true" href="#decoder-block-1">#</a></h4>
 <p>Putting everything together in a decoder block. The architecture follows the standard Transformer decoder design:</p>
 <ul>
 <li><strong>Masked Self-Attention</strong> - Attend to previous tokens (with optional causal mask)</li>
@@ -1148,7 +1078,7 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 </span></span><span class="line"><span class="cl">            <span class="n">x</span> <span class="o">=</span> <span class="n">block</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">encoder_output</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
 </span></span><span class="line"><span class="cl">        
 </span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-</span></span></code></pre></div><h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
+</span></span></code></pre></div><h3 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h3>
 <ol>
 <li>
 <p>Vaswani, Ashish, et al. <em>“Attention Is All You Need.”</em> <em>Advances in Neural Information Processing Systems (NeurIPS 2017)</em>, 2017. <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">arXiv:1706.03762</a>.</p>
@@ -1175,18 +1105,18 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://USharma002.github.io/tags/transformer/">Transformer</a></li>
-      <li><a href="https://USharma002.github.io/tags/attention/">Attention</a></li>
-      <li><a href="https://USharma002.github.io/tags/self-attention/">Self-Attention</a></li>
-      <li><a href="https://USharma002.github.io/tags/deep-learning/">Deep Learning</a></li>
+      <li><a href="http://localhost:1313/tags/transformer/">Transformer</a></li>
+      <li><a href="http://localhost:1313/tags/attention/">Attention</a></li>
+      <li><a href="http://localhost:1313/tags/self-attention/">Self-Attention</a></li>
+      <li><a href="http://localhost:1313/tags/deep-learning/">Deep Learning</a></li>
     </ul>
 <nav class="paginav">
-  <a class="prev" href="https://USharma002.github.io/posts/linear-regression/">
+  <a class="prev" href="http://localhost:1313/posts/linear-regression/">
     <span class="title">« Prev</span>
     <br>
     <span>Linear Regression with MLE and MAP</span>
   </a>
-  <a class="next" href="https://USharma002.github.io/posts/bias-variance/">
+  <a class="next" href="http://localhost:1313/posts/bias-variance/">
     <span class="title">Next »</span>
     <br>
     <span>Bias–Variance Tradeoff</span>
@@ -1198,7 +1128,7 @@ In the decoder, the self-attention layer is only allowed to attend to earlier po
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://USharma002.github.io/">USharma Notes</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">USharma Notes</a></span> · 
 
     <span>
         Powered by

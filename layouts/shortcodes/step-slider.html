@@ -1,6 +1,9 @@
 {{- $data := .Inner | transform.Unmarshal -}}
 {{- $animate := .Get "animate" | default "true" -}}
-{{- $width := .Get "width" | default "100%" -}}
+{{- $width := .Get "width" | default "75%" -}}
+{{- if not (or (hasSuffix $width "%") (hasSuffix $width "px") (hasSuffix $width "rem") (hasSuffix $width "em") (hasSuffix $width "vw")) -}}
+  {{- $width = printf "%s%%" $width -}}
+{{- end -}}
 {{- $noinvert := .Get "noinvert" -}}
 {{- $id := printf "step-slider-%d" .Ordinal -}}
 
@@ -37,7 +40,7 @@
 
 <div class="step-slider-container {{ if eq $animate "false" }}no-anim{{ end }}"
      id="{{ $id }}"
-     style="width: {{ $width }};"
+     style="width: {{ $width }}; max-width: 100%;"
      data-slides='{{ jsonify $data }}'>
 
   <div class="step-viewport">
@@ -57,7 +60,6 @@
 
   <!-- Footer Area (Title + Desc) -->
   <div class="step-footer">
-    <div class="step-active-label">Step 1 / {{ len $data }}</div>
     <div class="step-title"></div>
     <div class="step-description"></div>
   </div>
@@ -191,7 +193,7 @@
       const descEl  = container.querySelector('.step-description');
       const labelEl = container.querySelector('.step-active-label');
 
-      if (!titleEl || !descEl || !labelEl) return;
+      if (!titleEl || !descEl) return;
 
       titleEl.style.opacity = 0;
       descEl.style.opacity = 0;
@@ -224,7 +226,9 @@
         titleEl.innerHTML = safeTitle;
         descEl.innerHTML  = safeDesc;
 
-        labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        if (labelEl) {
+          labelEl.textContent = `Step ${index + 1} / ${slides.length}`;
+        }
         container.querySelector('.btn-prev').disabled = (index === 0);
         container.querySelector('.btn-next').disabled = (index === slides.length - 1);
 

@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Light Path Expressions</title>
     <style>
+        :root {
+            --ink:        #000000;
+            --ink-soft:   #b0b0b0;
+            --wall:       #b0b0b0;
+            --sphere:     #a2c4e6;
+            --sphere-line:#081e30;
+            --bulb-glass: #fff8e1;
+            --bulb-base:  #dddddd;
+            --halo:       #ffffff;
+        }
+
+        html, body { background: transparent; }
+
         body {
             margin: 0;
             padding: 0;
@@ -12,7 +25,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffffff;
+            background-color: transparent;
             font-family: 'Times New Roman', serif;
         }
 
@@ -30,28 +43,28 @@
         }
 
         /* Static Geometry */
-        .wall { fill: #b0b0b0; }
+        .wall { fill: var(--wall); }
         
         .specular-sphere {
-            fill: #a2c4e6; /* Light Blue */
-            stroke: #081e30;
+            fill: var(--sphere); /* Light Blue */
+            stroke: var(--sphere-line);
             stroke-width: 4;
         }
 
         .grid-lines {
-            stroke: #000;
+            stroke: var(--ink);
             stroke-width: 1.5;
             fill: none;
         }
 
         .eye {
             fill: none;
-            stroke: #000;
+            stroke: var(--ink);
             stroke-width: 3;
         }
         
-        .bulb-glass { fill: #fff8e1; stroke: #000; stroke-width: 2; }
-        .bulb-base { fill: #ddd; stroke: #000; stroke-width: 2; }
+        .bulb-glass { fill: var(--bulb-glass); stroke: var(--ink); stroke-width: 2; }
+        .bulb-base { fill: var(--bulb-base); stroke: var(--ink); stroke-width: 2; }
         .filament { fill: none; stroke: #f0a500; stroke-width: 2; }
 
         /* Rays */
@@ -76,7 +89,7 @@
         /* Labels (Text in the scene) */
         .scene-label {
             font-size: 28px;
-            fill: #b0b0b0; /* Light gray default */
+            fill: var(--ink-soft); /* Light gray default */
             font-weight: bold;
             cursor: pointer;
             transition: fill 0.3s ease;
@@ -84,14 +97,14 @@
         }
 
         .scene-label:hover, .scene-label.active {
-            fill: #000; /* Dark when active */
+            fill: var(--ink); /* Dark when active */
         }
         
         .object-label {
             font-family: sans-serif;
             font-weight: bold;
             font-size: 24px;
-            fill: #000;
+            fill: var(--ink);
             pointer-events: none;
         }
 
@@ -100,8 +113,8 @@
             font-family: 'Courier New', monospace;
             font-weight: bold;
             font-size: 20px;
-            fill: #000;
-            text-shadow: 0 0 4px #fff, 0 0 4px #fff;
+            fill: var(--ink);
+            text-shadow: 0 0 4px var(--halo), 0 0 4px var(--halo);
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
@@ -138,7 +151,7 @@
 
         <g transform="translate(50, 270) scale(0.8)">
             <path d="M0,0 Q30,-30 60,0 Q30,30 0,0" class="eye" />
-            <circle cx="30" cy="0" r="12" fill="#000" />
+            <circle cx="30" cy="0" r="12" fill="var(--ink)" />
         </g>
 
         <circle cx="530" cy="310" r="75" class="specular-sphere" />
@@ -260,6 +273,46 @@
         pathEl.addEventListener('mouseleave', deactivateAll);
     });
 
+</script>
+
+<script>
+    // Match the host page's theme so the figure reads as part of the article.
+    function applyTheme(isDark) {
+        const r = document.documentElement.style;
+        if (isDark) {
+            r.setProperty('--ink',         '#d7d7d9');
+            r.setProperty('--ink-soft',    '#6f7276');
+            r.setProperty('--wall',        '#3a3c40');
+            r.setProperty('--sphere',      '#4a7fae');
+            r.setProperty('--sphere-line', '#cfe3f5');
+            r.setProperty('--bulb-glass',  '#6b5a28');
+            r.setProperty('--bulb-base',   '#5a5c60');
+            r.setProperty('--halo',        '#1d1e20');
+        } else {
+            r.setProperty('--ink',         '#000000');
+            r.setProperty('--ink-soft',    '#b0b0b0');
+            r.setProperty('--wall',        '#b0b0b0');
+            r.setProperty('--sphere',      '#a2c4e6');
+            r.setProperty('--sphere-line', '#081e30');
+            r.setProperty('--bulb-glass',  '#fff8e1');
+            r.setProperty('--bulb-base',   '#dddddd');
+            r.setProperty('--halo',        '#ffffff');
+        }
+    }
+
+    function detectTheme() {
+        try {
+            const bg = window.getComputedStyle(window.parent.document.body).backgroundColor;
+            const rgb = bg.match(/\d+/g);
+            if (rgb) {
+                const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+                applyTheme(brightness < 128);
+            }
+        } catch (e) { /* cross-origin: keep the light default */ }
+    }
+
+    detectTheme();
+    setInterval(detectTheme, 1000);
 </script>
 
 </body>

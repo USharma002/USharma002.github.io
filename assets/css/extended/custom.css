@@ -698,3 +698,62 @@ body:not(.dark) .chroma .p {
 }
 
 /* Hide the return arrow ↩ */
+
+/* ------------------------------------------------------------------
+   Semantic colouring for transport equations.
+
+   Light-carrying quantities (L_o, L_e, L_i, E_x) vs scattering
+   quantities (f_r, f_s). Used via MathJax \class{...} so the colour
+   adapts per theme instead of being baked into the TeX as a literal
+   hex -- a fixed orange that reads well on the dark theme drops to
+   ~2.5:1 contrast on the light one.
+
+   All four values clear WCAG AA (4.5:1) against their own background.
+   ------------------------------------------------------------------ */
+:root {
+    --term-light: #b45309;  /* 5.02:1 on #fff */
+    --term-bsdf:  #0e7490;  /* 5.36:1 on #fff */
+}
+
+.dark {
+    --term-light: #e69138;  /* 6.73:1 on #1d1e20 */
+    --term-bsdf:  #3fb5d4;  /* 6.97:1 on #1d1e20 */
+}
+
+.term-light { color: var(--term-light); }
+.term-bsdf  { color: var(--term-bsdf);  }
+
+/* Inline legend swatches next to the first equation */
+.term-key { display: inline-flex; align-items: center; gap: 0.4em; }
+.term-key::before {
+    content: "";
+    width: 0.75em;
+    height: 0.75em;
+    border-radius: 2px;
+    background: currentColor;
+}
+
+
+/* ------------------------------------------------------------------
+   Display math on narrow screens.
+
+   Long aligned derivations (and a few inherently wide definitions) are
+   wider than the content column on phones. Without this they either
+   clip or force the whole page to scroll sideways; scoping the scroll
+   to the equation keeps the article column fixed.
+   ------------------------------------------------------------------ */
+mjx-container[display="true"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    padding-block: 2px;          /* room for the scrollbar without clipping glyphs */
+    scrollbar-width: thin;
+}
+
+/* The justification column in \begin{aligned} ... && \text{[...]} reads as
+   commentary, not as part of the equation. */
+mjx-container[display="true"] mjx-mtext {
+    opacity: 0.72;
+}
+
+
