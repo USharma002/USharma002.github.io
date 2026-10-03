@@ -41,13 +41,14 @@
     </div>
     <div class="modes">
       <button id="spray">Splat 300 samples</button>
+      <button id="refine">Refine (next iteration)</button>
       <button id="reset">Reset</button>
       <label><input type="checkbox" id="showTarget"> show target</label>
     </div>
     <div class="info" id="info">Click inside the quadtree to splat one radiance sample.</div>
     <div class="note">
-      The square is the directional domain of one SD-tree leaf (cylindrical coordinates). The quadtree is built with PPG's rule: a node is subdivided while it holds more than 1% of the total flux of a synthetic radiance function. Cell colour shows the learned radiance density (deposited energy ÷ cell area). Switching mode replays the same samples, so the three schemes can be compared directly.
-      Filter footprint = the size of the leaf the sample fell into, centred on the sample. In this demo, the part of a footprint that falls outside the square is renormalised away; that border handling is a simplification of the demo.
+      The square is the directional domain of one SD-tree leaf (cylindrical coordinates). As in PPG's reference implementation, the quadtree starts as a uniform 16×16 grid (nothing has been learned yet, so the 1% rule falls back to a uniform split), stays fixed while samples are splatted, and is rebuilt by <b>Refine</b> from the energy collected in the current iteration: a quadrant holding more than 1% of the total is split (an old leaf hands ¼ of its energy to each child), the rest become leaves, and all energies are cleared for the next iteration. Cell colour shows the learned radiance density (deposited energy ÷ cell area). Switching mode replays the same samples, so the three schemes can be compared directly.
+      Filter footprint = the size of the leaf the sample fell into, centred on the sample. As in Müller's reference implementation, the part of a box footprint that falls outside the square is dropped, and a stochastic jitter that leaves the square is clipped back into it. Simplifications of this demo: samples are drawn from a synthetic radiance function, every sample deposits one unit instead of a weighted radiance estimate, iterations do not double their sample count, and all three filters are shown in the directional domain (production PPG filters stochastically in space and deterministically in direction).
     </div>
   </div>
 </div>
@@ -62,20 +63,31 @@
   const target = (x, y) =>
     6.0 * Math.exp(-((x - 0.68) ** 2 + (y - 0.30) ** 2) / (2 * 0.035 ** 2)) +
     0.6 * Math.exp(-((x - 0.30) ** 2 + (y - 0.62) ** 2) / (2 * 0.16 ** 2)) + 0.05;
-  function integrate(x0, y0, s, n = 12) {          // midpoint rule over a square node
-    let acc = 0, h = s / n;
-    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) acc += target(x0 + (i + 0.5) * h, y0 + (j + 0.5) * h);
-    return acc * h * h;
-  }
-  // ---- build adaptive quadtree: subdivide while node flux > rho * total (PPG, rho = 0.01) ----
-  const RHO = 0.01, MAXD = 7, total = integrate(0, 0, 1, 200);
+  // ---- directional quadtree, rebuilt between iterations like PPG's DTree::reset (guided_path.cpp) ----
+  const RHO = 0.01, MAXD = 20;                       // PPG defaults: dTreeThreshold = 0.01, max depth 20
+  let root = null, iteration = 1;
   const leaves = [];
-  (function build(x0, y0, s, d) {
-    if (d < MAXD && integrate(x0, y0, s) > RHO * total) {
-      const h = s / 2;
-      build(x0, y0, h, d + 1); build(x0 + h, y0, h, d + 1); build(x0, y0 + h, h, d + 1); build(x0 + h, y0 + h, h, d + 1);
-    } else leaves.push({ x0, y0, s, e: 0 });
-  })(0, 0, 1, 0);
+  const energyOf = n => n.children ? n.children.reduce((a, c) => a + energyOf(c), 0) : n.e;
+  function rebuild(old) {
+    const total = old ? energyOf(old) : 0;
+    function make(x0, y0, s, oldNode, sumHere, depth) {
+      const node = { x0, y0, s, e: 0, children: null };               // new iteration: energies start at 0
+      const fraction = total > 0 ? sumHere / total : Math.pow(0.25, depth);  // no flux yet: uniform split
+      if (depth < MAXD && fraction > RHO) {
+        const h = s / 2;
+        node.children = [[0, 0], [h, 0], [0, h], [h, h]].map(([dx, dy], i) => {
+          const oc = oldNode && oldNode.children ? oldNode.children[i] : null;
+          // follow the old tree where it was subdivided; an old leaf hands 1/4 of its energy to each child
+          return make(x0 + dx, y0 + dy, h, oc, oc ? energyOf(oc) : sumHere / 4, depth + 1);
+        });
+      }
+      return node;                                    // quadrants at or below 1% of the flux stay leaves (pruning)
+    }
+    root = make(0, 0, 1, old, total, 0);
+    leaves.length = 0;
+    (function collect(n) { if (n.children) n.children.forEach(collect); else leaves.push(n); })(root);
+  }
+  rebuild(null);                                      // iteration 1: nothing learned yet -> uniform 16x16 grid
   const leafAt = (x, y) => leaves.find(l => x >= l.x0 && x < l.x0 + l.s && y >= l.y0 && y < l.y0 + l.s);
   const overlap = (a0, a1, b0, b1) => Math.max(0, Math.min(a1, b1) - Math.max(a0, b0));
 
@@ -87,14 +99,15 @@
     if (mode === 'nn') {
       leaf.e += 1; res.deposits.push([leaf, 1]);
     } else if (mode === 'filter') {
-      const inside = overlap(fx0, fx1, 0, 1) * overlap(fy0, fy1, 0, 1);  // renormalise to the in-domain part
-      for (const l of leaves) {
+      const V = (2 * r) * (2 * r);                    // footprint area; weight = overlap / V (as in PPG's code)
+      for (const l of leaves) {                       // the part of the footprint outside the domain is dropped
         const o = overlap(fx0, fx1, l.x0, l.x0 + l.s) * overlap(fy0, fy1, l.y0, l.y0 + l.s);
-        if (o > 0) { const w = o / inside; l.e += w; res.deposits.push([l, w]); }
+        if (o > 0) { const w = o / V; l.e += w; res.deposits.push([l, w]); }
       }
+      res.lost = 1 - res.deposits.reduce((a, d) => a + d[1], 0);
     } else {                                          // stochastic: jitter inside footprint, deposit into one leaf
-      let jx, jy;
-      do { jx = fx0 + Math.random() * 2 * r; jy = fy0 + Math.random() * 2 * r; } while (jx < 0 || jx >= 1 || jy < 0 || jy >= 1);
+      const clip = v => Math.min(Math.max(v, 0), 1 - 1e-9);   // jitter is clipped into the domain (as in PPG's code)
+      const jx = clip(fx0 + Math.random() * 2 * r), jy = clip(fy0 + Math.random() * 2 * r);
       const l = leafAt(jx, jy); l.e += 1; res.deposits.push([l, 1]); res.jitter = [jx, jy];
     }
     if (record) last = res;
@@ -144,7 +157,8 @@
   window.draw = draw;
 
   function describe() {
-    if (!last) { info.innerHTML = 'Click inside the quadtree to splat one radiance sample.'; return; }
+    const stats = `<b>Iteration:</b> ${iteration} &nbsp; <b>Samples this iteration:</b> ${history.length} &nbsp; <b>Leaves:</b> ${leaves.length}`;
+    if (!last) { info.innerHTML = `<p>Click inside the quadtree to splat one radiance sample, or splat a batch. Then press <b>Refine</b> to rebuild the tree from the energy collected in this iteration.</p><p class="stat">${stats}</p>`; return; }
     const n = last.deposits.length, ws = last.deposits.map(d => d[1]).sort((a, b) => b - a);
     const txt = {
       nn: 'The whole sample goes into the leaf it fell in. Leaves learn unevenly: a leaf is only updated by samples inside it, so the approximation is best near leaf centres and worst at their borders.',
@@ -152,8 +166,9 @@
       stoch: 'The sample is jittered uniformly inside the same footprint and deposited, unweighted, into the single leaf it lands in. In expectation this equals deterministic filtering, at the cost of two lookups per splat.'
     }[mode];
     info.innerHTML = `<p>${txt}</p><p class="stat"><b>Leaves touched by this splat:</b> ${n}` +
-      (mode === 'filter' ? `<br><b>Largest weights:</b> ${ws.slice(0, 4).map(w => w.toFixed(3)).join(', ')}${n > 4 ? ', …' : ''}` : '') +
-      `<br><b>Total leaves:</b> ${leaves.length}</p>`;
+      (mode === 'filter' ? `<br><b>Largest weights:</b> ${ws.slice(0, 4).map(w => w.toFixed(3)).join(', ')}${n > 4 ? ', …' : ''}` +
+        (last.lost > 1e-6 ? `<br><b>Lost outside the domain:</b> ${last.lost.toFixed(3)}` : '') : '') +
+      `<br>${stats}</p>`;
   }
 
   function toUnit(ev) {
@@ -167,7 +182,8 @@
     history.forEach(([x, y], i) => splat(x, y, i === history.length - 1)); describe(); draw();
   }));
   document.getElementById('spray').addEventListener('click', () => { for (let i = 0; i < 300; i++) { const [x, y] = sampleTarget(); history.push([x, y]); splat(x, y, i === 299); } describe(); draw(); });
-  document.getElementById('reset').addEventListener('click', () => { leaves.forEach(l => l.e = 0); last = null; history = []; describe(); draw(); });
+  document.getElementById('refine').addEventListener('click', () => { rebuild(root); iteration++; last = null; history = []; describe(); draw(); });
+  document.getElementById('reset').addEventListener('click', () => { rebuild(null); iteration = 1; last = null; history = []; describe(); draw(); });
   document.getElementById('showTarget').addEventListener('change', e => { showTarget = e.target.checked; draw(); });
 
   // ---- theme sync with the parent page (same approach as the site's other widgets) ----
