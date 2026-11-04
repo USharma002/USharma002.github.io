@@ -96,7 +96,7 @@ Kernel mode is also called *supervisor*, *system* or *privileged* mode. When a u
 
 The instruction to switch to kernel mode is itself a privileged instruction. Other examples include I/O control, timer management and interrupt management.
 
-> **Note.** Without hardware dual mode, a buggy user program can wipe out the OS. MS-DOS ran on the Intel 8088, which has no mode bit, so any program could overwrite the operating system. CPUs can also support more than two modes, e.g. a separate mode for a virtual machine manager, or the four *privilege levels* (rings) of Intel x86.
+> **Note.** Without hardware dual mode, a buggy user program can wipe out the OS. Early PC operating systems ran on processors with no mode bit, so any program could overwrite the operating system. CPUs can also support more than two modes, e.g. a separate mode for a virtual machine manager, or the four *privilege levels* (rings) of x86.
 
 #### Timer
 
@@ -846,7 +846,7 @@ Measured CPU-burst durations have a large number of short bursts and a small num
 
 Whenever the CPU becomes idle, the OS must select one of the processes in the ready queue to be executed. The selection is carried out by the **short-term scheduler** (CPU scheduler).
 
-> **Note.** The ready queue is not necessarily a FIFO queue. It can be a priority queue, a tree, or simply an unordered linked list.
+> **Note.** The ready queue is not necessarily a FIFO (first-in, first-out) queue. It can be a priority queue, a tree, or simply an unordered linked list.
 
 #### Preemptive Scheduling
 
@@ -3998,7 +3998,7 @@ With $L = 1$ this is the formula for a flat page table above.
 
 #### Hashed Page Tables
 
-For 64-bit addresses even a hierarchy gets deep. With 4 KB pages and 1024-entry inner tables, a two-level split leaves a 42-bit outer index, i.e. an outer table of $2^{42}$ entries; paging that again still leaves $2^{34}$ bytes (16 GB) at the top. The 64-bit UltraSPARC would need **seven** levels, i.e. seven memory accesses per TLB miss, so for 64-bit architectures hierarchical page tables are generally considered inappropriate.
+For 64-bit addresses even a hierarchy gets deep. With 4 KB pages and 1024-entry inner tables, a two-level split leaves a 42-bit outer index, i.e. an outer table of $2^{42}$ entries; paging that again still leaves $2^{34}$ bytes (16 GB) at the top. A full 64-bit address space would need **seven** levels, i.e. seven memory accesses per TLB miss, so for 64-bit architectures hierarchical page tables are generally considered inappropriate.
 
 A common alternative for address spaces larger than 32 bits is a *hashed page table*: the virtual page number is hashed, and each entry of the hash table holds a **linked list** of the pages that hash to it (to handle collisions). Each list element has three fields:
 
@@ -4119,8 +4119,6 @@ A virtual address is the triple $\langle \text{process-id}, \text{page-number}, 
 
 - **Less memory, more time:** the table is sorted by physical frame but looked up by virtual page, so in the worst case the whole table must be searched. A hash table limits the search to one or a few entries, but adds a memory access: one virtual reference now needs at least two real memory reads, one for the hash entry and one for the page table. (The TLB is searched first, which hides most of this.)
 - **Shared memory is hard:** sharing normally maps several virtual addresses to the same frame, but here each frame has only one entry, so it can record only one virtual address. A common fix is to allow only one mapping of the shared frame at a time; references through the other virtual addresses then cause page faults.
-
-Systems that use inverted page tables include the 64-bit UltraSPARC, the PowerPC and the IBM RT.
 
 ### Virtual Memory
 
@@ -4459,7 +4457,7 @@ The service time has three main parts: service the page-fault interrupt, **read 
 
 <div class="example">
 
-Memory access takes 200 ns and the average page-fault service time is 8 ms. Find the EAT, and the largest page-fault rate that keeps the slowdown under 10%.
+Memory access takes 200 ns and the average page-fault service time is 8 ms. Find the EAT (effective memory-access time), and the largest page-fault rate that keeps the slowdown under 10%.
 
 </div>
 
@@ -5484,7 +5482,7 @@ In UNIX/Linux this is done with the `mmap()` system call. Solaris goes further a
 
 ##### Memory-Mapped I/O
 
-The same idea is used for devices. Each I/O controller has registers for commands and data. With **memory-mapped I/O**, a range of memory addresses is set aside and mapped to the device registers, so reading or writing those addresses transfers data to and from the device. This suits fast devices such as video controllers: on the IBM PC each screen location is mapped to a memory location.
+The same idea is used for devices. Each I/O controller has registers for commands and data. With **memory-mapped I/O**, a range of memory addresses is set aside and mapped to the device registers, so reading or writing those addresses transfers data to and from the device. This suits fast devices such as video controllers, where each screen location is mapped to a memory location.
 
 To send a string of bytes through a memory-mapped serial port, the CPU writes a byte to the data register and sets a bit in the control register; the device takes the byte and clears the bit when it is ready for the next one.
 
@@ -6168,7 +6166,7 @@ The loader in ROM tells the disk controller to read the boot blocks into memory 
 
 Sometimes a disk fails completely and must be replaced. More often, single sectors become defective; most disks even come from the factory with some bad blocks.
 
-**Simple disks (e.g. IDE).** Bad blocks are handled manually. The disk is scanned for bad blocks while it is formatted, and those found are flagged so the file system never allocates them. Blocks that go bad later are found by running a program such as Linux's `badblocks`; their data are usually lost.
+**Simple disks.** Bad blocks are handled manually. The disk is scanned for bad blocks while it is formatted, and those found are flagged so the file system never allocates them. Blocks that go bad later are found by running a program such as Linux's `badblocks`; their data are usually lost.
 
 **Smarter disks.** The controller keeps a list of bad blocks, created during low-level formatting and updated over the life of the disk. Formatting also sets aside **spare sectors** that the OS cannot see. A bad sector is then replaced logically in one of two ways.
 
@@ -6785,7 +6783,7 @@ Other problems are **pointer overhead** (4 B of every 512 B block is 0.78% of th
 
 ##### File-Allocation Table (FAT)
 
-An important variation on linked allocation, used by MS-DOS. A section at the beginning of each volume holds a **table with one entry per disk block**, indexed by block number.
+An important variation on linked allocation, used by the FAT file system (still common on USB drives and SD cards). A section at the beginning of each volume holds a **table with one entry per disk block**, indexed by block number.
 
 - The directory entry holds the number of the file's **first block**.
 - The table entry for that block holds the number of the **next block**, and so on, until the last block, whose entry is a special **end-of-file** value.

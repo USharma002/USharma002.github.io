@@ -241,7 +241,7 @@ At the system level the processor, memory and I/O devices may share a single bus
   <polyline points="230,440 230,456 380,456 380,432" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sb)"/>
   <line x1="340" y1="416" x2="301.5" y2="416" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
 </svg>
-<figcaption>Single-bus organization of the processor (after the course slides and Hamacher). Register Y holds one ALU operand and Z holds the result; the MUX selects the constant 4 for $\text{PC} \leftarrow \text{PC} + 4$.</figcaption>
+<figcaption>Single-bus organization of the processor (after the course slides and Hamacher). Register Y holds one ALU operand and Z holds the result; the MUX (multiplexer) selects the constant 4 for $\text{PC} \leftarrow \text{PC} + 4$.</figcaption>
 </figure>
 
 ### Memory Addressing
@@ -258,8 +258,8 @@ Memory is an array of locations, each with a unique address. A memory with $M$ l
 
 #### Byte Ordering
 
-- **Little endian:** the least significant byte is stored at the lowest address (Intel, DEC Alpha).
-- **Big endian:** the most significant byte is stored at the lowest address (IBM 370, Motorola, TCP/IP).
+- **Little endian:** the least significant byte is stored at the lowest address (x86, including the Ryzen 7 5800H).
+- **Big endian:** the most significant byte is stored at the lowest address (network byte order in TCP/IP).
 
 <figure class="table">
 <figcaption>The 32-bit number <code>01010101 00110011 00001111 11000011</code> stored from address 2000.</figcaption>
@@ -294,7 +294,7 @@ STORE S, R3
 - **Assembly language** is a symbolic version of machine language, with a one-to-one correspondence to it.
 - **High-level languages** (C, C++, Java) are closer to human languages.
 
-An **assembler** translates assembly language to machine code. A **compiler** translates a high-level language program, either directly to machine code or first to assembly language. A *cross-assembler* or *cross-compiler* runs on one machine and generates code for another, e.g. an ARM cross-compiler running on a PC.
+An **assembler** translates assembly language to machine code. A **compiler** translates a high-level language program, either directly to machine code or first to assembly language. A *cross-assembler* or *cross-compiler* runs on one machine and generates code for another, e.g. a compiler running on a PC that generates code for a phone.
 
 ### von Neumann and Harvard Architectures
 
@@ -340,7 +340,7 @@ The *instruction set architecture (ISA)* is the interface between software and h
 
 </div>
 
-Many ISAs are used across generations of machines (IBM 360, Intel x86). The design issues of an instruction set are:
+Many ISAs are used across generations of machines (x86 has been extended from 16 to 64 bits and still runs on the Ryzen 7 5800H). The design issues of an instruction set are:
 
 - the number of explicit operands (0, 1, 2 or 3);
 - the location of the operands (registers, accumulator, memory) and how they are specified (addressing modes);
@@ -350,19 +350,19 @@ Many ISAs are used across generations of machines (IBM 360, Intel x86). The desi
 ### Types of ISA
 
 <figure class="table">
-<figcaption>Evolution of instruction sets.</figcaption>
+<figcaption>Evolution of instruction sets (TOS: top of stack; NEXT: the element below it; ACC: accumulator).</figcaption>
 
-| Type | Example | Operation | Machines |
-|:--|:--|:--|:--|
-| Stack | `ADD` | TOS ← TOS + NEXT | Burroughs 5000 |
-| Accumulator | `ADD X` | ACC ← ACC + Mem[X] | EDSAC, IBM 1130 |
-| Memory–memory | `ADD A,B,C` | Mem[A] ← Mem[B] + Mem[C] | IBM 360 |
-| Register–memory | `ADD R1,X` | R1 ← R1 + Mem[X] | Intel x86 |
-| Load–store | `ADD R1,R2,R3` | R1 ← R2 + R3 | MIPS, SPARC |
+| Type | Example | Operation |
+|:--|:--|:--|
+| Stack | `ADD` | TOS ← TOS + NEXT |
+| Accumulator | `ADD X` | ACC ← ACC + Mem[X] |
+| Memory–memory | `ADD A,B,C` | Mem[A] ← Mem[B] + Mem[C] |
+| Register–memory | `ADD R1,X` | R1 ← R1 + Mem[X] |
+| Load–store | `ADD R1,R2,R3` | R1 ← R2 + R3 |
 
 </figure>
 
-In a **load–store** architecture only LOAD and STORE instructions access memory, and all other instructions operate on registers. This is the basis of RISC.
+In a **load–store** architecture only LOAD and STORE instructions access memory, and all other instructions operate on registers. This is the basis of RISC (reduced instruction set computer; see CISC and RISC below).
 
 <div class="example">
 
@@ -451,7 +451,7 @@ For a fixed instruction length there is a trade-off between the **number of opco
 
 <div class="example">
 
-The PDP-8 has 12-bit instructions with a 3-bit opcode [[3]](#ref-3).
+Consider 12-bit instructions with a 3-bit opcode [[3]](#ref-3).
 
 - Opcodes 0–5 are memory-reference instructions (an address plus page and indirect bits), so there are only six basic operations.
 - Opcode 6 is I/O: 6 bits select one of 64 devices and 3 bits give the command.
@@ -500,7 +500,7 @@ An *addressing mode* specifies how the operand of an instruction is located. The
 
 </div>
 
-CISC ISAs support many addressing modes; load–store ISAs support very few.
+CISC (complex instruction set computer) ISAs support many addressing modes; load–store ISAs support very few.
 
 <figure class="fig">
 <svg viewBox="0 0 640 456" width="640" role="img" aria-label="How the operand is located in common addressing modes">
@@ -616,7 +616,7 @@ CISC ISAs support many addressing modes; load–store ISAs support very few.
 - **PC-relative:** the offset is added to PC. With a 12-bit offset the range is $-2048$ to $+2047$.
 - **Stack:** the operand is on top of the stack (`PUSH X`, `POP X`, `ADD`). The stack pointer (SP) is updated by `PUSH`, `POP`, `CALL` and `RET`.
 - **Base:** all addresses are added to a base (segment) register, so code and data can be moved in memory.
-- **Autoincrement and autodecrement:** the register holding the address is incremented after the access, or decremented before it (like `a++` and `--a` in C) [[2]](#ref-2). Introduced in the PDP-11.
+- **Autoincrement and autodecrement:** the register holding the address is incremented after the access, or decremented before it (like `a++` and `--a` in C) [[2]](#ref-2).
 
 ### CISC and RISC
 
@@ -628,7 +628,7 @@ CISC ISAs support many addressing modes; load–store ISAs support very few.
 - easy mapping of high-level language statements to machine instructions;
 - complex instruction decoding and control unit, and a complex pipeline implementation.
 
-Examples: IBM 360/370, VAX-11/780, Intel x86. The VAX had modes such as memory indirect (`ADD R1, @(R4)`: $R1 \leftarrow R1 + \text{Mem[Mem[R4]]}$) and scaled (`ADD R1, 50(R2)[R3]`: $R1 \leftarrow R1 + \text{Mem}[50 + R2 + R3 \times d]$).
+Example: x86, including the Ryzen 7 5800H. CISC machines have had modes such as memory indirect (`ADD R1, @(R4)`: $R1 \leftarrow R1 + \text{Mem[Mem[R4]]}$) and scaled (`ADD R1, 50(R2)[R3]`: $R1 \leftarrow R1 + \text{Mem}[50 + R2 + R3 \times d]$).
 
 **Reduced Instruction Set Computer (RISC)**, or load–store architecture:
 
@@ -638,9 +638,9 @@ Examples: IBM 360/370, VAX-11/780, Intel x86. The VAX had modes such as memory i
 - uniform instruction length and encoding, so decoding is easy;
 - compiler-assisted scheduling of the pipeline.
 
-Examples: CDC 6600, MIPS, SPARC, ARM.
+Examples: MIPS (used in these notes), ARM (most phones).
 
-A 1991 comparison of the VAX 8700 (CISC) and the MIPS M2000 (RISC) found that MIPS executed about twice as many instructions, but the CPI of the VAX was about six times larger. So MIPS was about three times faster, and needed much less hardware. x86 remains CISC because of backward compatibility: the user sees a CISC instruction set, the hardware translates each instruction into RISC-like instructions, and these are executed in a pipeline.
+A 1991 comparison of a CISC and a RISC machine found that the RISC machine executed about twice as many instructions, but the CPI (average cycles per instruction) of the CISC machine was about six times larger. So the RISC machine was about three times faster, and needed much less hardware. x86 remains CISC because of backward compatibility: the user sees a CISC instruction set, the hardware translates each instruction into RISC-like instructions, and these are executed in a pipeline.
 
 ### MIPS32
 
@@ -1385,7 +1385,7 @@ A datapath has 100 control signals. After analysing the microprograms, they are 
 
 The relative positions of the register fields and the immediate data are the same in all MIPS32 instructions. So when an instruction is decoded, the register operands are fetched and the immediate data is sign-extended at the same time; if they are not needed, they are ignored. The register bank has two read ports and one write port.
 
-The instruction execution cycle has five steps. A, B, Imm, NPC, ALUOut and LMD are temporary registers.
+The instruction execution cycle has five steps. It uses temporary registers: A and B hold the register operands, Imm the sign-extended immediate, NPC the next PC (PC + 4), ALUOut the ALU result and LMD the load memory data.
 
 <figure class="table">
 <figcaption>Micro-operations of the non-pipelined MIPS32 implementation.</figcaption>
@@ -1506,9 +1506,9 @@ The processor is connected to memory by an **address bus** (the location to be a
 
 Classification of memory:
 
-- **Volatile** (data lost when power is off: SRAM, DRAM; DRAM also needs refreshing) and **non-volatile** (ROM, magnetic disk, CD/DVD, flash).
+- **Volatile** (data lost when power is off: SRAM and DRAM, static and dynamic random-access memory; DRAM also needs refreshing) and **non-volatile** (ROM or read-only memory, magnetic disk, CD/DVD, flash).
 - **Random access** (access time independent of the location: RAM and ROM), **sequential access** (magnetic tape) and **direct (semi-random) access** (magnetic disk: go directly to a track, then sequential).
-- **ROM** (written during manufacture or in the laboratory: ROM, PROM, EPROM, EEPROM) and **RAM** (SRAM retains data while power is on; DRAM stores data as charge on capacitors and needs periodic refreshing).
+- **ROM** (written during manufacture or in the laboratory: ROM; PROM, programmable once; EPROM, erasable with ultraviolet light; EEPROM, electrically erasable) and **RAM** (SRAM retains data while power is on; DRAM stores data as charge on capacitors and needs periodic refreshing).
 
 Terms:
 
@@ -1649,7 +1649,7 @@ An **SRAM** cell stores a bit in a latch formed by two cross-connected inverters
   <text x="300.0" y="98.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">Y</text>
   <text x="220.0" y="196.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">latch (2 inverters = 4 transistors)</text>
 </svg>
-<figcaption>SRAM cell (after Hamacher). With CMOS inverters the cell has 6 transistors.</figcaption>
+<figcaption>SRAM cell (after Hamacher). With CMOS inverters (complementary metal–oxide–semiconductor: each inverter is a pair of n-type and p-type MOS transistors) the cell has 6 transistors.</figcaption>
 </figure>
 
 - **Read:** the word line is activated, $T_1$ and $T_2$ are switched on, and the stored value appears on $b$ (its complement on $b'$), where the sense/write circuit detects it.
@@ -1771,7 +1771,7 @@ In **burst mode**, after the column address is applied, data from successive col
 
 </figure>
 
-The DDRx standards are published by JEDEC. A **DIMM** (dual in-line memory module) carries several DRAM chips on a circuit board, with a 64-bit data path. For example, DDR3-1600 has an internal clock of 200 MHz, a bus clock of 800 MHz and a transfer rate of $800\text{ MHz} \times 2 \times 8\text{ B} = 12.8$ GB/s.
+The DDRx standards are published by JEDEC, the standards body of the semiconductor industry. A **DIMM** (dual in-line memory module) carries several DRAM chips on a circuit board, with a 64-bit data path. For example, DDR3-1600 has an internal clock of 200 MHz, a bus clock of 800 MHz and a transfer rate of $800\text{ MHz} \times 2 \times 8\text{ B} = 12.8$ GB/s.
 
 ### Memory Interfacing
 
@@ -1983,7 +1983,12 @@ A computer has two hierarchies:
 - **Cache / main memory** (2 to 4 levels), managed by hardware, since a block transfer takes tens of cycles. Its objective is a fast average memory access.
 - **Main memory / secondary memory**, managed by the OS, since a transfer takes thousands of cycles. Its objective is a large memory space (virtual memory).
 
-For example, in the Intel Core i7 each core has its own 32 KB 8-way L1 instruction and data caches (4 cycles) and a 256 KB 8-way L2 cache (11 cycles), and the cores share an 8 MB 16-way L3 cache (30–40 cycles). All caches use 64 B blocks.
+For example, in the AMD Ryzen 7 5800H (8 Zen 3 cores) each core has its own 32 KB 8-way L1 instruction and data caches (4 cycles) and a 512 KB 8-way L2 cache (12 cycles), and the cores share a 16 MB 16-way L3 cache (about 46 cycles). All caches use 64 B blocks.
+
+<figure class="fig">
+<img src="/images/computer-systems/cpuz-5800h.png" alt="CPU-Z window for the AMD Ryzen 7 5800H showing its cache sizes and associativity" width="601">
+<figcaption>CPU-Z on a Ryzen 7 5800H: the Cache panel lists the per-core L1 and L2 caches and the shared L3.</figcaption>
+</figure>
 
 ### Locality of Reference
 
@@ -2005,6 +2010,42 @@ For $c$ to approach $c_2$ we need $S_1 \ll S_2$.
 The **hit ratio** $H$ is the probability that an address generated by the CPU refers to $M_1$. If $N_1$ and $N_2$ references go to $M_1$ and $M_2$, then $H = N_1/(N_1 + N_2)$; $1 - H$ is the **miss ratio**. With access times $t_{A1}$, $t_{A2}$ and miss penalty $t_{\text{miss}}$:
 
 $$t_A = H\,t_{A1} + (1 - H)\,t_{\text{miss}}$$
+
+<figure class="fig">
+<svg viewBox="0 0 600 214" width="600" role="img" aria-label="Hit and miss paths of a two-level memory hierarchy and their access times">
+  <defs><marker id="arr-hp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="30" width="90" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="65.0" y="66.2" text-anchor="middle" font-size="12" fill="currentColor">CPU</text>
+  <rect x="250" y="30" width="110" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="250" y="30" width="110" height="64" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="305.0" y="56.0" text-anchor="middle" font-size="12" fill="currentColor">M<tspan baseline-shift="sub" font-size="9">1</tspan> (cache)</text>
+  <text x="305.0" y="78.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">t<tspan baseline-shift="sub" font-size="8">A1</tspan></text>
+  <rect x="480" y="30" width="110" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="30" width="110" height="64" rx="3" fill="#f59e0b" opacity=".14"/>
+  <text x="535.0" y="56.0" text-anchor="middle" font-size="12" fill="currentColor">M<tspan baseline-shift="sub" font-size="9">2</tspan> (main)</text>
+  <text x="535.0" y="78.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">t<tspan baseline-shift="sub" font-size="8">A2</tspan></text>
+  <line x1="110" y1="48" x2="248" y2="48" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
+  <text x="180.0" y="40.0" text-anchor="middle" font-size="11" fill="currentColor">address</text>
+  <line x1="250" y1="76" x2="112" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
+  <text x="180.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">hit (H): word</text>
+  <line x1="360" y1="48" x2="478" y2="48" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
+  <text x="420.0" y="40.0" text-anchor="middle" font-size="11" fill="currentColor">miss (1 − H)</text>
+  <line x1="480" y1="76" x2="362" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
+  <text x="420.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">word / block</text>
+  <text x="100.0" y="144.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">hit, prob. H</text>
+  <rect x="110" y="126" width="50" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="110" y="126" width="50" height="28" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="135.0" y="144.0" text-anchor="middle" font-size="11" fill="currentColor">t<tspan baseline-shift="sub" font-size="8">A1</tspan></text>
+  <text x="100.0" y="182.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">miss, prob. 1 − H</text>
+  <rect x="110" y="164" width="350" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="110" y="164" width="350" height="28" rx="3" fill="#ef4444" opacity=".18"/>
+  <text x="285.0" y="182.0" text-anchor="middle" font-size="11" fill="currentColor">t<tspan baseline-shift="sub" font-size="8">miss</tspan> (e.g. t<tspan baseline-shift="sub" font-size="8">A2</tspan>)</text>
+  <text x="480.0" y="158.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">t<tspan baseline-shift="sub" font-size="8">A</tspan> is the average</text>
+  <text x="480.0" y="176.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">of the two times,</text>
+  <text x="480.0" y="192.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">weighted by H, 1 − H</text>
+</svg>
+<figcaption>A reference is served by $M_1$ in time $t_{A1}$ with probability $H$; otherwise it costs $t_{\text{miss}}$.</figcaption>
+</figure>
 
 The miss penalty can be estimated in different ways:
 
@@ -2318,7 +2359,7 @@ A 32-bit address, a 16 KB cache and 32 B blocks. Find the widths of the tag, ind
 <figcaption>Accessing a block in a direct-mapped cache. The index selects an entry, and there is a hit if its tag equals the address tag and the valid bit is set.</figcaption>
 </figure>
 
-The tag is taken from the high-order bits, so adjacent memory blocks map to different cache blocks; the next memory block that maps to the same cache block is a cache size away.
+The index is the low-order bits of the block number $M$ (that is, $M \bmod N$), and the tag is the remaining high-order bits. So consecutive memory blocks go to consecutive cache blocks, and two memory blocks compete for the same cache block only if they are a multiple of $N$ blocks (the cache size) apart, like blocks 6 and 14 above. The tag tells such blocks apart.
 
 The problem with direct mapping: if a program alternately accesses $A, B, A, B, \dots$ and $A$ and $B$ map to the same cache block, every access is a miss, even if the rest of the cache is empty.
 
@@ -2750,7 +2791,7 @@ Reducing the hit time:
 
 <div class="example">
 
-In 1000 memory references there are 60 misses in L1 and 15 misses in L2. $\text{HitTime}_{L1} = 1$, $\text{HitTime}_{L2} = 12$ and $\text{MissPenalty}_{L2} = 180$ cycles. Find the miss rates and the AMAT.
+In 1000 memory references there are 60 misses in L1 and 15 misses in L2. $\text{HitTime}_{L1} = 1$, $\text{HitTime}_{L2} = 12$ and $\text{MissPenalty}_{L2} = 180$ cycles. Find the miss rates and the AMAT (average memory access time).
 
 </div>
 
@@ -2778,7 +2819,7 @@ Two questions:
 1. Are real caches built on virtual or physical addresses?
 2. Do modern processors use pipelines of the kind studied here?
 
-Every memory access needs a translation from virtual to physical address (by the MMU and TLB), and the cache can be accessed before or after it.
+Every memory access needs a translation from virtual to physical address (by the memory management unit, MMU, and its translation lookaside buffer, TLB; see Part II), and the cache can be accessed before or after it.
 
 <figure class="fig">
 <svg viewBox="0 0 640 368" width="640" role="img" aria-label="Physically addressed, virtually addressed and virtually indexed physically tagged caches">
@@ -2950,7 +2991,7 @@ The organization of a magnetic disk (platters, tracks, sectors, cylinders), the 
 
 A **solid-state drive (SSD)**, or flash drive, is non-volatile, uses little power, is faster than a hard disk, and allows random access. Data is written in blocks (an erase followed by a write).
 
-A flash cell is a **floating-gate MOSFET**: a MOS transistor whose gate is electrically isolated by an insulator, so the charge on it remains for a long time. The charge is controlled by the voltage on the control gate, and its presence or absence represents 0 or 1. To read a bit, a voltage $V_{\text{read}}$ is applied to the control gate and the drain current is measured: a programmed cell needs a higher control-gate voltage to conduct, so it gives (almost) no current.
+A flash cell is a **floating-gate MOSFET** (metal–oxide–semiconductor field-effect transistor): a MOS transistor whose gate is electrically isolated by an insulator, so the charge on it remains for a long time. The charge is controlled by the voltage on the control gate, and its presence or absence represents 0 or 1. To read a bit, a voltage $V_{\text{read}}$ is applied to the control gate and the drain current is measured: a programmed cell needs a higher control-gate voltage to conduct, so it gives (almost) no current.
 
 <figure class="table">
 <figcaption>NOR and NAND flash.</figcaption>
@@ -3024,7 +3065,7 @@ Typical steps of an input operation:
 5. The I/O module transfers the data to the processor.
 6. The processor stores the data in memory.
 
-Devices are connected through ports. An **output port** is a PIPO register, enabled by the address decoder for the device address; its inputs are connected to the data bus and its outputs to the device. An **input port** is a tristate bus driver, enabled by the decoder; its inputs are connected to the device and its outputs to the data bus.
+Devices are connected through ports. An **output port** is a PIPO (parallel-in parallel-out) register, enabled by the address decoder for the device address; its inputs are connected to the data bus and its outputs to the device. An **input port** is a tristate bus driver, enabled by the decoder; its inputs are connected to the device and its outputs to the data bus.
 
 #### Memory-Mapped and I/O-Mapped Interfacing
 
@@ -3555,7 +3596,7 @@ With busy waiting, the CPU is occupied for the whole transfer. With interrupts, 
 - To find which key (**keyboard scanning**), one row at a time is set to 0 and the columns are checked, giving the row and column of the key.
 - For interrupt-driven operation, the rows are grounded through AND gates with a control input set to 0, and the column lines go to a NAND gate whose output is connected to INTR, so a key press raises an interrupt. In the ISR the control input is set to 1 and the keyboard is scanned.
 
-**Printer.** Older printers used a serial (RS-232C) or a parallel (LPT, 25 pins, 8 data lines) interface. With LPT, the CPU sends the data and activates STROBE; the printer activates BUSY while printing and sends ACK when done (asynchronous transfer with handshaking). Modern printers use USB.
+**Printer.** Older printers used a serial port (RS-232C) or a parallel port (LPT, 25 pins, 8 data lines). With the parallel port, the CPU sends the data and activates STROBE; the printer activates BUSY while printing and sends ACK when done (asynchronous transfer with handshaking). Modern printers use USB.
 
 ### Buses
 
@@ -3563,7 +3604,7 @@ A **bus** is a collection of wires through which data is transmitted: the data b
 
 - **Parallel bus:** fast, but costly over long distances and subject to interference between lines at high frequency. **Serial bus:** cheap over long distances, without interference, but slower.
 - The device that controls the bus is the **master**, the others are **slaves**.
-- The **system bus** connects CPU and memory; the **front-side bus** connects the CPU to the north bridge; the **back-side bus** connects the CPU to the L2 cache; the **memory bus** connects the north bridge to memory; AGP connects the north bridge to the GPU; ISA, PCI, PCI-Express, FireWire and USB connect to peripherals.
+- The **system bus** connects CPU and memory; the **front-side bus** connects the CPU to the north bridge; the **back-side bus** connects the CPU to the L2 cache; the **memory bus** connects the north bridge to memory; a graphics bus (AGP in older PCs, now PCI Express) connects the north bridge to the GPU (graphics processor); expansion buses (ISA and PCI in older PCs, now PCI Express) and USB connect to peripherals.
 - **Bus width** is the number of data wires, and **bus bandwidth** the amount of data transferred per unit time (e.g. PCI 127 MB/s, PCI-Express 16× v2 8000 MB/s).
 
 In a **synchronous bus** a common clock controls the operations. For a memory read, the CPU places the address, asserts MREQ and RD once the address is stable, the memory places the data, and the CPU reads it and removes MREQ and RD.
@@ -3600,7 +3641,7 @@ In an **asynchronous bus** there is no common clock, and the master and slave ha
 4. The CPU takes the data and removes MREQ, RD and MSYN.
 5. The memory controller removes SSYN.
 
-**Bridge-based** architectures (used by Intel) separate the buses by bridges, so that different buses can operate in parallel.
+**Bridge-based** architectures separate the buses by bridges, so that different buses can operate in parallel.
 
 ### Universal Serial Bus
 
@@ -3618,7 +3659,7 @@ USB connects almost all kinds of peripherals (keyboard, mouse, printer, disks, c
 
 </figure>
 
-Data is sent serially with differential NRZI encoding. **Bit stuffing** guarantees a minimum frequency of transitions: a 0 is inserted after every six consecutive 1s, e.g. `1101 1111 1101 0100` → `1101 1111 10101 0100`.
+Data is sent serially with differential NRZI (non-return-to-zero inverted) encoding: a 0 is sent as a change of signal level and a 1 as no change. **Bit stuffing** guarantees a minimum frequency of transitions: a 0 is inserted after every six consecutive 1s, e.g. `1101 1111 1101 0100` → `1101 1111 10101 0100`.
 
 USB uses a **tiered star topology**: all devices are connected to a root hub, through hubs, up to 127 devices. The cable has 4 wires (power, ground and two differential signal lines). USB is a **polled bus**: all transactions are initiated by the host.
 
@@ -3988,7 +4029,7 @@ From the collision vector a state diagram is constructed. The initial state is t
 
 The **minimum average latency (MAL)** is 3 for both X and Y.
 
-Scheduling algorithm: the collision vector is loaded into a shift register $R$. If the LSB of $R$ is 1, no operation is initiated and $R$ is shifted right by one. Otherwise an operation is initiated, $R$ is shifted right by one and ORed with the original collision vector. Inserting non-compute delay stages into the pipeline changes the reservation table and may give a smaller MAL.
+Scheduling algorithm: the collision vector is loaded into a shift register $R$. If the LSB (least significant bit) of $R$ is 1, no operation is initiated and $R$ is shifted right by one. Otherwise an operation is initiated, $R$ is shifted right by one and ORed with the original collision vector. Inserting non-compute delay stages into the pipeline changes the reservation table and may give a smaller MAL.
 
 ### Arithmetic Pipelines
 
@@ -4433,7 +4474,7 @@ A load followed by an instruction that uses the loaded value causes a hazard tha
 <figcaption>A load followed by a use of the loaded data: one stall cycle, and then forwarding from MEM.</figcaption>
 </figure>
 
-The compiler tries to avoid a load followed by an immediate use (**instruction scheduling**). The slot after a load is the **load delay slot**; if the compiler cannot fill it with an independent instruction, it inserts a NOP.
+The compiler tries to avoid a load followed by an immediate use (**instruction scheduling**). The slot after a load is the **load delay slot**; if the compiler cannot fill it with an independent instruction, it inserts a NOP (no-operation instruction).
 
 <div class="code-pair">
 
@@ -4485,9 +4526,9 @@ The data hazards are named by the order that must be preserved:
 
 | Hazard | Problem | Dependence | Removed by renaming |
 |:--|:--|:--|:-:|
-| RAW | $j$ reads a source before $i$ writes it | true | no |
-| WAR | $j$ writes a destination before $i$ reads it | anti (name) | yes |
-| WAW | $j$ writes an operand before $i$ writes it | output (name) | yes |
+| RAW (read after write) | $j$ reads a source before $i$ writes it | true | no |
+| WAR (write after read) | $j$ writes a destination before $i$ reads it | anti (name) | yes |
+| WAW (write after write) | $j$ writes an operand before $i$ writes it | output (name) | yes |
 
 </figure>
 
@@ -4814,7 +4855,7 @@ Up to 4 FP adds, 7 FP multiplies and 1 FP divide can be outstanding. As a result
 
 ### Instruction-Level Parallelism
 
-Unrelated instructions can be overlapped; related instructions must be separated by the latency between them.
+**Instruction-level parallelism (ILP)** is the overlap of independent instructions of one program, so that several are in execution at the same time. Unrelated instructions can be overlapped; related instructions must be separated by the latency between them.
 
 <div class="example">
 
@@ -4868,11 +4909,11 @@ MUL.D  F6, F10, F8     ; WAW on F6 with ADD.D
 
 If `SUB.D` is executed before `ADD.D` reads F8, `ADD.D` gets the wrong value. If `MUL.D` finishes before `ADD.D`, F6 is left with the value of `ADD.D`.
 
-**Scoreboarding** (CDC 6600) executes an instruction as soon as its operands are available, which avoids RAW hazards. WAR and WAW hazards are handled by stalling: an instruction is not issued if its destination is the destination of an active instruction (WAW), and a result is not written while an earlier instruction still has to read the old value (WAR). The scoreboard is a central table that records the status of every instruction, functional unit and register.
+**Scoreboarding** executes an instruction as soon as its operands are available, which avoids RAW hazards. WAR and WAW hazards are handled by stalling: an instruction is not issued if its destination is the destination of an active instruction (WAW), and a result is not written while an earlier instruction still has to read the old value (WAR). The scoreboard is a central table that records the status of every instruction, functional unit and register.
 
 #### Tomasulo's Algorithm
 
-**Tomasulo's algorithm** (IBM 360/91) also waits for the operands to avoid RAW hazards, but it removes WAR and WAW hazards by **register renaming** in hardware. Renaming changes the destination registers so that an out-of-order write does not affect an instruction that needs an earlier value. With two temporary registers S and T, the sequence above becomes
+**Tomasulo's algorithm** also waits for the operands to avoid RAW hazards, but it removes WAR and WAW hazards by **register renaming** in hardware. Renaming changes the destination registers so that an out-of-order write does not affect an instruction that needs an earlier value. With two temporary registers S and T, the sequence above becomes
 
 ```text
 DIV.D  F0, F2, F4
@@ -5039,7 +5080,7 @@ The steps become:
 
 Instructions execute out of order but commit in order. An exception is recorded in the ROB and raised only when the instruction reaches the head, so exceptions are precise, and an exception on a wrong path is never raised.
 
-Modern processors issue several instructions per cycle with this scheme (a dynamically scheduled superscalar processor, e.g. the Intel Core i7). Instead of keeping values in the ROB, they usually rename the architectural registers into a larger set of physical registers.
+Modern processors issue several instructions per cycle with this scheme (a dynamically scheduled superscalar processor, e.g. the AMD Ryzen 7 5800H). Instead of keeping values in the ROB, they usually rename the architectural registers into a larger set of physical registers.
 
 ## Parallel Architectures
 
@@ -5052,7 +5093,7 @@ The performance gained from pipelining is limited by the clock cycle time (more 
 
 <div class="example">
 
-DAXPY: $Y = aX + Y$ for vectors of 64 elements.
+DAXPY (double-precision $a$ times $X$ plus $Y$): $Y = aX + Y$ for vectors of 64 elements.
 
 </div>
 
@@ -5217,7 +5258,7 @@ The elements are in different banks in no particular order, so gathers and scatt
 
 ### SIMD Instruction Set Extensions
 
-Most general-purpose processors have **SIMD extensions**: instructions that operate on several narrow elements packed in a wide register, e.g. eight 8-bit or four 16-bit operands in a 64-bit register. They were added for multimedia, where data is often 8 or 16 bits wide.
+Most general-purpose processors have **SIMD** (single instruction, multiple data) **extensions**: instructions that operate on several narrow elements packed in a wide register, e.g. eight 8-bit or four 16-bit operands in a 64-bit register. They were added for multimedia, where data is often 8 or 16 bits wide.
 
 <figure class="table">
 <figcaption>SIMD extensions of the x86 architecture.</figcaption>
@@ -5234,85 +5275,87 @@ Compared with vector architectures, the SIMD extensions fix the number of elemen
 
 ### The Roofline Model
 
-The **arithmetic intensity** of a program is the number of floating-point operations per byte of memory (DRAM) accessed. The **roofline model** bounds the performance of a program on a processor by its arithmetic intensity:
+The **arithmetic intensity** of a program is the number of floating-point operations (FLOP) per byte of memory (DRAM) accessed. The **roofline model** bounds the performance of a program on a processor by its arithmetic intensity:
 
 $$\text{Attainable GFLOP/s} = \min(\text{peak memory bandwidth} \times \text{arithmetic intensity},\ \text{peak floating-point performance})$$
 
 On a log–log plot this is a sloped line (memory-bound) joined to a horizontal line (compute-bound). The **ridge point**, where they meet, is the minimum arithmetic intensity needed to reach the peak floating-point performance.
 
 <figure class="fig">
-<svg viewBox="0 0 540 294" width="540" role="img" aria-label="Roofline model of the Intel Core i7 920">
+<svg viewBox="0 0 540 294" width="540" role="img" aria-label="Roofline model of the AMD Ryzen 7 5800H">
   <defs><marker id="arr-roof" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="70.0" y1="250.0" x2="520.0" y2="250.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-roof)"/>
-  <line x1="70.0" y1="250.0" x2="70.0" y2="14.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-roof)"/>
+  <line x1="70.0" y1="250.0" x2="525.0" y2="250.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-roof)"/>
+  <line x1="70.0" y1="250.0" x2="70.0" y2="10.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-roof)"/>
   <line x1="70.0" y1="250.0" x2="70.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
   <text x="70.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/16</text>
-  <line x1="118.9" y1="250.0" x2="118.9" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="118.9" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/8</text>
-  <line x1="167.8" y1="250.0" x2="167.8" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="167.8" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/4</text>
-  <line x1="216.7" y1="250.0" x2="216.7" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="216.7" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/2</text>
-  <line x1="265.6" y1="250.0" x2="265.6" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="265.6" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1</text>
-  <line x1="314.4" y1="250.0" x2="314.4" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="314.4" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">2</text>
-  <line x1="363.3" y1="250.0" x2="363.3" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="363.3" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">4</text>
-  <line x1="412.2" y1="250.0" x2="412.2" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="412.2" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">8</text>
-  <line x1="461.1" y1="250.0" x2="461.1" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="461.1" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">16</text>
+  <line x1="114.0" y1="250.0" x2="114.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="114.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/8</text>
+  <line x1="158.0" y1="250.0" x2="158.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="158.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/4</text>
+  <line x1="202.0" y1="250.0" x2="202.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="202.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/2</text>
+  <line x1="246.0" y1="250.0" x2="246.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="246.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1</text>
+  <line x1="290.0" y1="250.0" x2="290.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="290.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">2</text>
+  <line x1="334.0" y1="250.0" x2="334.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="334.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">4</text>
+  <line x1="378.0" y1="250.0" x2="378.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="378.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">8</text>
+  <line x1="422.0" y1="250.0" x2="422.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="422.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">16</text>
+  <line x1="466.0" y1="250.0" x2="466.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
+  <text x="466.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">32</text>
   <line x1="510.0" y1="250.0" x2="510.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="510.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">32</text>
+  <text x="510.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">64</text>
   <line x1="66.0" y1="250.0" x2="70.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="253.0" text-anchor="end" font-size="10" fill="currentColor">1/4</text>
+  <text x="62.0" y="253.0" text-anchor="end" font-size="10" fill="currentColor">2</text>
   <line x1="66.0" y1="224.4" x2="70.0" y2="224.4" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="227.4" text-anchor="end" font-size="10" fill="currentColor">1/2</text>
+  <text x="62.0" y="227.4" text-anchor="end" font-size="10" fill="currentColor">4</text>
   <line x1="66.0" y1="198.9" x2="70.0" y2="198.9" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="201.9" text-anchor="end" font-size="10" fill="currentColor">1</text>
+  <text x="62.0" y="201.9" text-anchor="end" font-size="10" fill="currentColor">8</text>
   <line x1="66.0" y1="173.3" x2="70.0" y2="173.3" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="176.3" text-anchor="end" font-size="10" fill="currentColor">2</text>
+  <text x="62.0" y="176.3" text-anchor="end" font-size="10" fill="currentColor">16</text>
   <line x1="66.0" y1="147.8" x2="70.0" y2="147.8" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="150.8" text-anchor="end" font-size="10" fill="currentColor">4</text>
+  <text x="62.0" y="150.8" text-anchor="end" font-size="10" fill="currentColor">32</text>
   <line x1="66.0" y1="122.2" x2="70.0" y2="122.2" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="125.2" text-anchor="end" font-size="10" fill="currentColor">8</text>
+  <text x="62.0" y="125.2" text-anchor="end" font-size="10" fill="currentColor">64</text>
   <line x1="66.0" y1="96.7" x2="70.0" y2="96.7" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="99.7" text-anchor="end" font-size="10" fill="currentColor">16</text>
+  <text x="62.0" y="99.7" text-anchor="end" font-size="10" fill="currentColor">128</text>
   <line x1="66.0" y1="71.1" x2="70.0" y2="71.1" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="74.1" text-anchor="end" font-size="10" fill="currentColor">32</text>
+  <text x="62.0" y="74.1" text-anchor="end" font-size="10" fill="currentColor">256</text>
   <line x1="66.0" y1="45.6" x2="70.0" y2="45.6" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="48.6" text-anchor="end" font-size="10" fill="currentColor">64</text>
+  <text x="62.0" y="48.6" text-anchor="end" font-size="10" fill="currentColor">512</text>
   <line x1="66.0" y1="20.0" x2="70.0" y2="20.0" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="23.0" text-anchor="end" font-size="10" fill="currentColor">128</text>
+  <text x="62.0" y="23.0" text-anchor="end" font-size="10" fill="currentColor">1024</text>
   <text x="290.0" y="284.0" text-anchor="middle" font-size="11" fill="currentColor">arithmetic intensity (FLOP/byte)</text>
   <text x="18" y="135.0" text-anchor="middle" font-size="11" fill="currentColor" transform="rotate(-90 18 135.0)">attainable GFLOP/s</text>
-  <path d="M70.0,198.0 L333.0,60.5 L510.0,60.5" stroke="#ef4444" stroke-width="2.5" fill="none"/>
-  <text x="112.0" y="140.0" text-anchor="middle" font-size="10" fill="#ef4444">16.4 GB/s × intensity</text>
-  <text x="450.0" y="52.5" text-anchor="middle" font-size="10" fill="#ef4444">peak 42.66 GFLOP/s</text>
-  <line x1="333.0" y1="60.5" x2="333.0" y2="250.0" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="329.0" y="242.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">ridge point ≈ 2.6</text>
-  <circle cx="167.8" cy="146.9" r="4" fill="#3b82f6"/>
-  <circle cx="363.4" cy="60.5" r="4" fill="#3b82f6"/>
-  <text x="175.8" y="162.9" text-anchor="start" font-size="10" fill="currentColor">0.25 FLOP/byte: 4.1 GFLOP/s</text>
-  <text x="371.4" y="76.5" text-anchor="start" font-size="10" fill="currentColor">4 FLOP/byte: 42.66 GFLOP/s</text>
+  <path d="M70.0,232.7 L378.0,53.8 L510.0,53.8" stroke="#ef4444" stroke-width="2.5" fill="none"/>
+  <text x="165.0" y="130.0" text-anchor="middle" font-size="10" fill="#ef4444">51.2 GB/s × intensity</text>
+  <text x="450.0" y="45.8" text-anchor="middle" font-size="10" fill="#ef4444">peak 409.6 GFLOP/s</text>
+  <line x1="378.0" y1="53.8" x2="378.0" y2="250.0" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="374.0" y="242.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">ridge point = 8</text>
+  <circle cx="158.0" cy="181.6" r="4" fill="#3b82f6"/>
+  <circle cx="422.0" cy="53.8" r="4" fill="#3b82f6"/>
+  <text x="166.0" y="197.6" text-anchor="start" font-size="10" fill="currentColor">0.25 FLOP/byte: 12.8 GFLOP/s</text>
+  <text x="430.0" y="69.8" text-anchor="start" font-size="10" fill="currentColor">16 FLOP/byte: peak</text>
   <text x="118.9" y="40.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">memory-bound</text>
   <text x="461.1" y="112.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">compute-bound</text>
 </svg>
-<figcaption>Roofline of the Intel Core i7 920 for double precision: peak memory bandwidth 16.4 GB/s (Stream benchmark) and peak 42.66 GFLOP/s (after Hennessy &amp; Patterson, Fig. 4.11 <a href="#ref-4">[4]</a>).</figcaption>
+<figcaption>Roofline of the AMD Ryzen 7 5800H for double precision, from theoretical peaks: memory bandwidth 51.2 GB/s (dual-channel DDR4-3200) and 409.6 GFLOP/s (after Hennessy &amp; Patterson, Fig. 4.11 <a href="#ref-4">[4]</a>).</figcaption>
 </figure>
 
-The ridge point is at $42.66 / 16.4 \approx 2.6$ FLOP/byte. A kernel with an arithmetic intensity of 0.25 hits the slanted roof and is limited by memory bandwidth to $16.4 \times 0.25 = 4.1$ GFLOP/s; a kernel with an intensity of 4 hits the flat roof and runs at the peak 42.66 GFLOP/s [[4]](#ref-4).
+Each Zen 3 core has two 256-bit FMA (fused multiply–add, $a \times b + c$ in one instruction) units (16 double-precision FLOP per cycle), so 8 cores at 3.2 GHz peak at $8 \times 3.2 \times 16 = 409.6$ GFLOP/s; two 64-bit DDR4-3200 channels give $2 \times 8 \times 3.2 = 51.2$ GB/s. The ridge point is at $409.6 / 51.2 = 8$ FLOP/byte. A kernel with an arithmetic intensity of 0.25 hits the slanted roof and is limited by memory bandwidth to $51.2 \times 0.25 = 12.8$ GFLOP/s; a kernel with an intensity of 16 hits the flat roof and runs at the peak 409.6 GFLOP/s. Measured (Stream) bandwidth is lower than the theoretical peak, which moves the ridge point to the right.
 
-If the ridge point is far to the right, only kernels with a very high arithmetic intensity can reach the peak performance; if it is far to the left, almost any kernel can. Some kernels have an intensity independent of the problem size, $O(1)$ (sparse matrix–vector multiply, structured grids); others grow with it, $O(\log N)$ for FFTs and $O(N)$ for dense matrix operations (BLAS3) [[4]](#ref-4).
+If the ridge point is far to the right, only kernels with a very high arithmetic intensity can reach the peak performance; if it is far to the left, almost any kernel can. Some kernels have an intensity independent of the problem size, $O(1)$ (sparse matrix–vector multiply, structured grids); others grow with it, $O(\log N)$ for FFTs (fast Fourier transforms) and $O(N)$ for dense matrix–matrix multiplication [[4]](#ref-4).
 
 ### Hardware Multithreading
 
-ILP within one thread is limited, and long stalls such as cache misses leave the functional units idle. **Multithreading** lets several threads share the functional units of one processor. The processor keeps a separate state for each thread (register file, PC, page table register), and switches between threads much faster than an OS context switch.
+Instruction-level parallelism (ILP, see above) within one thread is limited, and long stalls such as cache misses leave the functional units idle. **Multithreading** lets several threads share the functional units of one processor. The processor keeps a separate state for each thread (register file, PC, page table register), and switches between threads much faster than an OS context switch.
 
-- **Fine-grained multithreading** switches between threads every clock cycle, in round-robin order, skipping stalled threads. Short and long stalls of one thread are hidden by the others, but a thread that is ready to run is delayed by the others. Examples: Sun Niagara, NVIDIA GPUs.
+- **Fine-grained multithreading** switches between threads every clock cycle, in round-robin order, skipping stalled threads. Short and long stalls of one thread are hidden by the others, but a thread that is ready to run is delayed by the others. Example: GPUs.
 - **Coarse-grained multithreading** switches only on costly stalls such as L2 or L3 misses. A single thread runs at nearly full speed, but short stalls are not hidden, and the pipeline must be refilled after each switch.
-- **Simultaneous multithreading (SMT)** issues instructions from several threads in the same cycle, on a dynamically scheduled multiple-issue processor. Register renaming keeps the registers of the threads apart, and the issue slots one thread leaves empty are filled by the others. Example: Intel Hyper-Threading, two threads per core in the Core i7.
+- **Simultaneous multithreading (SMT)** issues instructions from several threads in the same cycle, on a dynamically scheduled multiple-issue processor. Register renaming keeps the registers of the threads apart, and the issue slots one thread leaves empty are filled by the others. Example: the AMD Ryzen 7 5800H runs two threads per core (8 cores, 16 threads).
 
 <figure class="fig">
 <svg viewBox="0 0 640 250" width="640" role="img" aria-label="Use of issue slots by a superscalar processor without multithreading, with coarse-grained and fine-grained multithreading, and with simultaneous multithreading">
@@ -5625,8 +5668,8 @@ A miss that replaces a block is handled the same way: a Modified block is writte
 
 Two common extensions:
 
-- **MESI** adds the **Exclusive (E)** state: the block is clean and in only this cache. A write to an Exclusive block needs no invalidate on the bus, which helps when a processor reads and then writes data no other processor uses. Intel processors use MESIF, a variant.
-- **MOESI** adds the **Owned (O)** state: the block is out of date in memory but may be shared; the owner supplies it on a miss and writes it back when it is replaced, so a read miss to a Modified block does not need a write to memory. AMD Opteron uses MOESI.
+- **MESI** adds the **Exclusive (E)** state: the block is clean and in only this cache. A write to an Exclusive block needs no invalidate on the bus, which helps when a processor reads and then writes data no other processor uses.
+- **MOESI** adds the **Owned (O)** state: the block is out of date in memory but may be shared; the owner supplies it on a miss and writes it back when it is replaced, so a read miss to a Modified block does not need a write to memory. AMD processors use MOESI.
 
 #### Hazards Across Cores
 

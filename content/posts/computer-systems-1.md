@@ -927,7 +927,7 @@ $(144)_8 = 64 + 32 + 4 = 100$ and $(121)_r = r^2 + 2r + 1 = (r + 1)^2$, so $(r +
 A *code* assigns a bit pattern to each element of a set. The ten decimal digits need at least 4 bits, which leaves 6 of the 16 patterns unused [[1]](#ref-1).
 
 <figure class="table split-1">
-<figcaption>Three codes for the decimal digits.</figcaption>
+<figcaption>Three codes for the decimal digits (BCD: binary-coded decimal).</figcaption>
 
 | Decimal | BCD (8421) | Excess-3 | Gray |
 |:-:|:-:|:-:|:-:|
@@ -1109,7 +1109,7 @@ $$
 \end{array}
 $$
 
-4 bits can only represent values up to 15, so a **carry out of the MSB means overflow** for unsigned numbers.
+4 bits can only represent values up to 15, so a **carry out of the MSB (most significant bit) means overflow** for unsigned numbers.
 
 ### Two's Complement Overflow
 
@@ -1957,7 +1957,7 @@ so $01011101 \times 00111110 = 01011101 \times (01000000 - 00000010)$ needs only
 
 <div class="definition">
 
-*Booth encoding.* Scan the multiplier from right to left with an extra 0 appended to the right of the LSB. Each digit is (bit on the right) $-$ (current bit):
+*Booth encoding.* Scan the multiplier from right to left with an extra 0 appended to the right of the LSB (least significant bit). Each digit is (bit on the right) $-$ (current bit):
 
 $$1 \leftarrow 0 \;\Rightarrow\; -1, \qquad 0 \leftarrow 1 \;\Rightarrow\; +1, \qquad 0 \leftarrow 0 \text{ or } 1 \leftarrow 1 \;\Rightarrow\; 0$$
 
@@ -2079,7 +2079,7 @@ $52.21875 = 110100.00111_2 = 1.1010000111_2 \times 2^5$, so $E = 127 + 5 = 132 =
 
 ### Special Values
 
-The reserved exponents $E = 0$ and $E = 255$ encode zero, infinity and NaN:
+The reserved exponents $E = 0$ and $E = 255$ encode zero, infinity and NaN (not a number):
 
 <figure class="fig">
 {{< bits bits="0 00000000 00000000000000000000000" name="+0" >}}
@@ -2367,7 +2367,7 @@ Combinational circuits have no memory: their outputs depend only on the current 
 
 ### SR Latch
 
-The simplest storage element is two NAND gates, each feeding its output back into the other:
+The simplest storage element is the SR (set–reset) latch: two NAND gates, each feeding its output back into the other:
 
 <figure class="fig">
 <svg viewBox="0 0 320 175" width="320" role="img" aria-label="SR latch from two cross-coupled NAND gates">
@@ -3383,7 +3383,7 @@ In a *Moore machine* the output depends only on the present state. In a *Mealy m
 **Design procedure** [[1]](#ref-1):
 
 1. Draw the state diagram from the word description.
-2. Reduce the number of states if possible: merge *equivalent* states, i.e. states that give the same output for every input and go to equivalent next states. This is the same procedure as minimizing a DFA; see Linz [[4]](#ref-4), §2.4.
+2. Reduce the number of states if possible: merge *equivalent* states, i.e. states that give the same output for every input and go to equivalent next states. This is the same procedure as minimizing a DFA (deterministic finite automaton); see Linz [[4]](#ref-4), §2.4.
 3. Give each state a binary code. $k$ states need $\lceil \log_2 k \rceil$ flip-flops.
 4. Write the state table: present state and input give the next state and output.
 5. Choose the flip-flop type and find its inputs with the excitation table.
