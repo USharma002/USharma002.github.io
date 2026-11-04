@@ -48,7 +48,7 @@ These notes follow the NPTEL course *Computer Architecture and Organization* (II
 
 </div>
 
-> **Note.** *Moore's law*: in 1965 Gordon Moore observed that the number of transistors per square inch on integrated circuits had doubled every year. The pace has slowed; the current form of the law is a doubling about every 18 months.
+> **Note.** *Moore's law*: in 1965 Gordon Moore observed that the number of transistors per square inch on integrated circuits was doubling every year. The pace slowed to a doubling every 18 months in the 1970s, and has kept that rate since [[3]](#ref-3).
 
 ### Functional Units
 
@@ -446,6 +446,53 @@ An instruction consists of an **opcode**, which specifies the operation (data tr
 - *Register–register*: `ADD R1, R2, R3`
 
 Fixed-size instructions are easier to decode. With 32 registers a register is specified in 5 bits; for example, in a 32-bit format, `LOAD R11, 100(R2)` is encoded as a 6-bit opcode, two 5-bit register fields and a 16-bit immediate.
+
+#### Expanding Opcodes
+
+For a fixed instruction length there is a trade-off between the **number of opcodes** and the **addressing capability**: more opcode bits leave fewer bits for addresses. A refinement is the *variable-length* (*expanding*) *opcode*: there is a minimum opcode length, but for some opcodes further operations are specified using additional bits of the instruction. Since the instruction length is fixed, those instructions have fewer bits for addressing, so this is used for instructions that need fewer operands or less powerful addressing [[3]](#ref-3).
+
+<div class="example">
+
+The PDP-8 has 12-bit instructions with a 3-bit opcode [[3]](#ref-3).
+
+- Opcodes 0–5 are memory-reference instructions (an address plus page and indirect bits), so there are only six basic operations.
+- Opcode 6 is I/O: 6 bits select one of 64 devices and 3 bits give the command.
+- Opcode 7 is a register-reference (microinstruction) format: each remaining bit specifies an operation, such as clear accumulator, and the bits can be combined.
+
+With this opcode extension, about 35 instructions fit in 12 bits.
+
+</div>
+
+##### How Many Instructions Can Be Encoded
+
+Each opcode pattern not used by a longer-address format becomes a **prefix** for the next format, which takes over the bits of the address field it no longer needs. No opcode may be a prefix of another, so the instruction can still be decoded.
+
+With $n$-bit instructions and $k$-bit address fields, a two-address instruction has $n - 2k$ opcode bits, i.e. $2^{n-2k}$ patterns. If $T_2$ of them are used, then
+
+$$N_1^{\max} = \left(2^{n-2k} - T_2\right) 2^k, \qquad N_0^{\max} = \left(\left(2^{n-2k} - T_2\right) 2^k - T_1\right) 2^k$$
+
+where $T_1$ is the number of one-address instructions actually used and $N_1^{\max}$, $N_0^{\max}$ are the most one- and zero-address instructions possible.
+
+<div class="example">
+
+16-bit instructions and 6-bit address fields, with 15 two-address and 60 one-address instructions. How many zero-address instructions are possible?
+
+- Two-address: $16 - 12 = 4$ opcode bits, 16 patterns. 15 are used (`0000`–`1110`), so 1 pattern (`1111`) is left.
+- One-address: `1111` plus 6 more bits gives $1 \times 2^6 = 64$ patterns. 60 are used, so 4 are left.
+- Zero-address: each of those 4 patterns plus the last 6 bits gives $4 \times 2^6 = 256$ instructions.
+
+</div>
+
+<figure class="table">
+<figcaption>The three formats in the example (bit counts out of 16).</figcaption>
+
+| Format | Opcode | Addresses |
+|:--|:--|:--|
+| two-address | 4 bits: `0000`–`1110` | $A_1$ (6), $A_2$ (6) |
+| one-address | 10 bits: `1111 000000`–`1111 111011` | $A$ (6) |
+| zero-address | 16 bits: `1111 111100 xxxxxx`–`1111 111111 xxxxxx` | none |
+
+</figure>
 
 ### Addressing Modes
 
@@ -1013,7 +1060,7 @@ MDR is connected to the internal bus ($\text{MDR}_\text{in}$, $\text{MDR}_\text{
 The first three steps are the instruction fetch, common to all instructions. In $T_1$ the ALU computes PC + 4 (Select4) while memory is read, and in $T_2$ the result is loaded into PC.
 
 <figure class="table tight">
-<figcaption>Control sequences on the single-bus datapath. In step 4, $	ext{IR}_	ext{out}$ places the address field (for LOCA) or the offset field (for the branch) on the bus.</figcaption>
+<figcaption>Control sequences on the single-bus datapath. In step 4, $\text{IR}_\text{out}$ places the address field (for LOCA) or the offset field (for the branch) on the bus.</figcaption>
 
 <table>
 <thead><tr><th>Step</th><th><code>ADD R1, R2</code></th><th><code>ADD R1, LOCA</code></th><th><code>BR Label</code></th></tr></thead>
@@ -5492,7 +5539,7 @@ ILP within one thread is limited, and long stalls such as cache misses leave the
 
 ### Multicore Processors
 
-A **multicore processor** has two or more independent cores on one die or package. Typically the L1 and L2 caches are private to each core and the L3 cache is shared. It is difficult to increase the clock frequency because of power consumption, so the hardware is replicated and run at a lower clock: two cores at 1.5 GHz can match one core at 3 GHz, with lower power. In a symmetric multicore all the cores are identical; in an asymmetric one they may have different functions.
+A **multicore processor** has two or more independent cores on one die or package. Typically the L1 and L2 caches are private to each core and the L3 cache is shared. It is difficult to increase the clock frequency because of power consumption, so the hardware is replicated and run at a lower clock: two cores at 1.5 GHz can match one core at 3 GHz, with lower power, but only for work that can be split between them: by Amdahl's law, the speedup from $N$ processors is $1/((1 - f) + f/N)$, where $f$ is the fraction of the execution time that can run in parallel [[3]](#ref-3). In a symmetric multicore all the cores are identical; in an asymmetric one they may have different functions.
 
 <figure class="table">
 <figcaption>Flynn's taxonomy.</figcaption>

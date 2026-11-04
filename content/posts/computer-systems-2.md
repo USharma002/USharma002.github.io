@@ -893,7 +893,7 @@ Different CPU-scheduling algorithms have different properties, and the choice of
 
 $$\text{turnaround} = \text{completion} - \text{arrival}, \qquad \text{waiting} = \text{turnaround} - \text{burst}$$
 
-> **Note.** It is desirable to **maximize** CPU utilization and throughput, and to **minimize** turnaround, waiting and response time. Turnaround time is generally limited by the speed of the output device. For interactive systems, a predictable response time may matter more than a fast one on average: a system with a reasonable and predictable response time can be more desirable than one that is faster on average but highly variable.
+> **Note.** It is desirable to **maximize** CPU utilization and throughput, and to **minimize** turnaround, waiting and response time. Turnaround time is generally limited by the speed of the output device. For interactive systems it has been suggested that minimizing the **variance** of the response time matters more than minimizing its average: a system with reasonable and predictable response time may be preferred to one that is faster on average but highly variable [[1]](#ref-1).
 
 #### Scheduling Algorithms
 
@@ -1421,7 +1421,7 @@ Hence progress and bounded waiting are independent of each other, and a solution
 
 ##### A Few Related Terms
 
-- **Deadlock freedom**: if two or more processes are trying to enter their critical sections, one of them will eventually enter. This is progress without the "outsiders have no influence" condition. Since the entry section is able to select a process to enter, the decision is certainly finite.
+- **Deadlock freedom**: if two or more processes are trying to enter their critical sections, one of them will eventually enter. This is progress without the "outsiders have no influence" condition.
 - **Starvation freedom**: if a process is trying to enter its critical section, it will eventually enter.
 
 **Q. Does starvation freedom imply deadlock freedom?** *Yes.* If every process can eventually enter its critical section (although the waiting time may vary), then the decision time of selecting a process is finite. Otherwise, all processes would wait in the entry section.
@@ -1589,7 +1589,7 @@ If both processes try to enter at the same time, `turn` is set to both `i` and `
 - **Progress is achieved**: a process won't have to wait for the other if the other doesn't want to enter. The deadlock of attempt 3 is broken through the `turn` variable: the process which assigns `turn` first will enter first.
 - **Bounded waiting is achieved** with bound = 1: after one entry by $P_j$, $P_j$ sets `turn = i` on its next attempt, so the processes alternate when both want to enter.
 
-> **Note.** Because modern processors and compilers may reorder loads and stores, Peterson's solution is not guaranteed to work on modern architectures without memory barriers. It is still the clearest description of what a correct solution has to do.
+> **Note.** Because modern processors and compilers may reorder loads and stores, Peterson's solution is not guaranteed to work on modern architectures without memory barriers. Galvin still presents it because it gives a good algorithmic description of solving the critical-section problem, and shows the difficulty of meeting mutual exclusion, progress and bounded waiting in software [[1]](#ref-1).
 
 #### Synchronization Hardware
 
@@ -2335,6 +2335,125 @@ void test(int i) {
 This is deadlock-free and allows the maximum parallelism (two philosophers can eat at once). A philosopher who finishes eating checks whether a neighbour was waiting for the forks, and wakes them up.
 
 > **Note.** Galvin's simple semaphore solution (one semaphore `chopstick[i]` per fork) deadlocks in the same way as the first try. Possible remedies are: allow at most four philosophers at the table; allow a philosopher to pick up forks only if both are available (picking them up in a critical section, as in the solution above); or use an asymmetric solution where odd philosophers pick up the left fork first and even ones the right. A deadlock-free solution does not necessarily eliminate starvation.
+
+#### Monitors
+
+Semaphores are effective, but using them incorrectly causes timing errors that are hard to detect, because they appear only for particular execution sequences. With a semaphore `mutex` guarding a critical section [[1]](#ref-1):
+
+- swapping the order, `signal(mutex)` ... `wait(mutex)`, lets several processes into their critical sections at once (mutual exclusion is violated);
+- writing `wait(mutex)` ... `wait(mutex)` causes a **deadlock**;
+- omitting the `wait()`, the `signal()` or both either violates mutual exclusion or deadlocks.
+
+These problems arise even if only a single process is not well behaved, whether from an honest programming error or an uncooperative programmer. To deal with such errors, high-level language constructs were developed; a fundamental one is the **monitor**.
+
+<div class="definition">
+
+A *monitor type* is an abstract data type that declares shared variables together with a set of programmer-defined operations on them, and the monitor guarantees that **only one process at a time is active within it**. The functions of a monitor can access only the variables declared in it and their own parameters [[1]](#ref-1).
+
+</div>
+
+```c
+monitor monitor_name {
+    /* shared variable declarations */
+
+    function P1(...) { ... }
+    function P2(...) { ... }
+    ...
+    function Pn(...) { ... }
+
+    initialization_code(...) { ... }
+}
+```
+
+The programmer does not need to code the mutual exclusion explicitly. Many programming languages, including Java and C#, have incorporated the monitor idea [[1]](#ref-1). For other synchronization schemes, a monitor can declare **condition variables**:
+
+```c
+condition x, y;
+```
+
+The only operations on a condition variable are `wait()` and `signal()`:
+
+- `x.wait()` suspends the calling process until another process calls `x.signal()`.
+- `x.signal()` resumes **exactly one** suspended process. If none is suspended, it has **no effect**: the state of `x` is as if it had never been called. This differs from a semaphore's `signal()`, which always changes the semaphore's value.
+
+<figure class="fig">
+<svg viewBox="0 0 560 330" width="560" role="img" aria-label="Monitor with condition variables">
+  <rect x="190" y="70" width="250" height="240" rx="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="215" y="90" width="200" height="46" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="315" y="118" text-anchor="middle" font-size="12" fill="currentColor">shared data</text>
+  <rect x="215" y="156" width="200" height="80" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="315" y="200" text-anchor="middle" font-size="12" fill="currentColor">operations</text>
+  <rect x="215" y="256" width="200" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="315" y="279" text-anchor="middle" font-size="12" fill="currentColor">initialization code</text>
+  <circle cx="345" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="370" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="395" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="420" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="336,30 315,30 315,70" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="440" y="34" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">entry queue</text>
+  <circle cx="60" cy="113" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="85" cy="113" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="110" cy="113" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="119" y1="113" x2="215" y2="113" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170" y="106" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">x</text>
+  <circle cx="85" cy="170" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="110" cy="170" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="119" y1="170" x2="215" y2="170" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170" y="163" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">y</text>
+  <text x="85" y="210" text-anchor="middle" font-size="11" fill="currentColor" class="dim">queues associated</text>
+  <text x="85" y="225" text-anchor="middle" font-size="11" fill="currentColor" class="dim">with x, y conditions</text>
+</svg>
+<figcaption>A monitor with condition variables (after Galvin, Fig. 5.17). Processes wait to enter in the entry queue; inside, a process that calls <code>x.wait()</code> joins the queue of <code>x</code>.</figcaption>
+</figure>
+
+When a process $P$ calls `x.signal()` and a process $Q$ is suspended on `x`, both cannot be active in the monitor. There are two options [[1]](#ref-1):
+
+1. **Signal and wait:** $P$ waits until $Q$ leaves the monitor or waits on another condition.
+2. **Signal and continue:** $Q$ waits until $P$ leaves the monitor or waits on another condition.
+
+Signal-and-continue seems reasonable since $P$ was already running, but by the time $Q$ resumes, the condition it was waiting for may no longer hold. Concurrent Pascal uses a compromise: the signalling process leaves the monitor immediately, so $Q$ resumes at once.
+
+##### Dining Philosophers Using a Monitor
+
+A philosopher may pick up the chopsticks only if **both** are available. Each philosopher is `THINKING`, `HUNGRY` or `EATING`, and philosopher $i$ can eat only if neither neighbour is eating. A condition `self[i]` lets a hungry philosopher wait [[1]](#ref-1):
+
+```c
+monitor DiningPhilosophers {
+    enum {THINKING, HUNGRY, EATING} state[5];
+    condition self[5];
+
+    void pickup(int i) {
+        state[i] = HUNGRY;
+        test(i);
+        if (state[i] != EATING)
+            self[i].wait();
+    }
+
+    void putdown(int i) {
+        state[i] = THINKING;
+        test((i + 4) % 5);      /* left neighbour  */
+        test((i + 1) % 5);      /* right neighbour */
+    }
+
+    void test(int i) {
+        if (state[(i + 4) % 5] != EATING &&
+            state[i] == HUNGRY &&
+            state[(i + 1) % 5] != EATING) {
+            state[i] = EATING;
+            self[i].signal();
+        }
+    }
+
+    initialization_code() {
+        for (int i = 0; i < 5; i++)
+            state[i] = THINKING;
+    }
+}
+```
+
+Philosopher $i$ calls `DiningPhilosophers.pickup(i)`, eats, then calls `DiningPhilosophers.putdown(i)`. No two neighbours eat at the same time and there is **no deadlock**, but a philosopher can still **starve**.
+
+> **Note.** A monitor can be implemented with semaphores: a semaphore `mutex` (initially 1) is acquired on entering and released on leaving the monitor, and a semaphore `next` (initially 0) lets a signalling process suspend itself until the resumed process leaves or waits [[1]](#ref-1).
 
 ### Deadlocks
 
@@ -3661,7 +3780,7 @@ The page number is split into an **outer** and an **inner** part. The outer part
 <figcaption>Two-level address translation (after Galvin, Fig. 8.18). $p_1$ selects an entry of the outer page table, which points to an inner page table; $p_2$ selects the entry there that holds the frame number $f$. The offset $d$ is copied unchanged.</figcaption>
 </figure>
 
-Because translation works from the outer table inward, this is also called a *forward-mapped page table*. An outer entry whose region is unused is marked invalid, and its inner table is **not stored at all**. That is where the saving comes from.
+Because translation works from the outer table inward, this is also called a *forward-mapped page table*. An outer entry whose region is unused is marked invalid, and its inner table is **not stored at all**.
 
 <figure class="fig">
 <svg viewBox="0 0 520 296" width="520" role="img" aria-label="Two-level page table in which the inner tables for unused regions are not stored">
@@ -3875,7 +3994,7 @@ $$
 
 $$\text{EMAT} = h\,(T_A + M_A) + (1 - h)\,\big(T_A + (L + 1)\,M_A\big)$$
 
-With $L = 1$ this is the formula for a flat page table above. A high TLB hit ratio is what makes deep page tables affordable.
+With $L = 1$ this is the formula for a flat page table above.
 
 #### Hashed Page Tables
 
@@ -5625,7 +5744,7 @@ Divide by the time of a **full** rotation, not by the average rotational latency
 
 $$T_{\text{access}} = 10 + 4.17 + 0.13 \approx 14.3 \text{ ms}$$
 
-Almost all of it is positioning, which is why the order in which requests are served matters.
+Seek time and rotational latency make up 14.17 ms of the 14.3 ms.
 
 > **Note.** A **solid-state disk (SSD)** is nonvolatile memory used like a hard disk. It has no moving parts, so there is no seek time or rotational latency. It uses less power, but costs more per MB and may wear out sooner.
 

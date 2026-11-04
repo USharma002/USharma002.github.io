@@ -223,11 +223,7 @@ A *Karnaugh map* (K-map) is a diagram made of squares, one square per minterm of
 <figcaption>$F = a\bar b + ab$: the two squares in row $a = 1$ are adjacent, and together they are just $a$.</figcaption>
 </figure>
 
-**Why the rows and columns are in Gray-code order.** With three or more variables the columns are labelled $00, 01, 11, 10$, not in binary order. In this order only one bit changes from one column to the next, so
-
-> any two adjacent squares differ in exactly one variable.
-
-That is exactly the condition for $a\bar b + ab = a$. For example $m_5$ and $m_7$ sit side by side, and
+**Why the rows and columns are in Gray-code order.** With three or more variables the columns are labelled $00, 01, 11, 10$, not in binary order. In this order only one bit changes from one column to the next, so any two adjacent squares differ in exactly one variable. That is exactly the condition for $a\bar b + ab = a$. For example $m_5$ and $m_7$ sit side by side, and
 
 $$m_5 + m_7 = x \bar y z + x y z = x z(\bar y + y) = x z$$
 
@@ -975,6 +971,36 @@ $$\text{value} = (-1)^{x_{n-1}} \times \sum_{i=0}^{n-2} 2^i x_i$$
 - There are **two representations of zero**: $1\,00\ldots0 = -0$ and $0\,00\ldots0 = +0$.
 - Range: $-(2^{n-1} - 1)$ to $+(2^{n-1} - 1)$, i.e. only $2^n - 1$ distinct numbers.
 
+### One's Complement
+
+<div class="definition">
+
+The *1's complement* of an $n$-bit number $N$ is $(2^n - 1) - N$. Since $2^n - 1 = 11\ldots1$, it is obtained by **complementing every bit**. In the *signed-1's-complement* representation, a negative number is the 1's complement of its positive value, sign bit included [[1]](#ref-1).
+
+</div>
+
+Equivalently, the most significant bit has weight $-(2^{n-1} - 1)$:
+
+$$\text{value} = -(2^{n-1} - 1)\,x_{n-1} + \sum_{i=0}^{n-2} 2^i x_i$$
+
+For example, $+9 = 00001001$ in 8 bits, and $-9$ is written in the three signed systems as [[1]](#ref-1)
+
+$$\underbrace{10001001}_{\text{signed magnitude}} \qquad \underbrace{11110110}_{\text{1's complement}} \qquad \underbrace{11110111}_{\text{2's complement}}$$
+
+- Like signed magnitude, there are **two representations of zero**: $00\ldots0 = +0$ and $11\ldots1 = -0$.
+- Range: $-(2^{n-1} - 1)$ to $+(2^{n-1} - 1)$.
+- The 2's complement is the 1's complement plus 1.
+
+**Subtraction with end-around carry.** To compute $A - B$, add $A$ and the 1's complement of $B$. Because the 1's complement is one less than the 2's complement, the sum is one less than the correct difference when an end carry occurs, so the carry is removed and added back to the sum (the *end-around carry*). If there is no end carry, the result is negative and equals the 1's complement of the sum [[1]](#ref-1).
+
+<div class="example">
+
+In 4 bits, $0111 - 0010$ $(7 - 2)$: $0111 + 1101 = 1\,0100$. There is an end carry, so $0100 + 1 = 0101 = 5$.
+
+$0010 - 0111$ $(2 - 7)$: $0010 + 1000 = 1010$. There is no end carry, so the result is $-(\text{1's complement of } 1010) = -0101 = -5$.
+
+</div>
+
 ### Two's Complement
 
 <div class="definition">
@@ -1037,6 +1063,31 @@ $$\underset{(3)}{0011} \xrightarrow{\text{complement}} 1100 + 1 \longrightarrow 
 - No repeated representations $\implies$ $2^n$ distinct numbers.
 - Allows efficient addition and multiplication (the same adder works for signed and unsigned numbers).
 
+### Fixed-Point Representation
+
+A register has no place to store the binary point; its position is only **assumed**. In the *fixed-point* method the binary point is always in the same position. The two positions most used are [[2]](#ref-2):
+
+1. at the extreme **right** of the register, so the stored number is an **integer**;
+2. at the extreme **left** (just after the sign bit), so the stored number is a **fraction**.
+
+A positive fixed-point number has sign bit 0 followed by its magnitude. A negative one has sign bit 1, and the rest is in sign-magnitude, sign-1's-complement or sign-2's-complement form, exactly as for integers [[2]](#ref-2).
+
+In general, if $f$ bits lie to the right of the assumed binary point, the stored bit pattern is read as an integer $I$ and
+
+$$\text{value} = I \times 2^{-f}$$
+
+<div class="example">
+
+An 8-bit register holding a signed 2's-complement fraction ($f = 7$):
+
+$$0.1010000 = 2^{-1} + 2^{-3} = +0.625, \qquad 1.0110000 = -1 + 2^{-2} + 2^{-3} = -0.625$$
+
+The range is $-1$ to $1 - 2^{-7}$, in steps of $2^{-7}$.
+
+</div>
+
+The step between neighbouring values is fixed at $2^{-f}$, so fixed point cannot represent very large and very small numbers in the same format. That is the motivation for floating point, below.
+
 ## Addition and Overflow
 
 $$
@@ -1062,7 +1113,7 @@ $$
 
 ### Two's Complement Overflow
 
-Adding a positive and a negative number can **never** overflow, since the result's magnitude is smaller than both operands. Overflow happens only when both operands have the same sign but the result has the opposite sign:
+Adding a positive and a negative number can **never** overflow, since the result's magnitude is smaller than the larger of the two operands [[1]](#ref-1). Overflow happens only when both operands have the same sign but the result has the opposite sign:
 
 $$
 \begin{array}{r@{\qquad}l}
