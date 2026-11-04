@@ -10,7 +10,7 @@ series: ["Computer Systems"]
 ShowToc: true
 TocOpen: false
 math: true
-draft: true
+draft: false
 ---
 
 <style>
