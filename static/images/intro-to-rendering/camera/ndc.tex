@@ -45,12 +45,12 @@
     \path[glassfront] (-\c,-\c,\c) -- (\c,-\c,\c) -- (\c,\c,\c) -- (-\c,\c,\c) -- cycle; % Front
 
     % Math Labels
-    \node[above left] at (-\c, \c, -\c) {$(-1, 1, -1)$};  % Back top left
-    \node[above right] at (\c, \c , -\c) {$(1, 1, 1)$};     % Front top right
-    \node[above left] at (-\c, \c, \c) {$(-1, 1, 1)$};    % Front top left
-    \node[below left] at (-\c, -\c, \c) {$(-1, -1, 1)$};  % Front bottom left
-    \node[below right] at (\c, -\c, \c) {$(1, -1, 1)$};   % Front bottom right
-    \node[below right] at (\c, -\c, -\c) {$(1, -1, -1)$}; % Back bottom right
+    \node[above left] at (-\c, \c, -\c) {$(-1, 1, 1)$};  % Back top left (NDC z = +1, far plane)
+    \node[above right] at (\c, \c , -\c) {$(1, 1, 1)$};     % Back top right (far plane)
+    \node[above left] at (-\c, \c, \c) {$(-1, 1, -1)$};    % Front top left (NDC z = -1, near plane)
+    \node[below left] at (-\c, -\c, \c) {$(-1, -1, -1)$};  % Front bottom left (near plane)
+    \node[below right] at (\c, -\c, \c) {$(1, -1, -1)$};   % Front bottom right (near plane)
+    \node[below right] at (\c, -\c, -\c) {$(1, -1, 1)$}; % Back bottom right (far plane)
     
 \end{tikzpicture}
 

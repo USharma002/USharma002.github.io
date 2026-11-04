@@ -3,309 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blinn-Phong Reflection Math</title>
+<title>Blinn-Phong Halfway Vector</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;600&display=swap">
 <style>
     :root {
-        /* Application Theme */
-        --mafs-bg: transparent;
-        --mafs-fg: #000000;
-        --mafs-grid: rgba(0,0,0,0.15);
-        --mafs-axis: rgba(0,0,0,0.8);
-        --mafs-text: #333;
-        
-        /* Vector Colors */
-        --vecorange: #E65100;
-        --vecblue: #1565C0;
-        --vecpurple: #6A1B9A;
-        --vecdark: #212121; /* Normal vector, adapts in dark mode */
+        --card-bg: #ffffff;
+        --halo: #ffffff;
+        --text: #374151;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --vl: #e65100;
+        --vh: #6a1b9a;
+        --vv: #1565c0;
+        --mono: "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
     }
-
-    .theme-light {
-        --mafs-fg: #000000;
-        --mafs-grid: rgba(0,0,0,0.15);
-        --mafs-text: #333;
-        --vecdark: #212121;
-        --vecpurple: #6A1B9A;
+    @media (prefers-color-scheme: dark) {
+        :root { --card-bg: #2d2d2d; --halo: #1d1e20; --text: #e4e4e4; --muted: #a3a3a3; --border: #404040; --vl: #ffa726; --vh: #ce93d8; --vv: #64b5f6; }
     }
-
-    .theme-dark {
-        --mafs-fg: #ffffff;
-        --mafs-grid: rgba(255,255,255,0.2);
-        --mafs-text: #eee;
-        --vecdark: #ffffff;
-        --vecpurple: #BA68C8; /* Lighter purple for dark mode visibility */
-    }
-
-    body {
-        margin: 0;
-        overflow: hidden;
-        background-color: var(--mafs-bg);
-        font-family: system-ui, sans-serif;
-        color: var(--mafs-text);
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-    }
-
-    /* Top Controls Structure */
-    .controls {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        padding: 15px;
-        background: var(--mafs-bg);
-        border-bottom: 1px solid var(--mafs-grid);
-        z-index: 10;
-    }
-
-    button {
-        background: var(--mafs-bg);
-        color: var(--mafs-fg);
-        border: 1px solid var(--mafs-grid);
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-
-    button:hover { background: var(--mafs-grid); }
-    button.active {
-        background: var(--vecpurple);
-        color: #ffffff;
-        border-color: var(--vecpurple);
-    }
-
-    /* Main Container & Layout */
-    .container {
-        width: 100%;
-        flex: 1;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* Bottom Label Status */
-    .label {
-        position: absolute;
-        bottom: 25px;
-        left: 20px;
-        right: 20px;
-        text-align: center;
-        font-size: 16px;
-        line-height: 1.5;
-        color: var(--mafs-fg);
-        pointer-events: none;
-        background: var(--mafs-bg);
-    }
-
-    /* SVG Styling */
-    svg {
-        width: 100%;
-        height: 100%;
-        max-width: 900px;
-        display: block;
-    }
-
-    .math {
-        font-family: 'Times New Roman', Times, serif;
-        font-style: italic;
-        font-weight: bold;
-        font-size: 26px;
-        paint-order: stroke;
-        stroke: var(--mafs-bg);
-        stroke-width: 5px;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .math-small { font-size: 20px; }
-    .vector { stroke-width: 4px; }
-    .dashed-ctx { stroke-dasharray: 8 6; stroke-width: 2px; }
-    .angle-arc { fill: none; stroke: var(--mafs-text); stroke-width: 2.5px; opacity: 0.6; }
-
-    /* Animation Classes */
-    .el-step-1, .el-step-2, .el-step-3 {
-        opacity: 0;
-        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Visibility Logic driven by container data attribute */
-    [data-step="1"] .el-step-1,
-    [data-step="2"] .el-step-1,[data-step="3"] .el-step-1 { opacity: 1; }[data-step="2"] .el-step-2,
-    [data-step="3"] .el-step-2 { opacity: 1; }
-
-    [data-step="3"] .el-step-3 { opacity: 1; }
-
-    [data-step="3"] .vec-n,[data-step="3"] .vec-h { stroke-width: 6px; }
-    .vec-n, .vec-h { transition: stroke-width 0.3s; }
+    html { background: transparent; }
+    body { margin: 0; padding: 6px 4px; font-family: 'Merriweather', Georgia, serif; font-weight: 300; font-size: 14px; background: transparent; color: var(--text); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 6px; }
+    button { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 0; border: 1px solid var(--muted); background: transparent; color: var(--text); cursor: pointer; }
+    button:hover { border-color: var(--text); }
+    button.on { background: var(--text); border-color: var(--text); color: var(--card-bg); }
+    .seg { display: flex; flex-wrap: wrap; }
+    .seg button + button { margin-left: -1px; }
+    .grp { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+    .grp b { font-family: var(--mono); font-weight: 400; color: var(--text); min-width: 2.2em; }
+    input[type=range] { width: 120px; accent-color: var(--vh); }
+    svg { width: 100%; height: auto; display: block; touch-action: none; user-select: none; }
+    svg text { font-family: 'Merriweather', Georgia, serif; paint-order: stroke; stroke: var(--halo); stroke-width: 4px; stroke-linejoin: round; }
+    svg .m { font-style: italic; font-weight: 700; font-size: 20px; }
+    svg .s { font-size: 13px; font-style: italic; }
+    .handle { cursor: grab; }
+    .cap { font-size: 13px; line-height: 1.5; min-height: 3em; margin: 2px 0 4px; }
+    .readout { font-family: var(--mono); font-size: 12px; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 4px; display: flex; flex-wrap: wrap; gap: 0 18px; }
+    .hint { font-size: 12px; color: var(--muted); font-style: italic; }
 </style>
 </head>
 <body>
-
-<div class="controls">
-    <button onclick="setStep(0)" id="btn-0" class="active">0. Initial State</button>
-    <button onclick="setStep(1)" id="btn-1">1. View & Light Angle</button>
-    <button onclick="setStep(2)" id="btn-2">2. Halfway Vector</button>
-    <button onclick="setStep(3)" id="btn-3">3. Blinn Dot Product</button>
+<div class="row">
+    <div class="seg" id="steps">
+        <button data-s="0" class="on">1. vectors</button><button data-s="1">2. angle between l and v</button><button data-s="2">3. halfway vector</button><button data-s="3">4. compare with n</button>
+    </div>
+    <div class="grp">&beta; <input type="range" id="beta" min="1" max="512" step="1" value="128"><b id="beta-v"></b></div>
 </div>
-
-<div class="container" id="vis-container" data-step="0">
-    <svg viewBox="-50 50 900 550" preserveAspectRatio="xMidYMid meet">
-        
-        <defs>
-            <!-- Arrowheads -->
-            <marker id="arrow-n" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecdark)" />
-            </marker>
-            <marker id="arrow-l" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecorange)" />
-            </marker>
-            <marker id="arrow-v" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecblue)" />
-            </marker>
-            <marker id="arrow-h" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecpurple)" />
-            </marker>
-        </defs>
-
-        <!-- Ground Base -->
-        <rect x="75" y="450" width="650" height="70" fill="var(--mafs-grid)" opacity="0.6"/>
-        <line x1="75" y1="450" x2="725" y2="450" stroke="var(--mafs-grid)" stroke-width="3" />
-
-        <!-- Unit Hemisphere -->
-        <path d="M 150 450 A 250 250 0 0 1 650 450" fill="none" stroke="var(--mafs-text)" opacity="0.4" stroke-width="1.5" stroke-dasharray="6 6"/>
-
-        <!-- Contextual Dashed Lines -->
-        <line x1="239.3" y1="258.5" x2="168.6" y2="174.2" stroke="var(--vecorange)" opacity="0.5" class="dashed-ctx" />
-        <line x1="634.9" y1="364.5" x2="738.3" y2="326.9" stroke="var(--vecblue)" opacity="0.5" class="dashed-ctx" />
-
-        <!-- Sun (Light Source Context) -->
-        <g transform="translate(168.6, 174.2)">
-            <circle cx="0" cy="0" r="20" fill="var(--vecorange)" opacity="0.2" />
-            <circle cx="0" cy="0" r="20" fill="none" stroke="var(--vecorange)" stroke-width="3" />
-            <path d="M 27.5 0 L 42.5 0 M -27.5 0 L -42.5 0 M 0 27.5 L 0 42.5 M 0 -27.5 L 0 -42.5 M 19.4 19.4 L 30 30 M -19.4 -19.4 L -30 -30 M 19.4 -19.4 L 30 -30 M -19.4 19.4 L -30 30" stroke="var(--vecorange)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-
-        <!-- Eye (Viewer Context) -->
-        <g transform="translate(738.3, 326.9) rotate(-20) scale(0.9)">
-            <ellipse cx="0" cy="0" rx="35" ry="20" fill="var(--mafs-bg)" stroke="var(--mafs-grid)" stroke-width="2"/>
-            <path d="M -35 0 C -15 -25, 15 -25, 35 0 C 15 25, -15 25, -35 0 Z" fill="none" stroke="var(--vecblue)" stroke-width="3" />
-            <circle cx="0" cy="0" r="12.5" fill="var(--vecblue)" />
-            <circle cx="4" cy="-4" r="2.5" fill="var(--mafs-bg)" />
-        </g>
-
-        <!-- Origin point x -->
-        <circle cx="400" cy="450" r="5" fill="var(--mafs-fg)" />
-        <text x="393" y="480" class="math" fill="var(--mafs-fg)">x</text>
-
-        <!-- STEP 1: Angle Arc from V to L -->
-        <g class="el-step-1">
-            <!-- Radius 1.8 units * 50 = 90px -->
-            <path d="M 484.57 419.22 A 90 90 0 0 0 342.15 381.06" class="angle-arc"/>
-        </g>
-
-        <!-- STEP 2: Halfway tick marks and vector -->
-        <g class="el-step-2">
-            <!-- MidRight Tick (47.5 deg) -->
-            <line x1="455.74" y1="389.17" x2="465.87" y2="378.11" stroke="var(--mafs-text)" stroke-width="2.5" opacity="0.6"/>
-            <!-- MidLeft Tick (102.5 deg) -->
-            <line x1="382.14" y1="369.45" x2="378.89" y2="354.81" stroke="var(--mafs-text)" stroke-width="2.5" opacity="0.6"/>
-        </g>
-
-        <!-- STEP 3: Dot Product Highlight / Phi Angle -->
-        <g class="el-step-3">
-            <!-- Radius 2.8 units * 50 = 140px -->
-            <path d="M 436.23 314.77 A 140 140 0 0 0 400 310.00" class="angle-arc" stroke="var(--mafs-text)" opacity="1"/>
-            <text x="421.5" y="286.4" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--mafs-text)">φ</text>
-        </g>
-
-        <!-- Base Vectors -->
-        <!-- Normal Vector (n) -->
-        <line x1="400" y1="450" x2="400" y2="200" class="vector vec-n" stroke="var(--vecdark)" marker-end="url(#arrow-n)" />
-        <text x="393" y="180" class="math" fill="var(--vecdark)">n</text>
-
-        <!-- Light Vector (l) -->
-        <line x1="400" y1="450" x2="239.3" y2="258.5" class="vector" stroke="var(--vecorange)" marker-end="url(#arrow-l)" />
-        <text x="215" y="275" class="math" fill="var(--vecorange)">l</text>
-        
-        <!-- View Vector (v) -->
-        <line x1="400" y1="450" x2="634.9" y2="364.5" class="vector" stroke="var(--vecblue)" marker-end="url(#arrow-v)" />
-        <text x="645" y="385" class="math" fill="var(--vecblue)">v</text>
-
-        <!-- Halfway Vector (h) -> Shown in Step 2 -->
-        <g class="el-step-2">
-            <line x1="400" y1="450" x2="464.7" y2="208.5" class="vector vec-h" stroke="var(--vecpurple)" marker-end="url(#arrow-h)" />
-            <text x="475" y="200" class="math" fill="var(--vecpurple)">h</text>
-        </g>
-    </svg>
-    
-    <div class="label" id="status-label"></div>
-</div>
-
+<svg id="svg" viewBox="0 0 760 330"></svg>
+<div class="cap" id="cap"></div>
+<div class="readout" id="readout"></div>
+<div class="hint">drag the tips of l and v</div>
 <script>
-    // Theme syncing capabilities
-    function syncTheme() {
-        try {
-            const parent = window.parent.document.body;
-            const isDark = parent.classList.contains('dark') || 
-                           window.parent.document.documentElement.classList.contains('dark');
-            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
-        } catch (e) {}
-    }
-    function installThemeSync() {
-        const sync = () => requestAnimationFrame(syncTheme);
-
-        sync();
-
-        if (typeof MutationObserver !== 'undefined') {
-            try {
-                const parentDoc = window.parent.document;
-                const observer = new MutationObserver(sync);
-                const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
-
-                if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
-                if (parentDoc.body) observer.observe(parentDoc.body, options);
-
-                window.addEventListener('beforeunload', function () {
-                    observer.disconnect();
-                }, { once: true });
-            } catch (e) {}
+// 2D cross-section: surface along x, n = (0,1). Unit vectors l, v point away from the surface.
+// h = (l+v)/|l+v| ; specular = max(n.h,0)^beta, and 0 when n.l <= 0.
+let colors = {};
+function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    ['--text', '--muted', '--border', '--vl', '--vh', '--vv', '--halo'].forEach(k => colors[k.slice(2)] = cs.getPropertyValue(k).trim());
+}
+function detectTheme() {
+    try {
+        if (window.parent === window) throw 0;
+        const bg = getComputedStyle(window.parent.document.body).backgroundColor;
+        document.documentElement.style.background = bg;
+        const rgb = bg.match(/\d+/g);
+        if (rgb) {
+            const dark = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 < 128;
+            const set = (k, v) => document.documentElement.style.setProperty(k, v);
+            set('--card-bg', dark ? '#2d2d2d' : '#ffffff');
+            set('--halo', bg);
+            set('--text', dark ? '#e4e4e4' : '#374151');
+            set('--muted', dark ? '#a3a3a3' : '#6b7280');
+            set('--border', dark ? '#404040' : '#e5e7eb');
+            set('--vl', dark ? '#ffa726' : '#e65100');
+            set('--vh', dark ? '#ce93d8' : '#6a1b9a');
+            set('--vv', dark ? '#64b5f6' : '#1565c0');
         }
+    } catch (e) {}
+    readColors();
+    draw();
+}
 
-        if (window.matchMedia) {
-            const media = window.matchMedia('(prefers-color-scheme: dark)');
-            if (media.addEventListener) media.addEventListener('change', sync);
-            else if (media.addListener) media.addListener(sync);
-        }
+const OX = 380, OY = 290, U = 200;
+const D2R = Math.PI / 180;
+let thL = -40, thV = 70, step = 0;
+const $ = id => document.getElementById(id);
+const svg = $('svg');
+const P = (x, y) => [OX + U * x, OY - U * y];
+const dir = th => [Math.sin(th * D2R), Math.cos(th * D2R)];
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+const ang = v => Math.atan2(v[0], v[1]) / D2R;
+
+const captions = [
+    'The unit normal <b>n</b>, the direction to the light <b>l</b> and the direction to the viewer <b>v</b>, all starting at the surface point.',
+    'Instead of reflecting <b>l</b>, Blinn looks at the angle spanned by the light direction <b>l</b> and the view direction <b>v</b>.',
+    'Since <b>l</b> and <b>v</b> have equal length, <b>l</b> + <b>v</b> (the diagonal of their rhombus) bisects that angle. Normalizing it gives the halfway vector <b>h</b> = (<b>l</b> + <b>v</b>) / |<b>l</b> + <b>v</b>|.',
+    'The highlight depends on how close <b>h</b> is to <b>n</b>. Here, with all vectors in one plane, the angle between them is exactly &phi;/2, half the Phong angle &phi; between <b>r</b> and <b>v</b>; so <b>n</b>&middot;<b>h</b> = cos(&phi;/2). The specular term is max(<b>n</b>&middot;<b>h</b>, 0)<sup>&beta;</sup> (zero when <b>n</b>&middot;<b>l</b> &le; 0).'
+];
+
+function el(tag, attrs, text) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    svg.appendChild(e);
+    return e;
+}
+function arrow(a, b, col, w, dash) {
+    const [x1, y1] = a, [x2, y2] = b;
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+    if (len < 1) return;
+    const ux = dx / len, uy = dy / len, hs = 7 + w * 1.5;
+    el('line', { x1, y1, x2: x2 - ux * hs * 0.8, y2: y2 - uy * hs * 0.8, stroke: col, 'stroke-width': w, 'stroke-dasharray': dash || '' });
+    el('path', { d: `M${x2},${y2} L${x2 - ux * hs - uy * hs * 0.45},${y2 - uy * hs + ux * hs * 0.45} L${x2 - ux * hs + uy * hs * 0.45},${y2 - uy * hs - ux * hs * 0.45}Z`, fill: col });
+}
+const polar = (t, rad) => [OX + rad * Math.sin(t * D2R), OY - rad * Math.cos(t * D2R)];
+function arc(a1, a2, rad, col, label) {
+    const lo = Math.min(a1, a2), hi = Math.max(a1, a2);
+    if (hi - lo < 0.5) return;
+    const [x1, y1] = polar(lo, rad), [x2, y2] = polar(hi, rad);
+    el('path', { d: `M${x1},${y1} A${rad},${rad} 0 0 1 ${x2},${y2}`, fill: 'none', stroke: col, 'stroke-width': 1.3 });
+    if (label) { const [lx, ly] = polar((lo + hi) / 2, rad * 1.2); el('text', { x: lx, y: ly + 5, 'text-anchor': 'middle', class: 's', fill: col }, label); }
+}
+function tick(t, rad, col) {
+    const [x1, y1] = polar(t, rad - 7), [x2, y2] = polar(t, rad + 7);
+    el('line', { x1, y1, x2, y2, stroke: col, 'stroke-width': 1.5 });
+}
+function label(v, txt, col, k) {
+    const [x, y] = P(v[0] * (k || 1.12), v[1] * (k || 1.12));
+    el('text', { x, y: y + 7, 'text-anchor': 'middle', class: 'm', fill: col }, txt);
+}
+
+function compute() {
+    const n = [0, 1], l = dir(thL), v = dir(thV);
+    const nl = dot(n, l);
+    const s = [l[0] + v[0], l[1] + v[1]];
+    const len = Math.hypot(s[0], s[1]);
+    const h = len > 1e-9 ? [s[0] / len, s[1] / len] : null;
+    const nh = h ? dot(n, h) : NaN;
+    const b = +$('beta').value;
+    const spec = (nl > 0 && h) ? Math.pow(Math.max(nh, 0), b) : 0;
+    return { n, l, v, nl, s, len, h, nh, b, spec };
+}
+
+function draw() {
+    const c = compute();
+    svg.textContent = '';
+    el('line', { x1: 40, y1: OY, x2: 720, y2: OY, stroke: colors.muted, 'stroke-width': 1.2 });
+    for (let x = 50; x < 720; x += 16) el('line', { x1: x, y1: OY, x2: x - 10, y2: OY + 10, stroke: colors.border, 'stroke-width': 1 });
+    el('path', { d: `M${OX - U},${OY} A${U},${U} 0 0 1 ${OX + U},${OY}`, fill: 'none', stroke: colors.border, 'stroke-dasharray': '4 4' });
+
+    const O = [OX, OY];
+    if (step === 1) arc(thL, thV, 90, colors.muted, '');
+    if (step >= 2 && c.h) {
+        // rhombus l, v, l+v
+        const pl = P(...c.l), pv = P(...c.v), ps = P(...c.s);
+        el('line', { x1: pl[0], y1: pl[1], x2: ps[0], y2: ps[1], stroke: colors.muted, 'stroke-dasharray': '6 4', 'stroke-width': 1.3 });
+        el('line', { x1: pv[0], y1: pv[1], x2: ps[0], y2: ps[1], stroke: colors.muted, 'stroke-dasharray': '6 4', 'stroke-width': 1.3 });
+        arrow(O, ps, colors.muted, 1.3, '6 4');
+        el('text', { x: ps[0] + 10, y: ps[1] - 4, class: 's', fill: colors.text }, 'l + v');
+        const th = ang(c.h);
+        arc(thL, thV, 90, colors.muted, '');
+        tick((thL + th) / 2, 90, colors.muted); tick((th + thV) / 2, 90, colors.muted);
+    }
+    if (step >= 3 && c.h) arc(0, ang(c.h), 140, colors.text, 'φ/2');
+
+    arrow(O, P(0, 1), colors.text, step >= 3 ? 3.5 : 2.5); label([0, 1], 'n', colors.text);
+    arrow(O, P(...c.l), colors.vl, 2.5); label(c.l, 'l', colors.vl);
+    arrow(O, P(...c.v), colors.vv, 2.5); label(c.v, 'v', colors.vv);
+    if (step >= 2 && c.h) { arrow(O, P(...c.h), colors.vh, step >= 3 ? 3.5 : 2.5); label(c.h, 'h', colors.vh, 1.12); }
+    el('circle', { cx: OX, cy: OY, r: 3.5, fill: colors.text });
+
+    for (const [k, v, col] of [['l', c.l, colors.vl], ['v', c.v, colors.vv]]) {
+        const [x, y] = P(...v);
+        el('circle', { cx: x, cy: y, r: 13, fill: 'transparent', stroke: col, 'stroke-width': 1, 'stroke-dasharray': '2 3', class: 'handle' });
     }
 
-    installThemeSync();
-
-    const labels =[
-        "The standard vectors: Normal (<b>n</b>), Light direction (<b>l</b>), and View direction (<b>v</b>).",
-        "First, we consider the total angle stretching between the light source <b>l</b> and the viewer <b>v</b>.",
-        "The halfway vector <b>h</b> is the normalized sum of <b>l</b> and <b>v</b>. It perfectly bisects the angle between them.",
-        "The Blinn-Phong model measures how close <b>h</b> is to the normal <b>n</b>. The dot product <b>n·h = cos(φ)</b> determines the specular highlight."
+    $('cap').innerHTML = captions[step];
+    const f = x => x.toFixed(3);
+    const lv = Math.acos(Math.max(-1, Math.min(1, dot(c.l, c.v)))) / D2R;
+    const items = [
+        `angle(l,v) = ${lv.toFixed(1)}°`,
+        `n·l = ${f(c.nl)}`,
+        `|l+v| = ${f(c.len)}`
     ];
+    if (c.h) {
+        const phi = Math.acos(Math.max(-1, Math.min(1, c.nh))) / D2R;
+        items.push(`h = (${f(c.h[0])}, ${f(c.h[1])})`, `n·h = cos(φ/2) = ${f(c.nh)} (φ = ${(2 * phi).toFixed(1)}°)`);
+    } else items.push('h undefined (l = −v)');
+    items.push(`max(n·h,0)^${c.b} = ${f(c.spec)}${c.nl <= 0 ? ' (n·l ≤ 0)' : ''}`);
+    $('readout').innerHTML = items.map(s => `<span>${s}</span>`).join('');
+    $('beta-v').textContent = c.b;
+}
 
-    function setStep(state) {
-        // Update Buttons
-        document.querySelectorAll('button').forEach((b, i) => {
-            b.className = i === state ? 'active' : '';
-        });
-        
-        // Update Visuals
-        document.getElementById('vis-container').setAttribute('data-step', state);
-        
-        // Update Text
-        document.getElementById('status-label').innerHTML = labels[state];
-    }
+let drag = null;
+function svgPt(e) {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+svg.addEventListener('pointerdown', e => {
+    const p = svgPt(e);
+    const dl = Math.hypot(p.x - P(...dir(thL))[0], p.y - P(...dir(thL))[1]);
+    const dv = Math.hypot(p.x - P(...dir(thV))[0], p.y - P(...dir(thV))[1]);
+    if (Math.min(dl, dv) > 40) return;
+    drag = dl < dv ? 'l' : 'v';
+    svg.setPointerCapture(e.pointerId);
+});
+svg.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const p = svgPt(e);
+    let th = Math.atan2(p.x - OX, OY - p.y) / D2R;
+    th = Math.max(-90, Math.min(90, th));
+    if (drag === 'l') thL = th; else thV = th;
+    draw();
+});
+svg.addEventListener('pointerup', () => { drag = null; });
+document.querySelectorAll('#steps button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#steps button').forEach(x => x.classList.toggle('on', x === b));
+    step = +b.dataset.s; draw();
+});
+$('beta').addEventListener('input', draw);
 
-    // Initialize first state
-    setStep(0);
+readColors();
+draw();
+(function(){var f=function(){detectTheme();setTimeout(detectTheme,350);};try{if(window.parent!==window)new MutationObserver(f).observe(window.parent.document.body,{attributes:true,attributeFilter:['class']});}catch(e){}matchMedia('(prefers-color-scheme: dark)').addEventListener('change',f);})();
+detectTheme();
 </script>
-
 </body>
 </html>

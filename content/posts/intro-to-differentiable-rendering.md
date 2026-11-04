@@ -1849,7 +1849,7 @@ $$
 \text{vMF}(n; \mu, \tau) = \frac{\tau \exp \left( \tau (\mu^T n - 1) \right)}{2\pi (1 - \exp(-2\tau))} .
 $$
 
-<iframe src="/interactive/vmf_sphere.html" loading="lazy" fetchpriority="low" title="von Mises-Fisher (vMF) distribution demo" style="width:100%; max-width:760px; height:440px; border:1px solid var(--border); background: var(--theme); display:block; margin: 1.5rem auto;"></iframe>
+<iframe src="/interactive/vmf_sphere.html" title="von Mises-Fisher (vMF) distribution demo" style="width:100%; max-width:760px; height:440px; border:1px solid var(--border); background: var(--theme); display:block; margin: 1.5rem auto;"></iframe>
 <p style="text-align: center; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem; color: var(--text-sub);">
   Depiction of the von-Mises-Fisher (vMF) distributions on the unit sphere in 3D, $\mathbb{S}^2$, and 2D. The color encodes the probability density function value of the vMF over the whole sphere. As $\tau \to \infty$ the von-Mises-Fisher distribution approaches a delta function on the sphere at its mode $\mu$. From the coloring it can be observed that the von-Mises-Fisher distribution is isotropic. <em>(Drag on the widget to move the mode direction $\mu$ and adjust the concentration $\tau$ using the slider).</em>
 </p>

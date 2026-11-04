@@ -1,0 +1,82 @@
+/* Shared style for the transformation widgets, matching lookat.html. */
+:root {
+    --bg: #ffffff; --text: #333; --fg: #000; --muted: #6b7280; --grid: rgba(0, 0, 0, 0.15); --faint: rgba(0, 0, 0, 0.12);
+    --ax-x: #ef4444; --ax-y: #22c55e; --ax-z: #3b82f6; --hi: #f97316; --vol: #0ea5e9;
+    --mono: "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #1d1e20; --text: #eee; --fg: #fff; --muted: #a3a3a3; --grid: rgba(255, 255, 255, 0.2); --faint: rgba(255, 255, 255, 0.13); --vol: #38bdf8; }
+}
+:root[data-theme="dark"] { --bg: #1d1e20; --text: #eee; --fg: #fff; --muted: #a3a3a3; --grid: rgba(255, 255, 255, 0.2); --faint: rgba(255, 255, 255, 0.13); --vol: #38bdf8; }
+html, body { height: 100%; }
+html { background: var(--bg); }
+body { margin: 0; display: flex; flex-direction: column; font-family: system-ui, sans-serif; font-size: 14px; color: var(--text); }
+/* control rows: centred, the last one separated from the canvas by a rule (as in lookat.html) */
+.row { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 10px 0; }
+.row:first-child { padding-top: 14px; }
+.row:has(+ .stage) { padding-bottom: 12px; border-bottom: 1px solid var(--grid); }
+button {
+    background: transparent; color: var(--fg); border: 1px solid var(--grid); padding: 7px 14px; border-radius: 6px;
+    cursor: pointer; font: inherit; font-size: 14px; transition: all 0.2s;
+}
+button:hover { background: var(--grid); }
+button.on { background: #333; color: #fff; border-color: #333; }
+.seg { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.grp { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.grp i, .label i, .math { font-family: "Cambria Math", "Latin Modern Math", "Times New Roman", serif; font-style: italic; font-weight: bold; }
+.grp i { font-size: 15px; }
+.grp b { font-family: var(--mono); font-weight: 400; font-size: 12.5px; min-width: 3.4em; }
+input[type=range] { width: 100px; accent-color: #333; }
+:root[data-theme="dark"] input[type=range] { accent-color: #ccc; }
+.stage { position: relative; flex: 1; min-height: 0; display: flex; gap: 6px; }
+.stage > .pane { position: relative; flex: 1; min-width: 0; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.stage canvas.flat { cursor: default; }
+/* state label at the bottom centre and the drag hint at the top left, as in lookat.html */
+.label { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; font-weight: 500; font-size: 17px; color: var(--fg); pointer-events: none; }
+.hint { position: absolute; top: 12px; left: 12px; font-weight: 500; font-size: 13px; color: var(--fg); opacity: 0.7; pointer-events: none; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--grid); }
+.tag { position: absolute; top: 12px; left: 0; right: 0; text-align: center; font-size: 13px; color: var(--muted); pointer-events: none; }
+/* numeric readout: an overlay inside the canvas (top right), so the layout never shifts */
+.readout {
+    position: absolute; top: 10px; right: 10px; z-index: 2; pointer-events: none; max-width: 60%;
+    font-family: var(--mono); font-size: 11px; line-height: 1.35; color: var(--text);
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    background: color-mix(in srgb, var(--bg) 82%, transparent); padding: 6px 8px; border-radius: 6px; border: 1px solid var(--grid);
+}
+.readout:empty { display: none; }
+.mat { display: inline-block; position: relative; padding: 0 6px; vertical-align: middle; }
+.mat::before, .mat::after { content: ''; position: absolute; top: 0; bottom: 0; width: 4px; border: 1px solid var(--text); }
+.mat::before { left: 0; border-right: none; }
+.mat::after { right: 0; border-left: none; }
+.mat table { border-collapse: collapse; }
+.mat td { padding: 0 4px; text-align: right; }
+.mat input {
+    width: 46px; box-sizing: border-box; font: 12px var(--mono); text-align: right; padding: 2px 4px; margin: 1px 0;
+    border: 1px solid var(--grid); border-radius: 4px; background: transparent; color: inherit; -moz-appearance: textfield; appearance: textfield;
+}
+.mat input::-webkit-inner-spin-button, .mat input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.mat input:focus { outline: none; border-color: var(--text); }
+.cx { color: var(--ax-x); } .cy { color: var(--ax-y); } .cz { color: var(--ax-z); } .ch { color: var(--hi); } .cm { color: var(--muted); }
+/* small screens: compact controls, stacked panes, readout behind a toggle so it never covers the scene */
+.ro-toggle { display: none; }
+@media (max-width: 560px) {
+    body { font-size: 13px; }
+    .row { gap: 6px; padding: 8px 6px 0; }
+    .row:first-child { padding-top: 8px; }
+    .row:has(+ .stage) { padding-bottom: 8px; }
+    .seg { gap: 6px; }
+    button { padding: 5px 9px; font-size: 12.5px; }
+    input[type=range] { width: 64px; }
+    .grp { gap: 4px; }
+    .grp b { min-width: 2.8em; font-size: 11.5px; }
+    .stage:has(> .pane + .pane) { flex-direction: column; }
+    .hint { display: none; }
+    .label { font-size: 13.5px; bottom: 6px; padding: 0 6px; }
+    .readout { display: none; max-width: calc(100% - 20px); font-size: 9.5px; top: 40px; }
+    .readout.open { display: flex; }
+    .ro-toggle {
+        display: block; position: absolute; top: 8px; right: 8px; z-index: 3; padding: 3px 8px; font-size: 12px;
+        background: color-mix(in srgb, var(--bg) 85%, transparent);
+    }
+}

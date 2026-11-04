@@ -3,544 +3,344 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Transformation Widget</title>
+<title>2D Transformations</title>
 <style>
     :root {
-        --mafs-bg: transparent;
-        --mafs-fg: #000000;
-        --mafs-grid: rgba(0,0,0,0.15);
-        --mafs-axis: rgba(0,0,0,0.8);
-        --mafs-blue: #0066ff;
-        --mafs-blue-fill: rgba(0, 102, 255, 0.15);
-        --mafs-red: #ef4444;
-        --mafs-green: #22c55e;
-        --mafs-text: #333;
+        --card-bg: #ffffff;
+        --text: #374151;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --accent: #2563eb;
+        --ax-x: #dc2626;
+        --ax-y: #16a34a;
+        --ax-w: #2563eb;
+        --mono: "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
     }
-
     @media (prefers-color-scheme: dark) {
         :root {
-            --mafs-fg: #ffffff;
-            --mafs-grid: rgba(255,255,255,0.2);
-            --mafs-axis: rgba(255,255,255,0.8);
-            --mafs-blue: #3b82f6;
-            --mafs-blue-fill: rgba(59, 130, 246, 0.2);
-            --mafs-red: #f87171;
-            --mafs-green: #4ade80;
-            --mafs-text: #eee;
+            --card-bg: #2d2d2d;
+            --text: #e4e4e4;
+            --muted: #a3a3a3;
+            --border: #404040;
+            --accent: #60a5fa;
+            --ax-x: #f87171;
+            --ax-y: #4ade80;
+            --ax-w: #60a5fa;
         }
     }
-
-    /* Force Light Mode if Parent says so */
-    .theme-light {
-        --mafs-fg: #000000;
-        --mafs-grid: rgba(0,0,0,0.15);
-        --mafs-axis: rgba(0,0,0,0.8);
-        --mafs-blue: #0066ff;
-        --mafs-blue-fill: rgba(0, 102, 255, 0.15);
-        --mafs-red: #ef4444;
-        --mafs-green: #22c55e;
-        --mafs-text: #333;
-    }
-
-    /* Force Dark Mode if Parent says so */
-    .theme-dark {
-        --mafs-fg: #ffffff;
-        --mafs-grid: rgba(255,255,255,0.2);
-        --mafs-axis: rgba(255,255,255,0.8);
-        --mafs-blue: #3b82f6;
-        --mafs-blue-fill: rgba(59, 130, 246, 0.2);
-        --mafs-red: #f87171;
-        --mafs-green: #4ade80;
-        --mafs-text: #eee;
-    }
-
-    body {
-        margin: 0;
-        overflow: hidden;
-        background-color: var(--mafs-bg);
-        font-family: system-ui, sans-serif;
-        color: var(--mafs-text);
-    }
-
-    #matrix-container {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        pointer-events: none;
-    }
-
-    #matrix-title {
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 4px;
-        color: var(--mafs-fg);
-    }
-
-    #matrix-code {
-        margin: 0;
-        padding: 8px 12px;
-        border-left: 2px solid var(--mafs-fg);
-        border-right: 2px solid var(--mafs-fg);
-        border-radius: 8px;
-        color: var(--mafs-fg);
-        background: color-mix(in srgb, var(--mafs-bg) 88%, transparent);
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 12px;
-        line-height: 1.35;
-        white-space: pre;
-        pointer-events: none;
-    }
-
-    #phase-container {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        font-weight: 600;
-        font-size: 16px;
-        color: var(--mafs-fg);
-        background: var(--mafs-bg);
-        padding: 4px 8px;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    #custom-matrix {
-        display: none;
-        grid-template-columns: repeat(3, 45px);
-        gap: 6px;
-        padding: 6px 12px;
-        border-left: 2px solid var(--mafs-fg);
-        border-right: 2px solid var(--mafs-fg);
-        border-radius: 8px;
-        pointer-events: auto;
-        margin-top: 8px;
-    }
-
-    .matrix-input {
-        width: 100%;
-        box-sizing: border-box;
-        text-align: center;
-        background: color-mix(in srgb, var(--mafs-grid) 30%, transparent);
-        border: 1px solid transparent;
-        color: var(--mafs-fg);
-        font-size: 15px;
-        font-family: monospace;
-        border-radius: 4px;
-        padding: 6px 0;
-        transition: all 0.2s;
-    }
-    .matrix-input:hover { background: color-mix(in srgb, var(--mafs-grid) 60%, transparent); }
-    .matrix-input:focus { outline: none; border-color: var(--mafs-blue); background: var(--mafs-bg); }
-
-    /* Hide spinners */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; 
-        margin: 0; 
-    }
+    html, body { height: 100%; }
+    body { margin: 0; padding: 4px 2px; box-sizing: border-box; font-family: system-ui, sans-serif; font-size: 14px; background: transparent; color: var(--text); display: flex; flex-direction: column; overflow: hidden; }
+    .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: center; padding: 8px 6px 10px; margin-bottom: 4px; border-bottom: 1px solid var(--border); }
+    button, select { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; transition: all 0.2s; }
+    button:hover, select:hover { background: var(--border); }
+    input[type=range] { flex: 1; min-width: 120px; accent-color: var(--muted); }
+    .lab { font-size: 13px; color: var(--muted); }
+    .params { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .stage { position: relative; flex: 1; min-height: 0; }
+    canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .overlay { position: absolute; top: 2px; left: 2px; pointer-events: none; font-family: var(--mono); font-size: 12px; line-height: 1.4; }
+    .mat { display: inline-block; position: relative; padding: 1px 7px; vertical-align: middle; }
+    .mat::before, .mat::after { content: ''; position: absolute; top: 0; bottom: 0; width: 4px; border: 1px solid var(--text); }
+    .mat::before { left: 0; border-right: none; }
+    .mat::after { right: 0; border-left: none; }
+    .mat table { border-collapse: collapse; }
+    .mat td { padding: 0 4px; text-align: right; }
+    .c0 { color: var(--ax-x); } .c1 { color: var(--ax-y); } .c2 { color: var(--ax-w); }
+    .note { margin-top: 3px; font-size: 11px; color: var(--muted); }
+    .mat input { width: 44px; box-sizing: border-box; font-family: var(--mono); font-size: 12px; text-align: right; padding: 1px 3px; margin: 1px 0; border: 1px solid var(--border); border-radius: 0; background: transparent; pointer-events: auto; }
+    .mat input:focus { outline: none; border-color: var(--text); }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
-
-    /* Column coloring */
-    .col-0 { color: var(--mafs-red) !important; }
-    .col-1 { color: var(--mafs-green) !important; }
-    .col-2 { color: var(--mafs-blue) !important; }
-
-    #custom-controls {
-        display: none;
-        margin-top: 12px;
-        gap: 8px;
-        pointer-events: auto;
-    }
-
-    .btn {
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: opacity 0.2s;
-        border: none;
-    }
-    .btn:hover { opacity: 0.8; }
-    .btn-apply { background: var(--mafs-blue); color: white; }
-    .btn-reset { background: var(--mafs-grid); color: var(--mafs-fg); }
-
-    svg {
-        width: 100vw;
-        height: 100vh;
-        display: block;
-    }
-
-    .base-shape {
-        fill: transparent;
-        stroke: var(--mafs-axis);
-        stroke-width: 0.05;
-        stroke-dasharray: 0.1 0.1;
-    }
-
-    .transformed-shape {
-        fill: var(--mafs-blue-fill);
-        stroke: var(--mafs-blue);
-        stroke-width: 0.08;
-        stroke-linejoin: round;
-    }
-
-    .point-node {
-        fill: var(--mafs-blue);
-        stroke: var(--mafs-bg);
-        stroke-width: 0.05;
-    }
-
-    text.axis-label {
-        fill: var(--mafs-fg);
-        font-size: 0.5px;
-        font-style: italic;
-        font-weight: bold;
-        user-select: none;
-    }
 </style>
 </head>
 <body>
-
-<div id="matrix-container">
-    <div id="matrix-title"></div>
-    <pre id="matrix-code"></pre>
-    
-    <div id="custom-matrix">
-        <input type="number" class="matrix-input col-0" id="m00" value="1" step="0.1">
-        <input type="number" class="matrix-input col-1" id="m01" value="0" step="0.1">
-        <input type="number" class="matrix-input col-2" id="m02" value="0" step="0.1">
-        
-        <input type="number" class="matrix-input col-0" id="m10" value="0" step="0.1">
-        <input type="number" class="matrix-input col-1" id="m11" value="1" step="0.1">
-        <input type="number" class="matrix-input col-2" id="m12" value="0" step="0.1">
-        
-        <input type="number" class="matrix-input col-0" id="m20" value="0" step="0.1">
-        <input type="number" class="matrix-input col-1" id="m21" value="0" step="0.1">
-        <input type="number" class="matrix-input col-2" id="m22" value="1" step="0.1">
-    </div>
-
-    <div id="custom-controls">
-        <button class="btn btn-apply" id="btn-apply">Apply T</button>
-        <button class="btn btn-reset" id="btn-reset">Reset</button>
-    </div>
+<div class="row" id="ctrl"></div>
+<div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="overlay" id="overlay"></div>
 </div>
-
-<div id="phase-container"></div>
-
-<svg id="canvas" preserveAspectRatio="xMidYMid slice">
-    <defs>
-        <pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse" x="4" y="4">
-            <path d="M 1 0 L 0 0 0 1" fill="none" stroke="var(--mafs-grid)" stroke-width="0.03" />
-        </pattern>
-        <!-- Standard Arrow -->
-        <marker id="arrow-end" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-axis)"/>
-        </marker>
-        <marker id="arrow-start" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="4" markerHeight="4" orient="auto">
-            <path d="M 10 0 L 0 5 L 10 10 z" fill="var(--mafs-axis)"/>
-        </marker>
-        <!-- Basis Vector Arrows -->
-        <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-red)"/>
-        </marker>
-        <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--mafs-green)"/>
-        </marker>
-    </defs>
-    
-    <rect x="-20" y="-20" width="40" height="40" fill="url(#grid)" />
-    
-    <!-- Axes with double arrows -->
-    <path id="x-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
-    <path id="y-axis" fill="none" stroke="var(--mafs-axis)" stroke-width="0.04" marker-start="url(#arrow-start)" marker-end="url(#arrow-end)" />
-    
-    <!-- Axes Labels -->
-    <text id="x-label" class="axis-label" dominant-baseline="middle">x</text>
-    <text id="y-label" class="axis-label" dominant-baseline="middle">y</text>
-    
-    <!-- Polygons -->
-    <polygon id="base" class="base-shape" />
-    <polygon id="transformed" class="transformed-shape" />
-    
-    <!-- Nodes (Mafs style) -->
-    <g id="nodes"></g>
-
-    <!-- Basis Vectors -->
-    <line id="x-vec" x1="0" y1="0" x2="1" y2="0" stroke="var(--mafs-red)" stroke-width="0.06" marker-end="url(#arrow-red)" />
-    <line id="y-vec" x1="0" y1="0" x2="0" y2="-1" stroke="var(--mafs-green)" stroke-width="0.06" marker-end="url(#arrow-green)" />
-</svg>
-
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const type = urlParams.get('type') || 'translation';
+    const type = new URLSearchParams(location.search).get('type') || 'translation';
+    const MODES = ['translation', 'euclidean', 'scaling', 'affine', 'projective', 'custom'];
+    const mode = MODES.includes(type) ? type : 'translation';
 
-    // Theme synchronization
-    function syncTheme() {
-        const theme = urlParams.get('theme');
-        if (theme) {
-            document.documentElement.className = `theme-${theme}`;
-            return;
-        }
-
+    // --- Theme (same approach as the other interactive pages) ---
+    let colors = {};
+    const VARS = ['--text', '--muted', '--border', '--accent', '--ax-x', '--ax-y', '--ax-w', '--card-bg'];
+    function readColors() { 
+        const cs = getComputedStyle(document.documentElement);
+        VARS.forEach(k => colors[k.slice(2)] = cs.getPropertyValue(k).trim());
+    }
+    function detectTheme() {
         try {
-            // Check parent's theme class (common in Hugo themes like PaperMod)
-            const parent = window.parent.document.body;
-            const isDark = parent.classList.contains('dark') || 
-                           window.parent.document.documentElement.classList.contains('dark');
-            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
-        } catch (e) {
-            // Fallback to system preference if cross-origin
-        }
-    }
-    syncTheme();
-    setInterval(syncTheme, 1000); // Check for theme toggles
-
-    function resize() {
-        const svg = document.getElementById('canvas');
-        const aspect = window.innerWidth / window.innerHeight;
-        // Fix Y to exactly -4 to 4 (height = 8). X scales with aspect ratio.
-        const width = 8 * aspect;
-        const halfWidth = width / 2;
-        
-        svg.setAttribute('viewBox', `${-halfWidth} -4 ${width} 8`);
-        
-        document.getElementById('x-axis').setAttribute('d', `M ${-halfWidth + 0.2} 0 L ${halfWidth - 0.2} 0`);
-        document.getElementById('y-axis').setAttribute('d', `M 0 -3.8 L 0 3.8`);
-        
-        document.getElementById('x-label').setAttribute('x', halfWidth - 0.5);
-        document.getElementById('x-label').setAttribute('y', 0.3);
-        
-        document.getElementById('y-label').setAttribute('x', -0.3);
-        document.getElementById('y-label').setAttribute('y', -3.5);
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    const matrixMap = {
-        translation: {
-            title: "Translation",
-            code: `mat3 T = mat3(
-    1.0, 0.0, tx,
-    0.0, 1.0, ty,
-    0.0, 0.0, 1.0
-);`
-        },
-        scaling: {
-            title: "Scaling",
-            code: `mat3 S = mat3(
-    sx,   0.0, 0.0,
-    0.0,  sy,  0.0,
-    0.0,  0.0, 1.0
-);`
-        },
-        euclidean: {
-            title: "Rotation",
-            code: `mat3 R = mat3(
-    cos(theta), -sin(theta), 0.0,
-    sin(theta),  cos(theta), 0.0,
-    0.0,         0.0,        1.0
-);`
-        },
-        similarity: {
-            title: "Similarity",
-            code: `mat3 S = mat3(
-    s * cos(theta), -s * sin(theta), 0.0,
-    s * sin(theta),  s * cos(theta), 0.0,
-    0.0,             0.0,            1.0
-);`
-        },
-        affine: {
-            title: "Affine",
-            code: `mat3 A = mat3(
-    a, b, 0.0,
-    c, d, 0.0,
-    0.0, 0.0, 1.0
-);`
-        },
-        projective: {
-            title: "Projective",
-            code: `mat3 H = mat3(
-    a, b, c,
-    d, e, f,
-    g, h, 1.0
-);`
-        },
-        custom: {
-            title: "Custom",
-            code: `mat3 T = mat3(
-    m00, m01, m02,
-    m10, m11, m12,
-    m20, m21, m22
-);`
-        }
-    };
-
-    const matrixInfo = matrixMap[type] || matrixMap['translation'];
-    document.getElementById('matrix-title').textContent = matrixInfo.title;
-    document.getElementById('matrix-code').textContent = matrixInfo.code;
-
-    function mat3(m00, m01, m02, m10, m11, m12, m20, m21, m22) {
-        return [m00, m01, m02, m10, m11, m12, m20, m21, m22];
-    }
-
-    function applyMatrix(p, m) {
-        const x = m[0] * p.x + m[1] * p.y + m[2];
-        const y = m[3] * p.x + m[4] * p.y + m[5];
-        const w = m[6] * p.x + m[7] * p.y + m[8];
-        return { x: x / w, y: y / w };
-    }
-
-    let customT = 0;
-    let targetT = 0;
-
-    if (type === 'custom') {
-        document.getElementById('custom-matrix').style.display = 'inline-grid';
-        document.getElementById('custom-controls').style.display = 'flex';
-        
-        document.getElementById('btn-apply').addEventListener('click', () => { targetT = 1; });
-        document.getElementById('btn-reset').addEventListener('click', () => { targetT = 0; });
-    }
-
-    // Base Square points (scaled for 8x8 grid)
-    const basePoints = [
-        {x: 1.0, y: 1.0},
-        {x: -1.0, y: 1.0},
-        {x: -1.0, y: -1.0},
-        {x: 1.0, y: -1.0}
-    ];
-
-    const basePoly = document.getElementById('base');
-    const transformedPoly = document.getElementById('transformed');
-    const nodesGroup = document.getElementById('nodes');
-    const xVec = document.getElementById('x-vec');
-    const yVec = document.getElementById('y-vec');
-
-    function pointsToString(pts) {
-        return pts.map(p => `${p.x},${-p.y}`).join(' ');
-    }
-
-    basePoly.setAttribute('points', pointsToString(basePoints));
-
-    const nodes = basePoints.map(() => {
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("r", "0.15");
-        circle.setAttribute("class", "point-node");
-        nodesGroup.appendChild(circle);
-        return circle;
-    });
-
-    function getTransform(type, t) {
-        if (type === 'custom') {
-            const m00 = parseFloat(document.getElementById('m00').value) || 0;
-            const m01 = parseFloat(document.getElementById('m01').value) || 0;
-            const m02 = parseFloat(document.getElementById('m02').value) || 0;
-            const m10 = parseFloat(document.getElementById('m10').value) || 0;
-            const m11 = parseFloat(document.getElementById('m11').value) || 0;
-            const m12 = parseFloat(document.getElementById('m12').value) || 0;
-            const m20 = parseFloat(document.getElementById('m20').value) || 0;
-            const m21 = parseFloat(document.getElementById('m21').value) || 0;
-            const m22 = parseFloat(document.getElementById('m22').value) || 1;
-            const matrix = mat3(
-                1 + (m00 - 1) * t, m01 * t, m02 * t,
-                m10 * t, 1 + (m11 - 1) * t, m12 * t,
-                m20 * t, m21 * t, 1 + (m22 - 1) * t
-            );
-            return p => applyMatrix(p, matrix);
-        }
-
-        let matrix = mat3(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0);
-        switch (type) {
-            case 'translation': {
-                const tx = 2 * t;
-                const ty = 1.5 * t;
-                matrix = mat3(1.0, 0.0, tx, 0.0, 1.0, ty, 0.0, 0.0, 1.0);
-                break;
+            if (window.parent === window) throw 0;  // standalone: CSS defaults + prefers-color-scheme
+            const bg = getComputedStyle(window.parent.document.body).backgroundColor;
+            document.documentElement.style.background = bg;
+            const rgb = bg.match(/\d+/g);
+            if (rgb) {
+                const dark = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 < 128;
+                const set = (k, v) => document.documentElement.style.setProperty(k, v);
+                set('--card-bg', dark ? '#2d2d2d' : '#ffffff');
+                set('--text', dark ? '#e4e4e4' : '#374151');
+                set('--muted', dark ? '#a3a3a3' : '#6b7280');
+                set('--border', dark ? '#404040' : '#e5e7eb');
+                set('--accent', dark ? '#60a5fa' : '#2563eb');
+                set('--ax-x', dark ? '#f87171' : '#dc2626');
+                set('--ax-y', dark ? '#4ade80' : '#16a34a');
+                set('--ax-w', dark ? '#60a5fa' : '#2563eb');
             }
-            case 'scaling': {
-                const sx = 1 + 1.2 * t;
-                const sy = 1 + 0.5 * t;
-                matrix = mat3(sx, 0.0, 0.0, 0.0, sy, 0.0, 0.0, 0.0, 1.0);
-                break;
+        } catch (e) { /* standalone */ }
+        readColors();
+        draw();
+    }
+
+    // --- Matrices: 3x3, row-major, acting on column vectors P' = M P ---
+    const I3 = () => [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    const lerpM = (A, B, t) => A.map((a, i) => a + (B[i] - a) * t);
+    const mul = (M, p) => [
+        M[0] * p[0] + M[1] * p[1] + M[2] * p[2],
+        M[3] * p[0] + M[4] * p[1] + M[5] * p[2],
+        M[6] * p[0] + M[7] * p[1] + M[8] * p[2]];
+    const AFFINE_TARGET = [1.2, 0.6, 0.5, 0.2, 0.8, 0.5, 0, 0, 1];
+    const PROJ_TARGET = [1, 0, 0, 0, 1, 0, 0.35, 0, 1];
+    const deg = Math.PI / 180;
+
+    // Each mode: matrix as a function of the animation parameter t in [0,1], and a parameter caption.
+    function modeMatrix(t) {
+        switch (mode) {
+            case 'translation': {
+                const tx = 2 * t, ty = 1.5 * t;
+                return { M: [1, 0, tx, 0, 1, ty, 0, 0, 1], cap: `t_x = ${tx.toFixed(2)}   t_y = ${ty.toFixed(2)}` };
             }
             case 'euclidean': {
-                const theta = 60 * Math.PI / 180 * t;
-                const cosTheta = Math.cos(theta);
-                const sinTheta = Math.sin(theta);
-                matrix = mat3(cosTheta, -sinTheta, 0.0, sinTheta, cosTheta, 0.0, 0.0, 0.0, 1.0);
-                break;
+                const th = 60 * t, c = Math.cos(th * deg), s = Math.sin(th * deg), tx = 1.5 * t, ty = 0.5 * t;
+                return { M: [c, -s, tx, s, c, ty, 0, 0, 1], cap: `θ = ${th.toFixed(0)}°   t_x = ${tx.toFixed(2)}   t_y = ${ty.toFixed(2)}` };
             }
-            case 'similarity': {
-                const theta = 45 * Math.PI / 180 * t;
-                const scale = 1 - 0.4 * t;
-                const cosTheta = Math.cos(theta);
-                const sinTheta = Math.sin(theta);
-                matrix = mat3(scale * cosTheta, -scale * sinTheta, 0.0, scale * sinTheta, scale * cosTheta, 0.0, 0.0, 0.0, 1.0);
-                break;
+            case 'scaling': {
+                const sx = 1 + 0.8 * t, sy = 1 - 0.4 * t;
+                return { M: [sx, 0, 0, 0, sy, 0, 0, 0, 1], cap: `s_x = ${sx.toFixed(2)}   s_y = ${sy.toFixed(2)}` };
             }
-            case 'affine': {
-                const sx = 1 + 0.4 * t;
-                const sy = 1 - 0.2 * t;
-                const shx = 0.6 * t;
-                matrix = mat3(sx, shx, 0.0, 0.0, sy, 0.0, 0.0, 0.0, 1.0);
-                break;
-            }
-            case 'projective': {
-                const px = 0.1 * t;
-                const py = 0.05 * t;
-                matrix = mat3(1.0, 0.0, 0.0, 0.0, 1.0, 0.0, px, py, 1.0);
-                break;
-            }
+            case 'affine':
+                return { M: lerpM(I3(), AFFINE_TARGET, t), cap: '' };
+            case 'projective':
+                return { M: lerpM(I3(), PROJ_TARGET, t), cap: '' };
         }
-
-        return p => applyMatrix(p, matrix);
+        return { M: readCustom(), cap: '' };
     }
 
-    function animate(time) {
-        const phaseLabel = document.getElementById('phase-container');
-        let t = 0;
-        
-        if (type === 'custom') {
-            customT += (targetT - customT) * 0.08; // Smooth interpolation
-            t = customT;
-            phaseLabel.textContent = targetT === 1 ? 'Applying T' : 'Identity';
-        } else {
-            const phaseRaw = Math.sin(time / 800);
-            t = (phaseRaw + 1) / 2;
-            const isForward = Math.cos(time / 800) > 0;
-            phaseLabel.textContent = isForward ? 'Applying T' : 'Applying T^-1';
-        }
+    // --- Controls ---
+    const ctrl = document.getElementById('ctrl');
+    const overlay = document.getElementById('overlay');
+    let t = 0, playing = mode !== 'custom', phase = 0, last = null;
+    let slider, playBtn;
 
-        const transform = getTransform(type, t);
-        const newPoints = basePoints.map(transform);
-        
-        transformedPoly.setAttribute('points', pointsToString(newPoints));
-        
-        newPoints.forEach((p, i) => {
-            nodes[i].setAttribute('cx', p.x);
-            nodes[i].setAttribute('cy', -p.y);
+    if (mode === 'custom') {
+        ctrl.innerHTML = '<button id="reset">Reset to I</button><span class="lab">edit the entries; the shape updates live</span>';
+        const vals = I3();
+        let html = '<div class="mat"><table>';
+        for (let r = 0; r < 3; r++) {
+            html += '<tr>';
+            for (let c = 0; c < 3; c++) html += `<td><input type="number" step="0.1" class="c${c}" id="m${r}${c}" value="${vals[r * 3 + c]}"></td>`;
+            html += '</tr>';
+        }
+        html += '</table></div><div class="note" id="note"></div>';
+        overlay.innerHTML = html;
+        overlay.style.pointerEvents = 'auto';
+        overlay.querySelectorAll('input').forEach(el => el.addEventListener('input', draw));
+        document.getElementById('reset').onclick = () => {
+            const v = I3();
+            for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) document.getElementById(`m${r}${c}`).value = v[r * 3 + c];
+            draw();
+        };
+    } else {
+        ctrl.innerHTML = '<button id="play">Pause</button><input type="range" id="t" min="0" max="1000" value="0"><span class="params" id="cap"></span>';
+        slider = document.getElementById('t');
+        playBtn = document.getElementById('play');
+        playBtn.onclick = () => { playing = !playing; playBtn.textContent = playing ? 'Pause' : 'Play'; last = null; if (playing) requestAnimationFrame(tick); };
+        slider.oninput = () => {
+            playing = false; playBtn.textContent = 'Play';
+            t = slider.value / 1000; phase = Math.acos(1 - 2 * t);
+            draw();
+        };
+        overlay.innerHTML = '<div class="mat"><table id="mtab"></table></div><div class="note" id="note"></div>';
+    }
+
+    function readCustom() {
+        const M = [];
+        for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
+            const v = parseFloat(document.getElementById(`m${r}${c}`).value);
+            M.push(isFinite(v) ? v : 0);
+        }
+        return M;
+    }
+
+    const fmt = v => (Math.abs(v) < 0.005 ? 0 : v).toFixed(2);
+    function showMatrix(M) {
+        const tab = document.getElementById('mtab');
+        if (!tab) return;
+        let h = '';
+        for (let r = 0; r < 3; r++) {
+            h += '<tr>';
+            for (let c = 0; c < 3; c++) h += `<td class="c${c}">${fmt(M[r * 3 + c])}</td>`;
+            h += '</tr>';
+        }
+        tab.innerHTML = h;
+    }
+
+    // --- Drawing ---
+    const cv = document.getElementById('cv');
+    const ctx = cv.getContext('2d');
+    let W = 0, H = 0, unit = 40, ox = 0, oy = 0;
+    function resize() {
+        const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+        W = r.width; H = r.height;
+        cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        unit = Math.min(W / 9, H / 8.5);
+        ox = W / 2; oy = H / 2;
+        draw();
+    }
+    const S = (x, y) => [ox + x * unit, oy - y * unit];
+
+    function line(a, b, col, lw, dash) {
+        ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.setLineDash(dash || []);
+        ctx.beginPath(); ctx.moveTo(...S(a[0], a[1])); ctx.lineTo(...S(b[0], b[1])); ctx.stroke();
+        ctx.setLineDash([]);
+    }
+    function arrow(a, b, col, lw) {
+        const [x0, y0] = S(a[0], a[1]), [x1, y1] = S(b[0], b[1]);
+        const L = Math.hypot(x1 - x0, y1 - y0); if (L < 1) return;
+        const ux = (x1 - x0) / L, uy = (y1 - y0) / L, hd = Math.min(8, L * 0.4);
+        ctx.strokeStyle = ctx.fillStyle = col; ctx.lineWidth = lw;
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - ux * hd * 0.8, y1 - uy * hd * 0.8); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x1, y1);
+        ctx.lineTo(x1 - ux * hd - uy * hd * 0.45, y1 - uy * hd + ux * hd * 0.45);
+        ctx.lineTo(x1 - ux * hd + uy * hd * 0.45, y1 - uy * hd - ux * hd * 0.45);
+        ctx.closePath(); ctx.fill();
+    }
+    function label(txt, x, y, col, italic) {
+        ctx.fillStyle = col; ctx.font = `${italic ? 'italic bold ' : ''}15px "Cambria Math", "Latin Modern Math", "Times New Roman", serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(txt, x, y);
+    }
+
+    // Image of a homogeneous segment p0->p1 under M, drawn correctly even if w' changes sign
+    // (then the image passes through infinity and is two rays).
+    function drawImageSegment(M, p0, p1, col, lw) {
+        const q0 = mul(M, p0), q1 = mul(M, p1);
+        const at = s => [q0[0] + (q1[0] - q0[0]) * s, q0[1] + (q1[1] - q0[1]) * s, q0[2] + (q1[2] - q0[2]) * s];
+        const cart = q => [q[0] / q[2], q[1] / q[2]];
+        const eps = 1e-9;
+        if (q0[2] * q1[2] > eps * eps) { line(cart(q0), cart(q1), col, lw); return; }
+        // w' crosses zero at s*; draw up to just before/after it
+        const s0 = q0[2] / (q0[2] - q1[2]);
+        const d = 0.004 / Math.max(1e-6, Math.abs(q1[2] - q0[2]));
+        if (Math.abs(q0[2]) > eps && s0 - d > 0) line(cart(q0), cart(at(s0 - d)), col, lw);
+        if (Math.abs(q1[2]) > eps && s0 + d < 1) line(cart(at(s0 + d)), cart(q1), col, lw);
+    }
+
+    const SQUARE = [[1, 1, 1], [-1, 1, 1], [-1, -1, 1], [1, -1, 1]];
+
+    function draw() {
+        if (!W) return;
+        ctx.clearRect(0, 0, W, H);
+        const { M, cap } = modeMatrix(t);
+        showMatrix(M);
+        const capEl = document.getElementById('cap');
+        if (capEl) capEl.textContent = cap;
+
+        // grid + axes
+        const xr = Math.ceil(W / 2 / unit), yr = Math.ceil(H / 2 / unit);
+        for (let i = -xr; i <= xr; i++) line([i, -yr], [i, yr], colors.border, 1);
+        for (let j = -yr; j <= yr; j++) line([-xr, j], [xr, j], colors.border, 1);
+        const xm = W / 2 / unit - 0.3, ym = H / 2 / unit - 0.3;
+        line([-xm, 0], [xm, 0], colors.muted, 1);
+        line([0, -ym], [0, ym], colors.muted, 1);
+        label('x', ...S(xm - 0.05, -0.3), colors.muted, true);
+        label('y', ...S(0.3, ym - 0.05), colors.muted, true);
+
+        // original square (dashed)
+        ctx.strokeStyle = colors.muted; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+        ctx.beginPath(); SQUARE.forEach((p, i) => ctx[i ? 'lineTo' : 'moveTo'](...S(p[0], p[1]))); ctx.closePath(); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // transformed square: P' = M P, then divide by w'
+        const img = SQUARE.map(p => mul(M, p));
+        const ws = img.map(q => q[2]);
+        const sameSign = ws.every(w => w > 1e-9) || ws.every(w => w < -1e-9);
+        if (sameSign) {
+            ctx.fillStyle = colors.accent; ctx.globalAlpha = 0.15;
+            ctx.beginPath(); img.forEach((q, i) => ctx[i ? 'lineTo' : 'moveTo'](...S(q[0] / q[2], q[1] / q[2]))); ctx.closePath(); ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+        for (let i = 0; i < 4; i++) drawImageSegment(M, SQUARE[i], SQUARE[(i + 1) % 4], colors.accent, 2);
+        if (sameSign) img.forEach(q => {
+            const [x, y] = S(q[0] / q[2], q[1] / q[2]);
+            ctx.fillStyle = colors.accent; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, 2 * Math.PI); ctx.fill();
         });
 
-        // Transform Basis Vectors (X vector is (1,0), Y vector is (0,1))
-        const pX = transform({x: 1, y: 0});
-        const pY = transform({x: 0, y: 1});
-        const origin = transform({x: 0, y: 0});
+        // vanishing points: image of the direction (1,0,0) / (0,1,0) when its w' is non-zero
+        const bottomRowNontrivial = Math.abs(M[6]) > 1e-3 || Math.abs(M[7]) > 1e-3;
+        if (bottomRowNontrivial && sameSign) {
+            [[0, [0, 1], [3, 2]], [1, [0, 3], [1, 2]]].forEach(([axis, e1, e2]) => {
+                const d = mul(M, axis === 0 ? [1, 0, 0] : [0, 1, 0]);
+                if (Math.abs(d[2]) < 0.02) return;
+                const vp = [d[0] / d[2], d[1] / d[2]];
+                const [vx, vy] = S(...vp);
+                if (vx < -40 || vx > W + 40 || vy < -40 || vy > H + 40) return;
+                [e1, e2].forEach(([a, b]) => {
+                    const qa = img[a], qb = img[b];
+                    const pa = [qa[0] / qa[2], qa[1] / qa[2]], pb = [qb[0] / qb[2], qb[1] / qb[2]];
+                    const near = Math.hypot(pa[0] - vp[0], pa[1] - vp[1]) < Math.hypot(pb[0] - vp[0], pb[1] - vp[1]) ? pa : pb;
+                    line(near, vp, colors.muted, 1, [3, 3]);
+                });
+                ctx.strokeStyle = colors.text; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.arc(vx, vy, 4, 0, 2 * Math.PI); ctx.stroke();
+                ctx.fillStyle = colors.muted; ctx.font = '12px system-ui, sans-serif';
+                ctx.textAlign = vx > W - 110 ? 'right' : 'left'; ctx.textBaseline = 'bottom';
+                ctx.fillText('vanishing point', vx + (vx > W - 110 ? -6 : 6), vy - 6);
+            });
+        }
 
-        xVec.setAttribute('x1', origin.x);
-        xVec.setAttribute('y1', -origin.y);
-        xVec.setAttribute('x2', pX.x);
-        xVec.setAttribute('y2', -pX.y);
+        // images of the unit points (1,0) and (0,1), drawn from the image of the origin
+        const o = mul(M, [0, 0, 1]), ex = mul(M, [1, 0, 1]), ey = mul(M, [0, 1, 1]);
+        if (o[2] > 1e-6 && ex[2] > 1e-6 && ey[2] > 1e-6) {
+            const oc = [o[0] / o[2], o[1] / o[2]];
+            arrow(oc, [ex[0] / ex[2], ex[1] / ex[2]], colors['ax-x'], 2);
+            arrow(oc, [ey[0] / ey[2], ey[1] / ey[2]], colors['ax-y'], 2);
+        }
 
-        yVec.setAttribute('x1', origin.x);
-        yVec.setAttribute('y1', -origin.y);
-        yVec.setAttribute('x2', pY.x);
-        yVec.setAttribute('y2', -pY.y);
-        
-        requestAnimationFrame(animate);
+        // note: w' range over the square
+        const note = document.getElementById('note');
+        if (note) {
+            const lo = Math.min(...ws), hi = Math.max(...ws);
+            if (Math.abs(M[6]) > 1e-3 || Math.abs(M[7]) > 1e-3 || Math.abs(M[8] - 1) > 1e-3) {
+                note.textContent = sameSign
+                    ? `w′ at corners: ${lo.toFixed(2)} … ${hi.toFixed(2)};  x = x′/w′, y = y′/w′`
+                    : `w′ changes sign (${lo.toFixed(2)} … ${hi.toFixed(2)}): the image crosses the line at infinity`;
+            } else note.textContent = mode === 'custom' ? 'w′ = 1 everywhere (affine)' : '';
+        }
     }
-    
-    requestAnimationFrame(animate);
-</script>
 
+    let visible = true;
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(document.body);
+    function tick(now) {
+        if (!playing) return;
+        if (!visible) { last = null; requestAnimationFrame(tick); return; }
+        if (last !== null) phase += (now - last) / 1000 * (2 * Math.PI / 6);  // 6 s per cycle
+        last = now;
+        t = (1 - Math.cos(phase)) / 2;
+        slider.value = Math.round(t * 1000);
+        draw();
+        requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', resize);
+    readColors();
+    resize();
+    (function(){var f=function(){detectTheme();setTimeout(detectTheme,350);};try{if(window.parent!==window)new MutationObserver(f).observe(window.parent.document.body,{attributes:true,attributeFilter:['class']});}catch(e){}matchMedia('(prefers-color-scheme: dark)').addEventListener('change',f);})();
+    detectTheme();
+    if (playing) requestAnimationFrame(tick);
+</script>
 </body>
 </html>

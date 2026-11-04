@@ -8,10 +8,9 @@
 {{- $src := .Get "src" -}}
 {{- $height := .Get "height" | default "800" -}}
 {{- $title := .Get "title" | default "Interactive content" -}}
-{{/* Default to lazy: these iframes are embedded visualizations well below the
-     fold, and several are the heaviest assets on the page. Pass lazy=false for
-     one that must be ready before the reader reaches it. */}}
-{{- $lazy := lower (printf "%v" (.Get "lazy" | default "true")) -}}
+{{/* Not lazy by default: lazy iframes change the page layout as they load,
+     which breaks scrolling to anchors. Pass lazy=true only if really needed. */}}
+{{- $lazy := lower (printf "%v" (.Get "lazy" | default "false")) -}}
 
 {{- if not (.Page.Scratch.Get "fullscreenIframeInit") -}}
 <style>

@@ -3,285 +3,226 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Specular Reflection Math Transformation</title>
+<title>Phong Reflection Vector</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;600&display=swap">
 <style>
     :root {
-        /* Application Theme */
-        --mafs-bg: transparent;
-        --mafs-fg: #000000;
-        --mafs-grid: rgba(0,0,0,0.15);
-        --mafs-axis: rgba(0,0,0,0.8);
-        --mafs-text: #333;
-        
-        /* Vector Colors */
-        --vecorange: #E65100;
-        --vecgreen: #2E7D32;
-        --vecblue: #1565C0;
-        --vecdark: #212121; /* Normal vector, adapts in dark mode */
+        --card-bg: #ffffff;
+        --halo: #ffffff;
+        --text: #374151;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --vl: #e65100;
+        --vr: #2e7d32;
+        --vv: #1565c0;
+        --mono: "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
     }
-
-    .theme-light {
-        --mafs-fg: #000000;
-        --mafs-grid: rgba(0,0,0,0.15);
-        --mafs-text: #333;
-        --vecdark: #212121;
+    @media (prefers-color-scheme: dark) {
+        :root { --card-bg: #2d2d2d; --halo: #1d1e20; --text: #e4e4e4; --muted: #a3a3a3; --border: #404040; --vl: #ffa726; --vr: #66bb6a; --vv: #64b5f6; }
     }
-
-    .theme-dark {
-        --mafs-fg: #ffffff;
-        --mafs-grid: rgba(255,255,255,0.2);
-        --mafs-text: #eee;
-        --vecdark: #ffffff;
-    }
-
-    body {
-        margin: 0;
-        overflow: hidden;
-        background-color: var(--mafs-bg);
-        font-family: system-ui, sans-serif;
-        color: var(--mafs-text);
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-    }
-
-    /* Top Controls Structure */
-    .controls {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        padding: 15px;
-        background: var(--mafs-bg);
-        border-bottom: 1px solid var(--mafs-grid);
-        z-index: 10;
-    }
-
-    button {
-        background: var(--mafs-bg);
-        color: var(--mafs-fg);
-        border: 1px solid var(--mafs-grid);
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-
-    button:hover { background: var(--mafs-grid); }
-    button.active {
-        background: var(--vecblue);
-        color: #ffffff;
-        border-color: var(--vecblue);
-    }
-
-    /* Main Container & Layout */
-    .container {
-        width: 100%;
-        flex: 1;
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* Bottom Label Status */
-    .label {
-        position: absolute;
-        bottom: 25px;
-        left: 20px;
-        right: 20px;
-        text-align: center;
-        font-size: 16px;
-        line-height: 1.5;
-        color: var(--mafs-fg);
-        pointer-events: none;
-        background: var(--mafs-bg);
-    }
-
-    /* SVG Styling */
-    svg {
-        width: 100%;
-        height: 100%;
-        max-width: 900px;
-        display: block;
-    }
-
-    .math {
-        font-family: 'Times New Roman', Times, serif;
-        font-style: italic;
-        font-weight: bold;
-        font-size: 26px;
-        paint-order: stroke;
-        stroke: var(--mafs-bg);
-        stroke-width: 5px;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
-
-    .math-small { font-size: 20px; }
-    .vector { stroke-width: 4px; }
-    .dashed-proj { stroke-dasharray: 6 4; stroke-width: 3px; }
-    .dashed-ctx { stroke-dasharray: 8 6; stroke-width: 2px; }
-    .angle-arc { fill: none; stroke: var(--mafs-text); stroke-width: 2.5px; opacity: 0.6; }
-
-    /* Animation Classes */
-    .el-step-1, .el-step-2, .el-step-3 {
-        opacity: 0;
-        transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Visibility Logic driven by container data attribute */
-    [data-step="1"] .el-step-1,
-    [data-step="2"] .el-step-1,
-    [data-step="3"] .el-step-1 { opacity: 1; }
-
-    [data-step="2"] .el-step-2,
-    [data-step="3"] .el-step-2 { opacity: 1; }
-
-    [data-step="3"] .el-step-3 { opacity: 1; }
-
-    [data-step="3"] .vec-v, [data-step="3"] .vec-r { stroke-width: 6px; }
-    .vec-v, .vec-r { transition: stroke-width 0.3s; }
+    html { background: transparent; }
+    body { margin: 0; padding: 6px 4px; font-family: 'Merriweather', Georgia, serif; font-weight: 300; font-size: 14px; background: transparent; color: var(--text); }
+    .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 6px; }
+    button { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 0; border: 1px solid var(--muted); background: transparent; color: var(--text); cursor: pointer; }
+    button:hover { border-color: var(--text); }
+    button.on { background: var(--text); border-color: var(--text); color: var(--card-bg); }
+    .seg { display: flex; flex-wrap: wrap; }
+    .seg button + button { margin-left: -1px; }
+    .grp { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+    .grp b { font-family: var(--mono); font-weight: 400; color: var(--text); min-width: 2.2em; }
+    input[type=range] { width: 120px; accent-color: var(--vr); }
+    svg { width: 100%; height: auto; display: block; touch-action: none; user-select: none; }
+    svg text { font-family: 'Merriweather', Georgia, serif; paint-order: stroke; stroke: var(--halo); stroke-width: 4px; stroke-linejoin: round; }
+    svg .m { font-style: italic; font-weight: 700; font-size: 20px; }
+    svg .s { font-size: 13px; font-style: italic; }
+    .handle { cursor: grab; }
+    .cap { font-size: 13px; line-height: 1.5; min-height: 3em; margin: 2px 0 4px; }
+    .readout { font-family: var(--mono); font-size: 12px; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 4px; display: flex; flex-wrap: wrap; gap: 0 18px; }
+    .hint { font-size: 12px; color: var(--muted); font-style: italic; }
 </style>
 </head>
 <body>
-
-<div class="controls">
-    <button onclick="setStep(0)" id="btn-0" class="active">0. Initial State</button>
-    <button onclick="setStep(1)" id="btn-1">1. Vector Projection</button>
-    <button onclick="setStep(2)" id="btn-2">2. Reflection Vector</button>
-    <button onclick="setStep(3)" id="btn-3">3. View Dot Product</button>
+<div class="row">
+    <div class="seg" id="steps">
+        <button data-s="0" class="on">1. vectors</button><button data-s="1">2. project l on n</button><button data-s="2">3. reflect</button><button data-s="3">4. compare with v</button>
+    </div>
+    <div class="grp">&alpha; <input type="range" id="alpha" min="1" max="128" step="1" value="32"><b id="alpha-v"></b></div>
 </div>
-
-<div class="container" id="vis-container" data-step="0">
-    <svg viewBox="-50 50 900 550" preserveAspectRatio="xMidYMid meet">
-        
-        <defs>
-            <!-- Arrowheads -->
-            <marker id="arrow-n" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecdark)" />
-            </marker>
-            <marker id="arrow-l" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecorange)" />
-            </marker>
-            <marker id="arrow-r" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecgreen)" />
-            </marker>
-            <marker id="arrow-v" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto-start-reverse">
-                <path d="M 0 0 L 6 3 L 0 6 L 1.5 3 Z" fill="var(--vecblue)" />
-            </marker>
-            <marker id="arrow-proj" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto-start-reverse">
-                <path d="M 0 0 L 5 2.5 L 0 5 L 1.5 2.5 Z" fill="var(--mafs-text)" />
-            </marker>
-        </defs>
-
-        <!-- Ground Base -->
-        <rect x="75" y="450" width="650" height="70" fill="var(--mafs-grid)" opacity="0.6"/>
-        <line x1="75" y1="450" x2="725" y2="450" stroke="var(--mafs-grid)" stroke-width="3" />
-
-        <!-- Unit Hemisphere -->
-        <path d="M 150 450 A 250 250 0 0 1 650 450" fill="none" stroke="var(--mafs-text)" opacity="0.4" stroke-width="1.5" stroke-dasharray="6 6"/>
-
-        <!-- Contextual Dashed Lines -->
-        <line x1="223.2" y1="273.2" x2="145.4" y2="195.4" stroke="var(--vecorange)" opacity="0.5" class="dashed-ctx" />
-        <line x1="641.5" y1="385.3" x2="747.7" y2="356.8" stroke="var(--vecblue)" opacity="0.5" class="dashed-ctx" />
-
-        <!-- Sun (Light Source Context) -->
-        <g transform="translate(145.4, 195.4)">
-            <circle cx="0" cy="0" r="20" fill="var(--vecorange)" opacity="0.2" />
-            <circle cx="0" cy="0" r="20" fill="none" stroke="var(--vecorange)" stroke-width="3" />
-            <path d="M 27.5 0 L 42.5 0 M -27.5 0 L -42.5 0 M 0 27.5 L 0 42.5 M 0 -27.5 L 0 -42.5 M 19.4 19.4 L 30 30 M -19.4 -19.4 L -30 -30 M 19.4 -19.4 L 30 -30 M -19.4 19.4 L -30 30" stroke="var(--vecorange)" stroke-width="3" stroke-linecap="round"/>
-        </g>
-
-        <!-- Eye (Viewer Context) -->
-        <g transform="translate(747.7, 356.8) rotate(-15) scale(0.9)">
-            <ellipse cx="0" cy="0" rx="35" ry="20" fill="var(--mafs-bg)" stroke="var(--mafs-grid)" stroke-width="2"/>
-            <path d="M -35 0 C -15 -25, 15 -25, 35 0 C 15 25, -15 25, -35 0 Z" fill="none" stroke="var(--vecblue)" stroke-width="3" />
-            <circle cx="0" cy="0" r="12.5" fill="var(--vecblue)" />
-            <circle cx="4" cy="-4" r="2.5" fill="var(--mafs-bg)" />
-        </g>
-
-        <!-- Origin point x -->
-        <circle cx="400" cy="450" r="5" fill="var(--mafs-fg)" />
-        <text x="393" y="480" class="math" fill="var(--mafs-fg)">x</text>
-
-        <!-- STEP 1 & 2: Construction Lines -->
-        <g class="el-step-1">
-            <line x1="223.2" y1="273.2" x2="395" y2="273.2" stroke="var(--mafs-text)" class="dashed-proj" marker-end="url(#arrow-proj)" />
-            <text x="240" y="260" class="math math-small" fill="var(--mafs-fg)"><tspan font-weight="normal">(</tspan>n<tspan font-weight="normal">·</tspan>l<tspan font-weight="normal">)n - </tspan>l</text>
-            <circle cx="400" cy="273.2" r="4" fill="var(--mafs-fg)" />
-            <text x="415" y="325" transform="rotate(-90 415 325)" class="math math-small" fill="var(--mafs-fg)"><tspan font-weight="normal">(</tspan>n<tspan font-weight="normal">·</tspan>l<tspan font-weight="normal">)n</tspan></text>
-        </g>
-
-        <g class="el-step-2">
-            <line x1="400" y1="273.2" x2="571" y2="273.2" stroke="var(--mafs-text)" class="dashed-proj" marker-end="url(#arrow-proj)" />
-            <path d="M 400 375 A 75 75 0 0 0 347 397" class="angle-arc"/>
-            <text x="350" y="375" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--mafs-text)">θ</text>
-            <path d="M 400 375 A 75 75 0 0 1 453 397" class="angle-arc"/>
-            <text x="435" y="375" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--mafs-text)">θ</text>
-        </g>
-
-        <!-- STEP 3: Dot Product Highlight / Phi Angle -->
-        <g class="el-step-3">
-            <path d="M 488.4 361.6 A 125 125 0 0 1 520.7 417.6" class="angle-arc" stroke="var(--vecblue)" opacity="1"/>
-            <text x="525" y="380" font-family="Times New Roman" font-style="italic" font-size="22" fill="var(--vecblue)">φ</text>
-        </g>
-
-        <!-- Base Vectors -->
-        <line x1="400" y1="450" x2="400" y2="208" class="vector" stroke="var(--vecdark)" marker-end="url(#arrow-n)" />
-        <text x="393" y="190" class="math" fill="var(--vecdark)">n</text>
-
-        <line x1="400" y1="450" x2="228" y2="278" class="vector" stroke="var(--vecorange)" marker-end="url(#arrow-l)" />
-        <text x="200" y="295" class="math" fill="var(--vecorange)">l</text>
-        
-        <line x1="400" y1="450" x2="636" y2="387" class="vector vec-v" stroke="var(--vecblue)" marker-end="url(#arrow-v)" />
-        <text x="655" y="385" class="math" fill="var(--vecblue)">v</text>
-
-        <g class="el-step-2">
-            <line x1="400" y1="450" x2="571" y2="278" class="vector vec-r" stroke="var(--vecgreen)" marker-end="url(#arrow-r)" />
-            <text x="585" y="265" class="math" fill="var(--vecgreen)">r</text>
-        </g>
-    </svg>
-    
-    <div class="label" id="status-label"></div>
-</div>
-
+<svg id="svg" viewBox="0 0 760 330"></svg>
+<div class="cap" id="cap"></div>
+<div class="readout" id="readout"></div>
+<div class="hint">drag the tips of l and v</div>
 <script>
-    // Theme syncing capabilities
-    function syncTheme() {
-        try {
-            const parent = window.parent.document.body;
-            const isDark = parent.classList.contains('dark') || 
-                           window.parent.document.documentElement.classList.contains('dark');
-            document.documentElement.className = isDark ? 'theme-dark' : 'theme-light';
-        } catch (e) {}
+// 2D cross-section: surface along x, n = (0,1). Unit vectors l, v point away from the surface.
+// r = 2(n.l)n - l ; specular = max(r.v,0)^alpha, and 0 when n.l <= 0.
+let colors = {};
+function readColors() {
+    const cs = getComputedStyle(document.documentElement);
+    ['--text', '--muted', '--border', '--vl', '--vr', '--vv', '--halo'].forEach(k => colors[k.slice(2)] = cs.getPropertyValue(k).trim());
+}
+function detectTheme() {
+    try {
+        if (window.parent === window) throw 0;
+        const bg = getComputedStyle(window.parent.document.body).backgroundColor;
+        document.documentElement.style.background = bg;
+        const rgb = bg.match(/\d+/g);
+        if (rgb) {
+            const dark = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 < 128;
+            const set = (k, v) => document.documentElement.style.setProperty(k, v);
+            set('--card-bg', dark ? '#2d2d2d' : '#ffffff');
+            set('--halo', bg);
+            set('--text', dark ? '#e4e4e4' : '#374151');
+            set('--muted', dark ? '#a3a3a3' : '#6b7280');
+            set('--border', dark ? '#404040' : '#e5e7eb');
+            set('--vl', dark ? '#ffa726' : '#e65100');
+            set('--vr', dark ? '#66bb6a' : '#2e7d32');
+            set('--vv', dark ? '#64b5f6' : '#1565c0');
+        }
+    } catch (e) {}
+    readColors();
+    draw();
+}
+
+const OX = 380, OY = 290, U = 200;            // origin and unit length in SVG units
+const D2R = Math.PI / 180;
+let thL = -45, thV = 70, step = 0;            // angles from n, degrees (negative = left)
+const $ = id => document.getElementById(id);
+const svg = $('svg');
+const P = (x, y) => [OX + U * x, OY - U * y];
+const dir = th => [Math.sin(th * D2R), Math.cos(th * D2R)];
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1];
+const ang = v => Math.atan2(v[0], v[1]) / D2R;   // angle from n
+
+const captions = [
+    'The unit normal <b>n</b>, the direction to the light <b>l</b> and the direction to the viewer <b>v</b>, all starting at the surface point.',
+    'Projecting <b>l</b> onto <b>n</b> gives (<b>n</b>&middot;<b>l</b>)<b>n</b>. The dashed horizontal vector from the tip of <b>l</b> to that point is (<b>n</b>&middot;<b>l</b>)<b>n</b> &minus; <b>l</b>.',
+    'Adding that difference twice to <b>l</b> mirrors it across <b>n</b>: <b>r</b> = <b>l</b> + 2[(<b>n</b>&middot;<b>l</b>)<b>n</b> &minus; <b>l</b>] = 2(<b>n</b>&middot;<b>l</b>)<b>n</b> &minus; <b>l</b>. Both make the angle &theta; with <b>n</b>.',
+    'The highlight depends on how close <b>r</b> is to <b>v</b>: <b>r</b>&middot;<b>v</b> = cos &phi;, and the specular term is max(<b>r</b>&middot;<b>v</b>, 0)<sup>&alpha;</sup> (zero when <b>n</b>&middot;<b>l</b> &le; 0).'
+];
+
+function el(tag, attrs, text) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    svg.appendChild(e);
+    return e;
+}
+function arrow(a, b, col, w, dash) {
+    const [x1, y1] = a, [x2, y2] = b;
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy);
+    if (len < 1) return;
+    const ux = dx / len, uy = dy / len, hs = 7 + w * 1.5;
+    el('line', { x1, y1, x2: x2 - ux * hs * 0.8, y2: y2 - uy * hs * 0.8, stroke: col, 'stroke-width': w, 'stroke-dasharray': dash || '' });
+    el('path', { d: `M${x2},${y2} L${x2 - ux * hs - uy * hs * 0.45},${y2 - uy * hs + ux * hs * 0.45} L${x2 - ux * hs + uy * hs * 0.45},${y2 - uy * hs - ux * hs * 0.45}Z`, fill: col });
+}
+function arc(a1, a2, rad, col, label) {      // angles from n in degrees
+    const lo = Math.min(a1, a2), hi = Math.max(a1, a2);
+    if (hi - lo < 0.5) return;
+    const p = t => [OX + rad * Math.sin(t * D2R), OY - rad * Math.cos(t * D2R)];
+    const [x1, y1] = p(lo), [x2, y2] = p(hi);
+    el('path', { d: `M${x1},${y1} A${rad},${rad} 0 0 1 ${x2},${y2}`, fill: 'none', stroke: col, 'stroke-width': 1.3 });
+    if (label) { const [lx, ly] = p((lo + hi) / 2).map((c, i) => i ? OY + (c - OY) * 1.22 : OX + (c - OX) * 1.22); el('text', { x: lx, y: ly + 5, 'text-anchor': 'middle', class: 's', fill: col }, label); }
+}
+function label(v, txt, col, k) {
+    const [x, y] = P(v[0] * (k || 1.12), v[1] * (k || 1.12));
+    el('text', { x, y: y + 7, 'text-anchor': 'middle', class: 'm', fill: col }, txt);
+}
+
+function compute() {
+    const n = [0, 1], l = dir(thL), v = dir(thV);
+    const nl = dot(n, l);
+    const proj = [n[0] * nl, n[1] * nl];
+    const diff = [proj[0] - l[0], proj[1] - l[1]];
+    const r = [2 * nl * n[0] - l[0], 2 * nl * n[1] - l[1]];
+    const rv = dot(r, v);
+    const a = +$('alpha').value;
+    const spec = nl > 0 ? Math.pow(Math.max(rv, 0), a) : 0;
+    return { n, l, v, nl, proj, diff, r, rv, a, spec };
+}
+
+function draw() {
+    const c = compute();
+    svg.textContent = '';
+    // surface and unit circle
+    el('line', { x1: 40, y1: OY, x2: 720, y2: OY, stroke: colors.muted, 'stroke-width': 1.2 });
+    for (let x = 50; x < 720; x += 16) el('line', { x1: x, y1: OY, x2: x - 10, y2: OY + 10, stroke: colors.border, 'stroke-width': 1 });
+    el('path', { d: `M${OX - U},${OY} A${U},${U} 0 0 1 ${OX + U},${OY}`, fill: 'none', stroke: colors.border, 'stroke-dasharray': '4 4' });
+
+    const O = [OX, OY];
+    if (step >= 1) {
+        // (n.l)n on the normal, and (n.l)n - l from the tip of l
+        el('circle', { cx: P(...c.proj)[0], cy: P(...c.proj)[1], r: 3.5, fill: colors.text });
+        arrow(P(...c.l), P(...c.proj), colors.muted, 1.5, '6 4');
+        const mid = P((c.l[0] + c.proj[0]) / 2, c.proj[1]);
+        el('text', { x: mid[0], y: mid[1] - 8, 'text-anchor': 'middle', class: 's', fill: colors.text }, '(n·l)n − l');
+        el('text', { x: OX + 8, y: (OY + P(...c.proj)[1]) / 2, class: 's', fill: colors.text }, '(n·l)n');
     }
-    syncTheme();
-    setInterval(syncTheme, 1000);
+    if (step >= 2) {
+        arrow(P(...c.proj), P(...c.r), colors.muted, 1.5, '6 4');
+        arc(0, thL, 70, colors.muted, 'θ');
+        arc(0, ang(c.r), 70, colors.muted, 'θ');
+    }
+    if (step >= 3) arc(ang(c.r), thV, 125, colors.vv, 'φ');
 
-    const labels =[
-        "The standard vectors: Normal (<b>n</b>), Light direction (<b>l</b>), and View direction (<b>v</b>).",
-        "Project <b>l</b> onto <b>n</b> using the dot product: <b>(n·l)n</b>. The horizontal dashed vector represents <b>(n·l)n - l</b>.",
-        "By adding the horizontal difference twice to <b>l</b>, we complete the parallelogram to find the reflection vector <b>r</b>. <br/><i>r = 2(n·l)n - l</i>",
-        "We measure how close the reflection <b>r</b> is to the viewer <b>v</b>. The dot product <b>r·v = cos(φ)</b> determines the specular highlight."
-    ];
+    // base vectors
+    arrow(O, P(0, 1), colors.text, 2.5); label([0, 1], 'n', colors.text);
+    arrow(O, P(...c.l), colors.vl, 2.5); label(c.l, 'l', colors.vl);
+    arrow(O, P(...c.v), colors.vv, 2.5); label(c.v, 'v', colors.vv);
+    if (step >= 2) { arrow(O, P(...c.r), colors.vr, step >= 3 ? 3.5 : 2.5); label(c.r, 'r', colors.vr, 1.2); }
+    el('circle', { cx: OX, cy: OY, r: 3.5, fill: colors.text });
 
-    function setStep(state) {
-        // Update Buttons
-        document.querySelectorAll('button').forEach((b, i) => {
-            b.className = i === state ? 'active' : '';
-        });
-        
-        // Update Visuals
-        document.getElementById('vis-container').setAttribute('data-step', state);
-        
-        // Update Text
-        document.getElementById('status-label').innerHTML = labels[state];
+    // drag handles
+    for (const [k, v, col] of [['l', c.l, colors.vl], ['v', c.v, colors.vv]]) {
+        const [x, y] = P(...v);
+        const h = el('circle', { cx: x, cy: y, r: 13, fill: 'transparent', stroke: col, 'stroke-width': 1, 'stroke-dasharray': '2 3', class: 'handle' });
+        h.dataset.k = k;
     }
 
-    // Initialize first state
-    setStep(0);
+    $('cap').innerHTML = captions[step];
+    const f = x => x.toFixed(3);
+    const phi = Math.acos(Math.max(-1, Math.min(1, c.rv))) / D2R;
+    $('readout').innerHTML = [
+        `θ = ${Math.abs(thL).toFixed(1)}°`,
+        `n·l = ${f(c.nl)}`,
+        `r = (${f(c.r[0])}, ${f(c.r[1])})`,
+        `r·v = cos φ = ${f(c.rv)} (φ = ${phi.toFixed(1)}°)`,
+        `max(r·v,0)^${c.a} = ${f(c.spec)}${c.nl <= 0 ? ' (n·l ≤ 0)' : ''}`
+    ].map(s => `<span>${s}</span>`).join('');
+    $('alpha-v').textContent = c.a;
+}
+
+let drag = null;
+function svgPt(e) {
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+svg.addEventListener('pointerdown', e => {
+    const p = svgPt(e);
+    const dl = Math.hypot(p.x - P(...dir(thL))[0], p.y - P(...dir(thL))[1]);
+    const dv = Math.hypot(p.x - P(...dir(thV))[0], p.y - P(...dir(thV))[1]);
+    if (Math.min(dl, dv) > 40) return;
+    drag = dl < dv ? 'l' : 'v';
+    svg.setPointerCapture(e.pointerId);
+});
+svg.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const p = svgPt(e);
+    let th = Math.atan2(p.x - OX, OY - p.y) / D2R;
+    th = Math.max(-90, Math.min(90, th));
+    if (drag === 'l') thL = th; else thV = th;
+    draw();
+});
+svg.addEventListener('pointerup', () => { drag = null; });
+document.querySelectorAll('#steps button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('#steps button').forEach(x => x.classList.toggle('on', x === b));
+    step = +b.dataset.s; draw();
+});
+$('alpha').addEventListener('input', draw);
+
+readColors();
+draw();
+(function(){var f=function(){detectTheme();setTimeout(detectTheme,350);};try{if(window.parent!==window)new MutationObserver(f).observe(window.parent.document.body,{attributes:true,attributeFilter:['class']});}catch(e){}matchMedia('(prefers-color-scheme: dark)').addEventListener('change',f);})();
+detectTheme();
 </script>
-
 </body>
 </html>

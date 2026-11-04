@@ -2,8 +2,8 @@
 author: ["Utkarsh Sharma"]
 title: "Introduction to 3D Rendering"
 date: "2026-04-30"
-description: "A comprehensive introduction to 3D rendering basics, covering homogeneous coordinates, the MVP pipeline, primary rays, shading, ray tracing, path tracing, SDFs, and volume rendering."
-summary: "A long-form guide to 3D rendering from first principles: transforms, camera and projection, ray generation, intersections, shading, ray tracing, path tracing, signed distance functions, and volume rendering."
+description: "An introduction to 3D rendering: homogeneous coordinates, transforms, the rendering pipeline, primary rays, ray-object intersection, shading, ray tracing, path tracing, and signed distance functions."
+summary: "3D rendering from first principles: transforms, camera and projection, ray generation, intersections, shading, ray tracing, path tracing, and signed distance functions."
 tags: ["Rendering", "Computer Graphics"]
 categories: ["Computer Graphics"]
 series: ["Notes"]
@@ -16,7 +16,7 @@ math: true
 
 <!-- <div style="background: var(--code-bg, #f6f8fa); border-left: 3px solid #3b82f6; border-radius: 6px; padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: 0.95rem;">
 <strong>This series</strong><br>
-<strong>① Introduction to Rendering</strong> (this post) — homogeneous coordinates, the MVP pipeline, ray generation, geometry intersections, and shading basics.<br>
+<strong>① Introduction to Rendering</strong> (this post) — homogeneous coordinates, the rendering pipeline, ray generation, geometry intersections, and shading basics.<br>
 ② <a href="../path-tracing">Monte Carlo Path Tracing &amp; Importance Sampling</a> — the rendering equation, Monte Carlo integration, BRDFs, and physically based shading.<br>
 ③ <a href="../differentiable-rendering">Introduction to Differentiable Rendering</a> — gradients through the rendering pipeline, inverse rendering, and scene optimisation.<br>
 ④ <a href="../3d-reconstruction">3D Reconstruction: NeRF &amp; 3DGS</a> — neural radiance fields, 3D Gaussian splatting, and modern scene representations.
@@ -25,127 +25,100 @@ math: true
 
 ## Introduction to Rendering
 
-These notes draw throughout on Szeliski [[1]](#ref-1), Lengyel [[2]](#ref-2), and the IISc graphics course notes [[13]](#ref-13).
+The transforms, the rendering pipeline, the ray-sphere test, the reflection and refraction vectors and the lighting model follow Lengyel, *Mathematics for 3D Game Programming and Computer Graphics* [[2]](#ref-2). The transform hierarchy follows Szeliski [[1]](#ref-1), and the rest draws on the IISc graphics course notes [[13]](#ref-13) and the papers cited in each section.
 
-What is rendering? At its core, rendering is the process of generating a 2D image from a 3D scene. The generated image can be realistic or stylized.
+Rendering is the process of generating a 2D image from a 3D scene. There are two basic approaches. **Rasterization** projects each object onto the image plane and fills the pixels it covers. **Ray tracing** follows a ray from the camera through each pixel into the scene and finds what it hits.
 
-In computer graphics, there are two ways to render a 2D image from a 3D scene. The first is **rasterization**, where we take 3D objects and mathematically project them forward onto the 2D screen. The second is **ray tracing**, where we work backward, shooting virtual rays of light from the camera into the scene to see what they hit.
+This post builds both from the ground up:
+* homogeneous coordinates and transforms
+* the rendering pipeline (object, world, camera, homogeneous clip and window space)
+* primary rays, ray-object intersection and shading
+* ray tracing and path tracing (path tracing is covered in detail in a separate post)
+* signed distance functions and sphere tracing
 
-In this post, we will build both methods from the ground up. Instead of just skimming high-level ideas, we’ll dive into the real math and algorithms powering modern graphics engines.
-
-Here is what we’ll cover in detail:
-* **Homogeneous Coordinates & Transformations**
-* **The Rasterization Pipeline** (Object → World → Camera → Clip → NDC → Screen)
-* **Ray Tracing, Geometry, and Shading**
-* **Path Tracing Basics** *(I have a separate, detailed post on this!)*
-* **Signed Distance Functions (SDF) & Sphere Tracing**
-
-Along the way, I’ll provide the GLSL code for these concepts so you can see exactly how the math translates into practice.
-
----
-
-## The Matrix Problem: Why Translation is Hard
-
-The goal in real-time graphics is to express every geometric operation — scale, rotate, translate — as a single matrix multiplication, so the GPU can process millions of vertices with one unified instruction.
-
-Rotation and scaling both work as $2 \times 2$ matrix multiplications:
-
-$$ \begin{bmatrix} x' \\ y' \end{bmatrix} = \mathbf{M} \begin{bmatrix} x \\ y \end{bmatrix} $$
-
-**Translation is the problem.** Moving a point by $(t_x, t_y)$ requires addition, not multiplication:
-
-$$x' = x + t_x, \qquad y' = y + t_y$$
-
-There is provably no $2 \times 2$ matrix that can do this — any linear map $\mathbf{M}$ must send the origin to itself, but translation moves it.
+The GLSL code in each part implements the equations given in the text.
 
 ---
 
 ## Homogeneous Coordinates
 
-The fix, developed in projective geometry, is to embed our 2D world in a higher-dimensional space by appending a coordinate $w$:
+A $3 \times 3$ matrix $\mathbf{M}$ can scale and rotate a point, but it cannot translate it, because $\mathbf{M}\mathbf{0}=\mathbf{0}$ for every matrix. A change of coordinate system therefore has the form
+
+$$\mathbf{P}' = \mathbf{M}\mathbf{P} + \mathbf{T},$$
+
+where $\mathbf{T}$ is a 3D translation vector. Applying two such transforms gives
+
+$$\mathbf{P}' = \mathbf{M}_2(\mathbf{M}_1\mathbf{P} + \mathbf{T}_1) + \mathbf{T}_2 = (\mathbf{M}_2\mathbf{M}_1)\mathbf{P} + \mathbf{M}_2\mathbf{T}_1 + \mathbf{T}_2,$$
+
+so the matrix part and the translation part have to be tracked separately at every step.
+
+### Four-Dimensional Transforms
+
+The fix is to extend vectors to four-dimensional **homogeneous coordinates**. A 3D point $\mathbf{P}$ gets a fourth coordinate, the $w$ coordinate, equal to $1$, and $\mathbf{M}$ and $\mathbf{T}$ are combined into one $4 \times 4$ matrix:
 
 $$
-(x,\, y) \;\longrightarrow\; \tilde{\mathbf{P}} = (x,\, y,\, 1)
+\mathbf{F} =
+\begin{bmatrix}
+\mathbf{M} & \mathbf{T} \\
+\mathbf{0} & 1
+\end{bmatrix} =
+\begin{bmatrix}
+M_{11} & M_{12} & M_{13} & T_x \\
+M_{21} & M_{22} & M_{23} & T_y \\
+M_{31} & M_{32} & M_{33} & T_z \\
+0 & 0 & 0 & 1
+\end{bmatrix}
 $$
 
-Every real 2D point lives on the hyperplane $w = 1$. To recover a 2D point from a homogeneous triple, we divide through by $w$:
-
-$$\tilde{\mathbf{P}} = (\tilde{x},\, \tilde{y},\, \tilde{w}) \;\longrightarrow\; \mathbf{P} =\!\left(\frac{\tilde{x}}{\tilde{w}},\; \frac{\tilde{y}}{\tilde{w}}\right)$$
-
-This division is called the **perspective divide**. Note: any scalar multiple $(\lambda x, \lambda y, \lambda)$ represents the *same* 2D point, because the $w$-divide cancels $\lambda$.
-
-{{< figure src="/images/intro-to-rendering/homogeneous_coords.svg" caption="The homogeneous embedding: a 2D point $(x, y)$ corresponds to the ray through $(x, y, 1)$ in $\mathbb{R}^3$. Any point on this ray maps to the same 2D location." width="500px" align="center" >}}
-
-**Why this enables translation.** In homogeneous coordinates, adding $(t_x, t_y)$ to a 2D point becomes a *shear* in 3D — a purely linear operation — representable by a $3 \times 3$ matrix multiplication. The dimension we added is doing real work.
-
-**The key semantic distinction.** In 3D, homogeneous coordinates are $\langle x, y, z, w \rangle^T$ and the rule is:
-
-| $w$ value | Interpretation | Affected by translation? |
-|-----------|----------------|--------------------------|
-| $w = 1$ | A **point** in space | Yes |
-| $w = 0$ | A **direction** (free vector) | No — the translation column is nullified |
-
-This is not arbitrary. A point has a position, so its homogeneous form gets $w=1$:
+Multiplying $\mathbf{F}$ by $\langle P_x, P_y, P_z, 1 \rangle$ gives $\langle \mathbf{M}\mathbf{P} + \mathbf{T},\, 1 \rangle$, and the product of two matrices of this form is again a matrix of this form, so a chain of transforms is one matrix. Vectors are columns and matrices multiply on the left, so in $\mathbf{F}_2\mathbf{F}_1\mathbf{P}$ the transform $\mathbf{F}_1$ is applied first. Solving $\mathbf{P}' = \mathbf{M}\mathbf{P} + \mathbf{T}$ for $\mathbf{P}$ gives the inverse:
 
 $$
-\tilde{\mathbf{p}}_1 =
-\begin{bmatrix} x_1 \\ y_1 \\ z_1 \\ 1 \end{bmatrix},
-\qquad
-\tilde{\mathbf{p}}_2 =
-\begin{bmatrix} x_2 \\ y_2 \\ z_2 \\ 1 \end{bmatrix}
+\mathbf{F}^{-1} =
+\begin{bmatrix}
+\mathbf{M}^{-1} & -\mathbf{M}^{-1}\mathbf{T} \\
+\mathbf{0} & 1
+\end{bmatrix}
 $$
 
-But a vector is the difference between two points. For example, the displacement from $\mathbf{p}_2$ to $\mathbf{p}_1$ is:
+### Points and Directions
 
-$$
-\tilde{\mathbf{v}} = \tilde{\mathbf{p}}_1 - \tilde{\mathbf{p}}_2 =
-\begin{bmatrix} x_1-x_2 \\ y_1-y_2 \\ z_1-z_2 \\ 1-1 \end{bmatrix}=
-\begin{bmatrix} v_x \\ v_y \\ v_z \\ 0 \end{bmatrix}=
-\begin{bmatrix} \mathbf{v} \\ 0 \end{bmatrix}
-$$
-
-Here $\mathbf{v}=(v_x,v_y,v_z)^T$ is the ordinary 3D direction part, and $\tilde{\mathbf{v}}=(\mathbf{v},0)^T$ is its homogeneous form. So vectors naturally have $w=0$. This matches their meaning: a vector has length and direction, but no fixed location in space.
-
-Now look at what a general affine transform does to a point:
+Direction vectors should not change under translation. They are extended to four dimensions with $w = 0$, which nullifies the fourth column of $\mathbf{F}$:
 
 $$
 \begin{bmatrix}
-\mathbf{M}_{3\times3} & \mathbf{t} \\
-\mathbf{0}^T & 1
+\mathbf{M} & \mathbf{T} \\
+\mathbf{0} & 1
 \end{bmatrix}
 \begin{bmatrix}
-\mathbf{p} \\ 1
+\mathbf{V} \\ 0
 \end{bmatrix}=
 \begin{bmatrix}
-\mathbf{M}\mathbf{p} + \mathbf{t} \\ 1
+\mathbf{M}\mathbf{V} \\ 0
 \end{bmatrix}
 $$
 
-The same transform applied to a direction vector gives:
+| $w$ | Meaning | Affected by $\mathbf{T}$? |
+|-----|---------|---------------------------|
+| $1$ | point | yes |
+| $0$ | direction | no |
 
-$$
-\begin{bmatrix}
-\mathbf{M}_{3\times3} & \mathbf{t} \\
-\mathbf{0}^T & 1
-\end{bmatrix}
-\begin{bmatrix}
-\mathbf{v} \\ 0
-\end{bmatrix}=
-\begin{bmatrix}
-\mathbf{M}\mathbf{v} + \mathbf{t}\cdot 0 \\ 0
-\end{bmatrix}=
-\begin{bmatrix}
-\mathbf{M}\mathbf{v} \\ 0
-\end{bmatrix}
-$$
+The difference $\mathbf{Q} - \mathbf{P}$ of two points with $w = 1$ has $w = 0$. It is the direction from $\mathbf{P}$ to $\mathbf{Q}$, which a translation should not affect.
 
-The translation column is multiplied by $w=0$, so it vanishes. That is exactly what we want: translating the entire coordinate system should move points, but it should not change a direction like "up", "forward", or "from this point to that point."
+### Geometrical Interpretation of the w Coordinate
+
+For a 4D point $\mathbf{P} = \langle x, y, z, w \rangle$ with $w \neq 0$, the 3D point $\tilde{\mathbf{P}}$ it represents is its projection into the space $w = 1$:
+
+$$\tilde{\mathbf{P}} = \left\langle \frac{x}{w},\, \frac{y}{w},\, \frac{z}{w} \right\rangle$$
+
+This is the point where the line through $\mathbf{P}$ and the origin meets the space $w = 1$, so every nonzero scalar multiple of $\langle x, y, z, w \rangle$ represents the same 3D point. The division by $w$ is what makes perspective projection possible (see [Perspective Projection](#perspective-projection)).
+
+{{< figure src="/images/intro-to-rendering/homogeneous_coords.svg" caption="Projection onto the space $w = 1$, drawn one dimension lower: the point $(x, y)$ corresponds to every point on the line through $(x, y, 1)$ and the origin." width="500px" align="center" >}}
 
 ---
 
 ## 2D Transformations
 
-We classify transformations by their **degrees of freedom (DoF)** and the geometric properties they **preserve**. The hierarchy below follows Szeliski [[1]](#ref-1); Lengyel [[2]](#ref-2) covers the same material with a game-engine emphasis.
+Transforms are grouped by their degrees of freedom (DoF) and the geometric properties they preserve. This hierarchy is from Szeliski [[1]](#ref-1); the matrices use the homogeneous form above.
 
 ---
 
@@ -162,21 +135,19 @@ $$ \begin{bmatrix} \color{#ef4444}1 & \color{#22c55e}0 & \color{#3b82f6}t_x \\ \
 - **Preserves**: lengths, angles, area, orientation, parallelism, straight lines.
 - **DoF**: 2 ($t_x$, $t_y$).
 
-<iframe src="/interactive/transformations/graph.html?type=translation" loading="lazy" fetchpriority="low" title="2D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph.html?type=translation" title="2D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
 ### 2D Rigid / Euclidean — 3 DoF
 
-A rigid transform is a rotation composed with a translation. It moves objects without any deformation at all — it is the most constrained non-trivial transform.
+A rigid transform is a rotation followed by a translation. A positive angle $\theta$ rotates counterclockwise. Rotating $\mathbf{P}$ by $90^\circ$ gives $\mathbf{Q} = \langle -P_y, P_x \rangle$, and the rotated vector is $\mathbf{P}' = \mathbf{P}\cos\theta + \mathbf{Q}\sin\theta$, so
 
-For a point at polar coordinates $(r, \phi)$, rotating by $\theta$ gives:
+$$P'_x = P_x\cos\theta - P_y\sin\theta, \qquad P'_y = P_y\cos\theta + P_x\sin\theta$$
 
-$$x' = x\cos\theta - y\sin\theta, \qquad y' = x\sin\theta + y\cos\theta$$
+{{< figure src="/images/intro-to-rendering/rotation.svg" caption="Rotation about the origin by $\theta$: $\mathbf{P}' = \mathbf{P}\cos\theta + \mathbf{Q}\sin\theta$, where $\mathbf{Q} = \langle -P_y, P_x \rangle$." width="400px" align="center" >}}
 
-{{< figure src="/images/intro-to-rendering/rotation.svg" caption="Rotation about the origin by $\theta$, derived from the angle-addition identities." width="400px" align="center" >}}
-
-The $2 \times 2$ rotation block $\mathbf{R}$ satisfies $\mathbf{R}^T\mathbf{R} = \mathbf{I}$ and $\det\mathbf{R} = 1$ — it is **orthonormal**. This is precisely what guarantees that lengths and angles are preserved.
+The $2 \times 2$ rotation block $\mathbf{R}$ is orthogonal ($\mathbf{R}^{-1} = \mathbf{R}^\mathrm{T}$) with $\det\mathbf{R} = 1$. An orthogonal matrix preserves dot products, and therefore lengths and angles.
 
 $$ \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}\cos\theta & \color{#22c55e}-\sin\theta & \color{#3b82f6}0 \\ \color{#ef4444}\sin\theta & \color{#22c55e}\cos\theta & \color{#3b82f6}0 \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} $$
 
@@ -185,7 +156,7 @@ Adding a translation column gives the full rigid (Euclidean) transform.
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 3 (1 rotation angle $\theta$, 2 translations).
 
-<iframe src="/interactive/transformations/graph.html?type=euclidean" loading="lazy" fetchpriority="low" title="2D rigid transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph.html?type=euclidean" title="2D rigid transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -197,52 +168,52 @@ $$x' = s_x \cdot x, \qquad y' = s_y \cdot y$$
 
 $$ \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}s_x & \color{#22c55e}0 & \color{#3b82f6}0 \\ \color{#ef4444}0 & \color{#22c55e}s_y & \color{#3b82f6}0 \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} $$
 
-**What is and isn't preserved depends on whether the scale is uniform:**
+What is preserved depends on whether the scale is uniform:
 
-- **Uniform scaling** ($s_x = s_y = s$): preserves angles, orientation, parallelism — but not lengths (everything scales by $s$).
-- **Non-uniform scaling** ($s_x \neq s_y$): distorts angles. Only parallelism survives in general.
+- **Uniform scaling** ($s_x = s_y = s > 0$) preserves angles, orientation and parallelism. Lengths are multiplied by $s$.
+- **Non-uniform scaling** ($s_x \neq s_y$) changes angles. In general only parallelism is preserved.
 
 - **DoF**: 2 ($s_x$, $s_y$).
 
-<iframe src="/interactive/transformations/graph.html?type=scaling" loading="lazy" fetchpriority="low" title="2D scaling demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph.html?type=scaling" title="2D scaling demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
 ### 2D Affine — 6 DoF
 
-An affine transform relaxes the orthonormality constraint on the $2 \times 2$ submatrix. The upper-left block is now *any* invertible $2 \times 2$ matrix. By SVD, every affine matrix decomposes into rotations and non-uniform scalings. The new operation introduced here is **shearing**.
+An affine transform allows *any* invertible $2 \times 2$ matrix $\mathbf{A}$ in the upper-left block, not only a rotation. By the singular value decomposition $\mathbf{A} = \mathbf{U}\boldsymbol{\Sigma}\mathbf{V}^\mathrm{T}$, every such matrix is a rotation or reflection, a non-uniform scale and another rotation or reflection. This adds **shearing** to the transforms above.
 
 $$ \begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}a_{11} & \color{#22c55e}a_{12} & \color{#3b82f6}t_x \\ \color{#ef4444}a_{21} & \color{#22c55e}a_{22} & \color{#3b82f6}t_y \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix} $$
 
 - **Preserves**: parallelism (parallel lines stay parallel; lengths and angles can change).
 - **DoF**: 6 (four entries of $\mathbf{A}$ + $t_x$ + $t_y$).
 
-<iframe src="/interactive/transformations/graph.html?type=affine" loading="lazy" fetchpriority="low" title="2D affine transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph.html?type=affine" title="2D affine transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
 ### 2D Projective / Homography — 8 DoF
 
-The final step: allow the *bottom row* of the matrix to take arbitrary values. The result is no longer affine — $w'$ is a non-trivial function of the input, so we must divide through by it to recover Cartesian coordinates.
+Now the *bottom row* of the matrix may also take any values. The result is no longer affine: $w'$ depends on the input point, so the result is divided by $w'$ to get Cartesian coordinates.
 
 $$ \begin{bmatrix} x' \\ y' \\ w' \end{bmatrix} = \begin{bmatrix} \color{#ef4444}h_{11} & \color{#22c55e}h_{12} & \color{#3b82f6}h_{13} \\ \color{#ef4444}h_{21} & \color{#22c55e}h_{22} & \color{#3b82f6}h_{23} \\ \color{#ef4444}h_{31} & \color{#22c55e}h_{32} & \color{#3b82f6}h_{33} \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}, \qquad x_{\text{out}} = \frac{x'}{w'}, \quad y_{\text{out}} = \frac{y'}{w'}$$
 
-The $9$ matrix entries have only $8$ DoF because multiplying every entry by a non-zero scalar $\lambda$ produces the same map (the $w'$-divide cancels $\lambda$).
+The $9$ matrix entries have only $8$ DoF because multiplying every entry by a nonzero scalar $\lambda$ produces the same map (division by $w'$ cancels $\lambda$).
 
 - **Preserves**: straight lines (but parallel lines can converge to a **vanishing point**).
 - **DoF**: 8.
 
-<iframe src="/interactive/transformations/graph.html?type=projective" loading="lazy" fetchpriority="low" title="2D projective transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph.html?type=projective" title="2D projective transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ### Custom 2D Transform
 
-<iframe src="/interactive/transformations/graph.html?type=custom" loading="lazy" fetchpriority="low" title="Custom 2D transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph.html?type=custom" title="Custom 2D transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
 ## 3D Transformations
 
-The extension to 3D is straightforward: use $4 \times 4$ matrices and four-component homogeneous coordinates $\langle x, y, z, w \rangle^T$. The point/direction semantic from the homogeneous coordinates section carries over directly: points use $w=1$, directions use $w=0$, and the same matrix form handles both correctly.
+In 3D the transforms are $4 \times 4$ matrices of the form $\mathbf{F}$ acting on $\langle x, y, z, w \rangle$, with $w = 1$ for points and $w = 0$ for directions.
 
 ---
 
@@ -253,20 +224,28 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 3.
 
-<iframe src="/interactive/transformations/graph3d.html?type=translation" loading="lazy" fetchpriority="low" title="Heaviside Discontinuity Step Mapping" style="width:100%; max-width:820px; height:360px; background: transparent; display:block; border: none; margin: 0;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=translation" title="3D translation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
 ### 3D Rigid / Euclidean — 6 DoF
 
-The $3 \times 3$ rotation block $\mathbf{R}$ is now orthonormal across all three axes ($\mathbf{R}^T\mathbf{R} = \mathbf{I}$, $\det\mathbf{R} = 1$), encoding pitch, yaw, and roll. It preserves lengths and angles for the same reason as in 2D: dot products are unchanged by an orthonormal matrix.
+The $3 \times 3$ block $\mathbf{R}$ is orthogonal with $\det\mathbf{R} = 1$. Extending the 2D rotation with a row and column of the identity gives the rotations about the coordinate axes. A positive angle is counterclockwise when the axis points toward the viewer:
+
+$$
+\mathbf{R}_x(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix},\quad
+\mathbf{R}_y(\theta) = \begin{bmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{bmatrix},\quad
+\mathbf{R}_z(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}
+$$
+
+A general rotation is a product of these. In homogeneous form it fills the upper-left block, with the translation in the fourth column:
 
 $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#ef4444}r_{11} & \color{#22c55e}r_{12} & \color{#3b82f6}r_{13} & \color{#a855f7}t_x \\ \color{#ef4444}r_{21} & \color{#22c55e}r_{22} & \color{#3b82f6}r_{23} & \color{#a855f7}t_y \\ \color{#ef4444}r_{31} & \color{#22c55e}r_{32} & \color{#3b82f6}r_{33} & \color{#a855f7}t_z \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}1 \end{bmatrix} \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix} $$
 
 - **Preserves**: lengths, angles, orientation.
 - **DoF**: 6 (3 rotation angles, 3 translations).
 
-<iframe src="/interactive/transformations/graph3d.html?type=rotation" loading="lazy" fetchpriority="low" title="3D rotation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=rotation" title="3D rotation demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -277,7 +256,7 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: parallelism. Angles preserved only if $s_x = s_y = s_z$.
 - **DoF**: 3.
 
-<iframe src="/interactive/transformations/graph3d.html?type=scaling" loading="lazy" fetchpriority="low" title="3D scaling demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=scaling" title="3D scaling demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -288,26 +267,26 @@ $$ \begin{bmatrix} x' \\ y' \\ z' \\ 1 \end{bmatrix} = \begin{bmatrix} \color{#e
 - **Preserves**: parallelism.
 - **DoF**: 12 (nine free entries in $\mathbf{A}$ + three translations).
 
-<iframe src="/interactive/transformations/graph3d.html?type=shear" loading="lazy" fetchpriority="low" title="3D shear demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=shear" title="3D shear demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
 ### 3D Projective — 15 DoF
 
-When the bottom row of the $4 \times 4$ matrix takes arbitrary values, the result is a general projective transform. After multiplying a point by this matrix, we must divide all components by the resulting $w'$ to recover Cartesian coordinates. This is the same perspective divide we saw in 2D homogeneous coordinates, now in 3D.
+When the bottom row of the $4 \times 4$ matrix takes arbitrary values, the result is a general projective transform. The product has $w' \neq 1$, and the 3D point is recovered by dividing by $w'$.
 
 $$ \begin{bmatrix} x' \\ y' \\ z' \\ w' \end{bmatrix} = \begin{bmatrix} \color{#ef4444}h_{11} & \color{#22c55e}h_{12} & \color{#3b82f6}h_{13} & \color{#a855f7}h_{14} \\ \color{#ef4444}h_{21} & \color{#22c55e}h_{22} & \color{#3b82f6}h_{23} & \color{#a855f7}h_{24} \\ \color{#ef4444}h_{31} & \color{#22c55e}h_{32} & \color{#3b82f6}h_{33} & \color{#a855f7}h_{34} \\ \color{#ef4444}h_{41} & \color{#22c55e}h_{42} & \color{#3b82f6}h_{43} & \color{#a855f7}h_{44} \end{bmatrix} \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix}, \qquad x_{\text{out}} = \frac{x'}{w'},\ y_{\text{out}} = \frac{y'}{w'},\ z_{\text{out}} = \frac{z'}{w'}$$
 
-The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ yields the same map (the $w'$-divide cancels it). The **perspective projection matrix** we derive later in the pipeline section is one specific, carefully constructed member of this family — not a free 15-parameter matrix.
+The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ gives the same map. The perspective projection matrix $\mathbf{M}_\text{frustum}$ derived below is one member of this family.
 
 - **Preserves**: straight lines (parallel lines can converge at a vanishing point).
 - **DoF**: 15.
 
-<iframe src="/interactive/transformations/graph3d.html?type=projective" loading="lazy" fetchpriority="low" title="3D projective transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=projective" title="3D projective transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ### Custom 3D Transform
 
-<iframe src="/interactive/transformations/graph3d.html?type=custom" loading="lazy" fetchpriority="low" title="Custom 3D transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/graph3d.html?type=custom" title="Custom 3D transform demo" style="width:100%; max-width:500px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
 ---
 
@@ -328,11 +307,11 @@ The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ yie
     border-collapse: collapse;
     font-family: "Times New Roman", Times, serif;
     font-size: 1.1rem;
-    color: var(--mafs-text);
+    color: var(--primary);
 }
 .transform-table th {
-    border-top: 2px solid var(--mafs-text);
-    border-bottom: 1px solid var(--mafs-text);
+    border-top: 2px solid var(--primary);
+    border-bottom: 1px solid var(--primary);
     padding: 12px 24px;
     font-weight: bold;
     text-align: center;
@@ -343,7 +322,7 @@ The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ yie
     text-align: center;
 }
 .transform-table tr:last-child td {
-    border-bottom: 2px solid var(--mafs-text);
+    border-bottom: 2px solid var(--primary);
 }
 .transform-table .text-left { text-align: left; }
 .transform-icon {
@@ -433,495 +412,321 @@ The 16 entries have 15 DoF because scaling every entry by the same $\lambda$ yie
 
 ## The 3D Graphics Rendering Pipeline
 
-With these pieces in place, we can trace a vertex all the way from an artist's model to a screen pixel. Each stage is still just a matrix multiplication; the GPU applies the same sequence to every vertex in parallel.
+The vertices of a model pass through a sequence of coordinate spaces before they are drawn. Each step between spaces is a $4 \times 4$ matrix, except the division by $w$ that produces normalized device coordinates.
 
-{{< figure src="/images/intro-to-rendering/coordinate_spaces_flow.svg" id="fig-coord-space-flow" caption="The MVP pipeline. Each arrow is a matrix multiplication; the final arrow is the hardware viewport transform." title="The Graphics Rendering Pipeline" alt="Flowchart: Object → World → Camera → Clip → NDC → Window Space" align="center" >}}
+{{< figure src="/images/intro-to-rendering/coordinate_spaces_flow.svg" id="fig-coord-space-flow" caption="The coordinate spaces of the rendering pipeline, after Lengyel, Fig. 1.3." title="The Graphics Rendering Pipeline" alt="Flowchart: object space, world space, camera space, homogeneous clip space, window space" align="center" >}}
 
 ---
 
-### Object Space (Local Space)
+### Object Space
 
-Each 3D model is authored in its own coordinate frame, with the origin typically at the model's geometric center. A cube, a sphere, and a character mesh all live in their own isolated local universes.
+The vertices of a model are stored in **object space**, a coordinate system local to that model and used only by it.
 
-<iframe src="/interactive/transformations/object_space.html" loading="lazy" fetchpriority="low" title="Object space demo" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Each object considers itself centered at its own origin, regardless of where it will end up in the scene.</p>
+<iframe src="/interactive/transformations/object_space.html" title="Object space demo" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Each model is defined about its own origin.</p>
 
 ---
 
 ### World Space
 
-We assemble the scene by applying each object's **Model Matrix** $\mathbf{M}_\text{model}$ — a rigid or affine transform encoding that object's scale, rotation, and position in the world.
+**World space** is the global coordinate system that ties all object spaces together. The position, orientation and scale of each model are stored as an object-to-world transform $\mathbf{M}_\text{model}$ of the form $\mathbf{F}$.
 
-The order matters: **Scale → Rotate → Translate** (applied right-to-left in matrix notation: $\mathbf{T} \cdot \mathbf{R} \cdot \mathbf{S}$). Translating before rotating would orbit the object around the world origin rather than spinning it in place.
+When it is built from a scale $\mathbf{S}$, a rotation $\mathbf{R}$ and a translation $\mathbf{T}$, the usual order is
 
-<iframe src="/interactive/transformations/world_space_steps.html" loading="lazy" fetchpriority="low" title="World space steps demo" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Scale → Rotate → Translate. Reversing this order produces different results.</p>
+$$\mathbf{M}_\text{model} = \mathbf{T}\,\mathbf{R}\,\mathbf{S},$$
 
-<iframe src="/interactive/transformations/world_space.html" loading="lazy" fetchpriority="low" title="World space demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">All objects share one World Space. A camera object is placed here too, defining the viewpoint.</p>
+which applies $\mathbf{S}$ first and $\mathbf{T}$ last, because the vector is multiplied on the right. With the order reversed, the rotation and scale act on the translated position and the object moves around the world origin.
+
+<iframe src="/interactive/transformations/world_space_steps.html" title="World space steps demo" style="width:100%; max-width:800px; height:400px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Scale, then rotate, then translate. A different order gives a different result.</p>
+
+<iframe src="/interactive/transformations/world_space.html" title="World space demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">All models placed in world space, together with the camera.</p>
 
 ---
 
-### Camera Space (Eye Space / View Space)
+### Camera Space
 
-To render the scene from the camera's point of view, we transform the entire world so that the camera sits at the origin, looking down the **$-Z$ axis**, with $+Y$ pointing up. This is **Camera Space** (also called Eye Space or View Space).
+**Camera space**, also called eye space, is the coordinate system in which the camera lies at the origin, the $x$ axis points to the right and the $y$ axis points up. In OpenGL the $z$ axis points opposite to the viewing direction, so the camera looks down the $-z$ axis and the system is right-handed. (Direct3D points $z$ along the viewing direction, which gives a left-handed system.)
 
-The transform that does this is the **View Matrix** $\mathbf{M}_\text{view}$ — a rigid Euclidean transform (rotation + translation). The camera itself doesn't move; the world is repositioned around it.
+The world-to-camera transform $\mathbf{M}_\text{view}$ is the inverse of the camera's own object-to-world transform. Let the camera sit at the world-space point $\mathbf{E}$, with its $x$, $y$ and $z$ axes given by the columns of a rotation matrix $\mathbf{R}$. Its object-to-world transform is $\mathbf{T}(\mathbf{E})\,\mathbf{R}$, a rotation followed by a translation by $\mathbf{E}$. By the inverse of $\mathbf{F}$ above, with $\mathbf{R}^{-1} = \mathbf{R}^\mathrm{T}$,
 
-<iframe src="/interactive/transformations/view_space.html" loading="lazy" fetchpriority="low" title="View space demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Translating the camera forward is mathematically identical to translating the entire world backward. The camera is always at the origin in Camera Space.</p>
+$$\mathbf{M}_\text{view} = \left(\mathbf{T}(\mathbf{E})\,\mathbf{R}\right)^{-1} = \mathbf{R}^\mathrm{T}\,\mathbf{T}(-\mathbf{E}),$$
 
-#### Sign Convention Used Throughout This Post
+a translation by $-\mathbf{E}$ that moves the camera to the origin, followed by the rotation $\mathbf{R}^\mathrm{T}$ that lines its axes up with $x$, $y$ and $z$. The product $\mathbf{M}_\text{view}\mathbf{M}_\text{model}$, which takes object space directly to camera space, is the **model-view transformation**.
 
-We follow the **OpenGL right-handed Camera Space convention**:
+<iframe src="/interactive/transformations/view_space.html" title="Camera space demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">$\mathbf{M}_\text{view}$ applied to the whole scene: a translation that moves the camera to the origin, then a rotation that lines its axes up with $x$, $y$, $z$.</p>
 
-- Camera at origin, looking down **$-Z$**.
-- $+X$ points right, $+Y$ points up.
-- **$n$ and $f$ are positive scalars** representing distances from the camera to the near and far planes. In Camera Space coordinates, those planes sit at $z = -n$ and $z = -f$.
+The near and far plane distances $n$ and $f$ are positive. In camera space the near plane is $z = -n$ and the far plane is $z = -f$.
 
-Every projection matrix in the rest of this post uses this convention consistently.
+#### LookAt
 
-#### Building the View Matrix: LookAt
-
-Specifying the camera via Euler angles (yaw/pitch/roll) is error-prone and suffers from gimbal lock. The `LookAt` construction is more intuitive. It takes three inputs:
-
-1. **Eye** $\mathbf{e}$: camera position in World Space.
-2. **Target** $\mathbf{t}$: the point the camera looks at.
-3. **World Up** $\mathbf{u}_\text{world}$: a reference "up" direction, typically $(0,1,0)$.
-
-From these we build an orthonormal basis for the camera's local frame:
+A common way to place the camera is by its position $\mathbf{E}$, a point $\mathbf{C}$ it looks at, and an approximate up direction $\mathbf{U}$, usually $\langle 0, 1, 0 \rangle$. The camera's axes are
 
 <div style="text-align: left">
 
 $$
 \begin{aligned}
-&\mathbf{\color{#3b82f6}f} = \text{normalize}(\mathbf{t} - \mathbf{e}) && \text{({\color{#3b82f6}forward}, toward target)} \\
-&\mathbf{\color{#ef4444}r} = \text{normalize}(\mathbf{\color{#3b82f6}f} \times \mathbf{u}_\text{world}) && \text{({\color{#ef4444}right})} \\
-&\mathbf{\color{#22c55e}u} = \mathbf{\color{#ef4444}r} \times \mathbf{\color{#3b82f6}f} && \text{(true {\color{#22c55e}up}, reorthogonalized)}
+&\mathbf{\color{#3b82f6}f} = \text{normalize}(\mathbf{C} - \mathbf{E}) && \text{(viewing direction)} \\
+&\mathbf{\color{#ef4444}r} = \text{normalize}(\mathbf{\color{#3b82f6}f} \times \mathbf{U}) && \text{(camera } x \text{ axis)} \\
+&\mathbf{\color{#22c55e}u} = \mathbf{\color{#ef4444}r} \times \mathbf{\color{#3b82f6}f} && \text{(camera } y \text{ axis)}
 \end{aligned}
 $$
 
 </div>
 
-Geometrically, this is just "make three perpendicular arrows." The vector $\mathbf{f}$ points from the eye to the target, so it fixes where the camera looks. The cross product $\mathbf{f}\times\mathbf{u}_\text{world}$ gives a vector perpendicular to both the viewing direction and the approximate world-up direction; that is the camera's right axis. Crossing right with forward gives the corrected up axis. This last step matters because the supplied world-up vector is usually only a hint — if the camera is pitched or rolled, it is not exactly perpendicular to the viewing direction.
+and the camera $z$ axis is $-\mathbf{f}$. The vector $\mathbf{u}$ is recomputed because $\mathbf{U}$ is in general not perpendicular to $\mathbf{f}$. The three axes are orthonormal and $\mathbf{r} \times \mathbf{u} = -\mathbf{f}$, so the basis is right-handed.
 
-<iframe src="/interactive/transformations/lookat.html" loading="lazy" fetchpriority="low" title="LookAt camera demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<iframe src="/interactive/transformations/lookat.html" title="LookAt camera demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
 
-The View Matrix is the *inverse* of the camera's own World-Space transform. Because the rotation part is orthonormal, its inverse is its transpose. The translation inverts via dot products with the eye position:
+The camera's object-to-world transform has the columns $\mathbf{r}$, $\mathbf{u}$, $-\mathbf{f}$ and the translation $\mathbf{E}$. Its inverse, from $\mathbf{F}^{-1}$ with an orthogonal $\mathbf{M}$ ($\mathbf{M}^{-1} = \mathbf{M}^\mathrm{T}$), is
 
 $$
-\mathbf{M}_\text{view} = \begin{bmatrix} 
-\color{#ef4444}r_x & \color{#ef4444}r_y & \color{#ef4444}r_z & \color{#a855f7}-\mathbf{r} \cdot \mathbf{e} \\ 
-\color{#22c55e}u_x & \color{#22c55e}u_y & \color{#22c55e}u_z & \color{#a855f7}-\mathbf{u} \cdot \mathbf{e} \\ 
-\color{#3b82f6}-f_x & \color{#3b82f6}-f_y & \color{#3b82f6}-f_z & \color{#a855f7}\mathbf{f} \cdot \mathbf{e} \\ 
-\color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}1 
+\mathbf{M}_\text{view} = \begin{bmatrix}
+\color{#ef4444}r_x & \color{#ef4444}r_y & \color{#ef4444}r_z & \color{#a855f7}-\mathbf{r} \cdot \mathbf{E} \\
+\color{#22c55e}u_x & \color{#22c55e}u_y & \color{#22c55e}u_z & \color{#a855f7}-\mathbf{u} \cdot \mathbf{E} \\
+\color{#3b82f6}-f_x & \color{#3b82f6}-f_y & \color{#3b82f6}-f_z & \color{#a855f7}\mathbf{f} \cdot \mathbf{E} \\
+0 & 0 & 0 & \color{#a855f7}1
 \end{bmatrix}
 $$
 
-The third row negates $\mathbf{f}$ because the camera looks down $-Z$: we want $+Z$ in Camera Space to point *behind* the camera.
+---
+
+### The View Frustum
+
+The region of camera space that is visible is the **view frustum**, a truncated pyramid bounded by six planes. The **left**, **right**, **bottom** and **top** planes pass through the camera position and the edges of the screen. The **near** and **far** planes at distances $n$ and $f$ bound the visible depth.
+
+{{< figure src="/images/intro-to-rendering/camera/frustum.svg" id="fig-view-frustum" caption="The view frustum in camera space. The near-plane rectangle at $z=-n$ has edges $x=l$, $x=r$, $y=b$, $y=t$." title="The View Frustum" alt="Perspective frustum showing near and far planes" align="center" >}}
+
+#### Field of View
+
+The **projection plane** is perpendicular to the viewing direction, at the distance $e$ from the camera where the left and right frustum planes meet it at $x = -1$ and $x = 1$. The distance $e$ is the **focal length**. It depends on the **horizontal field of view** angle $\alpha$ between the left and right planes:
+
+$$e = \frac{1}{\tan(\alpha/2)}$$
+
+A larger field of view gives a shorter focal length.
+
+{{< figure src="/images/intro-to-rendering/camera/fov_horizontal.svg" id="fig-fov-horizontal" caption="Horizontal field of view $\alpha$, top view. The right edge of the near plane is $r = n/e = n\tan(\alpha/2)$." title="Horizontal Field of View" alt="Horizontal field of view diagram" align="center" >}}
+
+The **aspect ratio** $a$ of the display is its height divided by its width ($0.75$ for $640 \times 480$). The bottom and top planes meet the projection plane at $y = \pm a$, so the **vertical field of view** is
+
+$$\beta = 2\tan^{-1}(a/e)$$
+
+{{< figure src="/images/intro-to-rendering/camera/fov_vertical.svg" id="fig-fov-vertical" caption="Vertical field of view $\beta$, side view. The top edge of the near plane is $t = an/e$." title="Vertical Field of View" alt="Vertical field of view diagram" align="center" >}}
+
+Scaling this rectangle by $n/e$ moves it to the near plane. For a symmetric frustum the near-plane edges are
+
+$$l = -\frac{n}{e}, \qquad r = \frac{n}{e}, \qquad b = -\frac{an}{e}, \qquad t = \frac{an}{e}$$
 
 ---
 
 ### Homogeneous Clip Space
 
-After Camera Space, the **Projection Matrix** $\mathbf{M}_\text{proj}$ maps the view volume to a canonical cube, called **Clip Space**. The GPU then clips geometry against this cube. Two projection types are in common use.
+The projection matrix maps the view frustum to a cube in **homogeneous clip space**, where primitives are clipped against the boundaries of the visible region. A camera-space point $\mathbf{P}$ becomes $\mathbf{P}_\text{clip} = \langle x_c, y_c, z_c, w_c \rangle$, and it is inside the visible region when
 
-One important OpenGL detail is that clipping happens **before** the perspective divide. A clip-space vertex $(x_c, y_c, z_c, w_c)$ survives only if:
+$$-w_c \le x_c \le w_c, \qquad -w_c \le y_c \le w_c, \qquad -w_c \le z_c \le w_c$$
 
-$$-\color{#a855f7}{w_c} \le \color{#ef4444}{x_c} \le \color{#a855f7}{w_c}, \qquad -\color{#a855f7}{w_c} \le \color{#22c55e}{y_c} \le \color{#a855f7}{w_c}, \qquad -\color{#a855f7}{w_c} \le \color{#3b82f6}{z_c} \le \color{#a855f7}{w_c}$$
-
-Only after this test does the GPU divide by $w_c$ to produce NDC:
-
-$$\color{#ef4444}{x_\text{ndc}} = \frac{\color{#ef4444}{x_c}}{\color{#a855f7}{w_c}}, \qquad \color{#22c55e}{y_\text{ndc}} = \frac{\color{#22c55e}{y_c}}{\color{#a855f7}{w_c}}, \qquad \color{#3b82f6}{z_\text{ndc}} = \frac{\color{#3b82f6}{z_c}}{\color{#a855f7}{w_c}}$$
-
----
-
-#### Orthographic Projection
-
-An orthographic (parallel) projection has no perspective effect — objects do not appear smaller with distance. It is used for technical drawings, isometric games, and UI rendering.
-
-The view volume is a **rectangular box** bounded by left ($l$), right ($r$), bottom ($b$), top ($t$), near ($n$), and far ($f$). In Camera Space the box spans $[l, r] \times [b, t] \times [-f, -n]$ (note: the near and far planes sit at *negative* $z$ because the camera looks down $-Z$, and $n, f > 0$).
-
-{{< figure src="/images/intro-to-rendering/camera/orthographic.svg" id="fig-orthographic-volume" caption="An orthographic view volume is already a box. Projection only has to translate and scale it into the canonical NDC cube." title="Orthographic View Volume" alt="Orthographic cuboid view volume" align="center" >}}
-
-The goal is to map this box to the **NDC cube** (this derivation follows Ahn [[3]](#ref-3)) $[-1, 1]^3$. Each coordinate is just an affine map between two intervals:
-
-$$
-\begin{aligned}
-\color{#ef4444}{x_\text{ndc}} &= \frac{2}{r-l}\color{#ef4444}{x} - \frac{r+l}{r-l} \qquad && [l, r] \to [-1, 1] \\
-\color{#22c55e}{y_\text{ndc}} &= \frac{2}{t-b}\color{#22c55e}{y} - \frac{t+b}{t-b} \qquad && [b, t] \to [-1, 1] \\
-\color{#3b82f6}{z_\text{ndc}} &= -\frac{2}{f-n}\color{#3b82f6}{z} - \frac{f+n}{f-n} \qquad && -n \to -1,\; -f \to +1
-\end{aligned}
-$$
-
-The negative coefficient on $z$ is not a typo: in OpenGL Camera Space, the near plane is at $z=-n$ and the far plane is at $z=-f$, but OpenGL NDC stores near as $-1$ and far as $+1$.
-
-The same result can be viewed geometrically as a translate-then-scale operation:
-
-**Step 1 — Translate the box center to the origin.** The center is at $\bigl(\frac{r+l}{2},\, \frac{t+b}{2},\, \frac{-f-n}{2}\bigr)$:
-
-$$ \mathbf{T} = \begin{bmatrix} \color{#ef4444}1 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}-\frac{r+l}{2} \\ \color{#ef4444}0 & \color{#22c55e}1 & \color{#3b82f6}0 & \color{#a855f7}-\frac{t+b}{2} \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}1 & \color{#a855f7}\frac{f+n}{2} \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}1 \end{bmatrix} $$
-
-**Step 2 — Scale to fit the NDC cube** (side length 2). The depth axis also gets negated so that $z = -n$ maps to $-1$ and $z = -f$ maps to $+1$ (i.e. near maps to NDC $-1$, far to NDC $+1$):
-
-$$ \mathbf{S} = \begin{bmatrix} \color{#ef4444}\frac{2}{r-l} & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}\frac{2}{t-b} & \color{#3b82f6}0 & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}\frac{-2}{f-n} & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}1 \end{bmatrix} $$
-
-Combining as $\mathbf{M}_\text{ortho} = \mathbf{S} \cdot \mathbf{T}$:
-
-$$ \mathbf{M}_\text{ortho} = \begin{bmatrix} \color{#ef4444}\frac{2}{r-l} & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}-\frac{r+l}{r-l} \\ \color{#ef4444}0 & \color{#22c55e}\frac{2}{t-b} & \color{#3b82f6}0 & \color{#a855f7}-\frac{t+b}{t-b} \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}\frac{-2}{f-n} & \color{#a855f7}-\frac{f+n}{f-n} \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}1 \end{bmatrix} $$
-
-Because this is an affine transform, $w' = 1$ throughout — no perspective divide is needed. The output is already in NDC.
-
-<iframe src="/interactive/transformations/orthographic.html" loading="lazy" fetchpriority="low" title="Orthographic projection demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The orthographic projection maps the box-shaped view volume uniformly to the NDC cube. No perspective distortion: a cube 10 m away looks identical to one at 1 m.</p>
+Dividing by $w_c$ then gives **normalized device coordinates**, with $x$, $y$ and $z$ in $[-1, 1]$. Below, following Lengyel, $x'$, $y'$, $z'$ denote these normalized device coordinates.
 
 ---
 
 #### Perspective Projection
 
-In a perspective projection, objects shrink as they recede — just as in a photograph. This is the correct model for a pinhole camera and the standard for 3D games and film.
+A perspective projection maps $x$ and $y$ to the projection plane, so that geometry becomes smaller as its distance from the camera increases, while keeping depth information.
 
-Orthographic projection was a box-to-box mapping. Perspective projection has one extra job first: turn a frustum into a box while preserving the illusion that farther objects project smaller.
+Let $\mathbf{P} = \langle P_x, P_y, P_z, 1 \rangle$ be a camera-space point inside the frustum. The OpenGL function `glFrustum()` takes the edges $l$, $r$, $b$, $t$ of the near-plane rectangle. The near plane is at $z = -n$, and the line from the camera to $\mathbf{P}$ meets it at
 
-##### The View Frustum
+$$x = -\frac{n}{P_z}P_x, \qquad y = -\frac{n}{P_z}P_y$$
 
-The visible region is a **truncated pyramid** called the view frustum. It is bounded by six planes: near, far, left, right, top, and bottom. Everything outside the frustum is clipped; everything inside is rasterized.
+{{< figure src="/images/intro-to-rendering/camera/similar_triangles-1.svg" id="fig-similar-triangles-y" caption="Side view in the $y$-$z$ plane. Similar triangles give $y = -nP_y/P_z$." title="Projection onto the Near Plane: y" alt="Side-view similar triangles for perspective projection" align="center" >}}
 
-{{< figure src="/images/intro-to-rendering/camera/frustum.svg" id="fig-view-frustum" caption="A perspective frustum in Camera Space. The near rectangle is at $z=-n$ with bounds $(l,r,b,t)$; the far rectangle is the same set of rays expanded out to $z=-f$." title="The Perspective View Frustum" alt="Perspective frustum showing near and far planes" align="center" >}}
+{{< figure src="/images/intro-to-rendering/camera/similar_triangles-2.svg" id="fig-similar-triangles-x" caption="Top view in the $x$-$z$ plane. The same ratio gives $x = -nP_x/P_z$." title="Projection onto the Near Plane: x" alt="Top-view similar triangles for perspective projection" align="center" >}}
 
-The frustum parameters $l,r,b,t$ are measured on the **near plane**, not the far plane. Because every side of the frustum is a ray from the camera origin, the cross-section grows linearly with distance. At a positive camera distance $d=-z$:
+Points in the frustum satisfy $l \le x \le r$ and $b \le y \le t$ on the near plane. The linear maps to $[-1, 1]$ are
+
+$$x' = (x - l)\frac{2}{r - l} - 1, \qquad y' = (y - b)\frac{2}{t - b} - 1,$$
+
+and substituting $x$ and $y$ gives
 
 $$
-x \in \left[\frac{d}{n}l,\; \frac{d}{n}r\right],
+x' = \frac{2n}{r-l}\left(-\frac{P_x}{P_z}\right) - \frac{r+l}{r-l},
 \qquad
-y \in \left[\frac{d}{n}b,\; \frac{d}{n}t\right]
+y' = \frac{2n}{t-b}\left(-\frac{P_y}{P_z}\right) - \frac{t+b}{t-b}
 $$
 
-So at the far plane $(d=f)$, the bounds are scaled by $f/n$. This depth-dependent width is exactly what makes perspective projection non-affine.
+For depth, $P_z$ lies in $[-f, -n]$, and the map should send $-n \to -1$ and $-f \to 1$. This reflects the $z$ axis, so homogeneous clip space is left-handed. Reciprocals of $z$ are what get interpolated during rasterization, so the map is chosen as a function of $1/z$:
 
-##### Field of View and Focal Length
+$$z' = \frac{A}{z} + B$$
 
-Field of view is a friendlier way to specify the same frustum. The **horizontal field of view** $\alpha$ controls the left/right opening, and the **vertical field of view** $\beta$ controls the top/bottom opening.
+The two conditions
 
-{{< figure src="/images/intro-to-rendering/camera/fov_horizontal.svg" id="fig-fov-horizontal" caption="Horizontal FoV. For a symmetric frustum, the half-width of the near plane is $r=n\tan(\alpha/2)$." title="Horizontal Field of View" alt="Horizontal field of view diagram" align="center" >}}
+$$-1 = \frac{A}{-n} + B, \qquad 1 = \frac{A}{-f} + B$$
 
-{{< figure src="/images/intro-to-rendering/camera/fov_vertical.svg" id="fig-fov-vertical" caption="Vertical FoV. The half-height of the near plane is $t=n\tan(\beta/2)$." title="Vertical Field of View" alt="Vertical field of view diagram" align="center" >}}
+give
 
-For a centered, symmetric frustum:
+$$A = \frac{2nf}{f - n}, \qquad B = \frac{f + n}{f - n}, \qquad z' = -\frac{2nf}{f-n}\left(-\frac{1}{P_z}\right) + \frac{f+n}{f-n}$$
 
-$$
-r = n\tan(\alpha/2), \qquad l=-r
-$$
+Each of $x'$, $y'$, $z'$ contains a division by $-P_z$. The 3D point $\langle x', y', z' \rangle$ is therefore the 4D point
 
-$$
-t = n\tan(\beta/2), \qquad b=-t
-$$
+$$\mathbf{P}' = \langle -x'P_z,\, -y'P_z,\, -z'P_z,\, -P_z \rangle$$
 
-If the viewport aspect ratio is $a=W/H$, then $a=r/t$. So if you start with horizontal FoV, $t=r/a$; if you start with vertical FoV, $r=at$.
-
-The dimensionless focal scale used by the projection matrix is the near distance divided by the near-plane half-size:
+after division by its $w$ coordinate, and each of its components is linear in the coordinates of $\mathbf{P}$:
 
 $$
-e_x=\frac{n}{r}=\frac{1}{\tan(\alpha/2)}, \qquad
-e_y=\frac{n}{t}=\frac{1}{\tan(\beta/2)}
+\begin{aligned}
+-x'P_z &= \frac{2n}{r-l}P_x + \frac{r+l}{r-l}P_z \\
+-y'P_z &= \frac{2n}{t-b}P_y + \frac{t+b}{t-b}P_z \\
+-z'P_z &= -\frac{f+n}{f-n}P_z - \frac{2nf}{f-n}
+\end{aligned}
 $$
 
-Larger FoV means a smaller focal scale, which makes the image wider. These focal scales are **not** the near plane distance $n$ or far plane distance $f$; they are the $x$ and $y$ scale factors that appear in the symmetric projection matrix.
-
-##### Similar Triangles: Why Perspective Divides by Depth
-
-Take a Camera-Space point $(x,y,z)$ with $z<0$. Project it along the ray from the camera origin onto the near plane $z=-n$. The side and top views are the same argument in two different planes.
-
-{{< figure src="/images/intro-to-rendering/camera/similar_triangles-1.svg" id="fig-similar-triangles-y" caption="Side view in the $yz$ plane. Similar triangles give $y_p=-ny/z$." title="Perspective Divide from Similar Triangles: Y" alt="Side-view similar triangles for perspective projection" align="center" >}}
-
-{{< figure src="/images/intro-to-rendering/camera/similar_triangles-2.svg" id="fig-similar-triangles-x" caption="Top view in the $xz$ plane. The same ratio gives $x_p=-nx/z$." title="Perspective Divide from Similar Triangles: X" alt="Top-view similar triangles for perspective projection" align="center" >}}
-
-The projected near-plane coordinates are:
+So $\mathbf{P}' = \mathbf{M}_\text{frustum}\mathbf{P}$, the point in homogeneous clip space ($\mathbf{P}_\text{clip}$ above), with
 
 $$
-x_p = \frac{-n}{z}x = \frac{nx}{-z},
-\qquad
-y_p = \frac{-n}{z}y = \frac{ny}{-z}
-$$
-
-The sign is easy to trip over. Visible points have $z<0$, while $n$ is a positive distance. The distance from the camera to the point is therefore $-z$, not $z$. That is why the scale factor is $n/(-z)$: it is "near-plane distance divided by point distance."
-
-That $-z$ in the denominator is the heart of perspective: as a point moves farther away, $|z|$ grows, and its projected coordinates move closer to the center.
-
-##### Deriving the Perspective Projection Matrix
-
-We build $\mathbf{M}_\text{proj}$ in two conceptual stages. This section constructs the clip-space coordinates; the next section performs the final perspective divide into NDC.
-
-**Stage 1 — The "unhinging" matrix $\mathbf{M}_\text{persp}$.**
-
-We want a matrix that turns the frustum into an orthographic box with bounds $[l,r]\times[b,t]\times[-f,-n]$ after the perspective divide. Start with this unknown-coefficient unhinging matrix:
-
-$$
-\mathbf{M}_\text{persp}(A,B)=
+\mathbf{M}_\text{frustum} =
 \begin{bmatrix}
-\color{#ef4444}n & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}0 \\
-\color{#ef4444}0 & \color{#22c55e}n & \color{#3b82f6}0 & \color{#a855f7}0 \\
-\color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}A & \color{#a855f7}B \\
-\color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}-1 & \color{#a855f7}0
+\color{#ef4444}\frac{2n}{r-l} & 0 & \frac{r+l}{r-l} & 0 \\
+0 & \color{#22c55e}\frac{2n}{t-b} & \frac{t+b}{t-b} & 0 \\
+0 & 0 & \color{#3b82f6}-\frac{f+n}{f-n} & -\frac{2nf}{f-n} \\
+0 & 0 & \color{#a855f7}-1 & 0
 \end{bmatrix}
 $$
 
-Applied to a Camera-Space point $(x,y,z,1)^T$, it produces:
+This is the matrix generated by `glFrustum()`; Ahn [[3]](#ref-3) derives the same matrix. Its last row puts $-P_z$ into the $w$ coordinate. For a symmetric frustum, substituting $l$, $r$, $b$, $t$ from the field of view gives
 
 $$
+\mathbf{M}_\text{frustum} =
 \begin{bmatrix}
-\color{#ef4444}x_u \\
-\color{#22c55e}y_u \\
-\color{#3b82f6}z_u \\
-\color{#a855f7}w_u
-\end{bmatrix}=
-\begin{bmatrix}
-\color{#ef4444}nx \\
-\color{#22c55e}ny \\
-\color{#3b82f6}Az+B \\
-\color{#a855f7}-z
+e & 0 & 0 & 0 \\
+0 & e/a & 0 & 0 \\
+0 & 0 & -\frac{f+n}{f-n} & -\frac{2nf}{f-n} \\
+0 & 0 & -1 & 0
 \end{bmatrix}
 $$
 
-The similar-triangle result tells us what the first two divided coordinates must be:
-
-$$
-\frac{x_u}{w_u} = \frac{nx}{-z},
-\qquad
-\frac{y_u}{w_u} = \frac{ny}{-z}
-$$
-
-The first, second, and fourth rows above make that happen automatically:
-
-$$
-\color{#ef4444}{x_u}=nx,
-\qquad
-\color{#22c55e}{y_u}=ny,
-\qquad
-\color{#a855f7}{w_u}=-z
-$$
-
-Now we solve the remaining $z_u$ row. If we simply used $z_u=z$, the divide by $-z$ would destroy depth. Instead, keep the linear numerator from the unknown matrix:
-
-$$
-\color{#3b82f6}{z_u}=Az+B,
-\qquad
-\frac{\color{#3b82f6}{z_u}}{\color{#a855f7}{w_u}}=\frac{Az+B}{-z}
-$$
-
-The unhinged box should keep the near plane at $z=-n$ and the far plane at $z=-f$, because Stage 2 will reuse the orthographic matrix derived above. So impose:
-
-$$
-z=-n \Rightarrow \frac{Az+B}{-z}=-n,
-\qquad
-z=-f \Rightarrow \frac{Az+B}{-z}=-f
-$$
-
-These become:
-
-$$
--An+B=-n^2,
-\qquad
--Af+B=-f^2
-$$
-
-Solving gives:
-
-$$A=n+f,\qquad B=nf$$
-
-So the unhinging matrix is:
-
-$$ \mathbf{M}_\text{persp} = \begin{bmatrix} \color{#ef4444}n & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}n & \color{#3b82f6}0 & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}n+f & \color{#a855f7}nf \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}-1 & \color{#a855f7}0 \end{bmatrix} $$
-
-Multiplying a Camera-Space point $(x, y, z, 1)^T$ through gives:
-
-$$\begin{bmatrix} \color{#ef4444}nx \\ \color{#22c55e}ny \\ \color{#3b82f6}(n+f)z + nf \\ \color{#a855f7}-z \end{bmatrix}$$
-
-After dividing by $w_u=-z$, the frustum has become an orthographic box:
-
-$$
-\color{#ef4444}{x} \to \frac{nx}{-z},
-\qquad
-\color{#22c55e}{y} \to \frac{ny}{-z},
-\qquad
-\color{#3b82f6}{z} \to \frac{(n+f)z+nf}{-z}
-$$
-
-Check the depth endpoints:
-
-$$
-\color{#3b82f6}{z=-n} \Rightarrow \frac{(n+f)(-n)+nf}{n}=-n,
-\qquad
-\color{#3b82f6}{z=-f} \Rightarrow \frac{(n+f)(-f)+nf}{f}=-f
-$$
-
-This confirms that $\mathbf{M}_\text{persp}$ is correct for the two-stage construction. It is not the final OpenGL projection matrix yet; it is the projective warp that prepares the frustum for an orthographic remap.
-
-**Stage 2 — Apply the orthographic matrix.**
-
-The unhinging warp has produced the same box that the orthographic matrix expects: $[l,r]\times[b,t]\times[-f,-n]$. Therefore:
-
-$$\mathbf{M}_\text{proj} = \mathbf{M}_\text{ortho} \cdot \mathbf{M}_\text{persp}$$
-
-In the actual GPU pipeline these multiply into one matrix first, and the hardware performs one perspective divide afterward. The two-stage story is just a derivation tool.
-
-Working the product out:
-
-$$ \mathbf{M}_\text{proj} = \begin{bmatrix} \color{#ef4444}\frac{2n}{r-l} & \color{#22c55e}0 & \color{#3b82f6}\frac{r+l}{r-l} & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}\frac{2n}{t-b} & \color{#3b82f6}\frac{t+b}{t-b} & \color{#a855f7}0 \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}-\frac{f+n}{f-n} & \color{#a855f7}-\frac{2fn}{f-n} \\ \color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}-1 & \color{#a855f7}0 \end{bmatrix} $$
-
-For a **symmetric** frustum ($r = -l$, $t = -b$), the off-diagonal entries in column 3 vanish and the matrix simplifies to the familiar `glm::perspective` form.
-
-Substituting the horizontal FoV extents from above, and writing $e=e_x=1/\tan(\alpha/2)$, gives:
-
-$$
-\frac{n}{r} = \frac{1}{\tan(\alpha/2)} = e,
-\qquad
-\frac{n}{t} = \frac{a}{\tan(\alpha/2)} = ae
-$$
-
-So the horizontal FoV form has $e$ in the $x$ scale entry and $ae$ in the $y$ scale entry. If you start from a vertical FoV instead, $1/\tan(\beta/2)$ appears in the $y$ scale entry and is divided by the aspect ratio for $x$.
-
-<iframe src="/interactive/transformations/perspective_projection.htm" loading="lazy" fetchpriority="low" title="Perspective projection demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The pyramid frustum warps into the NDC cube. Geometry far from the camera is compressed more than nearby geometry — this is foreshortening.</p>
-
-> **Note on the interactive.** The widget above shows Camera-Space $z$-values as signed coordinates (near plane at $z = -3$, far plane at $z = -13$), consistent with the OpenGL convention and the derivation above.
+<iframe src="/interactive/transformations/perspective_projection.htm" title="Perspective projection demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">$\mathbf{M}_\text{frustum}$ followed by division by $w$ maps the view frustum to the cube.</p>
 
 ---
 
-### Normalized Device Coordinates (NDC)
+#### Orthographic Projection
 
-After the perspective divide ($x_\text{ndc} = x'/w'$, $y_\text{ndc} = y'/w'$, $z_\text{ndc} = z'/w'$), all visible geometry occupies the unit cube $[-1, 1]^3$. This space is **device-independent**: NDC coordinates map to pixels the same way regardless of screen resolution.
+An orthographic projection, also called a parallel projection, has no perspective distortion. Camera-space points are moved to the projection plane along rays parallel to the viewing direction. The view volume is the box $[l, r] \times [b, t] \times [-f, -n]$.
 
-For perspective projection, the divide is the moment where the clip-space bookkeeping becomes actual screen-like coordinates. From the matrix above, a Camera-Space point $(x,y,z,1)^T$ produces:
+{{< figure src="/images/intro-to-rendering/camera/orthographic.svg" id="fig-orthographic-volume" caption="The orthographic view volume is a box, so the projection is a scale and a translation on each axis." title="Orthographic View Volume" alt="Orthographic cuboid view volume" align="center" >}}
+
+With no perspective, all three axes are mapped linearly, and $z$ is negated so that $-n \to -1$ and $-f \to 1$:
+
+$$
+\color{#ef4444}{x'} = \frac{2}{r-l}x - \frac{r+l}{r-l}, \qquad
+\color{#22c55e}{y'} = \frac{2}{t-b}y - \frac{t+b}{t-b}, \qquad
+\color{#3b82f6}{z'} = \frac{-2}{f-n}z - \frac{f+n}{f-n}
+$$
+
+In matrix form, $\mathbf{P}' = \mathbf{M}_\text{ortho}\mathbf{P}$ with
+
+$$
+\mathbf{M}_\text{ortho} =
+\begin{bmatrix}
+\color{#ef4444}\frac{2}{r-l} & 0 & 0 & -\frac{r+l}{r-l} \\
+0 & \color{#22c55e}\frac{2}{t-b} & 0 & -\frac{t+b}{t-b} \\
+0 & 0 & \color{#3b82f6}\frac{-2}{f-n} & -\frac{f+n}{f-n} \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
+
+This is the matrix generated by `glOrtho()`. The $w$ coordinate stays $1$, so no perspective division takes place.
+
+<iframe src="/interactive/transformations/orthographic.html" title="Orthographic projection demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">$\mathbf{M}_\text{ortho}$ maps the box to the cube. Projected size does not depend on depth.</p>
+
+---
+
+### Normalized Device Coordinates
+
+Dividing $\mathbf{P}_\text{clip} = \mathbf{M}_\text{frustum}\mathbf{P}$ by $w_c = -P_z$ gives the normalized device coordinates
 
 $$
 \begin{aligned}
-\color{#ef4444}{x_c} &= \frac{2n}{r-l}x + \frac{r+l}{r-l}z \\
-\color{#22c55e}{y_c} &= \frac{2n}{t-b}y + \frac{t+b}{t-b}z \\
-\color{#3b82f6}{z_c} &= -\frac{f+n}{f-n}z - \frac{2fn}{f-n} \\
-\color{#a855f7}{w_c} &= -z
+\color{#ef4444}{x_\text{ndc}} &= -\frac{2n}{r-l}\frac{P_x}{P_z} - \frac{r+l}{r-l} \\
+\color{#22c55e}{y_\text{ndc}} &= -\frac{2n}{t-b}\frac{P_y}{P_z} - \frac{t+b}{t-b} \\
+\color{#3b82f6}{z_\text{ndc}} &= \frac{f+n}{f-n} + \frac{2nf}{(f-n)P_z}
 \end{aligned}
 $$
 
-The perspective divide turns those clip coordinates into:
+The $x$ and $y$ coordinates are divided by depth, so a point farther from the camera lands closer to the center. Writing the distance from the camera as $d = -P_z$, the depth is
 
-$$
-\begin{aligned}
-\color{#ef4444}{x_\text{ndc}}
-&= \frac{\color{#ef4444}{x_c}}{\color{#a855f7}{w_c}}
-= \frac{\frac{2n}{r-l}x + \frac{r+l}{r-l}z}{-z}
-= -\frac{2nx}{(r-l)z} - \frac{r+l}{r-l} \\
-\color{#22c55e}{y_\text{ndc}}
-&= \frac{\color{#22c55e}{y_c}}{\color{#a855f7}{w_c}}
-= \frac{\frac{2n}{t-b}y + \frac{t+b}{t-b}z}{-z}
-= -\frac{2ny}{(t-b)z} - \frac{t+b}{t-b} \\
-\color{#3b82f6}{z_\text{ndc}}
-&= \frac{\color{#3b82f6}{z_c}}{\color{#a855f7}{w_c}}
-= \frac{-\frac{f+n}{f-n}z - \frac{2fn}{f-n}}{-z}
-= \frac{f+n}{f-n} + \frac{2fn}{(f-n)z}
-\end{aligned}
-$$
+$$\color{#3b82f6}{z_\text{ndc}}(d) = \frac{f+n}{f-n} - \frac{2nf}{(f-n)\,d}, \qquad z_\text{ndc}(n) = -1, \quad z_\text{ndc}(f) = 1$$
 
-The $x$ and $y$ equations are perspective foreshortening: both contain division by Camera-Space depth $z$. Since visible points have $z<0$, farther points have larger $|z|$, so their projected $x$ and $y$ values move closer to the center of the image.
+This is linear in $1/d$, not in $d$. Its derivative
 
-The depth equation is the important one for the Z-buffer. If we write positive camera distance as $D=-z$, then:
+$$\frac{\mathrm{d}\,z_\text{ndc}}{\mathrm{d}d} = \frac{2nf}{(f-n)\,d^2}$$
 
-$$\color{#3b82f6}{z_\text{ndc}}(D) = \frac{f+n}{f-n} - \frac{2fn}{(f-n)D}$$
+is large near the camera and small far away, so most of the depth range is spent close to the near plane. Points beyond the far plane map into $\left(1, \frac{f+n}{f-n}\right)$, points closer than the near plane map into $(-\infty, -1)$, and points behind the camera map to $\left(\frac{f+n}{f-n}, \infty\right)$.
 
-This maps the near and far planes correctly:
+{{< figure src="/images/intro-to-rendering/camera/ndc.svg" id="fig-ndc-cube" caption="After division by $w$, the view frustum occupies the cube $[-1, 1]^3$." title="Normalized Device Coordinates" alt="NDC cube with coordinates from -1 to 1" align="center" >}}
 
-$$
-D=n \Rightarrow \color{#3b82f6}{z_\text{ndc}}=-1,
-\qquad
-D=f \Rightarrow \color{#3b82f6}{z_\text{ndc}}=+1
-$$
+Evenly spaced planes in camera space are not evenly spaced in normalized device coordinates. Distant surfaces share a small part of the depth range and can fight for the same depth value (z-fighting). Moving the near plane farther out reduces this: for $f \gg n$, $z_\text{ndc} \approx 1 - 2n/d$, which depends mainly on $n/d$.
 
-But it is not linear in distance; it is linear in $1/D$. Its slope with respect to distance $D$ is:
-
-$$\frac{\mathrm{d}\,\color{#3b82f6}{z_\text{ndc}}}{\mathrm{d}D} = \frac{2fn}{(f-n)D^2}$$
-
-So the mapping changes rapidly near the camera and slowly far away. This is why the depth buffer gets much more precision near the near plane than near the far plane.
-
-{{< figure src="/images/intro-to-rendering/camera/ndc.svg" id="fig-ndc-cube" caption="All visible geometry maps to the NDC cube after the perspective divide. Clipping tests become simple comparisons against $\pm 1$." title="Normalized Device Coordinates" alt="NDC cube with coordinates from -1 to 1" align="center" >}}
-
-The interactive below shows this compression directly: evenly spaced planes in Camera Space bunch up after projection. Objects far away share a tiny slice of the depth range, causing **Z-fighting** (flickering between nearly coplanar surfaces). The practical fix is to push the near plane $n$ as far forward as your scene allows — halving $n$ roughly halves the Z-buffer precision available for distant objects.
-
-<iframe src="/interactive/transformations/perspective_divide.html" loading="lazy" fetchpriority="low" title="Perspective divide demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Five evenly-spaced depth planes in Camera Space become unevenly-spaced planes in NDC. The compression accelerates toward the far plane.</p>
+<iframe src="/interactive/transformations/perspective_divide.html" title="Depth mapping demo" style="width:100%; max-width:800px; height:500px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Evenly spaced depths in camera space and their values of $z_\text{ndc}$.</p>
 
 ---
 
 ### Window Space
 
-The **Viewport Transform** maps NDC to pixel coordinates [[4]](#ref-4). This is another set of line maps. For:
+The **viewport transformation** maps normalized device coordinates to the pixel coordinates covered by the viewport [[4]](#ref-4); after it, vertex positions are in **window space**. For
 
 ```cpp
 glViewport(X, Y, W, H)
 glDepthRange(N, F)
 ```
 
-the interval endpoints are:
-
-$$
-[-1, 1] \to [X, X+W],
-\qquad
-[-1, 1] \to [Y, Y+H],
-\qquad
-[-1, 1] \to [N, F]
-$$
-
-Solving $u_\text{out} = au_\text{ndc} + b$ for each axis gives:
+each axis is a linear map of $[-1, 1]$ onto $[X, X+W]$, $[Y, Y+H]$ and $[N, F]$:
 
 $$
 \color{#ef4444}{x_w} = \frac{W}{2}\color{#ef4444}{x_\text{ndc}} + X + \frac{W}{2},
 \qquad
-\color{#22c55e}{y_w} = \frac{H}{2}\color{#22c55e}{y_\text{ndc}} + Y + \frac{H}{2}
-$$
-
-$$
+\color{#22c55e}{y_w} = \frac{H}{2}\color{#22c55e}{y_\text{ndc}} + Y + \frac{H}{2},
+\qquad
 \color{#3b82f6}{z_w} = \frac{F-N}{2}\color{#3b82f6}{z_\text{ndc}} + \frac{F+N}{2}
 $$
 
-For the common default viewport origin $(X,Y)=(0,0)$ and depth range $[N,F]=[0,1]$, this reduces to:
-
-$$\color{#ef4444}{x_\text{px}} = \frac{W}{2}(\color{#ef4444}{x_\text{ndc}} + 1), \qquad \color{#22c55e}{y_\text{px}} = \frac{H}{2}(\color{#22c55e}{y_\text{ndc}} + 1), \qquad \color{#3b82f6}{z_w} = \frac{\color{#3b82f6}{z_\text{ndc}}+1}{2}$$
-
-As a homogeneous matrix, the full viewport transform is:
+As a matrix:
 
 $$
 \mathbf{M}_\text{viewport} =
 \begin{bmatrix}
-\color{#ef4444}\frac{W}{2} & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}X+\frac{W}{2} \\
-\color{#ef4444}0 & \color{#22c55e}\frac{H}{2} & \color{#3b82f6}0 & \color{#a855f7}Y+\frac{H}{2} \\
-\color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}\frac{F-N}{2} & \color{#a855f7}\frac{F+N}{2} \\
-\color{#ef4444}0 & \color{#22c55e}0 & \color{#3b82f6}0 & \color{#a855f7}1
+\frac{W}{2} & 0 & 0 & X+\frac{W}{2} \\
+0 & \frac{H}{2} & 0 & Y+\frac{H}{2} \\
+0 & 0 & \frac{F-N}{2} & \frac{F+N}{2} \\
+0 & 0 & 0 & 1
 \end{bmatrix}
 $$
 
-The depth value $z_w$ is what the Z-buffer stores for depth testing during rasterization.
+The default depth range is $[0, 1]$, and $z_w$ is the value stored in the depth buffer. The whole chain from object space to homogeneous clip space is
 
-The full pipeline is the **MVP transform**:
+$$\mathbf{P}_\text{clip} = \mathbf{M}_\text{frustum}\,\underbrace{\mathbf{M}_\text{view}\,\mathbf{M}_\text{model}}_{\text{model-view}}\,\mathbf{P}_\text{object},$$
 
-$$\mathbf{v}_\text{clip} = \underbrace{\color{#3b82f6}{\mathbf{M}_\text{proj}}}_{\text{Projection}} \cdot \underbrace{\color{#22c55e}{\mathbf{M}_\text{view}} \cdot \color{#ef4444}{\mathbf{M}_\text{model}}}_{\text{Model-View}} \cdot \mathbf{v}_\text{object}$$
+followed by division by $w$ and the viewport transformation.
 
-<iframe src="/interactive/transformations/combine_space.html" loading="lazy" fetchpriority="low" title="MVP pipeline demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The complete MVP pipeline. Each stage is one matrix multiply on the GPU, applied to every vertex in parallel.</p>
+<iframe src="/interactive/transformations/combine_space.html" title="Rendering pipeline demo" style="width:100%; max-width:800px; height:600px; border:1px solid var(--border); border-radius: 8px; margin: 1.5rem auto; background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">One vertex taken from object space to window space.</p>
 
 ---
 
 ## Two Ways to Render a Scene
 
-Everything up to this point has been **object-space / rasterization** thinking: we iterate over geometry and ask where each triangle lands on the screen. The GPU does this in parallel for every vertex, clipping and filling pixels as it goes. It is extremely fast, which is why it dominates real-time graphics.
+Everything so far is **object-order** rendering: loop over the geometry and find the pixels each triangle covers. GPUs do this for millions of triangles per frame, which is why rasterization dominates real-time graphics.
 
-But there is a second, equally valid question you can ask: starting from a pixel on the screen, what does the camera actually see through it? This is **image-space / ray casting** thinking. Instead of pushing geometry forward into screen space, we pull a ray backward from the pixel into the scene and find whatever it hits first. The two viewpoints are complementary: rasterization tells us where a surface lands on the image plane, while primary-ray methods ask which surface sits along each pixel's line of sight. The rest of this post moves from the first view to the second.
+**Image-order** rendering asks the opposite question: for each pixel, which surface does the camera see through it? We follow a ray from the camera through the pixel and find the first surface it hits. This is **ray casting**, and the rest of this post builds on it.
 
 ## Generating Primary Rays
 
-Next, we switch to a different way of rendering. Instead of projecting objects onto a 2D screen, we trace rays to determine the pixel color. Before the ray-casting algorithm itself, though, we need a basic definition of a ray.
-
 
 ### Ray
-A ray is a parametric line defined by an origin $\mathbf{o}$ and a direction $\mathbf{d}$:
+A ray is a half-line with an origin $\mathbf{o}$ and a direction $\mathbf{d}$. Its points are, for $t \ge 0$,
 $$\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$$
 
 
@@ -929,37 +734,33 @@ $$\mathbf{r}(t) = \mathbf{o} + t\mathbf{d}$$
 
 
 ### Primary Ray Generation
-Now that we know how to define a ray, for ray casting algorithms we will need to define a ray (or multiple rays) for a pixel. We can visualize the rays being generated from camera origin and passing through the image plane to the scene.  These rays are called primary rays. We will see how to render an image using these later, for now, we will focus on generating these rays.
+For each pixel we generate one or more rays that start at the camera and pass through that pixel on the image plane. These are the **primary rays**.
 
 {{< figure src="/images/intro-to-rendering/raytracing/primary_ray_generation.svg" id="fig-primary-ray-generation" caption="Primary ray generation for a pinhole camera. Each pixel center corresponds to one direction through the image plane." title="Primary Ray Generation" alt="Pinhole camera ray through a pixel center" align="center" >}}
 
-Assume the objects already live in World Space, and generate rays in Camera Space before transforming them back into World Space. As before, we use the `lookAt` construction to build the camera transform.
-
-1. **Eye** $\mathbf{e}$: camera position in World Space.
-2. **Target** $\mathbf{t}$: the point the camera looks at.
-3. **World Up** $\mathbf{u}_\text{world}$: a reference "up" direction, typically $(0,1,0)$.
-
-From these we build an orthonormal basis for the camera's local frame:
+The rays are generated in camera space and then rotated into world space. The camera is placed as in the [LookAt](#lookat) section, by its position $\mathbf{E}$, a point $\mathbf{C}$ it looks at, and an up direction $\mathbf{U}$, usually $\langle 0, 1, 0 \rangle$. Its axes are
 
 <div style="text-align: left">
 
 $$
 \begin{aligned}
-&\mathbf{\color{#3b82f6}f} = \text{normalize}(\mathbf{t} - \mathbf{e}) && \text{({\color{#3b82f6}forward}, toward target)} \\
-&\mathbf{\color{#ef4444}r} = \text{normalize}(\mathbf{\color{#3b82f6}f} \times \mathbf{u}_\text{world}) && \text{({\color{#ef4444}right})} \\
-&\mathbf{\color{#22c55e}u} = \mathbf{\color{#ef4444}r} \times \mathbf{\color{#3b82f6}f} && \text{(true {\color{#22c55e}up}, reorthogonalized)}
+&\mathbf{\color{#3b82f6}f} = \text{normalize}(\mathbf{C} - \mathbf{E}) && \text{(viewing direction)} \\
+&\mathbf{\color{#ef4444}r} = \text{normalize}(\mathbf{\color{#3b82f6}f} \times \mathbf{U}) && \text{(camera } x \text{ axis)} \\
+&\mathbf{\color{#22c55e}u} = \mathbf{\color{#ef4444}r} \times \mathbf{\color{#3b82f6}f} && \text{(camera } y \text{ axis)}
 \end{aligned}
 $$
 
+The camera $z$ axis is $-\mathbf{f}$. The rotation $\mathbf{R}$ from camera space to world space has these axes as its columns (it is `M_cam` in the code):
+
 $$
-\mathbf{M}_{camera} = \begin{bmatrix}
-\mathbf{\color{#ef4444}r}_x & \mathbf{\color{#22c55e}u}_x & \mathbf{\color{#3b82f6}-f}_x \\
-\mathbf{\color{#ef4444}r}_y & \mathbf{\color{#22c55e}u}_y & \mathbf{\color{#3b82f6}-f}_y \\
-\mathbf{\color{#ef4444}r}_z & \mathbf{\color{#22c55e}u}_z & \mathbf{\color{#3b82f6}-f}_z
+\mathbf{R} = \begin{bmatrix}
+{\color{#ef4444}r_x} & {\color{#22c55e}u_x} & {\color{#3b82f6}-f_x} \\
+{\color{#ef4444}r_y} & {\color{#22c55e}u_y} & {\color{#3b82f6}-f_y} \\
+{\color{#ef4444}r_z} & {\color{#22c55e}u_z} & {\color{#3b82f6}-f_z}
 \end{bmatrix}
 $$
 
-We will use this $M_{camera}$ matrix to transform these rays into the world space. For generating the rays we will use the pixel index. 
+A ray starts at $\mathbf{E}$, and its world-space direction is $\mathbf{R}$ times its camera-space direction. The camera-space direction comes from the pixel index, in four steps: 
 
 {{< figure src="/images/intro-to-rendering/raytracing/primary_rays/raygen.svg" id="fig-coordinate-mapping" caption="The four steps of mapping discrete pixel indices $(ix, iy)$ to continuous physical coordinates $(px, py)$ on the camera's image plane." title="Coordinate Mapping Pipeline" alt="Four-step diagram of pixel to physical coordinate mapping" align="center" width="100%" >}}
 
@@ -968,9 +769,7 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 > <details>
 > <summary style="cursor: pointer;">DrJit ray generation code</summary>
 >
-> The following Python code shows how we can implement a `camera` class in order to create rays:
->
-> The code below uses [drjit](https://drjit.readthedocs.io/) [[14]](#ref-14), the same array library that powers the Mitsuba renderer.
+> A `Camera` class that generates one ray per pixel center. It uses [Dr.Jit](https://drjit.readthedocs.io/) [[14]](#ref-14), the array library behind the Mitsuba renderer. Here `fov` is the vertical field of view.
 >
 > ```python
 > import math
@@ -990,17 +789,18 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 >         self.target = Array3f(*target)
 >         self.world_up = Array3f(0, 1, 0)
 >         self.fov = fov
->         self.aspect = aspect if aspect is not None else W / H
+>         self.aspect = aspect if aspect is not None else W / H   # width / height: the reciprocal of a in the text
 >         self.H = H
 >         self.W = W
->         self.f = 1.0
+>         self.f = 1.0   # distance to the image plane (D in the text, not the far plane)
 >
 >     def lookAt(self):
 >         forward = dr.normalize(self.target - self.pos)
 >         right = dr.normalize(dr.cross(forward, self.world_up))
 >         up = dr.normalize(dr.cross(right, forward))
 >
->         M_cam = Matrix3f(right, up, -forward)
+>         # Matrix3f takes rows, so transpose to get r, u, -f as columns (R in the text)
+>         M_cam = dr.transpose(Matrix3f(right, up, -forward))
 >         return M_cam
 >
 >
@@ -1022,8 +822,7 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 >         xs = x_center * 2.0 - 1.0
 >         ys = y_center * -2.0 + 1.0
 >
->         # Get the height and width in physical units
->         # tan(beta / 2) = height /2 * f
+>         # Image-plane size at distance f: tan(fov / 2) = (height / 2) / f
 >         height = 2.0 * self.f * math.tan(math.radians(self.fov) / 2.0)
 >         width = height * self.aspect
 >
@@ -1037,7 +836,7 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 >         # Pack the camera-space ray directions into an Array3f
 >         dirs_cam = Array3f(px, py, -self.f)
 >
->         # 5. Matrix multiplication (Matrix @ Vector)
+>         # Rotate into world space
 >         rd = M_cam @ dirs_cam
 >         rd = dr.normalize(rd) # normalize the ray direction
 >
@@ -1049,9 +848,7 @@ We will use this $M_{camera}$ matrix to transform these rays into the world spac
 > </details>
 
 
-For the glsl shader, the pixel coordinate itself comes from `gl_FragCoord`. Dividing by `u_resolution.y` keeps the field of view stable while correcting the aspect ratio:
-
-*(We can also see the color of pixels in {{< figref "fig-primary-ray-generation" >}} is same as the image formed)*
+In the GLSL shader the pixel coordinate comes from `gl_FragCoord`. Dividing by `u_resolution.y` makes $y$ run from $-0.5$ to $0.5$ and scales $x$ by the aspect ratio, so with the image plane at distance $D = 1$ (`f` in the code) the vertical field of view is $2\tan^{-1}(0.5) \approx 53^\circ$. The shader shows each world-space direction as a color, mapped from $[-1, 1]$ to $[0, 1]$.
 
 {{< glsl >}}
 #version 300 es
@@ -1072,7 +869,7 @@ mat3 lookAt(vec3 pos, vec3 target, vec3 world_up) {
 }
 
 void main() {
-    // Pixel coordinates mapped to[-1, 1] range (roughly)
+    // y in [-0.5, 0.5]; x scaled by the aspect ratio
     vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
     
     // Camera Setup
@@ -1093,50 +890,48 @@ void main() {
     vec3 rd = M_cam * rd_cam;
 
     // Visualize direction: [-1,1] -> [0,1].
-    fragColor = vec4(rd, 1.0);
+    fragColor = vec4(rd * 0.5 + 0.5, 1.0);
 }
 {{< /glsl >}}
 
-> **The Simplified Camera Shortcut**
-> 
-> For the rest of the GLSL examples in this post, we will use a common "shortcut". Because the camera stays at the origin `vec3(0,0,0)` (or is shifted only along the Z-axis without rotation) and always looks straight down the $-Z$ axis, the `M_cam` matrix is simply the identity matrix. 
-> 
-> This means we can skip the matrix multiplication entirely and construct our ray direction directly from the pixel coordinates:
+> **A simpler camera for the remaining shaders**
+>
+> In the remaining shaders the camera is translated but not rotated, so it looks down $-z$, `M_cam` is the identity matrix and the ray direction can be built directly from the pixel coordinates:
 > 
 > ```glsl
 > vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / u_resolution.y;
 > vec3 ro = vec3(0.0, 0.0, 3.0);       // Shifted back slightly, but not rotated
-> vec3 rd = normalize(vec3(uv, -1.0)); // Direct to world-space!
+> vec3 rd = normalize(vec3(uv, -1.0)); // already a world-space direction
 > ```
 
 ### Anti-Aliasing
 
-Sampling only the pixel center is simple, but it aliases hard edges. The jaggies (also called staircase artifacts) are clearly visible in the polygon render. Ideally, we want the average colors of objects within the pixel area. A common fix is to take several samples at slightly perturbed positions inside the pixel and average the results (A Monte Carlo estimate of the weighted area integration):
+One ray through the pixel center aliases hard edges into staircases ("jaggies"). A pixel should show the average color over its area. Averaging $N$ rays through random positions inside the pixel is a Monte Carlo estimate of that average.
+
+Let $(p_x, p_y)$ be the pixel center on the image plane at distance $D$, as computed in the ray generation code, and let $s$ be the size of one pixel there (`height / H` in the code). Sample $i$ moves the point by offsets $\delta_{x,i}$ and $\delta_{y,i}$ drawn uniformly from $[-s/2, s/2]$:
 
 $$
-\mathbf{d}_i=\mathrm{normalize}\!\left(u+\Delta u_i,\;v+\Delta v_i,\;-1\right),
+\mathbf{d}_i = \mathbf{R}\;\mathrm{normalize}\langle p_x + \delta_{x,i},\; p_y + \delta_{y,i},\; -D \rangle,
 \qquad
-\mathbf{C}_\text{pixel}=\frac{1}{N}\sum_{i=1}^{N}\mathbf{C}(\mathbf{d}_i)
+L_\text{pixel} \approx \frac{1}{N}\sum_{i=1}^{N} L(\mathbf{E}, \mathbf{d}_i)
 $$
+
+Here $L(\mathbf{E}, \mathbf{d}_i)$ is the radiance (color) returned by the ray with origin $\mathbf{E}$ and direction $\mathbf{d}_i$. Uniform offsets estimate the plain average over the pixel square, a box filter.
 
 {{< figure src="/images/intro-to-rendering/raytracing/primary_rays/aa_jitter.svg" id="fig-aa-jitter" caption="Anti-aliasing perturbs sample positions inside the pixel instead of always shooting through the center." title="Perturbed Pixel Samples" alt="Pixel grid with jittered sample points" align="center" >}}
 
 {{< figure src="/images/intro-to-rendering/raytracing/primary_rays/aliasing.svg" id="fig-aliasing-comparison" caption="Aliasing comparison: (Left) Original vector geometry, (Middle) Jagged aliasing from center-only sampling, (Right) Smooth anti-aliased result using jittered sub-pixel sampling." title="Aliasing Comparison" alt="Comparison of vector, aliased, and anti-aliased rendering" align="center" width="100%" >}}
 
-In a production renderer those offsets are usually stratified, blue-noise, or accumulated over many frames. For this introductory shader, one center ray is enough to keep the moving parts visible.
+Production renderers usually place these samples in a stratified or blue-noise pattern, or accumulate them over many frames. The shaders in this post use one ray through each pixel center.
 
 
 ## Geometry Representations and Intersections
 
-Once we have rays shooting into our scene, the immediate next question is: how is the scene represented? Based on how we define our geometry, the intersection logic—whether we compute exact intersections or iteratively sample along the ray—will fundamentally change.
+How a ray is intersected with the scene depends on how the geometry is represented. Three common representations are:
 
-In computer graphics, geometry is typically represented in three main ways:
-
-- **Analytic primitives** such as spheres, planes, and cylinders are defined by exact mathematical equations. Their intersections usually have closed-form algebraic solutions. While they are lightning-fast to intersect, they are not very flexible for modeling complex real-world objects.
-- **Triangles (Explicit Geometry)** are the fundamental building blocks of 3D graphics. They are explicit surface primitives that can approximate any shape. They are widely used in rasterization because they project cleanly to screen space, but ray tracers also intersect them directly using highly optimized ray-triangle tests.
-- **Signed Distance Functions (Implicit Geometry)** are continuous mathematical fields. Instead of storing a mesh of explicit vertices, an SDF returns the shortest distance from any point in space to the nearest surface. It returns a positive value outside the object, zero exactly on the surface, and a negative value inside. Intersecting with an SDF is done through an iterative process called *ray marching* [[6]](#ref-6), as there is no explicit surface to algebraically intersect with.
-
-Let's dive into the mathematics and code for each of these representations.
+- **Analytic primitives** such as spheres, planes and cylinders are given by equations. Their intersection with a ray usually has a closed-form solution. They are cheap to intersect but can only model simple shapes.
+- **Triangle meshes** approximate any surface with flat triangles. Rasterizers draw them, and ray tracers intersect them with a ray-triangle test.
+- **Signed distance functions (SDFs)** give, for every point in space, the distance to the nearest surface: positive outside the object, zero on the surface and negative inside. A ray is intersected with an SDF iteratively, by sphere tracing [[6]](#ref-6).
 
 ---
 
@@ -1149,32 +944,34 @@ A sphere is one of the simplest analytic primitives to intersect. It is defined 
 
 $$ \|\mathbf{p} - {\color{#109618}\mathbf{c}}\|^2 = {\color{#990099}R}^2 $$
 
-We want to find if our ray ever reaches a point $\mathbf{p}$ that satisfies this equation. Recall our ray equation, defined by an origin ${\color{#3273F6}\mathbf{o}}$ and a normalized direction ${\color{#FF4B4B}\mathbf{d}}$:
+A point on the ray, with origin ${\color{#3273F6}\mathbf{o}}$ and unit direction ${\color{#FF4B4B}\mathbf{d}}$, is
 
 $$ \mathbf{p} = {\color{#3273F6}\mathbf{o}} + t{\color{#FF4B4B}\mathbf{d}} $$
 
-To find the intersection, we simply substitute the ray equation into the sphere equation:
+Substituting the ray into the sphere equation gives
 
 $$ \| ({\color{#3273F6}\mathbf{o}} + t{\color{#FF4B4B}\mathbf{d}}) - {\color{#109618}\mathbf{c}} \|^2 = {\color{#990099}R}^2 $$
 
-To make the math cleaner, let $\mathbf{q} = {\color{#3273F6}\mathbf{o}} - {\color{#109618}\mathbf{c}}$ (the vector from the sphere's center to the ray's origin). Expanding the squared magnitude (which is the dot product of the vector with itself) gives us a classic quadratic equation in terms of $t$:
+Let $\mathbf{q} = {\color{#3273F6}\mathbf{o}} - {\color{#109618}\mathbf{c}}$, the vector from the center to the ray origin. Writing the squared length as a dot product and expanding gives a quadratic equation in $t$:
 
 $$ ({\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}})t^2 + 2(\mathbf{q} \cdot {\color{#FF4B4B}\mathbf{d}})t + (\mathbf{q} \cdot \mathbf{q} - {\color{#990099}R}^2) = 0 $$
 
-This is in the standard quadratic form $At^2 + Bt + C = 0$, where:
+This is $At^2 + Bt + C = 0$ with
 *   $A = {\color{#FF4B4B}\mathbf{d}} \cdot {\color{#FF4B4B}\mathbf{d}}$ (If our ray direction is normalized, $A = 1$)
 *   $B = 2(\mathbf{q} \cdot {\color{#FF4B4B}\mathbf{d}})$
 *   $C = \mathbf{q} \cdot \mathbf{q} - {\color{#990099}R}^2$
 
-Using the quadratic formula $t = \frac{-B \pm \sqrt{B^2 - 4AC}}{2A}$, we can find the roots. 
-*   If the discriminant ($B^2 - 4AC$) is negative, the ray misses the sphere.
-*   If it is zero, the ray grazes the sphere (one hit).
-*   If it is positive, the ray goes through the sphere (two hits). The smallest positive root $t$ is our first visible hit.
+The roots are $t = \frac{-B \pm \sqrt{B^2 - 4AC}}{2A}$.
+*   If the discriminant $B^2 - 4AC$ is negative, the ray misses the sphere.
+*   If it is zero, the ray touches the sphere at one point.
+*   If it is positive, the ray crosses the sphere at two points. The smallest positive root is the first visible hit. If only the larger root is positive, the ray starts inside the sphere.
 
-Once we find the hit distance $t$, the hit point is $\mathbf{p} = {\color{#3273F6}\mathbf{o}} + t{\color{#FF4B4B}\mathbf{d}}$, and the surface normal is simply the normalized vector from the center to the hit point: $\mathbf{n} = (\mathbf{p} - {\color{#109618}\mathbf{c}}) / {\color{#990099}R}$.
+With $A = 1$ and $b = B/2 = \mathbf{q} \cdot {\color{#FF4B4B}\mathbf{d}}$, the roots simplify to $t = -b \pm \sqrt{h}$ with $h = b^2 - C$, a quarter of the discriminant. The shader below uses this form.
+
+The hit point is $\mathbf{p} = {\color{#3273F6}\mathbf{o}} + t{\color{#FF4B4B}\mathbf{d}}$, and the unit normal there is $\mathbf{n} = (\mathbf{p} - {\color{#109618}\mathbf{c}}) / {\color{#990099}R}$.
 
 
-{{< figure src="/images/intro-to-rendering/representation/sphere_cases.svg" id="fig-sphere-cases" caption="The three intersection cases based on the discriminant $h$: missing the sphere, grazing it, or passing through." title="Intersection Cases" alt="Diagram showing three rays: miss, grazing hit, and two hits" align="center" >}}
+{{< figure src="/images/intro-to-rendering/representation/sphere_cases.svg" id="fig-sphere-cases" caption="The three cases, by the sign of $h$: the ray misses the sphere ($h < 0$), touches it ($h = 0$), or crosses it ($h > 0$)." title="Intersection Cases" alt="Diagram showing three rays: miss, grazing hit, and two hits" align="center" >}}
 
 
 {{< glsl >}}
@@ -1184,24 +981,20 @@ precision highp float;
 uniform vec2 u_resolution;
 out vec4 fragColor;
 
-// Returns t if it hits, -1.0 otherwise. Also outputs the normal.
+// Returns the smallest positive t, or -1.0 on a miss. Also outputs the unit normal.
 float intersectSphere(vec3 ro, vec3 rd, vec3 center, float radius, out vec3 normal) {
     vec3 q = ro - center;
-    float b = dot(q, rd);
-    float c = dot(q, q) - radius * radius;
-    
-    // Discriminant (A = 1 because rd is normalized)
-    float h = b * b - c;
-    if (h < 0.0) return -1.0; // Ray misses
-    
-    // Smallest positive root
-    float t = -b - sqrt(h);
-    if (t > 0.0) {
-        vec3 p = ro + t * rd;
-        normal = normalize(p - center);
-        return t;
-    }
-    return -1.0;
+    float b = dot(q, rd);                  // B / 2 (A = 1 because rd is normalized)
+    float c = dot(q, q) - radius * radius; // C
+    float h = b * b - c;                   // discriminant / 4
+    if (h < 0.0) return -1.0;              // ray misses
+
+    float t = -b - sqrt(h);                // nearer root
+    if (t <= 0.0) t = -b + sqrt(h);        // ray starts inside the sphere
+    if (t <= 0.0) return -1.0;             // sphere is behind the ray
+
+    normal = (ro + t * rd - center) / radius;
+    return t;
 }
 
 void main() {
@@ -1229,39 +1022,35 @@ void main() {
 
 ### 2. Ray-Triangle Intersection (Möller-Trumbore)
 
-Triangles are the backbone of 3D modeling. Let a triangle be defined by its three vertices ${\color{#FF9900}\mathbf{a}}$, ${\color{#0099C6}\mathbf{b}}$, and ${\color{#DD4477}\mathbf{c}}$. Any point $\mathbf{p}$ lying on the plane of this triangle can be written using **barycentric coordinates** $(u, v)$:
+Let a triangle have vertices ${\color{#FF9900}\mathbf{a}}$, ${\color{#0099C6}\mathbf{b}}$ and ${\color{#DD4477}\mathbf{c}}$. Any point $\mathbf{p}$ in its plane can be written with **barycentric coordinates** $(u, v)$:
 
 $$ \mathbf{p}(u, v) = {\color{#FF9900}\mathbf{a}} + u({\color{#0099C6}\mathbf{b}} - {\color{#FF9900}\mathbf{a}}) + v({\color{#DD4477}\mathbf{c}} - {\color{#FF9900}\mathbf{a}}) $$
 
-{{< figure src="/images/intro-to-rendering/representation/triangle_barycentric.svg" id="fig-triangle-barycentric" caption="Barycentric coordinates $(u, v, w)$ can be thought of as the weights of the three vertices, or as ratios of sub-triangle areas." title="Barycentric Coordinates" alt="Triangle divided into three colored sub-areas representing barycentric weights" align="center" width="60%" >}}
+{{< figure src="/images/intro-to-rendering/representation/triangle_barycentric.svg" id="fig-triangle-barycentric" caption="Barycentric coordinates $(w, u, v)$ with $w = 1 - u - v$ are the weights of $\mathbf{a}$, $\mathbf{b}$ and $\mathbf{c}$, and equal the ratios of the sub-triangle areas." title="Barycentric Coordinates" alt="Triangle divided into three colored sub-areas representing barycentric weights" align="center" width="60%" >}}
 
 
-Let's define the two edge vectors of the triangle originating from ${\color{#FF9900}\mathbf{a}}$ as $\mathbf{e}_1 = {\color{#0099C6}\mathbf{b}} - {\color{#FF9900}\mathbf{a}}$ and $\mathbf{e}_2 = {\color{#DD4477}\mathbf{c}} - {\color{#FF9900}\mathbf{a}}$. The ray hits the triangle when the ray equation equals the triangle plane equation:
+With the edge vectors $\mathbf{e}_1 = {\color{#0099C6}\mathbf{b}} - {\color{#FF9900}\mathbf{a}}$ and $\mathbf{e}_2 = {\color{#DD4477}\mathbf{c}} - {\color{#FF9900}\mathbf{a}}$, the ray meets the plane of the triangle where
 
 $$ {\color{#3273F6}\mathbf{o}} + t{\color{#FF4B4B}\mathbf{d}} = {\color{#FF9900}\mathbf{a}} + u\mathbf{e}_1 + v\mathbf{e}_2 $$
 
-Rearranging the terms to isolate our unknowns ($t, u, v$) on the left gives us a system of three linear equations:
+Moving the unknowns $t$, $u$, $v$ to the left gives three linear equations:
 
 $$ \begin{bmatrix} -{\color{#FF4B4B}\mathbf{d}} & \mathbf{e}_1 & \mathbf{e}_2 \end{bmatrix} \begin{bmatrix} t \\ u \\ v \end{bmatrix} = {\color{#3273F6}\mathbf{o}} - {\color{#FF9900}\mathbf{a}} $$
 
-Let $\mathbf{s} = {\color{#3273F6}\mathbf{o}} - {\color{#FF9900}\mathbf{a}}$ (the vector from vertex $\mathbf{a}$ to the ray origin). We can solve this $3\times3$ system elegantly using **Cramer's Rule**, which expresses the solution in terms of determinants. 
-
-Geometrically, the determinant of a $3\times3$ matrix composed of three vectors $\det(\mathbf{u}, \mathbf{v}, \mathbf{w})$ is the **scalar triple product**, written as $\mathbf{u} \cdot (\mathbf{v} \times \mathbf{w})$. It represents the volume of the parallelepiped formed by the three vectors.
-
-Using Cramer's Rule, the solution is:
+Let $\mathbf{s} = {\color{#3273F6}\mathbf{o}} - {\color{#FF9900}\mathbf{a}}$, the vector from $\mathbf{a}$ to the ray origin. **Cramer's rule** solves the system with determinants. The determinant of the matrix with columns $\mathbf{x}$, $\mathbf{y}$, $\mathbf{z}$ is the scalar triple product $\det(\mathbf{x}, \mathbf{y}, \mathbf{z}) = \mathbf{x} \cdot (\mathbf{y} \times \mathbf{z})$, the signed volume of the parallelepiped they span. The solution is
 
 $$ \begin{bmatrix} t \\ u \\ v \end{bmatrix} = \frac{1}{\det(-{\color{#FF4B4B}\mathbf{d}}, \mathbf{e}_1, \mathbf{e}_2)} \begin{bmatrix} \det(\mathbf{s}, \mathbf{e}_1, \mathbf{e}_2) \\ \det(-{\color{#FF4B4B}\mathbf{d}}, \mathbf{s}, \mathbf{e}_2) \\ \det(-{\color{#FF4B4B}\mathbf{d}}, \mathbf{e}_1, \mathbf{s}) \end{bmatrix} $$
 
-{{< figure src="/images/intro-to-rendering/representation/triangle_intersection.svg" id="fig-triangle-intersection" caption="Möller-Trumbore Algorithm: We equate the ray and triangle equations and solve for the intersection distance $t$ and barycentric coordinates $(u, v)$ simultaneously." title="Ray-Triangle Intersection" alt="Diagram showing ray hitting a triangle with basis vectors and s-vector labeled" align="center" >}}
+{{< figure src="/images/intro-to-rendering/representation/triangle_intersection.svg" id="fig-triangle-intersection" caption="Möller-Trumbore: setting the ray equal to the triangle's plane and solving for $t$, $u$ and $v$ together." title="Ray-Triangle Intersection" alt="Diagram showing ray hitting a triangle with basis vectors and s-vector labeled" align="center" >}}
 
-This translates to the famous **Möller-Trumbore algorithm** [[5]](#ref-5). To make it computationally efficient, we define cross products that we can reuse:
+The **Möller-Trumbore algorithm** [[5]](#ref-5) evaluates these determinants with two cross products, using $\det(\mathbf{x}, \mathbf{y}, \mathbf{z}) = \mathbf{x} \cdot (\mathbf{y} \times \mathbf{z}) = \mathbf{y} \cdot (\mathbf{z} \times \mathbf{x})$:
 
-1.  Let $\mathbf{p} = {\color{#FF4B4B}\mathbf{d}} \times \mathbf{e}_2$. The denominator becomes $\mathbf{e}_1 \cdot \mathbf{p}$. If this is $0$, the ray is parallel to the triangle.
-2.  The $u$ coordinate becomes $u = (\mathbf{s} \cdot \mathbf{p}) / (\mathbf{e}_1 \cdot \mathbf{p})$.
-3.  Let $\mathbf{q} = \mathbf{s} \times \mathbf{e}_1$. The $v$ coordinate becomes $v = ({\color{#FF4B4B}\mathbf{d}} \cdot \mathbf{q}) / (\mathbf{e}_1 \cdot \mathbf{p})$.
-4.  The hit distance becomes $t = (\mathbf{e}_2 \cdot \mathbf{q}) / (\mathbf{e}_1 \cdot \mathbf{p})$.
+1.  Let $\mathbf{g} = {\color{#FF4B4B}\mathbf{d}} \times \mathbf{e}_2$. The denominator becomes $\mathbf{e}_1 \cdot \mathbf{g}$. If this is $0$, the ray is parallel to the triangle.
+2.  The $u$ coordinate becomes $u = (\mathbf{s} \cdot \mathbf{g}) / (\mathbf{e}_1 \cdot \mathbf{g})$.
+3.  Let $\mathbf{k} = \mathbf{s} \times \mathbf{e}_1$. The $v$ coordinate becomes $v = ({\color{#FF4B4B}\mathbf{d}} \cdot \mathbf{k}) / (\mathbf{e}_1 \cdot \mathbf{g})$.
+4.  The hit distance becomes $t = (\mathbf{e}_2 \cdot \mathbf{k}) / (\mathbf{e}_1 \cdot \mathbf{g})$.
 
-The intersection is strictly inside the triangle if $u \ge 0$, $v \ge 0$, $u + v \le 1$, and $t > 0$. Notice how this brilliantly evaluates the hit without ever explicitly computing the plane's normal!
+The ray hits the triangle (its interior or an edge) if $u \ge 0$, $v \ge 0$, $u + v \le 1$ and $t > 0$. The plane's normal is never computed.
 
 {{< glsl >}}
 #version 300 es
@@ -1275,29 +1064,29 @@ out vec4 fragColor;
 bool intersectTriangle(vec3 ro, vec3 rd, vec3 a, vec3 b, vec3 c, out float t, out vec3 bary) {
     vec3 e1 = b - a;
     vec3 e2 = c - a;
-    vec3 pvec = cross(rd, e2);
-    float det = dot(e1, pvec);
+    vec3 g = cross(rd, e2);
+    float det = dot(e1, g);
 
-    // If det is near zero, ray lies in the plane of the triangle
+    // det near zero: the ray is parallel to the triangle's plane
     if (abs(det) < 0.0001) return false;
 
     float invDet = 1.0 / det;
     vec3 svec = ro - a;
     
     // Calculate u and test bounds
-    float u = dot(svec, pvec) * invDet;
+    float u = dot(svec, g) * invDet;
     if (u < 0.0 || u > 1.0) return false;
 
-    vec3 qvec = cross(svec, e1);
+    vec3 k = cross(svec, e1);
     
     // Calculate v and test bounds
-    float v = dot(rd, qvec) * invDet;
+    float v = dot(rd, k) * invDet;
     if (v < 0.0 || u + v > 1.0) return false;
 
     // Calculate t
-    t = dot(e2, qvec) * invDet;
+    t = dot(e2, k) * invDet;
     
-    bary = vec3(1.0 - u - v, u, v);
+    bary = vec3(1.0 - u - v, u, v);   // weights of a, b, c
     return t > 0.0;
 }
 
@@ -1327,42 +1116,42 @@ void main() {
 
 ### 3. Signed Distance Functions (SDFs)
 
-In contrast to explicit geometry representations like triangle meshes, a **Signed Distance Function (SDF)** describes geometry *implicitly* through a continuous mathematical field. Rather than storing discrete vertices, an SDF evaluates the shortest distance from any given point in space to the nearest surface.
+A **signed distance function (SDF)** describes a surface *implicitly*: instead of storing vertices, it gives the distance from any point to the nearest surface.
 
-Formally, let $\Omega \subset \mathbb{R}^3$ be a closed set representing a solid object, with its boundary surface denoted by $\partial \Omega$. The signed distance function $f(\mathbf{p})$ at any point $\mathbf{p} \in \mathbb{R}^3$ is defined as the minimum metric distance from $\mathbf{p}$ to the boundary $\partial \Omega$, signed by whether $\mathbf{p}$ is in the interior or exterior of the object:
+Let $S \subset \mathbb{R}^3$ be a closed set (the solid object) with boundary surface $\partial S$. The signed distance function is the Euclidean distance from $\mathbf{p}$ to $\partial S$, with a sign that tells whether $\mathbf{p}$ is outside or inside:
 
 $$
 f(\mathbf{p}) = \begin{cases} 
-+\min_{\mathbf{x} \in \partial \Omega} \|\mathbf{p} - \mathbf{x}\| & \text{if } \mathbf{p} \text{ is outside } \Omega \\
-0 & \text{if } \mathbf{p} \text{ is on the surface } \partial \Omega \\
--\min_{\mathbf{x} \in \partial \Omega} \|\mathbf{p} - \mathbf{x}\| & \text{if } \mathbf{p} \text{ is inside } \Omega 
++\min_{\mathbf{x} \in \partial S} \|\mathbf{p} - \mathbf{x}\| & \text{if } \mathbf{p} \text{ is outside } S \\
+0 & \text{if } \mathbf{p} \text{ is on the surface } \partial S \\
+-\min_{\mathbf{x} \in \partial S} \|\mathbf{p} - \mathbf{x}\| & \text{if } \mathbf{p} \text{ is inside } S 
 \end{cases}
 $$
 
-The sign convention dictates that $f(\mathbf{p})$ is positive outside the object, negative inside, and exactly zero on the surface $\partial \Omega$. Consequently, the surface itself is defined implicitly as the zero-level set of the function: $\partial \Omega = \{\mathbf{p} \in \mathbb{R}^3 \mid f(\mathbf{p}) = 0\}$.
+The surface is the zero level set $\partial S = \{\mathbf{p} \in \mathbb{R}^3 \mid f(\mathbf{p}) = 0\}$.
 
-Because $f(\mathbf{p})$ guarantees the exact distance to the nearest surface, it provides a strictly bound spatial radius. If $f(\mathbf{p}) = d$, a sphere of radius $d$ centered at $\mathbf{p}$ is guaranteed to be entirely empty. This property allows ray marching algorithms to safely advance along a ray by distance $d$ without prematurely overshooting the surface.
+If $f(\mathbf{p}) = d > 0$, the sphere of radius $d$ around $\mathbf{p}$ contains no surface. A ray can therefore advance by $d$ without passing through a surface, which is the idea behind sphere tracing.
 
-{{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere Tracing: By evaluating the SDF, the algorithm derives a safe distance to march along the ray. Because the field obeys the Eikonal equation, the circles represent exact bounds of empty space." title="Signed Distance Field" alt="SDF contour visualization" align="center" >}}
+{{< figure src="/images/intro-to-rendering/representation/sdf.svg" id="fig-sdf-visualization" caption="Sphere tracing: at each point the SDF value is the radius of an empty circle, so the ray can safely advance by that distance." title="Signed Distance Field" alt="SDF contour visualization" align="center" >}}
 
 #### The Eikonal Equation and Lipschitz Continuity
 
-For a function to be a valid Euclidean signed distance field, it must satisfy the **Eikonal equation**:
+An exact signed distance function satisfies the **eikonal equation**
 
 $$ \|\nabla f(\mathbf{p})\| = 1 $$
 
-This nonlinear partial differential equation states that the magnitude of the gradient of the function must equal exactly 1 everywhere (except at singularities, such as the medial axis, where the gradient is undefined). Geometrically, this implies that the field's rate of change perfectly matches physical space: moving one unit of distance directly away from the surface increases the SDF value by exactly one.
+everywhere except where the gradient is undefined (for example on the medial axis, the points with more than one nearest surface point). Moving one unit directly away from the surface increases $f$ by exactly one.
 
-In practice, when constructing complex 3D scenes, SDFs are often subjected to spatial deformations—such as scaling, twisting, or blending—that violate the strict Eikonal property. For rendering algorithms like sphere tracing to remain mathematically safe, the function must at least maintain a **Lipschitz bound** of $1$:
+Operations such as non-uniform scaling, twisting or blending usually break this property. Sphere tracing stays safe as long as $f$ is **1-Lipschitz**:
 
 $$ |f(\mathbf{p}) - f(\mathbf{q})| \le \|\mathbf{p} - \mathbf{q}\| $$
 
-If the gradient magnitude exceeds 1 ($\|\nabla f\| > 1$), the function overestimates the true distance. A sphere tracer would march too far and step *through* the surface, causing visual artifacts or missing geometry entirely. Conversely, if the gradient magnitude is substantially less than 1, the algorithm remains mathematically safe but becomes highly inefficient, forcing the ray to take excessively small, conservative steps. Maintaining the Eikonal property, or a strict Lipschitz bound, is a fundamental constraint when designing operations for SDFs.
+Then $f$ never overestimates the distance to the surface. If $\|\nabla f\| > 1$ somewhere, $f$ can overestimate it, and the ray can step through the surface and miss geometry. If $\|\nabla f\|$ is much smaller than 1, the steps are safe but short, and the ray needs many more of them.
 
 
 #### Constructive Solid Geometry (CSG)
 
-Complex scenes can be constructed from primitive SDFs using Boolean operations. Quilez catalogues both the 2D [[7]](#ref-7) and 3D [[8]](#ref-8) primitives and the operators below. If $a = f_1(\mathbf{p})$ and $b = f_2(\mathbf{p})$ represent the signed distances to two individual shapes at a given point, standard **Constructive Solid Geometry (CSG)** operations can be formulated as combinations of `min` and `max` functions:
+Shapes are combined with Boolean operations. Quilez lists SDFs for many 2D [[7]](#ref-7) and 3D [[8]](#ref-8) primitives, and the operators below. If $a = f_1(\mathbf{p})$ and $b = f_2(\mathbf{p})$ are the signed distances to two shapes, the **constructive solid geometry (CSG)** operations are:
 
 ```glsl
 float opUnion(float a, float b) {
@@ -1384,11 +1173,12 @@ float opSmoothUnion(float a, float b, float k) {
 }
 ```
 
-These operators directly manipulate the distance fields based on their spatial definitions:
-*   **Union (`opUnion`)**: The combined surface is determined by the closest object, yielding the minimum distance.
-*   **Intersection (`opIntersection`)**: A point is only inside the intersection if it is inside *both* shapes, meaning the limiting boundary is the one furthest away (the maximum).
-*   **Subtraction (`opSubtraction`)**: Subtracting the second shape from the first involves inverting the second field (turning inside to outside by negating $b$) and then intersecting them.
-*   **Smooth Union (`opSmoothUnion`)**: While standard CSG operators introduce non-differentiable $C^0$ seams at the intersection boundaries, smooth operators replace this abrupt transition with a polynomial blending curve of width $k$. While smooth blending slightly violates the Eikonal equation near the transition, it reliably maintains the Lipschitz bound.
+*   **Union**: the nearer shape decides, so the distance is the minimum.
+*   **Intersection**: a point is inside only if it is inside both shapes, so the larger value decides.
+*   **Subtraction**: negating $b$ swaps the inside and outside of the second shape, then the two are intersected.
+*   **Smooth union**: `min` has a crease where the two shapes meet. The smooth version blends the two distances with a quadratic wherever $|a - b| < 4k$, subtracting at most $k$ (at $a = b$). The result is no longer an exact distance near the blend, but it remains 1-Lipschitz.
+
+Union is exact outside the shapes. Intersection and subtraction give a lower bound on the distance rather than the exact distance; a bound never overestimates the distance, which is enough for sphere tracing.
 
 {{< glsl >}}
 #version 300 es
@@ -1406,12 +1196,12 @@ float sdCircle(in vec2 p, in float r) {
 }
 
 void main() {
-    // Normalize pixel coordinates (from -1 to 1 on the y-axis)
+    // Pixel coordinates, y from -1 to 1
     vec2 p = (2.0 * gl_FragCoord.xy - u_resolution.xy) / u_resolution.y;
     
     vec2 probe;
     
-    // If mouse is at (0,0)[meaning not hovered], animate the probe
+    // Without the mouse over the canvas, animate the probe
     if (u_mouse.x <= 0.0 && u_mouse.y <= 0.0) {
         probe = vec2(cos(u_time * 0.8) * 0.8, sin(u_time * 0.5) * 0.6);
     } else {
@@ -1422,28 +1212,25 @@ void main() {
     // Evaluate the SDF for the current pixel
     float d = sdCircle(p, 0.5);
     
-    // Base Colors (Matched exactly to LaTeX RGB values)
-    // Outside (Blue): RGB(80, 160, 240) -> vec3(0.314, 0.627, 0.941)
-    // Inside (Red): RGB(235, 80, 60) -> vec3(0.922, 0.314, 0.235)
+    // Outside blue, inside red (same colors as the figure)
     vec3 col = (d > 0.0) ? vec3(0.314, 0.627, 0.941) : vec3(0.922, 0.314, 0.235);
-    
-    // Add dark gradients near the surface (decay factor matches LaTeX)
+
+    // Darken toward the surface
     float decay = (d > 0.0) ? 3.0 : 4.0;
     col *= 1.0 - exp(-decay * abs(d));
-    
-    // Add repeating isoline waves (Math matched to LaTeX)
+
+    // Contour lines of constant distance
     col *= 0.85 + 0.15 * cos(150.0 * d);
     
     // Draw the exact surface (d = 0) as a white outline
     col = mix(col, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
 
-    // Draw the SDF probe demonstrating the safe-stepping ring
+    // Probe point and its empty circle
     float d_probe = sdCircle(probe, 0.5);
     
-    // Yellow Probe: RGB(255, 240, 0) -> vec3(1.0, 0.941, 0.0)
     vec3 yellow = vec3(1.0, 0.941, 0.0);
-    
-    // Draw the yellow ring (radius equals the exact distance to the surface)
+
+    // Circle of radius |f(probe)|: it touches the surface but does not cross it
     col = mix(col, yellow, 1.0 - smoothstep(0.0, 0.005, abs(length(p - probe) - abs(d_probe)) - 0.0025));
     
     // Draw the yellow center point
@@ -1455,23 +1242,21 @@ void main() {
 
 #### Calculating Normals for SDFs
 
-Unlike explicit meshes, implicit surfaces do not inherently store normal vectors. However, the surface normal at any point $\mathbf{p}$ on the boundary $\partial \Omega$ can be derived directly from the distance field. The normal vector $\mathbf{n}$ points in the direction of steepest ascent, which corresponds to the **gradient** of the SDF, denoted as $\nabla f(\mathbf{p})$.
-
-By definition of the Eikonal equation ($\|\nabla f(\mathbf{p})\| = 1$), the gradient of a mathematically perfect SDF is already a unit vector:
+An implicit surface stores no normals, but the normal at a surface point $\mathbf{p}$ is the direction in which $f$ increases fastest, the **gradient** $\nabla f(\mathbf{p})$. For an exact SDF the eikonal equation makes it a unit vector:
 
 $$ \mathbf{n} = \nabla f(\mathbf{p}) = \begin{pmatrix} \frac{\partial f}{\partial \color{#ef4444}x} \\ \frac{\partial f}{\partial \color{#22c55e}y} \\ \frac{\partial f}{\partial \color{#3b82f6}z} \end{pmatrix} $$
 
-In a shader implementation, this continuous derivative is typically approximated using finite differences. The **Central Difference** method evaluates the SDF at infinitesimally small offsets $\varepsilon$ along each Cartesian axis:
+Shaders approximate the gradient with finite differences. **Central differences** evaluate $f$ at a small offset $\varepsilon$ on either side along each axis (the common factor $1/2\varepsilon$ is removed by the normalization):
 
 $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varepsilon {\color{#ef4444}\mathbf{\hat{i}}}) - f(\mathbf{p} - \varepsilon {\color{#ef4444}\mathbf{\hat{i}}}) \\ f(\mathbf{p} + \varepsilon {\color{#22c55e}\mathbf{\hat{j}}}) - f(\mathbf{p} - \varepsilon {\color{#22c55e}\mathbf{\hat{j}}}) \\ f(\mathbf{p} + \varepsilon {\color{#3b82f6}\mathbf{\hat{k}}}) - f(\mathbf{p} - \varepsilon {\color{#3b82f6}\mathbf{\hat{k}}}) \end{pmatrix} $$
 
-This formulation requires six evaluations of the distance function. For real-time applications where rendering performance is critical, a **Forward Difference** method is often preferred. This approach reuses the evaluation at the center point $\mathbf{p}$, reducing the total number of evaluations to four:
+This takes six evaluations of $f$. **Forward differences** reuse $f(\mathbf{p})$ and take four, at the cost of a less accurate estimate:
 
 $$ \mathbf{n} \approx \mathrm{normalize}\! \begin{pmatrix} f(\mathbf{p} + \varepsilon {\color{#ef4444}\mathbf{\hat{i}}}) - f(\mathbf{p}) \\ f(\mathbf{p} + \varepsilon {\color{#22c55e}\mathbf{\hat{j}}}) - f(\mathbf{p}) \\ f(\mathbf{p} + \varepsilon {\color{#3b82f6}\mathbf{\hat{k}}}) - f(\mathbf{p}) \end{pmatrix} $$
 
-*(Note: Although a pure SDF yields a unit-length gradient, numerical precision limits, smooth CSG operations, and domain distortions introduce slight deviations from the perfect Eikonal property. Consequently, the resulting normal vector must be explicitly normalized prior to shading calculations).*
+The estimate is normalized because finite differences, smooth blends and distortions all make its length differ from 1.
 
-The following shader demonstrates these concepts by rendering a Torus using sphere tracing, with surface normals calculated dynamically via the forward difference method.
+The shader below renders a torus by sphere tracing and computes its normals with forward differences.
 
 {{< glsl >}}
 #version 300 es
@@ -1528,17 +1313,17 @@ void main() {
         vec3 p = ro + rd * t;
         float d = map(p);
         
-        // If we are close enough to the surface, it is a hit
+        // Close enough to the surface: a hit
         if(abs(d) < 0.001) {
             vec3 n = calcNormal(p);
             // Map normal to [0,1] range for visualization
             col = n * 0.5 + 0.5;
             break;
         }
-        // If we marched too far, the ray missed the object
+        // Too far: the ray missed
         if(t > max_d) break;
         
-        // Step forward by the safe distance bound
+        // Advance by the distance to the nearest surface
         t += d;
     }
 
@@ -1548,86 +1333,87 @@ void main() {
 
 ## Shading Models
 
-Intersection algorithms tell us *where* a ray hits and *which way* the surface faces. Shading models answer the next question: *what color should that point be?*
+Intersection gives the hit point and the surface normal there. A shading model gives the color of that point.
 
-When light strikes a surface, part of its energy is absorbed and part is scattered. The physics of this interaction is captured by the **Rendering Equation** [[12]](#ref-12):
+Light reaching a surface is partly absorbed and partly scattered. The **rendering equation** [[12]](#ref-12) describes the light leaving a point:
 
 $$ L_o(\mathbf{x}, \boldsymbol{\omega}_o) = \underbrace{L_e(\mathbf{x}, \boldsymbol{\omega}_o)}_{\text{Emitted Radiance}} + \underbrace{\int_{\Omega} L_i(\mathbf{x}, \boldsymbol{\omega}_i) f_s(\mathbf{x}, \boldsymbol{\omega}_o, \boldsymbol{\omega}_i) (\mathbf{n} \cdot \boldsymbol{\omega}_i) \, d\boldsymbol{\omega}_i}_{\text{Reflected Radiance}} $$
 
-The outgoing radiance $L_o$ toward the viewer equals the emitted light $L_e$ plus the integral of all incoming light $L_i$ scattered by the surface. We integrate over $\Omega$ (the upper hemisphere defined by the surface normal) because opaque surfaces only receive light from their exterior side. The function $f_s$ is the **Bidirectional Reflectance Distribution Function (BRDF)**, which encodes how a material distributes incoming light, and the dot product $(\mathbf{n} \cdot \boldsymbol{\omega}_i)$ accounts for foreshortening via Lambert's cosine law.
+The radiance $L_o$ leaving $\mathbf{x}$ in direction $\boldsymbol{\omega}_o$ is the emitted radiance $L_e$ plus the incoming radiance $L_i$ reflected toward $\boldsymbol{\omega}_o$, integrated over the hemisphere $\Omega$ above the surface. The **bidirectional reflectance distribution function (BRDF)** $f_s$ describes how the material reflects light, and the factor $\mathbf{n} \cdot \boldsymbol{\omega}_i$ is Lambert's cosine law.
 
-Evaluating this integral is computationally immense — it involves infinite recursive scattering between all objects in the scene. Real-time graphics have therefore historically relied on simpler, empirical models that approximate the result locally. Whitted's recursive ray tracer [[11]](#ref-11) was the first to combine local shading with traced reflection and shadow rays.
+$L_i$ at one point is the $L_o$ of other points, so the equation is recursive and has no closed-form solution for real scenes. Real-time graphics therefore uses simpler empirical models that consider only the light arriving directly from the light sources. Whitted's ray tracer [[11]](#ref-11) combined such a local model with traced shadow, reflection and refraction rays.
 
-> **Gamma Correction:** Before we look at the code, it is important to remember that physical light calculations are linear, but our computer monitors display light non-linearly. To fix this, we apply a $1/2.2$ power function to our final color at the very end of our shaders—a process known as gamma correction.
+> **Gamma correction:** lighting is computed in linear units, but displays expect values encoded with a power curve. The shaders below raise the final color to the power $1/2.2$, an approximation of the sRGB encoding.
 
 ### Light Sources and Attenuation
 
-Before applying any reflection model, we first need to know how much light energy actually reaches the surface.
-*   **Directional (Infinite) Lights**: Placed infinitely far away (like the sun). All rays are parallel, and intensity does not diminish over distance.
-*   **Point Lights**: Radiate equally in all directions from a specific point.
-*   **Spot Lights**: Radiate from a point, but restricted to a specific cone/direction.
+Three common kinds of light source are:
+*   **Directional lights** are infinitely far away, like the sun. All rays are parallel and the intensity does not change with distance.
+*   **Point lights** emit equally in all directions from a point.
+*   **Spot lights** emit from a point into a cone.
 
-For point and spot lights, energy disperses as it travels through space. Physically, light intensity falls off according to the inverse-square law ($1/d^2$). However, for artistic control in rendering pipelines, this distance attenuation is generally modeled using constant ($k_c$), linear ($k_l$), and quadratic ($k_q$) terms:
+For point and spot lights, the light arriving at a surface falls off with the square of the distance $d$. For artistic control, renderers often use constant ($k_c$), linear ($k_l$) and quadratic ($k_q$) terms instead:
 
 $$ I_{attenuated} = \frac{1}{k_c + k_l d + k_q d^2} I_{source} $$
 
 ### The Phong Reflection Model
 
-With the incoming light intensity established, we can now compute how the surface responds. The most famous empirical model is the **Phong reflection model** [[9]](#ref-9), which decomposes local illumination into three physically motivated components: **Ambient**, **Diffuse**, and **Specular**.
+The **Phong reflection model** [[9]](#ref-9) is an empirical model with three terms: **ambient**, **diffuse** and **specular**.
 
-{{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The components of the Phong reflection model: (Left) Ambient base, (Middle) Diffuse shading based on surface orientation, (Right) Specular highlight for shiny reflections." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" >}}
+{{< figure src="/images/intro-to-rendering/lighting/sphere_lighting.svg" id="fig-phong-components" caption="The terms of the Phong reflection model: ambient (left), diffuse (middle) and specular (right)." title="Phong Shading Components" alt="Three spheres showing ambient, diffuse, and specular components" align="center" width="100%" >}}
 
 #### 1. Ambient Light
-In the real world, light bounces off walls, floors, and other objects, filling the environment with indirect illumination. Instead of simulating these complex global bounces, the ambient term provides a constant base level of light so that objects in shadow are not completely pitch black.
+Light also arrives indirectly, after bouncing off other surfaces. Instead of computing it, the ambient term adds a constant amount, so that surfaces facing away from the light are not black.
 
 $$
 L_a = k_a I_a
 $$
 
-Here, $I_a$ is the intensity of the ambient light, and $k_a$ is the material's ambient reflection coefficient.
+$I_a$ is the ambient light intensity and $k_a$ the material's ambient coefficient.
 
 #### 2. Lambertian Diffuse
-A perfectly matte (diffuse) surface, like chalk or unpolished wood, scatters light equally in all directions. Because the scattered light is uniform, the appearance of a diffuse surface does not depend on where the camera is positioned. 
+A matte (Lambertian) surface, like chalk, reflects light equally in all directions, so its brightness does not depend on the viewer.
 
-However, it *does* depend heavily on the surface orientation relative to the light. If you hold a flashlight directly above a surface, the beam is concentrated. If you tilt the surface, the same beam spreads over a larger area, decreasing the intensity per unit area. This is governed by Lambert's cosine law, which we calculate using the dot product between the normalized surface normal $\mathbf{n}$ and the normalized light direction ${\color{#FF9800}\mathbf{l}}$:
+It does depend on the angle of the incoming light. A beam that hits the surface at an angle spreads over a larger area, so less light arrives per unit area. By Lambert's cosine law the light received is proportional to $\cos\theta = \mathbf{n} \cdot {\color{#FF9800}\mathbf{l}}$, where $\mathbf{n}$ is the unit normal and ${\color{#FF9800}\mathbf{l}}$ the unit vector toward the light:
 
 $$
 L_d = k_d I_d \max(0, \mathbf{n}\cdot{\color{#FF9800}\mathbf{l}})
 $$
 
-We clamp the dot product at zero because a negative value means the light is hitting the back of the surface, which should contribute no illumination.
+The clamp at zero removes light that arrives from behind the surface.
 
 #### 3. Specular Highlights
-Smooth surfaces, like polished metal or wet plastic, are not perfect diffusers. They exhibit specular highlights—bright spots where the light reflects strongly in a specific direction. Unlike diffuse reflection, specular reflection is highly dependent on the viewer's position.
+Smooth surfaces, like polished metal or plastic, also show **specular highlights**, bright spots where light is reflected mostly in one direction. Where they appear depends on the viewer.
 
-A perfect mirror reflects light exactly along the reflection vector ${\color{#4CAF50}\mathbf{r}}$. Using basic vector projection, we can compute ${\color{#4CAF50}\mathbf{r}}$ by taking the incoming light vector ${\color{#FF9800}\mathbf{l}}$, projecting it onto the normal $\mathbf{n}$, and reflecting it across the normal:
+A mirror reflects light along the reflection vector ${\color{#4CAF50}\mathbf{r}}$. Projecting ${\color{#FF9800}\mathbf{l}}$ onto $\mathbf{n}$ gives $(\mathbf{n} \cdot {\color{#FF9800}\mathbf{l}})\mathbf{n}$, and mirroring ${\color{#FF9800}\mathbf{l}}$ about the normal gives
 
 $$
 {\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#FF9800}\mathbf{l}})\mathbf{n} - {\color{#FF9800}\mathbf{l}}
 $$
 
-For surfaces that are shiny but not perfect mirrors, the reflected light scatters in a tight lobe around ${\color{#4CAF50}\mathbf{r}}$. As the angle $\phi$ between the reflection vector ${\color{#4CAF50}\mathbf{r}}$ and the view direction ${\color{#2196F3}\mathbf{v}}$ increases, the intensity drops. Phong modeled this drop-off using a cosine power function:
+A glossy surface reflects light into a lobe around ${\color{#4CAF50}\mathbf{r}}$. Phong models the falloff with the angle $\phi$ between ${\color{#4CAF50}\mathbf{r}}$ and the unit vector ${\color{#2196F3}\mathbf{v}}$ toward the viewer by a power of its cosine:
 
 $$
 L_s = k_s I_s \max(0, {\color{#4CAF50}\mathbf{r}} \cdot {\color{#2196F3}\mathbf{v}})^\alpha
 $$
 
-The exponent $\alpha$ is the **shininess coefficient**. A low value (e.g., $5 - 10$) produces a broad, soft highlight like plastic, while a high value (e.g., $100 - 200$) produces a sharp, tight highlight typical of polished metals.
+The exponent $\alpha$ is the **shininess**. Small values (around 5 to 10) give a broad highlight, large values (100 to 200) a small, sharp one. The specular term is usually set to zero where $\mathbf{n} \cdot {\color{#FF9800}\mathbf{l}} \le 0$, since the surface then faces away from the light; the widgets below do this.
 
-{{< figure src="/images/intro-to-rendering/lighting/phong.svg" id="fig-phong-vectors" caption="The Phong reflection model vectors. The light vector ${\color{#FF9800}\mathbf{l}}$ is reflected across the surface normal $\mathbf{n}$ to compute the reflection vector ${\color{#4CAF50}\mathbf{r}}$, which is then compared with the view vector ${\color{#2196F3}\mathbf{v}}$." title="Phong Vectors" alt="Vectors for Phong reflection model" align="center" width="500px" >}}
+{{< figure src="/images/intro-to-rendering/lighting/phong.svg" id="fig-phong-vectors" caption="The vectors of the Phong model: ${\color{#FF9800}\mathbf{l}}$ mirrored about $\mathbf{n}$ gives ${\color{#4CAF50}\mathbf{r}}$, which is compared with ${\color{#2196F3}\mathbf{v}}$." title="Phong Vectors" alt="Vectors for Phong reflection model" align="center" width="500px" >}}
 
-Combining all three gives the complete Phong reflection model:
+Together:
 
 $$
-L = \underbrace{k_a I_a}_{\text{Ambient}} + \underbrace{k_d I_d \max(0,{\color{#212121}\mathbf{n}}\cdot{\color{#E65100}\mathbf{l}})}_{\text{Diffuse}} + \underbrace{k_s I_s \max(0,{\color{#2E7D32}\mathbf{r}}\cdot{\color{#1565C0}\mathbf{v}})^\alpha}_{\text{Specular}}
+L = \underbrace{k_a I_a}_{\text{Ambient}} + \underbrace{k_d I_d \max(0,\mathbf{n}\cdot{\color{#FF9800}\mathbf{l}})}_{\text{Diffuse}} + \underbrace{k_s I_s \max(0,{\color{#4CAF50}\mathbf{r}}\cdot{\color{#2196F3}\mathbf{v}})^\alpha}_{\text{Specular}}
 $$
 
-<iframe src="/interactive/phong_lighting_sphere.html" loading="lazy" fetchpriority="low" title="Phong lighting demo" style="width:100%; max-width:760px; height:440px; border:1px solid var(--border); background: var(--theme); display:block;"></iframe>
-<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Interactive Phong reflection model. Drag on the sphere to reposition the light; toggle between Phong and Blinn-Phong specular models.</p>
+<iframe src="/interactive/phong_lighting_sphere.html" title="Phong lighting demo" style="width:100%; max-width:760px; height:440px; border:1px solid var(--border); background: var(--theme); display:block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">The Phong model on a sphere. Drag to move the light, hover to read the terms at a pixel, and switch to Blinn-Phong.</p>
 
-<iframe src="/interactive/phong_steps.html" width="100%" height="560" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<iframe src="/interactive/phong_steps.html" title="Phong reflection vector demo" width="100%" height="560" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Constructing $\mathbf{r} = 2(\mathbf{n} \cdot \mathbf{l})\mathbf{n} - \mathbf{l}$ step by step.</p>
 
-Below is the Phong reflection model applied to a test scene with two spheres on a checkerboard floor. Only local shading is computed here — no shadow rays, no reflections. Notice how the floor receives uniform light everywhere, even directly beneath the spheres where a shadow should be. This is the key limitation of local-only models.
+Below, the Phong model shades a test scene with two spheres on a checkerboard floor. Only local shading is computed, with no shadow or reflection rays, so the floor is lit even directly under the spheres.
 
 {{< glsl >}}
 #version 300 es
@@ -1705,23 +1491,22 @@ void main() {
 
 ### The Blinn-Phong Modification
 
-Calculating the exact reflection vector $\mathbf{r}$ at every pixel requires several vector operations. Jim Blinn proposed a cheaper approximation that produces nearly identical results: the **halfway vector** [[10]](#ref-10).
-
-Instead of finding the angle between the reflection ${\color{#4CAF50}\mathbf{r}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$, we calculate the vector that sits exactly halfway between the light ${\color{#FF9800}\mathbf{l}}$ and the viewer ${\color{#2196F3}\mathbf{v}}$:
+Blinn [[10]](#ref-10) replaced ${\color{#4CAF50}\mathbf{r}} \cdot {\color{#2196F3}\mathbf{v}}$ with the angle between the normal and the **halfway vector**, the unit vector midway between ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$:
 
 $$
 {\color{#9C27B0}\mathbf{h}} = \frac{{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}}{\|{\color{#FF9800}\mathbf{l}} + {\color{#2196F3}\mathbf{v}}\|}
 $$
 
-{{< figure src="/images/intro-to-rendering/lighting/blinn.svg" id="fig-blinn-vectors" caption="The Blinn-Phong modification vectors. Instead of the reflection vector, the halfway vector ${\color{#9C27B0}\mathbf{h}}$ is used, which sits exactly halfway between the light vector ${\color{#FF9800}\mathbf{l}}$ and view vector ${\color{#2196F3}\mathbf{v}}$." title="Blinn-Phong Vectors" alt="Vectors for Blinn-Phong modification" align="center" width="500px" >}}
+{{< figure src="/images/intro-to-rendering/lighting/blinn.svg" id="fig-blinn-vectors" caption="The Blinn-Phong vectors: the halfway vector ${\color{#9C27B0}\mathbf{h}}$ lies midway between ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$." title="Blinn-Phong Vectors" alt="Vectors for Blinn-Phong modification" align="center" width="500px" >}}
 
-If the halfway vector ${\color{#9C27B0}\mathbf{h}}$ perfectly aligns with the surface normal $\mathbf{n}$, the highlight is at its maximum. The specular term becomes $\max(0, \mathbf{n} \cdot {\color{#9C27B0}\mathbf{h}})^\beta$. (Note that to match the visual size of a Phong highlight, the Blinn-Phong exponent $\beta$ must be roughly $4$ times larger than the Phong exponent $\alpha$). 
+The highlight is brightest when ${\color{#9C27B0}\mathbf{h}} = \mathbf{n}$, which happens exactly when ${\color{#4CAF50}\mathbf{r}} = {\color{#2196F3}\mathbf{v}}$. The specular term becomes $\max(0, \mathbf{n} \cdot {\color{#9C27B0}\mathbf{h}})^\beta$. When $\mathbf{n}$, ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$ lie in one plane, the angle between $\mathbf{n}$ and ${\color{#9C27B0}\mathbf{h}}$ is half of $\phi$, so $\beta \approx 4\alpha$ gives a highlight of about the same size.
 
-This was a massive optimization for early rendering pipelines: if the light and the camera are infinitely far away, ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$ are constant, meaning ${\color{#9C27B0}\mathbf{h}}$ only needs to be computed *once per scene*, not once per pixel.
+When the light and the viewer are both infinitely far away, ${\color{#FF9800}\mathbf{l}}$ and ${\color{#2196F3}\mathbf{v}}$ are constant, so ${\color{#9C27B0}\mathbf{h}}$ is computed once instead of once per pixel. This made the model cheaper than Phong's on early hardware.
 
-<iframe src="/interactive/blinn_steps.html" width="100%" height="560" frameborder="0" loading="lazy" fetchpriority="low" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<iframe src="/interactive/blinn_steps.html" title="Blinn-Phong halfway vector demo" width="100%" height="560" frameborder="0" style="border-radius:8px; border:1px solid var(--border); margin: 1.5rem auto; display: block;"></iframe>
+<p style="text-align: center; font-style: italic; font-size: 0.9rem; margin-top: -1rem; margin-bottom: 2rem;">Constructing $\mathbf{h}$ and comparing it with $\mathbf{n}$.</p>
 
-The same scene as above, now shaded with Blinn-Phong. The only code change is in the specular calculation — `dot(n, h)^β` replaces `dot(r, v)^α`. The highlights are slightly rounder and wider.
+The same scene shaded with Blinn-Phong. Only the specular line changes: $\max(0, \mathbf{n} \cdot \mathbf{h})^\beta$ with $\beta = 4\alpha = 192$ replaces $\max(0, \mathbf{r} \cdot \mathbf{v})^\alpha$ with $\alpha = 48$. The highlights have about the same size; at grazing angles the Blinn-Phong highlight is stretched rather than round.
 
 {{< glsl >}}
 #version 300 es
@@ -1801,34 +1586,34 @@ void main() {
 
 ### Shading Paradigms: Gouraud vs. Phong
 
-The math above tells us *how* to calculate color, but the pipeline must decide *where* to calculate it. In rasterization, there are two primary ways to apply these equations across a triangle mesh:
+A rasterizer also has to decide *where* on a triangle the model is evaluated:
 
-1. **Gouraud Shading (Vertex Shading):** The lighting equations are evaluated only at the three vertices of a triangle. The resulting *colors* are then linearly interpolated across the pixels of the triangle. This is very fast, but it suffers from severe artifacts: if a sharp specular highlight falls in the exact center of a large triangle, the vertices will all be dark, and the highlight will completely disappear!
-2. **Phong Shading (Pixel/Fragment Shading):** Instead of interpolating colors, we linearly interpolate the *normal vector* $\mathbf{n}$ across the triangle's surface. The full lighting equation is then evaluated at every single pixel. This solves the highlight problem and produces beautifully smooth curved surfaces.
+1. **Gouraud shading** evaluates it at the three vertices and interpolates the resulting colors across the triangle. It is cheap, but a highlight that falls inside a large triangle, away from its vertices, is lost.
+2. **Phong shading** interpolates the normal across the triangle and evaluates the model at every pixel. Highlights inside triangles are kept and curved surfaces look smooth. Lengyel calls this per-pixel evaluation, done with the Blinn-Phong model, *Blinn-Phong shading* [[2]](#ref-2).
 
-> **Note the terminology:** The **Phong reflection model** (the math equation for ambient/diffuse/specular light) is fundamentally different from **Phong shading** (the technique of interpolating normals per-pixel). You can technically evaluate the Phong reflection model using Gouraud shading, though it will look poor! 
-> 
-> Furthermore, when linearly interpolating unit normal vectors across a triangle in a rasterizer, the resulting vectors will slightly shrink in length. Therefore, they must be **re-normalized** dynamically in the fragment shader before applying the reflection model.
+> The **Phong reflection model** (the formula above) and **Phong shading** (per-pixel evaluation with interpolated normals) are different things. The Phong reflection model can be evaluated with Gouraud shading.
+>
+> Linear interpolation between two unit normals gives a vector shorter than 1, so the interpolated normal is normalized again in the fragment shader.
 
-### Limitations: Self-Shadowing and Ambient Occlusion
+### Limitations of Local Shading and Ambient Occlusion
 
-The Phong and Blinn-Phong models evaluate lighting at each surface point independently — they have no knowledge of the rest of the scene. This means:
+The Phong and Blinn-Phong models look at one surface point at a time and know nothing about the rest of the scene. As a result:
 
-*   **No self-shadowing.** A sphere sitting on a floor will not cast a shadow, because the model never asks whether anything blocks the light.
-*   **No contact darkening.** Where two surfaces meet (e.g., the base of a sphere on a floor), real-world light is partially occluded by nearby geometry. Local models miss this entirely.
-*   **The ambient term is a flat constant.** Every surface point receives the same $k_a I_a$, regardless of how enclosed or exposed it is.
+*   **There are no cast shadows.** A sphere on a floor casts no shadow, because the model never checks whether anything blocks the light.
+*   **There is no contact darkening** where two surfaces meet, such as under a sphere resting on a floor.
+*   **The ambient term is constant.** Every point gets the same $k_a I_a$, however enclosed it is.
 
-**Ambient Occlusion (AO)** is a popular technique that addresses the third problem without requiring full global illumination. The idea is simple: at each surface point, estimate what fraction of the surrounding hemisphere is blocked by nearby geometry. Points in corners, crevices, and contact regions score low (more occluded), while exposed surfaces score high.
+**Ambient occlusion (AO)** addresses the last two without computing global illumination. At each point it measures how much of the hemisphere above the surface is blocked by nearby geometry, weighted by the cosine:
 
 $$
 A(\mathbf{p}) = \frac{1}{\pi} \int_{\Omega} V(\mathbf{p}, \boldsymbol{\omega}) \, (\mathbf{n} \cdot \boldsymbol{\omega}) \, d\boldsymbol{\omega}
 $$
 
-Here $V(\mathbf{p}, \boldsymbol{\omega})$ is a binary visibility function — $1$ if the hemisphere direction $\boldsymbol{\omega}$ is unblocked, $0$ if nearby geometry occludes it. The result $A(\mathbf{p})$ is then multiplied into the ambient (and sometimes diffuse) term, darkening the tucked-away areas that a flat ambient constant would otherwise over-illuminate.
+$V(\mathbf{p}, \boldsymbol{\omega})$ is $1$ if direction $\boldsymbol{\omega}$ is unblocked and $0$ otherwise, and the factor $1/\pi$ makes $A = 1$ for a fully open hemisphere. The shading is multiplied by $A$, which darkens corners and contact regions.
 
-In screen-space implementations like **SSAO** (Screen-Space Ambient Occlusion), the visibility check is approximated by sampling the depth buffer around each pixel — a fast, purely post-processing approach that requires no scene knowledge at all. In ray-traced pipelines, short-range occlusion rays can compute AO directly. 
+**Screen-space ambient occlusion (SSAO)** estimates $V$ from the depth buffer around each pixel, as a post-process. A ray tracer can compute it directly with short occlusion rays.
 
-Here is our test scene rendered with local Phong shading plus an Ambient Occlusion term computed analytically for each sphere. Notice how contact shadows naturally appear underneath the spheres where they approach the floor plane.
+For a sphere of radius $R$ whose center is at distance $d$ from $\mathbf{p}$, in a direction at angle $\theta$ to the normal, the blocked fraction of $A$ is exactly $\cos\theta \, (R/d)^2$, as long as the whole sphere is above the surface's tangent plane. The shader below subtracts this term for each sphere from $A = 1$ and multiplies all of the Phong terms by the result, which darkens the floor under the spheres.
 
 {{< glsl >}}
 #version 300 es
@@ -1877,11 +1662,11 @@ Hit traceScene(vec3 ro, vec3 rd) {
     return best;
 }
 
-// Analytic Ambient Occlusion of a sphere
-float sphereAO(vec3 p, vec3 n, vec3 c, float r) {
+// Occlusion by a sphere: cos(theta) * (R/d)^2 (exact while the sphere is above the tangent plane)
+float sphereAO(vec3 p, vec3 n, vec3 c, float R) {
     vec3 v = c - p;
     float d = length(v);
-    return max(0.0, dot(n, v / d)) * (r * r) / (d * d);
+    return max(0.0, dot(n, v / d)) * (R * R) / (d * d);
 }
 
 void main() {
@@ -1899,7 +1684,7 @@ void main() {
         vec3 v = normalize(ro - p);       // View vector
         vec3 r = reflect(-l, hit.n);      // Reflection vector
 
-        // Compute analytical AO from both spheres
+        // A = 1 minus the occlusion by each sphere
         float ao = 1.0;
         ao -= sphereAO(p, hit.n, vec3(-0.8, 0.0, -1.0), 1.0);
         ao -= sphereAO(p, hit.n, vec3(1.0, -0.3, 0.0), 0.7);
@@ -1917,54 +1702,51 @@ void main() {
 }
 {{< /glsl >}}
 
-We will see full shadow and reflection rays in the next section.
+Real shadows need shadow rays, which come next.
 
 ---
 
 ## Ray Tracing
 
-The shading models above are strictly **local**—they only consider the light hitting a surface directly from a source. **Whitted ray tracing** extends this idea into a global context by tracing visibility recursively. Once a primary ray hits a surface, the rendering algorithm spawns new secondary rays to evaluate the global environment.
-
-Instead of just intersection math, Ray Tracing is defined by this recursive routing logic:
+The shading models above are **local**: they only use light that comes directly from the light sources. **Whitted ray tracing** [[11]](#ref-11) adds secondary rays. Where a primary ray hits a surface, new rays are traced toward the light, in the mirror direction and through transparent surfaces, recursively.
 
 #### 1. Shadow Rays (Visibility Testing)
-To determine if a point $\mathbf{p}$ is in shadow, we don't guess. We cast a **shadow ray** from $\mathbf{p}$ directly toward the light source ${\color{#FF9800}\mathbf{l}}$. 
-*   If the ray hits an object *before* it reaches the light (${\color{#795548}t_{\text{hit}}} < {\color{#FF9800}t_{\text{light}}}$), the point is occluded. We skip the diffuse and specular calculations and only apply ambient light.
-*   To prevent a surface from shadowing itself due to floating-point inaccuracies (Shadow Acne), we offset the ray origin slightly along the normal: $\mathbf{p}_{\text{origin}} = \mathbf{p} + \epsilon\mathbf{n}$.
+A **shadow ray** is traced from $\mathbf{p}$ in the direction ${\color{#FF9800}\mathbf{l}}$ of the light.
+*   If it hits an object before reaching the light (${\color{#795548}t_{\text{hit}}} < {\color{#FF9800}t_{\text{light}}}$), the point is in shadow, and only the ambient term is used.
+*   Rounding errors can make the ray hit the surface it starts on ("shadow acne"), so its origin is moved slightly along the normal, to $\mathbf{p} + \epsilon\mathbf{n}$.
 
 {{< figure src="/images/intro-to-rendering/raytracing/shadow_ray.svg" id="fig-shadow-ray" caption="A shadow ray cast from point $\mathbf{p}$ toward the light source. If an occluder is found at distance ${\color{#795548}t_{\text{hit}}}$ that is less than the distance to the light ${\color{#FF9800}t_{\text{light}}}$, the point is in shadow." title="Shadow Ray Logic" alt="Diagram showing a shadow ray hit" align="center" width="600px" >}}
 
 #### 2. Reflection Rays
-For shiny surfaces like mirrors or water, we calculate the reflection vector ${\color{#4CAF50}\mathbf{r}}$ exactly as we did in the Phong model:
+For a mirror-like surface the reflected direction is computed as in the Phong model, with the view vector in place of the light vector:
 $$ {\color{#4CAF50}\mathbf{r}} = 2(\mathbf{n} \cdot {\color{#2196F3}\mathbf{v}})\mathbf{n} - {\color{#2196F3}\mathbf{v}} $$
-*(Where ${\color{#2196F3}\mathbf{v}}$ points from the surface back to the camera).* 
-We then cast a new ray from $\mathbf{p} + \epsilon\mathbf{n}$ in the direction of ${\color{#4CAF50}\mathbf{r}}$. Whatever color that ray eventually hits is added to the current pixel's color.
+Here ${\color{#2196F3}\mathbf{v}} = -\mathbf{d}$ points from the surface back along the incoming ray. A new ray is traced from $\mathbf{p} + \epsilon\mathbf{n}$ in direction ${\color{#4CAF50}\mathbf{r}}$, and the color it returns is blended with the local shading according to the surface's reflectivity.
 
-{{< figure src="/images/intro-to-rendering/raytracing/reflected_ray.svg" id="fig-reflected-ray" caption="A reflection ray is spawned at point $\mathbf{p}$ and cast in the direction $\mathbf{r}$. The color returned by this ray is used to shade the reflective surface." title="Reflection Ray" alt="Diagram showing a reflection ray" align="center" width="500px" >}}
+{{< figure src="/images/intro-to-rendering/raytracing/reflected_ray.svg" id="fig-reflected-ray" caption="A reflection ray traced from $\mathbf{p}$ in direction $\mathbf{r}$. The color it returns contributes to the color at $\mathbf{p}$." title="Reflection Ray" alt="Diagram showing a reflection ray" align="center" width="500px" >}}
 
 #### 3. Refraction Rays (Transmission)
-For transparent materials like glass, light bends as it passes through the surface boundary. According to **Snell's Law**, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ are related by the indices of refraction ($\eta$):
+Light entering a transparent material such as glass changes direction. By **Snell's law**, the angle of incidence $\theta_L$ and the angle of transmission $\theta_T$ satisfy the following, where $\eta_L$ is the refractive index of the medium the light leaves and $\eta_T$ that of the medium it enters (about $1.0$ for air and $1.5$ for glass) [[2]](#ref-2):
 $$ \eta_L \sin \theta_L = \eta_T \sin \theta_T $$
 
-To compute the transmission vector ${\color{#9C27B0}\mathbf{t}}$, we decompose it into components parallel and perpendicular to the surface normal $\mathbf{n}$. Let ${\color{#2196F3}\mathbf{v}}$ point from the surface back toward the incoming ray (i.e. ${\color{#2196F3}\mathbf{v}} = -\mathbf{d}$, where $\mathbf{d}$ is the ray direction), and let $\cos\theta_L = \mathbf{n} \cdot {\color{#2196F3}\mathbf{v}}$. Then:
+The transmitted direction ${\color{#9C27B0}\mathbf{t}}$ follows from splitting it into parts along and perpendicular to $\mathbf{n}$. With ${\color{#2196F3}\mathbf{v}} = -\mathbf{d}$ as above and $\cos\theta_L = \mathbf{n} \cdot {\color{#2196F3}\mathbf{v}}$,
 
 $$
 {\color{#9C27B0}\mathbf{t}} = \frac{\eta_L}{\eta_T}\left(-{\color{#2196F3}\mathbf{v}}\right) + \left(\frac{\eta_L}{\eta_T}\cos\theta_L - \cos\theta_T\right)\mathbf{n}
 $$
 
-where the transmitted cosine is recovered from Snell's Law:
+where, by Snell's law,
 
 $$
 \cos\theta_T = \sqrt{1 - \left(\frac{\eta_L}{\eta_T}\right)^2\!\left(1 - \cos^2\theta_L\right)}
 $$
 
-If the expression under the square root is **negative**, $\cos\theta_T$ has no real solution. This physical phenomenon is **Total Internal Reflection** — no light is transmitted; it is all reflected inside the object.
+If the value under the square root is negative, there is no transmitted ray: all the light is reflected. This is **total internal reflection**, and it can only happen when light goes from a denser to a less dense medium ($\eta_L > \eta_T$).
 
 
-{{< figure src="/images/intro-to-rendering/raytracing/snells_law.svg" id="fig-snells-law" caption="Snell's Law of refraction. Light bends when passing between media with different indices of refraction $\eta_L$ and $\eta_T$." title="Refraction and Snell's Law" alt="Diagram showing refraction" align="center" width="500px" >}}
+{{< figure src="/images/intro-to-rendering/raytracing/snells_law.svg" id="fig-snells-law" caption="Snell's law: light changes direction between media with refractive indices $\eta_L$ and $\eta_T$." title="Refraction and Snell's Law" alt="Diagram showing refraction" align="center" width="500px" >}}
 
 
-Here is the same scene rendered with full recursive ray tracing. Shadow rays now block direct light where occluded, and reflection rays on the chrome sphere pick up the environment. Compare with the local-only shaders above.
+The same scene with recursive ray tracing and an added glass sphere. Shadow rays now block the direct light, the chrome sphere reflects the scene, and rays refract through the glass sphere.
 
 {{< glsl >}}
 #version 300 es
@@ -1988,17 +1770,16 @@ float hitPlane(vec3 ro, vec3 rd, float y) {
     return t > 0.001 ? t : -1.0;
 }
 
-// mirrors GLSL built-in: r = d - 2*dot(d,n)*n
+// Same as GLSL reflect(): r = d - 2 (d.n) n, equal to 2 (n.v) n - v with v = -d
 vec3 myReflect(vec3 d, vec3 n) {
     return d - 2.0 * dot(d, n) * n;
 }
 
-// mirrors GLSL built-in: returns vec3(0) on TIR, so always guard with disc check first
-// eta = eta_incident / eta_transmitted, n points against d (into incident medium)
+// t = eta (-v) + (eta cosL - cosT) n with v = -d, eta = eta_L / eta_T, and n on the side of v.
+// The caller checks for total internal reflection (disc < 0) first.
 vec3 myRefract(vec3 d, vec3 n, float eta) {
     float cosL = dot(-d, n);
-    float disc = 1.0 - eta * eta * (1.0 - cosL * cosL);
-    // caller guarantees disc >= 0
+    float disc = 1.0 - eta * eta * (1.0 - cosL * cosL);   // cosT^2
     return eta * d + (eta * cosL - sqrt(disc)) * n;
 }
 
@@ -2025,9 +1806,8 @@ Hit traceScene(vec3 ro, vec3 rd) {
     t = hitPlane(ro, rd, -1.0);
     if (t > 0.0 && t < best.t) {
         vec3 p = ro + rd * t;
-        float check = step(0.5, fract(p.x * 0.5)) + step(0.5, fract(p.z * 0.5));
-        check = mod(check, 2.0);
-        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), check), 0.1, 0.0);
+        float ck = mod(floor(p.x) + floor(p.z), 2.0);
+        best = Hit(t, vec3(0,1,0), mix(vec3(0.3), vec3(0.7), ck), 0.1, 0.0);
     }
     return best;
 }
@@ -2037,13 +1817,13 @@ vec3 shade(Hit hit, vec3 p, vec3 rd) {
     vec3 l = normalize(lightPos - p);
     vec3 v = -rd;
 
-    // Shadow ray
+    // Shadow ray from p + eps n toward the light: in shadow, only the ambient term remains
     Hit sh = traceScene(p + hit.n * 0.01, l);
-    float shadow = (sh.t < length(lightPos - p)) ? 0.15 : 1.0;
+    float shadow = (sh.t < length(lightPos - p)) ? 0.0 : 1.0;
 
     float diff = max(dot(hit.n, l), 0.0) * shadow;
-    float spec = pow(max(dot(myReflect(-l, hit.n), v), 0.0), 64.0) * shadow;
-    return vec3(0.06) + hit.col * diff + vec3(0.7) * spec;
+    float spec = pow(max(dot(myReflect(-l, hit.n), v), 0.0), 48.0) * shadow;
+    return hit.col * 0.08 + hit.col * diff + vec3(0.7) * spec;
 }
 
 void main() {
@@ -2064,8 +1844,8 @@ void main() {
         vec3 p = ro + rd * hit.t;
 
         if (hit.ior > 0.0) {
-            // Dielectric: refract with TIR fallback
-            // If cosL < 0 the ray is already inside the sphere (exiting)
+            // Glass: refract, or reflect on total internal reflection.
+            // cosL < 0 means the ray is inside the sphere, leaving it.
             float cosL  = dot(hit.n, -rd);
             bool inside = cosL < 0.0;
             vec3  faceN = inside ? -hit.n :  hit.n;  // always points against rd
@@ -2079,13 +1859,13 @@ void main() {
                 rd = myReflect(rd, faceN);
             } else {
                 // Refract into / out of the medium
-                // rd = eta*d + (eta*cosL - sqrt(disc))*n  — derived in the section above
+                // t = eta (-v) + (eta cosL - cosT) n, as in the text
                 ro = p - faceN * 0.001;  // nudge into the new medium
                 rd = myRefract(rd, faceN, eta);
             }
-            atten *= 0.97; // slight absorption per bounce
+            atten *= 0.97; // a little absorption; no Fresnel reflection in this simple model
         } else {
-            // Opaque: local shading + spawn reflection ray
+            // Opaque: local shading, blended with a reflection ray by the reflectivity
             col  += atten * (1.0 - hit.refl) * shade(hit, p, rd);
             atten *= hit.refl;
             if (atten < 0.01) break;
@@ -2103,36 +1883,30 @@ void main() {
 
 ## Path Tracing
 
-Whitted ray tracing handles mirrors and hard shadows well, but it cannot capture the soft, diffuse inter-reflections that make real scenes look natural — colored light bleeding from a red wall onto a white floor, for example. **Path tracing** solves this by actually evaluating the rendering equation via Monte Carlo integration.
+Whitted ray tracing gives sharp shadows and mirror reflections, but no diffuse interreflection, such as red light from a red wall reaching a white floor. **Path tracing** solves the rendering equation with Monte Carlo integration.
 
-Instead of spawning deterministic shadow and reflection rays, the path tracer shoots the ray in a *random* direction sampled from the hemisphere at each bounce. Over hundreds or thousands of samples per pixel, the noisy estimates converge to the true solution of the rendering equation. This is the same technique used by production renderers in film (Arnold, RenderMan, Cycles).
+At each hit, a path tracer continues the path in a direction sampled at random over the hemisphere. Each path is a noisy estimate of the pixel's value, and the average over many paths per pixel converges to the solution of the rendering equation. Film renderers such as Arnold, RenderMan and Cycles are path tracers.
 
-The key ideas — Monte Carlo integration, importance sampling, and the mathematics of BRDFs — are covered in depth in the next post in this series: [A comprehensive look into the Importance Sampling and Path Guiding for Path Tracing](https://usharma002.github.io/posts/neural-importance-sampling-path-tracing/)
+Monte Carlo integration, importance sampling and BRDFs are covered in the next post: [Importance Sampling and Path Guiding for Path Tracing](/posts/neural-importance-sampling-path-tracing/).
 
 
 --- 
 
-The interactive below shows the same scene under different rendering paradigms. You can compare the local shading models (Phong and Blinn-Phong) — which calculate light per surface and ignore inter-object visibility — with global illumination models (Ray Tracing and Path Tracing), which trace ray paths recursively to simulate shadows, glossy reflections, and diffuse light transport.
+The widget below renders one scene four ways. Phong and Blinn-Phong use local shading only. Whitted ray tracing adds shadows and mirror reflections. Path tracing also includes diffuse interreflection (global illumination); its image gets less noisy as samples accumulate.
 
 ---
 
-<iframe src="/interactive/cornell_box_modes.html" loading="lazy" fetchpriority="low" title="Cornell box mode comparison demo" style="width:100%; max-width:860px; height:860px; background: transparent; display:block; margin: 1.5rem auto;"></iframe>
+<iframe src="/interactive/cornell_box_modes.html" title="Cornell box mode comparison demo" style="width:100%; max-width:860px; height:860px; background: transparent; display:block; margin: 1.5rem auto;"></iframe>
 
 ---
 
 ## Sphere Tracing
 
-As described in the SDF section above, **Sphere Tracing** (or Ray Marching) is the algorithm that turns the distance returned by an SDF into safe steps along a ray. Instead of solving an analytic equation, we evaluate the field at the current point, advance by that distance, and repeat.
-
-At the level of one march step, the update rule is:
+**Sphere tracing** [[6]](#ref-6) is the form of ray marching that uses the SDF value as the step size. Instead of solving an equation for the hit, it evaluates $f$ at the current point on the ray, advances by that distance, and repeats:
 
 $$ t_{k+1} = t_k + f({\color{#3273F6}\mathbf{o}} + t_k{\color{#FF4B4B}\mathbf{d}}) $$
 
-That equation is the heart of the method: the SDF tells us how far we can move along the ray without crossing a surface, so each iteration makes a safe, adaptive jump.
-
-The core loop is simple: march until the distance becomes smaller than an epsilon, or until the ray travels farther than the scene limit. The shader below is just one concrete implementation of that loop for a small scene.
-
-In pseudocode, the algorithm is easy to think about:
+The loop stops when $f$ falls below a small $\epsilon$ (a hit) or when $t$ exceeds a maximum distance (a miss):
 
 ```text
 SphereTrace(ray origin ro, ray direction rd):
@@ -2148,9 +1922,9 @@ SphereTrace(ray origin ro, ray direction rd):
     return miss
 ```
 
-The key idea is that the current SDF value is a guaranteed empty radius around the sample point, so the next evaluation can jump forward by exactly that amount. If the field is exact, this is extremely efficient. If the field is only a bound or has been distorted, the same loop still works, but you usually introduce a safety factor so the steps stay conservative.
+For an exact SDF or any 1-Lipschitz bound, the steps never cross the surface. If the function may overestimate the distance, for example after a deformation, each step is multiplied by a factor below 1.
 
-If you want to visualize what is happening, it helps to think of the ray as a sequence of expanding circles centered on the current sample point. Each march step uses the SDF value as the radius of the next safe jump, so the circles shrink as the ray gets close to the surface.
+In the widget below, each circle is centered on a sample point and has the SDF value as its radius. The circles get smaller as the ray approaches a surface.
 
 {{< glsl >}}
 #version 300 es
@@ -2179,7 +1953,7 @@ void main() {
     // Fixed ray origin at the top center
     vec2 ro = vec2(0.0, 0.8);
 
-    // Only ray direction animates / follows mouse
+    // The ray direction follows the mouse, or animates without it
     vec2 target = (u_mouse.x <= 0.0 && u_mouse.y <= 0.0)
         ? vec2(0.7 * cos(u_time * 0.55), 0.15 + 0.3 * sin(u_time * 0.8))
         : (2.0 * u_mouse - u_resolution.xy) / u_resolution.x;
@@ -2199,7 +1973,7 @@ void main() {
         length(p - (ro + clamp(dot(p - ro, rd), 0.0, 4.0) * rd)));
     col = mix(col, vec3(1.0), rayLine * 0.18);
 
-    // --- Sphere tracing circles (20 steps) ---
+    // --- Sphere tracing: one circle of radius f(p) per step (20 steps) ---
     vec2 marchP = ro;
     float t = 0.0;
     for (int i = 0; i < 20; i++) {
@@ -2228,7 +2002,7 @@ void main() {
 }
 {{< /glsl >}}
 
-Here is the same two-sphere scene, shown through that marching loop.
+The two-sphere scene from the shading section, rendered by sphere tracing, with shadow rays that are also sphere traced.
 
 {{< glsl >}}
 #version 300 es
@@ -2245,7 +2019,7 @@ float map(vec3 p) {
     return min(min(s1, s2), fl);
 }
 
-// Gradient-based normal estimation
+// Normal from central differences
 vec3 getNormal(vec3 p) {
     vec2 e = vec2(0.001, 0.0);
     return normalize(vec3(
@@ -2255,12 +2029,13 @@ vec3 getNormal(vec3 p) {
     ));
 }
 
-// Shadow ray via sphere tracing
-float calcShadow(vec3 ro, vec3 rd) {
+// Shadow ray by sphere tracing: 0 if it hits something before the light, 1 otherwise
+float calcShadow(vec3 ro, vec3 rd, float maxT) {
     float t = 0.02;
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 60; i++) {
+        if (t > maxT) break;
         float h = map(ro + rd * t);
-        if (h < 0.001) return 0.15;
+        if (h < 0.001) return 0.0;
         t += h;
     }
     return 1.0;
@@ -2303,7 +2078,7 @@ void main() {
         vec3 v = normalize(ro - p);
         vec3 r = reflect(-l, n);
 
-        float shadow = calcShadow(p + n * 0.01, l);
+        float shadow = calcShadow(p + n * 0.01, l, length(lightPos - p));
         float diff = max(dot(n, l), 0.0) * shadow;
         float spec = pow(max(dot(r, v), 0.0), 48.0) * shadow;
         col = c * 0.08 + c * diff + vec3(0.7) * spec;
@@ -2320,7 +2095,7 @@ void main() {
 
 1. <span id="ref-1"></span>Szeliski, Richard. *Computer Vision: Algorithms and Applications*. 2nd ed., Springer, 2022. [https://szeliski.org/Book/](https://szeliski.org/Book/).
 
-2. <span id="ref-2"></span>Lengyel, Eric. *Mathematics for 3D Game Programming and Computer Graphics*. 3rd ed., Course Technology, 2011.
+2. <span id="ref-2"></span>Lengyel, Eric. *Mathematics for 3D Game Programming and Computer Graphics*. 3rd ed., Course Technology PTR, 2012.
 
 3. <span id="ref-3"></span>Ahn, Song Ho. *"OpenGL Projection Matrix."* [https://www.songho.ca/opengl/gl_projectionmatrix.html](https://www.songho.ca/opengl/gl_projectionmatrix.html).
 

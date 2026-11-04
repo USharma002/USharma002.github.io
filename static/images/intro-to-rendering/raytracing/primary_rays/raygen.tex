@@ -120,7 +120,7 @@
       \foreach \ix in {0,...,4} {
         \foreach \iy in {0,...,4} {
           \pgfmathsetmacro{\rcol}{0.1 + 0.8*(\ix/4)}
-          \pgfmathsetmacro{\gcol}{0.1 + 0.8*((4 - \iy)/4)}
+          \pgfmathsetmacro{\gcol}{0.1 + 0.8*(\iy/4)}   % same color per pixel in every panel: only its coordinates change
           \definecolor{pcol}{rgb}{\rcol, \gcol, 0.2}
           
           \fill[pcol] (\ix + 0.5, 4.5 - \iy) circle (3.5pt);
@@ -171,7 +171,7 @@
       \foreach \ix in {0,...,4} {
         \foreach \iy in {0,...,4} {
           \pgfmathsetmacro{\rcol}{0.1 + 0.8*(\ix/4)}
-          \pgfmathsetmacro{\gcol}{0.1 + 0.8*((4 - \iy)/4)}
+          \pgfmathsetmacro{\gcol}{0.1 + 0.8*(\iy/4)}   % same color per pixel in every panel: only its coordinates change
           \definecolor{pcol}{rgb}{\rcol, \gcol, 0.2}
           \fill[pcol] (\ix + 0.5, 4.5 - \iy) circle (4pt);
           \node[color=black!80, font=\small, anchor=north, inner sep=5pt] 
