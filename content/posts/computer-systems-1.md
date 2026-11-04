@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Computer Systems I: Digital Electronics"
-date: "2026-11-03"
+date: "2026-11-03T10:00:00"
 description: "Lecture notes on digital electronics, from Boolean algebra to flip-flops and counters."
 summary: "Part I of the Computer Systems series: digital electronics (Boolean algebra, duality, canonical forms, K-maps, NAND/NOR implementation, hazards), decoders, encoders and multiplexers, number systems and codes, number representation, adders, multiplication and Booth's algorithm, IEEE 754 floating point, latches and flip-flops, registers, counters and state machines."
 tags: ["Digital Electronics", "Digital Logic"]

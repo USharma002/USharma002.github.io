@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Computer Systems III: Computer Architecture"
-date: "2026-11-03"
+date: "2026-11-03T12:00:00"
 description: "Lecture notes on computer architecture and organization."
 summary: "Part III of the Computer Systems series: computer architecture (basic organization, instruction set architecture and MIPS32, performance and Amdahl's law, design of the control unit, the MIPS32 datapath, SRAM and DRAM, memory interfacing and interleaving, the memory hierarchy and cache memory, I/O organization with interrupts and DMA, buses and USB, pipelining and pipeline hazards, instruction-level parallelism with dynamic scheduling and speculation, vector processors and SIMD extensions, the roofline model, multithreading, multicore processors and cache coherence)."
 tags: ["Computer Architecture"]

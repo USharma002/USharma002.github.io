@@ -1,7 +1,7 @@
 ---
 author: ["Utkarsh Sharma"]
 title: "Computer Systems II: Operating Systems"
-date: "2026-11-03"
+date: "2026-11-03T11:00:00"
 description: "Lecture notes on operating systems, following Silberschatz, Galvin and Gagne."
 summary: "Part II of the Computer Systems series: operating systems (dual-mode operation, system calls, processes, the PCB, scheduling queues and schedulers, context switches, process creation and termination, threads, CPU scheduling algorithms, deadlocks with the Banker's algorithm and deadlock detection, process synchronization, the classic synchronization problems, memory management, paging and virtual memory, multi-level page tables, frame allocation and thrashing, memory-mapped files, kernel memory allocation (buddy system and slab allocation), disk structure, scheduling and management, directory structures, file allocation methods and free-space management)."
 tags: ["Operating Systems"]
