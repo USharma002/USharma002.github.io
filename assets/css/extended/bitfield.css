@@ -1,0 +1,22 @@
+/* Binary words drawn by the bits shortcode */
+.bitfield { display: flex; align-items: flex-start; gap: 6px; overflow-x: auto; margin: .6rem 0; padding-bottom: 4px; }
+.bitfield > :first-child { margin-left: auto; }
+.bitfield > :last-child { margin-right: auto; }
+.bitfield .bf-name { min-width: 4.5rem; text-align: right; padding-right: 4px; line-height: 26px; font-size: 15px; white-space: nowrap; }
+.bitfield .bf-field { --bf: 59, 130, 246; flex: none; }
+.bitfield .bf-f0 { --bf: 239, 68, 68; }
+.bitfield .bf-f1 { --bf: 59, 130, 246; }
+.bitfield .bf-f2 { --bf: 34, 197, 94; }
+.bitfield .bf-f3 { --bf: 245, 158, 11; }
+.bitfield .bf-cells { display: flex; }
+.bitfield .bf-cells span {
+  width: 17px; height: 26px; display: inline-flex; align-items: center; justify-content: center;
+  font-family: "Source Code Pro", monospace; font-size: 14px;
+  background: rgba(var(--bf), .14); border: 1px solid rgba(var(--bf), .85); border-right-width: 0;
+}
+.bitfield .bf-cells span:last-child { border-right-width: 1px; }
+.bitfield .bf-cells span.bf-gap { width: 22px; letter-spacing: -1px; }
+.bitfield .bf-label { text-align: center; font-size: 12px; line-height: 1.25; margin-top: 3px; color: rgb(var(--bf)); }
+.bitfield .bf-size { opacity: .75; }
+.bitfield .bf-note { text-align: center; font-size: 12px; line-height: 1.25; margin-top: 2px; }
+.bitfield .bf-note p { margin: 0; }

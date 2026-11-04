@@ -1,0 +1,15 @@
+/* Karnaugh maps drawn by the kmap shortcode */
+.kmap-svg { color: var(--primary); max-width: 100%; height: auto; }
+.kmap-svg .grid { fill: none; stroke: currentColor; stroke-width: 1; opacity: .55; }
+.kmap-svg .frame { fill: none; stroke: currentColor; stroke-width: 1.4; }
+.kmap-svg text { fill: currentColor; }
+.kmap-svg .hdr { font-size: 13px; text-anchor: middle; }
+.kmap-svg .var { font-size: 14px; font-style: italic; }
+.kmap-svg .val { font-size: 19px; text-anchor: middle; }
+.kmap-svg .idx { font-size: 9px; opacity: .5; }
+.kmap-svg .kg { stroke-width: 2.2; fill-opacity: .06; }
+.kmap-svg .kg.dashed { stroke-dasharray: 6 4; }
+.kmap-svg .kg0 { stroke: #3b82f6; fill: #3b82f6; }
+.kmap-svg .kg1 { stroke: #ef4444; fill: #ef4444; }
+.kmap-svg .kg2 { stroke: #22c55e; fill: #22c55e; }
+.kmap-svg .kg3 { stroke: #f59e0b; fill: #f59e0b; }

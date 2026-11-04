@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ripple-Carry vs Carry-Lookahead Timing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;600&display=swap">
+<style>
+    :root {
+        --bg: transparent;
+        --card-bg: #ffffff;
+        --text: #374151;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --one: #2563eb;
+        --settled: #374151;
+        --pending: #9ca3af;
+        --wrong: #ef4444;
+        --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --mono: "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
+    }
+    /* Minimal, diagram-like: blog fonts, thin lines, transparent background */
+    body { margin: 0; padding: 4px 2px; font-family: 'Merriweather', Georgia, serif; font-weight: 300; font-size: 14px; background: transparent; color: var(--text); }
+    .card { padding: 0; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
+    button, select { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 0; border: 1px solid var(--muted); background: transparent; color: var(--text); cursor: pointer; }
+    button:hover, select:hover { border-color: var(--text); }
+    button.on { background: var(--text); border-color: var(--text); color: var(--card-bg); }
+    .grp { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+    .lab { font-size: 13px; color: var(--muted); min-width: 1.5em; }
+    .bits { display: flex; gap: 3px; }
+    .bits button { width: 26px; padding: 3px 0; font-family: var(--mono); }
+    .seg button { margin-left: -1px; }
+    input[type=range] { flex: 1; min-width: 160px; accent-color: var(--one); }
+    .tnow { font-family: var(--mono); font-size: 14px; min-width: 6.5em; }
+    canvas { width: 100%; display: block; }
+    .readout { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; margin-top: 6px; }
+    .readout b { font-family: var(--mono); }
+    .ok { color: var(--settled); } .bad { color: var(--wrong); }
+    .legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); margin-top: 4px; flex-wrap: wrap; font-style: italic; }
+    .sw { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--text); margin-right: 5px; vertical-align: 3px; }
+    .sw.pend { border-top: 2px dashed var(--muted); }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="row">
+        <div class="grp seg" id="mode">
+            <button data-m="rca" class="on">Ripple-carry</button><button data-m="cla">Carry-lookahead</button>
+        </div>
+        <div class="grp">bits
+            <select id="nbits"><option>4</option><option selected>8</option></select>
+        </div>
+        <div class="grp">preset
+            <select id="preset">
+                <option value="worst">worst case: 0111…1 + 1</option>
+                <option value="random">random</option>
+                <option value="small">no long carry: 0101… + 0010…</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <span class="lab">A</span><div class="bits" id="bitsA"></div>
+        <span class="lab">B</span><div class="bits" id="bitsB"></div>
+    </div>
+    <div class="row">
+        <button id="play">▶ Play</button>
+        <button id="stepb">Step</button>
+        <input type="range" id="time" min="0" max="20" value="0">
+        <span class="tnow" id="tnow">t = 0</span>
+    </div>
+    <canvas id="chain" height="170"></canvas>
+    <canvas id="wave" height="300"></canvas>
+    <div class="readout" id="readout"></div>
+    <div class="legend">
+        <span><span class="sw"></span>settled (guaranteed final value)</span>
+        <span><span class="sw pend"></span>still waiting for its inputs</span>
+        <span>Inputs switch from 0 + 0 to A + B at t = 0; every gate has a delay of 1.</span>
+    </div>
+</div>
+<script>
+    // --- Theme Detection (matches the other interactive pages) ---
+    let colors = {};
+    function readColors() {
+        const cs = getComputedStyle(document.documentElement);
+        ['--text', '--muted', '--border', '--one', '--settled', '--pending', '--wrong', '--card-bg']
+            .forEach(k => colors[k.slice(2)] = cs.getPropertyValue(k).trim());
+    }
+    function detectTheme() {
+        try {
+            if (window.parent === window) throw 0;  // standalone: keep the light defaults
+            const bg = getComputedStyle(window.parent.document.body).backgroundColor;
+            document.documentElement.style.background = bg;  // match the page, or the browser paints the iframe white
+            const rgb = bg.match(/\d+/g);
+            if (rgb) {
+                const dark = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 < 128;
+                const set = (k, v) => document.documentElement.style.setProperty(k, v);
+                set('--card-bg', dark ? '#2d2d2d' : '#ffffff');
+                set('--text', dark ? '#e4e4e4' : '#374151');
+                set('--muted', dark ? '#a3a3a3' : '#6b7280');
+                set('--border', dark ? '#404040' : '#e5e7eb');
+                set('--one', dark ? '#60a5fa' : '#2563eb');
+                set('--settled', dark ? '#e4e4e4' : '#374151');
+                set('--pending', dark ? '#737373' : '#9ca3af');
+            }
+        } catch (e) { /* standalone */ }
+        readColors();
+        draw();
+    }
+
+    const FONTF = "'Merriweather', Georgia, serif";
+
+    // --- State ---
+    let n = 8, mode = 'rca', A = [], B = [], t = 0, timer = null, sim = null;
+    const bitsOf = (v) => Array.from({ length: n }, (_, i) => (v >> i) & 1);      // index 0 = LSB
+    const num = (bits) => bits.reduce((acc, b, i) => acc + (b << i), 0);
+
+    function preset(kind) {
+        if (kind === 'worst') { A = bitsOf((1 << (n - 1)) - 1); B = bitsOf(1); }   // 0111..1 + 0..01
+        else if (kind === 'small') { A = bitsOf(0x55 & ((1 << n) - 1)); B = bitsOf(0x22 & ((1 << n) - 1)); }
+        else { A = bitsOf(Math.floor(Math.random() * (1 << n))); B = bitsOf(Math.floor(Math.random() * (1 << n))); }
+    }
+
+    // --- Delay models (unit gate delay), from the notes ---
+    // Ripple-carry with the two-level full adder:  C[i+1](t) = maj(a, b, C[i](t-2)),  S[i](t) = a ^ b ^ C[i](t-3)
+    // Carry-lookahead: P, G need 2 levels, every carry is a 2-level AND-OR of P, G, C0, and S = P ^ C is 2 more levels.
+    function simulate() {
+        const T = mode === 'rca' ? 2 * n + 3 : 8;
+        const hist = [];                         // hist[t] = { C: [C0..Cn], S: [S0..S(n-1)] }
+        const inA = (tt) => tt < 0 ? Array(n).fill(0) : A;
+        const inB = (tt) => tt < 0 ? Array(n).fill(0) : B;
+        const at = (tt) => hist[Math.max(0, tt)] || hist[0];
+        // t = 0 starts from the settled state of 0 + 0: every signal is 0
+        hist[0] = { C: Array(n + 1).fill(0), S: Array(n).fill(0) };
+        for (let tt = 1; tt <= T; tt++) {
+            const C = [0], S = [];
+            if (mode === 'rca') {
+                for (let i = 0; i < n; i++) {
+                    const a2 = inA(tt - 2)[i], b2 = inB(tt - 2)[i], c2 = at(tt - 2).C[i];
+                    C[i + 1] = (a2 & b2) | (a2 & c2) | (b2 & c2);
+                    S[i] = inA(tt - 3)[i] ^ inB(tt - 3)[i] ^ at(tt - 3).C[i];
+                }
+            } else {
+                const P = (tt2) => inA(tt2).map((a, i) => a ^ inB(tt2)[i]);
+                const G = (tt2) => inA(tt2).map((a, i) => a & inB(tt2)[i]);
+                // carries from P, G that were ready 2 levels earlier (P, G themselves take 2 levels)
+                const p = P(tt - 4), g = G(tt - 4);
+                for (let i = 0; i < n; i++) C[i + 1] = g[i] | (p[i] & C[i]);   // same value as the unrolled 2-level sum
+                const ps = P(tt - 4);
+                const cs = at(tt - 2).C;
+                for (let i = 0; i < n; i++) S[i] = ps[i] ^ cs[i];
+            }
+            hist[tt] = { C, S };
+        }
+        const final = hist[T];
+        // "Ready" = the time from which the circuit guarantees the final value (its inputs are ready and
+        // its gate levels have passed), not the last time the value happened to change.
+        // Ripple-carry: C(i+1) two levels after C(i), S(i) three levels after C(i). Lookahead: C at 4, S at 6.
+        const readyC = final.C.map((_, i) => i === 0 ? 0 : mode === 'rca' ? 2 * i : 4);
+        const readyS = final.S.map((_, i) => mode === 'rca' ? 2 * i + 3 : 6);
+        return { hist, T, final, readyS, readyC };
+    }
+
+    // --- Drawing ---
+    function fit(cv) {
+        const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = +(cv.dataset.h ||= cv.getAttribute('height'));
+        cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + 'px';
+        const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, w, h };
+    }
+
+    // Carry-lookahead mode: one column per bit, with the P/G row, the shared lookahead block and the sum row.
+    // The stage working at time t is highlighted, and the line at the bottom says which of the 6 levels it is.
+    const LEVELS = ['inputs change', 'G = ab (AND); first level of P = a ⊕ b', 'P = a ⊕ b done (OR level)',
+        'lookahead: AND terms', 'lookahead: OR gives every carry Cᵢ', 'sum: first level of Pᵢ ⊕ Cᵢ', 'sum Sᵢ = Pᵢ ⊕ Cᵢ done'];
+    function drawLookahead() {
+        const cv = document.getElementById('chain');
+        cv.dataset.h = 330;
+        const { ctx, w, h } = fit(cv);
+        ctx.clearRect(0, 0, w, h);
+        const cur = sim.hist[Math.min(t, sim.T)];
+        const AMBER = '#f59e0b';
+        const padL = 70, padR = 30;
+        const bw = Math.min(70, (w - padL - padR) / n * 0.72), gap = (w - padL - padR - bw * n) / (n - 1 || 1);
+        const yPG = 46, hPG = 42, yLA = 132, hLA = 36, ySum = 214, rS = 14;
+        const stage = (k) => ({ done: t >= 2 * k, now: t > 0 && t <= 6 && Math.ceil(t / 2) === k });
+        const look = (k) => {
+            const st = stage(k);
+            ctx.setLineDash(st.now || st.done ? [] : [4, 3]);
+            ctx.strokeStyle = st.now ? AMBER : st.done ? colors.settled : colors.pending;
+            ctx.lineWidth = st.now ? 2.2 : 1.4;
+            return st;
+        };
+        const ink = (ok) => ok ? colors.settled : colors.pending;
+        const line = (x0, y0, x1, y1) => { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); };
+        const label = (str, x, y, color, font) => { ctx.fillStyle = color; ctx.font = font || `12px ${FONTF}`; ctx.fillText(str, x, y); };
+        const amberFill = 'rgba(245, 158, 11, 0.12)';
+        const P = A.map((a, i) => a ^ B[i]), G = A.map((a, i) => a & B[i]);
+        const laX0 = padL - 8, laX1 = w - padR + 8;
+        ctx.textAlign = 'center';
+
+        for (let k = 0; k < n; k++) {
+            const i = n - 1 - k, x = padL + k * (bw + gap), cx = x + bw / 2;
+            label(`a${sub(i)} b${sub(i)}`, cx, 14, colors.muted, `11px ${FONTF}`);
+            label(`${A[i]} ${B[i]}`, cx, 30, colors.muted, `11px ${FONTF}`);
+            // stage 1: P_i, G_i
+            const s1 = look(1);
+            ctx.beginPath(); ctx.rect(x, yPG, bw, hPG);
+            if (s1.now) { ctx.fillStyle = amberFill; ctx.fill(); }
+            ctx.stroke(); ctx.setLineDash([]);
+            label(`P${sub(i)} = ${t >= 2 ? P[i] : '?'}`, cx, yPG + 17, ink(t >= 2), `11px ${FONTF}`);
+            label(`G${sub(i)} = ${t >= 1 ? G[i] : '?'}`, cx, yPG + 33, ink(t >= 1), `11px ${FONTF}`);
+            ctx.strokeStyle = ink(s1.done); ctx.lineWidth = 1.4; ctx.setLineDash(s1.done ? [] : [4, 3]);
+            line(cx, yPG + hPG, cx, yLA);                          // P, G down into the lookahead block
+            // carry C_i out of the lookahead block, down to the sum
+            const cOk = t >= sim.readyC[i];
+            ctx.strokeStyle = ink(cOk); ctx.setLineDash(cOk ? [] : [4, 3]);
+            line(cx, yLA + hLA, cx, ySum - rS);
+            ctx.setLineDash([]); ctx.textAlign = 'left';
+            label(`C${sub(i)} = ${cur.C[i]}`, cx + 5, yLA + hLA + 22, ink(cOk), `11px ${FONTF}`);
+            ctx.textAlign = 'center';
+            // stage 3: S_i = P_i xor C_i
+            const s3 = look(3);
+            ctx.beginPath(); ctx.arc(cx, ySum, rS, 0, 2 * Math.PI);
+            if (s3.now) { ctx.fillStyle = amberFill; ctx.fill(); }
+            ctx.stroke(); ctx.setLineDash([]);
+            ctx.strokeStyle = ink(s3.done); ctx.lineWidth = 1.2;
+            line(cx - rS, ySum, cx + rS, ySum); line(cx, ySum - rS, cx, ySum + rS);
+            const sOk = t >= sim.readyS[i];
+            label(cur.S[i], cx, ySum + 40, ink(sOk), `bold 16px ${FONTF}`);
+            label(`S${sub(i)} ready t=${sim.readyS[i]}`, cx, ySum + 58, colors.muted, `11px ${FONTF}`);
+        }
+        // stage 2: one lookahead block computing every carry from P, G, C0
+        const s2 = look(2);
+        ctx.beginPath(); ctx.rect(laX0, yLA, laX1 - laX0, hLA);
+        if (s2.now) { ctx.fillStyle = amberFill; ctx.fill(); }
+        ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = colors['card-bg'];
+        const title = 'carry lookahead: Cᵢ₊₁ = Gᵢ + PᵢGᵢ₋₁ + … + Pᵢ⋯P₀C₀';
+        ctx.font = `12px ${FONTF}`;
+        const tw = ctx.measureText(title).width + 16;
+        ctx.fillRect(w / 2 - tw / 2, yLA + 8, tw, 20);                  // keep the title readable over the wires
+        label(title, w / 2, yLA + 23, ink(s2.done || s2.now));
+        // carry out on the left (C0 = 0 is shown on bit 0's carry wire)
+        ctx.strokeStyle = ink(s2.done); ctx.lineWidth = 1.4; ctx.setLineDash(s2.done ? [] : [4, 3]);
+        line(laX0, yLA + hLA / 2, 6, yLA + hLA / 2); ctx.setLineDash([]);
+        ctx.textAlign = 'left';
+        label(`C${sub(n)} = ${cur.C[n]}`, 2, yLA - 6, ink(s2.done), `11px ${FONTF}`);
+        // stage levels in the left margin, bold for the stage that is working now
+        ctx.textAlign = 'left';
+        [['levels 1–2', yPG + 25, 1], ['levels 3–4', yLA - 6, 2], ['levels 5–6', ySum + 4, 3]].forEach(([str, y, k]) => {
+            if (k === 2) return;  // the lookahead block's label sits on its own row, see below
+            const st = stage(k);
+            label(str, 2, y, st.now ? AMBER : colors.muted, `${st.now ? 'bold ' : ''}italic 10px ${FONTF}`);
+        });
+        const st2 = stage(2);
+        label('levels 3–4', 2, yLA + hLA + 22, st2.now ? AMBER : colors.muted, `${st2.now ? 'bold ' : ''}italic 10px ${FONTF}`);
+        // where we are
+        ctx.textAlign = 'center';
+        const lv = Math.min(t, 6);
+        label(lv === 0 ? 't = 0: inputs change; nothing has passed a gate yet'
+            : `t = ${t}: level ${lv} of 6, ${LEVELS[lv]}${t > 6 ? ' (all settled)' : ''}`, w / 2, h - 8, colors.text, `italic 12px ${FONTF}`);
+    }
+
+    function drawChain() {
+        const cv = document.getElementById('chain');
+        cv.dataset.h = 170;
+        const { ctx, w, h } = fit(cv);
+        ctx.clearRect(0, 0, w, h);
+        const cur = sim.hist[Math.min(t, sim.T)], fin = sim.final;
+        const pad = 34, bw = Math.min(64, (w - pad * 2) / n * 0.62), gap = (w - pad * 2 - bw * n) / (n - 1 || 1);
+        ctx.font = '12px ' + FONTF;
+        ctx.textAlign = 'center';
+        for (let k = 0; k < n; k++) {
+            const i = n - 1 - k;                       // MSB on the left, like the notes
+            const x = pad + k * (bw + gap), y = 52;
+            const sOk = t >= sim.readyS[i];
+            ctx.strokeStyle = colors.text; ctx.lineWidth = 1.4;
+            ctx.fillStyle = colors['card-bg'];
+            ctx.beginPath(); ctx.rect(x, y, bw, 44); ctx.stroke();
+            ctx.fillStyle = colors.text;
+            ctx.fillText(`FA${i}`, x + bw / 2, y + 26);
+            ctx.fillStyle = colors.muted;
+            ctx.fillText(`${A[i]} ${B[i]}`, x + bw / 2, y - 18);
+            ctx.fillText(`a${sub(i)} b${sub(i)}`, x + bw / 2, y - 32);
+            // sum bit
+            ctx.fillStyle = sOk ? colors.settled : colors.pending;
+            ctx.font = 'bold 15px ' + FONTF;
+            ctx.fillText(cur.S[i], x + bw / 2, y + 68);
+            ctx.font = '11px ' + FONTF;
+            ctx.fillStyle = colors.muted;
+            ctx.fillText(`S${sub(i)} ready t=${sim.readyS[i]}`, x + bw / 2, y + 84);
+            ctx.font = '12px ' + FONTF;
+            // carry into this stage from the right
+            const cx0 = x + bw, cx1 = k === n - 1 ? w - 6 : x + bw + gap;
+            const cOk = t >= sim.readyC[i];
+            ctx.strokeStyle = cOk ? colors.settled : colors.pending; ctx.lineWidth = cur.C[i] ? 2.6 : 1.2; ctx.setLineDash(cOk ? [] : [4, 3]);
+            ctx.beginPath(); ctx.moveTo(cx1, y + 22); ctx.lineTo(cx0 + 4, y + 22); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.beginPath(); ctx.moveTo(cx0 + 4, y + 22); ctx.lineTo(cx0 + 10, y + 17); ctx.lineTo(cx0 + 10, y + 27); ctx.closePath();
+            ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+            ctx.fillStyle = cOk ? colors.settled : colors.pending;
+            ctx.fillText(`C${sub(i)}=${cur.C[i]}`, (cx0 + cx1) / 2 + 3, y + 14);
+        }
+        // carry out of the MSB
+        const cOk = t >= sim.readyC[n];
+        ctx.strokeStyle = cOk ? colors.settled : colors.pending; ctx.lineWidth = cur.C[n] ? 2.6 : 1.2; ctx.setLineDash(cOk ? [] : [4, 3]);
+        ctx.beginPath(); ctx.moveTo(pad, 74); ctx.lineTo(6, 74); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = ctx.strokeStyle; ctx.textAlign = 'left';
+        ctx.fillText(`C${sub(n)}=${cur.C[n]}`, 2, 66);
+    }
+
+    function drawWave() {
+        const { ctx, w, h } = fit(document.getElementById('wave'));
+        ctx.clearRect(0, 0, w, h);
+        const rows = [];
+        for (let i = n - 1; i >= 0; i--) rows.push({ key: 'S', i, name: `S${sub(i)}` });
+        for (let i = n; i >= 1; i--) if (mode === 'rca' || i === n || n <= 4) rows.push({ key: 'C', i, name: `C${sub(i)}` });
+        const left = 40, right = 10, top = 18, rowH = Math.min(18, (h - top - 20) / rows.length);
+        const T = sim.T, dx = (w - left - right) / T;
+        ctx.font = '11px ' + FONTF;
+        ctx.textAlign = 'center'; ctx.fillStyle = colors.muted;
+        for (let tt = 0; tt <= T; tt++) {
+            const x = left + tt * dx;
+            ctx.fillText(tt, x, 12);
+            ctx.strokeStyle = colors.border; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, top + rows.length * rowH); ctx.stroke();
+        }
+        rows.forEach((r, k) => {
+            const y = top + k * rowH, hi = y + 3, lo = y + rowH - 4;
+            ctx.textAlign = 'right'; ctx.fillStyle = colors.text;
+            ctx.fillText(r.name, left - 6, y + rowH / 2 + 4);
+            const ready = r.key === 'S' ? sim.readyS[r.i] : sim.readyC[r.i];
+            for (let tt = 0; tt < T; tt++) {
+                const v = sim.hist[tt][r.key][r.i], v2 = sim.hist[tt + 1][r.key][r.i];
+                const x0 = left + tt * dx, x1 = x0 + dx;
+                ctx.globalAlpha = tt + 1 > t ? 0.25 : 1;
+                const settled = tt + 1 > ready;
+                ctx.strokeStyle = settled ? colors.settled : colors.pending; ctx.lineWidth = 1.5; ctx.setLineDash(settled ? [] : [4, 3]);
+                ctx.beginPath(); ctx.moveTo(x0, v ? hi : lo); ctx.lineTo(x1, v ? hi : lo);
+                if (v2 !== v) ctx.lineTo(x1, v2 ? hi : lo);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                if (v) { ctx.fillStyle = colors.one; ctx.globalAlpha *= 0.10; ctx.fillRect(x0, hi, dx, lo - hi); }
+                ctx.globalAlpha = 1;
+            }
+        });
+        // time cursor
+        const x = left + Math.min(t, T) * dx;
+        ctx.strokeStyle = colors.wrong; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x, top - 4); ctx.lineTo(x, top + rows.length * rowH + 4); ctx.stroke();
+        if (mode !== 'rca' && n > 4) {
+            ctx.textAlign = 'left'; ctx.fillStyle = colors.muted;
+            ctx.fillText('(only the carry out Cₙ is shown; every carry settles at the same time)', left, top + rows.length * rowH + 14);
+        }
+    }
+
+    const sub = (i) => String(i).replace(/\d/g, d => '₀₁₂₃₄₅₆₇₈₉'[d]);
+
+    function draw() {
+        if (!sim) return;
+        if (mode === 'cla') drawLookahead(); else drawChain();
+        drawWave();
+        const cur = sim.hist[Math.min(t, sim.T)];
+        const shown = num(cur.S) + (cur.C[n] << n), correct = num(A) + num(B);
+        const done = Math.max(...sim.readyS, sim.readyC[n]);
+        document.getElementById('readout').innerHTML =
+            `<span>A + B = ${num(A)} + ${num(B)} = <b>${correct}</b></span>` +
+            `<span>output at t = ${t}: <b class="${shown === correct ? 'ok' : 'bad'}">${shown}</b></span>` +
+            `<span>all outputs settled at <b>t = ${done}</b> (${mode === 'rca' ? `ripple: up to 2n + 1 = ${2 * n + 1}` : 'lookahead: always 6'})</span>`;
+        document.getElementById('tnow').textContent = `t = ${t}`;
+        document.getElementById('time').value = t;
+    }
+
+    function rebuild() {
+        sim = simulate();
+        const slider = document.getElementById('time');
+        slider.max = sim.T; t = Math.min(t, sim.T);
+        renderBits();
+        draw();
+    }
+
+    function renderBits() {
+        ['A', 'B'].forEach(name => {
+            const arr = name === 'A' ? A : B;
+            const el = document.getElementById('bits' + name);
+            el.innerHTML = '';
+            for (let i = n - 1; i >= 0; i--) {
+                const b = document.createElement('button');
+                b.textContent = arr[i]; b.title = `${name}${i}`;
+                b.classList.toggle('on', arr[i] === 1);
+                b.onclick = () => { arr[i] ^= 1; t = 0; rebuild(); };
+                el.appendChild(b);
+            }
+        });
+    }
+
+    function play() {
+        const btn = document.getElementById('play');
+        if (timer) { clearInterval(timer); timer = null; btn.textContent = '▶ Play'; return; }
+        if (t >= sim.T) t = 0;
+        btn.textContent = '❚❚ Pause';
+        timer = setInterval(() => {
+            if (t >= sim.T) { clearInterval(timer); timer = null; btn.textContent = '▶ Play'; return; }
+            t++; draw();
+        }, 450);
+    }
+
+    document.getElementById('play').onclick = play;
+    document.getElementById('stepb').onclick = () => { if (t < sim.T) { t++; draw(); } };
+    document.getElementById('time').oninput = (e) => { t = +e.target.value; draw(); };
+    document.getElementById('nbits').onchange = (e) => { n = +e.target.value; preset(document.getElementById('preset').value); t = 0; rebuild(); };
+    document.getElementById('preset').onchange = (e) => { preset(e.target.value); t = 0; rebuild(); };
+    document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
+        document.querySelectorAll('#mode button').forEach(x => x.classList.toggle('on', x === b));
+        mode = b.dataset.m; t = 0; rebuild();
+    });
+    window.addEventListener('resize', draw);
+
+    preset('worst');
+    readColors();
+    rebuild();
+    setInterval(detectTheme, 1000);
+    detectTheme();
+</script>
+</body>
+</html>

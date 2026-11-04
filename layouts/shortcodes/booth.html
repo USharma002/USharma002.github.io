@@ -1,0 +1,89 @@
+{{/* Booth encoding of a multiplier, optionally with partial products.
+     q: multiplier bits (MSB first), read as two's complement
+     m: optional multiplicand bits; when given, the basic shift-and-add partial
+        products are drawn next to Booth's, both as 2n-bit two's complement rows.
+     Styles live in assets/css/extended/booth.css. */}}
+{{- $qs := split (.Get "q") "" -}}
+{{- $n := len $qs -}}
+
+{{- /* digit j = (bit to its right) - (bit j), with a 0 appended right of the LSB */ -}}
+{{- $digits := slice -}}
+{{- $qval := 0 -}}
+{{- $dval := 0 -}}
+{{- range $j, $b := $qs -}}
+  {{- $right := 0 -}}
+  {{- if lt $j (sub $n 1) }}{{ $right = int (index $qs (add $j 1)) }}{{ end -}}
+  {{- $d := sub $right (int $b) -}}
+  {{- $digits = $digits | append $d -}}
+  {{- $qval = add (mul $qval 2) (int $b) -}}
+  {{- $dval = add $dval (mul $d (int (math.Pow 2 (sub (sub $n 1) $j)))) -}}
+{{- end -}}
+{{- if eq (index $qs 0) "1" }}{{ $qval = sub $qval (int (math.Pow 2 $n)) }}{{ end -}}
+
+{{- $cw := 32 -}}
+{{- $x0 := 64 -}}
+{{- $W := add (add $x0 (mul (add $n 1) $cw)) 20 -}}
+<div class="booth">
+<svg class="booth-enc" viewBox="0 0 {{ $W }} 132" width="{{ $W }}" role="img" aria-label="Booth encoding of {{ .Get "q" }}">
+  <text class="lab" x="{{ sub $x0 14 }}" y="29" text-anchor="end">bits</text>
+  <text class="lab" x="{{ sub $x0 14 }}" y="101" text-anchor="end">digits</text>
+  {{- range $j, $b := $qs }}
+  <rect class="cell" x="{{ add $x0 (mul $j $cw) }}" y="8" width="{{ $cw }}" height="30"/>
+  <text class="bit" x="{{ add (add $x0 (mul $j $cw)) (div $cw 2) }}" y="29">{{ $b }}</text>
+  {{- end }}
+  <rect class="cell extra" x="{{ add $x0 (mul $n $cw) }}" y="8" width="{{ $cw }}" height="30"/>
+  <text class="bit extra" x="{{ add (add $x0 (mul $n $cw)) (div $cw 2) }}" y="29">0</text>
+
+  {{- range $j, $d := $digits }}
+    {{- $cx := add (add $x0 (mul $j $cw)) (div $cw 2) -}}
+    {{- $cls := "zero" -}}
+    {{- if gt $d 0 }}{{ $cls = "pos" }}{{ else if lt $d 0 }}{{ $cls = "neg" }}{{ end -}}
+    {{- if ne $d 0 -}}
+    {{- /* bracket over the pair (bit j, bit j+1), stepping down into digit j; staggered so neighbours don't collide */ -}}
+    {{- $lvl := cond (eq (mod $j 2) 0) 50 58 }}
+  <path class="pair {{ $cls }}" d="M{{ add $cx (sub $cw 4) }},40 V{{ $lvl }} H{{ $cx }} V78" marker-end="url(#booth-arrow-{{ $cls }}-{{ $.Ordinal }})"/>
+    {{- end }}
+  <rect class="digit {{ $cls }}" x="{{ add (add $x0 (mul $j $cw)) 2 }}" y="84" width="{{ sub $cw 4 }}" height="26" rx="5"/>
+  <text class="dtext {{ $cls }}" x="{{ $cx }}" y="102">{{ if gt $d 0 }}+1{{ else if lt $d 0 }}−1{{ else }}0{{ end }}</text>
+  {{- end }}
+  <defs>
+    <marker id="booth-arrow-pos-{{ .Ordinal }}" class="pos" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L6,3 L0,6 z"/></marker>
+    <marker id="booth-arrow-neg-{{ .Ordinal }}" class="neg" viewBox="0 0 6 6" refX="3" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L6,3 L0,6 z"/></marker>
+  </defs>
+  <text class="check" x="{{ $x0 }}" y="126">value of digits = {{ $dval }}  (multiplier = {{ $qval }})</text>
+</svg>
+
+{{- with .Get "m" }}
+  {{- $ms := split . "" -}}
+  {{- $M := 0 -}}
+  {{- range $ms }}{{ $M = add (mul $M 2) (int .) }}{{ end -}}
+  {{- if eq (index $ms 0) "1" }}{{ $M = sub $M (int (math.Pow 2 (len $ms))) }}{{ end -}}
+  {{- $w := mul 2 $n -}}
+  {{- $mod := int (math.Pow 2 $w) -}}
+  {{- $prod := mod (add (mod (mul $M $qval) $mod) $mod) $mod -}}
+  {{- $basic := 0 -}}
+  {{- $booth := 0 -}}
+<div class="booth-pp">
+  <div class="booth-col">
+    <div class="booth-title">Shift and add</div>
+    {{- range $j, $b := $qs }}{{ if eq $b "1" }}
+      {{- $p := sub (sub $n 1) $j -}}
+      {{- $v := mod (mul $M (int (math.Pow 2 $p))) $mod -}}
+      {{- $basic = add $basic 1 }}
+    <div class="booth-row"><code>{{ printf "%0*b" $w $v }}</code><span class="booth-lab">$+M \cdot 2^{ {{- $p -}} }$</span></div>
+    {{- end }}{{ end }}
+    <div class="booth-row sum"><code>{{ printf "%0*b" $w $prod }}</code><span class="booth-lab">{{ $basic }} additions</span></div>
+  </div>
+  <div class="booth-col">
+    <div class="booth-title">Booth</div>
+    {{- range $j, $d := $digits }}{{ if ne $d 0 }}
+      {{- $p := sub (sub $n 1) $j -}}
+      {{- $v := mod (add (mod (mul (mul $d $M) (int (math.Pow 2 $p))) $mod) $mod) $mod -}}
+      {{- $booth = add $booth 1 }}
+    <div class="booth-row {{ if lt $d 0 }}neg{{ else }}pos{{ end }}"><code>{{ printf "%0*b" $w $v }}</code><span class="booth-lab">${{ if lt $d 0 }}-{{ else }}+{{ end }}M \cdot 2^{ {{- $p -}} }$</span></div>
+    {{- end }}{{ end }}
+    <div class="booth-row sum"><code>{{ printf "%0*b" $w $prod }}</code><span class="booth-lab">{{ $booth }} additions</span></div>
+  </div>
+</div>
+{{- end }}
+</div>

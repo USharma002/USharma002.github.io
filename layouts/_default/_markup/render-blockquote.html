@@ -1,0 +1,11 @@
+{{- /* A quote whose first line is only a bold title ("> **Step 1**" followed by a new line) gets the
+     has-title class, which puts that title on its own line. "> **Note.** text" stays inline. */ -}}
+{{- $class := "" -}}
+{{- if eq .Type "alert" -}}
+  {{- $class = printf "alert alert-%s" .AlertType -}}
+{{- else if findRE `(?s)^<p><strong>.*?</strong>(\n|<br\s*/?>|</p>)` (strings.TrimLeft " \n" .Text) 1 -}}
+  {{- $class = "has-title" -}}
+{{- end -}}
+<blockquote{{ with $class }} class="{{ . }}"{{ end }}{{ range $k, $v := .Attributes }} {{ $k }}="{{ $v }}"{{ end }}>
+{{ .Text }}
+</blockquote>

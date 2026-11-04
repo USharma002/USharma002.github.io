@@ -494,7 +494,7 @@ body:not(.dark) .chroma .p {
     background-color: #212529 !important;
 }
 
-.post-content blockquote p:first-child strong {
+.post-content blockquote.has-title > p:first-child > strong:first-child {
     display: block;
     font-weight: 800 !important;
     margin-bottom: 8px;

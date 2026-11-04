@@ -1,0 +1,33 @@
+/* Booth encoding diagrams drawn by the booth shortcode */
+.booth { --pos: 34, 197, 94; --neg: 239, 68, 68; margin: .6rem 0; }
+.booth svg.booth-enc { display: block; margin: 0 auto; max-width: 100%; height: auto; color: var(--primary); }
+.booth-enc text { fill: currentColor; text-anchor: middle; }
+.booth-enc .lab { font-size: 12px; opacity: .7; }
+.booth-enc .bit { font-family: "Source Code Pro", monospace; font-size: 16px; }
+.booth-enc .cell { fill: none; stroke: currentColor; stroke-width: 1.2; }
+.booth-enc .extra { opacity: .6; }
+.booth-enc .cell.extra { stroke-dasharray: 4 3; }
+.booth-enc .pair { fill: none; stroke-width: 1.6; }
+.booth-enc .pair.pos, .booth-enc marker.pos path { stroke: rgb(var(--pos)); fill: rgb(var(--pos)); }
+.booth-enc .pair.pos { fill: none; }
+.booth-enc .pair.neg, .booth-enc marker.neg path { stroke: rgb(var(--neg)); fill: rgb(var(--neg)); }
+.booth-enc .pair.neg { fill: none; }
+.booth-enc .digit { stroke-width: 1.2; }
+.booth-enc .digit.zero { fill: none; stroke: currentColor; stroke-opacity: .25; }
+.booth-enc .digit.pos { fill: rgba(var(--pos), .16); stroke: rgb(var(--pos)); }
+.booth-enc .digit.neg { fill: rgba(var(--neg), .16); stroke: rgb(var(--neg)); }
+.booth-enc .dtext { font-family: "Source Code Pro", monospace; font-size: 14px; }
+.booth-enc .dtext.zero { opacity: .45; }
+.booth-enc .dtext.pos { fill: rgb(var(--pos)); font-weight: 700; }
+.booth-enc .dtext.neg { fill: rgb(var(--neg)); font-weight: 700; }
+.booth-enc .check { text-anchor: start; font-size: 12px; opacity: .75; }
+
+.booth-pp { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem 2.5rem; margin-top: .8rem; }
+.booth-col { min-width: 0; }
+.booth-title { font-weight: 700; font-size: 14px; text-align: center; margin-bottom: .3rem; }
+.booth-row { display: flex; align-items: center; gap: .7rem; }
+.booth-row code { background: none !important; padding: 0 !important; font-size: 14px; letter-spacing: 1px; }
+.booth-row.pos code { color: rgb(var(--pos)); }
+.booth-row.neg code { color: rgb(var(--neg)); }
+.booth-row.sum { border-top: 1.5px solid var(--primary); margin-top: .2rem; padding-top: .2rem; font-weight: 700; }
+.booth-lab { font-size: 13px; white-space: nowrap; }

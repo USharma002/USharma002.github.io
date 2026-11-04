@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Adder Step by Step</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;600&display=swap">
+<style>
+    :root {
+        --bg: transparent;
+        --card-bg: #ffffff;
+        --text: #374151;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --wire0: #9ca3af;
+        --wire1: #2563eb;
+        --active: #f59e0b;
+        --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    /* Minimal, diagram-like: blog fonts, thin lines, transparent background */
+    body { margin: 0; padding: 4px 2px; font-family: 'Merriweather', Georgia, serif; font-weight: 300; font-size: 14px; background: transparent; color: var(--text); }
+    .card { padding: 0; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
+    button, select { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 0; border: 1px solid var(--muted); background: transparent; color: var(--text); cursor: pointer; }
+    button:hover, select:hover { border-color: var(--text); }
+    button.on { background: var(--text); border-color: var(--text); color: var(--card-bg); }
+    .title { font-style: italic; margin-right: auto; }
+    button.bit { width: 64px; }
+    svg { width: 100%; height: auto; display: block; }
+    .wire { fill: none; stroke-width: 1.4; stroke: var(--wire0); transition: stroke .25s, stroke-width .25s; }
+    .wire.v1 { stroke: var(--wire1); stroke-width: 2.6; }
+    .gate { fill: none; stroke: var(--text); stroke-width: 1.5; transition: stroke .25s, fill .25s; }
+    .gate.back, .gate.back.busy { fill: none; }
+    .gate.busy { stroke: var(--active); fill: rgba(245, 158, 11, .15); stroke-width: 2.4; }
+    text { fill: var(--text); font-size: 14px; font-family: 'Merriweather', Georgia, serif; }
+    .lbl { font-style: italic; }
+    .val { font-weight: 700; font-size: 13px; }
+    .small { font-size: 11px; fill: var(--muted); }
+    .small-lbl { font-size: 12px; }
+    .status { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+    .status b { color: var(--text); }
+    .timeline { display: flex; gap: 6px; margin-top: 8px; }
+    .step { flex: 1; text-align: center; font-size: 12px; padding: 4px 2px; border-top: 2px solid var(--border); color: var(--muted); font-style: italic; }
+    .step.now { border-top-color: var(--active); color: var(--text); }
+    .step.done { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="row">
+        <span class="title">Full adder (AND–OR–NOT): one gate delay per step</span>
+        <button class="bit" id="ba">a = 0</button>
+        <button class="bit" id="bb">b = 0</button>
+        <button class="bit" id="bc">c = 0</button>
+        <button id="replay">Replay</button>
+    </div>
+    <svg viewBox="0 0 680 260" id="svg" aria-label="Full adder in sum-of-products form, with NOT gates on the complemented inputs">
+        <text class="lbl small-lbl" x="38" y="31" text-anchor="end">a</text>
+        <polyline class="wire" data-sig="a" points="42,27 62,27"/>
+        <polyline class="wire" data-sig="na" points="79,27 100,27"/>
+        <text class="lbl small-lbl" x="38" y="44" text-anchor="end">b</text>
+        <polyline class="wire" data-sig="b" points="42,40 62,40"/>
+        <polyline class="wire" data-sig="nb" points="79,40 100,40"/>
+        <text class="lbl small-lbl" x="38" y="57" text-anchor="end">cₙ</text>
+        <polyline class="wire" data-sig="c" points="42,53 100,53"/>
+        <text class="lbl small-lbl" x="38" y="86" text-anchor="end">a</text>
+        <polyline class="wire" data-sig="a" points="42,82 62,82"/>
+        <polyline class="wire" data-sig="na" points="79,82 100,82"/>
+        <text class="lbl small-lbl" x="38" y="99" text-anchor="end">b</text>
+        <polyline class="wire" data-sig="b" points="42,95 100,95"/>
+        <text class="lbl small-lbl" x="38" y="112" text-anchor="end">cₙ</text>
+        <polyline class="wire" data-sig="c" points="42,108 62,108"/>
+        <polyline class="wire" data-sig="nc" points="79,108 100,108"/>
+        <text class="lbl small-lbl" x="38" y="141" text-anchor="end">a</text>
+        <polyline class="wire" data-sig="a" points="42,137 100,137"/>
+        <text class="lbl small-lbl" x="38" y="154" text-anchor="end">b</text>
+        <polyline class="wire" data-sig="b" points="42,150 62,150"/>
+        <polyline class="wire" data-sig="nb" points="79,150 100,150"/>
+        <text class="lbl small-lbl" x="38" y="167" text-anchor="end">cₙ</text>
+        <polyline class="wire" data-sig="c" points="42,163 62,163"/>
+        <polyline class="wire" data-sig="nc" points="79,163 100,163"/>
+        <text class="lbl small-lbl" x="38" y="196" text-anchor="end">a</text>
+        <polyline class="wire" data-sig="a" points="42,192 100,192"/>
+        <text class="lbl small-lbl" x="38" y="209" text-anchor="end">b</text>
+        <polyline class="wire" data-sig="b" points="42,205 100,205"/>
+        <text class="lbl small-lbl" x="38" y="222" text-anchor="end">cₙ</text>
+        <polyline class="wire" data-sig="c" points="42,218 100,218"/>
+        <polyline class="wire" data-sig="m1" points="140,40 180,40 180,104 216,104"/>
+        <polyline class="wire" data-sig="m2" points="140,95 170,95 170,116 219,116"/>
+        <polyline class="wire" data-sig="m3" points="140,150 170,150 170,128 219,128"/>
+        <polyline class="wire" data-sig="m4" points="140,205 180,205 180,140 216,140"/>
+        <polyline class="wire" data-sig="S" points="282,122 315,122"/>
+        <text class="lbl small-lbl" x="378" y="66" text-anchor="end">a</text>
+        <polyline class="wire" data-sig="a" points="382,62 440,62"/>
+        <text class="lbl small-lbl" x="378" y="82" text-anchor="end">b</text>
+        <polyline class="wire" data-sig="b" points="382,78 440,78"/>
+        <text class="lbl small-lbl" x="378" y="118" text-anchor="end">b</text>
+        <polyline class="wire" data-sig="b" points="382,114 440,114"/>
+        <text class="lbl small-lbl" x="378" y="134" text-anchor="end">cₙ</text>
+        <polyline class="wire" data-sig="c" points="382,130 440,130"/>
+        <text class="lbl small-lbl" x="378" y="170" text-anchor="end">a</text>
+        <polyline class="wire" data-sig="a" points="382,166 440,166"/>
+        <text class="lbl small-lbl" x="378" y="186" text-anchor="end">cₙ</text>
+        <polyline class="wire" data-sig="c" points="382,182 440,182"/>
+        <polyline class="wire" data-sig="p1" points="475,70 505,70 505,109 535,109"/>
+        <polyline class="wire" data-sig="p2" points="475,122 537,122"/>
+        <polyline class="wire" data-sig="p3" points="475,174 505,174 505,135 535,135"/>
+        <polyline class="wire" data-sig="C" points="592,122 620,122"/>
+        <g id="g-m1"><path class="gate" d="M100,20 h20 a20,20 0 0 1 0,40 h-20 z"/></g>
+        <g id="g-n1"><path class="gate" d="M62,22 L73,27 L62,32 z"/><circle class="gate" cx="76" cy="27" r="3"/></g>
+        <g id="g-n2"><path class="gate" d="M62,35 L73,40 L62,45 z"/><circle class="gate" cx="76" cy="40" r="3"/></g>
+        <g id="g-m2"><path class="gate" d="M100,75 h20 a20,20 0 0 1 0,40 h-20 z"/></g>
+        <g id="g-n3"><path class="gate" d="M62,77 L73,82 L62,87 z"/><circle class="gate" cx="76" cy="82" r="3"/></g>
+        <g id="g-n4"><path class="gate" d="M62,103 L73,108 L62,113 z"/><circle class="gate" cx="76" cy="108" r="3"/></g>
+        <g id="g-m3"><path class="gate" d="M100,130 h20 a20,20 0 0 1 0,40 h-20 z"/></g>
+        <g id="g-n5"><path class="gate" d="M62,145 L73,150 L62,155 z"/><circle class="gate" cx="76" cy="150" r="3"/></g>
+        <g id="g-n6"><path class="gate" d="M62,158 L73,163 L62,168 z"/><circle class="gate" cx="76" cy="163" r="3"/></g>
+        <g id="g-m4"><path class="gate" d="M100,185 h20 a20,20 0 0 1 0,40 h-20 z"/></g>
+        <g id="g-orS"><path class="gate" d="M210,92 q18,30 0,60 q55,0 72,-30 q-18,-30 -72,-30 z"/></g>
+        <g id="g-p1"><path class="gate" d="M440,55 h20 a15,15 0 0 1 0,30 h-20 z"/></g>
+        <g id="g-p2"><path class="gate" d="M440,107 h20 a15,15 0 0 1 0,30 h-20 z"/></g>
+        <g id="g-p3"><path class="gate" d="M440,159 h20 a15,15 0 0 1 0,30 h-20 z"/></g>
+        <g id="g-orC"><path class="gate" d="M530,97 q15,25 0,50 q48,0 62,-25 q-15,-25 -62,-25 z"/></g>
+        <text class="lbl" x="322" y="127">S</text><text class="val" id="v-S" x="295" y="116">0</text>
+        <text class="lbl" x="626" y="127">cₙ₊₁</text><text class="val" id="v-C" x="602" y="116">0</text>
+        <text class="small" x="170" y="250" text-anchor="middle">(a) sum</text><text class="small" x="510" y="250" text-anchor="middle">(b) carry</text>
+    </svg>
+    <div class="timeline" id="timeline"></div>
+    <p class="status" id="status"></p>
+</div>
+<script>
+    // --- Theme Detection (matches the other interactive pages) ---
+    function detectTheme() {
+        try {
+            if (window.parent === window) throw 0;  // standalone: keep the light defaults
+            const bg = getComputedStyle(window.parent.document.body).backgroundColor;
+            document.documentElement.style.background = bg;  // match the page, or the browser paints the iframe white
+            const rgb = bg.match(/\d+/g);
+            if (!rgb) return;
+            const dark = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 < 128;
+            const set = (k, v) => document.documentElement.style.setProperty(k, v);
+            set('--card-bg', dark ? '#2d2d2d' : '#ffffff');
+            set('--text', dark ? '#e4e4e4' : '#374151');
+            set('--muted', dark ? '#a3a3a3' : '#6b7280');
+            set('--border', dark ? '#404040' : '#e5e7eb');
+            set('--wire0', dark ? '#6b7280' : '#9ca3af');
+            set('--wire1', dark ? '#60a5fa' : '#2563eb');
+        } catch (e) { /* standalone */ }
+    }
+    setInterval(detectTheme, 1000);
+    detectTheme();
+
+    // --- Unit-delay simulation: every gate output at step t uses its inputs at step t-1 ---
+    const gates = [
+        { id: 'n1', out: 'na', f: s => 1 - s.a },
+        { id: 'n2', out: 'nb', f: s => 1 - s.b },
+        { id: 'n3', out: 'na', f: s => 1 - s.a },
+        { id: 'n4', out: 'nc', f: s => 1 - s.c },
+        { id: 'n5', out: 'nb', f: s => 1 - s.b },
+        { id: 'n6', out: 'nc', f: s => 1 - s.c },
+        { id: 'm1', out: 'm1', f: s => s.na & s.nb & s.c },
+        { id: 'm2', out: 'm2', f: s => s.na & s.b & s.nc },
+        { id: 'm3', out: 'm3', f: s => s.a & s.nb & s.nc },
+        { id: 'm4', out: 'm4', f: s => s.a & s.b & s.c },
+        { id: 'p1', out: 'p1', f: s => s.a & s.b },
+        { id: 'p2', out: 'p2', f: s => s.b & s.c },
+        { id: 'p3', out: 'p3', f: s => s.a & s.c },
+        { id: 'orS', out: 'S', f: s => s.m1 | s.m2 | s.m3 | s.m4 },
+        { id: 'orC', out: 'C', f: s => s.p1 | s.p2 | s.p3 },
+    ];
+    const SHOW = { na: 'ā', nb: 'b̄', nc: 'c̄ₙ', m1: 'āb̄cₙ', m2: 'ābc̄ₙ', m3: 'ab̄c̄ₙ', m4: 'abcₙ', p1: 'ab', p2: 'bcₙ', p3: 'acₙ', S: 'S', C: 'C' };
+    let inputs = { a: 0, b: 0, c: 0 };
+    let state = { a: 0, b: 0, c: 0 };
+    gates.forEach(g => state[g.out] = 0);
+    let t = 0, timer = null, changedAt = {}, from = null;
+
+    function settle() {
+        for (let k = 0; k < 4; k++) gates.forEach(g => state[g.out] = g.f(state));
+    }
+
+    function paint(busy) {
+        document.querySelectorAll('.wire').forEach(w => w.classList.toggle('v1', state[w.dataset.sig] === 1));
+        for (const k in state) { const el = document.getElementById('v-' + k); if (el) el.textContent = state[k]; }
+        gates.forEach(g => document.querySelector('#g-' + g.id).querySelectorAll('.gate')
+            .forEach(p => p.classList.toggle('busy', busy.includes(g.id))));
+        ['a', 'b', 'c'].forEach(k => {
+            const b = document.getElementById('b' + k);
+            b.textContent = `${k} = ${inputs[k]}`;
+            b.classList.toggle('on', inputs[k] === 1);
+        });
+    }
+
+    function renderTimeline() {
+        const labels = ['t = 0: inputs change', 't = 1: NOTs, carry ANDs', 't = 2: sum ANDs, C', 't = 3: S'];
+        document.getElementById('timeline').innerHTML = labels.map((l, i) =>
+            `<div class="step ${i === t ? 'now' : i < t ? 'done' : ''}">${l}</div>`).join('');
+    }
+
+    function step() {
+        const prev = { ...state };
+        const busy = [];
+        gates.forEach(g => {
+            const v = g.f(prev);
+            if (v !== prev[g.out]) { busy.push(g.id); changedAt[g.out] = t + 1; }
+            state[g.out] = v;
+        });
+        t++;
+        paint(busy);
+        renderTimeline();
+        const sum = inputs.a + inputs.b + inputs.c;
+        const msg = busy.length ? `Step ${t}: <b>${[...new Set(busy.map(id => SHOW[gates.find(g => g.id === id).out]))].join(', ')}</b> changed.` : `Step ${t}: nothing changes.`;
+        document.getElementById('status').innerHTML = msg +
+            ` &nbsp; Outputs now S = ${state.S}, C = ${state.C} (correct: S = ${sum & 1}, C = ${sum >> 1}).`;
+        if (t >= 3) {
+            clearInterval(timer); timer = null;
+            const sReady = changedAt.S ?? 0, cReady = changedAt.C ?? 0;
+            document.getElementById('status').innerHTML += `<br>Settled: S was ready at step <b>${sReady}</b>, C at step <b>${cReady}</b>` +
+                ` (worst case: 3 gate delays for S, 2 for C).`;
+        }
+    }
+
+    function run() {
+        clearInterval(timer);
+        t = 0; changedAt = {};
+        state = { ...from, ...inputs };
+        paint([]);
+        renderTimeline();
+        document.getElementById('status').innerHTML = 'Step 0: the inputs change; every gate still shows its old output.';
+        timer = setInterval(step, 900);
+    }
+
+    ['a', 'b', 'c'].forEach(k => document.getElementById('b' + k).addEventListener('click', () => {
+        clearInterval(timer);
+        settle();
+        from = { ...state };  // the settled circuit before this input change
+        inputs[k] ^= 1;
+        run();
+    }));
+    document.getElementById('replay').addEventListener('click', () => { if (from) run(); });
+
+    settle();
+    paint([]);
+    renderTimeline();
+    document.getElementById('status').textContent = 'Click a, b or c to change an input and watch it propagate.';
+</script>
+</body>
+</html>

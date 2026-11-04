@@ -1,0 +1,22 @@
+{{/* A binary word drawn as one cell per bit, coloured by field.
+     bits:   the fields separated by spaces, e.g. "1 10000010 11001000000000000000000"
+             ("…" inside a field is drawn as a single elision cell)
+     labels: field names, comma separated (default: sign,exponent,significand)
+     sizes:  optional field widths shown under the names, comma separated
+     notes:  optional per-field annotations, comma separated (blank to skip one)
+     name:   optional row title shown on the left, e.g. "+∞"
+     Styles live in assets/css/extended/bitfield.css. */}}
+{{- $fields := split (.Get "bits") " " -}}
+{{- $labels := split (.Get "labels" | default "sign,exponent,significand") "," -}}
+{{- $sizes := split (.Get "sizes" | default "") "," -}}
+{{- $notes := split (.Get "notes" | default "") "," -}}
+<div class="bitfield">
+  {{- with .Get "name" }}<div class="bf-name">{{ . | markdownify }}</div>{{ end }}
+  {{- range $i, $f := $fields }}
+  <div class="bf-field bf-f{{ $i }}">
+    <div class="bf-cells">{{ range split $f "" }}<span{{ if eq . "…" }} class="bf-gap"{{ end }}>{{ . }}</span>{{ end }}</div>
+    <div class="bf-label">{{ index $labels $i | default "" }}{{ with index $sizes $i | default "" }}<br><span class="bf-size">{{ . }} bits</span>{{ end }}</div>
+    {{- with trim (index $notes $i | default "") " " }}<div class="bf-note">{{ . | markdownify }}</div>{{ end }}
+  </div>
+  {{- end }}
+</div>
