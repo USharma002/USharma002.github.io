@@ -3005,23 +3005,23 @@ We can provide this protection by using two registers, usually a **base** and a 
   <text x="375.0" y="165" text-anchor="middle" font-size="12" fill="currentColor">process</text>
   <rect x="300" y="180" width="150" height="40" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="460" y="24" text-anchor="start" font-size="11" fill="currentColor" class="dim">0</text>
-  <text x="460" y="64" text-anchor="start" font-size="11" fill="currentColor" class="dim">25600</text>
-  <text x="460" y="104" text-anchor="start" font-size="11" fill="currentColor" class="dim">30004</text>
-  <text x="460" y="144" text-anchor="start" font-size="11" fill="currentColor" class="dim">42094</text>
-  <text x="460" y="184" text-anchor="start" font-size="11" fill="currentColor" class="dim">88000</text>
-  <text x="460" y="224" text-anchor="start" font-size="11" fill="currentColor" class="dim">102400</text>
+  <text x="460" y="64" text-anchor="start" font-size="11" fill="currentColor" class="dim">256000</text>
+  <text x="460" y="104" text-anchor="start" font-size="11" fill="currentColor" class="dim">300040</text>
+  <text x="460" y="144" text-anchor="start" font-size="11" fill="currentColor" class="dim">420940</text>
+  <text x="460" y="184" text-anchor="start" font-size="11" fill="currentColor" class="dim">880000</text>
+  <text x="460" y="224" text-anchor="start" font-size="11" fill="currentColor" class="dim">1024000</text>
   <rect x="150" y="76" width="80" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="190.0" y="93.0" text-anchor="middle" font-size="12" fill="currentColor">30004</text>
+  <text x="190.0" y="93.0" text-anchor="middle" font-size="12" fill="currentColor">300040</text>
   <text x="190" y="114" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">base</text>
   <polyline points="230,88 260,88 260,100 296,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <rect x="150" y="132" width="80" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="190.0" y="149.0" text-anchor="middle" font-size="12" fill="currentColor">12090</text>
+  <text x="190.0" y="149.0" text-anchor="middle" font-size="12" fill="currentColor">120900</text>
   <text x="190" y="170" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">limit</text>
   <path d="M292,101 h-6 V139 h6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="230,144 270,144 270,120 283,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <text x="375" y="244" text-anchor="middle" font-size="11" fill="currentColor" class="dim">legal addresses: 30004 … 42093</text>
+  <text x="375" y="244" text-anchor="middle" font-size="11" fill="currentColor" class="dim">legal addresses: 300040 … 420939</text>
 </svg>
-<figcaption>With base = 30004 and limit = 12090, the program can legally access all addresses from 30004 through 42093 (inclusive), i.e. from <em>base</em> to <em>base + limit − 1</em> (after Galvin, Fig. 8.1).</figcaption>
+<figcaption>With base = 300040 and limit = 120900, the program can legally access all addresses from 300040 through 420939 (inclusive), i.e. from <em>base</em> to <em>base + limit − 1</em> (after Galvin, Fig. 8.1).</figcaption>
 </figure>
 
 Protection of memory space is accomplished by having the CPU hardware compare **every** address generated in user mode with the registers:
@@ -3097,7 +3097,7 @@ The run-time mapping from virtual to physical addresses is done by the **MMU**, 
   <rect x="20" y="62" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="55.0" y="87.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
   <rect x="265" y="32" width="90" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="310.0" y="49.0" text-anchor="middle" font-size="12" fill="currentColor">4000</text>
+  <text x="310.0" y="49.0" text-anchor="middle" font-size="12" fill="currentColor">14000</text>
   <text x="310" y="16" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">relocation register</text>
   <circle cx="310" cy="82" r="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310" y="87" text-anchor="middle" font-size="16" fill="currentColor">+</text>
@@ -3105,11 +3105,11 @@ The run-time mapping from virtual to physical addresses is done by the **MMU**, 
   <polyline points="90,82 294,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="160" y="74" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">logical address 346</text>
   <polyline points="324,82 528,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <text x="466" y="74" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">physical address 4346</text>
+  <text x="466" y="74" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">physical address 14346</text>
   <rect x="530" y="52" width="100" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="580.0" y="87.0" text-anchor="middle" font-size="13" fill="currentColor">memory</text>
 </svg>
-<figcaption>Dynamic relocation: with the relocation register at 4000, logical address 346 is mapped to physical address 4346 (after Galvin, Fig. 8.4).</figcaption>
+<figcaption>Dynamic relocation: with the relocation register at 14000, logical address 346 is mapped to physical address 14346 (after Galvin, Fig. 8.4).</figcaption>
 </figure>
 
 The user program never sees the real physical addresses: it deals with logical addresses in the range $0$ to *max*, which are mapped to physical addresses in the range $R + 0$ to $R + \text{max}$ for a relocation value $R$.
@@ -7083,7 +7083,7 @@ Its main advantage is **simplicity** and **efficiency in finding the first free 
 
 $$\text{block number} = (\text{bits per word}) \times (\text{number of 0-valued words}) + \text{offset of first 1 bit}$$
 
-It is efficient only if the whole vector is kept in memory, and it grows with the disk: one bit per block, so a 1 TB disk with 4 KB blocks has $2^{40}/2^{12} = 2^{28}$ blocks and needs $2^{28}$ bits $= 32$ MB.
+It is efficient only if the whole vector is kept in memory, and it grows with the disk: one bit per block, so a 1 TB disk with 4 KB blocks has $2^{40}/2^{12} = 2^{28}$ blocks and needs $2^{28}$ bits $= 32$ MB. (Galvin gives 256 MB for this case, which would be one byte per block; at one bit per block it is 32 MB.)
 
 ##### Linked List
 

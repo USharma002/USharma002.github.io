@@ -1798,7 +1798,7 @@ The hardware mirrors this array: a row of AND gates per bit $b_j$, and a 4-bit a
 <figcaption>4 × 4 array multiplier: 16 AND gates and three 4-bit adders, i.e. $O(n^2)$ gates.</figcaption>
 </figure>
 
-Gate by gate, the same circuit looks like this (after Mano, Fig. 4.16 [[1]](#ref-1)):
+Gate by gate, the same circuit looks like this. Mano's Fig. 4.16 shows the 4 × 3 case; in general $J$ multiplier bits and $K$ multiplicand bits need $J \times K$ AND gates and $J - 1$ $K$-bit adders [[1]](#ref-1), so 4 × 4 needs 16 AND gates and three 4-bit adders:
 
 <figure class="fig">
 <svg viewBox="0 0 650 565" width="650" role="img" aria-label="Gate-level 4 by 4 array multiplier: four rows of AND gates and three 4-bit adders">
