@@ -48,8 +48,6 @@ These notes follow the NPTEL course *Computer Architecture and Organization* (II
 
 </div>
 
-> **Note.** *Moore's law*: in 1965 Gordon Moore observed that the number of transistors per square inch on integrated circuits was doubling every year. The pace slowed to a doubling every 18 months in the 1970s, and has kept that rate since [[3]](#ref-3).
-
 ### Functional Units
 
 All instructions and data are stored in memory. An instruction and the data it needs are brought into the processor and executed there, and input and output devices connect the computer to the outside world. This is the **von Neumann architecture**.
@@ -5534,7 +5532,9 @@ ILP within one thread is limited, and long stalls such as cache misses leave the
 
 ### Multicore Processors
 
-A **multicore processor** has two or more independent cores on one die or package. Typically the L1 and L2 caches are private to each core and the L3 cache is shared. It is difficult to increase the clock frequency because of power consumption, so the hardware is replicated and run at a lower clock: two cores at 1.5 GHz can match one core at 3 GHz, with lower power, but only for work that can be split between them: by Amdahl's law, the speedup from $N$ processors is $1/((1 - f) + f/N)$, where $f$ is the fraction of the execution time that can run in parallel [[3]](#ref-3). In a symmetric multicore all the cores are identical; in an asymmetric one they may have different functions.
+A **multicore processor** has two or more independent cores on one die or package. Typically the L1 and L2 caches are private to each core and the L3 cache is shared. It is difficult to sustain Moore's law and at the same time meet the performance demands of applications, mainly because the clock frequency is hard to increase without raising power consumption. So the hardware is replicated and run at a lower clock: two cores at 1.5 GHz can match one core at 3 GHz, with lower power, but only for work that can be split between them: by Amdahl's law, the speedup from $N$ processors is $1/((1 - f) + f/N)$, where $f$ is the fraction of the execution time that can run in parallel [[3]](#ref-3). In a symmetric multicore all the cores are identical; in an asymmetric one they may have different functions.
+
+> **Note.** *Moore's law*: in 1965 Gordon Moore observed that the number of transistors per square inch on integrated circuits was doubling every year. The pace slowed to a doubling every 18 months in the 1970s, and has kept that rate since [[3]](#ref-3).
 
 <figure class="table">
 <figcaption>Flynn's taxonomy.</figcaption>
