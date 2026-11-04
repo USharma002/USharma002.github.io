@@ -5806,8 +5806,8 @@ A request just in front of the head is served almost at once; one just behind it
 When SCAN reverses, the cylinders just in front of the head were served only a moment ago, and the requests that have waited longest are at the **other** end. *Circular SCAN* goes there directly: it serves requests in one direction only, and at the end it returns to the beginning **without serving anything** on the way back. The cylinders are treated as a circular list, which gives a more uniform wait time.
 
 <figure class="fig">
-C<svg viewBox="0 0 600 246" width="600" role="img" aria-label="SCAN head movement">
-  <defs><marker id="arr-scan" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+<svg viewBox="0 0 600 276" width="600" role="img" aria-label="C-SCAN head movement">
+  <defs><marker id="arr-cscan" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="30.0" y1="30" x2="577.25" y2="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="30.0" y1="26" x2="30.0" y2="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="30.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor">0</text>
@@ -5831,27 +5831,29 @@ C<svg viewBox="0 0 600 246" width="600" role="img" aria-label="SCAN head movemen
   <text x="533.2" y="18.0" text-anchor="middle" font-size="11" fill="currentColor">183</text>
   <line x1="577.2" y1="26" x2="577.2" y2="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="577.2" y="18.0" text-anchor="middle" font-size="11" fill="currentColor">199</text>
-  <line x1="175.8" y1="50" x2="131.8" y2="70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="131.8" y1="70" x2="68.5" y2="90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="68.5" y1="90" x2="30.0" y2="110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="30.0" y1="110" x2="208.8" y2="130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="208.8" y1="130" x2="214.2" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="214.2" y1="150" x2="299.5" y2="170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="299.5" y1="170" x2="365.5" y2="190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="365.5" y1="190" x2="371.0" y2="210" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <line x1="371.0" y1="210" x2="533.2" y2="230" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-scan)"/>
-  <circle cx="175.8" cy="50" r="4" fill="#ef4444"/>
-  <circle cx="131.8" cy="70" r="3" fill="currentColor"/>
-  <circle cx="68.5" cy="90" r="3" fill="currentColor"/>
-  <circle cx="30.0" cy="110" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
-  <circle cx="208.8" cy="130" r="3" fill="currentColor"/>
-  <circle cx="214.2" cy="150" r="3" fill="currentColor"/>
-  <circle cx="299.5" cy="170" r="3" fill="currentColor"/>
-  <circle cx="365.5" cy="190" r="3" fill="currentColor"/>
-  <circle cx="371.0" cy="210" r="3" fill="currentColor"/>
-  <circle cx="533.2" cy="230" r="3" fill="currentColor"/>
+  <line x1="175.75" y1="50" x2="208.75" y2="70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="208.75" y1="70" x2="214.25" y2="90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="214.25" y1="90" x2="299.5" y2="110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="299.5" y1="110" x2="365.5" y2="130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="365.5" y1="130" x2="371.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="371.0" y1="150" x2="533.25" y2="170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="533.25" y1="170" x2="577.25" y2="190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="577.25" y1="190" x2="30.0" y2="210" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4" marker-end="url(#arr-cscan)"/>
+  <line x1="30.0" y1="210" x2="68.5" y2="230" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <line x1="68.5" y1="230" x2="131.75" y2="250" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cscan)"/>
+  <circle cx="175.75" cy="50" r="4" fill="#ef4444"/>
+  <circle cx="208.75" cy="70" r="3" fill="currentColor"/>
+  <circle cx="214.25" cy="90" r="3" fill="currentColor"/>
+  <circle cx="299.5" cy="110" r="3" fill="currentColor"/>
+  <circle cx="365.5" cy="130" r="3" fill="currentColor"/>
+  <circle cx="371.0" cy="150" r="3" fill="currentColor"/>
+  <circle cx="533.25" cy="170" r="3" fill="currentColor"/>
+  <circle cx="577.25" cy="190" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <circle cx="30.0" cy="210" r="3" fill="none" stroke="currentColor" stroke-width="1.2"/>
+  <circle cx="68.5" cy="230" r="3" fill="currentColor"/>
+  <circle cx="131.75" cy="250" r="3" fill="currentColor"/>
 </svg>
-<figcaption>C-SCAN disk scheduling (after Galvin, Fig. 10.7), moving toward 199. The dashed line is the return sweep. Total: (199 − 53) + 199 + 37 = 382 cylinders, or 183 if the return sweep is not counted.</figcaption>
+<figcaption>C-SCAN disk scheduling (after Galvin, Fig. 10.7), moving toward 199. The dashed line is the return sweep from 199 to 0, which serves nothing; hollow dots are the ends of the disk. Total: (199 − 53) + 199 + 37 = 382 cylinders, or 183 if the return sweep is not counted.</figcaption>
 </figure>
 
 ##### LOOK and C-LOOK
@@ -5906,8 +5908,8 @@ SCAN and C-SCAN go all the way to the end of the disk. In practice the arm goes 
 </figure>
 
 <figure class="fig">
-C<svg viewBox="0 0 600 226" width="600" role="img" aria-label="LOOK head movement">
-  <defs><marker id="arr-look" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+<svg viewBox="0 0 600 236" width="600" role="img" aria-label="C-LOOK head movement">
+  <defs><marker id="arr-clook" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="30.0" y1="30" x2="577.25" y2="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="30.0" y1="26" x2="30.0" y2="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="30.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor">0</text>
@@ -5931,25 +5933,25 @@ C<svg viewBox="0 0 600 226" width="600" role="img" aria-label="LOOK head movemen
   <text x="533.2" y="18.0" text-anchor="middle" font-size="11" fill="currentColor">183</text>
   <line x1="577.2" y1="26" x2="577.2" y2="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="577.2" y="18.0" text-anchor="middle" font-size="11" fill="currentColor">199</text>
-  <line x1="175.8" y1="50" x2="131.8" y2="70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="131.8" y1="70" x2="68.5" y2="90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="68.5" y1="90" x2="208.8" y2="110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="208.8" y1="110" x2="214.2" y2="130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="214.2" y1="130" x2="299.5" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="299.5" y1="150" x2="365.5" y2="170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="365.5" y1="170" x2="371.0" y2="190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <line x1="371.0" y1="190" x2="533.2" y2="210" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-look)"/>
-  <circle cx="175.8" cy="50" r="4" fill="#ef4444"/>
-  <circle cx="131.8" cy="70" r="3" fill="currentColor"/>
-  <circle cx="68.5" cy="90" r="3" fill="currentColor"/>
-  <circle cx="208.8" cy="110" r="3" fill="currentColor"/>
-  <circle cx="214.2" cy="130" r="3" fill="currentColor"/>
-  <circle cx="299.5" cy="150" r="3" fill="currentColor"/>
-  <circle cx="365.5" cy="170" r="3" fill="currentColor"/>
-  <circle cx="371.0" cy="190" r="3" fill="currentColor"/>
-  <circle cx="533.2" cy="210" r="3" fill="currentColor"/>
+  <line x1="175.75" y1="50" x2="208.75" y2="70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <line x1="208.75" y1="70" x2="214.25" y2="90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <line x1="214.25" y1="90" x2="299.5" y2="110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <line x1="299.5" y1="110" x2="365.5" y2="130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <line x1="365.5" y1="130" x2="371.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <line x1="371.0" y1="150" x2="533.25" y2="170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <line x1="533.25" y1="170" x2="68.5" y2="190" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4" marker-end="url(#arr-clook)"/>
+  <line x1="68.5" y1="190" x2="131.75" y2="210" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-clook)"/>
+  <circle cx="175.75" cy="50" r="4" fill="#ef4444"/>
+  <circle cx="208.75" cy="70" r="3" fill="currentColor"/>
+  <circle cx="214.25" cy="90" r="3" fill="currentColor"/>
+  <circle cx="299.5" cy="110" r="3" fill="currentColor"/>
+  <circle cx="365.5" cy="130" r="3" fill="currentColor"/>
+  <circle cx="371.0" cy="150" r="3" fill="currentColor"/>
+  <circle cx="533.25" cy="170" r="3" fill="currentColor"/>
+  <circle cx="68.5" cy="190" r="3" fill="currentColor"/>
+  <circle cx="131.75" cy="210" r="3" fill="currentColor"/>
 </svg>
-<figcaption>C-LOOK disk scheduling (after Galvin, Fig. 10.8), moving toward 199: after 183 the arm jumps to 14, the lowest request. Total: (183 − 53) + (183 − 14) + (37 − 14) = 322 cylinders, or 153 without the jump.</figcaption>
+<figcaption>C-LOOK disk scheduling (after Galvin, Fig. 10.8), moving toward 199: after 183 the arm jumps (dashed) to 14, the lowest request. Total: (183 − 53) + (183 − 14) + (37 − 14) = 322 cylinders, or 153 without the jump.</figcaption>
 </figure>
 
 <figure class="table">
