@@ -15,7 +15,7 @@
   {{- range $i, $f := $fields }}
   <div class="bf-field bf-f{{ $i }}">
     <div class="bf-cells">{{ range split $f "" }}<span{{ if eq . "…" }} class="bf-gap"{{ end }}>{{ . }}</span>{{ end }}</div>
-    <div class="bf-label">{{ index $labels $i | default "" }}{{ with index $sizes $i | default "" }}<br><span class="bf-size">{{ . }} bits</span>{{ end }}</div>
+    <div class="bf-label">{{ index $labels $i | default "" }}{{ with index $sizes $i | default "" }}<br><span class="bf-size">{{ . }} bit{{ if ne (string .) "1" }}s{{ end }}</span>{{ end }}</div>
     {{- with trim (index $notes $i | default "") " " }}<div class="bf-note">{{ . | markdownify }}</div>{{ end }}
   </div>
   {{- end }}

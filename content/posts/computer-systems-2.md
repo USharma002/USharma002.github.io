@@ -20,6 +20,7 @@ math: true
   .post-content .example { counter-increment: ex; }
   .post-content .example > p:first-child::before { content: "Example " counter(ex) ". "; font-weight: 700; }
   .post-content figure.table { counter-increment: tab; }
+  .post-content figure.table.plain { counter-increment: none; }
   .post-content figure.fig { counter-increment: fig; }
   .post-content figure.table figcaption::before { content: "Table " counter(tab) ". "; font-weight: 600; color: var(--primary); }
   .post-content figure.fig figcaption::before { content: "Figure " counter(fig) ". "; font-weight: 600; color: var(--primary); }
@@ -27,9 +28,9 @@ math: true
   .post-content figure svg { max-width: 100%; height: auto; color: var(--primary); }
   .post-content figure svg .dim { opacity: .65; }
   .post-content .figrow { display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; align-items: flex-start; }
-  .post-content .code-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .post-content .code-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1rem 0; }
   .post-content .code-pair .highlight, .post-content .code-pair pre { margin: 0 !important; }
-  @media (max-width: 640px) { .post-content .code-pair { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .post-content .code-pair { grid-template-columns: minmax(0, 1fr); } }
 </style>
 
 These notes follow *Operating System Concepts* by Silberschatz, Galvin and Gagne (9th edition) [[1]](#ref-1); figures marked "after Galvin" are redrawn from the book.
@@ -62,7 +63,7 @@ Kernel mode is also called *supervisor*, *system* or *privileged* mode. When a u
   <text x="30" y="32" text-anchor="start" font-size="11" fill="currentColor" class="dim">user process</text>
   <rect x="20" y="110" width="450" height="65" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="30" y="127" text-anchor="start" font-size="11" fill="currentColor" class="dim">kernel</text>
-  <line x1="10" y1="95" x2="590" y2="95" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="2"/>
+  <line x1="10" y1="95" x2="590" y2="95" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="35" y="42" width="130" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="100.0" y="61.0" text-anchor="middle" font-size="12" fill="currentColor">process executing</text>
   <rect x="195" y="42" width="110" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -94,7 +95,7 @@ Kernel mode is also called *supervisor*, *system* or *privileged* mode. When a u
 
 </div>
 
-The instruction to switch to kernel mode is itself a privileged instruction. Other examples include I/O control, timer management and interrupt management.
+The instruction to switch to kernel mode is itself a privileged instruction. (This means an instruction that sets the mode bit directly. The trap or system-call instruction that a user program uses to *enter* the kernel is not privileged; it switches mode only by jumping to a fixed kernel entry point.) Other examples include I/O control, timer management and interrupt management.
 
 > **Note.** Without hardware dual mode, a buggy user program can wipe out the OS. Early PC operating systems ran on processors with no mode bit, so any program could overwrite the operating system. CPUs can also support more than two modes, e.g. a separate mode for a virtual machine manager, or the four *privilege levels* (rings) of x86.
 
@@ -489,19 +490,19 @@ Switching the CPU to another process requires a **state save** of the current pr
   <text x="130" y="23" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">process P₀</text>
   <text x="310" y="23" text-anchor="middle" font-size="13" fill="currentColor" class="dim">operating system</text>
   <text x="490" y="23" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">process P₁</text>
-  <line x1="130" y1="40" x2="130" y2="70" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="4"/>
+  <line x1="130" y1="40" x2="130" y2="70" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M124,62 L130,70 L136,62" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="118" y="58" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">executing</text>
   <line x1="130" y1="70" x2="130" y2="330" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M144,70 q6,0 6,8 V194.0 q0,6 6,6 q-6,0 -6,6 V322 q0,8 -6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="157.2" y="204.0" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">idle</text>
-  <line x1="130" y1="330" x2="130" y2="365" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="4"/>
+  <line x1="130" y1="330" x2="130" y2="365" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M124,357 L130,365 L136,357" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="118" y="352" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">executing</text>
   <line x1="490" y1="60" x2="490" y2="175" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M504,60 q6,0 6,8 V111.5 q0,6 6,6 q-6,0 -6,6 V167 q0,8 -6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="517.2" y="121.5" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">idle</text>
-  <line x1="490" y1="175" x2="490" y2="205" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="4"/>
+  <line x1="490" y1="175" x2="490" y2="205" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M484,197 L490,205 L496,197" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="502" y="195" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">executing</text>
   <line x1="490" y1="205" x2="490" y2="330" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -524,7 +525,7 @@ Switching the CPU to another process requires a **state save** of the current pr
   <text x="310.0" y="305.0" text-anchor="middle" font-size="11" fill="currentColor">reload state from PCB₀</text>
   <polyline points="310,312 310,332 132,332" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
 </svg>
-<figcaption>CPU switch from process to process (after Galvin, Fig. 3.4). Thick arrows show execution; the time spent in the OS boxes is the context-switch overhead. PCBs are kept in specially reserved memory, the *kernel space*.</figcaption>
+<figcaption>CPU switch from process to process (after Galvin, Fig. 3.4). Thick arrows show execution; the time spent in the OS boxes is the context-switch overhead. PCBs are kept in specially reserved memory, the <em>kernel space</em>.</figcaption>
 </figure>
 
 - Context-switch time is pure **overhead**, since the system does no useful work while switching. A typical switch takes a few microseconds (Galvin, 9th edition, says milliseconds).
@@ -606,6 +607,91 @@ fork returned 0,   getpid = 915, getppid = 914     <- child
 - **Copy-on-write.** Copying the whole address space would make `fork()` expensive, especially since the child usually calls `exec()` straight away. Modern Unix marks the pages read-only and shared, and copies a page only when one of the processes writes to it.
 - `exec()` does not return on success (the old program is gone); it returns −1 only on error.
 
+**Counting processes.** Every process that executes a `fork()` becomes two, so after $n$ successive `fork()` calls (e.g. `for (i = 0; i < n; i++) fork();`) there are $2^n$ processes: the original and $2^n - 1$ children. A `printf` placed after them runs $2^n$ times. When a `fork()` is inside a condition such as `if (fork() == 0)`, only the processes that take that branch double.
+
+The process tree for $n = 3$ is a full binary tree with one level per `fork()`. At each node the left branch is the calling process carrying on and the right branch is the new child, so every right branch is created by the node it hangs from. The leaves are the 8 processes that run the code after the loop.
+
+<figure class="fig">
+<svg viewBox="0 0 680 318" width="680" role="img" aria-label="Full binary tree of processes created by three fork calls in a loop, with the parent of each process">
+  <g fill="currentColor" font-size="12">
+    <text x="10" y="34">start: 1</text>
+    <text x="10" y="104">fork 1 (i = 0): 2</text>
+    <text x="10" y="174">fork 2 (i = 1): 4</text>
+    <text x="10" y="244">fork 3 (i = 2): 8</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.5" fill="none">
+    <line x1="366" y1="38" x2="264" y2="92"/>
+    <line x1="396" y1="38" x2="498" y2="92" stroke-dasharray="5 4"/>
+    <line x1="237.3" y1="112.4" x2="194.7" y2="157.6"/>
+    <line x1="260.7" y1="112.4" x2="303.3" y2="157.6" stroke-dasharray="5 4"/>
+    <line x1="501.3" y1="112.4" x2="458.7" y2="157.6"/>
+    <line x1="524.7" y1="112.4" x2="567.3" y2="157.6" stroke-dasharray="5 4"/>
+    <line x1="175.8" y1="185.4" x2="157.2" y2="224.6"/>
+    <line x1="190.2" y1="185.4" x2="208.8" y2="224.6" stroke-dasharray="5 4"/>
+    <line x1="307.8" y1="185.4" x2="289.2" y2="224.6"/>
+    <line x1="322.2" y1="185.4" x2="340.8" y2="224.6" stroke-dasharray="5 4"/>
+    <line x1="439.8" y1="185.4" x2="421.2" y2="224.6"/>
+    <line x1="454.2" y1="185.4" x2="472.8" y2="224.6" stroke-dasharray="5 4"/>
+    <line x1="571.8" y1="185.4" x2="553.2" y2="224.6"/>
+    <line x1="586.2" y1="185.4" x2="604.8" y2="224.6" stroke-dasharray="5 4"/>
+    <circle cx="381" cy="30" r="17"/>
+    <circle cx="249" cy="100" r="17"/>
+    <circle cx="513" cy="100" r="17"/>
+    <circle cx="183" cy="170" r="17"/>
+    <circle cx="315" cy="170" r="17"/>
+    <circle cx="447" cy="170" r="17"/>
+    <circle cx="579" cy="170" r="17"/>
+    <circle cx="150" cy="240" r="17"/>
+    <circle cx="216" cy="240" r="17"/>
+    <circle cx="282" cy="240" r="17"/>
+    <circle cx="348" cy="240" r="17"/>
+    <circle cx="414" cy="240" r="17"/>
+    <circle cx="480" cy="240" r="17"/>
+    <circle cx="546" cy="240" r="17"/>
+    <circle cx="612" cy="240" r="17"/>
+  </g>
+  <g fill="currentColor" font-size="13" text-anchor="middle" font-style="italic">
+    <text x="381" y="35">P0</text>
+    <text x="249" y="105">P0</text>
+    <text x="513" y="105">P1</text>
+    <text x="183" y="175">P0</text>
+    <text x="315" y="175">P2</text>
+    <text x="447" y="175">P1</text>
+    <text x="579" y="175">P3</text>
+    <text x="150" y="245">P0</text>
+    <text x="216" y="245">P4</text>
+    <text x="282" y="245">P2</text>
+    <text x="348" y="245">P6</text>
+    <text x="414" y="245">P1</text>
+    <text x="480" y="245">P5</text>
+    <text x="546" y="245">P3</text>
+    <text x="612" y="245">P7</text>
+  </g>
+  <g fill="currentColor" font-size="11" text-anchor="middle" class="dim">
+    <text x="10" y="276" text-anchor="start">parent:</text>
+    <text x="150" y="276">—</text>
+    <text x="216" y="276">P0</text>
+    <text x="282" y="276">P0</text>
+    <text x="348" y="276">P2</text>
+    <text x="414" y="276">P0</text>
+    <text x="480" y="276">P1</text>
+    <text x="546" y="276">P1</text>
+    <text x="612" y="276">P3</text>
+  </g>
+  <g stroke="currentColor" stroke-width="1.5">
+    <line x1="200" y1="305" x2="230" y2="305"/>
+    <line x1="400" y1="305" x2="430" y2="305" stroke-dasharray="5 4"/>
+  </g>
+  <g fill="currentColor" font-size="12">
+    <text x="238" y="309">process continues</text>
+    <text x="438" y="309">new child created</text>
+  </g>
+</svg>
+<figcaption>Processes created by <code>for (i = 0; i &lt; 3; i++) fork();</code>, numbered in order of creation. P0 has 3 children (P1, P2, P4), P1 has 2 (P3, P5), P2 and P3 have one each, and the 4 processes created by the last <code>fork()</code> have none.</figcaption>
+</figure>
+
+In general the original process has $n$ children, and a process created in iteration $i$ ($i = 0, \ldots, n-1$) goes on to create $n - 1 - i$ children of its own.
+
 > **Note.** Buffered output is part of the address space, so it is copied too. If stdout is redirected to a file, `printf("Before forking\n")` may still be sitting in the stdio buffer at the time of `fork()`, and the line then appears **twice** in the file (once flushed by each process). On a terminal stdout is line-buffered, so it appears once [[4]](#ref-4).
 
 ##### Process Termination
@@ -638,6 +724,31 @@ Linux and UNIX address this scenario by assigning the `init` process as the new 
 
 For example, if a parent exits while its child is sleeping, the child's `getppid()` returns 1 (the pid of `init`) once it wakes up [[4]](#ref-4).
 
+#### Interprocess Communication
+
+A process is *independent* if it cannot affect or be affected by other processes, and *cooperating* otherwise. Cooperating processes need an **interprocess communication (IPC)** mechanism, and there are two fundamental models:
+
+<figure class="table">
+<figcaption>The two models of IPC.</figcaption>
+
+| | Shared memory | Message passing |
+|:--|:--|:--|
+| How | the processes map a common region and read and write it | `send(message)` and `receive(message)` through the kernel |
+| Kernel involvement | only to set up the region | a system call for every message |
+| Speed | faster | slower |
+| Synchronization | the processes' own job (e.g. producer–consumer below) | built in |
+| Suited to | large amounts of data on one machine | small messages, distributed systems |
+
+</figure>
+
+A message-passing link can be designed in several ways:
+
+- **Naming.** In *direct* communication each process names the other, `send(P, message)`, `receive(Q, message)`, and a link joins exactly one pair. In *indirect* communication messages go through a *mailbox* (port), `send(A, message)`, which several processes may share.
+- **Synchronization.** `send` and `receive` can each be *blocking* (synchronous) or *nonblocking* (asynchronous). When both block, the exchange is a *rendezvous*.
+- **Buffering.** The queue of messages has *zero capacity* (the sender blocks until the receiver takes the message), *bounded capacity* $n$ (the sender blocks only when the queue is full) or *unbounded capacity* (the sender never blocks).
+
+**Pipes.** An *ordinary pipe* (`pipe(fd)` in UNIX) is a unidirectional producer–consumer channel: one process writes to `fd[1]` and the other reads from `fd[0]`. It exists only while the processes use it, and it needs a parent–child relationship, since the child inherits the descriptors through `fork()`. A *named pipe* (FIFO in UNIX) appears in the file system, so unrelated processes can use it, and it lasts until it is deleted.
+
 ### Threads
 
 <div class="definition">
@@ -666,7 +777,7 @@ A *thread* is a basic unit of CPU utilization. It comprises a thread ID, a progr
   <rect x="97.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
   <polyline points="135.0,120 135.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M135.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.8"/>
+  <path d="M135.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.0" y="282" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">single-threaded process</text>
   <polyline points="83.0,186 123.0,186" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="79.0" y="190" text-anchor="end" font-size="11" fill="currentColor">thread</text>
@@ -687,21 +798,21 @@ A *thread* is a basic unit of CPU utilization. It comprises a thread ID, a progr
   <rect x="338.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="376.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
   <polyline points="376.0,120 376.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M376.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.8"/>
+  <path d="M376.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="422.0" y1="54" x2="422.0" y2="224" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="430.0" y="64" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="468.0" y="81.0" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <rect x="430.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="468.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
   <polyline points="468.0,120 468.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M468.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.8"/>
+  <path d="M468.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="514.0" y1="54" x2="514.0" y2="224" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="522.0" y="64" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="560.0" y="81.0" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <rect x="522.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="560.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
   <polyline points="560.0,120 560.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M560.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.8"/>
+  <path d="M560.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="468.0" y="282" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">multithreaded process</text>
   <polyline points="612.0,186 572.0,186" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="616.0" y="190" text-anchor="start" font-size="11" fill="currentColor">thread</text>
@@ -905,7 +1016,17 @@ The examples below use Galvin's process sets; all times are in milliseconds, and
 
 <div class="example">
 
-Processes $P_1, P_2, P_3$ arrive at time 0 in that order, with bursts of 24, 3 and 3.
+Processes $P_1, P_2, P_3$ arrive at time 0 in that order, with the CPU burst lengths below (in milliseconds).
+
+<figure class="table plain">
+
+| Process | Burst Time |
+|:-:|:-:|
+| $P_1$ | 24 |
+| $P_2$ | 3 |
+| $P_3$ | 3 |
+
+</figure>
 
 </div>
 
@@ -956,7 +1077,18 @@ This algorithm associates with each process the length of its **next CPU burst**
 
 <div class="example">
 
-$P_1, \ldots, P_4$ arrive at time 0 with bursts 6, 8, 7 and 3.
+Four processes arrive at time 0, with the CPU burst lengths below (in milliseconds).
+
+<figure class="table plain">
+
+| Process | Burst Time |
+|:-:|:-:|
+| $P_1$ | 6 |
+| $P_2$ | 8 |
+| $P_3$ | 7 |
+| $P_4$ | 3 |
+
+</figure>
 
 </div>
 
@@ -1008,7 +1140,7 @@ where $t_n$ is the actual length of the $n$th CPU burst and $\tau_{n+1}$ is the 
   <line x1="50" y1="75.71428571428571" x2="530" y2="75.71428571428571" stroke="currentColor" opacity=".12"/>
   <text x="42" y="56.85714285714286" text-anchor="end" font-size="10" fill="currentColor">12</text>
   <line x1="50" y1="52.85714285714286" x2="530" y2="52.85714285714286" stroke="currentColor" opacity=".12"/>
-  <polyline points="84.3,121.4 152.9,144.3 221.4,121.4 290.0,144.3 358.6,41.4 427.1,41.4 495.7,41.4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="2"/>
+  <polyline points="84.3,121.4 152.9,144.3 221.4,121.4 290.0,144.3 358.6,41.4 427.1,41.4 495.7,41.4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="50.0,75.7 118.6,98.6 187.1,121.4 255.7,121.4 324.3,132.9 392.9,87.1 461.4,64.3 530.0,52.9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
   <circle cx="84.3" cy="121.4" r="3" fill="currentColor"/>
   <circle cx="152.9" cy="144.3" r="3" fill="currentColor"/>
@@ -1036,7 +1168,18 @@ where $t_n$ is the actual length of the $n$th CPU burst and $\tau_{n+1}$ is the 
 
 <div class="example">
 
-$P_1, P_2, P_3, P_4$ arrive at times 0, 1, 2, 3 with bursts 8, 4, 9, 5.
+Four processes arrive at the times below, with the CPU burst lengths shown (in milliseconds).
+
+<figure class="table plain">
+
+| Process | Arrival Time | Burst Time |
+|:-:|:-:|:-:|
+| $P_1$ | 0 | 8 |
+| $P_2$ | 1 | 4 |
+| $P_3$ | 2 | 9 |
+| $P_4$ | 3 | 5 |
+
+</figure>
 
 </div>
 
@@ -1078,7 +1221,19 @@ and run the process with the **highest** ratio.
 
 <div class="example">
 
-Processes $A, B, C, D, E$ arrive at times 0, 2, 4, 6, 8 with bursts 3, 6, 4, 5, 2.
+Five processes arrive at the times below, with the burst times shown.
+
+<figure class="table plain">
+
+| Process | Arrival Time | Burst Time |
+|:-:|:-:|:-:|
+| $A$ | 0 | 3 |
+| $B$ | 2 | 6 |
+| $C$ | 4 | 4 |
+| $D$ | 6 | 5 |
+| $E$ | 8 | 2 |
+
+</figure>
 
 </div>
 
@@ -1119,7 +1274,19 @@ it is equivalent to SJF or SRTF (depending on whether it is preemptive).
 
 <div class="example">
 
-$P_1, \ldots, P_5$ arrive at time 0 with bursts 10, 1, 2, 1, 5 and priorities 3, 1, 4, 5, 2 (a smaller number means a higher priority).
+Five processes arrive at time 0, with the CPU burst lengths (in milliseconds) and priorities below. A smaller number means a higher priority.
+
+<figure class="table plain">
+
+| Process | Burst Time | Priority |
+|:-:|:-:|:-:|
+| $P_1$ | 10 | 3 |
+| $P_2$ | 1 | 1 |
+| $P_3$ | 2 | 4 |
+| $P_4$ | 1 | 5 |
+| $P_5$ | 5 | 2 |
+
+</figure>
 
 </div>
 
@@ -1162,7 +1329,17 @@ If the burst is shorter than the quantum, the process releases the CPU voluntari
 
 <div class="example">
 
-$P_1, P_2, P_3$ with bursts 24, 3, 3 and a quantum of 4.
+Three processes arrive at time 0, with the CPU burst lengths below (in milliseconds) and a time quantum of 4 milliseconds.
+
+<figure class="table plain">
+
+| Process | Burst Time |
+|:-:|:-:|
+| $P_1$ | 24 |
+| $P_2$ | 3 |
+| $P_3$ | 3 |
+
+</figure>
 
 </div>
 
@@ -1634,6 +1811,22 @@ do {
 
 This type of lock is also called a **spinlock** (a mutex that spins).
 
+**Mutex locks.** The OS packages this as a *mutex lock* (from *mutual exclusion*): a boolean `available` with two operations, which must be atomic and are usually built from `TestAndSet` or `compare_and_swap`:
+
+```c
+acquire() {
+    while (!available)
+        ;  /* busy wait */
+    available = false;
+}
+
+release() {
+    available = true;
+}
+```
+
+A process calls `acquire()` before its critical section and `release()` after it. The busy waiting wastes CPU cycles, but a spinning process needs no context switch, so spinlocks are preferred on multiprocessors when locks are held only briefly.
+
 > **Note.** `TestAndSet` satisfies **mutual exclusion** and **progress**, but **not bounded waiting**: when the lock is released, whichever spinning process happens to run `TestAndSet` first gets it, and an unlucky process can lose every time. (Galvin, Fig. 5.7, gives a longer version with a `waiting[]` array that does satisfy bounded waiting.)
 
 The similar `compare_and_swap(&value, expected, new_value)` instruction sets `value` to `new_value` only if `value == expected`, and always returns the original value; `while (compare_and_swap(&lock, 0, 1) != 0) ;` gives the same spinlock.
@@ -1740,7 +1933,7 @@ signal(semaphore *S) {
 </div>
 
 <figure class="fig">
-<svg viewBox="0 0 560 120" width="560" role="img" aria-label="A blocking semaphore: an integer value and a list of waiting processes">
+<svg viewBox="0 0 590 120" width="590" role="img" aria-label="A blocking semaphore: an integer value and a list of waiting processes">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="20" width="110" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="75.0" y="40.0" text-anchor="middle" font-size="13" fill="currentColor">value = −2</text>
@@ -1868,7 +2061,7 @@ Typically, these systems solve the problem by implementing a **priority-inherita
   <rect x="146.7" y="28" width="43.3" height="22" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="146.7" y="28" width="43.3" height="22" rx="2" fill="currentColor" opacity=".14"/>
   <line x1="190.0" y1="39" x2="276.7" y2="39" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-  <rect x="190.0" y="108" width="86.7" height="22" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="2.2"/>
+  <rect x="190.0" y="108" width="86.7" height="22" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="190.0" y="108" width="86.7" height="22" rx="2" fill="#ef4444" opacity=".25"/>
   <line x1="233.3" y1="79" x2="276.7" y2="79" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
   <rect x="276.7" y="28" width="86.7" height="22" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2193,27 +2386,27 @@ Similar to the producer–consumer problem, we can use semaphores to prevent thi
   <circle cx="170.0" cy="30.0" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170.0" y="35.0" text-anchor="middle" font-size="12" fill="currentColor">P₀</text>
   <circle cx="170.0" cy="90.0" r="12" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="199.4" y1="119.5" x2="219.4" y2="92.0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="3"/>
+  <line x1="199.4" y1="119.5" x2="219.4" y2="92.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="191.2" y="134.9" text-anchor="middle" font-size="9" fill="currentColor" class="dim">F₀</text>
   <circle cx="293.6" cy="119.8" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="293.6" y="124.8" text-anchor="middle" font-size="12" fill="currentColor">P₁</text>
   <circle cx="236.6" cy="138.4" r="12" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="217.6" y1="175.5" x2="249.9" y2="186.0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="3"/>
+  <line x1="217.6" y1="175.5" x2="249.9" y2="186.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="204.2" y="175.1" text-anchor="middle" font-size="9" fill="currentColor" class="dim">F₁</text>
   <circle cx="246.4" cy="265.2" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="246.4" y="270.2" text-anchor="middle" font-size="12" fill="currentColor">P₂</text>
   <circle cx="211.1" cy="216.6" r="12" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="170.0" y1="210.0" x2="170.0" y2="244.0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="3"/>
+  <line x1="170.0" y1="210.0" x2="170.0" y2="244.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170.0" y="200.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">F₂</text>
   <circle cx="93.6" cy="265.2" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="93.6" y="270.2" text-anchor="middle" font-size="12" fill="currentColor">P₃</text>
   <circle cx="128.9" cy="216.6" r="12" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="122.4" y1="175.5" x2="90.1" y2="186.0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="3"/>
+  <line x1="122.4" y1="175.5" x2="90.1" y2="186.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.8" y="175.1" text-anchor="middle" font-size="9" fill="currentColor" class="dim">F₃</text>
   <circle cx="46.4" cy="119.8" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="46.4" y="124.8" text-anchor="middle" font-size="12" fill="currentColor">P₄</text>
   <circle cx="103.4" cy="138.4" r="12" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="140.6" y1="119.5" x2="120.6" y2="92.0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="3"/>
+  <line x1="140.6" y1="119.5" x2="120.6" y2="92.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="148.8" y="134.9" text-anchor="middle" font-size="9" fill="currentColor" class="dim">F₄</text>
 </svg>
 <figcaption>The dining philosophers (after Galvin, Fig. 5.13): philosopher $P_i$ needs fork $F_i$ on one side and $F_{(i+4)\%5}$ on the other.</figcaption>
@@ -2488,6 +2681,12 @@ A deadlock can arise only if the following four conditions hold **simultaneously
 
 > **Note.** The four conditions are not completely independent: circular wait implies hold and wait. Separating them is still useful, because each prevention strategy below attacks one of them.
 
+**How many instances rule out deadlock.** Let $n$ processes share $m$ instances of one resource type, where process $P_i$ needs at most $\text{max}_i$ instances. In the worst case every process holds $\text{max}_i - 1$ instances and waits for one more. One extra instance lets some process finish and release everything, so deadlock is impossible if and only if
+
+$$m \ge \sum_{i=1}^{n} (\text{max}_i - 1) + 1$$
+
+For example, 3 processes that each need 2 tape drives cannot deadlock with 4 drives, but can with 3. With equal needs $k$, the bound is $n(k - 1) + 1$.
+
 #### Resource-Allocation Graphs
 
 Deadlocks can be described more precisely in terms of a directed graph called a **resource-allocation graph** $G = (V, E)$:
@@ -2676,7 +2875,7 @@ A state is *safe* if the system can allocate resources to each process (up to it
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="10" width="420" height="190" rx="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <ellipse cx="300" cy="118" rx="125" ry="72" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
-  <ellipse cx="320" cy="135" rx="62" ry="34" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="2"/>
+  <ellipse cx="320" cy="135" rx="62" ry="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <ellipse cx="320" cy="135" rx="62" ry="34" fill="currentColor" opacity=".12"/>
   <text x="95" y="60" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">safe</text>
   <text x="250" y="80" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">unsafe</text>
@@ -3998,7 +4197,7 @@ With $L = 1$ this is the formula for a flat page table above.
 
 #### Hashed Page Tables
 
-For 64-bit addresses even a hierarchy gets deep. With 4 KB pages and 1024-entry inner tables, a two-level split leaves a 42-bit outer index, i.e. an outer table of $2^{42}$ entries; paging that again still leaves $2^{34}$ bytes (16 GB) at the top. A full 64-bit address space would need **seven** levels, i.e. seven memory accesses per TLB miss, so for 64-bit architectures hierarchical page tables are generally considered inappropriate.
+For 64-bit addresses even a hierarchy gets deep. With 4 KB pages and 1024-entry inner tables, a two-level split leaves a 42-bit outer index, i.e. an outer table of $2^{42}$ entries; paging that again still leaves $2^{34}$ bytes (16 GB) at the top. With these sizes, a full 64-bit address space needs **six** levels ($\lceil 52/10 \rceil$) if every table must fit in a page, i.e. six page-table accesses per TLB miss, plus one for the data. Galvin quotes seven levels for the 64-bit UltraSPARC. So for 64-bit architectures, hierarchical page tables are generally considered inappropriate.
 
 A common alternative for address spaces larger than 32 bits is a *hashed page table*: the virtual page number is hashed, and each entry of the hash table holds a **linked list** of the pages that hash to it (to handle collisions). Each list element has three fields:
 
@@ -4170,9 +4369,9 @@ Take a program (process) on a 32-bit machine, so its virtual address space is $2
   <text x="200.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">0x000001</text>
   <rect x="250" y="284" width="64" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="282.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">24</text>
-  <path d="M150,316 q0,6 6,6 H194.0 q6,0 6,6 q0,-6 6,-6 H244 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M150,316 q0,6 6,6 H194.0 q6,0 6,6 q0,-6 6,-6 H244 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="200.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" class="dim">page number (24 b)</text>
-  <path d="M250,316 q0,6 6,6 H276.0 q6,0 6,6 q0,-6 6,-6 H308 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M250,316 q0,6 6,6 H276.0 q6,0 6,6 q0,-6 6,-6 H308 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="282.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset (8 b)</text>
   <text x="460" y="303" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">PA</text>
   <rect x="470" y="284" width="100" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -4180,9 +4379,9 @@ Take a program (process) on a 32-bit machine, so its virtual address space is $2
   <text x="520.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">0x0000</text>
   <rect x="570" y="284" width="64" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="602.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">24</text>
-  <path d="M470,316 q0,6 6,6 H514.0 q6,0 6,6 q0,-6 6,-6 H564 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M470,316 q0,6 6,6 H514.0 q6,0 6,6 q0,-6 6,-6 H564 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="520.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" class="dim">page number (16 b)</text>
-  <path d="M570,316 q0,6 6,6 H596.0 q6,0 6,6 q0,-6 6,-6 H628 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M570,316 q0,6 6,6 H596.0 q6,0 6,6 q0,-6 6,-6 H628 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="602.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset (8 b)</text>
 </svg>
 <figcaption>Virtual address 0x00000124 lies in virtual page 1 at offset 0x24. The page table maps virtual page 1 to physical page 0, so the physical address is 0x000024; the braces show how each address splits into page number and offset.</figcaption>
@@ -4207,9 +4406,9 @@ Each page-table entry holds the **physical page number (PPN)**, a **disk address
   <text x="90.0" y="79" text-anchor="middle" font-size="12" fill="currentColor">0x000001</text>
   <rect x="140" y="60" width="40" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="160.0" y="79" text-anchor="middle" font-size="12" fill="currentColor">24</text>
-  <path d="M40,92 q0,6 6,6 H84.0 q6,0 6,6 q0,-6 6,-6 H134 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M40,92 q0,6 6,6 H84.0 q6,0 6,6 q0,-6 6,-6 H134 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="90.0" y="118" text-anchor="middle" font-size="10" fill="currentColor" class="dim">virtual page no.</text>
-  <path d="M140,92 q0,6 6,6 H154.0 q6,0 6,6 q0,-6 6,-6 H174 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M140,92 q0,6 6,6 H154.0 q6,0 6,6 q0,-6 6,-6 H174 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="160.0" y="118" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset</text>
   <text x="310.0" y="50" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">PPN</text>
   <text x="405.0" y="50" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">disk addr</text>
@@ -4257,9 +4456,9 @@ Each page-table entry holds the **physical page number (PPN)**, a **disk address
   <rect x="624" y="89" width="34" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="641.0" y="108" text-anchor="middle" font-size="12" fill="currentColor">24</text>
   <polyline points="520,103.0 556,103.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <path d="M560,121 q0,6 6,6 H586.0 q6,0 6,6 q0,-6 6,-6 H618 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M560,121 q0,6 6,6 H586.0 q6,0 6,6 q0,-6 6,-6 H618 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="592.0" y="147" text-anchor="middle" font-size="10" fill="currentColor" class="dim">PPN</text>
-  <path d="M624,121 q0,6 6,6 H635.0 q6,0 6,6 q0,-6 6,-6 H652 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M624,121 q0,6 6,6 H635.0 q6,0 6,6 q0,-6 6,-6 H652 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="641.0" y="147" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset</text>
   <path d="M160,60 V24 H641 V85" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr)"/>
   <text x="400" y="16" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset copied unchanged</text>
@@ -4332,7 +4531,7 @@ Suppose there are many virtual pages for a process, which cannot all be stored i
   <rect x="380" y="108" width="40" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="400" y="126" text-anchor="middle" font-size="12" fill="currentColor">–</text>
   <text x="374" y="126" text-anchor="end" font-size="10" fill="currentColor" class="dim">3</text>
-  <rect x="196" y="104" width="48" height="30" rx="8" stroke="currentColor" stroke-width="1.5" fill="none" stroke="#ef4444"/>
+  <rect x="196" y="104" width="48" height="30" rx="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310" y="158" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">page tables (– = not in memory)</text>
   <ellipse cx="565" cy="40" rx="80" ry="12" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M485,40 V250 a80,12 0 0 0 160,0 V40" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -4347,7 +4546,7 @@ Suppose there are many virtual pages for a process, which cannot all be stored i
   <text x="565" y="230" text-anchor="middle" font-size="11" fill="currentColor" class="dim">contents of all</text>
   <text x="565" y="245" text-anchor="middle" font-size="11" fill="currentColor" class="dim">virtual pages</text>
   <text x="565" y="286" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">hard disk</text>
-  <polyline points="220,134 220,190 482,190" stroke="currentColor" stroke-width="1.5" fill="none" stroke="#ef4444" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <polyline points="220,134 220,190 482,190" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr)"/>
   <text x="355" y="208" text-anchor="middle" font-size="10" fill="currentColor" class="dim">P₁ page 3 is only on disk</text>
 </svg>
 <figcaption>Three processes share four frames of main memory. Each page table maps a virtual page to a frame, or marks it as not in memory (–); the contents of every virtual page are kept on the hard disk.</figcaption>
@@ -4506,7 +4705,7 @@ If memory address $A$ is referenced at time $t$, then **it** and its **neighbour
   <rect x="430" y="56" width="30" height="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="265.0" y="76" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">A</text>
   <text x="90" y="76" text-anchor="end" font-size="11" fill="currentColor" class="dim">memory</text>
-  <path d="M190,52 q0,-6 6,-6 H259.0 q6,0 6,-6 q0,6 6,6 H334 q6,0 6,6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1.2"/>
+  <path d="M190,52 q0,-6 6,-6 H259.0 q6,0 6,-6 q0,6 6,6 H334 q6,0 6,6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="265.0" y="34" text-anchor="middle" font-size="11" fill="currentColor" class="dim">spatial: A's neighbours are used soon</text>
   <path d="M259.0,88 C225.0,126 305.0,126 271.0,92" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="265.0" y="140" text-anchor="middle" font-size="11" fill="currentColor" class="dim">temporal: A itself is used again soon</text>

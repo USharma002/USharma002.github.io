@@ -92,7 +92,8 @@ x + 1 &= 1 & x \cdot 0 &= 0 && \text{null element} \\
 \bar{\bar x} &= x & & && \text{involution} \\
 x + (y + z) &= (x + y) + z & x(yz) &= (xy)z && \text{associativity} \\
 x + xy &= x & x(x + y) &= x && \text{absorption} \\
-\overline{x + y} &= \bar x \, \bar y & \overline{xy} &= \bar x + \bar y && \text{De Morgan}
+\overline{x + y} &= \bar x \, \bar y & \overline{xy} &= \bar x + \bar y && \text{De Morgan} \\
+xy + \bar x z + yz &= xy + \bar x z & (x + y)(\bar x + z)(y + z) &= (x + y)(\bar x + z) && \text{consensus}
 \end{aligned}
 $$
 
@@ -204,6 +205,8 @@ With $n$ variables there are $2^n$ rows, i.e. $2^n / 2 = 2^{n-1}$ pairs, and eac
 
 $$\text{Number of self-dual functions of } n \text{ variables} = 2^{2^{n-1}}$$
 
+**Neutral functions.** A function is *neutral* if it has as many 0s as 1s in its truth table. Choosing which $2^{n-1}$ of the $2^n$ rows are 1 gives $\binom{2^n}{2^{n-1}}$ neutral functions, e.g. $\binom{8}{4} = 70$ for $n = 3$. Every self-dual function is neutral, since each pair holds one 0 and one 1.
+
 ### Simplifying with K-Maps
 
 The canonical forms are rarely the simplest. Two minterms that differ in exactly one variable can always be merged, and that variable disappears:
@@ -223,7 +226,7 @@ A *Karnaugh map* (K-map) is a diagram made of squares, one square per minterm of
 <figcaption>$F = a\bar b + ab$: the two squares in row $a = 1$ are adjacent, and together they are just $a$.</figcaption>
 </figure>
 
-**Why the rows and columns are in Gray-code order.** With three or more variables the columns are labelled $00, 01, 11, 10$, not in binary order. In this order only one bit changes from one column to the next, so any two adjacent squares differ in exactly one variable. That is exactly the condition for $a\bar b + ab = a$. For example $m_5$ and $m_7$ sit side by side, and
+**Why the rows and columns are in Gray-code order.** With three or more variables the columns are labelled $00, 01, 11, 10$, not in binary order. This is *Gray code*, an ordering in which consecutive values differ in exactly one bit (see [Binary Codes](#binary-codes)). In this order only one bit changes from one column to the next, so any two adjacent squares differ in exactly one variable. That is exactly the condition for $a\bar b + ab = a$. For example $m_5$ and $m_7$ sit side by side, and
 
 $$m_5 + m_7 = x \bar y z + x y z = x z(\bar y + y) = x z$$
 
@@ -485,6 +488,26 @@ For instance, in $F = \bar x z + x y$ from above, cells 3 and 7 are adjacent but
 {{< kmap rowvar="x" colvar="yz" rows="0,1" cols="00,01,11,10" idx="0,1,3,2;4,5,7,6" cells="0,1,1,0;0,0,1,1" groups="0,1,1,2;1,2,1,2;0,2,2,1,d" >}}
 <figcaption>The extra (redundant) group $yz$ that should be there to avoid the static-1 hazard.</figcaption>
 </figure>
+
+### Static-0 Hazard
+
+<div class="definition">
+
+A *static-0 hazard* is when the output momentarily becomes 1 while it is supposed to stay 0.
+
+</div>
+
+It is the dual of the static-1 hazard and appears in POS circuits: a hazard exists if there are **adjacent 0s that are not covered by a common sum term**. The same function in POS form, $F = (x + z)(\bar x + y)$, has one: with $y = z = 0$ it is $x \bar x$, and when $x$ changes, one OR output can rise before the other falls, so $F$ can glitch to 1. Adding the redundant sum term $(y + z)$, which covers cells 0 and 4, removes it: $F = (x + z)(\bar x + y)(y + z)$.
+
+### Dynamic Hazard
+
+<div class="definition">
+
+A *dynamic hazard* is when the output should change once ($0 \to 1$ or $1 \to 0$) but changes three or more times ($0 \to 1 \to 0 \to 1$) before settling.
+
+</div>
+
+It occurs in multilevel circuits where the changing input reaches the output along three or more paths with different delays. A two-level SOP or POS circuit that is free of static hazards has no dynamic hazards, so removing the static hazards of a two-level form is enough.
 
 ## Decoders
 
@@ -752,7 +775,7 @@ A $2^n$-to-1 *multiplexer* (mux) has $2^n$ data inputs, $n$ select lines and one
 <div class="figrow">
 
 <figure class="fig">
-<svg viewBox="0 0 330 200" width="330" role="img" aria-label="4 to 1 multiplexer">
+<svg viewBox="0 0 330 204" width="330" role="img" aria-label="4 to 1 multiplexer">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polygon points="120,15 210,45 210,135 120,165" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="165.0" y="95.0" text-anchor="middle" font-size="14" fill="currentColor">4 : 1</text>
@@ -789,6 +812,8 @@ A $2^n$-to-1 *multiplexer* (mux) has $2^n$ data inputs, $n$ select lines and one
 </div>
 
 $$y = \bar s_1 \bar s_0 I_0 + \bar s_1 s_0 I_1 + s_1 \bar s_0 I_2 + s_1 s_0 I_3$$
+
+**Larger muxes from smaller ones.** A $2^n$ : 1 mux can be built as a tree of 2 : 1 muxes: $2^{n-1}$ in the first level, $2^{n-2}$ in the next, and so on, i.e. $2^n - 1$ in all ($s_0$ drives the first level, $s_{n-1}$ the last). In general an $N$ : 1 mux built from $k$ : 1 muxes needs $(N-1)/(k-1)$ of them, e.g. five 4 : 1 muxes for a 16 : 1 mux.
 
 **Try it.** Click the data inputs and the select lines; the dashed line shows which input is routed through.
 
@@ -908,7 +933,7 @@ The remainders read upwards give $41 = 101001_2$, and the integer parts read dow
 $$
 \begin{aligned}
 (10\;110\;001\;101\;011\,.\,111\;100\;000\;110)_2 &= (26153.7406)_8 \\
-(10\;1100\;0110\;1011\,.\,1111\;0010)_2 &= (\text{2C6B.F2})_{16}
+(10\;1100\;0110\;1011\,.\,1111\;0000\;0110)_2 &= (\text{2C6B.F06})_{16}
 \end{aligned}
 $$
 
@@ -957,6 +982,13 @@ $$8 + 9:\quad 1000 + 1001 = 1\,0001 \;\xrightarrow{+\,0110}\; 1\,0111 = 17$$
 For an $n$-bit representation:
 
 **Unsigned integers** range over $000\ldots0$ to $111\ldots1$, i.e. $0$ to $2^n - 1$.
+
+**Complements in base $r$.** For an $n$-digit number $N$ in base $r$ [[1]](#ref-1):
+
+- the *diminished radix* or $(r-1)$'s complement is $(r^n - 1) - N$: subtract each digit from $r - 1$;
+- the *radix* or $r$'s complement is $r^n - N$ (and $0$ for $N = 0$): the $(r-1)$'s complement plus 1.
+
+For example, the 9's complement of $546700$ is $453299$ and the 10's complement of $012398$ is $987602$. In binary these are the 1's and 2's complements below.
 
 ### Signed Magnitude
 
@@ -1062,6 +1094,10 @@ $$\underset{(3)}{0011} \xrightarrow{\text{complement}} 1100 + 1 \longrightarrow 
 - Range: $-8$ to $7$ for 4 bits, and in general $-2^{n-1}$ to $2^{n-1} - 1$.
 - No repeated representations $\implies$ $2^n$ distinct numbers.
 - Allows efficient addition and multiplication (the same adder works for signed and unsigned numbers).
+
+**Sign extension.** To widen a two's complement number, copy the sign bit into the new positions: $1101$ and $11111101$ are both $-3$. (Unsigned numbers are widened with 0s.)
+
+**Arithmetic shifts.** An *arithmetic right shift* copies the sign bit into the vacated position, so it divides by 2 rounding towards $-\infty$: $1101\,(-3) \to 1110\,(-2)$, and $0110\,(6) \to 0011\,(3)$. An arithmetic left shift brings in a 0 and multiplies by 2; it overflows when the sign bit changes.
 
 ### Fixed-Point Representation
 
@@ -1801,7 +1837,7 @@ The hardware mirrors this array: a row of AND gates per bit $b_j$, and a 4-bit a
 Gate by gate, the same circuit looks like this. Mano's Fig. 4.16 shows the 4 × 3 case; in general $J$ multiplier bits and $K$ multiplicand bits need $J \times K$ AND gates and $J - 1$ $K$-bit adders [[1]](#ref-1), so 4 × 4 needs 16 AND gates and three 4-bit adders:
 
 <figure class="fig">
-<svg viewBox="0 0 650 565" width="650" role="img" aria-label="Gate-level 4 by 4 array multiplier: four rows of AND gates and three 4-bit adders">
+<svg viewBox="-4 0 654 565" width="654" role="img" aria-label="Gate-level 4 by 4 array multiplier: four rows of AND gates and three 4-bit adders">
   <polyline points="20,40 616,40" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="12" y="44" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">b₀</text>
   <path d="M508,62 h24 v12 a12,12 0 0 1 -24,0 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2022,8 +2058,8 @@ $$\text{value} = (-1)^s \times (1.f)_2 \times 2^{\,E - 127}$$
 Instead of giving the exponent its own sign bit (which would allow both $+0$ and $-0$ as exponents), the stored 8-bit value $E$ stands for the exponent $E - 127$. The two extreme values are reserved for special numbers:
 
 <figure class="fig">
-<svg viewBox="0 0 580 118" width="580" role="img" aria-label="Meaning of the 8-bit biased exponent">
-  <g fill="currentColor" font-size="12"><text x="14" y="22" text-anchor="end" font-style="italic">E</text><text x="14" y="70" text-anchor="end" font-style="italic">E−127</text></g>
+<svg viewBox="-30 0 610 118" width="610" role="img" aria-label="Meaning of the 8-bit biased exponent">
+  <g fill="currentColor" font-size="12"><text x="6" y="22" text-anchor="end" font-style="italic">E</text><text x="6" y="70" text-anchor="end" font-style="italic">E−127</text></g>
   <rect x="20" y="30" width="50" height="26" fill="#f59e0b" fill-opacity=".18" stroke="#f59e0b" stroke-width="1.5"/>
   <text x="45.0" y="22" text-anchor="middle" font-size="13" fill="currentColor">0</text>
   <text x="45.0" y="74" text-anchor="middle" font-size="13" fill="#f59e0b">zero /<tspan x='45.0' dy='14'>subnormal</tspan></text>
@@ -2590,7 +2626,7 @@ Now $J = K = 1$ means *toggle*. But at CLK = 1, $J = K = 1$, every toggle change
 
 ### Master–Slave JK Flip-Flop
 
-We can make it edge-triggered by making it a *master–slave* JK flip-flop. The master is enabled while CLK = 1 and the slave while CLK = 0, and the feedback comes from the **slave**, which does not change while the master is listening.
+Race-around is removed by making it a *master–slave* JK flip-flop. The master is enabled while CLK = 1 and the slave while CLK = 0, and the feedback comes from the **slave**, which does not change while the master is listening.
 
 <figure class="fig">
 <svg viewBox="0 0 560 200" width="560" role="img" aria-label="Master-slave JK flip-flop">
@@ -2634,9 +2670,9 @@ We can make it edge-triggered by making it a *master–slave* JK flip-flop. The 
 <figure class="fig">
 <svg viewBox="0 0 600 138" width="600" role="img" aria-label="Master-slave JK timing">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="210.5" y1="6" x2="210.5" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="337.0" y1="6" x2="337.0" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="463.5" y1="6" x2="463.5" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="210.5" y1="6" x2="210.5" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="337.0" y1="6" x2="337.0" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="463.5" y1="6" x2="463.5" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <text x="72" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">CLK</text>
   <polyline points="84.0,38 147.2,38 147.2,18 210.5,18 210.5,38 273.8,38 273.8,18 337.0,18 337.0,38 400.2,38 400.2,18 463.5,18 463.5,38 526.8,38 526.8,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="72" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">master Q</text>
@@ -2649,6 +2685,8 @@ We can make it edge-triggered by making it a *master–slave* JK flip-flop. The 
 </figure>
 
 The output changes only when the clock falls, so it works like a **negative-edge-triggered** flip-flop.
+
+It is not truly edge-triggered, though: the master listens during the whole time CLK = 1 (*pulse-triggered*). With $Q = 0$ the master sees $KQ = 0$, so once a brief 1 on $J$ sets the master while CLK = 1, nothing can reset it before the falling edge, and the glitch reaches $Q$. This is **1s catching** (with $Q = 1$, a brief 1 on $K$ is caught the same way). A true edge-triggered flip-flop samples its inputs only at the clock edge.
 
 <figure class="table split-3">
 <figcaption>Master–slave JK flip-flop ($\downarrow$ = falling clock edge, $Q^+$ = the next state).</figcaption>
@@ -2710,7 +2748,7 @@ An edge-triggered flip-flop only works if its input is steady around the clock e
 A *register* is a group of flip-flops sharing a clock, one per bit. A *shift register* also connects each flip-flop's output to the next one's input, so the stored bits move one place per clock. The counters in the next section are registers with extra logic or feedback between the flip-flops.
 
 <figure class="fig">
-<svg viewBox="0 0 580 262" width="580" role="img" aria-label="Parallel-in parallel-out register with parallel load">
+<svg viewBox="0 -3 580 265" width="580" role="img" aria-label="Parallel-in parallel-out register with parallel load">
   <defs><marker id="arr-pipo" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="110" y="10" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">I₃</text>
   <polyline points="110,14 110,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pipo)"/>
@@ -2928,14 +2966,14 @@ We can build counters from JK flip-flops with $J = K = 1$ (equivalently T flip-f
 <figure class="fig">
 <svg viewBox="0 0 600 192" width="600" role="img" aria-label="Ripple counter timing">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="100.6" y1="6" x2="100.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="161.8" y1="6" x2="161.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="222.9" y1="6" x2="222.9" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="284.1" y1="6" x2="284.1" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="345.3" y1="6" x2="345.3" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="406.5" y1="6" x2="406.5" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="467.6" y1="6" x2="467.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="528.8" y1="6" x2="528.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="100.6" y1="6" x2="100.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="161.8" y1="6" x2="161.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="222.9" y1="6" x2="222.9" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="284.1" y1="6" x2="284.1" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="345.3" y1="6" x2="345.3" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="406.5" y1="6" x2="406.5" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="467.6" y1="6" x2="467.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="528.8" y1="6" x2="528.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <text x="58" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">CLK</text>
   <polyline points="70.0,18 100.6,18 100.6,38 131.2,38 131.2,18 161.8,18 161.8,38 192.4,38 192.4,18 222.9,18 222.9,38 253.5,38 253.5,18 284.1,18 284.1,38 314.7,38 314.7,18 345.3,18 345.3,38 375.9,38 375.9,18 406.5,18 406.5,38 437.1,38 437.1,18 467.6,18 467.6,38 498.2,38 498.2,18 528.8,18 528.8,38 559.4,38 559.4,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="58" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">A</tspan></text>
@@ -3147,16 +3185,16 @@ Initialize with $Q_C Q_B Q_A = 100$. Then $Q_B^+ = Q_C$, $Q_A^+ = Q_B$ and $Q_C^
 <figure class="fig">
 <svg viewBox="0 0 600 192" width="600" role="img" aria-label="Ring counter timing">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="122.0" y1="6" x2="122.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="174.0" y1="6" x2="174.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="226.0" y1="6" x2="226.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="278.0" y1="6" x2="278.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="330.0" y1="6" x2="330.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="382.0" y1="6" x2="382.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="434.0" y1="6" x2="434.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="486.0" y1="6" x2="486.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="538.0" y1="6" x2="538.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="590.0" y1="6" x2="590.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="122.0" y1="6" x2="122.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="174.0" y1="6" x2="174.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="226.0" y1="6" x2="226.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="278.0" y1="6" x2="278.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="330.0" y1="6" x2="330.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="382.0" y1="6" x2="382.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="434.0" y1="6" x2="434.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="486.0" y1="6" x2="486.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="538.0" y1="6" x2="538.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="590.0" y1="6" x2="590.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <text x="58" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">CLK</text>
   <polyline points="70.0,38 96.0,38 96.0,18 122.0,18 122.0,38 148.0,38 148.0,18 174.0,18 174.0,38 200.0,38 200.0,18 226.0,18 226.0,38 252.0,38 252.0,18 278.0,18 278.0,38 304.0,38 304.0,18 330.0,18 330.0,38 356.0,38 356.0,18 382.0,18 382.0,38 408.0,38 408.0,18 434.0,18 434.0,38 460.0,38 460.0,18 486.0,18 486.0,38 512.0,38 512.0,18 538.0,18 538.0,38 564.0,38 564.0,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="58" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">C</tspan></text>
@@ -3287,19 +3325,19 @@ Initialize $Q_C Q_B Q_A = 000$: the sequence is $000 \to 100 \to 110 \to 111 \to
 <figure class="fig">
 <svg viewBox="0 0 600 192" width="600" role="img" aria-label="Johnson counter timing">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="110.0" y1="6" x2="110.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="150.0" y1="6" x2="150.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="190.0" y1="6" x2="190.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="230.0" y1="6" x2="230.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="270.0" y1="6" x2="270.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="310.0" y1="6" x2="310.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="350.0" y1="6" x2="350.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="390.0" y1="6" x2="390.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="430.0" y1="6" x2="430.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="470.0" y1="6" x2="470.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="510.0" y1="6" x2="510.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="550.0" y1="6" x2="550.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="590.0" y1="6" x2="590.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="110.0" y1="6" x2="110.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="150.0" y1="6" x2="150.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="190.0" y1="6" x2="190.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="230.0" y1="6" x2="230.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="270.0" y1="6" x2="270.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="310.0" y1="6" x2="310.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="350.0" y1="6" x2="350.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="390.0" y1="6" x2="390.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="430.0" y1="6" x2="430.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="470.0" y1="6" x2="470.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="510.0" y1="6" x2="510.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="550.0" y1="6" x2="550.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="590.0" y1="6" x2="590.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <text x="58" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">CLK</text>
   <polyline points="70.0,38 90.0,38 90.0,18 110.0,18 110.0,38 130.0,38 130.0,18 150.0,18 150.0,38 170.0,38 170.0,18 190.0,18 190.0,38 210.0,38 210.0,18 230.0,18 230.0,38 250.0,38 250.0,18 270.0,18 270.0,38 290.0,38 290.0,18 310.0,18 310.0,38 330.0,38 330.0,18 350.0,18 350.0,38 370.0,38 370.0,18 390.0,18 390.0,38 410.0,38 410.0,18 430.0,18 430.0,38 450.0,38 450.0,18 470.0,18 470.0,38 490.0,38 490.0,18 510.0,18 510.0,38 530.0,38 530.0,18 550.0,18 550.0,38 570.0,38 570.0,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="58" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">C</tspan></text>
@@ -3576,7 +3614,7 @@ The value of $X$ just before each positive edge decides what is stored:
 - $X = 1$: $D = A$, so the flip-flop **loads $A$**.
 - $X = 0$: $D = \bar Q$, so the flip-flop **toggles**.
 
-So on each clock edge $k$, read $X$: if it is 1, $Y$ becomes the current $A_k$; if it is 0, $Y$ becomes the complement of its previous value. For example, with $X = 1, 1, 0, 1, 1$ on edges 1–5, the output is $Y = A_0, A_1, \bar A_1, A_3, A_4$.
+So on each clock edge $k$, read $X$: if it is 1, $Y$ becomes the current $A_k$; if it is 0, $Y$ becomes the complement of its previous value. For example, with $X = 1, 1, 0, 1, 1$ on edges 1–5, the output is $Y = A_1, A_2, \bar A_2, A_4, A_5$.
 
 <div class="example">
 
@@ -3620,16 +3658,16 @@ The circuit below uses XOR gates and non-inverting buffers with delays $\delta_1
 <figure class="fig">
 <svg viewBox="0 0 600 190" width="600" role="img" aria-label="Timing of the XOR and buffer circuit">
   <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="117.3" y1="6" x2="117.3" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="164.5" y1="6" x2="164.5" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="211.8" y1="6" x2="211.8" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="259.1" y1="6" x2="259.1" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="306.4" y1="6" x2="306.4" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="353.6" y1="6" x2="353.6" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="400.9" y1="6" x2="400.9" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="448.2" y1="6" x2="448.2" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="495.5" y1="6" x2="495.5" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
-  <line x1="542.7" y1="6" x2="542.7" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-width="1" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="117.3" y1="6" x2="117.3" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="164.5" y1="6" x2="164.5" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="211.8" y1="6" x2="211.8" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="259.1" y1="6" x2="259.1" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="306.4" y1="6" x2="306.4" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="353.6" y1="6" x2="353.6" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="400.9" y1="6" x2="400.9" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="448.2" y1="6" x2="448.2" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="495.5" y1="6" x2="495.5" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="542.7" y1="6" x2="542.7" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <text x="58" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">A</text>
   <polyline points="70.0,38 117.3,38 117.3,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="58" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">P</text>

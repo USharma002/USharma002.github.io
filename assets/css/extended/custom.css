@@ -481,7 +481,7 @@ body:not(.dark) .chroma .p {
     font-weight: 400 !important;
     font-style: normal !important;
     background-color: #f1f3f5 !important;
-    border-radius: 8px !important;
+    border-radius: 0 !important;
     padding-top: 14px !important;
     padding-right: 20px !important;
     padding-bottom: 14px !important;
@@ -501,6 +501,10 @@ body:not(.dark) .chroma .p {
 }
 
 /* ─── Tables ─── */
+.post-content figure.table {
+    overflow-x: auto;
+}
+
 .post-content table {
     margin-bottom: var(--content-gap) !important;
 }
