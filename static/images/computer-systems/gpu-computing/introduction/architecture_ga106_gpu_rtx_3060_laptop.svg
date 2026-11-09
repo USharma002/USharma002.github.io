@@ -1,0 +1,114 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 450" width="680" role="img" aria-label="Architecture of the GA106 GPU of the RTX 3060 Laptop GPU">
+  <defs><marker id="arr-ga106" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-ga106s" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="290" y="10" width="100" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.3"/>
+  <text x="340.0" y="28.2" text-anchor="middle" font-size="12" fill="currentColor">Host (CPU)</text>
+  <polyline points="340,38 340,66" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <text x="348" y="57" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">PCIe</text>
+  <rect x="240" y="66" width="200" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.15"/>
+  <text x="340.0" y="84.2" text-anchor="middle" font-size="12" fill="currentColor">GigaThread engine</text>
+  <polyline points="340,94 340,108" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  <polyline points="120,108 560,108" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  <polyline points="120,108 120,134" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)"/>
+  <rect x="20" y="134" width="200" height="132" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="120" y="150" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">GPC 0</text>
+  <rect x="32" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="48.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="68" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="84.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="104" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="120.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="140" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="156.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="176" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="192.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="32" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="48.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="68" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="84.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="104" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="120.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="140" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="156.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="176" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="192.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <text x="120" y="259" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">5 TPCs × 2 SMs</text>
+  <polyline points="120,266 120,294" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="340,108 340,134" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)"/>
+  <rect x="240" y="134" width="200" height="132" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="340" y="150" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">GPC 1</text>
+  <rect x="252" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="268.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="288" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="304.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="324" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="340.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="360" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="376.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="396" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="412.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="252" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="268.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="288" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="304.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="324" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="340.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="360" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="376.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="396" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="412.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <text x="340" y="259" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">5 TPCs × 2 SMs</text>
+  <polyline points="340,266 340,294" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="560,108 560,134" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)"/>
+  <rect x="460" y="134" width="200" height="132" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="560" y="150" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">GPC 2</text>
+  <rect x="472" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="488.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="508" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="524.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="544" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="560.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="580" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="596.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="616" y="159" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="632.0" y="182.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="472" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="488.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="508" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="524.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="544" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="560.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="580" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="596.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <rect x="616" y="205" width="32" height="40" rx="3" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.12"/>
+  <text x="632.0" y="228.5" text-anchor="middle" font-size="10" fill="currentColor">SM</text>
+  <text x="560" y="259" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">5 TPCs × 2 SMs</text>
+  <polyline points="560,266 560,294" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="20" y="294" width="640" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.2"/>
+  <text x="340.0" y="312.2" text-anchor="middle" font-size="12" fill="currentColor">L2 cache (3 MB, shared by all SMs)</text>
+  <polyline points="67,322 67,350" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="20" y="350" width="94" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="67.0" y="367.85" text-anchor="middle" font-size="11" fill="currentColor">32-bit MC</text>
+  <polyline points="67,378 67,408" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="176,322 176,350" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="129" y="350" width="94" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="176.0" y="367.85" text-anchor="middle" font-size="11" fill="currentColor">32-bit MC</text>
+  <polyline points="176,378 176,408" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="285,322 285,350" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="238" y="350" width="94" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="285.0" y="367.85" text-anchor="middle" font-size="11" fill="currentColor">32-bit MC</text>
+  <polyline points="285,378 285,408" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="394,322 394,350" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="347" y="350" width="94" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="394.0" y="367.85" text-anchor="middle" font-size="11" fill="currentColor">32-bit MC</text>
+  <polyline points="394,378 394,408" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="503,322 503,350" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="456" y="350" width="94" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="503.0" y="367.85" text-anchor="middle" font-size="11" fill="currentColor">32-bit MC</text>
+  <polyline points="503,378 503,408" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <polyline points="612,322 612,350" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="565" y="350" width="94" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="612.0" y="367.85" text-anchor="middle" font-size="11" fill="currentColor">32-bit MC</text>
+  <polyline points="612,378 612,408" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-ga106)" marker-start="url(#arr-ga106s)"/>
+  <rect x="20" y="408" width="640" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.3"/>
+  <text x="340.0" y="427.2" text-anchor="middle" font-size="12" fill="currentColor">Global memory: 6 GB GDDR6, 192-bit bus, 336 GB/s</text>
+</svg>

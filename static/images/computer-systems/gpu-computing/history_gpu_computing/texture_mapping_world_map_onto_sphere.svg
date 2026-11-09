@@ -1,0 +1,31 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="560" role="img" aria-label="Texture mapping a world map onto a sphere">
+  <defs><marker id="arr-texmap" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-texmaps" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="40" y="50" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="80" y="50" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="120" y="50" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="160" y="50" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="40" y="90" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="80" y="90" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="120" y="90" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="160" y="90" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="40" y="130" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="80" y="130" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="120" y="130" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="160" y="130" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="40" y="170" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="80" y="170" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="120" y="170" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="160" y="170" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1"/>
+  <rect x="92" y="102" width="14" height="14" fill="currentColor" fill-opacity="0.6" stroke="none"/>
+  <polyline points="40,34 160,34" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-texmap)"/>
+  <text x="170" y="38" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">u</text>
+  <polyline points="22,50 22,170" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-texmap)"/>
+  <text x="14" y="186" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">v</text>
+  <text x="120" y="230" text-anchor="middle" font-size="12" fill="currentColor">Texture image (u, v)</text>
+  <circle cx="430" cy="120" r="80" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <ellipse cx="430" cy="120" rx="80" ry="22" fill="none" stroke="currentColor" stroke-width="1" opacity=".65"/>
+  <ellipse cx="430" cy="120" rx="34" ry="80" fill="none" stroke="currentColor" stroke-width="1" opacity=".65"/>
+  <rect x="456" y="68" width="10" height="10" fill="currentColor" fill-opacity="0.6" stroke="none"/>
+  <path d="M 106 102 C 230 10, 380 10, 459 66" stroke="currentColor" stroke-width="1.4" fill="none" stroke-dasharray="4 3" marker-end="url(#arr-texmap)"/>
+  <text x="430" y="222" text-anchor="middle" font-size="12" fill="currentColor">Sphere made of triangles</text>
+</svg>

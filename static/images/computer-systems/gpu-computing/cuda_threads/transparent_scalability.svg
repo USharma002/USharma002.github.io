@@ -1,0 +1,64 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" width="680" role="img" aria-label="Transparent scalability">
+  <defs><marker id="arr-scal" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-scals" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="270" y="10" width="140" height="110" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.06"/>
+  <text x="278" y="24" text-anchor="start" font-size="10" fill="currentColor">Kernel grid</text>
+  <rect x="278" y="30" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="308.0" y="42.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 0</text>
+  <rect x="342" y="30" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="372.0" y="42.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 1</text>
+  <rect x="278" y="52" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="308.0" y="64.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 2</text>
+  <rect x="342" y="52" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="372.0" y="64.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 3</text>
+  <rect x="278" y="74" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="308.0" y="86.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 4</text>
+  <rect x="342" y="74" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="372.0" y="86.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 5</text>
+  <rect x="278" y="96" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="308.0" y="108.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 6</text>
+  <rect x="342" y="96" width="60" height="18" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="372.0" y="108.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 7</text>
+  <polyline points="270,65 100,65 100,96" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-scal)"/>
+  <polyline points="410,65 545,65 545,96" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-scal)"/>
+  <rect x="20" y="96" width="160" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.06"/>
+  <text x="28" y="115" text-anchor="start" font-size="10" fill="currentColor">Device (2 at a time)</text>
+  <rect x="40" y="140" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="71.0" y="156.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 0</text>
+  <rect x="110" y="140" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="141.0" y="156.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 1</text>
+  <rect x="40" y="174" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="71.0" y="190.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 2</text>
+  <rect x="110" y="174" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="141.0" y="190.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 3</text>
+  <rect x="40" y="208" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="71.0" y="224.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 4</text>
+  <rect x="110" y="208" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="141.0" y="224.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 5</text>
+  <rect x="40" y="242" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="71.0" y="258.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 6</text>
+  <rect x="110" y="242" width="62" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="141.0" y="258.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 7</text>
+  <polyline points="26,140 26,272" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-scal)"/>
+  <text x="34" y="290" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">time</text>
+  <rect x="420" y="96" width="250" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.06"/>
+  <text x="428" y="115" text-anchor="start" font-size="10" fill="currentColor">Device (4 at a time)</text>
+  <rect x="426" y="140" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="454.0" y="156.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 0</text>
+  <rect x="487" y="140" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="515.0" y="156.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 1</text>
+  <rect x="548" y="140" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="576.0" y="156.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 2</text>
+  <rect x="609" y="140" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="637.0" y="156.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 3</text>
+  <rect x="426" y="174" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="454.0" y="190.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 4</text>
+  <rect x="487" y="174" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="515.0" y="190.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 5</text>
+  <rect x="548" y="174" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="576.0" y="190.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 6</text>
+  <rect x="609" y="174" width="56" height="26" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="637.0" y="190.325" text-anchor="middle" font-size="9.5" fill="currentColor">Block 7</text>
+  <polyline points="412,140 412,204" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-scal)"/>
+  <text x="296" y="220" text-anchor="middle" font-size="10" fill="currentColor">Each block can execute in any</text>
+  <text x="296" y="234" text-anchor="middle" font-size="10" fill="currentColor">order relative to other blocks.</text>
+</svg>

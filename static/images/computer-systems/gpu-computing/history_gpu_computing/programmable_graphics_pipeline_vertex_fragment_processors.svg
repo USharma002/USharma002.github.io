@@ -1,0 +1,60 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="-20 0 940 340" width="940" role="img" aria-label="Programmable graphics pipeline with vertex and fragment processors">
+  <defs><marker id="arr-progpipe" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-progpipes" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="30" y="10" width="140" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="100.0" y="26.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">3D application</text>
+  <text x="100.0" y="40.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">or game</text>
+  <polyline points="100,50 100,82" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="108" y="70" text-anchor="start" font-size="10" fill="currentColor">3D API commands</text>
+  <rect x="30" y="82" width="140" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="100.0" y="100.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">3D API:</text>
+  <text x="100.0" y="114.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">OpenGL or Direct3D</text>
+  <polyline points="10,150 910,150" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="460" y="143" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">CPU – GPU boundary</text>
+  <text x="700" y="100" text-anchor="middle" font-size="11" fill="currentColor">CPU</text>
+  <text x="700" y="172" text-anchor="middle" font-size="11" fill="currentColor">GPU</text>
+  <polyline points="100,126 100,190" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="108" y="175" text-anchor="start" font-size="10" fill="currentColor">GPU command &amp; data stream</text>
+  <rect x="40" y="190" width="110" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="95.0" y="208.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">GPU</text>
+  <text x="95.0" y="222.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">front end</text>
+  <rect x="240" y="190" width="110" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="295.0" y="208.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">Primitive</text>
+  <text x="295.0" y="222.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">assembly</text>
+  <polyline points="150,212 240,212" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="195" y="192" text-anchor="middle" font-size="10" fill="currentColor">vertex index</text>
+  <text x="195" y="205" text-anchor="middle" font-size="10" fill="currentColor">stream</text>
+  <rect x="130" y="284" width="140" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="200.0" y="302.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">Programmable</text>
+  <text x="200.0" y="316.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">vertex processor</text>
+  <polyline points="70,234 70,306 130,306" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="64" y="262" text-anchor="end" font-size="10" fill="currentColor">pretransformed</text>
+  <text x="64" y="275" text-anchor="end" font-size="10" fill="currentColor">vertices</text>
+  <polyline points="270,306 310,306 310,234" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="316" y="262" text-anchor="start" font-size="10" fill="currentColor">transformed</text>
+  <text x="316" y="275" text-anchor="start" font-size="10" fill="currentColor">vertices</text>
+  <rect x="440" y="190" width="130" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="505.0" y="208.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">Rasterization and</text>
+  <text x="505.0" y="222.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">interpolation</text>
+  <polyline points="350,212 440,212" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="395" y="182" text-anchor="middle" font-size="10" fill="currentColor">assembled polygons,</text>
+  <text x="395" y="195" text-anchor="middle" font-size="10" fill="currentColor">lines, points</text>
+  <rect x="500" y="284" width="140" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="570.0" y="302.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">Programmable</text>
+  <text x="570.0" y="316.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">fragment processor</text>
+  <polyline points="470,234 470,306 500,306" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="464" y="262" text-anchor="end" font-size="10" fill="currentColor">rasterized</text>
+  <text x="464" y="275" text-anchor="end" font-size="10" fill="currentColor">fragments</text>
+  <rect x="680" y="190" width="110" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="735.0" y="208.975" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">Raster</text>
+  <text x="735.0" y="222.725" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">operations</text>
+  <polyline points="570,212 680,212" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="625" y="182" text-anchor="middle" font-size="10" fill="currentColor">pixel location</text>
+  <text x="625" y="195" text-anchor="middle" font-size="10" fill="currentColor">stream</text>
+  <polyline points="640,306 735,306 735,234" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="741" y="262" text-anchor="start" font-size="10" fill="currentColor">transformed</text>
+  <text x="741" y="275" text-anchor="start" font-size="10" fill="currentColor">fragments</text>
+  <rect x="820" y="197" width="90" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="865.0" y="215.85" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">Framebuffer</text>
+  <polyline points="790,212 820,212" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-progpipe)"/>
+  <text x="805" y="245" text-anchor="middle" font-size="10" fill="currentColor">pixel updates</text>
+</svg>

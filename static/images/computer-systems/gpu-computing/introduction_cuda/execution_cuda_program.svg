@@ -1,0 +1,65 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 250" width="600" role="img" aria-label="Execution of a CUDA program">
+  <defs><marker id="arr-cudaexec" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-cudaexecs" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <text x="160" y="30" text-anchor="middle" font-size="12" fill="currentColor">CPU serial code</text>
+  <path d="M440,10 q6,6 0,12 q-6,6 0,12 q6,6 0,12" stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#arr-cudaexec)"/>
+  <rect x="330" y="60" width="250" height="50" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="575" y="54" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">Grid 0</text>
+  <rect x="338" y="68" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M344,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M352,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M360,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M368,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M376,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="394" y="68" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M400,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M408,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M416,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M424,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M432,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="450" y="68" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M456,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M464,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M472,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M480,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M488,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="526" y="68" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M532,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M540,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M548,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M556,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M564,72 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="508" y="90" text-anchor="middle" font-size="12" fill="currentColor">…</text>
+  <text x="160" y="82" text-anchor="middle" font-size="12" fill="currentColor">GPU parallel kernel</text>
+  <text x="160" y="98" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">KernelA&lt;&lt;&lt;nBlk, nTid&gt;&gt;&gt;(args);</text>
+  <text x="160" y="150" text-anchor="middle" font-size="12" fill="currentColor">CPU serial code</text>
+  <path d="M440,120 q6,6 0,12 q-6,6 0,12 q6,6 0,12" stroke="currentColor" stroke-width="1.4" fill="none" marker-end="url(#arr-cudaexec)"/>
+  <rect x="330" y="175" width="250" height="50" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="575" y="169" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">Grid 1</text>
+  <rect x="338" y="183" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M344,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M352,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M360,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M368,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M376,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="394" y="183" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M400,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M408,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M416,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M424,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M432,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="450" y="183" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M456,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M464,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M472,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M480,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M488,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="526" y="183" width="46" height="34" rx="0" stroke="currentColor" stroke-width="1" fill="none"/>
+  <path d="M532,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M540,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M548,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M556,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <path d="M564,187 q3,4 0,8 q-3,4 0,8 q3,4 0,8" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="508" y="205" text-anchor="middle" font-size="12" fill="currentColor">…</text>
+  <text x="160" y="197" text-anchor="middle" font-size="12" fill="currentColor">GPU parallel kernel</text>
+  <text x="160" y="213" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">KernelB&lt;&lt;&lt;nBlk, nTid&gt;&gt;&gt;(args);</text>
+</svg>

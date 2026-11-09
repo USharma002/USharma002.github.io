@@ -1,0 +1,17 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 122" width="300" role="img" aria-label="k-space data in separate arrays">
+  <defs><marker id="arr-klayA" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-klayAs" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <text x="150" y="14" text-anchor="middle" font-size="10" fill="currentColor">Constant memory</text>
+  <rect x="10" y="22" width="280" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <rect x="12" y="24" width="50" height="18" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.4"/>
+  <text x="37.0" y="36.325" text-anchor="middle" font-size="9.5" fill="currentColor">kx[i]</text>
+  <text x="176" y="37" text-anchor="middle" font-size="10" fill="currentColor">kx</text>
+  <rect x="10" y="46" width="280" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <rect x="12" y="48" width="50" height="18" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.4"/>
+  <text x="37.0" y="60.325" text-anchor="middle" font-size="9.5" fill="currentColor">ky[i]</text>
+  <text x="176" y="61" text-anchor="middle" font-size="10" fill="currentColor">ky</text>
+  <rect x="10" y="70" width="280" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <rect x="12" y="72" width="50" height="18" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.4"/>
+  <text x="37.0" y="84.325" text-anchor="middle" font-size="9.5" fill="currentColor">kz[i]</text>
+  <text x="176" y="85" text-anchor="middle" font-size="10" fill="currentColor">kz</text>
+  <text x="150" y="112" text-anchor="middle" font-size="10" fill="currentColor">A. Separate arrays: 3 cache entries</text>
+</svg>

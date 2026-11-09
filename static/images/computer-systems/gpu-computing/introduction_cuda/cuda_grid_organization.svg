@@ -1,0 +1,74 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 420" width="520" role="img" aria-label="CUDA grid organization">
+  <defs><marker id="arr-gridorg" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-gridorgs" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="10" y="10" width="110" height="400" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.06"/>
+  <text x="20" y="28" text-anchor="start" font-size="11" fill="currentColor">Host</text>
+  <rect x="140" y="10" width="370" height="400" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.06"/>
+  <text x="150" y="28" text-anchor="start" font-size="11" fill="currentColor">Device</text>
+  <rect x="25" y="70" width="70" height="40" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="60.0" y="86.975" text-anchor="middle" font-size="11" fill="currentColor">Kernel</text>
+  <text x="60.0" y="100.725" text-anchor="middle" font-size="11" fill="currentColor">1</text>
+  <rect x="25" y="200" width="70" height="40" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="60.0" y="216.975" text-anchor="middle" font-size="11" fill="currentColor">Kernel</text>
+  <text x="60.0" y="230.725" text-anchor="middle" font-size="11" fill="currentColor">2</text>
+  <polyline points="110,30 110,390" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-gridorg)" opacity=".65"/>
+  <rect x="180" y="40" width="200" height="140" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="190" y="56" text-anchor="start" font-size="11" fill="currentColor">Grid 1</text>
+  <rect x="200" y="66" width="74" height="44" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="237.0" y="85.25" text-anchor="middle" font-size="10" fill="currentColor">Block</text>
+  <text x="237.0" y="97.75" text-anchor="middle" font-size="10" fill="currentColor">(0, 0)</text>
+  <rect x="285" y="66" width="74" height="44" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="322.0" y="85.25" text-anchor="middle" font-size="10" fill="currentColor">Block</text>
+  <text x="322.0" y="97.75" text-anchor="middle" font-size="10" fill="currentColor">(1, 0)</text>
+  <rect x="200" y="120" width="74" height="44" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="237.0" y="139.25" text-anchor="middle" font-size="10" fill="currentColor">Block</text>
+  <text x="237.0" y="151.75" text-anchor="middle" font-size="10" fill="currentColor">(0, 1)</text>
+  <rect x="285" y="120" width="74" height="44" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.12"/>
+  <text x="322.0" y="139.25" text-anchor="middle" font-size="10" fill="currentColor">Block</text>
+  <text x="322.0" y="151.75" text-anchor="middle" font-size="10" fill="currentColor">(1, 1)</text>
+  <polyline points="95,90 180,90" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-gridorg)"/>
+  <rect x="180" y="196" width="200" height="44" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="190" y="212" text-anchor="start" font-size="11" fill="currentColor">Grid 2</text>
+  <rect x="190" y="218" width="30" height="16" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="227" y="218" width="30" height="16" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="264" y="218" width="30" height="16" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="301" y="218" width="30" height="16" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="338" y="218" width="30" height="16" rx="0" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="95,220 180,220" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-gridorg)"/>
+  <rect x="170" y="255" width="300" height="140" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.04"/>
+  <text x="178" y="388" text-anchor="start" font-size="10" fill="currentColor">Block (1, 1)</text>
+  <polygon points="200,280 214,266 268,266 254,280" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="1"/>
+  <text x="234" y="276" text-anchor="middle" font-size="8" fill="currentColor">(0,0,1)</text>
+  <polygon points="258,280 272,266 326,266 312,280" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="1"/>
+  <text x="292" y="276" text-anchor="middle" font-size="8" fill="currentColor">(1,0,1)</text>
+  <polygon points="316,280 330,266 384,266 370,280" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="1"/>
+  <text x="350" y="276" text-anchor="middle" font-size="8" fill="currentColor">(2,0,1)</text>
+  <polygon points="374,280 388,266 442,266 428,280" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="1"/>
+  <text x="408" y="276" text-anchor="middle" font-size="8" fill="currentColor">(3,0,1)</text>
+  <polygon points="432,280 446,266 446,358 432,372" fill="currentColor" fill-opacity="0.1" stroke="currentColor" stroke-width="1"/>
+  <rect x="200" y="280" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="227.0" y="298.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="227.0" y="309.775" text-anchor="middle" font-size="9" fill="currentColor">(0,0,0)</text>
+  <rect x="258" y="280" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="285.0" y="298.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="285.0" y="309.775" text-anchor="middle" font-size="9" fill="currentColor">(1,0,0)</text>
+  <rect x="316" y="280" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="343.0" y="298.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="343.0" y="309.775" text-anchor="middle" font-size="9" fill="currentColor">(2,0,0)</text>
+  <rect x="374" y="280" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="401.0" y="298.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="401.0" y="309.775" text-anchor="middle" font-size="9" fill="currentColor">(3,0,0)</text>
+  <rect x="200" y="326" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="227.0" y="344.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="227.0" y="355.775" text-anchor="middle" font-size="9" fill="currentColor">(0,1,0)</text>
+  <rect x="258" y="326" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="285.0" y="344.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="285.0" y="355.775" text-anchor="middle" font-size="9" fill="currentColor">(1,1,0)</text>
+  <rect x="316" y="326" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="343.0" y="344.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="343.0" y="355.775" text-anchor="middle" font-size="9" fill="currentColor">(2,1,0)</text>
+  <rect x="374" y="326" width="54" height="42" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.25"/>
+  <text x="401.0" y="344.525" text-anchor="middle" font-size="9" fill="currentColor">Thread</text>
+  <text x="401.0" y="355.775" text-anchor="middle" font-size="9" fill="currentColor">(3,1,0)</text>
+  <polyline points="285,164 170,255" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3" opacity=".65"/>
+  <polyline points="359,164 470,255" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 3" opacity=".65"/>
+</svg>

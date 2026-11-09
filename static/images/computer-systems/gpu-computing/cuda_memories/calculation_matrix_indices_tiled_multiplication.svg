@@ -1,0 +1,45 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 530 466" width="530" role="img" aria-label="Calculation of the matrix indices in tiled multiplication">
+  <defs><marker id="arr-tiledidx" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-tiledidxs" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="100" y="240" width="180" height="180" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+  <text x="108" y="256" text-anchor="start" font-size="12" fill="currentColor" font-weight="700">Md</text>
+  <rect x="290" y="50" width="180" height="180" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+  <text x="298" y="66" text-anchor="start" font-size="12" fill="currentColor" font-weight="700">Nd</text>
+  <rect x="290" y="240" width="180" height="180" rx="0" stroke="currentColor" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+  <text x="298" y="256" text-anchor="start" font-size="12" fill="currentColor" font-weight="700">Pd</text>
+  <rect x="100" y="276" width="180" height="36" fill="currentColor" fill-opacity="0.15" stroke="none"/>
+  <rect x="326" y="50" width="36" height="180" fill="currentColor" fill-opacity="0.15" stroke="none"/>
+  <rect x="100" y="276" width="36" height="36" rx="0" stroke="currentColor" stroke-width="1.2" fill="currentColor" fill-opacity="0.3"/>
+  <rect x="136" y="276" width="36" height="36" rx="0" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.6"/>
+  <rect x="326" y="50" width="36" height="36" rx="0" stroke="currentColor" stroke-width="1.2" fill="currentColor" fill-opacity="0.3"/>
+  <rect x="326" y="86" width="36" height="36" rx="0" stroke="currentColor" stroke-width="1.6" fill="currentColor" fill-opacity="0.6"/>
+  <text x="154.0" y="270" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">m</text>
+  <text x="320" y="108.0" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">m</text>
+  <rect x="326" y="276" width="36" height="36" rx="0" stroke="currentColor" stroke-width="1.8" fill="currentColor" fill-opacity="0.35"/>
+  <text x="366" y="290" text-anchor="start" font-size="10" fill="currentColor">Pd<tspan baseline-shift="sub" font-size="75%">sub</tspan></text>
+  <polyline points="140,302 168,302" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-tiledidx)"/>
+  <text x="154.0" y="296" text-anchor="middle" font-size="10" fill="currentColor" font-style="italic">k</text>
+  <polyline points="352,90 352,118" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-tiledidx)"/>
+  <text x="344" y="108.0" text-anchor="end" font-size="10" fill="currentColor" font-style="italic">k</text>
+  <text x="308.0" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="64" y="262.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="344.0" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="64" y="298.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="380.0" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">2</text>
+  <text x="64" y="334.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">2</text>
+  <text x="416.0" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">3</text>
+  <text x="64" y="370.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">3</text>
+  <text x="452.0" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">4</text>
+  <text x="64" y="406.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">4</text>
+  <text x="280" y="24" text-anchor="end" font-size="10" fill="currentColor" font-style="italic">bx</text>
+  <text x="64" y="230" text-anchor="middle" font-size="10" fill="currentColor" font-style="italic">by</text>
+  <text x="344.0" y="42" text-anchor="middle" font-size="10" fill="currentColor" font-style="italic">tx</text>
+  <text x="88" y="298.0" text-anchor="end" font-size="10" fill="currentColor" font-style="italic">ty</text>
+  <polyline points="100,434 280,434" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-tiledidx)" marker-start="url(#arr-tiledidxs)"/>
+  <text x="190.0" y="450" text-anchor="middle" font-size="10" fill="currentColor">Width</text>
+  <polyline points="290,434 470,434" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-tiledidx)" marker-start="url(#arr-tiledidxs)"/>
+  <text x="380.0" y="450" text-anchor="middle" font-size="10" fill="currentColor">Width</text>
+  <polyline points="486,50 486,230" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-tiledidx)" marker-start="url(#arr-tiledidxs)"/>
+  <text x="500" y="140.0" text-anchor="middle" font-size="10" fill="currentColor" transform="rotate(-90 500 140.0)">Width</text>
+  <polyline points="486,240 486,420" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-tiledidx)" marker-start="url(#arr-tiledidxs)"/>
+  <text x="500" y="330.0" text-anchor="middle" font-size="10" fill="currentColor" transform="rotate(-90 500 330.0)">Width</text>
+</svg>

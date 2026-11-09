@@ -1,0 +1,41 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 140" width="620" role="img" aria-label="Input tile with halo for 1D tiled convolution">
+  <defs><marker id="arr-halo1d" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-halo1ds" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="35.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">0</text>
+  <rect x="50" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="65.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">1</text>
+  <rect x="80" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="95.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">2</text>
+  <rect x="110" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="125.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">3</text>
+  <rect x="140" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.35"/>
+  <text x="155.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">4</text>
+  <rect x="170" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.35"/>
+  <text x="185.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">5</text>
+  <rect x="200" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.35"/>
+  <text x="215.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">6</text>
+  <rect x="230" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.35"/>
+  <text x="245.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">7</text>
+  <rect x="260" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="275.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">8</text>
+  <rect x="290" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="305.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">9</text>
+  <rect x="320" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="335.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">10</text>
+  <rect x="350" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="365.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">11</text>
+  <rect x="380" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="395.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">12</text>
+  <rect x="410" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="425.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">13</text>
+  <rect x="440" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="455.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">14</text>
+  <rect x="470" y="40" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.05"/>
+  <text x="485.0" y="56.15" text-anchor="middle" font-size="9" fill="currentColor">15</text>
+  <rect x="80" y="36" width="240" height="34" fill="none" stroke="currentColor" stroke-width="2"/>
+  <text x="200" y="26" text-anchor="middle" font-size="10" fill="currentColor">input tile of block 1 = output tile + 2 halo cells each side</text>
+  <text x="110" y="90" text-anchor="middle" font-size="10" fill="currentColor">left halo</text>
+  <text x="200" y="90" text-anchor="middle" font-size="10" fill="currentColor">output tile 1</text>
+  <text x="290" y="90" text-anchor="middle" font-size="10" fill="currentColor">right halo</text>
+  <text x="260" y="120" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">OUT_TILE = 4, r = 2: the block loads 8 input elements to produce 4 outputs</text>
+</svg>

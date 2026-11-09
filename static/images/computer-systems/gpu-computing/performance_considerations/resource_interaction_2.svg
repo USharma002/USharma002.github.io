@@ -1,0 +1,31 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 170" width="330" role="img" aria-label="Resource interaction">
+  <defs><marker id="arr-resint1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-resint1s" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <text x="165" y="16" text-anchor="middle" font-size="11" fill="currentColor" font-weight="700">B. 48 registers per thread</text>
+  <text x="10" y="40" text-anchor="start" font-size="10" fill="currentColor">Register file (65,536)</text>
+  <rect x="10.0" y="46" width="58.1" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="39.05" y="62.15" text-anchor="middle" font-size="9" fill="currentColor">TB0</text>
+  <rect x="68.1" y="46" width="58.1" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="97.14999999999999" y="62.15" text-anchor="middle" font-size="9" fill="currentColor">TB1</text>
+  <rect x="126.2" y="46" width="58.1" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="155.25" y="62.15" text-anchor="middle" font-size="9" fill="currentColor">TB2</text>
+  <rect x="184.4" y="46" width="58.1" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="213.45000000000002" y="62.15" text-anchor="middle" font-size="9" fill="currentColor">TB3</text>
+  <rect x="242.5" y="46" width="58.1" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="271.55" y="62.15" text-anchor="middle" font-size="9" fill="currentColor">TB4</text>
+  <rect x="300.6" y="46" width="19.4" height="26" rx="0" stroke="currentColor" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
+  <text x="310.3" y="62.15" text-anchor="middle" font-size="9" fill="currentColor">✗</text>
+  <text x="10" y="98" text-anchor="start" font-size="10" fill="currentColor">Thread slots (1536)</text>
+  <rect x="10.0" y="104" width="51.6" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="35.8" y="118.15" text-anchor="middle" font-size="9" fill="currentColor">256</text>
+  <rect x="61.6" y="104" width="51.6" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="87.4" y="118.15" text-anchor="middle" font-size="9" fill="currentColor">256</text>
+  <rect x="113.2" y="104" width="51.6" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="139.0" y="118.15" text-anchor="middle" font-size="9" fill="currentColor">256</text>
+  <rect x="164.8" y="104" width="51.6" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="190.60000000000002" y="118.15" text-anchor="middle" font-size="9" fill="currentColor">256</text>
+  <rect x="216.4" y="104" width="51.6" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="currentColor" fill-opacity="0.3"/>
+  <text x="242.20000000000002" y="118.15" text-anchor="middle" font-size="9" fill="currentColor">256</text>
+  <rect x="268.0" y="104" width="51.6" height="22" rx="0" stroke="currentColor" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
+  <text x="293.8" y="118.15" text-anchor="middle" font-size="9" fill="currentColor"></text>
+  <text x="165" y="150" text-anchor="middle" font-size="10" fill="currentColor">5 blocks = 1280 threads per SM</text>
+</svg>

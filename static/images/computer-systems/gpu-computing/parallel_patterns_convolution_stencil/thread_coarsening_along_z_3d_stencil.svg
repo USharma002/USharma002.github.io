@@ -1,0 +1,12 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 230" width="520" role="img" aria-label="Thread coarsening along z for a 3D stencil">
+  <defs><marker id="arr-zcoarse" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-zcoarses" viewBox="0 0 8 8" refX="1" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M8,0 L0,4 L8,8 z" fill="currentColor"/></marker></defs>
+  <polygon points="60,150 260,150 320,116 120,116" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-width="1.2"/>
+  <text x="340" y="138" text-anchor="start" font-size="10" fill="currentColor">plane z − 1 (register)</text>
+  <polygon points="100,100 300,100 360,66 160,66" fill="currentColor" fill-opacity="0.35" stroke="currentColor" stroke-width="1.2"/>
+  <text x="380" y="88" text-anchor="start" font-size="10" fill="currentColor">plane z (shared memory)</text>
+  <polygon points="140,50 340,50 400,16 200,16" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-width="1.2"/>
+  <text x="420" y="38" text-anchor="start" font-size="10" fill="currentColor">plane z + 1 (register)</text>
+  <polyline points="30,200 30,40" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#arr-zcoarse)"/>
+  <text x="38" y="205" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">z</text>
+  <text x="250" y="222" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">each block walks up its column of the grid; the planes rotate down after each step</text>
+</svg>
