@@ -2200,22 +2200,22 @@ Because translation works from the outer table inward, this is also called a *fo
 
 <div class="example">
 
-A system has a 32-bit address space, 4 KB pages and 8 B page-table entries. A program uses only a small region near address $\texttt{0x0001\,0000}$ and the region $\texttt{0xFFFF\,0000}$–$\texttt{0xFFFF\,FFFF}$. Compare a flat page table with a two-level one.
+A system has a 32-bit address space, 4 KB pages and 4 B page-table entries. A program uses only a small region near address $\texttt{0x0001\,0000}$ and the region $\texttt{0xFFFF\,0000}$–$\texttt{0xFFFF\,FFFF}$. Compare a flat page table with a two-level one.
 
 </div>
 
-**Flat.** There are $2^{32} / 2^{12} = 2^{20}$ pages, so the table is $2^{20} \times 8\text{ B} = 8$ MB.
+**Flat.** There are $2^{32} / 2^{12} = 2^{20}$ pages, so the table is $2^{20} \times 4\text{ B} = 4$ MB.
 
-**Two-level.** Split the 20-bit page number into two 10-bit parts, so that every table has $2^{10} = 1024$ entries:
+**Two-level.** Split the 20-bit page number into two 10-bit parts, so that every table has $2^{10} = 1024$ entries and exactly fills one 4 KB page:
 
 {{< figure src="/images/computer-systems/operating-systems/memory_management/32_bit_address_split_level_paging.svg" alt="32-bit address split for two-level paging" width="560px" class="fig" caption="32-bit address for two-level paging with 4 KB pages." >}}
 
-- The outer page table has 1024 entries: $2^{10} \times 8\text{ B} = 8$ KB.
-- Each inner table covers $2^{10}$ pages $= 4$ MB of address space. The two used regions fall in outer entries 0 and 1023, so only **two** inner tables are needed: $2 \times 2^{10} \times 8\text{ B} = 16$ KB.
+- The outer page table has 1024 entries: $2^{10} \times 4\text{ B} = 4$ KB.
+- Each inner table covers $2^{10}$ pages $= 4$ MB of address space. The two used regions fall in outer entries 0 and 1023, so only **two** inner tables are needed: $2 \times 2^{10} \times 4\text{ B} = 8$ KB.
 
 {{< figure src="/images/computer-systems/operating-systems/memory_management/level_page_table_32_bit_example.svg" alt="Two-level page table for the 32-bit example: only outer entries 0 and 1023 are used" width="620px" class="fig" caption="The two-level table of the example: of the 1024 outer entries only 0 and 1023 are valid, so only two inner tables exist." >}}
 
-$$\text{Total} = 8\text{ KB} + 16\text{ KB} = 24\text{ KB} \quad\text{instead of } 8\text{ MB}$$
+$$\text{Total} = 4\text{ KB} + 8\text{ KB} = 12\text{ KB} \quad\text{instead of } 4\text{ MB}$$
 
 ##### Four-Level Example
 

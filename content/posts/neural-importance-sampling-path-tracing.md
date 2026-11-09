@@ -29,8 +29,6 @@ The plan is: establish the radiometric quantities, write the rendering equation 
 - **Light travels in straight lines.** Its path is unbent within a uniform medium.
 - **Lambert's cosine law.** The incident angle $\theta$ dictates how much a surface is illuminated.
 <iframe src="/interactive/cosine_forshortening.html"
- 
- 
         width="100%"
         height="430"
         frameborder="0"
@@ -43,8 +41,6 @@ The plan is: establish the radiometric quantities, write the rendering equation 
 $$\text{Intensity} \propto \frac{1}{r^2}$$
 
 <iframe src="/interactive/inverse_square_law.html"
- 
- 
         width="100%"
         height="430"
         frameborder="0"
@@ -668,8 +664,6 @@ width="80%"
 We can see the interaction of light with Specular (S), Diffuse (D) objects. We can write all of the types of interaction of lights as regular expression $L(D | S)^*E$
 
 <iframe src="/interactive/light_paths.html"
- 
- 
         width="100%"
         height="500"
         frameborder="0"
@@ -862,8 +856,6 @@ Two facts about $\eqref{eq:inverse-cdf}$ carry into the rest of these notes. Fir
 
 <div style="overflow-x:auto;">
 <iframe src="/interactive/inverse_transform_sampling.html"
- 
- 
         width="100%"
         height="280"
         frameborder="0"
@@ -908,8 +900,6 @@ $$
 where $X$ is a random variable drawn from distribution $p(x)$.
 
 <iframe src="/interactive/monte_carlo.html"
- 
- 
         width="100%"
         height="420"
         frameborder="0"
@@ -1209,8 +1199,6 @@ width="100%"
 >}}
 
 <iframe src="/interactive/importance_sampling.html"
- 
- 
         width="100%"
         height="670"
         frameborder="0"
@@ -2066,8 +2054,6 @@ $$
 
 
 <iframe src="/interactive/mis.html"
- 
- 
         width="100%"
         height="660"
         frameborder="0"
@@ -3389,8 +3375,6 @@ caption="vMF Mixture with $K=3$ components"
 width="60%" >}}
 
 <iframe src="/interactive/vmf.html"
- 
- 
         width="100%"
         height="445"
         frameborder="0">
