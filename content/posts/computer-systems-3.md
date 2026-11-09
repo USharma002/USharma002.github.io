@@ -613,7 +613,7 @@ CISC (complex instruction set computer) ISAs support many addressing modes; load
 - **Register:** few bits are needed and there is no memory access.
 - **Register indirect:** a large address space, with one memory access fewer than indirect addressing.
 - **Indexed:** the offset is the starting address of an array and the index register selects the element.
-- **PC-relative:** the offset is added to PC, which by then usually holds the address of the *next* instruction. With a 12-bit offset the range is $-2048$ to $+2047$.
+- **PC-relative:** the offset is added to the *updated* PC, i.e. the address of the next instruction [[2]](#ref-2). With a 12-bit offset the range is $-2048$ to $+2047$.
 - **Stack:** the operand is on top of the stack (`PUSH X`, `POP X`, `ADD`). The stack pointer (SP) is updated by `PUSH`, `POP`, `CALL` and `RET`.
 - **Base:** all addresses are added to a base (segment) register, so code and data can be moved in memory.
 - **Autoincrement and autodecrement:** the register holding the address is incremented after the access, or decremented before it (like `a++` and `--a` in C) [[2]](#ref-2).
@@ -1382,15 +1382,13 @@ A datapath has 100 control signals. After analysing the microprograms, they are 
 - Vertical: $\lceil \log_2 100 \rceil = 7$ bits.
 - Diagonal: $25 \le 2^5$, $15 \le 2^4$, $40 \le 2^6$, $5 \le 2^3$, $15 \le 2^4$, so $5 + 4 + 6 + 3 + 4 = 22$ bits.
 
-If a group may also have *no* signal active, one code is reserved for that, so the condition becomes $k_i + 1 \le 2^{m_i}$. (Here the answer is still 22 bits, since $16 \le 2^4$.)
-
 #### Microprogram Sequencing
 
-Incrementing the μPC is not enough when a microroutine has to branch, e.g. on a condition flag or to the common fetch routine. A microinstruction then also carries sequencing fields:
+Incrementing the μPC is not enough when a microroutine has to branch, e.g. on a condition flag or to the common fetch routine. A common approach is a single **address field** in the microinstruction, with **branch control** bits that select, using the flags, between this address, an address derived from the instruction register code, and the next sequential address [[3]](#ref-3):
 
-$$\underbrace{\text{condition select}}_{\lceil \log_2 (\text{no. of conditions}) \rceil} \;\Big|\; \underbrace{\text{next address}}_{\lceil \log_2 (\text{control store words}) \rceil} \;\Big|\; \underbrace{\text{control signals}}_{\text{horizontal, vertical or diagonal}}$$
+$$\underbrace{\text{branch control}}_{\lceil \log_2 (\text{no. of conditions}) \rceil} \;\Big|\; \underbrace{\text{address}}_{\lceil \log_2 (\text{control store words}) \rceil} \;\Big|\; \underbrace{\text{control signals}}_{\text{horizontal, vertical or diagonal}}$$
 
-The selected condition decides whether the μPC is loaded from the next-address field or incremented. For example, with a 4K-word control store, 8 branch conditions and 30 horizontal control signals, a microinstruction has $3 + 12 + 30 = 45$ bits.
+The selected condition decides whether the μPC is loaded from the address field or incremented. For example, with a 4K-word control store, 8 branch conditions and 30 horizontal control signals, a microinstruction has $3 + 12 + 30 = 45$ bits.
 
 ### MIPS32 Implementation
 
@@ -1712,6 +1710,134 @@ A non-pipelined processor X has a clock of 250 MHz and CPI 4. Processor Y has a 
 
 $T_X = 5000 \times 4 / 250\text{ MHz} = 80\ \mu$s and $T_Y = (5 + 4999)/200\text{ MHz} = 25.02\ \mu$s, so the speedup is $80/25.02 = 3.2$. The MIPS rates are $250/4 = 62.5$ for X and $5000/25.02\ \mu\text{s} \approx 200$ for Y.
 
+### Types of Pipelines
+
+The five-stage pipeline is linear, and every instruction passes through each stage once. Pipelines in general differ in four ways:
+
+- **Degree of overlap:** serial (the next operation starts after the previous one finishes), overlapped, or pipelined (fine-grain overlap).
+- **Depth:** a shallow pipeline has few stages, each more complex; a deep pipeline has many stages, each simpler.
+- **Structure:** in a linear pipeline the stages are executed in sequence; in a non-linear pipeline a stage may be used more than once for a data set (feedforward and feedback connections).
+- **Scheduling:** a static pipeline executes the same sequence of stages for all data, and if one stalls all later ones are delayed; a dynamic pipeline can be reconfigured to perform different functions at different times.
+
+<figure class="fig">
+<svg viewBox="0 0 600 128" width="600" role="img" aria-label="Linear and non-linear pipeline structures">
+  <defs><marker id="arr-ln" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-lnr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <rect x="20" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="47.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">A</text>
+  <line x1="74.0" y1="60.0" x2="107.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
+  <rect x="110" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="137.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">B</text>
+  <line x1="164.0" y1="60.0" x2="197.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
+  <rect x="200" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="227.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">C</text>
+  <line x1="4.0" y1="60.0" x2="17.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
+  <line x1="254.0" y1="60.0" x2="270.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
+  <text x="145.0" y="108.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(a) linear: A → B → C</text>
+  <rect x="330" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="357.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">A</text>
+  <line x1="384.0" y1="60.0" x2="417.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
+  <rect x="420" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="447.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">B</text>
+  <line x1="474.0" y1="60.0" x2="507.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
+  <rect x="510" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="537.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">C</text>
+  <polyline points="537.0,40.0 537.0,22.0 447.0,22.0 447.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
+  <polyline points="537.0,80.0 537.0,96.0 357.0,96.0 357.0,83.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
+  <polyline points="384.0,50.0 402.0,50.0 402.0,14.0 530.0,14.0 530.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
+  <text x="447.0" y="120.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(b) non-linear, e.g. A, B, C, B, C, A, C, A</text>
+</svg>
+<figcaption>Linear and non-linear pipelines.</figcaption>
+</figure>
+
+### Reservation Tables
+
+<div class="definition">
+
+A *reservation table* represents the utilization pattern of the stages of a synchronous pipeline: time steps on the $x$-axis and stages on the $y$-axis. The number of columns is the evaluation time.
+
+</div>
+
+For a linear pipeline the table is a diagonal. For a non-linear pipeline with stages A, B, C and two functions X and Y:
+
+<figure class="table">
+<figcaption>Reservation table for X (8 time steps).</figcaption>
+
+| | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| A | X | | | | | X | | X |
+| B | | X | | X | | | | |
+| C | | | X | | X | | X | |
+
+</figure>
+
+<figure class="table">
+<figcaption>Reservation table for Y (6 time steps).</figcaption>
+
+| | 1 | 2 | 3 | 4 | 5 | 6 |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| A | Y | | | | Y | |
+| B | | | Y | | | |
+| C | | Y | | Y | | Y |
+
+</figure>
+
+- Multiple X's in a row: repeated use of the same stage in different cycles.
+- Continuous X's in a row: extended use of a stage over more than one cycle.
+- Multiple X's in a column: several stages used in parallel during a clock cycle.
+
+#### Pipeline Scheduling
+
+The number of time units between two initiations is the **latency**. If two initiations try to use the same stage at the same time, there is a **collision**, and the latencies that cause a collision are **forbidden latencies**: the distances between two marks in the same row.
+
+- X: row A gives 5, 7 and 2, row B gives 2, row C gives 2 and 4. Forbidden latencies $\{2, 4, 5, 7\}$.
+- Y: row A gives 4, row C gives 2 and 4. Forbidden latencies $\{2, 4\}$.
+
+The **collision vector** is $C = (C_m \dots C_2 C_1)$, where $C_i = 1$ if latency $i$ is forbidden and $m$ is the largest forbidden latency. Here $C_X = (1011010)$ and $C_Y = (1010)$.
+
+From the collision vector a state diagram is constructed. The initial state is the collision vector. A latency $p$ is permitted if $C_p = 0$, and the next state is obtained by shifting the present state $p$ bits to the right and ORing it with the initial collision vector. A latency greater than $m$ returns to the initial state.
+
+<figure class="fig">
+<svg viewBox="0 0 440 210" width="440" role="img" aria-label="State diagram for the collision vector 1010">
+  <defs><marker id="arr-sd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-sdr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <ellipse cx="100" cy="110" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="100.0" y="114.0" text-anchor="middle" font-size="12" fill="currentColor">1010</text>
+  <ellipse cx="340" cy="45" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="340.0" y="49.0" text-anchor="middle" font-size="12" fill="currentColor">1111</text>
+  <ellipse cx="340" cy="175" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="340.0" y="179.0" text-anchor="middle" font-size="12" fill="currentColor">1011</text>
+  <path d="M128,97 Q220,30 298,40" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
+  <text x="210.0" y="34.0" text-anchor="middle" font-size="11" fill="#ef4444">1</text>
+  <path d="M302,58 Q230,95 142,108" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
+  <text x="236.0" y="104.0" text-anchor="middle" font-size="11" fill="#ef4444">5+</text>
+  <path d="M128,123 Q220,190 298,180" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
+  <text x="210.0" y="196.0" text-anchor="middle" font-size="11" fill="#ef4444">3</text>
+  <path d="M302,162 Q230,125 142,114" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
+  <text x="236.0" y="126.0" text-anchor="middle" font-size="11" fill="#ef4444">5+</text>
+  <path d="M64,102 C 20,70 20,150 64,118" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sd)"/>
+  <text x="16.0" y="114.0" text-anchor="end" font-size="11" fill="#ef4444">5+</text>
+  <path d="M378,167 C 420,140 420,210 378,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sd)"/>
+  <text x="422.0" y="179.0" text-anchor="start" font-size="11" fill="#ef4444">3</text>
+  <text x="100.0" y="146.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">initial state</text>
+</svg>
+<figcaption>State diagram for Y, with $C_Y = (1010)$. Each arrow is labelled in red with the permitted latency that causes the transition; 5+ is any latency of 5 or more.</figcaption>
+</figure>
+
+- A **latency cycle** is a latency sequence that repeats. In a **simple cycle** each state appears only once. A **greedy cycle** is formed by taking the minimum permitted latency from each state.
+- Y: simple cycles (3), (5), (1, 5), (3, 5); greedy cycles (3) and (1, 5).
+- X: simple cycles (3), (6), (8), (1, 8), (3, 8), (6, 8); greedy cycles (3) and (1, 8).
+
+The **minimum average latency (MAL)** is 3 for both X and Y.
+
+Scheduling algorithm: the collision vector is loaded into a shift register $R$. If the LSB (least significant bit) of $R$ is 1, no operation is initiated and $R$ is shifted right by one. Otherwise an operation is initiated, $R$ is shifted right by one and ORed with the original collision vector. Inserting non-compute delay stages into the pipeline changes the reservation table and may give a smaller MAL.
+
+### Arithmetic Pipelines
+
+- **Pipelined ripple-carry adder:** latches are placed between the full adders. If a latch is about as slow as a full adder, the clock period is $T \ge t_{FA} + t_L$, and after the pipeline is full one sum is produced every $T$. This suits vector operations such as `a[i] = b[i] + c[i]`.
+- **Floating-point addition:** compare the exponents, align the mantissas, add the mantissas, normalize the result (and round, for IEEE 754). For example, $0.9504 \times 10^3 + 0.8200 \times 10^2$: align to $0.0820$, add to get $1.0324$, normalize to $0.10324 \times 10^4$.
+- **Floating-point multiplication:** add the exponents, multiply the mantissas, normalize, round.
+
+An adder and a multiplier can be combined into one multifunction pipeline, scheduled with reservation tables.
+
 ## Instruction Pipelining in MIPS32
 
 ### The Five-Stage Pipeline
@@ -1720,7 +1846,7 @@ Each of the five steps IF, ID, EX, MEM and WB becomes a pipeline stage, each sta
 
 <figure class="fig">
 <svg viewBox="0 0 524 128" width="524" role="img" aria-label="The five MIPS32 pipeline stages separated by the IF/ID, ID/EX, EX/MEM and MEM/WB latches">
-  <defs><marker id="arr-mp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-mpr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <defs><marker id="arr-mp2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-mpr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
   <rect x="10" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="10" y="30" width="80" height="50" rx="3" fill="#3b82f6" opacity=".18"/>
   <text x="50.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">IF</text>
@@ -1729,7 +1855,7 @@ Each of the five steps IF, ID, EX, MEM and WB becomes a pipeline stage, each sta
   <rect x="98" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
   <text x="103.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">IF/ID</text>
   <line x1="90.0" y1="55.0" x2="97.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="108.0" y1="55.0" x2="115.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp)"/>
+  <line x1="108.0" y1="55.0" x2="115.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
   <rect x="116" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="116" y="30" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
   <text x="156.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">ID</text>
@@ -1738,7 +1864,7 @@ Each of the five steps IF, ID, EX, MEM and WB becomes a pipeline stage, each sta
   <rect x="204" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
   <text x="209.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">ID/EX</text>
   <line x1="196.0" y1="55.0" x2="203.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="214.0" y1="55.0" x2="221.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp)"/>
+  <line x1="214.0" y1="55.0" x2="221.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
   <rect x="222" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="222" y="30" width="80" height="50" rx="3" fill="#f59e0b" opacity=".18"/>
   <text x="262.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">EX</text>
@@ -1746,7 +1872,7 @@ Each of the five steps IF, ID, EX, MEM and WB becomes a pipeline stage, each sta
   <rect x="310" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
   <text x="315.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">EX/MEM</text>
   <line x1="302.0" y1="55.0" x2="309.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="320.0" y1="55.0" x2="327.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp)"/>
+  <line x1="320.0" y1="55.0" x2="327.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
   <rect x="328" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="328" y="30" width="80" height="50" rx="3" fill="#a855f7" opacity=".18"/>
   <text x="368.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">MEM</text>
@@ -1754,7 +1880,7 @@ Each of the five steps IF, ID, EX, MEM and WB becomes a pipeline stage, each sta
   <rect x="416" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
   <text x="421.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">MEM/WB</text>
   <line x1="408.0" y1="55.0" x2="415.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="426.0" y1="55.0" x2="433.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp)"/>
+  <line x1="426.0" y1="55.0" x2="433.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
   <rect x="434" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="434" y="30" width="80" height="50" rx="3" fill="#ef4444" opacity=".18"/>
   <text x="474.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">WB</text>
@@ -1949,7 +2075,7 @@ Structural hazards are allowed in real machines to reduce cost, when they are in
 Data hazards arise from data dependences between instructions in the pipeline. In `ADD R2,R5,R8` followed by `SUB R9,R2,R6`, ADD writes R2 in WB (cycle 5) but SUB reads R2 in ID (cycle 3). Without forwarding, SUB must stall until R2 is written: 2 cycles with the split register access above (ID in cycle 5, reading the value written in the first half of that cycle), or 3 cycles without it (ID in cycle 6). Two methods are used together to reduce the stalls:
 
 1. **Data forwarding (bypassing):** the result is in a pipeline register (e.g. EX/MEM.ALUOut) as soon as it is computed. Additional paths with multiplexers forward it to the ALU input of the instruction that needs it; the control unit detects the dependence and selects the path.
-2. **Splitting the register access:** the register write is done in the first half of the cycle and the reads in the second half, which removes the hazard between an instruction and the third instruction after it.
+2. **Splitting the register access** (the write in the first half of the cycle and the reads in the second half, as in the five-stage pipeline above), which removes the hazard between an instruction and the third instruction after it.
 
 <figure class="fig">
 <svg viewBox="0 0 544 170" width="544" role="img" aria-label="Forwarding the ALU result of ADD to the following instructions">
@@ -2405,134 +2531,6 @@ With 90% of the branches found in the BTB, 8% of the predictions incorrect and 7
 
 **Conditional instructions** remove some branches. `if (X == 0) A = B;` can be written as `CMOVZ R2, R3, R1` instead of `BNEZ R1, L; ADDU R2, R3, R0`, which converts the control dependence into a data dependence.
 
-### Types of Pipelines
-
-The five-stage pipeline is linear, and every instruction passes through each stage once. Pipelines in general differ in four ways:
-
-- **Degree of overlap:** serial (the next operation starts after the previous one finishes), overlapped, or pipelined (fine-grain overlap).
-- **Depth:** a shallow pipeline has few stages, each more complex; a deep pipeline has many stages, each simpler.
-- **Structure:** in a linear pipeline the stages are executed in sequence; in a non-linear pipeline a stage may be used more than once for a data set (feedforward and feedback connections).
-- **Scheduling:** a static pipeline executes the same sequence of stages for all data, and if one stalls all later ones are delayed; a dynamic pipeline can be reconfigured to perform different functions at different times.
-
-<figure class="fig">
-<svg viewBox="0 0 600 128" width="600" role="img" aria-label="Linear and non-linear pipeline structures">
-  <defs><marker id="arr-ln" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-lnr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="20" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="47.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">A</text>
-  <line x1="74.0" y1="60.0" x2="107.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="110" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="137.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">B</text>
-  <line x1="164.0" y1="60.0" x2="197.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="200" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="227.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">C</text>
-  <line x1="4.0" y1="60.0" x2="17.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <line x1="254.0" y1="60.0" x2="270.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <text x="145.0" y="108.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(a) linear: A → B → C</text>
-  <rect x="330" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="357.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">A</text>
-  <line x1="384.0" y1="60.0" x2="417.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="420" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="447.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">B</text>
-  <line x1="474.0" y1="60.0" x2="507.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="510" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="537.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">C</text>
-  <polyline points="537.0,40.0 537.0,22.0 447.0,22.0 447.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
-  <polyline points="537.0,80.0 537.0,96.0 357.0,96.0 357.0,83.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
-  <polyline points="384.0,50.0 402.0,50.0 402.0,14.0 530.0,14.0 530.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
-  <text x="447.0" y="120.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(b) non-linear, e.g. A, B, C, B, C, A, C, A</text>
-</svg>
-<figcaption>Linear and non-linear pipelines.</figcaption>
-</figure>
-
-### Reservation Tables
-
-<div class="definition">
-
-A *reservation table* represents the utilization pattern of the stages of a synchronous pipeline: time steps on the $x$-axis and stages on the $y$-axis. The number of columns is the evaluation time.
-
-</div>
-
-For a linear pipeline the table is a diagonal. For a non-linear pipeline with stages A, B, C and two functions X and Y:
-
-<figure class="table">
-<figcaption>Reservation table for X (8 time steps).</figcaption>
-
-| | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| A | X | | | | | X | | X |
-| B | | X | | X | | | | |
-| C | | | X | | X | | X | |
-
-</figure>
-
-<figure class="table">
-<figcaption>Reservation table for Y (6 time steps).</figcaption>
-
-| | 1 | 2 | 3 | 4 | 5 | 6 |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| A | Y | | | | Y | |
-| B | | | Y | | | |
-| C | | Y | | Y | | Y |
-
-</figure>
-
-- Multiple X's in a row: repeated use of the same stage in different cycles.
-- Continuous X's in a row: extended use of a stage over more than one cycle.
-- Multiple X's in a column: several stages used in parallel during a clock cycle.
-
-#### Pipeline Scheduling
-
-The number of time units between two initiations is the **latency**. If two initiations try to use the same stage at the same time, there is a **collision**, and the latencies that cause a collision are **forbidden latencies**: the distances between two marks in the same row.
-
-- X: row A gives 5, 7 and 2, row B gives 2, row C gives 2 and 4. Forbidden latencies $\{2, 4, 5, 7\}$.
-- Y: row A gives 4, row C gives 2 and 4. Forbidden latencies $\{2, 4\}$.
-
-The **collision vector** is $C = (C_m \dots C_2 C_1)$, where $C_i = 1$ if latency $i$ is forbidden and $m$ is the largest forbidden latency. Here $C_X = (1011010)$ and $C_Y = (1010)$.
-
-From the collision vector a state diagram is constructed. The initial state is the collision vector. A latency $p$ is permitted if $C_p = 0$, and the next state is obtained by shifting the present state $p$ bits to the right and ORing it with the initial collision vector. A latency greater than $m$ returns to the initial state.
-
-<figure class="fig">
-<svg viewBox="0 0 440 210" width="440" role="img" aria-label="State diagram for the collision vector 1010">
-  <defs><marker id="arr-sd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-sdr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <ellipse cx="100" cy="110" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="100.0" y="114.0" text-anchor="middle" font-size="12" fill="currentColor">1010</text>
-  <ellipse cx="340" cy="45" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="340.0" y="49.0" text-anchor="middle" font-size="12" fill="currentColor">1111</text>
-  <ellipse cx="340" cy="175" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="340.0" y="179.0" text-anchor="middle" font-size="12" fill="currentColor">1011</text>
-  <path d="M128,97 Q220,30 298,40" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="210.0" y="34.0" text-anchor="middle" font-size="11" fill="#ef4444">1</text>
-  <path d="M302,58 Q230,95 142,108" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="236.0" y="104.0" text-anchor="middle" font-size="11" fill="#ef4444">5+</text>
-  <path d="M128,123 Q220,190 298,180" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="210.0" y="196.0" text-anchor="middle" font-size="11" fill="#ef4444">3</text>
-  <path d="M302,162 Q230,125 142,114" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="236.0" y="126.0" text-anchor="middle" font-size="11" fill="#ef4444">5+</text>
-  <path d="M64,102 C 20,70 20,150 64,118" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="16.0" y="114.0" text-anchor="end" font-size="11" fill="#ef4444">5+</text>
-  <path d="M378,167 C 420,140 420,210 378,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="422.0" y="179.0" text-anchor="start" font-size="11" fill="#ef4444">3</text>
-  <text x="100.0" y="146.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">initial state</text>
-</svg>
-<figcaption>State diagram for Y, with $C_Y = (1010)$. Each arrow is labelled in red with the permitted latency that causes the transition; 5+ is any latency of 5 or more.</figcaption>
-</figure>
-
-- A **latency cycle** is a latency sequence that repeats. In a **simple cycle** each state appears only once. A **greedy cycle** is formed by taking the minimum permitted latency from each state.
-- Y: simple cycles (3), (5), (1, 5), (3, 5); greedy cycles (3) and (1, 5).
-- X: simple cycles (3), (6), (8), (1, 8), (3, 8), (6, 8); greedy cycles (3) and (1, 8).
-
-The **minimum average latency (MAL)** is 3 for both X and Y.
-
-Scheduling algorithm: the collision vector is loaded into a shift register $R$. If the LSB (least significant bit) of $R$ is 1, no operation is initiated and $R$ is shifted right by one. Otherwise an operation is initiated, $R$ is shifted right by one and ORed with the original collision vector. Inserting non-compute delay stages into the pipeline changes the reservation table and may give a smaller MAL.
-
-### Arithmetic Pipelines
-
-- **Pipelined ripple-carry adder:** latches are placed between the full adders. If a latch is about as slow as a full adder, the clock period is $T \ge t_{FA} + t_L$, and after the pipeline is full one sum is produced every $T$. This suits vector operations such as `a[i] = b[i] + c[i]`.
-- **Floating-point addition:** compare the exponents, align the mantissas, add the mantissas, normalize the result (and round, for IEEE 754). For example, $0.9504 \times 10^3 + 0.8200 \times 10^2$: align to $0.0820$, add to get $1.0324$, normalize to $0.10324 \times 10^4$.
-- **Floating-point multiplication:** add the exponents, multiply the mantissas, normalize, round.
-
-An adder and a multiplier can be combined into one multifunction pipeline, scheduled with reservation tables.
-
 ### Multicycle Operations
 
 Floating-point operations need more than one cycle in EX. Using a slower clock would slow down all other operations, so the EX stage is repeated, with several functional units:
@@ -2609,8 +2607,10 @@ Floating-point operations need more than one cycle in EX. Using a slower clock w
 <figcaption>MIPS32 pipeline with floating-point units (after the NPTEL course <a href="#ref-1">[1]</a> and Hennessy & Patterson).</figcaption>
 </figure>
 
-- **Latency:** the number of cycles between an instruction that produces a result and an instruction that uses it.
-- **Initiation interval:** the number of cycles that must elapse between issuing two operations of the same type.
+- **Latency:** the number of intervening cycles between an instruction that produces a result and an instruction that uses it.
+- **Initiation interval** (repeat interval): the number of cycles that must elapse between issuing two operations of the same type.
+
+Note that "latency" here is not the latency of [reservation tables](#reservation-tables), which is the number of time units between two initiations; that quantity corresponds to the initiation interval.
 
 <figure class="table">
 <figcaption>Latencies and initiation intervals.</figcaption>
@@ -3130,12 +3130,16 @@ In **burst mode**, after the column address is applied, data from successive col
 | DDR (double data rate) | 2, on both edges |
 | DDR2 | 4 |
 | DDR3 | 8 |
-| DDR4 | 8, with independent bank groups |
-| DDR5 | 16 |
 
 </figure>
 
 A **DIMM** (dual in-line memory module) carries several DRAM chips on a circuit board, with a 64-bit data path. For example, DDR3-1600 has an internal clock of 200 MHz, a bus clock of 800 MHz and a transfer rate of $800\text{ MHz} \times 2 \times 8\text{ B} = 12.8$ GB/s.
+
+**Refresh overhead.** A DRAM cannot respond to read or write requests while a refresh is in progress; such requests wait until the refresh cycle completes. The time lost is small [[2]](#ref-2):
+
+$$\text{refresh overhead} = \frac{\text{refresh cycles} \times \text{time per refresh cycle}}{\text{refresh period}}$$
+
+For example, if each row must be refreshed once every 64 ms, the minimum time between two row accesses is 50 ns, and all rows are refreshed in 8K (8192) refresh cycles, refreshing takes $8192 \times 50$ ns $= 0.41$ ms, an overhead of $0.41/64 = 0.0064$, under 1%.
 
 ### Memory Interfacing
 
@@ -3417,11 +3421,11 @@ The miss penalty can be estimated in different ways:
 2. The block containing the word is transferred to $M_1$ (time $t_B$), and the word is then accessed in $M_1$: $t_{\text{miss}} = t_B + t_{A1}$.
 3. Including the time $t_{\text{hit}}$ to check for a hit: $t_{\text{miss}} = t_{\text{hit}} + t_B + t_{A1}$.
 
-Two cases of the word-access model are often named:
+Two cases of the word-access model are used in problems:
 
 - **Simultaneous (parallel) access:** $M_1$ and $M_2$ are searched together, and a miss costs only $t_{A2}$:
 $$t_A = H\,t_{A1} + (1 - H)\,t_{A2}$$
-- **Hierarchical (sequential) access:** $M_2$ is accessed only after $M_1$ misses, so a miss costs $t_{A1} + t_{A2}$:
+- **Hierarchical (sequential) access:** $M_2$ is accessed only after $M_1$ misses, so a miss costs $t_{A1} + t_{A2}$. This is the form hit time + miss rate × miss penalty of H&P, with hit time $t_{A1}$ and miss penalty $t_{A2}$ [[4]](#ref-4):
 $$t_A = H\,t_{A1} + (1 - H)\,(t_{A1} + t_{A2}) = t_{A1} + (1 - H)\,t_{A2}$$
 
 For example, with $H = 0.9$, $t_{A1} = 10$ ns and $t_{A2} = 100$ ns these give 19 ns and 20 ns.
@@ -3961,6 +3965,7 @@ The index field selects a set ($\log_2 S$ bits), and all the blocks in the set a
 - A direct-mapped cache is 1-way set associative ($S = N$).
 - A fully associative cache has a single set ($S = 1$), so a block can be placed anywhere and there are no index bits. The tag is compared with all the tags in the cache, which needs a large associative memory (high cost, not scalable), but any replacement policy can be used.
 - Typical values are 2, 4 or 8 ways. A set-associative cache needs several small associative memories, only one of which is used at a time.
+- **Hardware for a hit.** With $k$-way set-associative mapping the address tag is compared only with the $k$ tags of one set, whereas a fully associative cache compares it with the tag of every line [[3]](#ref-3). The tag memory, the comparators and the data memory are replicated $k$ times, and a $k$:1 multiplexer selects the data of the way that hit [[4]](#ref-4). Each comparator is as wide as the tag. The multiplexer adds to the hit time: in an example of H&P (a 128 KB cache with 64 B blocks), the clock of the 2-way set-associative version is assumed 1.35 times longer than that of the direct-mapped one to accommodate it.
 
 <figure class="table">
 <figcaption>Address fields for a 24-bit word address, a cache of 256 blocks of 32 words (8K words), and a main memory of 16M words (512K blocks).</figcaption>
@@ -4114,6 +4119,28 @@ The reference sequence is load `A[0]`, `A[1]`, …, `A[2047]`. Let the base addr
 
 Each block gives one compulsory miss and three hits, so the hit ratio is 75%.
 
+**Two-dimensional arrays.** In C an array `x[i][j]` is stored in **row-major** order: `x[i][j]` and `x[i][j+1]` are adjacent. Nested loops that run down a column skip through memory and use one word of each block before it is replaced; exchanging the loops (**loop interchange**) accesses all the words of a block before moving to the next [[4]](#ref-4):
+
+<div class="code-pair">
+
+```c
+/* Before: strides of 100 words */
+for (j = 0; j < 100; j++)
+    for (i = 0; i < 5000; i++)
+        x[i][j] = 2 * x[i][j];
+```
+
+```c
+/* After: consecutive words */
+for (i = 0; i < 5000; i++)
+    for (j = 0; j < 100; j++)
+        x[i][j] = 2 * x[i][j];
+```
+
+</div>
+
+Assuming the array does not fit in the cache, the interchange reduces misses by improving spatial locality, without changing the number of instructions executed.
+
 ### Cache Performance
 
 $$\text{effective } CPI = CPI_{\text{base}} + \text{memory stall cycles per instruction}$$
@@ -4142,7 +4169,7 @@ The techniques reduce one of these three terms.
 
 Reducing the miss rate:
 
-1. **Larger block size.** Reduces compulsory misses. But the miss penalty increases, and since there are fewer blocks, conflict and capacity misses may increase. High latency and high bandwidth of the lower level favour large blocks; low latency and low bandwidth favour small ones. Typical L1 block sizes are 32 to 64 bytes (64 B on the Ryzen 7 5800H).
+1. **Larger block size.** Reduces compulsory misses. But the miss penalty increases, and since there are fewer blocks, conflict and capacity misses may increase. High latency and high bandwidth of the lower level favour large blocks; low latency and low bandwidth favour small ones. For example, the ARM Cortex-A8 and A9 described in H&P and the Ryzen 7 5800H all use 64 B blocks.
 2. **Larger cache.** Reduces capacity misses, but increases the hit time, the cost and the power.
 3. **Higher associativity.** Reduces conflict misses, but increases the hit time and the power. As a rule of thumb, an 8-way cache is as effective as a fully associative one, and a direct-mapped cache of size $N$ has about the same miss rate as a 2-way cache of size $N/2$.
 
@@ -5234,7 +5261,7 @@ Priority can also be set by **daisy chaining**: the INTR line is common to all d
 
 <figure class="fig">
 <svg viewBox="0 0 560 136" width="560" role="img" aria-label="Daisy chain: INTR is shared and INTA is passed from device to device">
-  <defs><marker id="arr-dc" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-dc2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="40" width="70" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="20" y="40" width="70" height="60" rx="3" fill="#3b82f6" opacity=".18"/>
   <text x="55.0" y="74.5" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
@@ -5244,15 +5271,15 @@ Priority can also be set by **daisy chaining**: the INTR line is common to all d
   <text x="345.0" y="73.8" text-anchor="middle" font-size="11" fill="currentColor">device 2</text>
   <rect x="440" y="40" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="485.0" y="73.8" text-anchor="middle" font-size="11" fill="currentColor">device n</text>
-  <polyline points="205.0,37.0 205.0,20.0 55.0,20.0 55.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dc)"/>
+  <polyline points="205.0,37.0 205.0,20.0 55.0,20.0 55.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dc2)"/>
   <text x="130.0" y="14.0" text-anchor="middle" font-size="10" fill="#ef4444">INTR (shared)</text>
   <line x1="345.0" y1="37.0" x2="345.0" y2="20.0" stroke="currentColor" stroke-width="1.5"/>
   <line x1="485.0" y1="37.0" x2="485.0" y2="20.0" stroke="currentColor" stroke-width="1.5"/>
   <line x1="205.0" y1="20.0" x2="485.0" y2="20.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="90.0" y1="85.0" x2="157.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
+  <line x1="90.0" y1="85.0" x2="157.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc2)"/>
   <text x="124.0" y="79.0" text-anchor="middle" font-size="10" fill="#22c55e">INTA</text>
-  <line x1="250.0" y1="85.0" x2="297.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <line x1="390.0" y1="85.0" x2="437.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
+  <line x1="250.0" y1="85.0" x2="297.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc2)"/>
+  <line x1="390.0" y1="85.0" x2="437.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc2)"/>
   <text x="300.0" y="126.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">INTA passes through each device that has not interrupted</text>
 </svg>
 <figcaption>Daisy chain.</figcaption>
@@ -5428,7 +5455,7 @@ A hardwired **DMA controller** carries out the transfer, so no instructions are 
 
 <figure class="fig">
 <svg viewBox="0 0 640 260" width="640" role="img" aria-label="DMA controller sharing the system bus with the CPU">
-  <defs><marker id="arr-dm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-dm2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="20.0" y1="30.0" x2="560.0" y2="30.0" stroke="currentColor" stroke-width="2"/>
   <text x="566.0" y="34.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">address bus</text>
   <line x1="20.0" y1="55.0" x2="560.0" y2="55.0" stroke="currentColor" stroke-width="2"/>
@@ -5456,11 +5483,11 @@ A hardwired **DMA controller** carries out the transfer, so no instructions are 
   <line x1="400.0" y1="30.0" x2="400.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
   <line x1="410.0" y1="55.0" x2="410.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
   <line x1="420.0" y1="80.0" x2="420.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="420.0" y1="160.0" x2="420.0" y2="207.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dm)"/>
-  <line x1="440.0" y1="207.0" x2="440.0" y2="162.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dm)"/>
-  <polyline points="360.0,125.0 330.0,125.0 330.0,190.0 100.0,190.0 100.0,163.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dm)"/>
+  <line x1="420.0" y1="160.0" x2="420.0" y2="207.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dm2)"/>
+  <line x1="440.0" y1="207.0" x2="440.0" y2="162.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dm2)"/>
+  <polyline points="360.0,125.0 330.0,125.0 330.0,190.0 100.0,190.0 100.0,163.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dm2)"/>
   <text x="215.0" y="184.0" text-anchor="middle" font-size="10" fill="#ef4444">DMA-RQ (bus request)</text>
-  <polyline points="60.0,163.0 60.0,205.0 340.0,205.0 340.0,150.0 357.0,150.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dm)"/>
+  <polyline points="60.0,163.0 60.0,205.0 340.0,205.0 340.0,150.0 357.0,150.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dm2)"/>
   <text x="215.0" y="220.0" text-anchor="middle" font-size="10" fill="#22c55e">DMA-ACK (bus grant)</text>
 </svg>
 <figcaption>DMA controller on the system bus.</figcaption>
@@ -5567,8 +5594,6 @@ A DMA request can be acknowledged at the end of any machine cycle, since the CPU
 </svg>
 <figcaption>DMA transfer modes: cycle stealing gives up the bus after every word; block transfer keeps it until the whole block is done.</figcaption>
 </figure>
-
-If the device takes time $X$ to prepare a block and the DMA takes time $Y$ to transfer it, the CPU is blocked for a fraction $Y/(X + Y)$ of the time in burst mode. With cycle stealing it is blocked only for the memory cycles actually stolen, i.e. (cycle time) / (time between words) per word.
 
 <figure class="fig">
 <svg viewBox="0 0 500 118" width="500" role="img" aria-label="DMA cycle stealing and block transfer modes">
@@ -5770,6 +5795,15 @@ In an **asynchronous bus** there is no common clock, and the master and slave ha
 5. The memory controller removes SSYN.
 
 **Bridge-based** architectures separate the buses by bridges, so that different buses can operate in parallel.
+
+#### Bus Arbitration
+
+Several devices may need to be bus masters, e.g. an I/O device transferring data directly to memory. Since the bus is shared, an **arbiter** decides which master gets it [[2]](#ref-2):
+
+- Each master has a **Bus-request** line ($BR_i$) and a **Bus-grant** line ($BG_i$) to the arbiter. A master asks for the bus by activating $BR_i$, and the arbiter activates $BG_i$ to let it use the bus. When the transfer is complete the master deactivates $BR_i$, and the arbiter deactivates $BG_i$.
+- If several requests arrive together, the arbiter grants the bus to the one with the **highest priority** first. Devices for which a delay could cause an error get high priority; if there is no urgency, a simple **round-robin** scheme can be used.
+
+For example, with three masters where master 1 has the highest priority: master 2 requests first and gets the bus. While it is using the bus, master 3 and then master 1 also request it. When master 2 releases the bus, the arbiter grants it to master 1, and only then to master 3, even though master 3 asked first (after Hamacher, Fig. 7.9).
 
 ### Universal Serial Bus
 

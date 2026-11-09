@@ -205,8 +205,6 @@ With $n$ variables there are $2^n$ rows, i.e. $2^n / 2 = 2^{n-1}$ pairs, and eac
 
 $$\text{Number of self-dual functions of } n \text{ variables} = 2^{2^{n-1}}$$
 
-**Neutral functions.** A function is *neutral* if it has as many 0s as 1s in its truth table. Choosing which $2^{n-1}$ of the $2^n$ rows are 1 gives $\binom{2^n}{2^{n-1}}$ neutral functions, e.g. $\binom{8}{4} = 70$ for $n = 3$. Every self-dual function is neutral, since each pair holds one 0 and one 1.
-
 ### Simplifying with K-Maps
 
 The canonical forms are rarely the simplest. Two minterms that differ in exactly one variable can always be merged, and that variable disappears:
@@ -272,6 +270,8 @@ The larger the group, the fewer literals in its term, so each group should be as
 A *prime implicant* is a product term obtained by combining the maximum possible number of adjacent squares in the map. It is *essential* if some minterm of the function is covered by that prime implicant alone.
 
 </div>
+
+"Maximum" is meant locally [[1]](#ref-1): a single 1 is a prime implicant if it is not adjacent to any other 1; two adjacent 1s form a prime implicant if they are not within a group of four; four adjacent 1s form one if they are not within a group of eight; and so on. So a prime implicant is a group not contained in any larger group, and a function can have prime implicants of different sizes.
 
 A minimal SOP always contains every essential prime implicant, plus as few others as needed to cover the remaining 1s.
 
@@ -567,7 +567,7 @@ We need **five** 2 × 4 decoders. The first one decodes the two high bits $c, d$
 
 <figure class="fig">
 <svg viewBox="0 0 470 380" width="470" role="img" aria-label="4 to 16 decoder built from five 2 to 4 decoders">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="50" y="140" width="90" height="100" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="95.0" y="195.0" text-anchor="middle" font-size="14" fill="currentColor">2 × 4</text>
   <polyline points="15,170 50,170" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -582,7 +582,7 @@ We need **five** 2 × 4 decoders. The first one decodes the two high bits $c, d$
   <text x="234" y="46" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">b</text>
   <polyline points="240,22 270,22" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="240,42 270,42" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="140,155 160,155 160,68 270,68" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="140,155 160,155 160,68 270,68" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x2)"/>
   <text x="282" y="72" text-anchor="start" font-size="10" fill="currentColor" class="dim">EN</text>
   <polyline points="360,22 385,22" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="360,37 385,37" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -595,7 +595,7 @@ We need **five** 2 × 4 decoders. The first one decodes the two high bits $c, d$
   <text x="234" y="138" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">b</text>
   <polyline points="240,114 270,114" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="240,134 270,134" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="140,177 174,177 174,160 270,160" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="140,177 174,177 174,160 270,160" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x2)"/>
   <text x="282" y="164" text-anchor="start" font-size="10" fill="currentColor" class="dim">EN</text>
   <polyline points="360,114 385,114" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="360,129 385,129" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -608,7 +608,7 @@ We need **five** 2 × 4 decoders. The first one decodes the two high bits $c, d$
   <text x="234" y="230" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">b</text>
   <polyline points="240,206 270,206" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="240,226 270,226" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="140,199 188,199 188,252 270,252" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="140,199 188,199 188,252 270,252" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x2)"/>
   <text x="282" y="256" text-anchor="start" font-size="10" fill="currentColor" class="dim">EN</text>
   <polyline points="360,206 385,206" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="360,221 385,221" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -621,7 +621,7 @@ We need **five** 2 × 4 decoders. The first one decodes the two high bits $c, d$
   <text x="234" y="322" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">b</text>
   <polyline points="240,298 270,298" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="240,318 270,318" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="140,221 202,221 202,344 270,344" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="140,221 202,221 202,344 270,344" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x2)"/>
   <text x="282" y="348" text-anchor="start" font-size="10" fill="currentColor" class="dim">EN</text>
   <polyline points="360,298 385,298" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="360,313 385,313" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -776,7 +776,7 @@ A $2^n$-to-1 *multiplexer* (mux) has $2^n$ data inputs, $n$ select lines and one
 
 <figure class="fig">
 <svg viewBox="0 0 330 204" width="330" role="img" aria-label="4 to 1 multiplexer">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polygon points="120,15 210,45 210,135 120,165" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="165.0" y="95.0" text-anchor="middle" font-size="14" fill="currentColor">4 : 1</text>
   <polyline points="70,40 120,40" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -813,7 +813,7 @@ A $2^n$-to-1 *multiplexer* (mux) has $2^n$ data inputs, $n$ select lines and one
 
 $$y = \bar s_1 \bar s_0 I_0 + \bar s_1 s_0 I_1 + s_1 \bar s_0 I_2 + s_1 s_0 I_3$$
 
-**Larger muxes from smaller ones.** A $2^n$ : 1 mux can be built as a tree of 2 : 1 muxes: $2^{n-1}$ in the first level, $2^{n-2}$ in the next, and so on, i.e. $2^n - 1$ in all ($s_0$ drives the first level, $s_{n-1}$ the last). In general an $N$ : 1 mux built from $k$ : 1 muxes needs $(N-1)/(k-1)$ of them, e.g. five 4 : 1 muxes for a 16 : 1 mux.
+**Larger muxes from smaller ones.** A $2^n$ : 1 mux can be built as a tree of 2 : 1 muxes: $2^{n-1}$ in the first level, $2^{n-2}$ in the next, and so on, i.e. $2^n - 1$ in all ($s_0$ drives the first level, $s_{n-1}$ the last). In general each $k$ : 1 mux reduces the number of signals by $k - 1$, so an $N$ : 1 mux built from $k$ : 1 muxes needs $(N-1)/(k-1)$ of them, e.g. five 4 : 1 muxes for a 16 : 1 mux.
 
 **Try it.** Click the data inputs and the select lines; the dashed line shows which input is routed through.
 
@@ -844,7 +844,7 @@ Any function can also be implemented with a multiplexer, in two ways. Take $f(a,
 
 <figure class="fig">
 <svg viewBox="0 0 600 262" width="600" role="img" aria-label="Implementing f with an 8 to 1 mux and with a 4 to 1 mux">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x4" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polygon points="90,10 180,50 180,190 90,230" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.0" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">8 : 1</text>
   <polyline points="50,30 90,30" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1095,9 +1095,9 @@ $$\underset{(3)}{0011} \xrightarrow{\text{complement}} 1100 + 1 \longrightarrow 
 - No repeated representations $\implies$ $2^n$ distinct numbers.
 - Allows efficient addition and multiplication (the same adder works for signed and unsigned numbers).
 
-**Sign extension.** To widen a two's complement number, copy the sign bit into the new positions: $1101$ and $11111101$ are both $-3$. (Unsigned numbers are widened with 0s.)
+**Sign extension.** To widen a two's complement number, copy the sign bit into the new positions [[5]](#ref-5): $1101$ and $11111101$ are both $-3$. (Unsigned numbers are widened with 0s.)
 
-**Arithmetic shifts.** An *arithmetic right shift* copies the sign bit into the vacated position, so it divides by 2 rounding towards $-\infty$: $1101\,(-3) \to 1110\,(-2)$, and $0110\,(6) \to 0011\,(3)$. An arithmetic left shift brings in a 0 and multiplies by 2; it overflows when the sign bit changes.
+**Arithmetic shifts.** An arithmetic shift-left multiplies a signed number by 2 and an arithmetic shift-right divides it by 2, leaving the sign unchanged [[2]](#ref-2). For 2's complement the right shift copies the sign bit into the vacated position, e.g. $0110\,(6) \to 0011\,(3)$ and $1100\,(-4) \to 1110\,(-2)$. A shift-left overflows if the sign bit after the shift is not the same as before, e.g. $0\,1001\,(9) \to 1\,0010$ gives a negative result instead of 18.
 
 ### Fixed-Point Representation
 
@@ -1215,7 +1215,7 @@ $$S = a \oplus b = \bar a b + a \bar b, \qquad C = ab$$
 
 <figure class="fig">
 <svg viewBox="0 0 360 150" width="360" role="img" aria-label="Half adder circuit">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x5" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="22" y="45" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">a</text>
   <text x="22" y="65" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">b</text>
   <path d="M150,30 q15,20 0,40" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1243,7 +1243,7 @@ A half adder has no carry input, so it can only add the lowest bit. A *full adde
 
 <figure class="fig">
 <svg viewBox="0 0 640 170" width="640" role="img" aria-label="Full adder built from two half adders and an OR gate">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x6" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="20" y="55" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">a</text>
   <text x="20" y="85" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">b</text>
   <text x="20" y="145" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">c</text>
@@ -1251,19 +1251,19 @@ A half adder has no carry input, so it can only add the lowest bit. A *full adde
   <text x="120.0" y="70.0" text-anchor="middle" font-size="14" fill="currentColor">HA₁</text>
   <rect x="260" y="15" width="80" height="70" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="300.0" y="55.0" text-anchor="middle" font-size="14" fill="currentColor">HA₂</text>
-  <polyline points="30,50 80,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="30,80 80,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="160,50 210,50 210,35 260,35" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="30,50 80,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <polyline points="30,80 80,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <polyline points="160,50 210,50 210,35 260,35" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
   <text x="185" y="44" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">a⊕b</text>
-  <polyline points="30,140 230,140 230,65 260,65" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="340,35 470,35" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="30,140 230,140 230,65 260,65" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <polyline points="340,35 470,35" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
   <text x="478" y="40" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">S = a⊕b⊕c</text>
   <path d="M395,95 q15,20 0,40 q40,0 55,-20 q-15,-20 -55,-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="340,65 370,65 370,105 398,105" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="352" y="58" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">(a⊕b)c</text>
   <polyline points="160,80 190,80 190,125 398,125" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="172" y="74" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">ab</text>
-  <polyline points="450,115 470,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="450,115 470,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
   <text x="478" y="120" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">C = (a⊕b)c + ab</text>
 </svg>
 <figcaption>Full adder from two half adders and an OR gate: 2 XOR, 2 AND and 1 OR gate in total.</figcaption>
@@ -1404,50 +1404,50 @@ A 16-bit ripple-carry adder is built from full adders using AND, OR and NOT gate
 
 <figure class="fig">
 <svg viewBox="0 0 650 175" width="650" role="img" aria-label="16-bit ripple carry adder">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x7" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="40" y="55" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="80.0" y="85.0" text-anchor="middle" font-size="14" fill="currentColor">FA15</text>
-  <polyline points="65,18 65,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="95,18 95,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="65,18 65,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
+  <polyline points="95,18 95,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="65" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₁₅</text>
   <text x="95" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₁₅</text>
-  <polyline points="80,105 80,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="80,105 80,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="80" y="148" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₁₅</text>
   <rect x="220" y="55" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="260.0" y="85.0" text-anchor="middle" font-size="14" fill="currentColor">FA2</text>
-  <polyline points="245,18 245,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="275,18 275,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="245,18 245,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
+  <polyline points="275,18 275,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="245" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₂</text>
   <text x="275" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₂</text>
-  <polyline points="260,105 260,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="260,105 260,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="260" y="148" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₂</text>
   <rect x="340" y="55" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="380.0" y="85.0" text-anchor="middle" font-size="14" fill="currentColor">FA1</text>
-  <polyline points="365,18 365,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="395,18 395,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="365,18 365,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
+  <polyline points="395,18 395,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="365" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₁</text>
   <text x="395" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₁</text>
-  <polyline points="380,105 380,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="380,105 380,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="380" y="148" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₁</text>
   <rect x="460" y="55" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="500.0" y="85.0" text-anchor="middle" font-size="14" fill="currentColor">FA0</text>
-  <polyline points="485,18 485,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="515,18 515,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="485,18 485,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
+  <polyline points="515,18 515,55" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="485" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₀</text>
   <text x="515" y="14" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₀</text>
-  <polyline points="500,105 500,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="500,105 500,132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="500" y="148" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₀</text>
-  <polyline points="610,80 540,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="610,80 540,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="618" y="85" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">C₀</text>
-  <polyline points="460,80 420,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="460,80 420,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="440" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₁</text>
-  <polyline points="340,80 300,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="340,80 300,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="320" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₂</text>
   <polyline points="220,80 185,80" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="168" y="85" text-anchor="middle" font-size="18" fill="currentColor">⋯</text>
-  <polyline points="150,80 120,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="150,80 120,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="135" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₁₅</text>
-  <polyline points="40,80 8,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="40,80 8,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x7)"/>
   <text x="22" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₁₆</text>
   <text x="440" y="97" text-anchor="middle" font-size="11" fill="currentColor" class="dim">2 ns</text>
   <text x="320" y="97" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4 ns</text>
@@ -1503,7 +1503,7 @@ Every carry is a two-level AND–OR expression of $P$, $G$ and $C_0$, so no carr
 
 <figure class="fig">
 <svg viewBox="0 0 640 642" width="640" role="img" aria-label="Gate-level 4-bit carry lookahead logic">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x8" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polyline points="34,28 34,624" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="34" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₀</text>
   <polyline points="56,28 56,624" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1634,11 +1634,11 @@ A 4-bit carry-lookahead adder is built from AND, OR, NOT, NAND and NOR gates, im
 
 <figure class="fig">
 <svg viewBox="0 0 640 182" width="640" role="img" aria-label="Carry lookahead adder stages and gate levels">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x9" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="18" y="70" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">aᵢ</text>
   <text x="18" y="100" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">bᵢ</text>
-  <polyline points="30,65 60,65" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="30,95 60,95" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="30,65 60,65" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <polyline points="30,95 60,95" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
   <rect x="60" y="40" width="150" height="80" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.0" y="76.0" text-anchor="middle" font-size="14" fill="currentColor">Pᵢ = aᵢ ⊕ bᵢ</text>
   <text x="135.0" y="94.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">Gᵢ = aᵢbᵢ</text>
@@ -1647,13 +1647,13 @@ A 4-bit carry-lookahead adder is built from AND, OR, NOT, NAND and NOR gates, im
   <text x="340.0" y="94.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">Cᵢ from P, G, C₀</text>
   <rect x="470" y="40" width="120" height="80" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="530.0" y="85.0" text-anchor="middle" font-size="14" fill="currentColor">Sᵢ = Pᵢ ⊕ Cᵢ</text>
-  <polyline points="210,80 260,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="210,80 260,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
   <text x="235" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">P, G</text>
-  <polyline points="420,80 470,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="420,80 470,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
   <text x="445" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">Cᵢ</text>
-  <polyline points="135,40 135,20 530,20 530,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="135,40 135,20 530,20 530,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
   <text x="330" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">Pᵢ</text>
-  <polyline points="300,145 300,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="300,145 300,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
   <text x="308" y="143" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">C₀</text>
   <path d="M60,152 v6 H210 v-6" stroke="currentColor" stroke-width="1.5" fill="none" opacity=".6"/>
   <text x="135.0" y="174" text-anchor="middle" font-size="12" fill="currentColor" class="dim">levels 1–2</text>
@@ -1681,15 +1681,15 @@ For $A - B$ we can add $A$ and $-B$, and in two's complement $-B = \bar B + 1$. 
 
 <figure class="fig">
 <svg viewBox="0 0 660 245" width="660" role="img" aria-label="4-bit adder/subtractor with overflow detection">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x10" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polyline points="640,45 100,45" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="648" y="50" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">K</text>
-  <polyline points="630,45 630,140 580,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="630,45 630,140 580,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <circle cx="630" cy="45" r="2.6" fill="currentColor"/>
   <text x="612" y="158" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₀ = K</text>
   <rect x="80" y="115" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="120.0" y="145.0" text-anchor="middle" font-size="14" fill="currentColor">FA</text>
-  <polyline points="100,20 100,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="100,20 100,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="100" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₃</text>
   <text x="138" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₃</text>
   <polyline points="138,20 138,76" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1697,12 +1697,12 @@ For $A - B$ we can add $A$ and $-B$, and in two's complement $-B = \bar B + 1$. 
   <path d="M129,85 h18 M138,76 v18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="154,45 154,85 147,85" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="154" cy="45" r="2.6" fill="currentColor"/>
-  <polyline points="138,94 138,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="120,165 120,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="138,94 138,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
+  <polyline points="120,165 120,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="120" y="205" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₃</text>
   <rect x="220" y="115" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="260.0" y="145.0" text-anchor="middle" font-size="14" fill="currentColor">FA</text>
-  <polyline points="240,20 240,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="240,20 240,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="240" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₂</text>
   <text x="278" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₂</text>
   <polyline points="278,20 278,76" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1710,12 +1710,12 @@ For $A - B$ we can add $A$ and $-B$, and in two's complement $-B = \bar B + 1$. 
   <path d="M269,85 h18 M278,76 v18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="294,45 294,85 287,85" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="294" cy="45" r="2.6" fill="currentColor"/>
-  <polyline points="278,94 278,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="260,165 260,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="278,94 278,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
+  <polyline points="260,165 260,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="260" y="205" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₂</text>
   <rect x="360" y="115" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="400.0" y="145.0" text-anchor="middle" font-size="14" fill="currentColor">FA</text>
-  <polyline points="380,20 380,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="380,20 380,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="380" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₁</text>
   <text x="418" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₁</text>
   <polyline points="418,20 418,76" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1723,12 +1723,12 @@ For $A - B$ we can add $A$ and $-B$, and in two's complement $-B = \bar B + 1$. 
   <path d="M409,85 h18 M418,76 v18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="434,45 434,85 427,85" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="434" cy="45" r="2.6" fill="currentColor"/>
-  <polyline points="418,94 418,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="400,165 400,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="418,94 418,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
+  <polyline points="400,165 400,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="400" y="205" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₁</text>
   <rect x="500" y="115" width="80" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="540.0" y="145.0" text-anchor="middle" font-size="14" fill="currentColor">FA</text>
-  <polyline points="520,20 520,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="520,20 520,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="520" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₀</text>
   <text x="558" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">B₀</text>
   <polyline points="558,20 558,76" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1736,14 +1736,14 @@ For $A - B$ we can add $A$ and $-B$, and in two's complement $-B = \bar B + 1$. 
   <path d="M549,85 h18 M558,76 v18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="574,45 574,85 567,85" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="574" cy="45" r="2.6" fill="currentColor"/>
-  <polyline points="558,94 558,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="540,165 540,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="558,94 558,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
+  <polyline points="540,165 540,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="540" y="205" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">S₀</text>
-  <polyline points="220,140 160,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="220,140 160,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="190" y="132" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₃</text>
-  <polyline points="360,140 300,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="360,140 300,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="330" y="132" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₂</text>
-  <polyline points="500,140 440,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="500,140 440,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x10)"/>
   <text x="470" y="132" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₁</text>
   <polyline points="80,140 35,140 35,191" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="52" y="132" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">C₄</text>
@@ -1793,7 +1793,7 @@ The hardware mirrors this array: a row of AND gates per bit $b_j$, and a 4-bit a
 
 <figure class="fig">
 <svg viewBox="0 0 560 300" width="560" role="img" aria-label="4 by 4 array multiplier">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x11" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="300" y="20" width="170" height="40" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="385.0" y="36.0" text-anchor="middle" font-size="14" fill="currentColor">a · b₀</text>
   <text x="385.0" y="54.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4 AND gates</text>
@@ -1802,32 +1802,32 @@ The hardware mirrors this array: a row of AND gates per bit $b_j$, and a 4-bit a
   <text x="125.0" y="124.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4 AND gates</text>
   <rect x="300" y="90" width="170" height="40" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="385.0" y="115.0" text-anchor="middle" font-size="14" fill="currentColor">4-bit adder</text>
-  <polyline points="210,110 300,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="385,60 385,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="210,110 300,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
+  <polyline points="385,60 385,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="392" y="78" text-anchor="start" font-size="11" fill="currentColor" class="dim">upper 3 bits + carry</text>
   <rect x="40" y="160" width="170" height="40" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="125.0" y="176.0" text-anchor="middle" font-size="14" fill="currentColor">a · b₂</text>
   <text x="125.0" y="194.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4 AND gates</text>
   <rect x="300" y="160" width="170" height="40" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="385.0" y="185.0" text-anchor="middle" font-size="14" fill="currentColor">4-bit adder</text>
-  <polyline points="210,180 300,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="385,130 385,160" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="210,180 300,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
+  <polyline points="385,130 385,160" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="392" y="148" text-anchor="start" font-size="11" fill="currentColor" class="dim">upper 3 bits + carry</text>
   <rect x="40" y="230" width="170" height="40" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="125.0" y="246.0" text-anchor="middle" font-size="14" fill="currentColor">a · b₃</text>
   <text x="125.0" y="264.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4 AND gates</text>
   <rect x="300" y="230" width="170" height="40" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="385.0" y="255.0" text-anchor="middle" font-size="14" fill="currentColor">4-bit adder</text>
-  <polyline points="210,250 300,250" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="385,200 385,230" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="210,250 300,250" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
+  <polyline points="385,200 385,230" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="392" y="218" text-anchor="start" font-size="11" fill="currentColor" class="dim">upper 3 bits + carry</text>
-  <polyline points="470,40 520,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="470,40 520,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="528" y="45" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">m₀</text>
-  <polyline points="470,110 520,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="470,110 520,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="528" y="115" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">m₁</text>
-  <polyline points="470,180 520,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="470,180 520,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="528" y="185" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">m₂</text>
-  <polyline points="385,270 385,292" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="385,270 385,292" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x11)"/>
   <text x="395" y="290" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">m₃ … m₇</text>
   <text x="125" y="60" text-anchor="middle" font-size="12" fill="currentColor" class="dim">a = a₃a₂a₁a₀</text>
 </svg>
@@ -2029,6 +2029,80 @@ $57 = 32 + 16 + 8 + 1 = 00111001$, so $-57 = 11000110 + 1 = 11000111$.
 </figure>
 
 Encoding: $0\;{-1}\;0\;0\;{+1}\;0\;0\;{-1}$. Check: $-2^6 + 2^3 - 2^0 = -64 + 8 - 1 = -57$.
+
+## Integer Division
+
+Division of unsigned integers follows the longhand method [[5]](#ref-5): position the divisor against the dividend and subtract; if the remainder is zero or positive the quotient bit is 1, otherwise it is 0 and the dividend is *restored* by adding the divisor back.
+
+For an $n$-bit division the $n$-bit divisor is in register $M$, the $n$-bit dividend in $Q$, and $A$ starts at 0. $A$ and $M$ have an extra bit on the left for the sign during subtraction. At the end the quotient is in $Q$ and the remainder in $A$.
+
+### Restoring Division
+
+Do the following $n$ times:
+
+1. Shift $A$ and $Q$ left one bit.
+2. Subtract $M$ from $A$, and put the result back in $A$.
+3. If the sign of $A$ is 1, set $q_0 = 0$ and add $M$ back to $A$ (restore $A$); otherwise set $q_0 = 1$.
+
+<div class="example">
+
+Divide $8$ by $3$: $Q = 1000$, $M = 00011$ [[5]](#ref-5).
+
+</div>
+
+<figure class="table">
+<figcaption>Restoring division of $1000$ by $11$ (after Hamacher, Fig. 9.24); □ marks the bit $q_0$ still to be set.</figcaption>
+
+| Cycle | Step | $A$ | $Q$ |
+|:-:|:--|:-:|:-:|
+| | initially | 00000 | 1000 |
+| 1 | shift | 00001 | 000□ |
+| | subtract $M$ | 11110 | |
+| | negative: $q_0 = 0$, restore | 00001 | 0000 |
+| 2 | shift | 00010 | 000□ |
+| | subtract $M$ | 11111 | |
+| | negative: $q_0 = 0$, restore | 00010 | 0000 |
+| 3 | shift | 00100 | 000□ |
+| | subtract $M$ | 00001 | |
+| | positive: $q_0 = 1$ | 00001 | 0001 |
+| 4 | shift | 00010 | 001□ |
+| | subtract $M$ | 11111 | |
+| | negative: $q_0 = 0$, restore | 00010 | 0010 |
+
+</figure>
+
+The quotient is $Q = 0010 = 2$ and the remainder $A = 00010 = 2$.
+
+### Non-Restoring Division
+
+The restore can be avoided. If $A$ is positive after a subtraction, the next cycle shifts and subtracts, i.e. computes $2A - M$. If $A$ is negative, restoring and then shifting and subtracting gives $2(A + M) - M = 2A + M$, so the next cycle can simply shift and *add* [[5]](#ref-5):
+
+- **Stage 1.** Do the following $n$ times:
+  1. If the sign of $A$ is 0, shift $A$ and $Q$ left and subtract $M$ from $A$; otherwise shift $A$ and $Q$ left and add $M$ to $A$.
+  2. If the sign of $A$ is now 0, set $q_0 = 1$; otherwise set $q_0 = 0$.
+- **Stage 2.** If the sign of $A$ is 1, add $M$ to $A$, to leave the correct positive remainder.
+
+<figure class="table">
+<figcaption>Non-restoring division of $1000$ by $11$ (after Hamacher, Fig. 9.25); □ marks the bit $q_0$ still to be set.</figcaption>
+
+| Cycle | Step | $A$ | $Q$ |
+|:-:|:--|:-:|:-:|
+| | initially | 00000 | 1000 |
+| 1 | shift | 00001 | 000□ |
+| | subtract $M$ | 11110 | |
+| | $q_0 = 0$ | | 0000 |
+| 2 | shift | 11100 | 000□ |
+| | add $M$ | 11111 | |
+| | $q_0 = 0$ | | 0000 |
+| 3 | shift | 11110 | 000□ |
+| | add $M$ | 00001 | |
+| | $q_0 = 1$ | | 0001 |
+| 4 | shift | 00010 | 001□ |
+| | subtract $M$ | 11111 | |
+| | $q_0 = 0$ | | 0010 |
+| | stage 2: add $M$ | 00010 | |
+
+</figure>
 
 ## Floating Point (IEEE 754)
 
@@ -2449,7 +2523,7 @@ Adding two NAND gates in front of the latch makes the inputs active-high and onl
 
 <figure class="fig">
 <svg viewBox="0 0 470 175" width="470" role="img" aria-label="Clocked SR latch from NAND gates">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x12" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <path d="M150,20 h20 a20.0,20.0 0 0 1 0,40 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="194.0" cy="40.0" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M150,110 h20 a20.0,20.0 0 0 1 0,40 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2503,7 +2577,7 @@ One way to make $S = R = 1$ impossible is to drive both inputs from a single inp
 
 <figure class="fig">
 <svg viewBox="0 0 470 175" width="470" role="img" aria-label="Gated D latch from NAND gates">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x13" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <path d="M150,20 h20 a20.0,20.0 0 0 1 0,40 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="194.0" cy="40.0" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M150,110 h20 a20.0,20.0 0 0 1 0,40 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2558,7 +2632,7 @@ The D latch avoids $S = R = 1$ by giving up one input. The JK latch keeps two in
 
 <figure class="fig">
 <svg viewBox="0 0 480 200" width="480" role="img" aria-label="JK latch: clocked SR latch with feedback from Q and Q-bar">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x14" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <path d="M150,14 h20 a30.0,30.0 0 0 1 0,60 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="204.0" cy="44.0" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M150,120 h20 a30.0,30.0 0 0 1 0,60 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2614,7 +2688,7 @@ Now $J = K = 1$ means *toggle*. But at CLK = 1, $J = K = 1$, every toggle change
 
 <figure class="fig">
 <svg viewBox="0 0 600 104" width="600" role="img" aria-label="Race-around: Q toggles repeatedly while CLK is high">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x15" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="58" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">CLK</text>
   <polyline points="70.0,38 156.7,38 156.7,18 243.3,18 243.3,38 330.0,38 330.0,18 416.7,18 416.7,38 503.3,38 503.3,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="58" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q</text>
@@ -2630,7 +2704,7 @@ Race-around is removed by making it a *master–slave* JK flip-flop. The master 
 
 <figure class="fig">
 <svg viewBox="0 0 560 200" width="560" role="img" aria-label="Master-slave JK flip-flop">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x16" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="110" y="30" width="130" height="100" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="175.0" y="76.0" text-anchor="middle" font-size="14" fill="currentColor">Master</text>
   <text x="175.0" y="94.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">gated JK latch</text>
@@ -2638,30 +2712,30 @@ Race-around is removed by making it a *master–slave* JK flip-flop. The master 
   <text x="385.0" y="76.0" text-anchor="middle" font-size="14" fill="currentColor">Slave</text>
   <text x="385.0" y="94.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">gated SR latch</text>
   <text x="20" y="55" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">J</text>
-  <polyline points="30,50 110,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="30,50 110,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="20" y="115" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">K</text>
-  <polyline points="30,110 110,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="30,110 110,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="22" y="85" text-anchor="middle" font-size="12" fill="currentColor">CLK</text>
-  <polyline points="42,80 110,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="42,80 110,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <circle cx="70" cy="80" r="2.6" fill="currentColor"/>
   <polyline points="70,80 70,160 150,160" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M150,151 L168,160 L150,169 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="172" cy="160" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="176,160 290,160 290,80 320,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="176,160 290,160 290,80 320,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="250" y="175" text-anchor="middle" font-size="11" fill="currentColor">CLK̄</text>
-  <polyline points="240,50 320,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="240,50 320,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="280" y="44" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">Qₘ</text>
-  <polyline points="240,110 320,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="240,110 320,110" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="280" y="104" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">Q̄ₘ</text>
   <polyline points="450,50 530,50" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="538" y="55" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">Q</text>
   <polyline points="450,110 530,110" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="538" y="115" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">Q̄</text>
   <circle cx="500" cy="110" r="2.6" fill="currentColor"/>
-  <polyline points="500,110 500,10 175,10 175,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="500,110 500,10 175,10 175,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="190" y="22" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic" class="dim">Q̄</text>
   <circle cx="510" cy="50" r="2.6" fill="currentColor"/>
-  <polyline points="510,50 510,192 175,192 175,130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="510,50 510,192 175,192 175,130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x16)"/>
   <text x="190" y="188" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic" class="dim">Q</text>
 </svg>
 <figcaption>Master–slave JK flip-flop: the master is clocked by CLK, the slave by CLK̄, and the feedback comes from the slave's outputs.</figcaption>
@@ -2669,7 +2743,7 @@ Race-around is removed by making it a *master–slave* JK flip-flop. The master 
 
 <figure class="fig">
 <svg viewBox="0 0 600 138" width="600" role="img" aria-label="Master-slave JK timing">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x17" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="210.5" y1="6" x2="210.5" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="337.0" y1="6" x2="337.0" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="463.5" y1="6" x2="463.5" y2="116" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
@@ -2854,11 +2928,11 @@ A *register* is a group of flip-flops sharing a clock, one per bit. A *shift reg
 
 <figure class="fig">
 <svg viewBox="0 0 560 130" width="560" role="img" aria-label="Serial-in serial-out shift register">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x18" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polyline points="20,120 520,120" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="14" y="116" text-anchor="start" font-size="11" fill="currentColor">CLK</text>
   <text x="20" y="37" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">in</text>
-  <polyline points="40,32 80,32" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="40,32 80,32" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x18)"/>
   <rect x="80" y="15" width="80" height="70" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="88" y="37" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">D</text>
   <path d="M80,44.0 L89,50.0 L80,56.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2908,7 +2982,7 @@ We can build counters from JK flip-flops with $J = K = 1$ (equivalently T flip-f
 
 <figure class="fig">
 <svg viewBox="0 0 560 170" width="560" role="img" aria-label="3-bit ripple counter from JK flip-flops">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x19" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <polyline points="40,14 520,14" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="30" y="19" text-anchor="end" font-size="14" fill="currentColor">1</text>
   <polyline points="40,158 520,158" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2965,7 +3039,7 @@ We can build counters from JK flip-flops with $J = K = 1$ (equivalently T flip-f
 
 <figure class="fig">
 <svg viewBox="0 0 600 192" width="600" role="img" aria-label="Ripple counter timing">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x20" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="100.6" y1="6" x2="100.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="161.8" y1="6" x2="161.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="222.9" y1="6" x2="222.9" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
@@ -3030,7 +3104,7 @@ We can stop this sequence early using extra logic. For $0 \to 1 \to 2 \to 3 \to 
 
 <figure class="fig">
 <svg viewBox="0 0 420 100" width="420" role="img" aria-label="Reset logic: clear all flip-flops when the count reaches 4">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x21" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <path d="M130,10 h20 a40.0,40.0 0 0 1 0,80 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <polyline points="70,30.0 130,30.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="62" y="35.0" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">C</tspan></text>
@@ -3038,7 +3112,7 @@ We can stop this sequence early using extra logic. For $0 \to 1 \to 2 \to 3 \to 
   <text x="62" y="55.0" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">Q̄<tspan baseline-shift="sub" font-size="75%">B</tspan></text>
   <polyline points="70,70.0 130,70.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="62" y="75.0" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">Q̄ₐ</text>
-  <polyline points="190.0,50.0 250,50.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="190.0,50.0 250,50.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x21)"/>
   <text x="258" y="55.0" text-anchor="start" font-size="13" fill="currentColor">CLR of all flip-flops</text>
 </svg>
 <figcaption>Asynchronous reset: state 100 lasts only for an instant before everything is cleared to 000.</figcaption>
@@ -3084,7 +3158,7 @@ $$T_C = Q_C + Q_B, \qquad T_B = \bar Q_C Q_A, \qquad T_A = Q_C + \bar Q_A$$
 
 <figure class="fig">
 <svg viewBox="0 0 560 330" width="560" role="img" aria-label="State diagram of the synchronous 0, 1, 3, 5 counter">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x22" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <ellipse cx="280" cy="150" rx="38" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="280" y="155" text-anchor="middle" font-size="14" fill="currentColor">000</text>
   <ellipse cx="420" cy="215" rx="38" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3101,14 +3175,14 @@ $$T_C = Q_C + Q_B, \qquad T_B = \bar Q_C Q_A, \qquad T_A = Q_C + \bar Q_A$$
   <text x="350" y="50" text-anchor="middle" font-size="14" fill="currentColor">100</text>
   <ellipse cx="470" cy="70" rx="38" ry="20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
   <text x="470" y="75" text-anchor="middle" font-size="14" fill="currentColor">010</text>
-  <polyline points="308.5,163.2 388.8,200.5" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="392.5,228.8 310.2,269.9" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="252.5,271.2 170.2,230.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="168.5,201.8 248.8,164.5" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="119.7,82.5 247.6,136.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="222.6,63.9 265.8,128.6" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="337.4,63.9 294.2,128.6" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="440.3,82.5 312.4,136.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="308.5,163.2 388.8,200.5" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="392.5,228.8 310.2,269.9" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="252.5,271.2 170.2,230.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="168.5,201.8 248.8,164.5" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="119.7,82.5 247.6,136.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="222.6,63.9 265.8,128.6" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="337.4,63.9 294.2,128.6" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
+  <polyline points="440.3,82.5 312.4,136.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x22)"/>
   <text x="280" y="325" text-anchor="middle" font-size="11" fill="currentColor" class="dim">dashed: unused states, sent to 000 so the counter can never get stuck</text>
 </svg>
 <figcaption>Self-correcting design: every unused state goes to 000 on the next clock.</figcaption>
@@ -3142,7 +3216,7 @@ A *ring counter* is a shift register whose last output feeds back into its first
 
 <figure class="fig">
 <svg viewBox="0 0 540 170" width="540" role="img" aria-label="3-bit ring counter from D flip-flops">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x23" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="70" y="40" width="84" height="76" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="78" y="62" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">D</text>
   <path d="M70,72.0 L79,78.0 L70,84.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3184,7 +3258,7 @@ Initialize with $Q_C Q_B Q_A = 100$. Then $Q_B^+ = Q_C$, $Q_A^+ = Q_B$ and $Q_C^
 
 <figure class="fig">
 <svg viewBox="0 0 600 192" width="600" role="img" aria-label="Ring counter timing">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x24" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="122.0" y1="6" x2="122.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="174.0" y1="6" x2="174.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="226.0" y1="6" x2="226.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
@@ -3253,13 +3327,13 @@ We can also make a 4-bit ring counter by connecting a 2-to-4 decoder to a 2-bit 
 
 <figure class="fig">
 <svg viewBox="0 0 520 120" width="520" role="img" aria-label="4-bit ring counter from a 2-bit counter and a 2 to 4 decoder">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x25" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="20" y="55" text-anchor="start" font-size="12" fill="currentColor">CLK</text>
-  <polyline points="50,50 110,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="50,50 110,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x25)"/>
   <rect x="110" y="25" width="120" height="50" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170.0" y="55.0" text-anchor="middle" font-size="14" fill="currentColor">2-bit counter</text>
-  <polyline points="230,40 300,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="230,60 300,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="230,40 300,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x25)"/>
+  <polyline points="230,60 300,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x25)"/>
   <rect x="300" y="10" width="90" height="80" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="345.0" y="46.0" text-anchor="middle" font-size="14" fill="currentColor">2 × 4</text>
   <text x="345.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">decoder</text>
@@ -3282,7 +3356,7 @@ A *Johnson* (twisted-ring) counter feeds back the **complement** of the last out
 
 <figure class="fig">
 <svg viewBox="0 0 540 170" width="540" role="img" aria-label="3-bit Johnson counter from D flip-flops">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x26" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="70" y="40" width="84" height="76" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="78" y="62" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">D</text>
   <path d="M70,72.0 L79,78.0 L70,84.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3324,7 +3398,7 @@ Initialize $Q_C Q_B Q_A = 000$: the sequence is $000 \to 100 \to 110 \to 111 \to
 
 <figure class="fig">
 <svg viewBox="0 0 600 192" width="600" role="img" aria-label="Johnson counter timing">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x27" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="110.0" y1="6" x2="110.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="150.0" y1="6" x2="150.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="190.0" y1="6" x2="190.0" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
@@ -3522,7 +3596,7 @@ $$T_1 = \bar Q_2 Q_1 + Q_2 \bar Q_1 = Q_1 \oplus Q_2, \qquad T_2 = \bar Q_2 \bar
 
 <figure class="fig">
 <svg viewBox="0 0 590 190" width="590" role="img" aria-label="T flip-flop counter for 0, 2, 3, 1">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x28" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="220" y="70" width="84" height="76" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="228" y="92" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">T</text>
   <path d="M220,102.0 L229,108.0 L220,114.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3574,7 +3648,7 @@ Consider the following circuit with a positive-edge-triggered D flip-flop. What 
 
 <figure class="fig">
 <svg viewBox="0 0 500 195" width="500" role="img" aria-label="D flip-flop circuit with D = AX + Q-bar X-bar">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x29" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="16" y="35" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">A</text>
   <polyline points="26,30 120,30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="16" y="65" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">X</text>
@@ -3624,7 +3698,7 @@ The circuit below uses XOR gates and non-inverting buffers with delays $\delta_1
 
 <figure class="fig">
 <svg viewBox="0 0 540 150" width="540" role="img" aria-label="XOR gates with delay buffers">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x30" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="16" y="55" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">A</text>
   <polyline points="26,50 204,50" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="60" cy="50" r="2.6" fill="currentColor"/>
@@ -3657,7 +3731,7 @@ The circuit below uses XOR gates and non-inverting buffers with delays $\delta_1
 
 <figure class="fig">
 <svg viewBox="0 0 600 190" width="600" role="img" aria-label="Timing of the XOR and buffer circuit">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x31" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="117.3" y1="6" x2="117.3" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="164.5" y1="6" x2="164.5" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
   <line x1="211.8" y1="6" x2="211.8" y2="186" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
@@ -3715,34 +3789,34 @@ The control signals of a 4-bit binary counter are given below. The counter is co
 
 <figure class="fig">
 <svg viewBox="0 0 470 210" width="470" role="img" aria-label="4-bit counter with Clear driven by A1 and A3">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-1x32" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="150" y="90" width="180" height="60" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="240.0" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">4-bit counter</text>
-  <polyline points="170,90 170,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="170,90 170,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="170" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₄</text>
-  <polyline points="210,90 210,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="210,90 210,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="210" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₃</text>
-  <polyline points="250,90 250,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="250,90 250,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="250" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₂</text>
-  <polyline points="290,90 290,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="290,90 290,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="290" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₁</text>
   <path d="M60,20 h20 a30.0,30.0 0 0 1 0,60 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="210" cy="40" r="2.6" fill="currentColor"/>
   <polyline points="210,40 60,40" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="290" cy="60" r="2.6" fill="currentColor"/>
   <polyline points="290,60 60,60" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="110.0,50.0 115,50.0 115,120 150,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="110.0,50.0 115,50.0 115,120 150,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="122" y="136" text-anchor="start" font-size="11" fill="currentColor">Clear</text>
-  <polyline points="390,100 330,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="390,100 330,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="398" y="104" text-anchor="start" font-size="11" fill="currentColor">Count = 1</text>
-  <polyline points="390,120 330,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="390,120 330,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="398" y="124" text-anchor="start" font-size="11" fill="currentColor">Load = 0</text>
-  <polyline points="390,140 330,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="390,140 330,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="398" y="144" text-anchor="start" font-size="11" fill="currentColor">CLK</text>
-  <polyline points="175,185 175,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="215,185 215,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="255,185 255,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="295,185 295,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="175,185 175,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <polyline points="215,185 215,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <polyline points="255,185 255,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <polyline points="295,185 295,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
   <text x="235" y="202" text-anchor="middle" font-size="11" fill="currentColor" class="dim">parallel inputs (unused, Load = 0)</text>
 </svg>
 <figcaption>The counter with Count = 1, Load = 0 and Clear = $A_3 A_1$.</figcaption>
@@ -3761,3 +3835,5 @@ $$0 \to 1 \to 2 \to 3 \to 4 \to 0 \quad \text{(a mod-5 counter)}$$
 3. <span id="ref-3"></span>Rajaraman, V. *“IEEE Standard for Floating Point Numbers.”* *Resonance*, 21(1), 11–30, 2016. [https://www.ias.ac.in/public/Volumes/reso/021/01/0011-0030.pdf](https://www.ias.ac.in/public/Volumes/reso/021/01/0011-0030.pdf).
 
 4. <span id="ref-4"></span>Linz, Peter. *An Introduction to Formal Languages and Automata*, 6th ed. Jones & Bartlett Learning, 2017.
+
+5. <span id="ref-5"></span>Hamacher, Carl, Zvonko Vranesic, Safwat Zaky, and Naraig Manjikian. *Computer Organization and Embedded Systems*, 6th ed. McGraw-Hill, 2012, §9.6.

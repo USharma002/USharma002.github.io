@@ -159,15 +159,15 @@ A program is a *passive* entity (an executable file on disk); a process is *acti
 
 <figure class="fig">
 <svg viewBox="0 0 420 300" width="420" role="img" aria-label="Layout of a process in memory">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="120" y="20" width="150" height="260" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="120" y1="70" x2="270" y2="70" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="120" y1="210" x2="270" y2="210" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="120" y1="245" x2="270" y2="245" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="195.0" y="50" text-anchor="middle" font-size="13" fill="currentColor">stack</text>
-  <polyline points="195.0,72 195.0,105" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="195.0,72 195.0,105" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x2)"/>
   <text x="195.0" y="200" text-anchor="middle" font-size="13" fill="currentColor">heap</text>
-  <polyline points="195.0,186 195.0,152" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="195.0,186 195.0,152" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x2)"/>
   <text x="195.0" y="233" text-anchor="middle" font-size="13" fill="currentColor">data</text>
   <text x="195.0" y="267" text-anchor="middle" font-size="13" fill="currentColor">text</text>
   <text x="110" y="26" text-anchor="end" font-size="11" fill="currentColor" class="dim">max</text>
@@ -200,7 +200,7 @@ As a process executes, it changes **state**. A process may be in one of the foll
 
 <figure class="fig">
 <svg viewBox="0 0 600 250" width="600" role="img" aria-label="Diagram of process states">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <ellipse cx="80" cy="50" rx="52" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="80" y="55" text-anchor="middle" font-size="13" fill="currentColor">new</text>
   <ellipse cx="190" cy="160" rx="52" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -211,21 +211,23 @@ As a process executes, it changes **state**. A process may be in one of the foll
   <text x="300" y="230" text-anchor="middle" font-size="13" fill="currentColor">waiting</text>
   <ellipse cx="520" cy="50" rx="62" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="520" y="55" text-anchor="middle" font-size="13" fill="currentColor">terminated</text>
-  <polyline points="110,68 165,141" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="110,68 165,141" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x3)"/>
   <text x="122" y="112" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">admitted</text>
-  <path d="M240,150 Q300,118 358,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M240,150 Q300,118 358,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x3)"/>
   <text x="300" y="122" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">scheduler dispatch</text>
-  <path d="M358,170 Q300,196 242,170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M358,170 Q300,196 242,170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x3)"/>
   <text x="300" y="163" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">interrupt</text>
-  <polyline points="440,140 490,70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="440,140 490,70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x3)"/>
   <text x="478" y="112" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">exit</text>
-  <polyline points="430,180 348,220" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="430,180 348,220" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x3)"/>
   <text x="420" y="216" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">I/O or event wait</text>
-  <polyline points="252,220 175,182" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="252,220 175,182" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x3)"/>
   <text x="180" y="216" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">I/O or event completion</text>
 </svg>
 <figcaption>Process states (after Galvin, Fig. 3.2). On a single CPU only one process can be running at a time; many can be ready or waiting.</figcaption>
 </figure>
+
+**Suspended state.** Not all processes can be kept in main memory, so some are swapped (wholly or partly) out to disk (see medium-term scheduling below). Such a process needs a further state, **suspended**: it is on disk, and therefore not available to the CPU [[7]](#ref-7).
 
 #### Process Control Block
 
@@ -235,7 +237,7 @@ Each process is represented in the OS by a **process control block (PCB)**, also
 
 <figure class="fig" style="margin:0">
 <svg viewBox="0 0 260 250" width="260" role="img" aria-label="Process control block">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x4" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="40" y="10" width="180" height="33" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="130.0" y="31.5" text-anchor="middle" font-size="12" fill="currentColor">process state</text>
   <rect x="40" y="43" width="180" height="33" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -284,7 +286,7 @@ In Linux the PCB is the C structure `task_struct`, and all active processes are 
 
 <figure class="fig">
 <svg viewBox="0 0 680 400" width="680" role="img" aria-label="The ready queue and I/O device queues as linked lists of PCBs">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x5" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="158" y="14" text-anchor="middle" font-size="11" fill="currentColor" class="dim">queue header</text>
   <text x="108" y="55" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">ready queue</text>
   <rect x="120" y="30" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -301,11 +303,11 @@ In Linux the PCB is the C structure `task_struct`, and all active processes are 
   <rect x="450" y="52" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="492.0" y="67" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <text x="492.0" y="87" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
-  <polyline points="196,40.0 278,40.0 278,43.0 300,43.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="384,43.0 450,43.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="196,40.0 278,40.0 278,43.0 300,43.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="384,43.0 450,43.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
   <polyline points="534,43.0 546,43.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M546,36.0 v14 M550,38.5 v9 M554,41.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="196,60.0 266,60.0 266,106 436,106 436,72 450,72" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="196,60.0 266,60.0 266,106 436,106 436,72 450,72" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
   <text x="108" y="147" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">mag tape unit 0</text>
   <rect x="120" y="122" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="158.0" y="137.0" text-anchor="middle" font-size="11" fill="currentColor">head</text>
@@ -332,12 +334,12 @@ In Linux the PCB is the C structure `task_struct`, and all active processes are 
   <rect x="540" y="194" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="540" y="212" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="582.0" y="247" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
-  <polyline points="196,200.0 278,200.0 278,203.0 300,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="384,203.0 420,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="504,203.0 540,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="196,200.0 278,200.0 278,203.0 300,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="384,203.0 420,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="504,203.0 540,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
   <polyline points="624,203.0 636,203.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M636,196.0 v14 M640,198.5 v9 M644,201.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="196,220.0 266,220.0 266,266 526,266 526,232 540,232" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="196,220.0 266,220.0 266,266 526,266 526,232 540,232" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
   <text x="108" y="325" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">terminal unit 0</text>
   <rect x="120" y="300" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="158.0" y="315.0" text-anchor="middle" font-size="11" fill="currentColor">head</text>
@@ -347,10 +349,10 @@ In Linux the PCB is the C structure `task_struct`, and all active processes are 
   <rect x="300" y="304" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="300" y="322" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="342.0" y="357" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
-  <polyline points="196,310.0 278,310.0 278,313.0 300,313.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="196,310.0 278,310.0 278,313.0 300,313.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
   <polyline points="384,313.0 396,313.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M396,306.0 v14 M400,308.5 v9 M404,311.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="196,330.0 288,330.0 288,342 300,342" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="196,330.0 288,330.0 288,342 300,342" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
 </svg>
 <figcaption>The ready queue and I/O device queues are linked lists of PCBs (after Galvin, Fig. 3.5).</figcaption>
 </figure>
@@ -359,42 +361,42 @@ A common representation of process scheduling is a **queueing diagram**: rectang
 
 <figure class="fig">
 <svg viewBox="0 0 620 300" width="620" role="img" aria-label="Queueing diagram of process scheduling">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x6" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="160" y="15" width="130" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="225.0" y="35.0" text-anchor="middle" font-size="13" fill="currentColor">ready queue</text>
   <circle cx="470" cy="30" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="470" y="35" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <polyline points="20,30 160,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="290,30 450,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="490,30 600,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="20,30 160,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
+  <polyline points="290,30 450,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
+  <polyline points="490,30 600,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <line x1="560" y1="30" x2="560" y2="260" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="60" y1="260" x2="60" y2="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="60,120 60,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="560,80 520,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="60,120 60,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
+  <polyline points="560,80 520,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <rect x="380" y="64" width="140" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="450.0" y="85.0" text-anchor="middle" font-size="12" fill="currentColor">I/O request</text>
-  <polyline points="380,80 350,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="380,80 350,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <rect x="230" y="64" width="120" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="290.0" y="85.0" text-anchor="middle" font-size="12" fill="currentColor">I/O queue</text>
-  <polyline points="230,80 204,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="230,80 204,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <circle cx="182" cy="80" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="182" y="85" text-anchor="middle" font-size="12" fill="currentColor">I/O</text>
   <polyline points="162,80 60,80" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="560,135 520,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="560,135 520,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <rect x="380" y="119" width="140" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="450.0" y="140.0" text-anchor="middle" font-size="12" fill="currentColor">time slice expired</text>
   <polyline points="380,135 60,135" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="560,190 520,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="560,190 520,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <rect x="380" y="174" width="140" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="450.0" y="195.0" text-anchor="middle" font-size="12" fill="currentColor">fork a child</text>
-  <polyline points="380,190 354,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="380,190 354,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <ellipse cx="296" cy="190" rx="56" ry="19" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="296" y="195" text-anchor="middle" font-size="11" fill="currentColor">child executes</text>
   <polyline points="240,190 60,190" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="560,245 520,245" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="560,245 520,245" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <rect x="380" y="229" width="140" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="450.0" y="250.0" text-anchor="middle" font-size="12" fill="currentColor">wait for an interrupt</text>
-  <polyline points="380,245 354,245" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="380,245 354,245" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x6)"/>
   <ellipse cx="292" cy="245" rx="60" ry="19" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="292" y="250" text-anchor="middle" font-size="11" fill="currentColor">interrupt occurs</text>
   <polyline points="232,245 60,245" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -441,7 +443,7 @@ If it takes 10 ms to decide to run a process for 100 ms, then $\frac{10}{100 + 1
 
 <figure class="fig">
 <svg viewBox="0 0 600 230" width="600" role="img" aria-label="Medium-term scheduling added to the queueing diagram">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x7" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="215" y="12" width="180" height="42" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="305.0" y="30.0" text-anchor="middle" font-size="12" fill="currentColor">partially executed</text>
   <text x="305.0" y="46.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">swapped-out processes</text>
@@ -449,19 +451,19 @@ If it takes 10 ms to decide to run a process for 100 ms, then $\frac{10}{100 + 1
   <text x="280.0" y="125.0" text-anchor="middle" font-size="13" fill="currentColor">ready queue</text>
   <circle cx="460" cy="120" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="460" y="125" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <polyline points="30,120 220,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="340,120 440,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="480,120 560,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="30,120 220,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x7)"/>
+  <polyline points="340,120 440,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x7)"/>
+  <polyline points="480,120 560,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x7)"/>
   <text x="568" y="124" text-anchor="start" font-size="12" fill="currentColor">end</text>
-  <polyline points="515,120 515,33 397,33" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="515,120 515,33 397,33" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x7)"/>
   <text x="521" y="78" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">swap out</text>
   <polyline points="215,33 170,33 170,120" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="164" y="78" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">swap in</text>
-  <polyline points="495,120 495,195 430,195" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="495,120 495,195 430,195" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x7)"/>
   <rect x="330" y="180" width="100" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="380.0" y="200.0" text-anchor="middle" font-size="12" fill="currentColor">I/O waiting</text>
   <text x="380" y="224" text-anchor="middle" font-size="10" fill="currentColor" class="dim">queues</text>
-  <polyline points="330,195 300,195" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="330,195 300,195" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x7)"/>
   <circle cx="280" cy="195" r="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="280" y="200" text-anchor="middle" font-size="13" fill="currentColor">I/O</text>
   <polyline points="260,195 120,195 120,120" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -485,7 +487,7 @@ Switching the CPU to another process requires a **state save** of the current pr
 
 <figure class="fig">
 <svg viewBox="0 0 620 380" width="620" role="img" aria-label="Context switch from process P0 to process P1 and back">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x8" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="70" y="6" width="480" height="24" fill="currentColor" opacity=".08"/>
   <text x="130" y="23" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">process P₀</text>
   <text x="310" y="23" text-anchor="middle" font-size="13" fill="currentColor" class="dim">operating system</text>
@@ -509,21 +511,21 @@ Switching the CPU to another process requires a **state save** of the current pr
   <path d="M504,205 q6,0 6,8 V261.5 q0,6 6,6 q-6,0 -6,6 V322 q0,8 -6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="517.2" y="271.5" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">idle</text>
   <text x="310" y="47" text-anchor="middle" font-size="11" fill="currentColor" class="dim">interrupt or system call</text>
-  <polyline points="132,53 310,53 310,71" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="132,53 310,53 310,71" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
   <rect x="240" y="73" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310.0" y="90.0" text-anchor="middle" font-size="11" fill="currentColor">save state into PCB₀</text>
   <text x="310" y="119" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
   <rect x="240" y="131" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310.0" y="148.0" text-anchor="middle" font-size="11" fill="currentColor">reload state from PCB₁</text>
-  <polyline points="310,155 310,175 488,175" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="310,155 310,175 488,175" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
   <text x="310" y="204" text-anchor="middle" font-size="11" fill="currentColor" class="dim">interrupt or system call</text>
-  <polyline points="488,212 310,212 310,228" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="488,212 310,212 310,228" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
   <rect x="240" y="230" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310.0" y="247.0" text-anchor="middle" font-size="11" fill="currentColor">save state into PCB₁</text>
   <text x="310" y="276" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
   <rect x="240" y="288" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310.0" y="305.0" text-anchor="middle" font-size="11" fill="currentColor">reload state from PCB₀</text>
-  <polyline points="310,312 310,332 132,332" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="310,312 310,332 132,332" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
 </svg>
 <figcaption>CPU switch from process to process (after Galvin, Fig. 3.4). Thick arrows show execution; the time spent in the OS boxes is the context-switch overhead. PCBs are kept in specially reserved memory, the <em>kernel space</em>.</figcaption>
 </figure>
@@ -553,24 +555,24 @@ One of the two processes typically uses the `exec()` system call to replace the 
 
 <figure class="fig">
 <svg viewBox="0 0 600 170" width="600" role="img" aria-label="Process creation using fork, exec and wait">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x9" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="40" y="64" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">parent</text>
   <ellipse cx="110" cy="60" rx="62" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="110" y="65" text-anchor="middle" font-size="12" fill="currentColor">pid = fork()</text>
   <ellipse cx="390" cy="60" rx="46" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="390" y="65" text-anchor="middle" font-size="12" fill="currentColor">wait()</text>
-  <polyline points="172,60 344,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="172,60 344,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x9)"/>
   <text x="258" y="52" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">parent (pid &gt; 0)</text>
-  <polyline points="436,60 570,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="436,60 570,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x9)"/>
   <text x="510" y="52" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">parent resumes</text>
-  <path d="M120,80 Q140,135 206,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M120,80 Q140,135 206,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x9)"/>
   <text x="118" y="150" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">child (pid = 0)</text>
   <ellipse cx="250" cy="135" rx="42" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250" y="140" text-anchor="middle" font-size="12" fill="currentColor">exec()</text>
-  <polyline points="292,135 346,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="292,135 346,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x9)"/>
   <ellipse cx="390" cy="135" rx="42" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="390" y="140" text-anchor="middle" font-size="12" fill="currentColor">exit()</text>
-  <polyline points="390,115 390,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="390,115 390,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x9)"/>
 </svg>
 <figcaption>Process creation using the <code>fork()</code> system call (after Galvin, Fig. 3.10).</figcaption>
 </figure>
@@ -607,7 +609,7 @@ fork returned 0,   getpid = 915, getppid = 914     <- child
 - **Copy-on-write.** Copying the whole address space would make `fork()` expensive, especially since the child usually calls `exec()` straight away. Modern Unix marks the pages read-only and shared, and copies a page only when one of the processes writes to it.
 - `exec()` does not return on success (the old program is gone); it returns −1 only on error.
 
-**Counting processes.** Every process that executes a `fork()` becomes two, so after $n$ successive `fork()` calls (e.g. `for (i = 0; i < n; i++) fork();`) there are $2^n$ processes: the original and $2^n - 1$ children. A `printf` placed after them runs $2^n$ times. When a `fork()` is inside a condition such as `if (fork() == 0)`, only the processes that take that branch double.
+**Counting processes** (Galvin, Exercise 3.2 asks this for three `fork()` calls). Every process that executes a `fork()` becomes two, so after $n$ successive `fork()` calls (e.g. `for (i = 0; i < n; i++) fork();`) there are $2^n$ processes: the original and $2^n - 1$ children. A `printf` placed after them runs $2^n$ times. When a `fork()` is inside a condition such as `if (fork() == 0)`, only the processes that take that branch double.
 
 The process tree for $n = 3$ is a full binary tree with one level per `fork()`. At each node the left branch is the calling process carrying on and the right branch is the new child, so every right branch is created by the node it hangs from. The leaves are the 8 processes that run the code after the loop.
 
@@ -759,7 +761,7 @@ A *thread* is a basic unit of CPU utilization. It comprises a thread ID, a progr
 
 <figure class="fig">
 <svg viewBox="0 0 680 300" width="680" role="img" aria-label="Single-threaded and multithreaded processes">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x10" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="10" width="230" height="250" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="20" y="10" width="230" height="44" fill="currentColor" opacity=".08"/>
   <line x1="20" y1="54" x2="250" y2="54" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -776,10 +778,10 @@ A *thread* is a basic unit of CPU utilization. It comprises a thread ID, a progr
   <text x="135.0" y="81.0" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <rect x="97.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
-  <polyline points="135.0,120 135.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="135.0,120 135.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x10)"/>
   <path d="M135.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135.0" y="282" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">single-threaded process</text>
-  <polyline points="83.0,186 123.0,186" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="83.0,186 123.0,186" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x10)"/>
   <text x="79.0" y="190" text-anchor="end" font-size="11" fill="currentColor">thread</text>
   <rect x="330" y="10" width="276" height="250" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="330" y="10" width="276" height="44" fill="currentColor" opacity=".08"/>
@@ -797,24 +799,24 @@ A *thread* is a basic unit of CPU utilization. It comprises a thread ID, a progr
   <text x="376.0" y="81.0" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <rect x="338.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="376.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
-  <polyline points="376.0,120 376.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="376.0,120 376.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x10)"/>
   <path d="M376.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="422.0" y1="54" x2="422.0" y2="224" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="430.0" y="64" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="468.0" y="81.0" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <rect x="430.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="468.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
-  <polyline points="468.0,120 468.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="468.0,120 468.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x10)"/>
   <path d="M468.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="514.0" y1="54" x2="514.0" y2="224" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="522.0" y="64" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="560.0" y="81.0" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
   <rect x="522.0" y="94" width="76" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="560.0" y="111.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
-  <polyline points="560.0,120 560.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="560.0,120 560.0,136" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x10)"/>
   <path d="M560.0,150 q9,9 0,18 q-9,9 0,18 q9,9 0,18 q-9,9 0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="468.0" y="282" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">multithreaded process</text>
-  <polyline points="612.0,186 572.0,186" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="612.0,186 572.0,186" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x10)"/>
   <text x="616.0" y="190" text-anchor="start" font-size="11" fill="currentColor">thread</text>
 </svg>
 <figcaption>Single-threaded and multithreaded processes (after Galvin, Fig. 4.1). Each thread (one column) has its own registers and stack; the shaded code, data, files and heap are shared by all threads.</figcaption>
@@ -850,7 +852,7 @@ User threads must ultimately be mapped to kernel threads:
 
 <figure class="fig">
 <svg viewBox="0 0 620 200" width="620" role="img" aria-label="Many-to-one, one-to-one and many-to-many threading models">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x11" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="8" y="34" text-anchor="start" font-size="10" fill="currentColor" class="dim">user</text>
   <text x="8" y="144" text-anchor="start" font-size="10" fill="currentColor" class="dim">kernel</text>
   <path d="M70,20 q6,10 0,18 q-6,8 0,16" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -919,7 +921,7 @@ Process execution consists of a **cycle** of CPU execution and I/O wait, and pro
 
 <figure class="fig">
 <svg viewBox="0 0 460 250" width="460" role="img" aria-label="Alternating sequence of CPU and I/O bursts">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x12" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="150" y="26" text-anchor="middle" font-size="12" fill="currentColor">load, add, store</text>
   <text x="150" y="42" text-anchor="middle" font-size="12" fill="currentColor">read from file</text>
   <path d="M260,14 h6 V50 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1032,7 +1034,7 @@ Processes $P_1, P_2, P_3$ arrive at time 0 in that order, with the CPU burst len
 
 <figure class="fig">
 <svg viewBox="0 0 600 62" width="600" role="img" aria-label="Gantt chart: fcfs1">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x13" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20.0" y="8" width="448.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="244.0" y="28" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₁</text>
   <rect x="468.0" y="8" width="56.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1051,7 +1053,7 @@ If they arrive in the order $P_2, P_3, P_1$ instead:
 
 <figure class="fig">
 <svg viewBox="0 0 600 62" width="600" role="img" aria-label="Gantt chart: fcfs2">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x14" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20.0" y="8" width="56.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="48.0" y="28" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₂</text>
   <rect x="76.0" y="8" width="56.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1094,7 +1096,7 @@ Four processes arrive at time 0, with the CPU burst lengths below (in millisecon
 
 <figure class="fig">
 <svg viewBox="0 0 600 62" width="600" role="img" aria-label="Gantt chart: sjf">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x15" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20.0" y="8" width="70.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="55.0" y="28" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₄</text>
   <rect x="90.0" y="8" width="140.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1126,7 +1128,7 @@ where $t_n$ is the actual length of the $n$th CPU burst and $\tau_{n+1}$ is the 
 
 <figure class="fig">
 <svg viewBox="0 0 560 230" width="560" role="img" aria-label="Predicting the next CPU burst by exponential averaging">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x16" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <line x1="50" y1="190" x2="530" y2="190" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="50" y1="190" x2="50" y2="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="42" y="171.14285714285714" text-anchor="end" font-size="10" fill="currentColor">2</text>
   <line x1="50" y1="167.14285714285714" x2="530" y2="167.14285714285714" stroke="currentColor" opacity=".12"/>
@@ -1185,7 +1187,7 @@ Four processes arrive at the times below, with the CPU burst lengths shown (in m
 
 <figure class="fig">
 <svg viewBox="0 0 600 62" width="600" role="img" aria-label="Gantt chart: srtf">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x17" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20.0" y="8" width="21.5" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="30.8" y="28" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₁</text>
   <rect x="41.5" y="8" width="86.2" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1292,7 +1294,7 @@ Five processes arrive at time 0, with the CPU burst lengths (in milliseconds) an
 
 <figure class="fig">
 <svg viewBox="0 0 600 62" width="600" role="img" aria-label="Gantt chart: pri">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x18" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20.0" y="8" width="29.5" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="34.7" y="28" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₂</text>
   <rect x="49.5" y="8" width="147.4" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1345,7 +1347,7 @@ Three processes arrive at time 0, with the CPU burst lengths below (in milliseco
 
 <figure class="fig">
 <svg viewBox="0 0 600 62" width="600" role="img" aria-label="Gantt chart: rr">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x19" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20.0" y="8" width="74.7" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="57.3" y="28" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₁</text>
   <rect x="94.7" y="8" width="56.0" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1380,30 +1382,30 @@ Three processes arrive at time 0, with the CPU burst lengths below (in milliseco
 
 <figure class="fig">
 <svg viewBox="0 0 520 260" width="520" role="img" aria-label="Multilevel queue scheduling">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x20" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="20" y="14" text-anchor="start" font-size="11" fill="currentColor" class="dim">highest priority</text>
-  <polyline points="60,39 100,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="60,39 100,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <rect x="100" y="24" width="300" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250.0" y="44.0" text-anchor="middle" font-size="12" fill="currentColor">system processes</text>
-  <polyline points="400,39 450,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="60,83 100,83" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,39 450,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
+  <polyline points="60,83 100,83" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <rect x="100" y="68" width="300" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250.0" y="88.0" text-anchor="middle" font-size="12" fill="currentColor">interactive processes</text>
-  <polyline points="400,83 450,83" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="60,127 100,127" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,83 450,83" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
+  <polyline points="60,127 100,127" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <rect x="100" y="112" width="300" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250.0" y="132.0" text-anchor="middle" font-size="12" fill="currentColor">interactive editing processes</text>
-  <polyline points="400,127 450,127" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="60,171 100,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,127 450,127" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
+  <polyline points="60,171 100,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <rect x="100" y="156" width="300" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250.0" y="176.0" text-anchor="middle" font-size="12" fill="currentColor">batch processes</text>
-  <polyline points="400,171 450,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="60,215 100,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,171 450,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
+  <polyline points="60,215 100,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <rect x="100" y="200" width="300" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250.0" y="220.0" text-anchor="middle" font-size="12" fill="currentColor">student processes</text>
-  <polyline points="400,215 450,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,215 450,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <line x1="450" y1="39" x2="450" y2="215" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="450,127 490,127" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="450,127 490,127" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x20)"/>
   <text x="20" y="252" text-anchor="start" font-size="11" fill="currentColor" class="dim">lowest priority</text>
 </svg>
 <figcaption>Multilevel queue scheduling (after Galvin, Fig. 6.6).</figcaption>
@@ -1419,23 +1421,23 @@ Three processes arrive at time 0, with the CPU burst lengths below (in milliseco
 
 <figure class="fig">
 <svg viewBox="0 0 520 200" width="520" role="img" aria-label="Multilevel feedback queues">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x21" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="120" y="20" width="220" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="230.0" y="42.0" text-anchor="middle" font-size="13" fill="currentColor">quantum = 8</text>
-  <polyline points="60,37 120,37" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="340,37 400,37" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="60,37 120,37" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <polyline points="340,37 400,37" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
   <text x="406" y="41" text-anchor="start" font-size="12" fill="currentColor" class="dim">CPU</text>
-  <polyline points="370,37 370,67 100,67 100,97 118,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="370,37 370,67 100,67 100,97 118,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
   <rect x="120" y="80" width="220" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="230.0" y="102.0" text-anchor="middle" font-size="13" fill="currentColor">quantum = 16</text>
-  <polyline points="100,97 120,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="340,97 400,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="100,97 120,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <polyline points="340,97 400,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
   <text x="406" y="101" text-anchor="start" font-size="12" fill="currentColor" class="dim">CPU</text>
-  <polyline points="370,97 370,127 100,127 100,157 118,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="370,97 370,127 100,127 100,157 118,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
   <rect x="120" y="140" width="220" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="230.0" y="162.0" text-anchor="middle" font-size="13" fill="currentColor">FCFS</text>
-  <polyline points="100,157 120,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="340,157 400,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="100,157 120,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <polyline points="340,157 400,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
   <text x="406" y="161" text-anchor="start" font-size="12" fill="currentColor" class="dim">CPU</text>
   <text x="28" y="41" text-anchor="middle" font-size="11" fill="currentColor" class="dim">new</text>
   <text x="470" y="72" text-anchor="middle" font-size="10" fill="currentColor" font-style="italic" class="dim">demote</text>
@@ -1476,7 +1478,7 @@ A context switch can happen between any two instructions, so the six instruction
 
 <figure class="fig">
 <svg viewBox="0 0 660 300" width="660" role="img" aria-label="Three interleavings of counter++ and counter-- starting from counter = 5">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x22" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="110" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">one after the other</text>
   <rect x="10" y="26" width="200" height="180" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="22" y="46" font-size="13" fill="#3b82f6">R1 ← counter</text>
@@ -1562,7 +1564,7 @@ A critical-section protocol consists of two parts, an **entry section** and an *
 
 <figure class="fig">
 <svg viewBox="0 0 360 190" width="360" role="img" aria-label="General structure of a process with a critical section">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x23" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="60" y="22" text-anchor="start" font-size="13" fill="currentColor">do {</text>
   <rect x="90" y="34" width="160" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">entry section</text>
@@ -1934,7 +1936,7 @@ signal(semaphore *S) {
 
 <figure class="fig">
 <svg viewBox="0 0 590 120" width="590" role="img" aria-label="A blocking semaphore: an integer value and a list of waiting processes">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x24" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="20" width="110" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="75.0" y="40.0" text-anchor="middle" font-size="13" fill="currentColor">value = −2</text>
   <rect x="20" y="50" width="110" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -1946,8 +1948,8 @@ signal(semaphore *S) {
   <rect x="340" y="40" width="90" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="340" y="62" width="90" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="385.0" y="80.0" text-anchor="middle" font-size="12" fill="currentColor">P₅</text>
-  <polyline points="130,65 160,65 160,51 200,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="290,51 340,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="130,65 160,65 160,51 200,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x24)"/>
+  <polyline points="290,51 340,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x24)"/>
   <polyline points="430,51 442,51" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M442,44 v14 M446,46.5 v9 M450,49 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="470" y="30" text-anchor="start" font-size="11" fill="currentColor" class="dim">2 processes blocked</text>
@@ -2004,7 +2006,7 @@ Ordinarily, process $H$ would wait for $L$ to finish using resource $R$. However
 
 <figure class="fig">
 <svg viewBox="0 0 620 170" width="620" role="img" aria-label="Priority inversion: M delays H while L holds R">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x25" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="46" y="40" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">H</text>
   <line x1="60" y1="50" x2="580.0" y2="50" stroke="currentColor" opacity=".2"/>
   <text x="46" y="80" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">M</text>
@@ -2049,7 +2051,7 @@ Typically, these systems solve the problem by implementing a **priority-inherita
 
 <figure class="fig">
 <svg viewBox="0 0 620 170" width="620" role="img" aria-label="Priority inheritance: L runs at H's priority until it releases R">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x26" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="46" y="40" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">H</text>
   <line x1="60" y1="50" x2="580.0" y2="50" stroke="currentColor" opacity=".2"/>
   <text x="46" y="80" text-anchor="end" font-size="13" fill="currentColor" font-style="italic">M</text>
@@ -2123,7 +2125,7 @@ The shared buffer is implemented as a **circular array** with two logical pointe
 
 <figure class="fig">
 <svg viewBox="0 0 640 290" width="640" role="img" aria-label="Circular buffer with in and out pointers">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x27" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <path d="M160.0,55.0 A70,70 0 0 1 209.5,75.5 L189.7,95.3 A42,42 0 0 0 160.0,83.0 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="181.4" y="77.3" text-anchor="middle" font-size="10" fill="currentColor" class="dim">0</text>
   <path d="M209.5,75.5 A70,70 0 0 1 230.0,125.0 L202.0,125.0 A42,42 0 0 0 189.7,95.3 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2143,9 +2145,9 @@ The shared buffer is implemented as a **circular array** with two logical pointe
   <text x="108.3" y="107.6" text-anchor="middle" font-size="10" fill="currentColor" class="dim">6</text>
   <path d="M110.5,75.5 A70,70 0 0 1 160.0,55.0 L160.0,83.0 A42,42 0 0 0 130.3,95.3 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="138.6" y="77.3" text-anchor="middle" font-size="10" fill="currentColor" class="dim">7</text>
-  <polyline points="256.1,164.8 228.4,153.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="256.1,164.8 228.4,153.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x27)"/>
   <text x="267.2" y="173.4" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">out</text>
-  <polyline points="63.9,164.8 91.6,153.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="63.9,164.8 91.6,153.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x27)"/>
   <text x="52.8" y="173.4" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">in</text>
   <text x="160" y="261" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">3 items: out → first full, in → next free</text>
   <path d="M470.0,55.0 A70,70 0 0 1 519.5,75.5 L499.7,95.3 A42,42 0 0 0 470.0,83.0 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -2171,9 +2173,9 @@ The shared buffer is implemented as a **circular array** with two logical pointe
   <path d="M420.5,75.5 A70,70 0 0 1 470.0,55.0 L470.0,83.0 A42,42 0 0 0 440.3,95.3 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M420.5,75.5 A70,70 0 0 1 470.0,55.0 L470.0,83.0 A42,42 0 0 0 440.3,95.3 z" fill="currentColor" opacity=".18"/>
   <text x="448.6" y="77.3" text-anchor="middle" font-size="10" fill="currentColor" class="dim">7</text>
-  <polyline points="566.1,164.8 538.4,153.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="566.1,164.8 538.4,153.3" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x27)"/>
   <text x="577.2" y="173.4" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">out</text>
-  <polyline points="566.1,85.2 538.4,96.7" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="566.1,85.2 538.4,96.7" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x27)"/>
   <text x="577.2" y="84.6" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">in</text>
   <text x="470" y="261" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">full: (in + 1) % 8 == out</text>
 </svg>
@@ -2346,7 +2348,7 @@ STORE  M[IN], Ri          ; IN = Ri
 
 <figure class="fig">
 <svg viewBox="0 0 520 235" width="520" role="img" aria-label="Two processes reading the same IN index of the spooler directory">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x28" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="330" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">spooler directory</text>
   <rect x="270" y="26" width="120" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="330.0" y="48.0" text-anchor="middle" font-size="12" fill="currentColor">abc.pdf</text>
@@ -2366,8 +2368,8 @@ STORE  M[IN], Ri          ; IN = Ri
   <text x="105.0" y="71.0" text-anchor="middle" font-size="12" fill="currentColor">P₁: Rᵢ ← IN = 7</text>
   <rect x="30" y="130" width="150" height="52" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="105.0" y="161.0" text-anchor="middle" font-size="12" fill="currentColor">P₂: Rⱼ ← IN = 7</text>
-  <polyline points="180,66 225,66 225,135 268,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="180,158 268,158" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="180,66 225,66 225,135 268,135" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x28)"/>
+  <polyline points="180,158 268,158" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x28)"/>
   <text x="330" y="220" text-anchor="middle" font-size="11" fill="currentColor" class="dim">both write slot 7: P₁'s file name is overwritten, and IN becomes 8</text>
 </svg>
 <figcaption>If $P_1$ is switched out after its <code>LOAD</code>, $P_2$ reads the same <code>IN</code>; both store into slot 7 and one file name is lost.</figcaption>
@@ -2379,7 +2381,7 @@ Similar to the producer–consumer problem, we can use semaphores to prevent thi
 
 <figure class="fig">
 <svg viewBox="0 0 340 320" width="340" role="img" aria-label="Five philosophers around a table with five forks">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x29" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <circle cx="170" cy="160" r="96" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="170" cy="160" r="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170" y="164" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">rice</text>
@@ -2681,11 +2683,11 @@ A deadlock can arise only if the following four conditions hold **simultaneously
 
 > **Note.** The four conditions are not completely independent: circular wait implies hold and wait. Separating them is still useful, because each prevention strategy below attacks one of them.
 
-**How many instances rule out deadlock.** Let $n$ processes share $m$ instances of one resource type, where process $P_i$ needs at most $\text{max}_i$ instances. In the worst case every process holds $\text{max}_i - 1$ instances and waits for one more. One extra instance lets some process finish and release everything, so deadlock is impossible if and only if
+**How many instances rule out deadlock.** Let $n$ processes share $m$ instances of one resource type, each requesting or releasing one instance at a time. The system is deadlock free if the maximum need of each process is between 1 and $m$ instances and the sum of all maximum needs is less than $m + n$ (Galvin, Exercise 7.18). Rewriting the second condition,
 
 $$m \ge \sum_{i=1}^{n} (\text{max}_i - 1) + 1$$
 
-For example, 3 processes that each need 2 tape drives cannot deadlock with 4 drives, but can with 3. With equal needs $k$, the bound is $n(k - 1) + 1$.
+Even if every process holds $\text{max}_i - 1$ instances and waits for one more, one instance is still free, so some process can finish and release everything. For example, 3 processes that each need at most 2 instances are deadlock free with $m = 4$. With equal needs $k$, the bound is $n(k - 1) + 1$.
 
 #### Resource-Allocation Graphs
 
@@ -2696,7 +2698,7 @@ Deadlocks can be described more precisely in terms of a directed graph called a 
 
 <figure class="fig">
 <svg viewBox="0 0 640 105" width="640" role="img" aria-label="Resource-allocation graph notation">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x30" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <circle cx="55" cy="42" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="55" y="47" text-anchor="middle" font-size="13" fill="currentColor">Pᵢ</text>
   <text x="55" y="92" text-anchor="middle" font-size="11" fill="currentColor" class="dim">process</text>
@@ -2709,13 +2711,13 @@ Deadlocks can be described more precisely in terms of a directed graph called a 
   <text x="300" y="47" text-anchor="middle" font-size="13" fill="currentColor">Pᵢ</text>
   <rect x="368" y="25" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="391" cy="42" r="3" fill="currentColor"/>
-  <polyline points="317,42 365,42" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="317,42 365,42" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x30)"/>
   <text x="345" y="92" text-anchor="middle" font-size="11" fill="currentColor" class="dim">request edge Pᵢ → Rⱼ</text>
   <rect x="480" y="25" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <circle cx="503" cy="42" r="3" fill="currentColor"/>
   <circle cx="590" cy="42" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="590" y="47" text-anchor="middle" font-size="13" fill="currentColor">Pᵢ</text>
-  <polyline points="503,42 570,42" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="503,42 570,42" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x30)"/>
   <text x="535" y="92" text-anchor="middle" font-size="11" fill="currentColor" class="dim">assignment edge Rⱼ → Pᵢ</text>
 </svg>
 <figcaption>Resource-allocation graph notation.</figcaption>
@@ -2724,7 +2726,7 @@ Deadlocks can be described more precisely in terms of a directed graph called a 
 <figure class="fig">
 <div class="figrow">
 <svg viewBox="0 0 500 240" width="500" role="img" aria-label="Resource-allocation graph without a cycle">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x31" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="147.0" y="23.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170" y="17.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₁</text>
   <circle cx="170.0" cy="40" r="3" fill="currentColor"/>
@@ -2746,15 +2748,15 @@ Deadlocks can be described more precisely in terms of a directed graph called a 
   <text x="250" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₂</text>
   <circle cx="410" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="410" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₃</text>
-  <polyline points="101.7,112.6 151.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="261.7,112.6 311.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="170.0,40 236.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="164.0,210 103.1,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="176.0,210 236.9,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="330.0,40 396.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="101.7,112.6 151.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="261.7,112.6 311.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="170.0,40 236.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="164.0,210 103.1,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="176.0,210 236.9,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="330.0,40 396.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
 </svg>
 <svg viewBox="0 0 500 240" width="500" role="img" aria-label="Resource-allocation graph with a deadlock">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x32" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="147.0" y="23.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="170" y="17.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₁</text>
   <circle cx="170.0" cy="40" r="3" fill="currentColor"/>
@@ -2776,13 +2778,13 @@ Deadlocks can be described more precisely in terms of a directed graph called a 
   <text x="250" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₂</text>
   <circle cx="410" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="410" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₃</text>
-  <polyline points="101.7,112.6 151.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="261.7,112.6 311.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="394.0,130.7 196.0,200.8" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="170.0,40 236.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="164.0,210 103.1,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="176.0,210 236.9,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="330.0,40 396.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="101.7,112.6 151.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
+  <polyline points="261.7,112.6 311.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
+  <polyline points="394.0,130.7 196.0,200.8" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
+  <polyline points="170.0,40 236.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
+  <polyline points="164.0,210 103.1,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
+  <polyline points="176.0,210 236.9,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
+  <polyline points="330.0,40 396.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x32)"/>
 </svg>
 </div>
 <figcaption>Top: no cycle, so no deadlock (after Galvin, Fig. 7.1). Bottom: once $P_3$ requests $R_2$ there are two cycles, $P_1 \to R_1 \to P_2 \to R_3 \to P_3 \to R_2 \to P_1$ and $P_2 \to R_3 \to P_3 \to R_2 \to P_2$, and $P_1, P_2, P_3$ are deadlocked (Fig. 7.2).</figcaption>
@@ -2792,7 +2794,7 @@ If the graph contains no cycle, no process is deadlocked. If it contains a cycle
 
 <figure class="fig">
 <svg viewBox="0 0 330 245" width="330" role="img" aria-label="Resource-allocation graph with a cycle but no deadlock">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x33" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="137.0" y="38.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="160" y="32.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₁</text>
   <circle cx="154.0" cy="55" r="3" fill="currentColor"/>
@@ -2809,12 +2811,12 @@ If the graph contains no cycle, no process is deadlocked. If it contains a cycle
   <text x="250" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₃</text>
   <circle cx="250" cy="215" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="250" y="220" text-anchor="middle" font-size="13" fill="currentColor">P₄</text>
-  <polyline points="83.4,114.6 134.3,75.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="236.6,135.4 185.7,175.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="154.0,55 230.6,35.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="166.0,55 234.6,112.2" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="154.0,195 85.4,137.8" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="166.0,195 230.5,210.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="83.4,114.6 134.3,75.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="236.6,135.4 185.7,175.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="154.0,55 230.6,35.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="166.0,55 234.6,112.2" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="154.0,195 85.4,137.8" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="166.0,195 230.5,210.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
 </svg>
 <figcaption>A cycle $P_1 \to R_1 \to P_3 \to R_2 \to P_1$ but no deadlock (after Galvin, Fig. 7.3): $P_4$ may release its instance of $R_2$, which can then be allocated to $P_3$, breaking the cycle.</figcaption>
 </figure>
@@ -2872,7 +2874,7 @@ A state is *safe* if the system can allocate resources to each process (up to it
 
 <figure class="fig">
 <svg viewBox="0 0 460 210" width="460" role="img" aria-label="Safe, unsafe and deadlocked state spaces">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x34" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="10" width="420" height="190" rx="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <ellipse cx="300" cy="118" rx="125" ry="72" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
   <ellipse cx="320" cy="135" rx="62" ry="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3144,7 +3146,7 @@ Main memory and the registers built into the processor itself are the only stora
 
 <figure class="fig">
 <svg viewBox="0 0 640 170" width="640" role="img" aria-label="CPU components and the storage it can access directly">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x35" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="24" width="260" height="128" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="150" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">CPU</text>
   <rect x="35" y="38" width="70" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3157,14 +3159,14 @@ Main memory and the registers built into the processor itself are the only stora
   <text x="70.0" y="132.0" text-anchor="middle" font-size="12" fill="currentColor">MMU</text>
   <rect x="190" y="114" width="75" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="227.5" y="132.0" text-anchor="middle" font-size="12" fill="currentColor">cache</text>
-  <polyline points="280,88 370,88" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="280,88 370,88" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x35)"/>
   <text x="325" y="80" text-anchor="middle" font-size="10" fill="currentColor" class="dim">address / data</text>
   <rect x="370" y="62" width="110" height="52" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="425.0" y="93.0" text-anchor="middle" font-size="12" fill="currentColor">main memory</text>
   <ellipse cx="575" cy="64" rx="38" ry="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <path d="M537,64 V112 a38,9 0 0 0 76,0 V64" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="575" y="96" text-anchor="middle" font-size="12" fill="currentColor">disk</text>
-  <polyline points="537,88 482,88" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)" stroke-dasharray="4 3"/>
+  <polyline points="537,88 482,88" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x35)" stroke-dasharray="4 3"/>
   <text x="510" y="132" text-anchor="middle" font-size="10" fill="currentColor" class="dim">only via I/O</text>
 </svg>
 <figcaption>The CPU can address its registers and main memory directly; the disk is reached only through I/O.</figcaption>
@@ -3192,7 +3194,7 @@ We can provide this protection by using two registers, usually a **base** and a 
 
 <figure class="fig">
 <svg viewBox="0 0 560 250" width="560" role="img" aria-label="A base and a limit register define a logical address space">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x36" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="300" y="20" width="150" height="40" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="375.0" y="45" text-anchor="middle" font-size="12" fill="currentColor">operating system</text>
   <rect x="300" y="60" width="150" height="40" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3212,12 +3214,12 @@ We can provide this protection by using two registers, usually a **base** and a 
   <rect x="150" y="76" width="80" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="190.0" y="93.0" text-anchor="middle" font-size="12" fill="currentColor">300040</text>
   <text x="190" y="114" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">base</text>
-  <polyline points="230,88 260,88 260,100 296,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="230,88 260,88 260,100 296,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x36)"/>
   <rect x="150" y="132" width="80" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="190.0" y="149.0" text-anchor="middle" font-size="12" fill="currentColor">120900</text>
   <text x="190" y="170" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">limit</text>
   <path d="M292,101 h-6 V139 h6" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="230,144 270,144 270,120 283,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="230,144 270,144 270,120 283,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x36)"/>
   <text x="375" y="244" text-anchor="middle" font-size="11" fill="currentColor" class="dim">legal addresses: 300040 … 420939</text>
 </svg>
 <figcaption>With base = 300040 and limit = 120900, the program can legally access all addresses from 300040 through 420939 (inclusive), i.e. from <em>base</em> to <em>base + limit − 1</em> (after Galvin, Fig. 8.1).</figcaption>
@@ -3227,30 +3229,30 @@ Protection of memory space is accomplished by having the CPU hardware compare **
 
 <figure class="fig">
 <svg viewBox="0 0 640 200" width="640" role="img" aria-label="Hardware address protection with base and limit registers">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x37" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="70" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="55.0" y="95.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <polyline points="90,90 173,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="90,90 173,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
   <text x="130" y="82" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">address</text>
   <polygon points="175,90 215,64 255,90 215,116" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="215" y="95" text-anchor="middle" font-size="14" fill="currentColor">≥</text>
   <rect x="175" y="12" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="215.0" y="30.0" text-anchor="middle" font-size="12" fill="currentColor">base</text>
-  <polyline points="215,38 215,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="255,90 358,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="215,38 215,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <polyline points="255,90 358,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
   <text x="305" y="82" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">yes</text>
   <polygon points="360,90 400,64 440,90 400,116" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="400" y="95" text-anchor="middle" font-size="14" fill="currentColor">&lt;</text>
   <rect x="345" y="12" width="110" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="400.0" y="30.0" text-anchor="middle" font-size="12" fill="currentColor">base + limit</text>
-  <polyline points="400,38 400,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="440,90 540,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,38 400,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <polyline points="440,90 540,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
   <text x="490" y="82" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">yes</text>
   <rect x="540" y="60" width="85" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="582.5" y="95.0" text-anchor="middle" font-size="13" fill="currentColor">memory</text>
-  <polyline points="215,116 215,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="215,116 215,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
   <text x="223" y="136" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">no</text>
-  <polyline points="400,116 400,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,116 400,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
   <text x="408" y="136" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">no</text>
   <rect x="170" y="150" width="275" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="307.5" y="170.0" text-anchor="middle" font-size="12" fill="currentColor">trap to the OS: addressing error</text>
@@ -3290,7 +3292,7 @@ The run-time mapping from virtual to physical addresses is done by the **MMU**, 
 
 <figure class="fig">
 <svg viewBox="0 0 650 150" width="650" role="img" aria-label="Dynamic relocation using a relocation register">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x38" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="220" y="22" width="180" height="110" rx="4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
   <text x="310" y="126" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic" class="dim">MMU</text>
   <rect x="20" y="62" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3300,10 +3302,10 @@ The run-time mapping from virtual to physical addresses is done by the **MMU**, 
   <text x="310" y="16" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">relocation register</text>
   <circle cx="310" cy="82" r="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="310" y="87" text-anchor="middle" font-size="16" fill="currentColor">+</text>
-  <polyline points="310,56 310,66" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="90,82 294,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="310,56 310,66" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x38)"/>
+  <polyline points="90,82 294,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x38)"/>
   <text x="160" y="74" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">logical address 346</text>
-  <polyline points="324,82 528,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="324,82 528,82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x38)"/>
   <text x="466" y="74" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">physical address 14346</text>
   <rect x="530" y="52" width="100" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="580.0" y="87.0" text-anchor="middle" font-size="13" fill="currentColor">memory</text>
@@ -3347,7 +3349,7 @@ A process has to be in main memory while it runs, but it does not have to stay t
 
 <figure class="fig">
 <svg viewBox="0 0 600 220" width="600" role="img" aria-label="Swapping two processes using a disk as a backing store">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x39" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="60" y="20" width="150" height="160" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <line x1="60" y1="56" x2="210" y2="56" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="135" y="43" text-anchor="middle" font-size="12" fill="currentColor">operating system</text>
@@ -3358,9 +3360,9 @@ A process has to be in main memory while it runs, but it does not have to stay t
   <text x="470.0" y="82.0" text-anchor="middle" font-size="12" fill="currentColor">process P₁</text>
   <rect x="440" y="118" width="110" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="495.0" y="138.0" text-anchor="middle" font-size="12" fill="currentColor">process P₂</text>
-  <polyline points="210,77 413,77" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="210,77 413,77" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x39)"/>
   <text x="300" y="70" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">① swap out</text>
-  <polyline points="438,133 212,133" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="438,133 212,133" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x39)"/>
   <text x="300" y="126" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">② swap in</text>
   <text x="135" y="206" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">main memory</text>
   <text x="480" y="206" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">backing store</text>
@@ -3400,7 +3402,7 @@ This is a special case of the general **dynamic storage-allocation problem**: ho
 
 <figure class="fig">
 <svg viewBox="0 0 640 160" width="640" role="img" aria-label="First fit, best fit and worst fit for a request of 212 K">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x40" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="15" y="46" width="34" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="15" y="46" width="34" height="36" fill="currentColor" opacity=".12"/>
   <rect x="49" y="46" width="50" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3422,13 +3424,13 @@ This is a special case of the general **dynamic storage-allocation problem**: ho
   <rect x="495" y="46" width="125" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="557.5" y="69" text-anchor="middle" font-size="12" fill="currentColor">600 K</text>
   <text x="320" y="26" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">request: 212 K (shaded blocks are in use)</text>
-  <polyline points="188.0,122 188.0,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="188.0,122 188.0,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x40)"/>
   <text x="188.0" y="138" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">first fit</text>
   <text x="188.0" y="153" text-anchor="middle" font-size="10" fill="currentColor" class="dim">leaves 288 K</text>
-  <polyline points="418.5,122 418.5,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="418.5,122 418.5,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x40)"/>
   <text x="418.5" y="138" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">best fit</text>
   <text x="418.5" y="153" text-anchor="middle" font-size="10" fill="currentColor" class="dim">leaves 88 K</text>
-  <polyline points="557.5,122 557.5,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="557.5,122 557.5,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x40)"/>
   <text x="557.5" y="138" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">worst fit</text>
   <text x="557.5" y="153" text-anchor="middle" font-size="10" fill="currentColor" class="dim">leaves 388 K</text>
 </svg>
@@ -3457,7 +3459,7 @@ In the worst case there could be a block of free (wasted) memory between every p
 
 <figure class="fig">
 <svg viewBox="0 0 620 190" width="620" role="img" aria-label="Compaction moves the free holes together into one large block">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x41" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="30" y="47" text-anchor="middle" font-size="11" fill="currentColor" class="dim">before</text>
   <rect x="60" y="26" width="60" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="60" y="26" width="60" height="34" fill="currentColor" opacity=".12"/>
@@ -3477,7 +3479,7 @@ In the worst case there could be a block of free (wasted) memory between every p
   <text x="455.0" y="48" text-anchor="middle" font-size="12" fill="currentColor">P₃</text>
   <rect x="500" y="26" width="80" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="540.0" y="48" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic" class="dim">free</text>
-  <polyline points="320,66 320,116" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="320,66 320,116" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x41)"/>
   <text x="330" y="95" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">compaction</text>
   <text x="30" y="145" text-anchor="middle" font-size="11" fill="currentColor" class="dim">after</text>
   <rect x="60" y="124" width="60" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3538,7 +3540,7 @@ Normally, the user program is compiled, and the compiler automatically construct
 
 <figure class="fig">
 <svg viewBox="0 0 620 315" width="620" role="img" aria-label="Segmentation hardware">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x42" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="300" y="14" width="100" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="300" y="34" width="100" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="300" y="54" width="100" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3553,26 +3555,26 @@ Normally, the user program is compiled, and the compiler automatically construct
   <text x="277" y="50" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">s</text>
   <rect x="80" y="145" width="70" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="115.0" y="175.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <polyline points="150,170 178,170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="150,170 178,170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
   <rect x="180" y="159" width="60" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="210" y1="159" x2="210" y2="181" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="180" y="159" width="30" height="22" fill="currentColor" opacity=".18"/>
   <rect x="210" y="159" width="30" height="22" fill="#3b82f6" opacity=".28"/>
   <text x="195" y="175" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">s</text>
   <text x="225" y="175" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">d</text>
-  <polyline points="195,159 195,45 270,45" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="225,181 225,235 301,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="195,159 195,45 270,45" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polyline points="225,181 225,235 301,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
   <polygon points="303,235 325,217 347,235 325,253" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="325" y="240" text-anchor="middle" font-size="14" fill="currentColor">&lt;</text>
-  <polyline points="325,76 325,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="347,235 414,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="325,76 325,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polyline points="347,235 414,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
   <text x="372" y="227" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">yes</text>
   <circle cx="430" cy="235" r="15" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="430" y="241" text-anchor="middle" font-size="16" fill="currentColor">+</text>
-  <polyline points="400,65 430,65 430,218" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="445,235 498,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,65 430,65 430,218" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polyline points="445,235 498,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
   <rect x="500" y="100" width="100" height="190" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="550" y="306" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory</text>
-  <polyline points="325,253 325,288" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="325,253 325,288" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
   <text x="333" y="272" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">no</text>
   <text x="325" y="306" text-anchor="middle" font-size="12" fill="currentColor">trap: addressing error</text>
 </svg>
@@ -3589,7 +3591,7 @@ The segment table is thus essentially an array of base–limit register pairs.
 
 <figure class="fig">
 <svg viewBox="0 0 640 330" width="640" role="img" aria-label="Logical view of segmentation, the segment table and physical memory">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x43" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="10" y="30" width="210" height="200" rx="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="25" y="48" width="85" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="67.5" y="69.0" text-anchor="middle" font-size="11" fill="currentColor">subroutine</text>
@@ -3684,7 +3686,7 @@ In *paging*, the logical address space is divided into fixed-size blocks called 
 
 <figure class="fig">
 <svg viewBox="0 0 600 344" width="600" role="img" aria-label="Paging model of logical and physical memory">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x44" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="30" y="40" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="75.0" y="67.0" text-anchor="middle" font-size="12" fill="currentColor">page 0</text>
   <text x="18" y="67" text-anchor="end" font-size="11" fill="currentColor" class="dim">0</text>
@@ -3701,19 +3703,19 @@ In *paging*, the logical address space is divided into fixed-size blocks called 
   <rect x="210" y="62" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="235" y="84" text-anchor="middle" font-size="13" fill="currentColor">1</text>
   <text x="200" y="84" text-anchor="end" font-size="11" fill="currentColor" class="dim">0</text>
-  <polyline points="120,62 206,79" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="120,62 206,79" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
   <rect x="210" y="96" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="235" y="118" text-anchor="middle" font-size="13" fill="currentColor">4</text>
   <text x="200" y="118" text-anchor="end" font-size="11" fill="currentColor" class="dim">1</text>
-  <polyline points="120,106 206,113" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="120,106 206,113" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
   <rect x="210" y="130" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="235" y="152" text-anchor="middle" font-size="13" fill="currentColor">3</text>
   <text x="200" y="152" text-anchor="end" font-size="11" fill="currentColor" class="dim">2</text>
-  <polyline points="120,150 206,147" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="120,150 206,147" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
   <rect x="210" y="164" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="235" y="186" text-anchor="middle" font-size="13" fill="currentColor">7</text>
   <text x="200" y="186" text-anchor="end" font-size="11" fill="currentColor" class="dim">3</text>
-  <polyline points="120,194 206,181" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="120,194 206,181" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
   <text x="235" y="50" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">page table</text>
   <rect x="420" y="20" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="540" y="43" text-anchor="start" font-size="11" fill="currentColor" class="dim">0</text>
@@ -3739,10 +3741,10 @@ In *paging*, the logical address space is divided into fixed-size blocks called 
   <rect x="420" y="272" width="110" height="36" fill="currentColor" opacity=".12"/>
   <text x="475" y="295" text-anchor="middle" font-size="12" fill="currentColor">page 3</text>
   <text x="540" y="295" text-anchor="start" font-size="11" fill="currentColor" class="dim">7</text>
-  <polyline points="260,79 416,74" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="260,113 416,182" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="260,147 416,146" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
-  <polyline points="260,181 416,290" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="260,79 416,74" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <polyline points="260,113 416,182" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <polyline points="260,147 416,146" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <polyline points="260,181 416,290" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
   <text x="475" y="334" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory (frames)</text>
 </svg>
 <figcaption>Paging model (after Galvin, Fig. 8.11): any page can go in any free frame, so a process no longer needs one contiguous region.</figcaption>
@@ -3758,7 +3760,7 @@ But what will be the size of the page table? Take a 32-bit machine with 4-byte (
 
 <figure class="fig">
 <svg viewBox="0 0 360 204" width="360" role="img" aria-label="A page table with one entry per byte">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x45" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="180" y="20" width="120" height="38" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="240" y="44" text-anchor="middle" font-size="13" fill="currentColor">0x100</text>
   <text x="170" y="44" text-anchor="end" font-size="12" fill="currentColor">0</text>
@@ -3771,7 +3773,7 @@ But what will be the size of the page table? Take a 32-bit machine with 4-byte (
   <rect x="180" y="134" width="120" height="38" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="240" y="158" text-anchor="middle" font-size="13" fill="currentColor">0xFFF</text>
   <text x="170" y="158" text-anchor="end" font-size="12" fill="currentColor">2³² − 1</text>
-  <polyline points="70,39 130,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="70,39 130,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x45)"/>
   <text x="60" y="44" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">VA</text>
   <text x="240" y="194" text-anchor="middle" font-size="12" fill="currentColor" class="dim">2³² entries × 4 B = 16 GB</text>
 </svg>
@@ -3809,7 +3811,7 @@ The *translation look-aside buffer (TLB)* is a small, fast memory in the MMU tha
 
 <figure class="fig">
 <svg viewBox="0 0 700 345" width="700" role="img" aria-label="Paging hardware with a translation look-aside buffer">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x46" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="20" y="40" width="60" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="50.0" y="65.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
   <rect x="110" y="48" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3817,7 +3819,7 @@ The *translation look-aside buffer (TLB)* is a small, fast memory in the MMU tha
   <text x="125.0" y="65.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">p</text>
   <rect x="140" y="48" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="155.0" y="65.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">d</text>
-  <polyline points="80,60 106,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="80,60 106,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
   <text x="140" y="126" text-anchor="middle" font-size="11" fill="currentColor" class="dim">logical address</text>
   <text x="295" y="24" text-anchor="middle" font-size="10" fill="currentColor" class="dim">page no.</text>
   <text x="365" y="24" text-anchor="middle" font-size="10" fill="currentColor" class="dim">frame no.</text>
@@ -3838,11 +3840,11 @@ The *translation look-aside buffer (TLB)* is a small, fast memory in the MMU tha
   <text x="295" y="90" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">p</text>
   <text x="365" y="90" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">f</text>
   <text x="330" y="180" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">TLB</text>
-  <polyline points="125,72 125,100 256,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="125,72 125,100 256,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
   <text x="215" y="94" text-anchor="middle" font-size="10" fill="currentColor" class="dim">search</text>
-  <polyline points="400,85 485,85 485,148" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,85 485,85 485,148" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
   <text x="445" y="79" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">TLB hit</text>
-  <polyline points="155,48 155,8 515,8 515,148" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <polyline points="155,48 155,8 515,8 515,148" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr-2x46)"/>
   <rect x="470" y="150" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="470" y="150" width="30" height="24" fill="#3b82f6" opacity=".25"/>
   <text x="485.0" y="167.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">f</text>
@@ -3850,7 +3852,7 @@ The *translation look-aside buffer (TLB)* is a small, fast memory in the MMU tha
   <text x="515.0" y="167.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">d</text>
   <text x="505" y="196" text-anchor="middle" font-size="11" fill="currentColor" class="dim">physical address</text>
   <circle cx="190" cy="100" r="2.6" fill="currentColor"/>
-  <polyline points="190,100 190,255 256,255" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="190,100 190,255 256,255" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
   <text x="196" y="230" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">TLB miss</text>
   <rect x="260" y="200" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="260" y="222" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -3860,10 +3862,10 @@ The *translation look-aside buffer (TLB)* is a small, fast memory in the MMU tha
   <rect x="260" y="288" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="330" y="260" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">f</text>
   <text x="330" y="328" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">page table (in memory)</text>
-  <polyline points="400,255 445,255 445,162 466,162" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="400,255 445,255 445,162 466,162" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
   <rect x="590" y="60" width="90" height="250" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="635" y="330" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">physical memory</text>
-  <polyline points="530,162 586,162" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="530,162 586,162" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
 </svg>
 <figcaption>Paging hardware with a TLB (after Galvin, Fig. 8.14). The page number $p$ is looked up in the TLB; on a hit the frame number $f$ comes straight from the TLB, on a miss it comes from the page table in memory. The offset $d$ is copied unchanged.</figcaption>
 </figure>
@@ -4329,7 +4331,7 @@ Take a program (process) on a 32-bit machine, so its virtual address space is $2
 
 <figure class="fig">
 <svg viewBox="0 0 660 360" width="660" role="img" aria-label="A 4 GB virtual address space of 256 B pages mapped onto 16 MB of physical memory">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x47" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="215.0" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">virtual address space (4 GB)</text>
   <rect x="150" y="28" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="215.0" y="62" text-anchor="middle" font-size="12" fill="currentColor">virtual page 0</text>
@@ -4360,7 +4362,7 @@ Take a program (process) on a 32-bit machine, so its virtual address space is $2
   <text x="608" y="206" text-anchor="start" font-size="10" fill="currentColor" class="dim">0xFFFFFF</text>
   <rect x="470" y="68" width="130" height="12" fill="#3b82f6" opacity=".25"/>
   <text x="535.0" y="78" text-anchor="middle" font-size="9" fill="currentColor">0x000024</text>
-  <path d="M280,130 C370,130 380,74 466,74" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M280,130 C370,130 380,74 466,74" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x47)"/>
   <text x="375" y="152" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">page table:</text>
   <text x="375" y="167" text-anchor="middle" font-size="11" fill="currentColor">virtual page 1 → physical page 0</text>
   <text x="140" y="303" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">VA</text>
@@ -4399,7 +4401,7 @@ Each page-table entry holds the **physical page number (PPN)**, a **disk address
 
 <figure class="fig">
 <svg viewBox="0 0 700 262" width="700" role="img" aria-label="Translating a virtual address through a page table with PPN, disk address and valid bit">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x48" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="110" y="50" text-anchor="middle" font-size="11" fill="currentColor" class="dim">virtual address</text>
   <rect x="40" y="60" width="100" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="40" y="60" width="100" height="28" fill="#ef4444" opacity=".22"/>
@@ -4447,7 +4449,7 @@ Each page-table entry holds the **physical page number (PPN)**, a **disk address
   <text x="460" y="198" text-anchor="middle" font-size="12" fill="currentColor" class="dim">0</text>
   <text x="500" y="198" text-anchor="middle" font-size="12" fill="currentColor" class="dim">⋯</text>
   <text x="385.0" y="228" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">page table</text>
-  <polyline points="40,74 24,74 24,150 226,150 226,103.0 247,103.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="40,74 24,74 24,150 226,150 226,103.0 247,103.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x48)"/>
   <text x="130" y="144" text-anchor="middle" font-size="10" fill="currentColor" class="dim">index</text>
   <text x="610" y="50" text-anchor="middle" font-size="11" fill="currentColor" class="dim">physical address</text>
   <rect x="560" y="89" width="64" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -4455,12 +4457,12 @@ Each page-table entry holds the **physical page number (PPN)**, a **disk address
   <text x="592.0" y="108" text-anchor="middle" font-size="12" fill="currentColor">0x0000</text>
   <rect x="624" y="89" width="34" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="641.0" y="108" text-anchor="middle" font-size="12" fill="currentColor">24</text>
-  <polyline points="520,103.0 556,103.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="520,103.0 556,103.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x48)"/>
   <path d="M560,121 q0,6 6,6 H586.0 q6,0 6,6 q0,-6 6,-6 H618 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="592.0" y="147" text-anchor="middle" font-size="10" fill="currentColor" class="dim">PPN</text>
   <path d="M624,121 q0,6 6,6 H635.0 q6,0 6,6 q0,-6 6,-6 H652 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="641.0" y="147" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset</text>
-  <path d="M160,60 V24 H641 V85" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <path d="M160,60 V24 H641 V85" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr-2x48)"/>
   <text x="400" y="16" text-anchor="middle" font-size="10" fill="currentColor" class="dim">offset copied unchanged</text>
   <text x="385.0" y="250" text-anchor="middle" font-size="10" fill="currentColor" class="dim">valid = 0: page not in memory (the disk address says where it is); ⋯ = other bits</text>
 </svg>
@@ -4475,7 +4477,7 @@ Suppose there are many virtual pages for a process, which cannot all be stored i
 
 <figure class="fig">
 <svg viewBox="0 0 660 300" width="660" role="img" aria-label="Page tables of three processes mapping virtual pages to main memory or the hard disk">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x49" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="70" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">main memory</text>
   <rect x="20" y="30" width="100" height="48" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="20" y="30" width="100" height="48" fill="#ef4444" opacity=".22"/>
@@ -4546,7 +4548,7 @@ Suppose there are many virtual pages for a process, which cannot all be stored i
   <text x="565" y="230" text-anchor="middle" font-size="11" fill="currentColor" class="dim">contents of all</text>
   <text x="565" y="245" text-anchor="middle" font-size="11" fill="currentColor" class="dim">virtual pages</text>
   <text x="565" y="286" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">hard disk</text>
-  <polyline points="220,134 220,190 482,190" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+  <polyline points="220,134 220,190 482,190" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr-2x49)"/>
   <text x="355" y="208" text-anchor="middle" font-size="10" fill="currentColor" class="dim">P₁ page 3 is only on disk</text>
 </svg>
 <figcaption>Three processes share four frames of main memory. Each page table maps a virtual page to a frame, or marks it as not in memory (–); the contents of every virtual page are kept on the hard disk.</figcaption>
@@ -4575,7 +4577,7 @@ A *page fault* is the situation where the virtual address generated by the proce
 
 <figure class="fig">
 <svg viewBox="0 0 690 320" width="690" role="img" aria-label="Steps in handling a page fault">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x50" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="205" y="20" width="120" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="265.0" y="45.0" text-anchor="middle" font-size="12" fill="currentColor">operating system</text>
   <text x="70" y="128" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic" class="dim">process</text>
@@ -4599,28 +4601,28 @@ A *page fault* is the situation where the virtual address generated by the proce
   <ellipse cx="610" cy="66" rx="42" ry="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M568,66 V136 a42,9 0 0 0 84,0 V66" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="610" y="104" text-anchor="middle" font-size="11" fill="currentColor">backing</text>
   <text x="610" y="118" text-anchor="middle" font-size="11" fill="currentColor">store</text>
-  <polyline points="120,159 196,159" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="120,159 196,159" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x50)"/>
   <circle cx="158" cy="141" r="9" stroke="currentColor" stroke-width="1.5" fill="var(--theme, #fff)"/>
   <text x="158" y="145" text-anchor="middle" font-size="11" fill="currentColor">1</text>
   <text x="158" y="181" text-anchor="middle" font-size="10" fill="currentColor" class="dim">reference</text>
-  <polyline points="265,120 265,64" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="265,120 265,64" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x50)"/>
   <circle cx="285" cy="92" r="9" stroke="currentColor" stroke-width="1.5" fill="var(--theme, #fff)"/>
   <text x="285" y="96" text-anchor="middle" font-size="11" fill="currentColor">2</text>
   <text x="300" y="96" text-anchor="start" font-size="10" fill="currentColor" class="dim">trap</text>
-  <polyline points="325,40 610,40 610,53" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="325,40 610,40 610,53" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x50)"/>
   <circle cx="440" cy="40" r="9" stroke="currentColor" stroke-width="1.5" fill="var(--theme, #fff)"/>
   <text x="440" y="44" text-anchor="middle" font-size="11" fill="currentColor">3</text>
   <text x="456" y="30" text-anchor="start" font-size="10" fill="currentColor" class="dim">page is on backing store</text>
-  <polyline points="610,146 610,175 524,175" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="610,146 610,175 524,175" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x50)"/>
   <circle cx="610" cy="160" r="9" stroke="currentColor" stroke-width="1.5" fill="var(--theme, #fff)"/>
   <text x="610" y="164" text-anchor="middle" font-size="11" fill="currentColor">4</text>
   <text x="626" y="196" text-anchor="start" font-size="10" fill="currentColor" class="dim">bring in</text>
   <text x="626" y="210" text-anchor="start" font-size="10" fill="currentColor" class="dim">missing page</text>
-  <polyline points="420,175 350,175 350,159 284,159" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="420,175 350,175 350,159 284,159" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x50)"/>
   <circle cx="385" cy="175" r="9" stroke="currentColor" stroke-width="1.5" fill="var(--theme, #fff)"/>
   <text x="385" y="179" text-anchor="middle" font-size="11" fill="currentColor">5</text>
   <text x="380" y="199" text-anchor="end" font-size="10" fill="currentColor" class="dim">reset page table</text>
-  <polyline points="225,224 225,270 70,270 70,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="225,224 225,270 70,270 70,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x50)"/>
   <circle cx="150" cy="270" r="9" stroke="currentColor" stroke-width="1.5" fill="var(--theme, #fff)"/>
   <text x="150" y="274" text-anchor="middle" font-size="11" fill="currentColor">6</text>
   <text x="150" y="294" text-anchor="middle" font-size="10" fill="currentColor" class="dim">restart instruction</text>
@@ -4685,7 +4687,7 @@ If memory address $A$ is referenced at time $t$, then **it** and its **neighbour
 
 <figure class="fig">
 <svg viewBox="0 0 560 150" width="560" role="img" aria-label="Temporal and spatial locality">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x51" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="100" y="56" width="30" height="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="130" y="56" width="30" height="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <rect x="160" y="56" width="30" height="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -4707,7 +4709,7 @@ If memory address $A$ is referenced at time $t$, then **it** and its **neighbour
   <text x="90" y="76" text-anchor="end" font-size="11" fill="currentColor" class="dim">memory</text>
   <path d="M190,52 q0,-6 6,-6 H259.0 q6,0 6,-6 q0,6 6,6 H334 q6,0 6,6" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="265.0" y="34" text-anchor="middle" font-size="11" fill="currentColor" class="dim">spatial: A's neighbours are used soon</text>
-  <path d="M259.0,88 C225.0,126 305.0,126 271.0,92" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <path d="M259.0,88 C225.0,126 305.0,126 271.0,92" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x51)"/>
   <text x="265.0" y="140" text-anchor="middle" font-size="11" fill="currentColor" class="dim">temporal: A itself is used again soon</text>
 </svg>
 <figcaption>Temporal locality: the same address is used again soon. Spatial locality: nearby addresses are used soon.</figcaption>
@@ -4743,7 +4745,7 @@ $$7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1$$
 
 <figure class="fig">
 <svg viewBox="0 0 600 156" width="600" role="img" aria-label="LRU page replacement with 3 frames">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x52" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="10" y="20" text-anchor="start" font-size="10" fill="currentColor" class="dim">ref</text>
   <text x="44.0" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">7</text>
   <rect x="32" y="30" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -4861,7 +4863,7 @@ $$7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1$$
 
 <figure class="fig">
 <svg viewBox="0 0 600 156" width="600" role="img" aria-label="FIFO page replacement with 3 frames">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x53" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="10" y="20" text-anchor="start" font-size="10" fill="currentColor" class="dim">ref</text>
   <text x="44.0" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">7</text>
   <rect x="32" y="30" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -4998,7 +5000,7 @@ Belady's anomaly. Run FIFO on the reference string $1,2,3,4,1,2,5,1,2,3,4,5$ wit
 
 <figure class="fig">
 <svg viewBox="0 0 376 156" width="376" role="img" aria-label="FIFO with 3 frames on 1,2,3,4,1,2,5,1,2,3,4,5">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x54" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="10" y="20" text-anchor="start" font-size="10" fill="currentColor" class="dim">ref</text>
   <text x="44.0" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">1</text>
   <rect x="32" y="30" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -5075,7 +5077,7 @@ Belady's anomaly. Run FIFO on the reference string $1,2,3,4,1,2,5,1,2,3,4,5$ wit
   <text x="188.0" y="136" text-anchor="middle" font-size="11" fill="currentColor" class="dim">9 page faults (only faults are drawn; the new page is shaded)</text>
 </svg>
 <svg viewBox="0 0 376 180" width="376" role="img" aria-label="FIFO with 4 frames on 1,2,3,4,1,2,5,1,2,3,4,5">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x55" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="10" y="20" text-anchor="start" font-size="10" fill="currentColor" class="dim">ref</text>
   <text x="44.0" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">1</text>
   <rect x="32" y="30" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -5188,6 +5190,29 @@ Belady's anomaly. Run FIFO on the reference string $1,2,3,4,1,2,5,1,2,3,4,5$ wit
 
 > **Note.** The **second-chance** (clock) algorithm is a refinement: pages are kept in FIFO order, but if the oldest page has its reference bit set, the bit is cleared and the page gets a second chance (it is moved to the back) instead of being replaced.
 
+**Enhanced second chance.** The reference bit and the modify (dirty) bit are used as an ordered pair, giving four classes:
+
+<figure class="table">
+<figcaption>Classes in the enhanced second-chance algorithm (after Galvin, §9.4.5.3).</figcaption>
+
+| (reference, modify) | Meaning |
+|:-:|:--|
+| (0, 0) | neither recently used nor modified: best page to replace |
+| (0, 1) | not recently used but modified: must be written out first |
+| (1, 0) | recently used but clean: probably used again soon |
+| (1, 1) | recently used and modified: probably used again soon, and must be written out |
+
+</figure>
+
+The clock scheme is used, but the first page found in the **lowest nonempty class** is replaced, so the queue may be scanned several times. Preferring unmodified pages reduces the number of I/Os.
+
+**Counting-based replacement.** A counter of the number of references is kept for each page:
+
+- **LFU** (least frequently used) replaces the page with the smallest count, since an actively used page should have a large count. A page used heavily at the start but never again keeps a large count; shifting the counts right by 1 bit at regular intervals gives an exponentially decaying count.
+- **MFU** (most frequently used) replaces the page with the largest count, on the argument that the page with the smallest count was probably just brought in and has yet to be used.
+
+Neither is common: they are expensive to implement and do not approximate OPT well.
+
 **3. Random.**
 
 - Randomly pick an $i$ between 1 and $n$, and replace the $i$th page.
@@ -5201,7 +5226,7 @@ Belady's anomaly. Run FIFO on the reference string $1,2,3,4,1,2,5,1,2,3,4,5$ wit
 
 <figure class="fig">
 <svg viewBox="0 0 600 156" width="600" role="img" aria-label="OPT page replacement with 3 frames">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x56" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <text x="10" y="20" text-anchor="start" font-size="10" fill="currentColor" class="dim">ref</text>
   <text x="44.0" y="20" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">7</text>
   <rect x="32" y="30" width="24" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -5324,7 +5349,7 @@ After all this information, a page-table entry holds:
 
 <figure class="fig">
 <svg viewBox="0 0 560 110" width="560" role="img" aria-label="Fields of a page-table entry">
-  <defs><marker id="arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <defs><marker id="arr-2x57" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
   <rect x="50" y="20" width="150" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="125.0" y="42" text-anchor="middle" font-size="13" fill="currentColor">PPN</text>
   <rect x="200" y="20" width="120" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
@@ -5335,9 +5360,9 @@ After all this information, a page-table entry holds:
   <text x="410.0" y="42" text-anchor="middle" font-size="13" fill="currentColor">LRU bits</text>
   <rect x="450" y="20" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
   <text x="475.0" y="42" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">D</text>
-  <polyline points="345,84 345,58" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="345,84 345,58" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x57)"/>
   <text x="345" y="100" text-anchor="middle" font-size="11" fill="currentColor" class="dim">valid bit</text>
-  <polyline points="475,84 475,58" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+  <polyline points="475,84 475,58" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x57)"/>
   <text x="475" y="100" text-anchor="middle" font-size="11" fill="currentColor" class="dim">dirty (modified) bit</text>
 </svg>
 <figcaption>A page-table entry: physical page number, disk address, valid bit, bits used by the replacement policy, and the dirty bit.</figcaption>
@@ -6449,6 +6474,21 @@ Replacement is not fully automatic, because the data in a bad block are usually 
 
 ### File-System Interface
 
+#### Open Files
+
+To avoid searching the directory on every operation, most systems require an `open()` call before a file is used. `open()` searches the directory, copies the directory entry into the **open-file table**, checks the requested access mode (read-only, read–write, append-only, …) against the file's permissions, and returns a pointer to the table entry, which is used in all later I/O. `close()` removes the entry.
+
+When several processes may open the same file, the OS keeps two levels of tables:
+
+- a **per-process table** of the files the process has open, holding its own use of each file: the **current file pointer**, access rights and accounting information;
+- a **system-wide table** of process-independent information: the file's location on disk, access dates and size, and an **open count** of the processes that have it open. Each `close()` decrements the count, and the entry is removed when it reaches zero.
+
+#### Access Methods
+
+- **Sequential access:** the file is processed in order, one record after the other (the tape model). `read_next()` reads the next portion and advances the file pointer, and `write_next()` appends to the end. This is by far the most common method; editors and compilers use it.
+- **Direct (relative) access:** the file is a numbered sequence of fixed-length logical records that can be read and written in any order (the disk model), with `read(n)` and `write(n)`, or `position_file(n)` followed by `read_next()`. The block number $n$ is relative to the beginning of the file, and with record length $L$, record $N$ starts at byte $L \times N$ (records numbered from 0). Databases are often of this type.
+- **Indexed access**, built on top of direct access: an index, like the index of a book, holds pointers to the blocks; to find a record, the index is searched and the pointer used to access the file directly. A large index can itself be indexed (a primary index pointing to secondary index blocks).
+
 #### Directory Structure
 
 A directory is a table that maps file names to their directory entries. The question is how to organize it.
@@ -7410,3 +7450,5 @@ Traversing the list means reading every free block, which is slow, but this is r
 5. <span id="ref-5"></span>Shene, Ching-Kuang. *“Synchronization: Critical Section and Mutual Exclusion.”* CS3331 lecture slides, Michigan Technological University. [https://web.archive.org/web/20210506091615/http://www.csl.mtu.edu/cs3331.ck/common/05-Sync-Basics.pdf](https://web.archive.org/web/20210506091615/http://www.csl.mtu.edu/cs3331.ck/common/05-Sync-Basics.pdf).
 
 6. <span id="ref-6"></span>Bryant, Randal E., and David R. O'Hallaron. *Computer Systems: A Programmer's Perspective*, 3rd ed. Pearson, 2016, §8.1.
+
+7. <span id="ref-7"></span>Martonosi, Margaret. *"Processes and Threads."* COS 318: Operating Systems lecture slides, Princeton University, Fall 2011. [https://www.cs.princeton.edu/courses/archive/fall11/cos318/lectures/L4_ProcessesThreads.pdf](https://www.cs.princeton.edu/courses/archive/fall11/cos318/lectures/L4_ProcessesThreads.pdf).
