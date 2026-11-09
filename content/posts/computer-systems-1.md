@@ -507,7 +507,7 @@ A *dynamic hazard* is when the output should change once ($0 \to 1$ or $1 \to 0$
 
 </div>
 
-It occurs in multilevel circuits where the changing input reaches the output along three or more paths with different delays. A two-level SOP or POS circuit that is free of static hazards has no dynamic hazards, so removing the static hazards of a two-level form is enough.
+It occurs in multilevel circuits where the changing input reaches the output along three or more paths with different delays. For single-input changes, a two-level SOP or POS circuit that is free of static hazards has no dynamic hazards, so removing the static hazards of a two-level form is enough.
 
 ## Decoders
 
@@ -1671,7 +1671,7 @@ A 4-bit carry-lookahead adder is built from AND, OR, NOT, NAND and NOR gates, im
 
 $$\text{Delay} = 2 + 2 + 2 = 6 \text{ unit delays}$$
 
-**Try it.** Compare the two adders on the same inputs. With the worst-case preset, the ripple-carry adder shows wrong sums until the carry has rippled through every stage (dashed means not settled yet). The lookahead adder settles at $t = 6$ for any $n$. Its view shows the three stages: $P_i, G_i$ are ready at $t = 2$, all carries at $t = 4$ and all sums at $t = 6$.
+**Try it.** Compare the two adders on the same inputs. With the worst-case preset, the ripple-carry adder shows wrong sums until the carry has rippled through every stage (dashed means not settled yet). The lookahead adder settles at $t = 6$ for any $n$, assuming gates with unlimited fan-in. Its view shows the three stages: $P_i, G_i$ are ready at $t = 2$, all carries at $t = 4$ and all sums at $t = 6$.
 
 {{< fullscreen-iframe id="adder-timing" src="/interactive/adder_timing.html" height="700" title="Ripple-carry vs carry-lookahead timing" >}}
 
@@ -2124,7 +2124,7 @@ The reserved exponents $E = 0$ and $E = 255$ encode zero, infinity and NaN (not 
 {{< bits bits="1 11111111 00000000000000000000000" name="−∞" >}}
 {{< bits bits="x 11111111 1xxxxxxxxxxxxxxxxxxxxxx" name="QNaN" >}}
 {{< bits bits="x 11111111 0xxxxxxxxxxxxxxxxxxxxxx" name="SNaN" >}}
-<figcaption>Special values ($x$ = any bit; for SNaN the significand must not be all 0s, or it would be $\infty$).</figcaption>
+<figcaption>Special values ($x$ = any bit; for SNaN the significand must not be all 0s, or it would be $\infty$). The QNaN/SNaN encoding is the one recommended by IEEE 754-2008; 754-1985 left it to the implementation.</figcaption>
 </figure>
 
 - **Zero** is all 0s in exponent and significand. Because of the hidden bit, an all-0 significand would otherwise mean $1.0$, so $E = 0$ is not used for normal numbers. $+0$ and $-0$ are different bit patterns but compare equal.

@@ -112,7 +112,7 @@ The OS must keep control over the CPU even if a user program gets stuck in an in
 There are only three ways for the CPU to switch from user mode to kernel mode: an **interrupt**, a **trap** (system call), or an **exception** caused by the running instruction (a fault or an abort). In each case it jumps to a handler at a fixed address taken from the **interrupt vector table**, so a user program can choose *which* service it wants but never *what code* runs in kernel mode [[2]](#ref-2).
 
 <figure class="table">
-<figcaption>Classes of exceptional control flow <a href="#ref-3">[3]</a>.</figcaption>
+<figcaption>Classes of exceptional control flow <a href="#ref-3">[3]</a> <a href="#ref-6">[6]</a>.</figcaption>
 
 | Class | Cause | Sync? | Returns to |
 |:--|:--|:-:|:--|
@@ -143,7 +143,7 @@ Some examples of system calls (UNIX):
 - `exit()`: terminates the calling process.
 - `sbrk()`: used by `malloc` to increase the size of the heap.
 
-> **Note.** `malloc()` does **not** always result in a system call. It hands out memory from the heap the process already has, and only calls `sbrk()`/`brk()` (or `mmap()` for large blocks) when the heap has to grow.
+> **Note.** `malloc()` does **not** always result in a system call. It hands out memory from the heap the process already has, and only calls `sbrk()`/`brk()` when the heap has to grow.
 
 ## Process Management
 
@@ -528,7 +528,7 @@ Switching the CPU to another process requires a **state save** of the current pr
 <figcaption>CPU switch from process to process (after Galvin, Fig. 3.4). Thick arrows show execution; the time spent in the OS boxes is the context-switch overhead. PCBs are kept in specially reserved memory, the <em>kernel space</em>.</figcaption>
 </figure>
 
-- Context-switch time is pure **overhead**, since the system does no useful work while switching. A typical switch takes a few microseconds (Galvin, 9th edition, says milliseconds).
+- Context-switch time is pure **overhead**, since the system does no useful work while switching. Galvin gives "a few milliseconds" in §3.2.3 but "typically less than 10 microseconds" in §6.3.4.
 - Context-switch times are highly dependent on hardware support. Some processors provide multiple register sets, so a context switch only changes a pointer to the current set.
 
 #### Operations on Processes
@@ -722,7 +722,7 @@ If a parent terminates without invoking `wait()`, its children are left as *orph
 
 Linux and UNIX address this scenario by assigning the `init` process as the new parent of orphan processes. `init` periodically invokes `wait()`, thereby collecting the exit status of any orphan and releasing its pid and process-table entry.
 
-For example, if a parent exits while its child is sleeping, the child's `getppid()` returns 1 (the pid of `init`) once it wakes up [[4]](#ref-4).
+For example, if a parent exits while its child is sleeping, the child's `getppid()` returns the pid of the process that adopted it (traditionally 1, the pid of `init`) once it wakes up [[4]](#ref-4).
 
 #### Interprocess Communication
 
@@ -736,7 +736,7 @@ A process is *independent* if it cannot affect or be affected by other processes
 | How | the processes map a common region and read and write it | `send(message)` and `receive(message)` through the kernel |
 | Kernel involvement | only to set up the region | a system call for every message |
 | Speed | faster | slower |
-| Synchronization | the processes' own job (e.g. producer–consumer below) | built in |
+| Synchronization | the processes' own job (e.g. producer–consumer below) | provided by blocking `send`/`receive` |
 | Suited to | large amounts of data on one machine | small messages, distributed systems |
 
 </figure>
@@ -820,7 +820,7 @@ A *thread* is a basic unit of CPU utilization. It comprises a thread ID, a progr
 <figcaption>Single-threaded and multithreaded processes (after Galvin, Fig. 4.1). Each thread (one column) has its own registers and stack; the shaded code, data, files and heap are shared by all threads.</figcaption>
 </figure>
 
-> **Note.** Context switch cost is an important difference between processes and threads. Switching between two processes changes the address space, so the TLB (the cache of page-table entries) must be invalidated, and it then fills up again slowly. Switching between two threads of the same process keeps the same address space, so the TLB and caches stay valid. Hence
+> **Note.** Context switch cost is an important difference between processes and threads. Switching between two processes changes the address space, so, unless the TLB (the cache of page-table entries) tags its entries with address-space identifiers (ASIDs), it must be flushed, and it then fills up again slowly. Switching between two threads of the same process keeps the same address space, so the TLB and caches stay valid. Hence
 >
 > $$\text{cost of switching between threads} \ll \text{cost of switching between processes}$$
 
@@ -836,7 +836,7 @@ A *thread library* provides the programmer with an API for creating and managing
 In systems that use **kernel-level threads**, the OS itself is aware of each individual thread.
 
 - A context switch between kernel threads of the same process requires only the registers, PC and stack to be changed; the overall memory-management information does not need to be switched, since they share the same address space. So it is slightly faster than switching between two processes.
-- However, kernel threads can still be expensive, because a system call is required to switch between them.
+- However, kernel threads can still be expensive, because switching between them requires entering the kernel.
 
 A **user-level thread** is a thread within a process which the OS does not know about.
 
@@ -1988,7 +1988,7 @@ If $P_0$ executes `wait(S)` and then $P_1$ executes `wait(Q)`, then $P_0$ blocks
 
 Another problem related to deadlocks is **indefinite blocking**, or **starvation**: a situation in which processes wait indefinitely within the semaphore. Indefinite blocking may occur if we add and remove processes from the list associated with a semaphore in LIFO (last-in, first-out) order.
 
-A related problem is **livelock**. It is similar to a deadlock, except that the states of the processes involved keep **changing** with regard to one another, yet none of them makes progress. (Think of two people in a corridor who keep stepping aside the same way to let each other pass.) Livelock is a special case of resource starvation; starvation in general only says that some process is not progressing.
+A related problem is **livelock**. It is similar to a deadlock, except that the states of the processes involved keep **changing** with regard to one another, yet none of them makes progress. (Think of two people in a corridor who keep stepping aside the same way to let each other pass.)
 
 #### Priority Inversion
 
@@ -3745,7 +3745,7 @@ In *paging*, the logical address space is divided into fixed-size blocks called 
   <polyline points="260,181 416,290" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
   <text x="475" y="334" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory (frames)</text>
 </svg>
-<figcaption>Paging model (after Galvin, Fig. 8.12): any page can go in any free frame, so a process no longer needs one contiguous region.</figcaption>
+<figcaption>Paging model (after Galvin, Fig. 8.11): any page can go in any free frame, so a process no longer needs one contiguous region.</figcaption>
 </figure>
 
 Every logical address is split into a **page number** $p$, which indexes the page table, and a **page offset** $d$, which is copied unchanged into the physical address. With a logical address space of $2^m$ and a page size of $2^n$, the high $m - n$ bits are the page number and the low $n$ bits are the offset.
@@ -5820,7 +5820,7 @@ The segment is split into two **buddies** $A_L$ and $A_R$ of 128 KB. $A_L$ is sp
 <figcaption>Slab allocation (after Galvin, Fig. 9.27): two 3 KB objects and three 7 KB objects, each kind in its own cache.</figcaption>
 </figure>
 
-When a cache is created, a number of objects, all marked **free**, are allocated to it; how many depends on the slab size (a 12 KB slab of three 4 KB pages holds six 2 KB objects). When the kernel needs an object, the allocator hands out any free object from the cache and marks it **used**. For example, a new Linux task needs a `struct task_struct` (about 1.7 KB), which comes ready-made from the `task_struct` cache.
+When a cache is created, a number of objects, all marked **free**, are allocated to it; how many depends on the slab size (a 12 KB slab of three 4 KB pages holds six 2 KB objects). When the kernel needs an object, the allocator hands out any free object from the cache and marks it **used**. For example, a new Linux task needs a `struct task_struct`, which comes ready-made from the `task_struct` cache.
 
 In Linux a slab is **full** (all objects used), **empty** (all free) or **partial**. A request is served first from a partial slab, then from an empty one, and only if neither exists is a new slab allocated from contiguous physical pages.
 
@@ -5829,7 +5829,7 @@ The two main benefits:
 1. **No memory is wasted to fragmentation:** each cache is divided into chunks of exactly the object's size, so the kernel gets exactly the memory the object needs.
 2. **Requests are satisfied quickly:** objects are created in advance, and a released object is just marked free and returned to its cache, ready for the next request. This suits the kernel, which allocates and frees objects very often.
 
-The slab allocator first appeared in Solaris 2.4; Linux used the buddy system until version 2.2 and then adopted slab allocation. Linux now also has **SLOB** (for systems with little memory) and **SLUB**, the default since 2.6.24, which reduces the overhead of SLAB.
+The slab allocator first appeared in Solaris 2.4; Linux used the buddy system until version 2.2 and then adopted slab allocation.
 
 ## Storage Management
 
@@ -5895,7 +5895,7 @@ A disk has one or more **platters**, each with two magnetic surfaces, on a commo
 
 If a head touches the surface it damages it. This is a **head crash**, and the disk usually has to be replaced.
 
-The disk is addressed as a one-dimensional array of **logical blocks** (usually 512 B), the smallest unit of transfer. The array is mapped onto the sectors in order: sector 0 is the first sector of the first track of the outermost cylinder, then the rest of that track, then the other tracks of that cylinder, then the next cylinder inward. With $H$ surfaces and $S$ sectors per track, block $b$ is at
+The disk is addressed as a one-dimensional array of **logical blocks** (e.g. 512 B), the smallest unit of transfer. The array is mapped onto the sectors in order: sector 0 is the first sector of the first track of the outermost cylinder, then the rest of that track, then the other tracks of that cylinder, then the next cylinder inward. With $H$ surfaces and $S$ sectors per track, block $b$ is at
 
 $$\text{cylinder} = \left\lfloor \frac{b}{HS} \right\rfloor, \qquad \text{surface} = \left\lfloor \frac{b}{S} \right\rfloor \bmod H, \qquad \text{sector} = b \bmod S.$$
 
@@ -6289,13 +6289,13 @@ SCAN and C-SCAN go all the way to the end of the disk. In practice the arm goes 
 - With only one request in the queue, every algorithm behaves like FCFS.
 - The file-allocation method matters: a contiguous file gives requests close together, while a linked or indexed file may be scattered over the disk. Directories and index blocks are accessed often, so placing them in the middle cylinders (or caching them in memory) reduces arm movement.
 - These algorithms consider only seek distance. Rotational latency can be nearly as large, but the OS does not know where the sectors physically are, so modern disks also schedule inside the controller.
-- SSDs have no head, so they usually use FCFS (Linux's *noop* scheduler is FCFS that merges adjacent requests).
+- SSDs have no head, so they usually use FCFS.
 
 #### Disk Management
 
 ##### Disk Formatting
 
-A new disk is just magnetic material. **Low-level (physical) formatting** divides it into sectors the controller can read and write. Each sector gets a **header**, a **data area** (usually 512 B) and a **trailer**; the header and trailer hold information for the controller, such as the sector number and an **error-correcting code (ECC)**.
+A new disk is just magnetic material. **Low-level (physical) formatting** divides it into sectors the controller can read and write. Each sector gets a **header**, a **data area** (e.g. 512 B) and a **trailer**; the header and trailer hold information for the controller, such as the sector number and an **error-correcting code (ECC)**.
 
 <figure class="fig">
 <svg viewBox="0 0 560 72" width="560" role="img" aria-label="Sector layout: header, data area, trailer">
@@ -6333,7 +6333,7 @@ At power-up the computer needs an initial **bootstrap** program, which initializ
 
 The loader in ROM tells the disk controller to read the boot blocks into memory (no device drivers are loaded yet) and runs them. The full bootstrap can then load the OS from anywhere on the disk.
 
-**Example: Windows.** The first sector of the disk is the **master boot record (MBR)**. It holds the boot code and a **partition table** with a flag marking the **boot partition**. The ROM code runs the boot code in the MBR; this finds the boot partition, reads its first sector (the **boot sector**), and the boot continues from there.
+**Example: Windows with legacy BIOS/MBR booting.** The first sector of the disk is the **master boot record (MBR)**. It holds the boot code and a **partition table** with a flag marking the **boot partition**. The ROM code runs the boot code in the MBR; this finds the boot partition, reads its first sector (the **boot sector**), and the boot continues from there.
 
 <figure class="fig">
 <svg viewBox="0 0 420 296" width="420" role="img" aria-label="Booting from disk in Windows: the MBR holds boot code and the partition table">
@@ -6982,7 +6982,7 @@ Other problems are **pointer overhead** (4 B of every 512 B block is 0.78% of th
 
 ##### File-Allocation Table (FAT)
 
-An important variation on linked allocation, used by the FAT file system (still common on USB drives and SD cards). A section at the beginning of each volume holds a **table with one entry per disk block**, indexed by block number.
+An important variation on linked allocation, used by the FAT file system of MS-DOS. A section at the beginning of each volume holds a **table with one entry per disk block**, indexed by block number.
 
 - The directory entry holds the number of the file's **first block**.
 - The table entry for that block holds the number of the **next block**, and so on, until the last block, whose entry is a special **end-of-file** value.
@@ -7408,3 +7408,5 @@ Traversing the list means reading every free block, which is slow, but this is r
 4. <span id="ref-4"></span>Plank, James, and Jian Huang. *“Fork.”* CS360 lecture notes, University of Tennessee. [https://web.eecs.utk.edu/~huangj/cs360/360/notes/Fork/lecture.html](https://web.eecs.utk.edu/~huangj/cs360/360/notes/Fork/lecture.html).
 
 5. <span id="ref-5"></span>Shene, Ching-Kuang. *“Synchronization: Critical Section and Mutual Exclusion.”* CS3331 lecture slides, Michigan Technological University. [https://web.archive.org/web/20210506091615/http://www.csl.mtu.edu/cs3331.ck/common/05-Sync-Basics.pdf](https://web.archive.org/web/20210506091615/http://www.csl.mtu.edu/cs3331.ck/common/05-Sync-Basics.pdf).
+
+6. <span id="ref-6"></span>Bryant, Randal E., and David R. O'Hallaron. *Computer Systems: A Programmer's Perspective*, 3rd ed. Pearson, 2016, §8.1.
