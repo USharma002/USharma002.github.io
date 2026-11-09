@@ -1,0 +1,32 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 176" width="470" role="img" aria-label="Polling the status bits of the devices to find out which one has interrupted">
+  <defs><marker id="arr-pol" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="52" width="90" height="84" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="52" width="90" height="84" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="65.0" y="98.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
+  <text x="225" y="14" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">whether interrupted</text>
+  <rect x="205" y="24" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="225.0" y="42.96" text-anchor="middle" font-size="11" fill="currentColor">0</text>
+  <rect x="320" y="27" width="100" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="320" y="27" width="100" height="24" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="370.0" y="42.6" text-anchor="middle" font-size="10" fill="currentColor">device 1</text>
+  <polyline points="320,39 246,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
+  <polyline points="110,94 204,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
+  <rect x="205" y="54" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="225.0" y="72.96" text-anchor="middle" font-size="11" fill="currentColor">1</text>
+  <rect x="320" y="57" width="100" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="320" y="57" width="100" height="24" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="370.0" y="72.6" text-anchor="middle" font-size="10" fill="currentColor">device 2</text>
+  <polyline points="320,69 246,69" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
+  <polyline points="110,94 204,69" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
+  <rect x="205" y="84" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="225.0" y="102.96" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <text x="370" y="103" text-anchor="middle" font-size="10" fill="currentColor">⋮</text>
+  <rect x="205" y="114" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="225.0" y="132.96" text-anchor="middle" font-size="11" fill="currentColor">0</text>
+  <rect x="320" y="117" width="100" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="320" y="117" width="100" height="24" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="370.0" y="132.6" text-anchor="middle" font-size="10" fill="currentColor">device N</text>
+  <polyline points="320,129 246,129" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
+  <polyline points="110,94 204,129" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
+  <text x="150" y="160" text-anchor="middle" font-size="10" fill="#ef4444">polling</text>
+</svg>

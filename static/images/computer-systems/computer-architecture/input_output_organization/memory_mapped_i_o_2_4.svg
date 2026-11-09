@@ -1,0 +1,82 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 338" width="660" role="img" aria-label="Memory-mapped I/O: one 2-to-4 decoder selects three 16 KB memory modules and, through its last output, a second decoder for four ports">
+  <defs><marker id="arr-mmd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="10" y="15" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="10" y="15" width="70" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="45.0" y="39.32" text-anchor="middle" font-size="12" fill="currentColor">CPU</text>
+  <polygon points="41,55 49,55 49,80 53,80 45,88 37,80 41,80" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="60" y="80" text-anchor="start" font-size="10" fill="currentColor">A<tspan dy="3" font-size="8">15</tspan> – A<tspan dy="3" font-size="8">0</tspan></text>
+  <text x="46" y="128" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">15</tspan></text>
+  <text x="46" y="168" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">14</tspan></text>
+  <polyline points="50,124 99,124" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <polyline points="50,164 99,164" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <rect x="100" y="98" width="80" height="100" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="140.0" y="151.96" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
+  <text x="176" y="113" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">0</text>
+  <text x="176" y="138" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">1</text>
+  <text x="176" y="163" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">2</text>
+  <text x="176" y="188" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">3</text>
+  <polyline points="180,110 215,110 215,38 334,38" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="33" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="18" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="18" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="370.0" y="41.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
+  <text x="413" y="42" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">16 KB</text>
+  <polyline points="180,135 235,135 235,93 334,93" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="88" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="73" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="73" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="370.0" y="96.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
+  <text x="413" y="97" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">16 KB</text>
+  <polyline points="180,160 255,160 255,148 334,148" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="143" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="128" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="128" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="370.0" y="151.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
+  <text x="413" y="152" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">16 KB</text>
+  <polyline points="452,18 460,18 460,168 452,168" stroke="#ef4444" stroke-width="1.5" fill="none"/>
+  <text x="468" y="97" text-anchor="start" font-size="10" fill="#ef4444">48 KB</text>
+  <polyline points="180,185 215,185 215,219" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="221" y="208" text-anchor="start" font-size="10" fill="#ef4444">I/O</text>
+  <text x="209" y="212" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="170" y="220" width="90" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215.0" y="278.96" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
+  <text x="116" y="259" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">13</tspan></text>
+  <text x="116" y="299" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">12</tspan></text>
+  <polyline points="120,255 169,255" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <polyline points="120,295 169,295" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <polyline points="260,237 334,237" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="233" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="227" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="227" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="352.0" y="240.6" text-anchor="middle" font-size="10" fill="currentColor">A</text>
+  <polyline points="260,262 334,262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="258" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="252" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="252" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="352.0" y="265.6" text-anchor="middle" font-size="10" fill="currentColor">B</text>
+  <polyline points="260,287 334,287" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="283" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="277" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="277" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="352.0" y="290.6" text-anchor="middle" font-size="10" fill="currentColor">C</text>
+  <polyline points="260,312 334,312" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
+  <text x="322" y="308" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">En</text>
+  <rect x="335" y="302" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="335" y="302" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="352.0" y="315.6" text-anchor="middle" font-size="10" fill="currentColor">D</text>
+  <polyline points="377,227 385,227 385,322 377,322" stroke="#ef4444" stroke-width="1.5" fill="none"/>
+  <text x="392" y="278" text-anchor="start" font-size="10" fill="#ef4444">ports</text>
+  <text x="450" y="232" text-anchor="start" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">15</tspan> A<tspan dy="3" font-size="8">14</tspan> A<tspan dy="3" font-size="8">13</tspan> A<tspan dy="3" font-size="8">12</tspan></text>
+  <text x="453" y="254" text-anchor="start" font-size="10" fill="currentColor">1 1 0 0</text>
+  <text x="508" y="254" text-anchor="start" font-size="10" fill="currentColor">⇒ A</text>
+  <text x="545" y="254" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">C000–CFFF</text>
+  <text x="453" y="276" text-anchor="start" font-size="10" fill="currentColor">1 1 0 1</text>
+  <text x="508" y="276" text-anchor="start" font-size="10" fill="currentColor">⇒ B</text>
+  <text x="545" y="276" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">D000–DFFF</text>
+  <text x="453" y="298" text-anchor="start" font-size="10" fill="currentColor">1 1 1 0</text>
+  <text x="508" y="298" text-anchor="start" font-size="10" fill="currentColor">⇒ C</text>
+  <text x="545" y="298" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">E000–EFFF</text>
+  <text x="453" y="320" text-anchor="start" font-size="10" fill="currentColor">1 1 1 1</text>
+  <text x="508" y="320" text-anchor="start" font-size="10" fill="currentColor">⇒ D</text>
+  <text x="545" y="320" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">F000–FFFF</text>
+</svg>

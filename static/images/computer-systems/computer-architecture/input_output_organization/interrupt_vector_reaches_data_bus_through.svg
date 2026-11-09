@@ -1,0 +1,12 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 136" width="420" role="img" aria-label="The interrupt vector reaches the data bus through a tristate buffer enabled by INTA">
+  <defs><marker id="arr-tri" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-tri-g" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#22c55e"/></marker></defs>
+  <text x="150" y="14" text-anchor="middle" font-size="10" fill="currentColor">interrupt vector</text>
+  <polyline points="150,20 150,41" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-tri)"/>
+  <rect x="90" y="42" width="120" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="150.0" y="62.6" text-anchor="middle" font-size="10" fill="currentColor">tristate buffer</text>
+  <polyline points="310,59 211,59" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#arr-tri-g)"/>
+  <text x="260" y="52" text-anchor="middle" font-size="10" fill="#22c55e">INTA</text>
+  <polyline points="150,76 150,111" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-tri)"/>
+  <polygon points="30,117 42,107 42,112 378,112 378,107 390,117 378,127 378,122 42,122 42,127" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="390" y="98" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">data bus</text>
+</svg>

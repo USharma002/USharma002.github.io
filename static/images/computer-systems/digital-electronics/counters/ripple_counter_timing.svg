@@ -1,0 +1,57 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 192" width="600" role="img" aria-label="Ripple counter timing">
+  <defs><marker id="arr-1x20" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <line x1="100.6" y1="6" x2="100.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="161.8" y1="6" x2="161.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="222.9" y1="6" x2="222.9" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="284.1" y1="6" x2="284.1" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="345.3" y1="6" x2="345.3" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="406.5" y1="6" x2="406.5" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="467.6" y1="6" x2="467.6" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <line x1="528.8" y1="6" x2="528.8" y2="150" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="3 3" opacity=".35"/>
+  <text x="58" y="33.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">CLK</text>
+  <polyline points="70.0,18 100.6,18 100.6,38 131.2,38 131.2,18 161.8,18 161.8,38 192.4,38 192.4,18 222.9,18 222.9,38 253.5,38 253.5,18 284.1,18 284.1,38 314.7,38 314.7,18 345.3,18 345.3,38 375.9,38 375.9,18 406.5,18 406.5,38 437.1,38 437.1,18 467.6,18 467.6,38 498.2,38 498.2,18 528.8,18 528.8,38 559.4,38 559.4,18 590.0,18" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="58" y="67.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">A</tspan></text>
+  <polyline points="70.0,72 105.2,72 105.2,52 166.4,52 166.4,72 227.5,72 227.5,52 288.7,52 288.7,72 349.9,72 349.9,52 411.1,52 411.1,72 472.2,72 472.2,52 533.4,52 533.4,72 590.0,72" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="58" y="101.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">B</tspan></text>
+  <polyline points="70.0,106 170.9,106 170.9,86 293.3,86 293.3,106 415.6,106 415.6,86 538.0,86 538.0,106 590.0,106" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="58" y="135.0" text-anchor="end" font-size="14" fill="currentColor" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">C</tspan></text>
+  <polyline points="70.0,140 297.9,140 297.9,120 542.6,120 542.6,140 590.0,140" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="300.0" y="186" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">each flip-flop toggles on the falling edge of the one before it, a little later each time (the ripple)</text>
+  <text x="58" y="162" text-anchor="end" font-size="11" fill="currentColor" opacity=".65" font-style="italic">Q<tspan baseline-shift="sub" font-size="75%">C</tspan>Q<tspan baseline-shift="sub" font-size="75%">B</tspan>Q<tspan baseline-shift="sub" font-size="75%">A</tspan></text>
+  <text x="85.3" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="85.3" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="85.3" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="85.3" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">000</text>
+  <text x="131.2" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="131.2" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="131.2" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="131.2" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">001</text>
+  <text x="192.4" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="192.4" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="192.4" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="192.4" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">010</text>
+  <text x="253.5" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="253.5" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="253.5" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="253.5" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">011</text>
+  <text x="314.7" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="314.7" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="314.7" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="314.7" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">100</text>
+  <text x="375.9" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="375.9" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="375.9" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="375.9" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">101</text>
+  <text x="437.1" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="437.1" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="437.1" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="437.1" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">110</text>
+  <text x="498.2" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="498.2" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="498.2" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <text x="498.2" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">111</text>
+  <text x="559.4" y="66.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="559.4" y="100.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="559.4" y="134.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <text x="559.4" y="162" text-anchor="middle" font-size="11" fill="currentColor" font-family="Source Code Pro, monospace">000</text>
+</svg>

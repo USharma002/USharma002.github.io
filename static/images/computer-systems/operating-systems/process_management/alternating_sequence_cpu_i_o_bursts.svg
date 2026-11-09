@@ -1,0 +1,30 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 250" width="460" role="img" aria-label="Alternating sequence of CPU and I/O bursts">
+  <defs><marker id="arr-2x12" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="150" y="26" text-anchor="middle" font-size="12" fill="currentColor">load, add, store</text>
+  <text x="150" y="42" text-anchor="middle" font-size="12" fill="currentColor">read from file</text>
+  <path d="M260,14 h6 V50 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="276" y="37" text-anchor="start" font-size="12" fill="currentColor">CPU burst</text>
+  <rect x="95" y="58" width="110" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="95" y="58" width="110" height="26" rx="3" fill="currentColor" opacity=".07"/>
+  <text x="150.0" y="76.0" text-anchor="middle" font-size="12" fill="currentColor">wait for I/O</text>
+  <path d="M260,58 h6 V84 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="276" y="76" text-anchor="start" font-size="12" fill="currentColor" opacity=".65">I/O burst</text>
+  <text x="150" y="106" text-anchor="middle" font-size="12" fill="currentColor">store, increment</text>
+  <text x="150" y="122" text-anchor="middle" font-size="12" fill="currentColor">write to file</text>
+  <path d="M260,94 h6 V130 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="276" y="117" text-anchor="start" font-size="12" fill="currentColor">CPU burst</text>
+  <rect x="95" y="138" width="110" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="95" y="138" width="110" height="26" rx="3" fill="currentColor" opacity=".07"/>
+  <text x="150.0" y="156.0" text-anchor="middle" font-size="12" fill="currentColor">wait for I/O</text>
+  <path d="M260,138 h6 V164 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="276" y="156" text-anchor="start" font-size="12" fill="currentColor" opacity=".65">I/O burst</text>
+  <text x="150" y="186" text-anchor="middle" font-size="12" fill="currentColor">load, add, store</text>
+  <text x="150" y="202" text-anchor="middle" font-size="12" fill="currentColor">read from file</text>
+  <path d="M260,174 h6 V210 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="276" y="197" text-anchor="start" font-size="12" fill="currentColor">CPU burst</text>
+  <rect x="95" y="218" width="110" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="95" y="218" width="110" height="26" rx="3" fill="currentColor" opacity=".07"/>
+  <text x="150.0" y="236.0" text-anchor="middle" font-size="12" fill="currentColor">wait for I/O</text>
+  <path d="M260,218 h6 V244 h-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="276" y="236" text-anchor="start" font-size="12" fill="currentColor" opacity=".65">I/O burst</text>
+</svg>

@@ -1,0 +1,61 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 330" width="620" role="img" aria-label="Structure of a floating-point unit using Tomasulo's algorithm">
+  <defs><marker id="arr-tom" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-tomr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <rect x="30" y="20" width="150" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="105.0" y="44.2" text-anchor="middle" font-size="12" fill="currentColor">Instruction queue</text>
+  <rect x="400" y="20" width="170" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="485.0" y="44.2" text-anchor="middle" font-size="12" fill="currentColor">FP registers</text>
+  <rect x="20" y="120" width="110" height="66" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="20.0" y1="142.0" x2="130.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
+  <line x1="20.0" y1="164.0" x2="130.0" y2="164.0" stroke="currentColor" stroke-width="1"/>
+  <rect x="150" y="120" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="150.0" y1="142.0" x2="240.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
+  <rect x="30" y="222" width="200" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="130.0" y="244.2" text-anchor="middle" font-size="12" fill="currentColor">Memory unit</text>
+  <rect x="270" y="120" width="130" height="66" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="270.0" y1="142.0" x2="400.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
+  <line x1="270.0" y1="164.0" x2="400.0" y2="164.0" stroke="currentColor" stroke-width="1"/>
+  <rect x="440" y="120" width="130" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="440.0" y1="142.0" x2="570.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
+  <rect x="270" y="222" width="130" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="270" y="222" width="130" height="36" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="335.0" y="244.2" text-anchor="middle" font-size="12" fill="currentColor">FP adders</text>
+  <rect x="440" y="222" width="130" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="440" y="222" width="130" height="36" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="505.0" y="244.2" text-anchor="middle" font-size="12" fill="currentColor">FP multipliers</text>
+  <text x="335.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Add1</text>
+  <text x="335.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Add2</text>
+  <text x="335.0" y="179.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Add3</text>
+  <text x="505.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Mult1</text>
+  <text x="505.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Mult2</text>
+  <text x="195.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Store1</text>
+  <text x="195.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Store2</text>
+  <text x="75.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Load1</text>
+  <text x="75.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Load2</text>
+  <text x="75.0" y="179.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">Load3</text>
+  <line x1="105.0" y1="60.0" x2="105.0" y2="72.0" stroke="currentColor" stroke-width="1.5"/>
+  <line x1="75.0" y1="72.0" x2="505.0" y2="72.0" stroke="currentColor" stroke-width="1.5"/>
+  <line x1="75.0" y1="72.0" x2="75.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="300.0" y1="72.0" x2="300.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="470.0" y1="72.0" x2="470.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <text x="250.0" y="68.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">operation bus</text>
+  <line x1="485.0" y1="60.0" x2="485.0" y2="88.0" stroke="currentColor" stroke-width="1.5"/>
+  <line x1="215.0" y1="88.0" x2="540.0" y2="88.0" stroke="currentColor" stroke-width="1.5"/>
+  <line x1="215.0" y1="88.0" x2="215.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="370.0" y1="88.0" x2="370.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="540.0" y1="88.0" x2="540.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <text x="548.0" y="84.0" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">operand</text>
+  <text x="548.0" y="96.0" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">buses</text>
+  <line x1="335.0" y1="186.0" x2="335.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="505.0" y1="164.0" x2="505.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="75.0" y1="186.0" x2="75.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="195.0" y1="164.0" x2="195.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
+  <line x1="20.0" y1="300.0" x2="610.0" y2="300.0" stroke="#ef4444" stroke-width="3.5"/>
+  <text x="315.0" y="318.0" text-anchor="middle" font-size="11" fill="#ef4444">common data bus (CDB)</text>
+  <line x1="130.0" y1="258.0" x2="130.0" y2="297.0" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr-tomr)"/>
+  <line x1="335.0" y1="258.0" x2="335.0" y2="297.0" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr-tomr)"/>
+  <line x1="505.0" y1="258.0" x2="505.0" y2="297.0" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr-tomr)"/>
+  <polyline points="258.0,297.0 258.0,153.0 268.0,153.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
+  <polyline points="428.0,297.0 428.0,142.0 438.0,142.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
+  <polyline points="253.0,297.0 253.0,142.0 242.0,142.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
+  <polyline points="600.0,300.0 600.0,40.0 573.0,40.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
+</svg>

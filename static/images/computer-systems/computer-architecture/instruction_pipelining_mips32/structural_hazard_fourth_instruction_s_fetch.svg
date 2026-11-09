@@ -1,0 +1,99 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 590 170" width="590" role="img" aria-label="Structural hazard: the fourth instruction's fetch conflicts with the load's memory access">
+  <defs><marker id="arr-pstruct" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-pstructr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <text x="143.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">1</text>
+  <text x="189.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">2</text>
+  <text x="235.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">3</text>
+  <text x="281.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">4</text>
+  <text x="327.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">5</text>
+  <text x="373.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">6</text>
+  <text x="419.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">7</text>
+  <text x="465.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">8</text>
+  <text x="511.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">9</text>
+  <text x="557.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">10</text>
+  <text x="112.0" y="18.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">cycle</text>
+  <text x="110.0" y="47.0" text-anchor="end" font-size="11" fill="currentColor">LW R1,10(R2)</text>
+  <rect x="121" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="121" y="32" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
+  <text x="143.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
+  <rect x="167" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="167" y="32" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
+  <text x="189.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
+  <rect x="213" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="213" y="32" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
+  <text x="235.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
+  <rect x="259" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="259" y="32" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
+  <rect x="259" y="32" width="44" height="22" rx="2" stroke="#ef4444" stroke-width="2.4" fill="none"/>
+  <text x="281.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
+  <rect x="305" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="305" y="32" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
+  <text x="327.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
+  <text x="110.0" y="73.0" text-anchor="end" font-size="11" fill="currentColor">ADD R3,R4,R5</text>
+  <rect x="167" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="167" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
+  <text x="189.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
+  <rect x="213" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="213" y="58" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
+  <text x="235.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
+  <rect x="259" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="259" y="58" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
+  <text x="281.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
+  <rect x="305" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="305" y="58" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
+  <text x="327.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
+  <rect x="351" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="351" y="58" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
+  <text x="373.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
+  <text x="110.0" y="99.0" text-anchor="end" font-size="11" fill="currentColor">SUB R10,R2,R9</text>
+  <rect x="213" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="213" y="84" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
+  <text x="235.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
+  <rect x="259" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="259" y="84" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
+  <text x="281.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
+  <rect x="305" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="305" y="84" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
+  <text x="327.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
+  <rect x="351" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="351" y="84" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
+  <text x="373.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
+  <rect x="397" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="397" y="84" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
+  <text x="419.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
+  <text x="110.0" y="125.0" text-anchor="end" font-size="11" fill="currentColor">AND R5,R7,R7</text>
+  <rect x="259" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
+  <text x="281.0" y="125.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">stall</text>
+  <rect x="305" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="305" y="110" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
+  <text x="327.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
+  <rect x="351" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="351" y="110" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
+  <text x="373.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
+  <rect x="397" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="397" y="110" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
+  <text x="419.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
+  <rect x="443" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="443" y="110" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
+  <text x="465.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
+  <rect x="489" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="489" y="110" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
+  <text x="511.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
+  <text x="110.0" y="151.0" text-anchor="end" font-size="11" fill="currentColor">ADD R2,R1,R5</text>
+  <rect x="305" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
+  <text x="327.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">stall</text>
+  <rect x="351" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="351" y="136" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
+  <text x="373.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
+  <rect x="397" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="397" y="136" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
+  <text x="419.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
+  <rect x="443" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="443" y="136" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
+  <text x="465.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
+  <rect x="489" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="489" y="136" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
+  <text x="511.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
+  <rect x="535" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
+  <rect x="535" y="136" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
+  <text x="557.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
+</svg>

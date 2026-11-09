@@ -1,0 +1,68 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 570 258" width="570" role="img" aria-label="MIPS32 pipeline with an integer unit, pipelined FP multiplier and adder, and a non-pipelined divider">
+  <defs><marker id="arr-mc" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-mcr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <rect x="10" y="120" width="50" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="10" y="120" width="50" height="34" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="35.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">IF</text>
+  <rect x="80" y="120" width="50" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="80" y="120" width="50" height="34" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="105.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">ID</text>
+  <line x1="60.0" y1="137.0" x2="77.0" y2="137.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mc)"/>
+  <rect x="430" y="120" width="56" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="430" y="120" width="56" height="34" rx="3" fill="#a855f7" opacity=".18"/>
+  <text x="458.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">MEM</text>
+  <rect x="506" y="120" width="50" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="506" y="120" width="50" height="34" rx="3" fill="#ef4444" opacity=".18"/>
+  <text x="531.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">WB</text>
+  <line x1="486.0" y1="137.0" x2="503.0" y2="137.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mc)"/>
+  <rect x="240" y="20" width="60" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="240" y="20" width="60" height="30" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="270.0" y="38.9" text-anchor="middle" font-size="11" fill="currentColor">EX</text>
+  <text x="270.0" y="14.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">integer unit</text>
+  <rect x="160" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="160" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="176.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M1</text>
+  <rect x="196" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="196" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="212.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M2</text>
+  <rect x="232" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="232" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="248.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M3</text>
+  <rect x="268" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="268" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="284.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M4</text>
+  <rect x="304" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="304" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="320.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M5</text>
+  <rect x="340" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="340" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="356.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M6</text>
+  <rect x="376" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="376" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="392.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M7</text>
+  <text x="296.0" y="116.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">FP / integer multiply (7 stages)</text>
+  <rect x="214" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="214" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="230.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A1</text>
+  <rect x="250" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="250" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="266.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A2</text>
+  <rect x="286" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="286" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="302.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A3</text>
+  <rect x="322" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="322" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="338.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A4</text>
+  <text x="286.0" y="184.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">FP add / subtract (4 stages)</text>
+  <rect x="230" y="204" width="80" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="230" y="204" width="80" height="30" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="270.0" y="222.8" text-anchor="middle" font-size="11" fill="currentColor">divider</text>
+  <text x="270.0" y="248.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">divider (not pipelined)</text>
+  <polyline points="130.0,137.0 145.0,137.0 145.0,35.0 237.0,35.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="300.0,35.0 415.0,35.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="130.0,137.0 145.0,137.0 145.0,89.0 157.0,89.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="412.0,89.0 415.0,89.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="130.0,137.0 145.0,137.0 145.0,157.0 211.0,157.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="358.0,157.0 415.0,157.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="130.0,137.0 145.0,137.0 145.0,219.0 227.0,219.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+  <polyline points="310.0,219.0 415.0,219.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 200" width="640" role="img" aria-label="Hardware address protection with base and limit registers">
+  <defs><marker id="arr-2x37" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="70" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="55.0" y="95.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
+  <polyline points="90,90 173,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <text x="130" y="82" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">address</text>
+  <polygon points="175,90 215,64 255,90 215,116" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215" y="95" text-anchor="middle" font-size="14" fill="currentColor">≥</text>
+  <rect x="175" y="12" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215.0" y="30.0" text-anchor="middle" font-size="12" fill="currentColor">base</text>
+  <polyline points="215,38 215,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <polyline points="255,90 358,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <text x="305" y="82" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">yes</text>
+  <polygon points="360,90 400,64 440,90 400,116" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="400" y="95" text-anchor="middle" font-size="14" fill="currentColor">&lt;</text>
+  <rect x="345" y="12" width="110" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="400.0" y="30.0" text-anchor="middle" font-size="12" fill="currentColor">base + limit</text>
+  <polyline points="400,38 400,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <polyline points="440,90 540,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <text x="490" y="82" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">yes</text>
+  <rect x="540" y="60" width="85" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="582.5" y="95.0" text-anchor="middle" font-size="13" fill="currentColor">memory</text>
+  <polyline points="215,116 215,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <text x="223" y="136" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">no</text>
+  <polyline points="400,116 400,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x37)"/>
+  <text x="408" y="136" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">no</text>
+  <rect x="170" y="150" width="275" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="307.5" y="170.0" text-anchor="middle" font-size="12" fill="currentColor">trap to the OS: addressing error</text>
+</svg>

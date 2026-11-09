@@ -1,0 +1,57 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 345" width="700" role="img" aria-label="Paging hardware with a translation look-aside buffer">
+  <defs><marker id="arr-2x46" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="40" width="60" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="50.0" y="65.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
+  <rect x="110" y="48" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="110" y="48" width="30" height="24" fill="#ef4444" opacity=".22"/>
+  <text x="125.0" y="65.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">p</text>
+  <rect x="140" y="48" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="155.0" y="65.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">d</text>
+  <polyline points="80,60 106,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
+  <text x="140" y="126" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">logical address</text>
+  <text x="295" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">page no.</text>
+  <text x="365" y="24" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">frame no.</text>
+  <rect x="260" y="30" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="30" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="52" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="52" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="74" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="74" width="70" height="22" fill="#ef4444" opacity=".22"/>
+  <rect x="330" y="74" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="74" width="70" height="22" fill="#3b82f6" opacity=".25"/>
+  <rect x="260" y="96" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="96" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="118" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="118" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="140" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="140" width="70" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="295" y="90" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">p</text>
+  <text x="365" y="90" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">f</text>
+  <text x="330" y="180" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">TLB</text>
+  <polyline points="125,72 125,100 256,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
+  <text x="215" y="94" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">search</text>
+  <polyline points="400,85 485,85 485,148" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
+  <text x="445" y="79" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">TLB hit</text>
+  <polyline points="155,48 155,8 515,8 515,148" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr-2x46)"/>
+  <rect x="470" y="150" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="470" y="150" width="30" height="24" fill="#3b82f6" opacity=".25"/>
+  <text x="485.0" y="167.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">f</text>
+  <rect x="500" y="150" width="30" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="515.0" y="167.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">d</text>
+  <text x="505" y="196" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">physical address</text>
+  <circle cx="190" cy="100" r="2.6" fill="currentColor"/>
+  <polyline points="190,100 190,255 256,255" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
+  <text x="196" y="230" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">TLB miss</text>
+  <rect x="260" y="200" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="222" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="244" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="244" width="140" height="22" fill="#3b82f6" opacity=".25"/>
+  <rect x="260" y="266" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="260" y="288" width="140" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="330" y="260" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">f</text>
+  <text x="330" y="328" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">page table (in memory)</text>
+  <polyline points="400,255 445,255 445,162 466,162" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
+  <rect x="590" y="60" width="90" height="250" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="635" y="330" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">physical memory</text>
+  <polyline points="530,162 586,162" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x46)"/>
+</svg>

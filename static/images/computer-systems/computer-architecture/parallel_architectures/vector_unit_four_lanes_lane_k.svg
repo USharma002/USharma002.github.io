@@ -1,0 +1,65 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 630 236" width="630" role="img" aria-label="A vector unit with four lanes; lane k holds elements k, k+4, k+8 and so on">
+  <defs><marker id="arr-lane" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="90.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 0</text>
+  <rect x="30" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="30" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
+  <text x="90.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">vector registers:</text>
+  <text x="90.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 0, 4, 8, …</text>
+  <rect x="22" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+  <rect x="30" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="30" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="90.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
+  <rect x="30" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="30" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="90.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
+  <rect x="30" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="30" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="90.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
+  <text x="240.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 1</text>
+  <rect x="180" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="180" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
+  <text x="240.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">vector registers:</text>
+  <text x="240.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 1, 5, 9, …</text>
+  <rect x="172" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+  <rect x="180" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="180" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="240.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
+  <rect x="180" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="180" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="240.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
+  <rect x="180" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="180" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="240.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
+  <text x="390.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 2</text>
+  <rect x="330" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
+  <text x="390.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">vector registers:</text>
+  <text x="390.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 2, 6, 10, …</text>
+  <rect x="322" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+  <rect x="330" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="390.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
+  <rect x="330" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="390.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
+  <rect x="330" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="390.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
+  <text x="540.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 3</text>
+  <rect x="480" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
+  <text x="540.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">vector registers:</text>
+  <text x="540.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 3, 7, 11, …</text>
+  <rect x="472" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
+  <rect x="480" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="540.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
+  <rect x="480" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="540.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
+  <rect x="480" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="540.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
+  <text x="315.0" y="226.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">vector load/store unit and memory banks</text>
+  <line x1="30.0" y1="214.0" x2="600.0" y2="214.0" stroke="currentColor" stroke-width="2"/>
+</svg>

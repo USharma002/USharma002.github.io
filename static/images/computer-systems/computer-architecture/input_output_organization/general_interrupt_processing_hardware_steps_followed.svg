@@ -1,0 +1,40 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 266" width="600" role="img" aria-label="General interrupt processing: the hardware steps followed by the software steps">
+  <defs><marker id="arr-gip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="150" y="16" text-anchor="middle" font-size="11" fill="#3b82f6">by hardware</text>
+  <text x="450" y="16" text-anchor="middle" font-size="11" fill="#22c55e">by software</text>
+  <rect x="20" y="28" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="28" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="150.0" y="47.6" text-anchor="middle" font-size="10" fill="currentColor">device controller issues an interrupt</text>
+  <polyline points="150,60 150,75" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="20" y="76" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="76" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="150.0" y="95.6" text-anchor="middle" font-size="10" fill="currentColor">CPU finishes execution of current instruction</text>
+  <polyline points="150,108 150,123" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="20" y="124" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="124" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="150.0" y="143.6" text-anchor="middle" font-size="10" fill="currentColor">CPU acknowledges the interrupt</text>
+  <polyline points="150,156 150,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="20" y="172" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="172" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="150.0" y="191.6" text-anchor="middle" font-size="10" fill="currentColor">CPU pushes PSW and PC on the stack</text>
+  <polyline points="150,204 150,219" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="20" y="220" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="220" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="150.0" y="239.6" text-anchor="middle" font-size="10" fill="currentColor">CPU loads new PC value based on the interrupt</text>
+  <rect x="330" y="28" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="28" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="455.0" y="47.6" text-anchor="middle" font-size="10" fill="currentColor">save remainder of process state information</text>
+  <polyline points="455,60 455,75" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="330" y="76" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="76" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="455.0" y="95.6" text-anchor="middle" font-size="10" fill="currentColor">process interrupt request</text>
+  <polyline points="455,108 455,123" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="330" y="124" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="124" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="455.0" y="143.6" text-anchor="middle" font-size="10" fill="currentColor">restore process state information</text>
+  <polyline points="455,156 455,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+  <rect x="330" y="172" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="330" y="172" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="455.0" y="191.6" text-anchor="middle" font-size="10" fill="currentColor">restore old PSW and PC</text>
+  <polyline points="280,236 305,236 305,44 329,44" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
+</svg>

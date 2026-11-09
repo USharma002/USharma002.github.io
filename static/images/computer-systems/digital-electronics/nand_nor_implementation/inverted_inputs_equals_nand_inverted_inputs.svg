@@ -1,0 +1,29 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 140" width="300" role="img" aria-label="OR with inverted inputs equals NAND; AND with inverted inputs equals NOR">
+  <defs>
+    <path id="g-and" d="M0,0 h20 a20,20 0 0 1 0,40 h-20 z" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+    <path id="g-or" d="M0,0 q15,20 0,40 q40,0 55,-20 q-15,-20 -55,-20 z" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+  </defs>
+  <g stroke="currentColor" stroke-width="1.5" fill="none">
+    <!-- row 1: bubbled OR == NAND -->
+    <line x1="10" y1="20" x2="34" y2="20"/><line x1="10" y1="40" x2="34" y2="40"/>
+    <circle cx="38" cy="20" r="4"/><circle cx="38" cy="40" r="4"/>
+    <use href="#g-or" x="40" y="10"/>
+    <line x1="95" y1="30" x2="120" y2="30"/>
+    <line x1="165" y1="20" x2="190" y2="20"/><line x1="165" y1="40" x2="190" y2="40"/>
+    <use href="#g-and" x="190" y="10"/>
+    <circle cx="234" cy="30" r="4"/>
+    <line x1="238" y1="30" x2="265" y2="30"/>
+    <!-- row 2: bubbled AND == NOR -->
+    <line x1="10" y1="90" x2="32" y2="90"/><line x1="10" y1="110" x2="32" y2="110"/>
+    <circle cx="36" cy="90" r="4"/><circle cx="36" cy="110" r="4"/>
+    <use href="#g-and" x="40" y="80"/>
+    <line x1="80" y1="100" x2="120" y2="100"/>
+    <line x1="165" y1="90" x2="192" y2="90"/><line x1="165" y1="110" x2="192" y2="110"/>
+    <use href="#g-or" x="190" y="80"/>
+    <circle cx="249" cy="100" r="4"/>
+    <line x1="253" y1="100" x2="280" y2="100"/>
+  </g>
+  <g fill="currentColor" font-size="22" text-anchor="middle">
+    <text x="142" y="38">≡</text><text x="142" y="108">≡</text>
+  </g>
+</svg>

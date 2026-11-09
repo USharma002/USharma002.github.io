@@ -1,0 +1,41 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 380" width="620" role="img" aria-label="Context switch from process P0 to process P1 and back">
+  <defs><marker id="arr-2x8" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="70" y="6" width="480" height="24" fill="currentColor" opacity=".08"/>
+  <text x="130" y="23" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">process P₀</text>
+  <text x="310" y="23" text-anchor="middle" font-size="13" fill="currentColor" opacity=".65">operating system</text>
+  <text x="490" y="23" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">process P₁</text>
+  <line x1="130" y1="40" x2="130" y2="70" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M124,62 L130,70 L136,62" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="118" y="58" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">executing</text>
+  <line x1="130" y1="70" x2="130" y2="330" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M144,70 q6,0 6,8 V194.0 q0,6 6,6 q-6,0 -6,6 V322 q0,8 -6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="157.2" y="204.0" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">idle</text>
+  <line x1="130" y1="330" x2="130" y2="365" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M124,357 L130,365 L136,357" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="118" y="352" text-anchor="end" font-size="11" fill="currentColor" font-style="italic">executing</text>
+  <line x1="490" y1="60" x2="490" y2="175" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M504,60 q6,0 6,8 V111.5 q0,6 6,6 q-6,0 -6,6 V167 q0,8 -6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="517.2" y="121.5" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">idle</text>
+  <line x1="490" y1="175" x2="490" y2="205" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M484,197 L490,205 L496,197" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="502" y="195" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">executing</text>
+  <line x1="490" y1="205" x2="490" y2="330" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M504,205 q6,0 6,8 V261.5 q0,6 6,6 q-6,0 -6,6 V322 q0,8 -6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="517.2" y="271.5" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">idle</text>
+  <text x="310" y="47" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">interrupt or system call</text>
+  <polyline points="132,53 310,53 310,71" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
+  <rect x="240" y="73" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="310.0" y="90.0" text-anchor="middle" font-size="11" fill="currentColor">save state into PCB₀</text>
+  <text x="310" y="119" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
+  <rect x="240" y="131" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="310.0" y="148.0" text-anchor="middle" font-size="11" fill="currentColor">reload state from PCB₁</text>
+  <polyline points="310,155 310,175 488,175" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
+  <text x="310" y="204" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">interrupt or system call</text>
+  <polyline points="488,212 310,212 310,228" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
+  <rect x="240" y="230" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="310.0" y="247.0" text-anchor="middle" font-size="11" fill="currentColor">save state into PCB₁</text>
+  <text x="310" y="276" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
+  <rect x="240" y="288" width="140" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="310.0" y="305.0" text-anchor="middle" font-size="11" fill="currentColor">reload state from PCB₀</text>
+  <polyline points="310,312 310,332 132,332" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x8)"/>
+</svg>

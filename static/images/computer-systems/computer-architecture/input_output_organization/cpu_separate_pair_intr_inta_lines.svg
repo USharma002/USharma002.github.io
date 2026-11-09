@@ -1,0 +1,28 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 162" width="520" role="img" aria-label="CPU with a separate pair of INTR and INTA lines for each device">
+  <defs><marker id="arr-ml" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="25" y="12" width="470" height="38" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="25" y="12" width="470" height="38" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="260.0" y="35.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
+  <rect x="40" y="118" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="40" y="118" width="110" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="95.0" y="138.6" text-anchor="middle" font-size="10" fill="currentColor">device 1</text>
+  <polyline points="73,118 73,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
+  <polyline points="117,50 117,117" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
+  <text x="68" y="88" text-anchor="end" font-size="10" fill="#ef4444">INTR<tspan dy="3" font-size="8">1</tspan></text>
+  <text x="122" y="88" text-anchor="start" font-size="10" fill="#22c55e">INTA<tspan dy="3" font-size="8">1</tspan></text>
+  <rect x="185" y="118" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="185" y="118" width="110" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="240.0" y="138.6" text-anchor="middle" font-size="10" fill="currentColor">device 2</text>
+  <polyline points="218,118 218,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
+  <polyline points="262,50 262,117" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
+  <text x="213" y="88" text-anchor="end" font-size="10" fill="#ef4444">INTR<tspan dy="3" font-size="8">2</tspan></text>
+  <text x="267" y="88" text-anchor="start" font-size="10" fill="#22c55e">INTA<tspan dy="3" font-size="8">2</tspan></text>
+  <rect x="370" y="118" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="370" y="118" width="110" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="425.0" y="138.6" text-anchor="middle" font-size="10" fill="currentColor">device n</text>
+  <polyline points="403,118 403,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
+  <polyline points="447,50 447,117" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
+  <text x="398" y="88" text-anchor="end" font-size="10" fill="#ef4444">INTR<tspan dy="3" font-size="8">n</tspan></text>
+  <text x="452" y="88" text-anchor="start" font-size="10" fill="#22c55e">INTA<tspan dy="3" font-size="8">n</tspan></text>
+  <text x="335" y="139" text-anchor="middle" font-size="13" fill="currentColor">· · ·</text>
+</svg>

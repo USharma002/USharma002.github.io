@@ -1,0 +1,47 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 296" width="640" role="img" aria-label="A resource-allocation graph and its wait-for graph">
+  <defs><marker id="arr-wfg" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <circle cx="50" cy="40" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="50.0" y="45.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₁</text>
+  <circle cx="250" cy="40" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="250.0" y="45.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₂</text>
+  <circle cx="50" cy="240" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="50.0" y="245.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₄</text>
+  <circle cx="250" cy="240" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="250.0" y="245.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₃</text>
+  <rect x="133" y="23" width="34" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="150" cy="46" r="3" fill="currentColor"/>
+  <text x="150.0" y="37.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">R₁</text>
+  <rect x="33" y="123" width="34" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="50" cy="146" r="3" fill="currentColor"/>
+  <text x="50.0" y="137.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">R₄</text>
+  <rect x="133" y="123" width="34" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="150" cy="146" r="3" fill="currentColor"/>
+  <text x="150.0" y="137.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">R₃</text>
+  <rect x="233" y="123" width="34" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="250" cy="146" r="3" fill="currentColor"/>
+  <text x="250.0" y="137.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">R₂</text>
+  <line x1="69.0" y1="40.0" x2="129.0" y2="40.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="250.0" y1="59.0" x2="250.0" y2="119.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="236.6" y1="53.4" x2="164.8" y2="125.2" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="236.6" y1="226.6" x2="164.8" y2="154.8" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="50.0" y1="221.0" x2="50.0" y2="161.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="168.0" y1="40.0" x2="229.0" y2="40.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="250.0" y1="158.0" x2="250.0" y2="219.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="137.3" y1="152.7" x2="64.8" y2="225.2" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="50.0" y1="122.0" x2="50.0" y2="61.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <text x="150.0" y="286.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">(a) resource-allocation graph</text>
+  <circle cx="440" cy="40" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="440.0" y="45.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₁</text>
+  <circle cx="590" cy="40" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="590.0" y="45.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₂</text>
+  <circle cx="440" cy="240" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="440.0" y="245.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₄</text>
+  <circle cx="590" cy="240" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="590.0" y="245.0" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">P₃</text>
+  <line x1="459.0" y1="40.0" x2="569.0" y2="40.0" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="590.0" y1="59.0" x2="590.0" y2="219.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="578.6" y1="55.2" x2="452.6" y2="223.2" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="571.0" y1="240.0" x2="461.0" y2="240.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <line x1="440.0" y1="221.0" x2="440.0" y2="61.0" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr-wfg)"/>
+  <text x="515.0" y="286.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">(b) wait-for graph</text>
+</svg>

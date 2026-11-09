@@ -1,0 +1,29 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 170" width="440" role="img" aria-label="The ISR can be entered from any point of the program, depending on when the interrupt arrives">
+  <defs><marker id="arr-isr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-isr-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <text x="150" y="14" text-anchor="middle" font-size="11" fill="currentColor">program</text>
+  <rect x="100" y="22" width="100" height="136" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="114,34 186,34" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,46 186,46" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,58 186,58" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,70 186,70" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,82 186,82" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,94 186,94" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,106 186,106" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,118 186,118" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,130 186,130" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="114,142 186,142" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="330" y="50" text-anchor="middle" font-size="11" fill="currentColor">ISR</text>
+  <rect x="280" y="58" width="100" height="64" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="294,70 366,70" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="294,82 366,82" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="294,94 366,94" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="294,106 366,106" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <polyline points="70,52 99,52" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-isr-r)"/>
+  <text x="66" y="56" text-anchor="end" font-size="9" fill="#ef4444">interrupt</text>
+  <polyline points="70,118 99,118" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-isr-r)"/>
+  <text x="66" y="122" text-anchor="end" font-size="9" fill="#ef4444">interrupt</text>
+  <polyline points="200,52 279,66" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
+  <polyline points="280,114 201,64" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
+  <polyline points="200,118 279,76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
+  <polyline points="280,118 201,130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
+</svg>

@@ -1,0 +1,42 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 524 128" width="524" role="img" aria-label="The five MIPS32 pipeline stages separated by the IF/ID, ID/EX, EX/MEM and MEM/WB latches">
+  <defs><marker id="arr-mp2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-mpr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <rect x="10" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="10" y="30" width="80" height="50" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="50.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">IF</text>
+  <text x="50.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">instruction</text>
+  <text x="50.0" y="111.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">fetch</text>
+  <rect x="98" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
+  <text x="103.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">IF/ID</text>
+  <line x1="90.0" y1="55.0" x2="97.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="108.0" y1="55.0" x2="115.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
+  <rect x="116" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="116" y="30" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="156.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">ID</text>
+  <text x="156.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">decode,</text>
+  <text x="156.0" y="111.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">register read</text>
+  <rect x="204" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
+  <text x="209.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">ID/EX</text>
+  <line x1="196.0" y1="55.0" x2="203.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="214.0" y1="55.0" x2="221.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
+  <rect x="222" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="222" y="30" width="80" height="50" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="262.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">EX</text>
+  <text x="262.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">ALU / address</text>
+  <rect x="310" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
+  <text x="315.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">EX/MEM</text>
+  <line x1="302.0" y1="55.0" x2="309.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="320.0" y1="55.0" x2="327.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
+  <rect x="328" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="328" y="30" width="80" height="50" rx="3" fill="#a855f7" opacity=".18"/>
+  <text x="368.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">MEM</text>
+  <text x="368.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">data memory</text>
+  <rect x="416" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
+  <text x="421.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">MEM/WB</text>
+  <line x1="408.0" y1="55.0" x2="415.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
+  <line x1="426.0" y1="55.0" x2="433.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
+  <rect x="434" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="434" y="30" width="80" height="50" rx="3" fill="#ef4444" opacity=".18"/>
+  <text x="474.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">WB</text>
+  <text x="474.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">register</text>
+  <text x="474.0" y="111.0" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">write</text>
+</svg>

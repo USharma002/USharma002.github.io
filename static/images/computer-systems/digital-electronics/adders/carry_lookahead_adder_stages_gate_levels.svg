@@ -1,0 +1,29 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 182" width="640" role="img" aria-label="Carry lookahead adder stages and gate levels">
+  <defs><marker id="arr-1x9" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="18" y="70" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">aᵢ</text>
+  <text x="18" y="100" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">bᵢ</text>
+  <polyline points="30,65 60,65" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <polyline points="30,95 60,95" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <rect x="60" y="40" width="150" height="80" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="135.0" y="76.0" text-anchor="middle" font-size="14" fill="currentColor">Pᵢ = aᵢ ⊕ bᵢ</text>
+  <text x="135.0" y="94.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">Gᵢ = aᵢbᵢ</text>
+  <rect x="260" y="40" width="160" height="80" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="340.0" y="76.0" text-anchor="middle" font-size="14" fill="currentColor">carry lookahead</text>
+  <text x="340.0" y="94.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">Cᵢ from P, G, C₀</text>
+  <rect x="470" y="40" width="120" height="80" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="530.0" y="85.0" text-anchor="middle" font-size="14" fill="currentColor">Sᵢ = Pᵢ ⊕ Cᵢ</text>
+  <polyline points="210,80 260,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <text x="235" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">P, G</text>
+  <polyline points="420,80 470,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <text x="445" y="72" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">Cᵢ</text>
+  <polyline points="135,40 135,20 530,20 530,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <text x="330" y="15" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">Pᵢ</text>
+  <polyline points="300,145 300,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x9)"/>
+  <text x="308" y="143" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">C₀</text>
+  <path d="M60,152 v6 H210 v-6" stroke="currentColor" stroke-width="1.5" fill="none" opacity=".6"/>
+  <text x="135.0" y="174" text-anchor="middle" font-size="12" fill="currentColor" opacity=".65">levels 1–2</text>
+  <path d="M260,152 v6 H420 v-6" stroke="currentColor" stroke-width="1.5" fill="none" opacity=".6"/>
+  <text x="340.0" y="174" text-anchor="middle" font-size="12" fill="currentColor" opacity=".65">levels 3–4</text>
+  <path d="M470,152 v6 H590 v-6" stroke="currentColor" stroke-width="1.5" fill="none" opacity=".6"/>
+  <text x="530.0" y="174" text-anchor="middle" font-size="12" fill="currentColor" opacity=".65">levels 5–6</text>
+</svg>

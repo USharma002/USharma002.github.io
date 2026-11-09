@@ -1,0 +1,20 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 526 248" width="526" role="img" aria-label="Asynchronous bus read with MSYN and SSYN handshake">
+  <defs><marker id="arr-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="80.0" y="34.0" text-anchor="end" font-size="10" fill="currentColor">address</text>
+  <polyline points="90.0,38.0 142.0,22.0 454.0,22.0 506.0,38.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
+  <text x="80.0" y="72.0" text-anchor="end" font-size="10" fill="currentColor">MREQ, RD</text>
+  <polyline points="90.0,76.0 168.0,76.0 168.0,60.0 428.0,60.0 428.0,76.0 506.0,76.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
+  <text x="80.0" y="110.0" text-anchor="end" font-size="10" fill="currentColor">MSYN</text>
+  <polyline points="90.0,114.0 194.0,114.0 194.0,98.0 376.0,98.0 376.0,114.0 506.0,114.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
+  <text x="80.0" y="148.0" text-anchor="end" font-size="10" fill="currentColor">data</text>
+  <polyline points="90.0,152.0 272.0,152.0 272.0,136.0 402.0,136.0 402.0,152.0 506.0,152.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
+  <text x="80.0" y="186.0" text-anchor="end" font-size="10" fill="currentColor">SSYN</text>
+  <polyline points="90.0,190.0 298.0,190.0 298.0,174.0 443.6,174.0 443.6,190.0 506.0,190.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
+  <line x1="194.0" y1="16.0" x2="194.0" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
+  <line x1="298.0" y1="16.0" x2="298.0" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
+  <line x1="376.0" y1="16.0" x2="376.0" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
+  <line x1="443.6" y1="16.0" x2="443.6" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
+  <text x="194.0" y="228.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">MSYN: master ready</text>
+  <text x="298.0" y="240.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">SSYN: data on bus</text>
+  <text x="412.4" y="228.0" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">master took data</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 170" width="640" role="img" aria-label="Full adder built from two half adders and an OR gate">
+  <defs><marker id="arr-1x6" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="20" y="55" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">a</text>
+  <text x="20" y="85" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">b</text>
+  <text x="20" y="145" text-anchor="middle" font-size="14" fill="currentColor" font-style="italic">c</text>
+  <rect x="80" y="30" width="80" height="70" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="120.0" y="70.0" text-anchor="middle" font-size="14" fill="currentColor">HA₁</text>
+  <rect x="260" y="15" width="80" height="70" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="300.0" y="55.0" text-anchor="middle" font-size="14" fill="currentColor">HA₂</text>
+  <polyline points="30,50 80,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <polyline points="30,80 80,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <polyline points="160,50 210,50 210,35 260,35" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <text x="185" y="44" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">a⊕b</text>
+  <polyline points="30,140 230,140 230,65 260,65" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <polyline points="340,35 470,35" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <text x="478" y="40" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">S = a⊕b⊕c</text>
+  <path d="M395,95 q15,20 0,40 q40,0 55,-20 q-15,-20 -55,-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="340,65 370,65 370,105 398,105" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="352" y="58" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">(a⊕b)c</text>
+  <polyline points="160,80 190,80 190,125 398,125" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="172" y="74" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">ab</text>
+  <polyline points="450,115 470,115" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x6)"/>
+  <text x="478" y="120" text-anchor="start" font-size="14" fill="currentColor" font-style="italic">C = (a⊕b)c + ab</text>
+</svg>

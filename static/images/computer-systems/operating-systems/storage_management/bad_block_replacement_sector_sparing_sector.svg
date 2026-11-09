@@ -1,0 +1,61 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 212" width="460" role="img" aria-label="Bad-block replacement by sector sparing and sector slipping">
+  <defs><marker id="arr-bad" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="108.0" y="34.0" text-anchor="end" font-size="12" fill="currentColor">sparing</text>
+  <rect x="120" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="143.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor">16</text>
+  <rect x="166" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="166" y="16" width="46" height="26" fill="#ef4444" opacity=".25"/>
+  <text x="189.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor">17 ✗</text>
+  <rect x="212" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor">18</text>
+  <rect x="258" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="281.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor">19</text>
+  <rect x="304" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="327.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">…</text>
+  <rect x="350" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="373.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor">202</text>
+  <rect x="396" y="16" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="396" y="16" width="46" height="26" fill="#3b82f6" opacity=".18"/>
+  <text x="419.0" y="33.0" text-anchor="middle" font-size="11" fill="currentColor">spare</text>
+  <polyline points="189.0,42 189.0,58 419.0,58 419.0,45" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-bad)"/>
+  <text x="304.0" y="74.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">block 17 is read from the spare</text>
+  <text x="108.0" y="118.0" text-anchor="end" font-size="12" fill="currentColor">slipping</text>
+  <text x="108.0" y="132.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">before</text>
+  <rect x="120" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="143.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor">16</text>
+  <rect x="166" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="166" y="100" width="46" height="26" fill="#ef4444" opacity=".25"/>
+  <text x="189.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor">17 ✗</text>
+  <rect x="212" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor">18</text>
+  <rect x="258" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="281.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor">19</text>
+  <rect x="304" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="327.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">…</text>
+  <rect x="350" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="373.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor">202</text>
+  <rect x="396" y="100" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="396" y="100" width="46" height="26" fill="#3b82f6" opacity=".18"/>
+  <text x="419.0" y="117.0" text-anchor="middle" font-size="11" fill="currentColor">spare</text>
+  <path d="M235.0,126 q23.0,16 46,2" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-bad)"/>
+  <path d="M281.0,126 q23.0,16 46,2" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-bad)"/>
+  <path d="M373.0,126 q23.0,16 46,2" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-bad)"/>
+  <text x="108.0" y="172.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">after</text>
+  <rect x="120" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="143.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor">16</text>
+  <rect x="166" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="166" y="154" width="46" height="26" fill="#ef4444" opacity=".25"/>
+  <text x="189.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor">✗</text>
+  <rect x="212" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor">17</text>
+  <rect x="258" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="281.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor">18</text>
+  <rect x="304" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="327.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">…</text>
+  <rect x="350" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="373.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor">201</text>
+  <rect x="396" y="154" width="46" height="26" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="396" y="154" width="46" height="26" fill="#3b82f6" opacity=".18"/>
+  <text x="419.0" y="171.0" text-anchor="middle" font-size="11" fill="currentColor">202</text>
+  <text x="281.0" y="202.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">physical sector k now holds logical block k − 1</text>
+</svg>

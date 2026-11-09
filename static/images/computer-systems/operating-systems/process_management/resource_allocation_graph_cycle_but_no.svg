@@ -1,0 +1,25 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 245" width="330" role="img" aria-label="Resource-allocation graph with a cycle but no deadlock">
+  <defs><marker id="arr-2x33" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="137.0" y="38.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="160" y="32.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₁</text>
+  <circle cx="154.0" cy="55" r="3" fill="currentColor"/>
+  <circle cx="166.0" cy="55" r="3" fill="currentColor"/>
+  <rect x="137.0" y="178.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="160" y="172.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₂</text>
+  <circle cx="154.0" cy="195" r="3" fill="currentColor"/>
+  <circle cx="166.0" cy="195" r="3" fill="currentColor"/>
+  <circle cx="70" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="70" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₁</text>
+  <circle cx="250" cy="30" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="250" y="35" text-anchor="middle" font-size="13" fill="currentColor">P₂</text>
+  <circle cx="250" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="250" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₃</text>
+  <circle cx="250" cy="215" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="250" y="220" text-anchor="middle" font-size="13" fill="currentColor">P₄</text>
+  <polyline points="83.4,114.6 134.3,75.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="236.6,135.4 185.7,175.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="154.0,55 230.6,35.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="166.0,55 234.6,112.2" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="154.0,195 85.4,137.8" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+  <polyline points="166.0,195 230.5,210.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x33)"/>
+</svg>

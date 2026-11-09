@@ -1,0 +1,36 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 230" width="560" role="img" aria-label="Predicting the next CPU burst by exponential averaging">
+  <defs><marker id="arr-2x16" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <line x1="50" y1="190" x2="530" y2="190" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="50" y1="190" x2="50" y2="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="42" y="171.14285714285714" text-anchor="end" font-size="10" fill="currentColor">2</text>
+  <line x1="50" y1="167.14285714285714" x2="530" y2="167.14285714285714" stroke="currentColor" opacity=".12"/>
+  <text x="42" y="148.28571428571428" text-anchor="end" font-size="10" fill="currentColor">4</text>
+  <line x1="50" y1="144.28571428571428" x2="530" y2="144.28571428571428" stroke="currentColor" opacity=".12"/>
+  <text x="42" y="125.42857142857143" text-anchor="end" font-size="10" fill="currentColor">6</text>
+  <line x1="50" y1="121.42857142857143" x2="530" y2="121.42857142857143" stroke="currentColor" opacity=".12"/>
+  <text x="42" y="102.57142857142857" text-anchor="end" font-size="10" fill="currentColor">8</text>
+  <line x1="50" y1="98.57142857142857" x2="530" y2="98.57142857142857" stroke="currentColor" opacity=".12"/>
+  <text x="42" y="79.71428571428571" text-anchor="end" font-size="10" fill="currentColor">10</text>
+  <line x1="50" y1="75.71428571428571" x2="530" y2="75.71428571428571" stroke="currentColor" opacity=".12"/>
+  <text x="42" y="56.85714285714286" text-anchor="end" font-size="10" fill="currentColor">12</text>
+  <line x1="50" y1="52.85714285714286" x2="530" y2="52.85714285714286" stroke="currentColor" opacity=".12"/>
+  <polyline points="84.3,121.4 152.9,144.3 221.4,121.4 290.0,144.3 358.6,41.4 427.1,41.4 495.7,41.4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="50.0,75.7 118.6,98.6 187.1,121.4 255.7,121.4 324.3,132.9 392.9,87.1 461.4,64.3 530.0,52.9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
+  <circle cx="84.3" cy="121.4" r="3" fill="currentColor"/>
+  <circle cx="152.9" cy="144.3" r="3" fill="currentColor"/>
+  <circle cx="221.4" cy="121.4" r="3" fill="currentColor"/>
+  <circle cx="290.0" cy="144.3" r="3" fill="currentColor"/>
+  <circle cx="358.6" cy="41.4" r="3" fill="currentColor"/>
+  <circle cx="427.1" cy="41.4" r="3" fill="currentColor"/>
+  <circle cx="495.7" cy="41.4" r="3" fill="currentColor"/>
+  <circle cx="50.0" cy="75.7" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="118.6" cy="98.6" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="187.1" cy="121.4" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="255.7" cy="121.4" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="324.3" cy="132.9" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="392.9" cy="87.1" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="461.4" cy="64.3" r="3" fill="none" stroke="currentColor"/>
+  <circle cx="530.0" cy="52.9" r="3" fill="none" stroke="currentColor"/>
+  <text x="520" y="155.71428571428572" text-anchor="end" font-size="11" fill="currentColor">CPU burst tᵢ (solid)</text>
+  <text x="520" y="171.71428571428572" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">guess τᵢ (dashed)</text>
+  <text x="290.0" y="222" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">time →</text>
+</svg>

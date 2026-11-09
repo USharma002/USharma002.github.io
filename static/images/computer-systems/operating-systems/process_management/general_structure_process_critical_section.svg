@@ -1,0 +1,11 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 190" width="360" role="img" aria-label="General structure of a process with a critical section">
+  <defs><marker id="arr-2x23" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="60" y="22" text-anchor="start" font-size="13" fill="currentColor">do {</text>
+  <rect x="90" y="34" width="160" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">entry section</text>
+  <text x="170" y="84" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">critical section</text>
+  <rect x="90" y="94" width="160" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170.0" y="112.0" text-anchor="middle" font-size="13" fill="currentColor">exit section</text>
+  <text x="170" y="144" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">remainder section</text>
+  <text x="60" y="176" text-anchor="start" font-size="13" fill="currentColor">} while (true);</text>
+</svg>

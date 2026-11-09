@@ -1,0 +1,36 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 196" width="640" role="img" aria-label="The interrupt controller ORs the request lines; on INTA it acknowledges the requesting device and puts its vector on the data bus">
+  <defs><marker id="arr-pd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="66" y="56" text-anchor="end" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">0</tspan></text>
+  <polyline points="70,52 118,52" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="66" y="72" text-anchor="end" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">1</tspan></text>
+  <polyline points="70,68 122,68" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="66" y="112" text-anchor="end" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">n</tspan></text>
+  <polyline points="70,108 118,108" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="52" y="92" text-anchor="middle" font-size="10" fill="currentColor">⋮</text>
+  <path d="M110,40 Q136,80 110,120 Q170,120 200,80 Q170,40 110,40 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="200,80 258,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
+  <text x="228" y="73" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
+  <text x="135" y="150" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">(a) common request line</text>
+  <rect x="380" y="25" width="130" height="96" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="380" y="25" width="130" height="96" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="445" y="48" text-anchor="middle" font-size="10" fill="currentColor">interrupt</text>
+  <text x="445" y="60" text-anchor="middle" font-size="10" fill="currentColor">controller</text>
+  <circle cx="415" cy="90" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
+  <text x="415" y="93.5" text-anchor="middle" font-size="9" fill="currentColor">IV</text>
+  <circle cx="445" cy="90" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
+  <text x="445" y="93.5" text-anchor="middle" font-size="9" fill="currentColor">IV</text>
+  <circle cx="475" cy="90" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
+  <text x="475" y="93.5" text-anchor="middle" font-size="9" fill="currentColor">IV</text>
+  <polyline points="380,50 321,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
+  <text x="350" y="44" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
+  <polyline points="320,90 379,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
+  <text x="350" y="84" text-anchor="middle" font-size="10" fill="currentColor">INTA</text>
+  <polyline points="570,50 511,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
+  <text x="540" y="44" text-anchor="middle" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">2</tspan></text>
+  <polyline points="510,90 569,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
+  <text x="540" y="84" text-anchor="middle" font-size="10" fill="currentColor">INTA<tspan dy="3" font-size="8">2</tspan></text>
+  <polygon points="441,121 449,121 449,146 453,146 445,154 437,146 441,146" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polygon points="320,160 332,150 332,155 558,155 558,150 570,160 558,170 558,165 332,165 332,170" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="576" y="164" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">data bus</text>
+  <text x="445" y="190" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">(b) device 2 requests</text>
+</svg>

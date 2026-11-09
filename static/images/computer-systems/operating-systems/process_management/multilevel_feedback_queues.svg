@@ -1,0 +1,23 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 200" width="520" role="img" aria-label="Multilevel feedback queues">
+  <defs><marker id="arr-2x21" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="120" y="20" width="220" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="230.0" y="42.0" text-anchor="middle" font-size="13" fill="currentColor">quantum = 8</text>
+  <polyline points="60,37 120,37" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <polyline points="340,37 400,37" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <text x="406" y="41" text-anchor="start" font-size="12" fill="currentColor" opacity=".65">CPU</text>
+  <polyline points="370,37 370,67 100,67 100,97 118,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <rect x="120" y="80" width="220" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="230.0" y="102.0" text-anchor="middle" font-size="13" fill="currentColor">quantum = 16</text>
+  <polyline points="100,97 120,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <polyline points="340,97 400,97" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <text x="406" y="101" text-anchor="start" font-size="12" fill="currentColor" opacity=".65">CPU</text>
+  <polyline points="370,97 370,127 100,127 100,157 118,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <rect x="120" y="140" width="220" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="230.0" y="162.0" text-anchor="middle" font-size="13" fill="currentColor">FCFS</text>
+  <polyline points="100,157 120,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <polyline points="340,157 400,157" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x21)"/>
+  <text x="406" y="161" text-anchor="start" font-size="12" fill="currentColor" opacity=".65">CPU</text>
+  <text x="28" y="41" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">new</text>
+  <text x="470" y="72" text-anchor="middle" font-size="10" fill="currentColor" font-style="italic" opacity=".65">demote</text>
+  <text x="470" y="132" text-anchor="middle" font-size="10" fill="currentColor" font-style="italic" opacity=".65">demote</text>
+</svg>

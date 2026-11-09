@@ -1,0 +1,24 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 170" width="640" role="img" aria-label="CPU components and the storage it can access directly">
+  <defs><marker id="arr-2x35" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="24" width="260" height="128" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="150" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">CPU</text>
+  <rect x="35" y="38" width="70" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="70.0" y="57.0" text-anchor="middle" font-size="12" fill="currentColor">ALU</text>
+  <rect x="125" y="38" width="140" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="195.0" y="57.0" text-anchor="middle" font-size="12" fill="currentColor">registers</text>
+  <rect x="100" y="78" width="100" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="150.0" y="96.0" text-anchor="middle" font-size="12" fill="currentColor">control</text>
+  <rect x="35" y="114" width="70" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="70.0" y="132.0" text-anchor="middle" font-size="12" fill="currentColor">MMU</text>
+  <rect x="190" y="114" width="75" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="227.5" y="132.0" text-anchor="middle" font-size="12" fill="currentColor">cache</text>
+  <polyline points="280,88 370,88" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x35)"/>
+  <text x="325" y="80" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">address / data</text>
+  <rect x="370" y="62" width="110" height="52" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="425.0" y="93.0" text-anchor="middle" font-size="12" fill="currentColor">main memory</text>
+  <ellipse cx="575" cy="64" rx="38" ry="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M537,64 V112 a38,9 0 0 0 76,0 V64" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="575" y="96" text-anchor="middle" font-size="12" fill="currentColor">disk</text>
+  <polyline points="537,88 482,88" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x35)" stroke-dasharray="4 3"/>
+  <text x="510" y="132" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">only via I/O</text>
+</svg>

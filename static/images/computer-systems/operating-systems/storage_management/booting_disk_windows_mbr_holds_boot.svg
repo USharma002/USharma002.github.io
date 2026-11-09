@@ -1,0 +1,22 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 296" width="420" role="img" aria-label="Booting from disk in Windows: the MBR holds boot code and the partition table">
+  <defs><marker id="arr-mbr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="60" y="14" width="150" height="70" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="60" y1="49" x2="210" y2="49" stroke="currentColor" stroke-width="1" opacity=".6"/>
+  <text x="135.0" y="36.0" text-anchor="middle" font-size="12" fill="currentColor">boot code</text>
+  <text x="135.0" y="71.0" text-anchor="middle" font-size="12" fill="currentColor">partition table</text>
+  <text x="52.0" y="54.0" text-anchor="end" font-size="12" fill="currentColor">MBR</text>
+  <rect x="60" y="84" width="150" height="50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="135.0" y="115.0" text-anchor="middle" font-size="12" fill="currentColor">partition 1</text>
+  <rect x="60" y="134" width="150" height="50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="60" y="134" width="150" height="50" fill="#3b82f6" opacity=".18"/>
+  <rect x="60" y="134" width="150" height="14" fill="#3b82f6" opacity=".3"/>
+  <text x="135.0" y="165.0" text-anchor="middle" font-size="12" fill="currentColor">partition 2</text>
+  <rect x="60" y="184" width="150" height="50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="135.0" y="215.0" text-anchor="middle" font-size="12" fill="currentColor">partition 3</text>
+  <rect x="60" y="234" width="150" height="50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="135.0" y="265.0" text-anchor="middle" font-size="12" fill="currentColor">partition 4</text>
+  <polyline points="210,66 250,66 250,145 213,145" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mbr)"/>
+  <text x="258.0" y="112.0" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">boot flag</text>
+  <text x="258.0" y="160.0" text-anchor="start" font-size="12" fill="#3b82f6">boot partition</text>
+  <text x="258.0" y="176.0" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">(first sector: boot sector)</text>
+</svg>

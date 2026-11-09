@@ -1,0 +1,20 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 410 60" width="410" role="img" aria-label="NOR implementation of c a-bar, and a NOR used as an inverter">
+  <defs>
+    <path id="g-and" d="M0,0 h20 a20,20 0 0 1 0,40 h-20 z" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+    <path id="g-or" d="M0,0 q15,20 0,40 q40,0 55,-20 q-15,-20 -55,-20 z" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+  </defs>
+  <g stroke="currentColor" stroke-width="1.5" fill="none">
+    <line x1="25" y1="20" x2="62" y2="20"/><line x1="25" y1="40" x2="62" y2="40"/>
+    <use href="#g-or" x="60" y="10"/><circle cx="119" cy="30" r="4"/>
+    <line x1="123" y1="30" x2="150" y2="30"/>
+    <polyline points="260,30 285,30"/><polyline points="285,20 285,40"/>
+    <line x1="285" y1="20" x2="312" y2="20"/><line x1="285" y1="40" x2="312" y2="40"/>
+    <use href="#g-or" x="310" y="10"/><circle cx="369" cy="30" r="4"/>
+    <line x1="373" y1="30" x2="395" y2="30"/>
+  </g>
+  <g fill="currentColor" font-size="15" font-style="italic">
+    <text x="8" y="25">c̄</text><text x="8" y="45">a</text>
+    <text x="155" y="35">F = cā</text>
+    <text x="245" y="35">a</text><text x="399" y="35">ā</text>
+  </g>
+</svg>

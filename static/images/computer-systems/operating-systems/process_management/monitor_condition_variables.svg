@@ -1,0 +1,26 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" width="560" role="img" aria-label="Monitor with condition variables">
+  <rect x="190" y="70" width="250" height="240" rx="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="215" y="90" width="200" height="46" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="315" y="118" text-anchor="middle" font-size="12" fill="currentColor">shared data</text>
+  <rect x="215" y="156" width="200" height="80" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="315" y="200" text-anchor="middle" font-size="12" fill="currentColor">operations</text>
+  <rect x="215" y="256" width="200" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="315" y="279" text-anchor="middle" font-size="12" fill="currentColor">initialization code</text>
+  <circle cx="345" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="370" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="395" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="420" cy="30" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="336,30 315,30 315,70" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="440" y="34" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">entry queue</text>
+  <circle cx="60" cy="113" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="85" cy="113" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="110" cy="113" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="119" y1="113" x2="215" y2="113" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170" y="106" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">x</text>
+  <circle cx="85" cy="170" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="110" cy="170" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="119" y1="170" x2="215" y2="170" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170" y="163" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">y</text>
+  <text x="85" y="210" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">queues associated</text>
+  <text x="85" y="225" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">with x, y conditions</text>
+</svg>

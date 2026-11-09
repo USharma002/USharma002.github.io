@@ -52,33 +52,7 @@ These notes follow the NPTEL course *Computer Architecture and Organization* (II
 
 All instructions and data are stored in memory. An instruction and the data it needs are brought into the processor and executed there, and input and output devices connect the computer to the outside world. This is the **von Neumann architecture**.
 
-<figure class="fig">
-<svg viewBox="0 0 600 256" width="600" role="img" aria-label="Functional units of a von Neumann computer">
-  <defs><marker id="arr-fu" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="200" y="20" width="200" height="150" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="300.0" y="40.0" text-anchor="middle" font-size="12" fill="currentColor">Processor (CPU)</text>
-  <rect x="220" y="55" width="160" height="45" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="220" y="55" width="160" height="45" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="300.0" y="81.7" text-anchor="middle" font-size="12" fill="currentColor">Control Unit</text>
-  <rect x="220" y="112" width="160" height="45" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="220" y="112" width="160" height="45" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="300.0" y="138.7" text-anchor="middle" font-size="12" fill="currentColor">ALU + registers</text>
-  <line x1="300" y1="100" x2="300" y2="112" stroke="currentColor" stroke-width="1.2"/>
-  <rect x="200" y="200" width="200" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="200" y="200" width="200" height="44" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="300.0" y="226.2" text-anchor="middle" font-size="12" fill="currentColor">Memory (program + data)</text>
-  <rect x="20" y="75" width="120" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="80.0" y="101.2" text-anchor="middle" font-size="12" fill="currentColor">Input</text>
-  <rect x="460" y="75" width="120" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="520.0" y="101.2" text-anchor="middle" font-size="12" fill="currentColor">Output</text>
-  <line x1="140" y1="97" x2="197" y2="97" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-fu)"/>
-  <line x1="400" y1="97" x2="457" y2="97" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-fu)"/>
-  <line x1="285" y1="172" x2="285" y2="197" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-fu)"/>
-  <line x1="315" y1="197" x2="315" y2="172" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-fu)"/>
-  <text x="330.0" y="190.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">instructions, data</text>
-</svg>
-<figcaption>Functional units of a computer.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/basics_computer_organization/functional_units_von_neumann_computer.svg" alt="Functional units of a von Neumann computer" width="600px" class="fig" caption="Functional units of a computer." >}}
 
 - **Processor (CPU)**: a control unit and an arithmetic logic unit (ALU).
   - The **ALU** contains registers and the circuits for arithmetic (add, subtract, multiply, divide) and logic (AND, OR, NOT, shift, compare). The operands are brought into registers, the operation is carried out, and the result is stored in a register or in memory.
@@ -98,37 +72,7 @@ The following special-purpose registers are used:
 - **Program Counter (PC):** the address of the next instruction. It is incremented when an instruction is fetched.
 - **Instruction Register (IR):** the instruction fetched from memory, while it is decoded.
 
-<figure class="fig">
-<svg viewBox="0 0 580 166" width="580" role="img" aria-label="Processor-memory interface through MAR and MDR">
-  <defs><marker id="arr-pm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="20" width="200" height="130" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="120.0" y="40.0" text-anchor="middle" font-size="12" fill="currentColor">Processor</text>
-  <rect x="60" y="55" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="60" y="55" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="120.0" y="74.2" text-anchor="middle" font-size="12" fill="currentColor">MAR</text>
-  <rect x="60" y="100" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="60" y="100" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="120.0" y="119.2" text-anchor="middle" font-size="12" fill="currentColor">MDR</text>
-  <rect x="400" y="20" width="160" height="130" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="480.0" y="40.0" text-anchor="middle" font-size="12" fill="currentColor">Primary memory</text>
-  <rect x="430" y="50" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="422.0" y="65.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">0</text>
-  <rect x="430" y="72" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="422.0" y="87.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">1</text>
-  <rect x="430" y="94" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="422.0" y="109.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">2</text>
-  <rect x="430" y="116" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="422.0" y="131.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">⋮</text>
-  <line x1="180" y1="70" x2="397" y2="70" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
-  <text x="290.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">address</text>
-  <line x1="180" y1="112" x2="397" y2="112" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
-  <line x1="397" y1="120" x2="180" y2="120" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
-  <text x="290.0" y="106.0" text-anchor="middle" font-size="11" fill="currentColor">data</text>
-  <line x1="220" y1="140" x2="397" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
-  <text x="290.0" y="134.0" text-anchor="middle" font-size="11" fill="currentColor">control: READ / WRITE</text>
-</svg>
-<figcaption>The processor accesses memory through MAR and MDR.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/basics_computer_organization/processor_memory_interface_through_mar_mdr.svg" alt="Processor-memory interface through MAR and MDR" width="580px" class="fig" caption="The processor accesses memory through MAR and MDR." >}}
 
 - **Read:** load the address into MAR and issue READ. The data read is stored in MDR.
 - **Write:** load the address into MAR and the data into MDR, then issue WRITE.
@@ -170,79 +114,7 @@ A **bus** is a group of lines that connects several devices.
 
 At the system level the processor, memory and I/O devices may share a single bus, or I/O may be connected through an I/O processor on a second bus. Inside the processor, the registers and the ALU can also be connected by a single internal bus:
 
-<figure class="fig">
-<svg viewBox="0 0 530 468" width="530" role="img" aria-label="Single-bus organization of the processor datapath">
-  <defs><marker id="arr-sb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="300" y1="20" x2="300" y2="445" stroke="currentColor" stroke-width="3"/>
-  <text x="308.0" y="12.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">internal processor bus</text>
-  <rect x="180" y="30" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="220.0" y="50.2" text-anchor="middle" font-size="12" fill="currentColor">PC</text>
-  <line x1="260" y1="40" x2="298.5" y2="40" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="298.5" y1="52" x2="260" y2="52" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <rect x="180" y="80" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="220.0" y="100.2" text-anchor="middle" font-size="12" fill="currentColor">MAR</text>
-  <line x1="298.5" y1="96" x2="260" y2="96" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <rect x="180" y="130" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="220.0" y="150.2" text-anchor="middle" font-size="12" fill="currentColor">MDR</text>
-  <line x1="260" y1="140" x2="298.5" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="298.5" y1="152" x2="260" y2="152" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <rect x="180" y="190" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="220.0" y="210.2" text-anchor="middle" font-size="12" fill="currentColor">IR</text>
-  <line x1="260" y1="200" x2="298.5" y2="200" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="298.5" y1="212" x2="260" y2="212" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <rect x="180" y="300" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="220.0" y="320.2" text-anchor="middle" font-size="12" fill="currentColor">Y</text>
-  <line x1="298.5" y1="316" x2="260" y2="316" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <rect x="20" y="80" width="90" height="82" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="80" width="90" height="82" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="65.0" y="125.2" text-anchor="middle" font-size="12" fill="currentColor">Memory</text>
-  <line x1="180" y1="96" x2="113" y2="96" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="146.0" y="91.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">address</text>
-  <line x1="113" y1="142" x2="177" y2="142" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="177" y1="152" x2="113" y2="152" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="146.0" y="167.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">data</text>
-  <rect x="40" y="240" width="170" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="40" y="240" width="170" height="50" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="125.0" y="260.0" text-anchor="middle" font-size="11" fill="currentColor">Instruction decoding</text>
-  <text x="125.0" y="275.0" text-anchor="middle" font-size="11" fill="currentColor">and control unit</text>
-  <line x1="200" y1="222" x2="200" y2="237" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="40.0" y="305.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">control signals to all units</text>
-  <rect x="340" y="40" width="80" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="380.0" y="59.2" text-anchor="middle" font-size="12" fill="currentColor">R0</text>
-  <line x1="301.5" y1="50" x2="340" y2="50" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="340" y1="60" x2="301.5" y2="60" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <rect x="340" y="80" width="80" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="380.0" y="99.2" text-anchor="middle" font-size="12" fill="currentColor">R1</text>
-  <line x1="301.5" y1="90" x2="340" y2="90" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="340" y1="100" x2="301.5" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="380.0" y="140.0" text-anchor="middle" font-size="14" fill="currentColor">⋮</text>
-  <rect x="340" y="160" width="80" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="380.0" y="179.2" text-anchor="middle" font-size="12" fill="currentColor">Rn−1</text>
-  <line x1="301.5" y1="170" x2="340" y2="170" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <line x1="340" y1="180" x2="301.5" y2="180" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="430.0" y="115.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">general-purpose</text>
-  <text x="430.0" y="129.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">registers</text>
-  <polygon points="140,350 250,350 235,375 155,375" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="195.0" y="367.0" text-anchor="middle" font-size="11" fill="currentColor">MUX</text>
-  <line x1="220" y1="332" x2="220" y2="350" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="122.0" y="344.0" text-anchor="middle" font-size="13" fill="currentColor">4</text>
-  <polyline points="132,340 170,340 170,350" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sb)"/>
-  <line x1="104" y1="364" x2="147" y2="364" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="100.0" y="368.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">select</text>
-  <polygon points="170,395 220,395 230,407 240,395 290,395 265,440 195,440" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="230.0" y="426.0" text-anchor="middle" font-size="12" fill="currentColor">ALU</text>
-  <line x1="195" y1="375" x2="195" y2="395" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <polyline points="298.5,383 265,383 265,395" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sb)"/>
-  <line x1="120" y1="418" x2="181" y2="418" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-  <text x="116.0" y="414.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">function select,</text>
-  <text x="116.0" y="427.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">carry-in</text>
-  <rect x="340" y="400" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="380.0" y="420.2" text-anchor="middle" font-size="12" fill="currentColor">Z</text>
-  <polyline points="230,440 230,456 380,456 380,432" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sb)"/>
-  <line x1="340" y1="416" x2="301.5" y2="416" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-sb)"/>
-</svg>
-<figcaption>Single-bus organization of the processor (after the NPTEL course <a href="#ref-1">[1]</a> and Hamacher). Register Y holds one ALU operand and Z holds the result; the MUX (multiplexer) selects the constant 4 for $\text{PC} \leftarrow \text{PC} + 4$.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/basics_computer_organization/single_bus_organization_processor_datapath.svg" alt="Single-bus organization of the processor datapath" width="530px" class="fig" caption=`Single-bus organization of the processor (after the NPTEL course <a href="#ref-1">[1]</a> and Hamacher). Register Y holds one ALU operand and Z holds the result; the MUX (multiplexer) selects the constant 4 for $\text{PC} \leftarrow \text{PC} + 4$.` >}}
 
 ### Memory Addressing
 
@@ -259,7 +131,7 @@ Memory is an array of locations, each with a unique address. A memory with $M$ l
 #### Byte Ordering
 
 - **Little endian:** the least significant byte is stored at the lowest address (x86, including the Ryzen 7 5800H).
-- **Big endian:** the most significant byte is stored at the lowest address (network byte order in TCP/IP).
+- **Big endian:** the most significant byte is stored at the lowest address.
 
 <figure class="table">
 <figcaption>The 32-bit number <code>01010101 00110011 00001111 11000011</code> stored from address 2000.</figcaption>
@@ -298,34 +170,7 @@ An **assembler** translates assembly language to machine code. A **compiler** tr
 
 ### von Neumann and Harvard Architectures
 
-<figure class="fig">
-<svg viewBox="0 0 460 190" width="460" role="img" aria-label="von Neumann and Harvard architectures">
-  <defs><marker id="arr-vh" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="20" width="110" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="20" width="110" height="44" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="75.0" y="46.2" text-anchor="middle" font-size="12" fill="currentColor">Processor</text>
-  <rect x="20" y="110" width="110" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="110" width="110" height="44" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="75.0" y="135.8" text-anchor="middle" font-size="11" fill="currentColor">Program / data</text>
-  <line x1="65" y1="64" x2="65" y2="107" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vh)"/>
-  <line x1="85" y1="107" x2="85" y2="64" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vh)"/>
-  <text x="75.0" y="180.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(a) von Neumann</text>
-  <rect x="250" y="20" width="160" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="250" y="20" width="160" height="44" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="330.0" y="46.2" text-anchor="middle" font-size="12" fill="currentColor">Processor</text>
-  <rect x="220" y="110" width="100" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="220" y="110" width="100" height="44" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="270.0" y="135.8" text-anchor="middle" font-size="11" fill="currentColor">Program</text>
-  <rect x="340" y="110" width="100" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="340" y="110" width="100" height="44" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="390.0" y="135.8" text-anchor="middle" font-size="11" fill="currentColor">Data</text>
-  <line x1="270" y1="107" x2="270" y2="64" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vh)"/>
-  <line x1="380" y1="64" x2="380" y2="107" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vh)"/>
-  <line x1="400" y1="107" x2="400" y2="64" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vh)"/>
-  <text x="330.0" y="180.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(b) Harvard</text>
-</svg>
-<figcaption>(a) von Neumann: instructions and data in one memory. (b) Harvard: separate program and data memories.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/basics_computer_organization/von_neumann_harvard_architectures.svg" alt="von Neumann and Harvard architectures" width="460px" class="fig" caption="(a) von Neumann: instructions and data in one memory. (b) Harvard: separate program and data memories." >}}
 
 - **von Neumann:** instructions and data are stored in the same memory. It is flexible, easy to implement, and used in most general-purpose processors. The processor–memory bus is a bottleneck, since all instructions and data pass through it.
 - **Harvard:** instructions are stored in a program memory and data in a data memory, so an instruction fetch and a data access can be done in parallel. Used in some microcontrollers, and in pipelines with separate instruction and data caches. The processor–memory bottleneck remains.
@@ -502,93 +347,7 @@ An *addressing mode* specifies how the operand of an instruction is located. The
 
 CISC (complex instruction set computer) ISAs support many addressing modes; load–store ISAs support very few.
 
-<figure class="fig">
-<svg viewBox="0 0 640 456" width="640" role="img" aria-label="How the operand is located in common addressing modes">
-  <defs><marker id="arr-am" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="20.0" y="30.0" text-anchor="start" font-size="12" fill="currentColor">Immediate</text>
-  <text x="330.0" y="30.0" text-anchor="start" font-size="12" fill="currentColor">Direct</text>
-  <text x="20.0" y="175.0" text-anchor="start" font-size="12" fill="currentColor">Indirect</text>
-  <text x="330.0" y="175.0" text-anchor="start" font-size="12" fill="currentColor">Register indirect</text>
-  <text x="20.0" y="320.0" text-anchor="start" font-size="12" fill="currentColor">Indexed / base</text>
-  <text x="330.0" y="320.0" text-anchor="start" font-size="12" fill="currentColor">PC-relative</text>
-  <rect x="20" y="40" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="45.0" y="56.5" text-anchor="middle" font-size="10" fill="currentColor">opcode</text>
-  <rect x="70" y="40" width="90" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="115.0" y="56.5" text-anchor="middle" font-size="10" fill="currentColor">operand</text>
-  <text x="175.0" y="90.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">operand is in the instruction</text>
-  <rect x="330" y="40" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="355.0" y="56.5" text-anchor="middle" font-size="10" fill="currentColor">opcode</text>
-  <rect x="380" y="40" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="420.0" y="56.5" text-anchor="middle" font-size="10" fill="currentColor">address A</text>
-  <rect x="510" y="20" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="510" y="42" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="550.0" y="57.0" text-anchor="middle" font-size="10" fill="#ef4444">operand</text>
-  <rect x="510" y="64" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="550.0" y="100.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">memory</text>
-  <line x1="460" y1="53" x2="507" y2="53" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <rect x="20" y="185" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="45.0" y="201.5" text-anchor="middle" font-size="10" fill="currentColor">opcode</text>
-  <rect x="70" y="185" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="110.0" y="201.5" text-anchor="middle" font-size="10" fill="currentColor">address A</text>
-  <rect x="200" y="187" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="240.0" y="202.0" text-anchor="middle" font-size="10" fill="currentColor">pointer</text>
-  <rect x="200" y="209" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="200" y="231" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="240.0" y="246.0" text-anchor="middle" font-size="10" fill="#ef4444">operand</text>
-  <text x="240.0" y="267.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">memory</text>
-  <line x1="150" y1="198" x2="197" y2="198" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <polyline points="280,198 295,198 295,242 283,242" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-am)"/>
-  <rect x="330" y="185" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="355.0" y="201.5" text-anchor="middle" font-size="10" fill="currentColor">opcode</text>
-  <rect x="380" y="185" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="420.0" y="201.5" text-anchor="middle" font-size="10" fill="currentColor">Ri</text>
-  <rect x="350" y="235" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="350" y="235" width="80" height="26" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="390.0" y="251.5" text-anchor="middle" font-size="10" fill="currentColor">Ri: address</text>
-  <line x1="420" y1="211" x2="420" y2="232" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <rect x="510" y="215" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="510" y="237" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="550.0" y="252.0" text-anchor="middle" font-size="10" fill="#ef4444">operand</text>
-  <rect x="510" y="259" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="550.0" y="295.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">memory</text>
-  <line x1="430" y1="248" x2="507" y2="248" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <rect x="20" y="330" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="45.0" y="346.5" text-anchor="middle" font-size="10" fill="currentColor">opcode</text>
-  <rect x="70" y="330" width="90" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="115.0" y="346.5" text-anchor="middle" font-size="10" fill="currentColor">Ri | offset</text>
-  <rect x="30" y="382" width="60" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="30" y="382" width="60" height="24" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="60.0" y="397.5" text-anchor="middle" font-size="10" fill="currentColor">Ri</text>
-  <circle cx="140" cy="394" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="399.0" text-anchor="middle" font-size="14" fill="currentColor">+</text>
-  <line x1="90" y1="394" x2="127" y2="394" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <line x1="140" y1="356" x2="140" y2="381" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <rect x="200" y="361" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="200" y="383" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="240.0" y="398.0" text-anchor="middle" font-size="10" fill="#ef4444">operand</text>
-  <rect x="200" y="405" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="240.0" y="441.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">memory</text>
-  <line x1="151" y1="394" x2="197" y2="394" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <rect x="330" y="330" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="355.0" y="346.5" text-anchor="middle" font-size="10" fill="currentColor">opcode</text>
-  <rect x="380" y="330" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="420.0" y="346.5" text-anchor="middle" font-size="10" fill="currentColor">offset</text>
-  <rect x="340" y="382" width="60" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="340" y="382" width="60" height="24" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="370.0" y="397.5" text-anchor="middle" font-size="10" fill="currentColor">PC</text>
-  <circle cx="450" cy="394" r="11" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="450.0" y="399.0" text-anchor="middle" font-size="14" fill="currentColor">+</text>
-  <line x1="400" y1="394" x2="437" y2="394" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <line x1="450" y1="356" x2="450" y2="381" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-  <rect x="510" y="361" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="510" y="383" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="550.0" y="398.0" text-anchor="middle" font-size="10" fill="#ef4444">operand</text>
-  <rect x="510" y="405" width="80" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="550.0" y="441.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">memory</text>
-  <line x1="461" y1="394" x2="507" y2="394" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-am)"/>
-</svg>
-<figcaption>Common addressing modes, with the number of memory accesses needed to get the operand.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_set_architecture/how_operand_located_common_addressing_modes.svg" alt="How the operand is located in common addressing modes" width="640px" class="fig" caption="Common addressing modes, with the number of memory accesses needed to get the operand." >}}
 
 <figure class="table">
 <figcaption>Common addressing modes.</figcaption>
@@ -692,57 +451,7 @@ Words must be **aligned**: the address of a word is a multiple of 4 (the last tw
 
 All MIPS32 instructions are 32 bits long, in one of three formats. Fields such as `rs` and `rt` are in the same position in every format, which keeps decoding simple (see [MIPS32 Implementation](#mips32-implementation)).
 
-<figure class="fig">
-<svg viewBox="0 0 620 210" width="620" role="img" aria-label="MIPS32 R-type, I-type and J-type instruction formats">
-  <defs><marker id="arr-mf" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="60.0" y="50.0" text-anchor="end" font-size="12" fill="currentColor">R-type</text>
-  <rect x="70.0" y="30" width="101.25" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="70.0" y="30" width="101.25" height="30" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="120.6" y="48.9" text-anchor="middle" font-size="11" fill="currentColor">opcode</text>
-  <text x="72.0" y="26.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">31</text>
-  <rect x="171.25" y="30" width="84.375" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="213.4" y="48.9" text-anchor="middle" font-size="11" fill="currentColor">rs</text>
-  <text x="173.2" y="26.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">25</text>
-  <rect x="255.625" y="30" width="84.375" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="297.8" y="48.9" text-anchor="middle" font-size="11" fill="currentColor">rt</text>
-  <text x="257.6" y="26.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">20</text>
-  <rect x="340.0" y="30" width="84.375" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="382.2" y="48.9" text-anchor="middle" font-size="11" fill="currentColor">rd</text>
-  <text x="342.0" y="26.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">15</text>
-  <rect x="424.375" y="30" width="84.375" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="466.6" y="48.9" text-anchor="middle" font-size="11" fill="currentColor">shamt</text>
-  <text x="426.4" y="26.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">10</text>
-  <rect x="508.75" y="30" width="101.25" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="559.4" y="48.9" text-anchor="middle" font-size="11" fill="currentColor">funct</text>
-  <text x="510.8" y="26.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">5</text>
-  <text x="608.0" y="26.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">0</text>
-  <text x="60.0" y="110.0" text-anchor="end" font-size="12" fill="currentColor">I-type</text>
-  <rect x="70.0" y="90" width="101.25" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="70.0" y="90" width="101.25" height="30" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="120.6" y="108.8" text-anchor="middle" font-size="11" fill="currentColor">opcode</text>
-  <text x="72.0" y="86.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">31</text>
-  <rect x="171.25" y="90" width="84.375" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="213.4" y="108.8" text-anchor="middle" font-size="11" fill="currentColor">rs</text>
-  <text x="173.2" y="86.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">25</text>
-  <rect x="255.625" y="90" width="84.375" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="297.8" y="108.8" text-anchor="middle" font-size="11" fill="currentColor">rt</text>
-  <text x="257.6" y="86.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">20</text>
-  <rect x="340.0" y="90" width="270.0" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="475.0" y="108.8" text-anchor="middle" font-size="11" fill="currentColor">16-bit immediate</text>
-  <text x="342.0" y="86.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">15</text>
-  <text x="608.0" y="86.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">0</text>
-  <text x="60.0" y="170.0" text-anchor="end" font-size="12" fill="currentColor">J-type</text>
-  <rect x="70.0" y="150" width="101.25" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="70.0" y="150" width="101.25" height="30" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="120.6" y="168.8" text-anchor="middle" font-size="11" fill="currentColor">opcode</text>
-  <text x="72.0" y="146.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">31</text>
-  <rect x="171.25" y="150" width="438.75" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="390.6" y="168.8" text-anchor="middle" font-size="11" fill="currentColor">26-bit jump address</text>
-  <text x="173.2" y="146.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">25</text>
-  <text x="608.0" y="146.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">0</text>
-</svg>
-<figcaption>MIPS32 instruction formats.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_set_architecture/mips32_r_type_i_type_j.svg" alt="MIPS32 R-type, I-type and J-type instruction formats" width="620px" class="fig" caption="MIPS32 instruction formats." >}}
 
 - **R-type:** two source registers `rs`, `rt` and a destination `rd`; `shamt` is the shift amount and `funct` selects the ALU operation. For `add $t1, $s1, $s2` (`$t1` = R9, `$s1` = R17, `$s2` = R18; opcode 0, funct 100000) the encoding is `000000 10001 10010 01001 00000 100000`.
 - **I-type:** a source `rs`, a destination `rt` and a 16-bit immediate. Used for loads, stores, ALU-immediate instructions and branches. For `lw $t1, 48($s1)` (opcode 100011) the encoding is `100011 10001 01001 0000000000110000`.
@@ -930,26 +639,7 @@ The geometric means are consistent whichever machine is the reference (C, A, B i
 
 If a fraction $F$ of the execution time is improved by a factor $S$, the time changes from $1$ to $(1 - F) + F/S$:
 
-<figure class="fig">
-<svg viewBox="0 0 600 140" width="600" role="img" aria-label="Amdahl's law: only the fraction F is sped up by S">
-  <defs><marker id="arr-amd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="110" y="20" width="300" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="260.0" y="40.2" text-anchor="middle" font-size="12" fill="currentColor">1 − F</text>
-  <rect x="410" y="20" width="160" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="410" y="20" width="160" height="32" rx="3" fill="#ef4444" opacity=".18"/>
-  <text x="490.0" y="40.2" text-anchor="middle" font-size="12" fill="currentColor">F</text>
-  <text x="100.0" y="41.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">before</text>
-  <rect x="110" y="80" width="300" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="260.0" y="100.2" text-anchor="middle" font-size="12" fill="currentColor">1 − F</text>
-  <rect x="410" y="80" width="40" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="410" y="80" width="40" height="32" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="430.0" y="99.8" text-anchor="middle" font-size="11" fill="currentColor">F/S</text>
-  <text x="100.0" y="101.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">after</text>
-  <line x1="450" y1="96" x2="568" y2="96" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="510.0" y="130.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">time saved</text>
-</svg>
-<figcaption>Only the fraction $F$ of the execution time is sped up by $S$.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/performance_evaluation/amdahl_s_law_fraction_f_sped.svg" alt="Amdahl's law: only the fraction F is sped up by S" width="600px" class="fig" caption="Only the fraction $F$ of the execution time is sped up by $S$." >}}
 
 $$\text{Speedup} = \frac{1}{(1 - F) + \dfrac{F}{S}} \qquad\xrightarrow{\;S \to \infty\;}\qquad \frac{1}{1 - F}$$
 
@@ -1010,25 +700,7 @@ A register $R_i$ has two control signals:
 - $R_i\text{in}$: load $R_i$ with the data on the bus;
 - $R_i\text{out}$: place the contents of $R_i$ on the bus.
 
-<figure class="fig">
-<svg viewBox="0 0 450 176" width="450" role="img" aria-label="A register connected to the bus through Rin and Rout switches">
-  <defs><marker id="arr-rg" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="30.0" y1="20.0" x2="30.0" y2="150.0" stroke="currentColor" stroke-width="3"/>
-  <text x="30.0" y="168.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">bus</text>
-  <rect x="120" y="60" width="110" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="120" y="60" width="110" height="44" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="175.0" y="86.2" text-anchor="middle" font-size="12" fill="currentColor">register Rᵢ</text>
-  <polyline points="32.0,70.0 90.0,70.0 117.0,70.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-rg)"/>
-  <text x="75.0" y="62.0" text-anchor="middle" font-size="11" fill="#22c55e">Rᵢin</text>
-  <polyline points="120.0,94.0 32.0,94.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-rg)"/>
-  <text x="75.0" y="112.0" text-anchor="middle" font-size="11" fill="#ef4444">Rᵢout</text>
-  <circle cx="92" cy="70" r="4" fill="#22c55e"/>
-  <circle cx="92" cy="94" r="4" fill="#ef4444"/>
-  <text x="250.0" y="70.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">Rᵢin = 1: load from the bus</text>
-  <text x="250.0" y="98.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">Rᵢout = 1: drive onto the bus</text>
-</svg>
-<figcaption>A register connected to the bus through controlled switches.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/design_control_unit/register_connected_bus_through_rin_rout.svg" alt="A register connected to the bus through Rin and Rout switches" width="450px" class="fig" caption="A register connected to the bus through controlled switches." >}}
 
 All operations are synchronized with the processor clock: the control signals are asserted at the start of a cycle and return to 0 after the transfer. A time step is written with its control signals, e.g. `MOVE R1, R2` ($R1 \leftarrow R2$) is
 
@@ -1088,64 +760,7 @@ Other instructions differ only after step 3:
 
 With three internal buses, two operands can be sent to the ALU on buses A and B while the result is placed on bus C, so fewer steps are needed than with a single bus.
 
-<figure class="fig">
-<svg viewBox="0 0 660 320" width="660" role="img" aria-label="Three-bus organization: two source buses into the ALU and a result bus">
-  <defs><marker id="arr-3b" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="200.0" y1="20.0" x2="200.0" y2="300.0" stroke="currentColor" stroke-width="3"/>
-  <text x="200.0" y="14.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">bus A</text>
-  <line x1="250.0" y1="20.0" x2="250.0" y2="300.0" stroke="currentColor" stroke-width="3"/>
-  <text x="250.0" y="14.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">bus B</text>
-  <line x1="420.0" y1="20.0" x2="420.0" y2="300.0" stroke="currentColor" stroke-width="3"/>
-  <text x="420.0" y="14.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">bus C</text>
-  <rect x="270" y="40" width="110" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="325.0" y="62.2" text-anchor="middle" font-size="12" fill="currentColor">PC</text>
-  <rect x="270" y="100" width="110" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="100" width="110" height="60" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="325.0" y="134.2" text-anchor="middle" font-size="12" fill="currentColor">Register file</text>
-  <rect x="470" y="120" width="90" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="515.0" y="142.2" text-anchor="middle" font-size="12" fill="currentColor">MAR</text>
-  <rect x="470" y="180" width="90" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="515.0" y="202.2" text-anchor="middle" font-size="12" fill="currentColor">MDR</text>
-  <rect x="470" y="240" width="90" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="515.0" y="262.2" text-anchor="middle" font-size="12" fill="currentColor">IR</text>
-  <rect x="40" y="220" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="40" y="220" width="90" height="60" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="85.0" y="254.2" text-anchor="middle" font-size="12" fill="currentColor">ALU</text>
-  <line x1="380.0" y1="58.0" x2="418.0" y2="58.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="250.0" y1="58.0" x2="270.0" y2="58.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="270.0" y1="115.0" x2="200.0" y2="115.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="270.0" y1="135.0" x2="250.0" y2="135.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="380.0" y1="145.0" x2="418.0" y2="145.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="130.0" y1="240.0" x2="200.0" y2="240.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="130.0" y1="260.0" x2="250.0" y2="260.0" stroke="currentColor" stroke-width="1.5"/>
-  <polyline points="85.0,280.0 85.0,298.0 420.0,298.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="420.0" y1="138.0" x2="470.0" y2="138.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="420.0" y1="198.0" x2="470.0" y2="198.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="420.0" y1="258.0" x2="470.0" y2="258.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="470.0" y1="210.0" x2="250.0" y2="210.0" stroke="currentColor" stroke-width="1.5"/>
-  <circle cx="250" cy="210" r="3.5" fill="currentColor"/>
-  <line x1="560.0" y1="138.0" x2="600.0" y2="138.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="560.0" y1="198.0" x2="600.0" y2="198.0" stroke="currentColor" stroke-width="1.5"/>
-  <text x="605.0" y="142.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">address</text>
-  <text x="605.0" y="202.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">data</text>
-  <text x="605.0" y="120.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">to memory</text>
-  <text x="165.0" y="232.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">A</text>
-  <text x="190.0" y="272.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">B</text>
-  <text x="250.0" y="312.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">result on bus C</text>
-  <circle cx="200" cy="115" r="3.5" fill="currentColor"/>
-  <circle cx="250" cy="135" r="3.5" fill="currentColor"/>
-  <circle cx="250" cy="58" r="3.5" fill="currentColor"/>
-  <circle cx="420" cy="58" r="3.5" fill="currentColor"/>
-  <circle cx="420" cy="145" r="3.5" fill="currentColor"/>
-  <circle cx="420" cy="138" r="3.5" fill="currentColor"/>
-  <circle cx="420" cy="198" r="3.5" fill="currentColor"/>
-  <circle cx="420" cy="258" r="3.5" fill="currentColor"/>
-  <circle cx="200" cy="240" r="3.5" fill="currentColor"/>
-  <circle cx="250" cy="260" r="3.5" fill="currentColor"/>
-  <circle cx="420" cy="298" r="3.5" fill="currentColor"/>
-</svg>
-<figcaption>Three-bus organization of the datapath (after the NPTEL course <a href="#ref-1">[1]</a>).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/design_control_unit/three_bus_organization_source_buses_alu.svg" alt="Three-bus organization: two source buses into the ALU and a result bus" width="660px" class="fig" caption=`Three-bus organization of the datapath (after the NPTEL course <a href="#ref-1">[1]</a>).` >}}
 
 `SUB R1, R2, R3` ($R1 \leftarrow R2 - R3$) takes four steps:
 
@@ -1160,59 +775,7 @@ $$\begin{aligned}
 
 In a **hardwired** control unit the control signals are generated by combinational logic. Each step is assumed to take one clock cycle, and a counter keeps track of the time step.
 
-<figure class="fig">
-<svg viewBox="0 0 720 314" width="720" role="img" aria-label="Hardwired control unit: step counter and decoders feeding a combinational encoder">
-  <defs><marker id="arr-hw" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="40" width="80" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="60.0" y="61.9" text-anchor="middle" font-size="11" fill="currentColor">clock</text>
-  <rect x="140" y="40" width="120" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="200.0" y="55.5" text-anchor="middle" font-size="10" fill="currentColor">control step</text>
-  <text x="200.0" y="67.5" text-anchor="middle" font-size="10" fill="currentColor">counter</text>
-  <rect x="300" y="40" width="300" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="450.0" y="61.9" text-anchor="middle" font-size="11" fill="currentColor">step decoder</text>
-  <line x1="100.0" y1="58.0" x2="137.0" y2="58.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <line x1="260.0" y1="58.0" x2="297.0" y2="58.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <line x1="200.0" y1="14.0" x2="200.0" y2="37.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="206.0" y="22.0" text-anchor="start" font-size="10" fill="currentColor">Run</text>
-  <rect x="300" y="120" width="300" height="100" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="300" y="120" width="300" height="100" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="450.0" y="174.6" text-anchor="middle" font-size="13" fill="currentColor">encoder</text>
-  <line x1="360.0" y1="76.0" x2="360.0" y2="117.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="365.0" y="100.0" text-anchor="start" font-size="10" fill="currentColor">T₁</text>
-  <line x1="420.0" y1="76.0" x2="420.0" y2="117.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="425.0" y="100.0" text-anchor="start" font-size="10" fill="currentColor">T₂</text>
-  <line x1="540.0" y1="76.0" x2="540.0" y2="117.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="545.0" y="100.0" text-anchor="start" font-size="10" fill="currentColor">Tₙ</text>
-  <text x="480.0" y="102.0" text-anchor="middle" font-size="12" fill="currentColor">⋯</text>
-  <rect x="20" y="150" width="80" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="60.0" y="172.2" text-anchor="middle" font-size="12" fill="currentColor">IR</text>
-  <rect x="140" y="130" width="90" height="76" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="185.0" y="165.5" text-anchor="middle" font-size="10" fill="currentColor">instruction</text>
-  <text x="185.0" y="177.5" text-anchor="middle" font-size="10" fill="currentColor">decoder</text>
-  <line x1="100.0" y1="168.0" x2="137.0" y2="168.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <line x1="230.0" y1="142.0" x2="297.0" y2="142.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="236.0" y="139.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">INS₁</text>
-  <line x1="230.0" y1="162.0" x2="297.0" y2="162.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="236.0" y="159.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">INS₂</text>
-  <line x1="230.0" y1="202.0" x2="297.0" y2="202.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="236.0" y="199.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">INSₘ</text>
-  <text x="264.0" y="186.0" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
-  <line x1="380.0" y1="262.0" x2="380.0" y2="223.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="380.0" y="276.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">condition codes</text>
-  <line x1="520.0" y1="262.0" x2="520.0" y2="223.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hw)"/>
-  <text x="520.0" y="276.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">external inputs (MFC, …)</text>
-  <line x1="600.0" y1="135.0" x2="640.0" y2="135.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-hw)"/>
-  <line x1="600.0" y1="155.0" x2="640.0" y2="155.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-hw)"/>
-  <line x1="600.0" y1="175.0" x2="640.0" y2="175.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-hw)"/>
-  <text x="620.0" y="194.0" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
-  <text x="648.0" y="150.0" text-anchor="start" font-size="11" fill="currentColor">control</text>
-  <text x="648.0" y="164.0" text-anchor="start" font-size="11" fill="currentColor">signals</text>
-  <polyline points="600.0,208.0 630.0,208.0 630.0,292.0 10.0,292.0 10.0,98.0 180.0,98.0 180.0,79.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-hw)"/>
-  <text x="636.0" y="222.0" text-anchor="start" font-size="10" fill="#ef4444">End</text>
-  <text x="320.0" y="306.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">End resets the counter; Run = 0 stops it (e.g. while waiting for MFC)</text>
-</svg>
-<figcaption>Hardwired control unit (after the NPTEL course <a href="#ref-1">[1]</a> and Hamacher).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/design_control_unit/hardwired_control_unit_step_counter_decoders.svg" alt="Hardwired control unit: step counter and decoders feeding a combinational encoder" width="720px" class="fig" caption=`Hardwired control unit (after the NPTEL course <a href="#ref-1">[1]</a> and Hamacher).` >}}
 
 - The control signals depend on the control step counter, the contents of IR, the condition code flags, and external inputs such as MFC.
 - The **step decoder** gives a separate line $T_1, T_2, \dots$ for each step. If an instruction needs at most 10 steps, a $4 \times 16$ decoder is used.
@@ -1232,31 +795,7 @@ In a **microprogrammed** control unit the control signals are generated by a pro
 - The sequence of control words for a machine instruction is its **microroutine**.
 - When an instruction is loaded into IR, the starting address generator loads the address of its microroutine into the **microprogram counter (μPC)**. The μPC is then incremented every clock, and the control words are read in sequence.
 
-<figure class="fig">
-<svg viewBox="0 0 680 150" width="680" role="img" aria-label="Microprogrammed control unit: the micro-PC reads control words from the control store">
-  <defs><marker id="arr-mp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="40" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="55.0" y="64.2" text-anchor="middle" font-size="12" fill="currentColor">IR</text>
-  <rect x="130" y="40" width="130" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="195.0" y="57.5" text-anchor="middle" font-size="10" fill="currentColor">starting address</text>
-  <text x="195.0" y="69.5" text-anchor="middle" font-size="10" fill="currentColor">generator</text>
-  <rect x="300" y="40" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="300" y="40" width="70" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="335.0" y="64.2" text-anchor="middle" font-size="12" fill="currentColor">μPC</text>
-  <rect x="410" y="20" width="120" height="80" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="410" y="20" width="120" height="80" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="470.0" y="63.9" text-anchor="middle" font-size="11" fill="currentColor">control store</text>
-  <line x1="90.0" y1="60.0" x2="127.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mp)"/>
-  <line x1="260.0" y1="60.0" x2="297.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mp)"/>
-  <line x1="370.0" y1="60.0" x2="407.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mp)"/>
-  <line x1="530.0" y1="60.0" x2="580.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mp)"/>
-  <text x="586.0" y="56.0" text-anchor="start" font-size="11" fill="currentColor">control word</text>
-  <text x="586.0" y="71.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">(CW)</text>
-  <line x1="335.0" y1="125.0" x2="335.0" y2="83.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mp)"/>
-  <text x="335.0" y="140.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">clock: μPC + 1</text>
-</svg>
-<figcaption>Microprogrammed control unit.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/design_control_unit/microprogrammed_control_unit_micro_pc_reads.svg" alt="Microprogrammed control unit: the micro-PC reads control words from the control store" width="680px" class="fig" caption="Microprogrammed control unit." >}}
 
 <figure class="table">
 <figcaption>Control store for <code>ADD R1, R2</code>: one column per microinstruction, a 1 for each active signal (Select = 0 selects the constant 4, 1 selects Y).</figcaption>
@@ -1298,75 +837,7 @@ In a **microprogrammed** control unit the control signals are generated by a pro
 
 Suppose there are $k$ control signals $c_1, \dots, c_k$.
 
-<figure class="fig">
-<svg viewBox="0 0 520 252" width="520" role="img" aria-label="Horizontal, vertical and diagonal microinstruction encoding">
-  <defs><marker id="arr-me" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="20.0" y="20.0" text-anchor="start" font-size="11" fill="currentColor">(a) horizontal: one bit per signal</text>
-  <rect x="20" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="35.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c1</text>
-  <rect x="50" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="50" y="30" width="30" height="26" rx="0" fill="#22c55e" opacity=".3"/>
-  <text x="65.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c2</text>
-  <rect x="80" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="95.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c3</text>
-  <rect x="110" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="110" y="30" width="30" height="26" rx="0" fill="#22c55e" opacity=".3"/>
-  <text x="125.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c4</text>
-  <rect x="140" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="140" y="30" width="30" height="26" rx="0" fill="#22c55e" opacity=".3"/>
-  <text x="155.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c5</text>
-  <rect x="170" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="185.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c6</text>
-  <rect x="200" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="215.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c7</text>
-  <rect x="230" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="245.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c8</text>
-  <rect x="260" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="275.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c9</text>
-  <rect x="290" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="305.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c10</text>
-  <rect x="320" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="335.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">c11</text>
-  <rect x="350" y="30" width="30" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="365.0" y="46.1" text-anchor="middle" font-size="9" fill="currentColor">cₖ</text>
-  <text x="20.0" y="92.0" text-anchor="start" font-size="11" fill="currentColor">(b) vertical: one encoded field</text>
-  <rect x="20" y="102" width="120" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="80.0" y="118.5" text-anchor="middle" font-size="10" fill="currentColor">m-bit code</text>
-  <rect x="170" y="102" width="90" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="170" y="102" width="90" height="26" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="215.0" y="118.5" text-anchor="middle" font-size="10" fill="currentColor">decoder</text>
-  <line x1="140.0" y1="115.0" x2="167.0" y2="115.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-me)"/>
-  <line x1="260.0" y1="115.0" x2="290.0" y2="115.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-me)"/>
-  <text x="296.0" y="119.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">exactly one of c₁ … cₖ (k ≤ 2ᵐ)</text>
-  <text x="20.0" y="164.0" text-anchor="start" font-size="11" fill="currentColor">(c) diagonal: groups of mutually exclusive signals</text>
-  <rect x="20" y="174" width="70" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="55.0" y="190.5" text-anchor="middle" font-size="10" fill="currentColor">m1</text>
-  <rect x="24" y="220" width="62" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="24" y="220" width="62" height="22" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="55.0" y="234.2" text-anchor="middle" font-size="9" fill="currentColor">dec</text>
-  <line x1="55.0" y1="200.0" x2="55.0" y2="217.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-me)"/>
-  <rect x="90" y="174" width="55" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="117.5" y="190.5" text-anchor="middle" font-size="10" fill="currentColor">m2</text>
-  <rect x="94" y="220" width="47" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="94" y="220" width="47" height="22" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="117.5" y="234.2" text-anchor="middle" font-size="9" fill="currentColor">dec</text>
-  <line x1="117.5" y1="200.0" x2="117.5" y2="217.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-me)"/>
-  <rect x="145" y="174" width="85" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="187.5" y="190.5" text-anchor="middle" font-size="10" fill="currentColor">m3</text>
-  <rect x="149" y="220" width="77" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="149" y="220" width="77" height="22" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="187.5" y="234.2" text-anchor="middle" font-size="9" fill="currentColor">dec</text>
-  <line x1="187.5" y1="200.0" x2="187.5" y2="217.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-me)"/>
-  <rect x="230" y="174" width="45" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="252.5" y="190.5" text-anchor="middle" font-size="10" fill="currentColor">m4</text>
-  <rect x="234" y="220" width="37" height="22" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="234" y="220" width="37" height="22" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="252.5" y="234.2" text-anchor="middle" font-size="9" fill="currentColor">dec</text>
-  <line x1="252.5" y1="200.0" x2="252.5" y2="217.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-me)"/>
-  <text x="290.0" y="236.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">one signal per group, groups in parallel</text>
-</svg>
-<figcaption>Horizontal, vertical and diagonal microinstruction encoding.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/design_control_unit/horizontal_vertical_diagonal_microinstruction_encoding.svg" alt="Horizontal, vertical and diagonal microinstruction encoding" width="520px" class="fig" caption="Horizontal, vertical and diagonal microinstruction encoding." >}}
 
 - **Horizontal:** a control word has $k$ bits, one for each control signal, and several bits can be 1. Any number of micro-operations can be activated in parallel, but the control words are long, so the control memory is large and costly.
 - **Vertical:** the control signals are encoded in an $m$-bit word with $k \le 2^m$, and a decoder activates exactly one signal. The words are short, but only one signal is active at a time, so more steps are needed.
@@ -1420,77 +891,7 @@ The instruction execution cycle has five steps. It uses temporary registers: A a
 
 In IF the new PC is not stored in PC, since for a branch it may be the target address; it is kept in NPC and PC is updated in MEM. In ID, `##` is concatenation: the 16-bit immediate is sign-extended by copying IR₁₅ sixteen times.
 
-<figure class="fig">
-<svg viewBox="0 0 750 214" width="750" role="img" aria-label="Non-pipelined MIPS32 datapath across the five steps">
-  <defs><marker id="arr-md" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="70.0" y="14.0" text-anchor="middle" font-size="12" fill="#ef4444">IF</text>
-  <text x="230.0" y="14.0" text-anchor="middle" font-size="12" fill="#ef4444">ID</text>
-  <text x="390.0" y="14.0" text-anchor="middle" font-size="12" fill="#ef4444">EX</text>
-  <text x="550.0" y="14.0" text-anchor="middle" font-size="12" fill="#ef4444">MEM</text>
-  <text x="690.0" y="14.0" text-anchor="middle" font-size="12" fill="#ef4444">WB</text>
-  <rect x="10" y="60" width="50" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="35.0" y="84.2" text-anchor="middle" font-size="12" fill="currentColor">PC</text>
-  <rect x="80" y="50" width="70" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="80" y="50" width="70" height="60" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="115.0" y="77.5" text-anchor="middle" font-size="10" fill="currentColor">instr.</text>
-  <text x="115.0" y="89.5" text-anchor="middle" font-size="10" fill="currentColor">memory</text>
-  <rect x="80" y="140" width="50" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="105.0" y="158.8" text-anchor="middle" font-size="11" fill="currentColor">+4</text>
-  <line x1="60.0" y1="80.0" x2="77.0" y2="80.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <polyline points="35.0,100.0 35.0,155.0 77.0,155.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <rect x="170" y="60" width="40" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="190.0" y="83.8" text-anchor="middle" font-size="11" fill="currentColor">IR</text>
-  <line x1="150.0" y1="80.0" x2="167.0" y2="80.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <rect x="170" y="140" width="50" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="195.0" y="158.5" text-anchor="middle" font-size="10" fill="currentColor">NPC</text>
-  <line x1="130.0" y1="155.0" x2="167.0" y2="155.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <rect x="240" y="40" width="80" height="70" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="240" y="40" width="80" height="70" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="280.0" y="72.5" text-anchor="middle" font-size="10" fill="currentColor">register</text>
-  <text x="280.0" y="84.5" text-anchor="middle" font-size="10" fill="currentColor">bank</text>
-  <rect x="240" y="130" width="80" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="280.0" y="148.5" text-anchor="middle" font-size="10" fill="currentColor">sign ext.</text>
-  <line x1="210.0" y1="75.0" x2="237.0" y2="75.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <polyline points="210.0,92.0 224.0,92.0 224.0,145.0 237.0,145.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <rect x="340" y="40" width="30" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="355.0" y="58.5" text-anchor="middle" font-size="10" fill="currentColor">A</text>
-  <rect x="340" y="80" width="30" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="355.0" y="98.5" text-anchor="middle" font-size="10" fill="currentColor">B</text>
-  <rect x="340" y="130" width="30" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="355.0" y="147.8" text-anchor="middle" font-size="8" fill="currentColor">Imm</text>
-  <line x1="320.0" y1="55.0" x2="337.0" y2="55.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <line x1="320.0" y1="95.0" x2="337.0" y2="95.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <line x1="320.0" y1="145.0" x2="337.0" y2="145.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <polygon points="390,40 450,70 450,120 390,150 390,110 402,95 390,80" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="428.0" y="100.0" text-anchor="middle" font-size="11" fill="currentColor">ALU</text>
-  <line x1="370.0" y1="55.0" x2="389.0" y2="55.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <polyline points="370.0,95.0 374.0,95.0 374.0,118.0 389.0,118.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <polyline points="370.0,145.0 379.0,145.0 379.0,136.0 389.0,136.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <rect x="470" y="80" width="50" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="495.0" y="97.8" text-anchor="middle" font-size="8" fill="currentColor">ALUOut</text>
-  <line x1="450.0" y1="95.0" x2="467.0" y2="95.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <rect x="470" y="130" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="495.0" y="146.2" text-anchor="middle" font-size="9" fill="currentColor">cond</text>
-  <text x="430.0" y="165.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">= 0</text>
-  <rect x="540" y="50" width="70" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="540" y="50" width="70" height="60" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="575.0" y="77.5" text-anchor="middle" font-size="10" fill="currentColor">data</text>
-  <text x="575.0" y="89.5" text-anchor="middle" font-size="10" fill="currentColor">memory</text>
-  <line x1="520.0" y1="88.0" x2="537.0" y2="88.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <rect x="630" y="60" width="40" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="650.0" y="78.2" text-anchor="middle" font-size="9" fill="currentColor">LMD</text>
-  <line x1="610.0" y1="75.0" x2="627.0" y2="75.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <rect x="690" y="60" width="22" height="70" rx="6" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="701.0" y="98.0" text-anchor="middle" font-size="6" fill="currentColor">MUX</text>
-  <line x1="670.0" y1="75.0" x2="687.0" y2="75.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-md)"/>
-  <polyline points="520.0,102.0 530.0,102.0 530.0,120.0 687.0,120.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <polyline points="712.0,95.0 730.0,95.0 730.0,24.0 280.0,24.0 280.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <text x="640.0" y="44.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">write back</text>
-  <polyline points="495.0,156.0 495.0,185.0 20.0,185.0 20.0,103.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-md)"/>
-  <text x="250.0" y="200.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">next PC: NPC, or ALUOut if the branch is taken</text>
-</svg>
-<figcaption>Datapath of the non-pipelined MIPS32 implementation (after the NPTEL course <a href="#ref-1">[1]</a>).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/design_control_unit/non_pipelined_mips32_datapath_across_five.svg" alt="Non-pipelined MIPS32 datapath across the five steps" width="750px" class="fig" caption=`Datapath of the non-pipelined MIPS32 implementation (after the NPTEL course <a href="#ref-1">[1]</a>).` >}}
 
 Since the instruction encoding is regular, the control unit is simple. The control signals of the datapath are LoadPC, LoadNPC, ReadIM, LoadIR, ReadRegPort1, ReadRegPort2, LoadA, LoadB, LoadIMM, MuxALU1, MuxALU2, ALUfunc, LoadALUOut, MuxPC, ReadDM, WriteDM, LoadLMD, MuxWB and WriteReg.
 
@@ -1519,102 +920,7 @@ Since the instruction encoding is regular, the control unit is simple. The contr
 
 The increase in hardware cost is small, and the ideal speedup is $k$. Pipelining is used in instruction execution, in arithmetic (the same operation on several data sets) and in memory access (consecutive locations).
 
-<figure class="fig">
-<svg viewBox="0 0 564 170" width="564" role="img" aria-label="Five instructions overlapped in a 5-stage pipeline">
-  <defs><marker id="arr-pbasic" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-pbasicr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="163.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">1</text>
-  <text x="209.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">2</text>
-  <text x="255.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">3</text>
-  <text x="301.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4</text>
-  <text x="347.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">5</text>
-  <text x="393.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">6</text>
-  <text x="439.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">7</text>
-  <text x="485.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">8</text>
-  <text x="531.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">9</text>
-  <text x="132.0" y="18.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">cycle</text>
-  <text x="130.0" y="47.0" text-anchor="end" font-size="11" fill="currentColor">i1</text>
-  <rect x="141" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="141" y="32" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="163.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="187" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="187" y="32" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="209.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="233" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="233" y="32" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="255.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="279" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="279" y="32" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="301.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="325" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="325" y="32" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="347.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="130.0" y="73.0" text-anchor="end" font-size="11" fill="currentColor">i2</text>
-  <rect x="187" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="187" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="209.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="233" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="233" y="58" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="255.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="279" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="279" y="58" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="301.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="325" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="325" y="58" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="347.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="371" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="371" y="58" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="393.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="130.0" y="99.0" text-anchor="end" font-size="11" fill="currentColor">i3</text>
-  <rect x="233" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="233" y="84" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="255.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="279" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="279" y="84" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="301.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="325" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="325" y="84" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="347.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="371" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="371" y="84" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="393.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="417" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="417" y="84" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="439.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="130.0" y="125.0" text-anchor="end" font-size="11" fill="currentColor">i4</text>
-  <rect x="279" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="279" y="110" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="301.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="325" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="325" y="110" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="347.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="371" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="371" y="110" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="393.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="417" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="417" y="110" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="439.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="463" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="463" y="110" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="485.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="130.0" y="151.0" text-anchor="end" font-size="11" fill="currentColor">i5</text>
-  <rect x="325" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="325" y="136" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="347.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="371" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="371" y="136" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="393.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="417" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="417" y="136" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="439.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="463" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="463" y="136" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="485.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="509" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="509" y="136" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="531.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-</svg>
-<figcaption>Five instructions in a 5-stage pipeline. In serial execution, $i_2$ would start only after $i_1$ finishes in cycle 5.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/pipelining/five_instructions_overlapped_5_stage_pipeline.svg" alt="Five instructions overlapped in a 5-stage pipeline" width="564px" class="fig" caption="Five instructions in a 5-stage pipeline. In serial execution, $i_2$ would start only after $i_1$ finishes in cycle 5." >}}
 
 With $k$ stages of one cycle each and $n$ instructions:
 
@@ -1627,49 +933,7 @@ A speedup of $k$ could also be obtained by replicating the hardware $k$ times, b
 
 ### Synchronous k-Stage Pipeline
 
-<figure class="fig">
-<svg viewBox="0 0 478 130" width="478" role="img" aria-label="Synchronous k-stage pipeline: combinational stages separated by latches on a common clock">
-  <defs><marker id="arr-km" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-kmr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="20" y="40" width="24" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="40" width="24" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="32.0" y="63.9" text-anchor="middle" font-size="11" fill="currentColor">L</text>
-  <line x1="44.0" y1="60.0" x2="57.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-km)"/>
-  <rect x="60" y="40" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="60" y="40" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="95.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">S₁</text>
-  <text x="95.0" y="30.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">stage 1</text>
-  <line x1="130.0" y1="60.0" x2="143.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-km)"/>
-  <rect x="146" y="40" width="24" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="146" y="40" width="24" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="158.0" y="63.9" text-anchor="middle" font-size="11" fill="currentColor">L</text>
-  <line x1="170.0" y1="60.0" x2="183.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-km)"/>
-  <rect x="186" y="40" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="186" y="40" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="221.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">S₂</text>
-  <text x="221.0" y="30.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">stage 2</text>
-  <line x1="256.0" y1="60.0" x2="269.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-km)"/>
-  <text x="290.0" y="66.0" text-anchor="middle" font-size="16" fill="currentColor">…</text>
-  <rect x="312" y="40" width="24" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="312" y="40" width="24" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="324.0" y="63.9" text-anchor="middle" font-size="11" fill="currentColor">L</text>
-  <line x1="336.0" y1="60.0" x2="349.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-km)"/>
-  <rect x="352" y="40" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="352" y="40" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="387.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">Sₖ</text>
-  <text x="387.0" y="30.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">stage k</text>
-  <line x1="422.0" y1="60.0" x2="435.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-km)"/>
-  <rect x="438" y="40" width="24" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="438" y="40" width="24" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="450.0" y="63.9" text-anchor="middle" font-size="11" fill="currentColor">L</text>
-  <line x1="10.0" y1="105.0" x2="462.0" y2="105.0" stroke="currentColor" stroke-width="1.2"/>
-  <text x="10.0" y="120.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">clock</text>
-  <line x1="32.0" y1="105.0" x2="32.0" y2="83.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-km)"/>
-  <line x1="158.0" y1="105.0" x2="158.0" y2="83.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-km)"/>
-  <line x1="324.0" y1="105.0" x2="324.0" y2="83.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-km)"/>
-  <line x1="450.0" y1="105.0" x2="450.0" y2="83.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-km)"/>
-</svg>
-<figcaption>Model of a synchronous $k$-stage pipeline. The stages are combinational circuits, and the latches (master–slave flip-flops) isolate the inputs from the outputs. When the clock is applied, all latches transfer data to the next stage simultaneously.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/pipelining/synchronous_k_stage_pipeline_combinational_stages.svg" alt="Synchronous k-stage pipeline: combinational stages separated by latches on a common clock" width="478px" class="fig" caption="Model of a synchronous $k$-stage pipeline. The stages are combinational circuits, and the latches (master–slave flip-flops) isolate the inputs from the outputs. When the clock is applied, all latches transfer data to the next stage simultaneously." >}}
 
 Let $t_i$ be the delay of stage $S_i$ and $d_L$ the delay of a latch. The clock period is set by the slowest stage:
 
@@ -1719,35 +983,7 @@ The five-stage pipeline is linear, and every instruction passes through each sta
 - **Structure:** in a linear pipeline the stages are executed in sequence; in a non-linear pipeline a stage may be used more than once for a data set (feedforward and feedback connections).
 - **Scheduling:** a static pipeline executes the same sequence of stages for all data, and if one stalls all later ones are delayed; a dynamic pipeline can be reconfigured to perform different functions at different times.
 
-<figure class="fig">
-<svg viewBox="0 0 600 128" width="600" role="img" aria-label="Linear and non-linear pipeline structures">
-  <defs><marker id="arr-ln" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-lnr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="20" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="47.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">A</text>
-  <line x1="74.0" y1="60.0" x2="107.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="110" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="137.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">B</text>
-  <line x1="164.0" y1="60.0" x2="197.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="200" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="227.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">C</text>
-  <line x1="4.0" y1="60.0" x2="17.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <line x1="254.0" y1="60.0" x2="270.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <text x="145.0" y="108.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(a) linear: A → B → C</text>
-  <rect x="330" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="357.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">A</text>
-  <line x1="384.0" y1="60.0" x2="417.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="420" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="447.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">B</text>
-  <line x1="474.0" y1="60.0" x2="507.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-ln)"/>
-  <rect x="510" y="40" width="54" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="537.0" y="64.5" text-anchor="middle" font-size="13" fill="currentColor">C</text>
-  <polyline points="537.0,40.0 537.0,22.0 447.0,22.0 447.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
-  <polyline points="537.0,80.0 537.0,96.0 357.0,96.0 357.0,83.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
-  <polyline points="384.0,50.0 402.0,50.0 402.0,14.0 530.0,14.0 530.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ln)"/>
-  <text x="447.0" y="120.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(b) non-linear, e.g. A, B, C, B, C, A, C, A</text>
-</svg>
-<figcaption>Linear and non-linear pipelines.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/pipelining/linear_non_linear_pipeline_structures.svg" alt="Linear and non-linear pipeline structures" width="600px" class="fig" caption="Linear and non-linear pipelines." >}}
 
 ### Reservation Tables
 
@@ -1796,31 +1032,7 @@ The **collision vector** is $C = (C_m \dots C_2 C_1)$, where $C_i = 1$ if latenc
 
 From the collision vector a state diagram is constructed. The initial state is the collision vector. A latency $p$ is permitted if $C_p = 0$, and the next state is obtained by shifting the present state $p$ bits to the right and ORing it with the initial collision vector. A latency greater than $m$ returns to the initial state.
 
-<figure class="fig">
-<svg viewBox="0 0 440 210" width="440" role="img" aria-label="State diagram for the collision vector 1010">
-  <defs><marker id="arr-sd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-sdr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <ellipse cx="100" cy="110" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="100.0" y="114.0" text-anchor="middle" font-size="12" fill="currentColor">1010</text>
-  <ellipse cx="340" cy="45" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="340.0" y="49.0" text-anchor="middle" font-size="12" fill="currentColor">1111</text>
-  <ellipse cx="340" cy="175" rx="40" ry="18" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="340.0" y="179.0" text-anchor="middle" font-size="12" fill="currentColor">1011</text>
-  <path d="M128,97 Q220,30 298,40" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="210.0" y="34.0" text-anchor="middle" font-size="11" fill="#ef4444">1</text>
-  <path d="M302,58 Q230,95 142,108" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="236.0" y="104.0" text-anchor="middle" font-size="11" fill="#ef4444">5+</text>
-  <path d="M128,123 Q220,190 298,180" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="210.0" y="196.0" text-anchor="middle" font-size="11" fill="#ef4444">3</text>
-  <path d="M302,162 Q230,125 142,114" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="236.0" y="126.0" text-anchor="middle" font-size="11" fill="#ef4444">5+</text>
-  <path d="M64,102 C 20,70 20,150 64,118" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="16.0" y="114.0" text-anchor="end" font-size="11" fill="#ef4444">5+</text>
-  <path d="M378,167 C 420,140 420,210 378,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-sd)"/>
-  <text x="422.0" y="179.0" text-anchor="start" font-size="11" fill="#ef4444">3</text>
-  <text x="100.0" y="146.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">initial state</text>
-</svg>
-<figcaption>State diagram for Y, with $C_Y = (1010)$. Each arrow is labelled in red with the permitted latency that causes the transition; 5+ is any latency of 5 or more.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/pipelining/state_diagram_collision_vector_1010.svg" alt="State diagram for the collision vector 1010" width="440px" class="fig" caption="State diagram for Y, with $C_Y = (1010)$. Each arrow is labelled in red with the permitted latency that causes the transition; 5+ is any latency of 5 or more." >}}
 
 - A **latency cycle** is a latency sequence that repeats. In a **simple cycle** each state appears only once. A **greedy cycle** is formed by taking the minimum permitted latency from each state.
 - Y: simple cycles (3), (5), (1, 5), (3, 5); greedy cycles (3) and (1, 5).
@@ -1844,51 +1056,7 @@ An adder and a multiplier can be combined into one multifunction pipeline, sched
 
 Each of the five steps IF, ID, EX, MEM and WB becomes a pipeline stage, each stage finishes in one clock cycle, and a new instruction is started every cycle.
 
-<figure class="fig">
-<svg viewBox="0 0 524 128" width="524" role="img" aria-label="The five MIPS32 pipeline stages separated by the IF/ID, ID/EX, EX/MEM and MEM/WB latches">
-  <defs><marker id="arr-mp2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-mpr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="10" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="10" y="30" width="80" height="50" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="50.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">IF</text>
-  <text x="50.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">instruction</text>
-  <text x="50.0" y="111.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">fetch</text>
-  <rect x="98" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
-  <text x="103.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">IF/ID</text>
-  <line x1="90.0" y1="55.0" x2="97.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="108.0" y1="55.0" x2="115.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
-  <rect x="116" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="116" y="30" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="156.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">ID</text>
-  <text x="156.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">decode,</text>
-  <text x="156.0" y="111.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">register read</text>
-  <rect x="204" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
-  <text x="209.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">ID/EX</text>
-  <line x1="196.0" y1="55.0" x2="203.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="214.0" y1="55.0" x2="221.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
-  <rect x="222" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="222" y="30" width="80" height="50" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="262.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">EX</text>
-  <text x="262.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">ALU / address</text>
-  <rect x="310" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
-  <text x="315.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">EX/MEM</text>
-  <line x1="302.0" y1="55.0" x2="309.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="320.0" y1="55.0" x2="327.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
-  <rect x="328" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="328" y="30" width="80" height="50" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="368.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">MEM</text>
-  <text x="368.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">data memory</text>
-  <rect x="416" y="24" width="10" height="62" fill="currentColor" opacity=".55"/>
-  <text x="421.0" y="16.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">MEM/WB</text>
-  <line x1="408.0" y1="55.0" x2="415.0" y2="55.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="426.0" y1="55.0" x2="433.0" y2="55.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-mp2)"/>
-  <rect x="434" y="30" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="434" y="30" width="80" height="50" rx="3" fill="#ef4444" opacity=".18"/>
-  <text x="474.0" y="52.0" text-anchor="middle" font-size="13" fill="currentColor">WB</text>
-  <text x="474.0" y="98.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">register</text>
-  <text x="474.0" y="111.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">write</text>
-</svg>
-<figcaption>The MIPS32 pipeline. The temporary registers of the datapath are part of the latches between stages; for example, ID/EX.A is register A in the ID/EX latch.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/five_mips32_pipeline_stages_separated_if.svg" alt="The five MIPS32 pipeline stages separated by the IF/ID, ID/EX, EX/MEM and MEM/WB latches" width="524px" class="fig" caption="The MIPS32 pipeline. The temporary registers of the datapath are part of the latches between stages; for example, ID/EX.A is register A in the ID/EX latch." >}}
 
 <figure class="table">
 <figcaption>Micro-operations of the pipeline stages.</figcaption>
@@ -1957,108 +1125,7 @@ Structural hazards arise when the hardware cannot support all combinations of ov
 - a register read in ID while another instruction writes a register in WB;
 - a functional unit (such as a floating-point multiplier) that is not fully pipelined.
 
-<figure class="fig">
-<svg viewBox="0 0 590 170" width="590" role="img" aria-label="Structural hazard: the fourth instruction's fetch conflicts with the load's memory access">
-  <defs><marker id="arr-pstruct" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-pstructr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="143.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">1</text>
-  <text x="189.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">2</text>
-  <text x="235.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">3</text>
-  <text x="281.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4</text>
-  <text x="327.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">5</text>
-  <text x="373.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">6</text>
-  <text x="419.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">7</text>
-  <text x="465.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">8</text>
-  <text x="511.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">9</text>
-  <text x="557.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">10</text>
-  <text x="112.0" y="18.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">cycle</text>
-  <text x="110.0" y="47.0" text-anchor="end" font-size="11" fill="currentColor">LW R1,10(R2)</text>
-  <rect x="121" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="121" y="32" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="143.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="167" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="32" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="189.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="213" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="32" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="235.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="259" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="32" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <rect x="259" y="32" width="44" height="22" rx="2" stroke="#ef4444" stroke-width="2.4" fill="none"/>
-  <text x="281.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="305" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="32" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="327.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="73.0" text-anchor="end" font-size="11" fill="currentColor">ADD R3,R4,R5</text>
-  <rect x="167" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="189.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="213" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="58" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="235.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="259" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="58" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="281.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="305" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="58" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="327.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="351" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="58" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="373.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="99.0" text-anchor="end" font-size="11" fill="currentColor">SUB R10,R2,R9</text>
-  <rect x="213" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="84" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="235.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="259" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="84" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="281.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="305" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="84" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="327.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="351" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="84" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="373.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="397" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="84" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="419.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="125.0" text-anchor="end" font-size="11" fill="currentColor">AND R5,R7,R7</text>
-  <rect x="259" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="281.0" y="125.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="305" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="110" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="327.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="351" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="110" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="373.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="397" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="110" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="419.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="443" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="110" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="465.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="489" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="489" y="110" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="511.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="151.0" text-anchor="end" font-size="11" fill="currentColor">ADD R2,R1,R5</text>
-  <rect x="305" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="327.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="351" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="136" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="373.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="397" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="136" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="419.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="443" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="136" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="465.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="489" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="489" y="136" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="511.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="535" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="535" y="136" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="557.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-</svg>
-<figcaption>Structural hazard with a single-port memory: the fetch of the fourth instruction conflicts with the MEM of the load (red), so a stall is inserted.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/structural_hazard_fourth_instruction_s_fetch.svg" alt="Structural hazard: the fourth instruction's fetch conflicts with the load's memory access" width="590px" class="fig" caption="Structural hazard with a single-port memory: the fetch of the fourth instruction conflicts with the MEM of the load (red), so a stall is inserted." >}}
 
 <div class="example">
 
@@ -2077,201 +1144,13 @@ Data hazards arise from data dependences between instructions in the pipeline. I
 1. **Data forwarding (bypassing):** the result is in a pipeline register (e.g. EX/MEM.ALUOut) as soon as it is computed. Additional paths with multiplexers forward it to the ALU input of the instruction that needs it; the control unit detects the dependence and selects the path.
 2. **Splitting the register access** (the write in the first half of the cycle and the reads in the second half, as in the five-stage pipeline above), which removes the hazard between an instruction and the third instruction after it.
 
-<figure class="fig">
-<svg viewBox="0 0 544 170" width="544" role="img" aria-label="Forwarding the ALU result of ADD to the following instructions">
-  <defs><marker id="arr-pfwd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-pfwdr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="143.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">1</text>
-  <text x="189.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">2</text>
-  <text x="235.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">3</text>
-  <text x="281.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4</text>
-  <text x="327.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">5</text>
-  <text x="373.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">6</text>
-  <text x="419.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">7</text>
-  <text x="465.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">8</text>
-  <text x="511.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">9</text>
-  <text x="112.0" y="18.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">cycle</text>
-  <text x="110.0" y="47.0" text-anchor="end" font-size="11" fill="currentColor">ADD R4,R5,R6</text>
-  <rect x="121" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="121" y="32" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="143.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="167" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="32" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="189.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="213" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="32" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <rect x="213" y="32" width="44" height="22" rx="2" stroke="#ef4444" stroke-width="2.4" fill="none"/>
-  <text x="235.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="259" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="32" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="281.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="305" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="32" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="327.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="73.0" text-anchor="end" font-size="11" fill="currentColor">SUB R3,R4,R8</text>
-  <rect x="167" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="189.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="213" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="58" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="235.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="259" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="58" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="281.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="305" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="58" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="327.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="351" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="58" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="373.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="99.0" text-anchor="end" font-size="11" fill="currentColor">ADD R7,R2,R4</text>
-  <rect x="213" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="84" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="235.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="259" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="84" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="281.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="305" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="84" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="327.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="351" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="84" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="373.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="397" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="84" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="419.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="125.0" text-anchor="end" font-size="11" fill="currentColor">AND R9,R4,R10</text>
-  <rect x="259" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="110" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="281.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="305" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="110" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="327.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="351" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="110" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="373.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="397" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="110" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="419.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="443" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="110" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="465.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="151.0" text-anchor="end" font-size="11" fill="currentColor">OR R11,R4,R5</text>
-  <rect x="305" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="136" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="327.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="351" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="136" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="373.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="397" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="136" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="419.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="443" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="136" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="465.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="489" y="136" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="489" y="136" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="511.0" y="151.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <path d="M249.0,53.0 C249.0,69.0 254.0,69.0 260.0,69.0" style="stroke: var(--theme, #fff)" stroke-width="6" fill="none"/>
-  <path d="M249.0,53.0 C249.0,69.0 254.0,69.0 260.0,69.0" stroke="#ef4444" stroke-width="2.2" fill="none" marker-end="url(#arr-pfwdr)"/>
-  <path d="M295.0,53.0 C295.0,95.0 300.0,95.0 306.0,95.0" style="stroke: var(--theme, #fff)" stroke-width="6" fill="none"/>
-  <path d="M295.0,53.0 C295.0,95.0 300.0,95.0 306.0,95.0" stroke="#ef4444" stroke-width="2.2" fill="none" marker-end="url(#arr-pfwdr)"/>
-</svg>
-<figcaption>ADD computes R4 in EX (red), and the result is forwarded to SUB and the second ADD. AND reads R4 in the cycle in which ADD writes it, so the split register access removes that hazard. OR is not affected.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/forwarding_alu_result_add_following_instructions.svg" alt="Forwarding the ALU result of ADD to the following instructions" width="544px" class="fig" caption="ADD computes R4 in EX (red), and the result is forwarded to SUB and the second ADD. AND reads R4 in the cycle in which ADD writes it, so the split register access removes that hazard. OR is not affected." >}}
 
 In MIPS32, memory references are always kept in order, so there are no data hazards between memory references: `SW R2,100(R5)` followed by `LW R10,100(R5)` is executed correctly. Cache misses can still cause stalls.
 
 A load followed by an instruction that uses the loaded value causes a hazard that forwarding cannot remove: the data is available only at the end of MEM, and the next instruction needs it at the start of EX. The hardware (a **pipeline interlock**) detects the hazard in ID and stalls the instruction for one cycle before it is **issued**, i.e. moved from ID to EX.
 
-<figure class="fig">
-<svg viewBox="0 0 544 144" width="544" role="img" aria-label="Load-use hazard: one stall even with forwarding">
-  <defs><marker id="arr-ploaduse" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-ploaduser" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="143.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">1</text>
-  <text x="189.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">2</text>
-  <text x="235.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">3</text>
-  <text x="281.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4</text>
-  <text x="327.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">5</text>
-  <text x="373.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">6</text>
-  <text x="419.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">7</text>
-  <text x="465.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">8</text>
-  <text x="511.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">9</text>
-  <text x="112.0" y="18.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">cycle</text>
-  <text x="110.0" y="47.0" text-anchor="end" font-size="11" fill="currentColor">LW R4,100(R5)</text>
-  <rect x="121" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="121" y="32" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="143.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="167" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="32" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="189.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="213" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="32" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="235.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="259" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="32" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <rect x="259" y="32" width="44" height="22" rx="2" stroke="#ef4444" stroke-width="2.4" fill="none"/>
-  <text x="281.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="305" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="32" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="327.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="73.0" text-anchor="end" font-size="11" fill="currentColor">SUB R3,R4,R8</text>
-  <rect x="167" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="189.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="213" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="58" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="235.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="259" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="281.0" y="73.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="305" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="58" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="327.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="351" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="58" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="373.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="397" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="58" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="419.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="99.0" text-anchor="end" font-size="11" fill="currentColor">ADD R7,R2,R4</text>
-  <rect x="213" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="84" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="235.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="259" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="281.0" y="99.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="305" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="84" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="327.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="351" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="84" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="373.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="397" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="84" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="419.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="443" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="84" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="465.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="125.0" text-anchor="end" font-size="11" fill="currentColor">AND R9,R4,R10</text>
-  <rect x="259" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="281.0" y="125.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="305" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="110" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="327.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="351" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="110" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="373.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="397" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="110" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="419.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="443" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="110" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="465.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="489" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="489" y="110" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="511.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <path d="M295.0,53.0 C295.0,69.0 300.0,69.0 306.0,69.0" style="stroke: var(--theme, #fff)" stroke-width="6" fill="none"/>
-  <path d="M295.0,53.0 C295.0,69.0 300.0,69.0 306.0,69.0" stroke="#ef4444" stroke-width="2.2" fill="none" marker-end="url(#arr-ploaduser)"/>
-</svg>
-<figcaption>A load followed by a use of the loaded data: one stall cycle, and then forwarding from MEM.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/load_use_hazard_stall_even_forwarding.svg" alt="Load-use hazard: one stall even with forwarding" width="544px" class="fig" caption="A load followed by a use of the loaded data: one stall cycle, and then forwarding from MEM." >}}
 
 The compiler tries to avoid a load followed by an immediate use (**instruction scheduling**). The slot after a load is the **load delay slot**; if the compiler cannot fill it with an independent instruction, it inserts a NOP (no-operation instruction).
 
@@ -2352,93 +1231,7 @@ Control hazards are caused by branches. If the branch is taken, the PC changes t
 
 In MIPS32 a branch only tests a register for zero or compares two registers. With additional logic the outcome is known by the end of ID, and a separate adder computes the target address, so the penalty is one cycle.
 
-<figure class="fig">
-<svg viewBox="0 0 544 144" width="544" role="img" aria-label="Branch resolved in ID: the instruction after the branch is fetched again, one cycle lost">
-  <defs><marker id="arr-pbranch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-pbranchr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="143.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">1</text>
-  <text x="189.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">2</text>
-  <text x="235.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">3</text>
-  <text x="281.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">4</text>
-  <text x="327.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">5</text>
-  <text x="373.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">6</text>
-  <text x="419.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">7</text>
-  <text x="465.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">8</text>
-  <text x="511.0" y="18.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">9</text>
-  <text x="112.0" y="18.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">cycle</text>
-  <text x="110.0" y="47.0" text-anchor="end" font-size="11" fill="currentColor">BEQ R1,R2,L</text>
-  <rect x="121" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="121" y="32" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="143.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="167" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="32" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="189.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="213" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="32" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="235.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="259" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="32" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="281.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="305" y="32" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="32" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="327.0" y="47.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="73.0" text-anchor="end" font-size="11" fill="currentColor">i + 1</text>
-  <rect x="167" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="167" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="189.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="213" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="213" y="58" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="235.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="259" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="58" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="281.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="305" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="58" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="327.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="351" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="58" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="373.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="397" y="58" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="58" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="419.0" y="73.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="99.0" text-anchor="end" font-size="11" fill="currentColor">i + 2</text>
-  <rect x="213" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="235.0" y="99.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="259" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="259" y="84" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="281.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="305" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="84" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="327.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="351" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="84" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="373.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="397" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="84" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="419.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="443" y="84" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="84" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="465.0" y="99.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-  <text x="110.0" y="125.0" text-anchor="end" font-size="11" fill="currentColor">i + 3</text>
-  <rect x="259" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2" fill="none" opacity=".7"/>
-  <text x="281.0" y="125.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">stall</text>
-  <rect x="305" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="305" y="110" width="44" height="22" rx="2" fill="#3b82f6" opacity=".18"/>
-  <text x="327.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">IF</text>
-  <rect x="351" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="351" y="110" width="44" height="22" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="373.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">ID</text>
-  <rect x="397" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="397" y="110" width="44" height="22" rx="2" fill="#f59e0b" opacity=".18"/>
-  <text x="419.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">EX</text>
-  <rect x="443" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="443" y="110" width="44" height="22" rx="2" fill="#a855f7" opacity=".18"/>
-  <text x="465.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">MEM</text>
-  <rect x="489" y="110" width="44" height="22" rx="2" stroke="currentColor" stroke-width="1.2" fill="none"/>
-  <rect x="489" y="110" width="44" height="22" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="511.0" y="125.0" text-anchor="middle" font-size="10" fill="currentColor">WB</text>
-</svg>
-<figcaption>Branch decided at the end of ID: the instruction after a taken branch is fetched again, with one cycle lost.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/branch_resolved_id_instruction_branch_fetched.svg" alt="Branch resolved in ID: the instruction after the branch is fetched again, one cycle lost" width="544px" class="fig" caption="Branch decided at the end of ID: the instruction after a taken branch is fetched again, with one cycle lost." >}}
 
 Deciding the branch in ID creates a new data hazard, since the branch now needs its register operands in ID, one stage earlier than an ALU instruction needs them in EX. An ALU instruction followed by a branch on its result therefore stalls the branch even with forwarding:
 
@@ -2470,46 +1263,7 @@ $$\text{Speedup} = \frac{5}{1 + \text{branch frequency} \times \text{branch pena
 - **Branch prediction buffer (BPB):** a small memory indexed by the lower bits of the branch address, holding a bit that says whether the branch was recently taken. The entry may belong to another branch with the same lower address bits. If the prediction is wrong, the bit is inverted. With a 1-bit scheme, a branch that is almost always taken is mispredicted twice when it is not taken. In an inner loop of 20 iterations, the branch is mispredicted on the last iteration and on the first iteration of the next execution, so it is predicted correctly 18 times out of 20 (90%), although it is taken 95% of the time.
 - **2-bit prediction:** the prediction changes only after two consecutive mispredictions.
 
-<figure class="fig">
-<svg viewBox="0 0 440 214" width="440" role="img" aria-label="Two-bit branch predictor: the prediction changes only after two consecutive mispredictions">
-  <defs><marker id="arr-2b" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-2br" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <g transform="translate(30,0)">
-  <rect x="10" y="28" width="140" height="44" rx="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="10" y="28" width="140" height="44" rx="20" fill="#22c55e" opacity=".18"/>
-  <text x="80.0" y="47.0" text-anchor="middle" font-size="11" fill="currentColor">predict taken</text>
-  <text x="80.0" y="63.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(11)</text>
-  <rect x="220" y="28" width="140" height="44" rx="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="220" y="28" width="140" height="44" rx="20" fill="#22c55e" opacity=".18"/>
-  <text x="290.0" y="47.0" text-anchor="middle" font-size="11" fill="currentColor">predict taken</text>
-  <text x="290.0" y="63.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(10)</text>
-  <rect x="10" y="148" width="140" height="44" rx="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="10" y="148" width="140" height="44" rx="20" fill="#ef4444" opacity=".18"/>
-  <text x="80.0" y="167.0" text-anchor="middle" font-size="11" fill="currentColor">predict not taken</text>
-  <text x="80.0" y="183.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(01)</text>
-  <rect x="220" y="148" width="140" height="44" rx="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="220" y="148" width="140" height="44" rx="20" fill="#ef4444" opacity=".18"/>
-  <text x="290.0" y="167.0" text-anchor="middle" font-size="11" fill="currentColor">predict not taken</text>
-  <text x="290.0" y="183.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">(00)</text>
-  <line x1="150.0" y1="44.0" x2="220.0" y2="44.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2b)"/>
-  <text x="185.0" y="38.0" text-anchor="middle" font-size="10" fill="currentColor">NT</text>
-  <line x1="220.0" y1="58.0" x2="150.0" y2="58.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2b)"/>
-  <text x="185.0" y="72.0" text-anchor="middle" font-size="10" fill="currentColor">T</text>
-  <line x1="150.0" y1="164.0" x2="220.0" y2="164.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2b)"/>
-  <text x="185.0" y="158.0" text-anchor="middle" font-size="10" fill="currentColor">NT</text>
-  <line x1="220.0" y1="178.0" x2="150.0" y2="178.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2b)"/>
-  <text x="185.0" y="192.0" text-anchor="middle" font-size="10" fill="currentColor">T</text>
-  <line x1="290.0" y1="72.0" x2="290.0" y2="148.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2b)"/>
-  <text x="298.0" y="112.0" text-anchor="start" font-size="10" fill="currentColor">NT</text>
-  <line x1="80.0" y1="148.0" x2="80.0" y2="72.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2b)"/>
-  <text x="72.0" y="112.0" text-anchor="end" font-size="10" fill="currentColor">T</text>
-  <path d="M10,40 C -12,30 -12,70 10,60" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2b)"/>
-  <text x="4.0" y="28.0" text-anchor="middle" font-size="10" fill="currentColor">T</text>
-  <path d="M360,160 C 384,150 384,190 360,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2b)"/>
-  <text x="372.0" y="204.0" text-anchor="middle" font-size="10" fill="currentColor">NT</text>
-  </g>
-</svg>
-<figcaption>2-bit prediction scheme (T: taken, NT: not taken).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/bit_branch_predictor_prediction_changes_consecutive.svg" alt="Two-bit branch predictor: the prediction changes only after two consecutive mispredictions" width="440px" class="fig" caption="2-bit prediction scheme (T: taken, NT: not taken)." >}}
 
 The 2-bit scheme alone does not speed up the MIPS32 pipeline, since the outcome and the target are both known at the end of ID. To avoid the penalty, the next fetch address must be known by the end of IF, before the instruction is decoded.
 
@@ -2535,77 +1289,7 @@ With 90% of the branches found in the BTB, 8% of the predictions incorrect and 7
 
 Floating-point operations need more than one cycle in EX. Using a slower clock would slow down all other operations, so the EX stage is repeated, with several functional units:
 
-<figure class="fig">
-<svg viewBox="0 0 570 258" width="570" role="img" aria-label="MIPS32 pipeline with an integer unit, pipelined FP multiplier and adder, and a non-pipelined divider">
-  <defs><marker id="arr-mc" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-mcr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="10" y="120" width="50" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="10" y="120" width="50" height="34" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="35.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">IF</text>
-  <rect x="80" y="120" width="50" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="80" y="120" width="50" height="34" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="105.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">ID</text>
-  <line x1="60.0" y1="137.0" x2="77.0" y2="137.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mc)"/>
-  <rect x="430" y="120" width="56" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="430" y="120" width="56" height="34" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="458.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">MEM</text>
-  <rect x="506" y="120" width="50" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="506" y="120" width="50" height="34" rx="3" fill="#ef4444" opacity=".18"/>
-  <text x="531.0" y="141.2" text-anchor="middle" font-size="12" fill="currentColor">WB</text>
-  <line x1="486.0" y1="137.0" x2="503.0" y2="137.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mc)"/>
-  <rect x="240" y="20" width="60" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="240" y="20" width="60" height="30" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="270.0" y="38.9" text-anchor="middle" font-size="11" fill="currentColor">EX</text>
-  <text x="270.0" y="14.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">integer unit</text>
-  <rect x="160" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="160" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="176.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M1</text>
-  <rect x="196" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="196" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="212.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M2</text>
-  <rect x="232" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="232" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="248.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M3</text>
-  <rect x="268" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="268" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="284.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M4</text>
-  <rect x="304" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="304" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="320.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M5</text>
-  <rect x="340" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="340" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="356.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M6</text>
-  <rect x="376" y="76" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="376" y="76" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="392.0" y="92.2" text-anchor="middle" font-size="9" fill="currentColor">M7</text>
-  <text x="296.0" y="116.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">FP / integer multiply (7 stages)</text>
-  <rect x="214" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="214" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="230.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A1</text>
-  <rect x="250" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="250" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="266.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A2</text>
-  <rect x="286" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="286" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="302.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A3</text>
-  <rect x="322" y="144" width="32" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="322" y="144" width="32" height="26" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="338.0" y="160.2" text-anchor="middle" font-size="9" fill="currentColor">A4</text>
-  <text x="286.0" y="184.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">FP add / subtract (4 stages)</text>
-  <rect x="230" y="204" width="80" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="230" y="204" width="80" height="30" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="270.0" y="222.8" text-anchor="middle" font-size="11" fill="currentColor">divider</text>
-  <text x="270.0" y="248.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">divider (not pipelined)</text>
-  <polyline points="130.0,137.0 145.0,137.0 145.0,35.0 237.0,35.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="300.0,35.0 415.0,35.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="130.0,137.0 145.0,137.0 145.0,89.0 157.0,89.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="412.0,89.0 415.0,89.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="130.0,137.0 145.0,137.0 145.0,157.0 211.0,157.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="358.0,157.0 415.0,157.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="130.0,137.0 145.0,137.0 145.0,219.0 227.0,219.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-  <polyline points="310.0,219.0 415.0,219.0 415.0,137.0 427.0,137.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mc)"/>
-</svg>
-<figcaption>MIPS32 pipeline with floating-point units (after the NPTEL course <a href="#ref-1">[1]</a> and Hennessy & Patterson).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/mips32_pipeline_integer_unit_pipelined_fp.svg" alt="MIPS32 pipeline with an integer unit, pipelined FP multiplier and adder, and a non-pipelined divider" width="570px" class="fig" caption=`MIPS32 pipeline with floating-point units (after the NPTEL course <a href="#ref-1">[1]</a> and Hennessy & Patterson).` >}}
 
 - **Latency:** the number of intervening cycles between an instruction that produces a result and an instruction that uses it.
 - **Initiation interval** (repeat interval): the number of cycles that must elapse between issuing two operations of the same type.
@@ -2638,7 +1322,7 @@ Up to 4 FP adds, 7 FP multiplies and 1 FP divide can be outstanding. As a result
 
 <div class="example">
 
-`for (i = 1000; i > 0; i--) x[i] = x[i] + s;` with these latencies, counted as the number of stall cycles needed between producer and consumer (H&P, Fig. 3.2): FP ALU op to FP ALU op 3, FP ALU op to store 2, load to FP ALU op 1, load to store 0; and one cycle of branch delay.
+`for (i = 1000; i > 0; i--) x[i] = x[i] + s;` with these latencies, counted as the number of stall cycles needed between producer and consumer (H&P, Fig. 3.2): FP ALU op to FP ALU op 3, FP ALU op to store 2, load to FP ALU op 1, load to store 0. An integer ALU result used by the branch needs one stall, and delayed branches are ignored.
 
 </div>
 
@@ -2650,7 +1334,7 @@ Loop: L.D    F0, 0(R1)      ; x[i]
       BNE    R1, R2, Loop
 ```
 
-- As written: 9 cycles per iteration (1 stall after the load, 2 after ADD.D, 1 for the branch).
+- As written: 9 cycles per iteration (1 stall after the load, 2 after ADD.D, and 1 between ADDI and BNE, which needs the new R1).
 - Scheduled: `ADDI` is moved after the load and the store offset changed to `8(R1)`, giving 7 cycles per iteration.
 - Unrolled 4 times, with different registers (F0/F4, F6/F8, F10/F12, F14/F16) and one `ADDI` and `BNE`: 14 instructions and 13 stalls, 27 cycles, i.e. 6.8 cycles per element.
 - Unrolled and scheduled (four loads, four adds, four stores): no stalls, 14 cycles, 3.5 cycles per element.
@@ -2705,70 +1389,7 @@ and later uses of F8 must refer to T. The compiler can do this inside a basic bl
 
 In Tomasulo's scheme the names are the **reservation stations**. A reservation station is a buffer in front of a functional unit. It holds an issued instruction and either the values of its operands, if they are available, or the names of the reservation stations that will produce them. All results are broadcast on the **common data bus (CDB)**, and every reservation station and register waiting for that result loads it at the same time. Hazard detection is distributed among the reservation stations, and results go directly to the waiting units instead of through the registers.
 
-<figure class="fig">
-<svg viewBox="0 0 620 330" width="620" role="img" aria-label="Structure of a floating-point unit using Tomasulo's algorithm">
-  <defs><marker id="arr-tom" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-tomr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="30" y="20" width="150" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="105.0" y="44.2" text-anchor="middle" font-size="12" fill="currentColor">Instruction queue</text>
-  <rect x="400" y="20" width="170" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="485.0" y="44.2" text-anchor="middle" font-size="12" fill="currentColor">FP registers</text>
-  <rect x="20" y="120" width="110" height="66" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="20.0" y1="142.0" x2="130.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="20.0" y1="164.0" x2="130.0" y2="164.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="150" y="120" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="150.0" y1="142.0" x2="240.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="30" y="222" width="200" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="130.0" y="244.2" text-anchor="middle" font-size="12" fill="currentColor">Memory unit</text>
-  <rect x="270" y="120" width="130" height="66" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="270.0" y1="142.0" x2="400.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="270.0" y1="164.0" x2="400.0" y2="164.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="440" y="120" width="130" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="440.0" y1="142.0" x2="570.0" y2="142.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="270" y="222" width="130" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="222" width="130" height="36" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="335.0" y="244.2" text-anchor="middle" font-size="12" fill="currentColor">FP adders</text>
-  <rect x="440" y="222" width="130" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="440" y="222" width="130" height="36" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="505.0" y="244.2" text-anchor="middle" font-size="12" fill="currentColor">FP multipliers</text>
-  <text x="335.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Add1</text>
-  <text x="335.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Add2</text>
-  <text x="335.0" y="179.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Add3</text>
-  <text x="505.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Mult1</text>
-  <text x="505.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Mult2</text>
-  <text x="195.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Store1</text>
-  <text x="195.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Store2</text>
-  <text x="75.0" y="135.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Load1</text>
-  <text x="75.0" y="157.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Load2</text>
-  <text x="75.0" y="179.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">Load3</text>
-  <line x1="105.0" y1="60.0" x2="105.0" y2="72.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="75.0" y1="72.0" x2="505.0" y2="72.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="75.0" y1="72.0" x2="75.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="300.0" y1="72.0" x2="300.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="470.0" y1="72.0" x2="470.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <text x="250.0" y="68.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">operation bus</text>
-  <line x1="485.0" y1="60.0" x2="485.0" y2="88.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="215.0" y1="88.0" x2="540.0" y2="88.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="215.0" y1="88.0" x2="215.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="370.0" y1="88.0" x2="370.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="540.0" y1="88.0" x2="540.0" y2="118.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <text x="548.0" y="84.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">operand</text>
-  <text x="548.0" y="96.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">buses</text>
-  <line x1="335.0" y1="186.0" x2="335.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="505.0" y1="164.0" x2="505.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="75.0" y1="186.0" x2="75.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="195.0" y1="164.0" x2="195.0" y2="220.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-tom)"/>
-  <line x1="20.0" y1="300.0" x2="610.0" y2="300.0" stroke="#ef4444" stroke-width="3.5"/>
-  <text x="315.0" y="318.0" text-anchor="middle" font-size="11" fill="#ef4444">common data bus (CDB)</text>
-  <line x1="130.0" y1="258.0" x2="130.0" y2="297.0" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr-tomr)"/>
-  <line x1="335.0" y1="258.0" x2="335.0" y2="297.0" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr-tomr)"/>
-  <line x1="505.0" y1="258.0" x2="505.0" y2="297.0" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr-tomr)"/>
-  <polyline points="258.0,297.0 258.0,153.0 268.0,153.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
-  <polyline points="428.0,297.0 428.0,142.0 438.0,142.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
-  <polyline points="253.0,297.0 253.0,142.0 242.0,142.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
-  <polyline points="600.0,300.0 600.0,40.0 573.0,40.0" stroke="#ef4444" stroke-width="1.4" fill="none" marker-end="url(#arr-tomr)"/>
-</svg>
-<figcaption>Floating-point unit using Tomasulo's algorithm (Hennessy & Patterson). Load1–3 are the load buffers, Store1–2 the store buffers, and Add1–3 and Mult1–2 the reservation stations of the FP adders and multipliers. Results from memory and the FP units go on the CDB.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/instruction_pipelining_mips32/structure_floating_point_unit_tomasulo_s.svg" alt="Structure of a floating-point unit using Tomasulo's algorithm" width="620px" class="fig" caption="Floating-point unit using Tomasulo's algorithm (Hennessy & Patterson). Load1–3 are the load buffers, Store1–2 the store buffers, and Add1–3 and Mult1–2 the reservation stations of the FP adders and multipliers. Results from memory and the FP units go on the CDB." >}}
 
 <figure class="table">
 <figcaption>Fields of a reservation station and of a register.</figcaption>
@@ -2891,91 +1512,7 @@ The latency is 20 ns and the bandwidth is $32 \text{ bits}/20\text{ ns} = 1.6$ G
 
 The memory cells are organized as an array. In an $8 \times 4$ chip, each row of 4 cells is a word, and a $3 \times 8$ decoder selects one of the 8 rows through the word lines. Each cell is connected to two bit lines $b$ and $b'$, and the cells in a column are connected to a sense/write circuit.
 
-<figure class="fig">
-<svg viewBox="0 0 470 322" width="470" role="img" aria-label="Organization of an 8 x 4 memory chip">
-  <defs><marker id="arr-c8" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="40" width="60" height="200" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="40" width="60" height="200" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="50.0" y="137.5" text-anchor="middle" font-size="10" fill="currentColor">3 × 8</text>
-  <text x="50.0" y="149.5" text-anchor="middle" font-size="10" fill="currentColor">decoder</text>
-  <text x="10.0" y="30.0" text-anchor="start" font-size="10" fill="currentColor">A₂A₁A₀</text>
-  <line x1="80.0" y1="58.0" x2="340.0" y2="58.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="55.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W0</text>
-  <rect x="120" y="50" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="50" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="50" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="50" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="82.0" x2="340.0" y2="82.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="79.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W1</text>
-  <rect x="120" y="74" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="74" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="74" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="74" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="106.0" x2="340.0" y2="106.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="103.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W2</text>
-  <rect x="120" y="98" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="98" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="98" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="98" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="130.0" x2="340.0" y2="130.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="127.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W3</text>
-  <rect x="120" y="122" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="122" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="122" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="122" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="154.0" x2="340.0" y2="154.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="151.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W4</text>
-  <rect x="120" y="146" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="146" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="146" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="146" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="178.0" x2="340.0" y2="178.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="175.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W5</text>
-  <rect x="120" y="170" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="170" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="170" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="170" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="202.0" x2="340.0" y2="202.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="199.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W6</text>
-  <rect x="120" y="194" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="194" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="194" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="194" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="80.0" y1="226.0" x2="340.0" y2="226.0" stroke="currentColor" stroke-width="1"/>
-  <text x="86.0" y="223.0" text-anchor="start" font-size="8" fill="currentColor" class="dim">W7</text>
-  <rect x="120" y="218" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="175" y="218" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="230" y="218" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="285" y="218" width="30" height="16" stroke="currentColor" stroke-width="1" fill="none"/>
-  <line x1="127.0" y1="46.0" x2="127.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="143.0" y1="46.0" x2="143.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="113" y="250" width="44" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="135.0" y="267.1" text-anchor="middle" font-size="9" fill="currentColor">S/W</text>
-  <line x1="135.0" y1="278.0" x2="135.0" y2="300.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-c8)"/>
-  <text x="135.0" y="314.0" text-anchor="middle" font-size="10" fill="currentColor">b0</text>
-  <line x1="182.0" y1="46.0" x2="182.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="198.0" y1="46.0" x2="198.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="168" y="250" width="44" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="190.0" y="267.1" text-anchor="middle" font-size="9" fill="currentColor">S/W</text>
-  <line x1="190.0" y1="278.0" x2="190.0" y2="300.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-c8)"/>
-  <text x="190.0" y="314.0" text-anchor="middle" font-size="10" fill="currentColor">b1</text>
-  <line x1="237.0" y1="46.0" x2="237.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="253.0" y1="46.0" x2="253.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="223" y="250" width="44" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="245.0" y="267.1" text-anchor="middle" font-size="9" fill="currentColor">S/W</text>
-  <line x1="245.0" y1="278.0" x2="245.0" y2="300.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-c8)"/>
-  <text x="245.0" y="314.0" text-anchor="middle" font-size="10" fill="currentColor">b2</text>
-  <line x1="292.0" y1="46.0" x2="292.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="308.0" y1="46.0" x2="308.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <rect x="278" y="250" width="44" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="300.0" y="267.1" text-anchor="middle" font-size="9" fill="currentColor">S/W</text>
-  <line x1="300.0" y1="278.0" x2="300.0" y2="300.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-c8)"/>
-  <text x="300.0" y="314.0" text-anchor="middle" font-size="10" fill="currentColor">b3</text>
-  <text x="390.0" y="266.0" text-anchor="start" font-size="10" fill="currentColor">R/W′, CS′</text>
-  <line x1="385.0" y1="262.0" x2="350.0" y2="262.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-c8)"/>
-</svg>
-<figcaption>Organization of an $8 \times 4$ memory chip (after Hamacher).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_organization/organization_8_x_4_memory_chip.svg" alt="Organization of an 8 x 4 memory chip" width="470px" class="fig" caption="Organization of an $8 \times 4$ memory chip (after Hamacher)." >}}
 
 The external connections are the address lines, the data lines, R/$\overline{\text{W}}$, $\overline{\text{CS}}$, power and ground. An $8 \times 4$ chip needs $3 + 4 + 2 + 2 = 11$, and a $256 \times 16$ chip needs $8 + 16 + 2 + 2 = 28$.
 
@@ -2983,37 +1520,7 @@ The external connections are the address lines, the data lines, R/$\overline{\te
 
 An **SRAM** cell stores a bit in a latch formed by two cross-connected inverters. The latch is connected to the bit lines $b$ and $b'$ by transistors $T_1$ and $T_2$, which are switched on by the word line.
 
-<figure class="fig">
-<svg viewBox="0 0 500 224" width="500" role="img" aria-label="SRAM cell: a latch of two cross-coupled inverters connected to the bit lines through T1 and T2">
-  <defs><marker id="arr-sr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="40.0" y1="20.0" x2="40.0" y2="200.0" stroke="currentColor" stroke-width="2"/>
-  <line x1="400.0" y1="20.0" x2="400.0" y2="200.0" stroke="currentColor" stroke-width="2"/>
-  <text x="40.0" y="216.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">b</text>
-  <text x="400.0" y="216.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">b′</text>
-  <line x1="20.0" y1="40.0" x2="420.0" y2="40.0" stroke="currentColor" stroke-width="1.5"/>
-  <text x="425.0" y="44.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">word line</text>
-  <rect x="90" y="90" width="30" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="105.0" y="108.5" text-anchor="middle" font-size="10" fill="currentColor">T₁</text>
-  <line x1="105.0" y1="40.0" x2="105.0" y2="90.0" stroke="currentColor" stroke-width="1.2"/>
-  <rect x="330" y="90" width="30" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="345.0" y="108.5" text-anchor="middle" font-size="10" fill="currentColor">T₂</text>
-  <line x1="345.0" y1="40.0" x2="345.0" y2="90.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="40.0" y1="105.0" x2="90.0" y2="105.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="360.0" y1="105.0" x2="400.0" y2="105.0" stroke="currentColor" stroke-width="1.5"/>
-  <polygon points="190,75 190,115 230,95" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <circle cx="234" cy="95" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polygon points="250,135 250,175 210,155" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <circle cx="206" cy="155" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="120.0,105.0 160.0,105.0 160.0,95.0 190.0,95.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="238.0,95.0 290.0,95.0 290.0,105.0 330.0,105.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="290.0,105.0 290.0,155.0 250.0,155.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="202.0,155.0 160.0,155.0 160.0,105.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="150.0" y="98.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">X</text>
-  <text x="300.0" y="98.0" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">Y</text>
-  <text x="220.0" y="196.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">latch (2 inverters = 4 transistors)</text>
-</svg>
-<figcaption>SRAM cell (after Hamacher). With CMOS inverters (complementary metal–oxide–semiconductor: each inverter is a pair of n-type and p-type MOS transistors) the cell has 6 transistors.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_organization/sram_cell_latch_cross_coupled_inverters.svg" alt="SRAM cell: a latch of two cross-coupled inverters connected to the bit lines through T1 and T2" width="500px" class="fig" caption="SRAM cell (after Hamacher). With CMOS inverters (complementary metal–oxide–semiconductor: each inverter is a pair of n-type and p-type MOS transistors) the cell has 6 transistors." >}}
 
 - **Read:** the word line is activated, $T_1$ and $T_2$ are switched on, and the stored value appears on $b$ (its complement on $b'$), where the sense/write circuit detects it.
 - **Write:** the sense/write circuit sets $b$ and $b'$ to the value and its complement, and the word line is activated.
@@ -3026,31 +1533,7 @@ SRAM is fast, needs no refresh circuitry, and is volatile. It costs more (6 tran
 
 A **DRAM** cell stores a bit as charge on a capacitor, with one transistor. The charge leaks, so the cell must be refreshed periodically, every few milliseconds.
 
-<figure class="fig">
-<svg viewBox="0 0 330 230" width="330" role="img" aria-label="DRAM cell: one transistor and one capacitor">
-  <defs><marker id="arr-dr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="60.0" y1="20.0" x2="60.0" y2="170.0" stroke="currentColor" stroke-width="2"/>
-  <text x="52.0" y="182.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">bit line</text>
-  <line x1="20.0" y1="50.0" x2="240.0" y2="50.0" stroke="currentColor" stroke-width="1.5"/>
-  <text x="245.0" y="54.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">word line</text>
-  <rect x="110" y="80" width="34" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="127.0" y="98.8" text-anchor="middle" font-size="11" fill="currentColor">T</text>
-  <line x1="127.0" y1="50.0" x2="127.0" y2="80.0" stroke="currentColor" stroke-width="1.2"/>
-  <line x1="60.0" y1="95.0" x2="110.0" y2="95.0" stroke="currentColor" stroke-width="1.5"/>
-  <polyline points="144.0,95.0 190.0,95.0 190.0,115.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="172.0" y1="115.0" x2="208.0" y2="115.0" stroke="currentColor" stroke-width="2"/>
-  <line x1="172.0" y1="125.0" x2="208.0" y2="125.0" stroke="currentColor" stroke-width="2"/>
-  <polyline points="190.0,125.0 190.0,145.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <line x1="178.0" y1="145.0" x2="202.0" y2="145.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="183.0" y1="150.0" x2="197.0" y2="150.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="188.0" y1="155.0" x2="192.0" y2="155.0" stroke="currentColor" stroke-width="1.5"/>
-  <text x="222.0" y="124.0" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">C</text>
-  <rect x="20" y="196" width="80" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="60.0" y="212.2" text-anchor="middle" font-size="9" fill="currentColor">sense amp</text>
-  <line x1="60.0" y1="170.0" x2="60.0" y2="193.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dr)"/>
-</svg>
-<figcaption>One-transistor DRAM cell.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_organization/dram_cell_transistor_capacitor.svg" alt="DRAM cell: one transistor and one capacitor" width="330px" class="fig" caption="One-transistor DRAM cell." >}}
 
 - **Read:** the word line switches the transistor on, and a sense amplifier on the bit line detects whether the charge is above a threshold (1) or below (0).
 - **Write:** the transistor is switched on, and the voltage on the bit line charges or discharges the capacitor.
@@ -3061,42 +1544,7 @@ DRAM needs less hardware than SRAM, so it is cheaper and much denser, and is use
 
 The address lines are multiplexed. The high-order half of the address (the row address) is loaded into the row address latch by the row address strobe $\overline{\text{RAS}}$, and the low-order half (the column address) into the column address latch by the column address strobe $\overline{\text{CAS}}$. Both strobes are active low.
 
-<figure class="fig">
-<svg viewBox="0 0 560 270" width="560" role="img" aria-label="Internal organization of a DRAM chip with multiplexed row and column addresses">
-  <defs><marker id="arr-dc" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="60" width="80" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="60.0" y="77.7" text-anchor="middle" font-size="9" fill="currentColor">row address</text>
-  <text x="60.0" y="88.7" text-anchor="middle" font-size="9" fill="currentColor">latch</text>
-  <rect x="130" y="60" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="165.0" y="77.7" text-anchor="middle" font-size="9" fill="currentColor">row</text>
-  <text x="165.0" y="88.7" text-anchor="middle" font-size="9" fill="currentColor">decoder</text>
-  <rect x="230" y="30" width="200" height="120" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="230" y="30" width="200" height="120" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="330.0" y="87.3" text-anchor="middle" font-size="11" fill="currentColor">cell array</text>
-  <text x="330.0" y="100.3" text-anchor="middle" font-size="11" fill="currentColor">(r rows × c columns)</text>
-  <rect x="230" y="165" width="200" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="330.0" y="182.2" text-anchor="middle" font-size="9" fill="currentColor">sense / write circuits</text>
-  <rect x="230" y="210" width="200" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="330.0" y="227.2" text-anchor="middle" font-size="9" fill="currentColor">column decoder</text>
-  <rect x="20" y="210" width="80" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="60.0" y="227.2" text-anchor="middle" font-size="9" fill="currentColor">column latch</text>
-  <line x1="100.0" y1="80.0" x2="127.0" y2="80.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <line x1="200.0" y1="80.0" x2="227.0" y2="80.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <line x1="100.0" y1="224.0" x2="227.0" y2="224.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <line x1="330.0" y1="210.0" x2="330.0" y2="196.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <line x1="330.0" y1="150.0" x2="330.0" y2="162.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <line x1="430.0" y1="179.0" x2="470.0" y2="179.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <text x="476.0" y="183.0" text-anchor="start" font-size="10" fill="currentColor">Dₘ₋₁ … D₀</text>
-  <text x="60.0" y="30.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">multiplexed address</text>
-  <line x1="60.0" y1="36.0" x2="60.0" y2="57.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc)"/>
-  <polyline points="60.0,36.0 5.0,36.0 5.0,224.0 17.0,224.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dc)"/>
-  <line x1="60.0" y1="120.0" x2="60.0" y2="103.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-dc)"/>
-  <text x="60.0" y="132.0" text-anchor="middle" font-size="10" fill="#ef4444">RAS′</text>
-  <line x1="60.0" y1="252.0" x2="60.0" y2="241.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-dc)"/>
-  <text x="60.0" y="266.0" text-anchor="middle" font-size="10" fill="#ef4444">CAS′</text>
-</svg>
-<figcaption>Internal organization of a DRAM chip (after Hamacher).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_organization/internal_organization_dram_chip_multiplexed_row.svg" alt="Internal organization of a DRAM chip with multiplexed row and column addresses" width="560px" class="fig" caption="Internal organization of a DRAM chip (after Hamacher)." >}}
 
 If the cell array has $r$ rows and $c$ columns, the row address has $x = \log_2 r$ bits and the column address $y = \log_2 c$ bits. On a read, all the cells of the selected row are read and refreshed; the column decoder then selects a group of $m$ sense/write circuits, which are connected to the data lines.
 
@@ -3159,55 +1607,7 @@ Four $1\text{G} \times 8$ memory chips (30 address lines, 8 data lines) are conn
 
 The low-order 30 address lines $A_{29}$–$A_0$ go to all the chips, and the high-order lines $A_{31} A_{30}$ go to a $2 \times 4$ decoder that selects one of the chips.
 
-<figure class="fig">
-<svg viewBox="0 0 660 252" width="660" role="img" aria-label="Four 1 G x 8 modules selected by the high-order address bits">
-  <defs><marker id="arr-memhi" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="10" y="90" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="55.0" y="123.8" text-anchor="middle" font-size="11" fill="currentColor">processor</text>
-  <rect x="150" y="165" width="80" height="56" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="150" y="165" width="80" height="56" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="190.0" y="190.5" text-anchor="middle" font-size="10" fill="currentColor">2 × 4</text>
-  <text x="190.0" y="202.5" text-anchor="middle" font-size="10" fill="currentColor">decoder</text>
-  <rect x="270" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="310.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M0</text>
-  <text x="310.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,174.0 310.0,174.0 310.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memhi)"/>
-  <text x="315.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS0′</text>
-  <rect x="365" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="365" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="405.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M1</text>
-  <text x="405.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,186.0 405.0,186.0 405.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memhi)"/>
-  <text x="410.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS1′</text>
-  <rect x="460" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="460" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="500.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M2</text>
-  <text x="500.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,198.0 500.0,198.0 500.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memhi)"/>
-  <text x="505.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS2′</text>
-  <rect x="555" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="555" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="595.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M3</text>
-  <text x="595.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,210.0 595.0,210.0 595.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memhi)"/>
-  <text x="600.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS3′</text>
-  <polyline points="55.0,150.0 55.0,193.0 147.0,193.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-memhi)"/>
-  <text x="62.0" y="186.0" text-anchor="start" font-size="10" fill="#ef4444">A₃₁A₃₀</text>
-  <polyline points="100.0,105.0 240.0,105.0 240.0,20.0 612.0,20.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="250.0" y="14.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">A₂₉–A₀ to all modules</text>
-  <line x1="310.0" y1="20.0" x2="310.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memhi)"/>
-  <circle cx="310" cy="20" r="2.5" fill="currentColor"/>
-  <line x1="405.0" y1="20.0" x2="405.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memhi)"/>
-  <circle cx="405" cy="20" r="2.5" fill="currentColor"/>
-  <line x1="500.0" y1="20.0" x2="500.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memhi)"/>
-  <circle cx="500" cy="20" r="2.5" fill="currentColor"/>
-  <line x1="595.0" y1="20.0" x2="595.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memhi)"/>
-  <circle cx="595" cy="20" r="2.5" fill="currentColor"/>
-  <text x="10.0" y="244.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">M0: 0x00000000–0x3FFFFFFF, M1: 0x40000000–0x7FFFFFFF, … (consecutive bytes in one module)</text>
-</svg>
-<figcaption>Four modules selected by the high-order address bits.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_organization/four_1_g_x_8_modules.svg" alt="Four 1 G x 8 modules selected by the high-order address bits" width="660px" class="fig" caption="Four modules selected by the high-order address bits." >}}
 
 <figure class="table">
 <figcaption>Address ranges of the modules.</figcaption>
@@ -3232,55 +1632,7 @@ In an **interleaved** memory the low-order address lines $A_1 A_0$ select the mo
 - M2: 2, 6, 10, 14, …
 - M3: 3, 7, 11, 15, …
 
-<figure class="fig">
-<svg viewBox="0 0 660 252" width="660" role="img" aria-label="Interleaved memory: modules selected by the low-order address bits">
-  <defs><marker id="arr-memlo" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="10" y="90" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="55.0" y="123.8" text-anchor="middle" font-size="11" fill="currentColor">processor</text>
-  <rect x="150" y="165" width="80" height="56" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="150" y="165" width="80" height="56" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="190.0" y="190.5" text-anchor="middle" font-size="10" fill="currentColor">2 × 4</text>
-  <text x="190.0" y="202.5" text-anchor="middle" font-size="10" fill="currentColor">decoder</text>
-  <rect x="270" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="310.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M0</text>
-  <text x="310.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,174.0 310.0,174.0 310.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memlo)"/>
-  <text x="315.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS0′</text>
-  <rect x="365" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="365" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="405.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M1</text>
-  <text x="405.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,186.0 405.0,186.0 405.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memlo)"/>
-  <text x="410.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS1′</text>
-  <rect x="460" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="460" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="500.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M2</text>
-  <text x="500.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,198.0 500.0,198.0 500.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memlo)"/>
-  <text x="505.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS2′</text>
-  <rect x="555" y="40" width="80" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="555" y="40" width="80" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="595.0" y="62.5" text-anchor="middle" font-size="10" fill="currentColor">M3</text>
-  <text x="595.0" y="74.5" text-anchor="middle" font-size="10" fill="currentColor">1G × 8</text>
-  <polyline points="230.0,210.0 595.0,210.0 595.0,93.0" stroke="currentColor" stroke-width="1" fill="none" marker-end="url(#arr-memlo)"/>
-  <text x="600.0" y="108.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">CS3′</text>
-  <polyline points="55.0,150.0 55.0,193.0 147.0,193.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-memlo)"/>
-  <text x="62.0" y="186.0" text-anchor="start" font-size="10" fill="#ef4444">A₁A₀</text>
-  <polyline points="100.0,105.0 240.0,105.0 240.0,20.0 612.0,20.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="250.0" y="14.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">A₃₁–A₂ to all modules</text>
-  <line x1="310.0" y1="20.0" x2="310.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memlo)"/>
-  <circle cx="310" cy="20" r="2.5" fill="currentColor"/>
-  <line x1="405.0" y1="20.0" x2="405.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memlo)"/>
-  <circle cx="405" cy="20" r="2.5" fill="currentColor"/>
-  <line x1="500.0" y1="20.0" x2="500.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memlo)"/>
-  <circle cx="500" cy="20" r="2.5" fill="currentColor"/>
-  <line x1="595.0" y1="20.0" x2="595.0" y2="37.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-memlo)"/>
-  <circle cx="595" cy="20" r="2.5" fill="currentColor"/>
-  <text x="10.0" y="244.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">M0: 0, 4, 8, …; M1: 1, 5, 9, …; M2: 2, 6, 10, …; M3: 3, 7, 11, …</text>
-</svg>
-<figcaption>Interleaved memory: the modules are selected by the low-order address bits.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_organization/interleaved_memory_modules_selected_low_order.svg" alt="Interleaved memory: modules selected by the low-order address bits" width="660px" class="fig" caption="Interleaved memory: the modules are selected by the low-order address bits." >}}
 
 If all four modules are enabled together, with a 32-bit data bus ($D_{31}$–$D_0$), the four bytes of a word are transferred in one memory cycle. This is the reason for word alignment in MIPS32: a word starting at an address divisible by 4 has its bytes (0, 1, 2, 3), (4, 5, 6, 7), … in four different modules. A misaligned word such as (1, 2, 3, 4) still has its bytes in four different modules (M1, M2, M3, M0), but byte 4 is in the next row: it needs a different $A_{31}$–$A_2$, which all the modules share, so the word needs two memory cycles. (The course slides say two bytes fall in the same module; they do not.)
 
@@ -3297,35 +1649,7 @@ Fast memory technology is more expensive per bit than slower memory.
 
 So the memory system is organized as a **hierarchy**: a small amount of fast memory, a larger amount of medium-speed memory, and a large amount of slow memory. Each level holds a subset of the data in the level below it, and the whole address space is in the largest, slowest level. Moving away from the processor, the size increases, the cost per bit decreases and the speed decreases.
 
-<figure class="fig">
-<svg viewBox="0 0 660 222" width="660" role="img" aria-label="Memory hierarchy from registers to disk">
-  <defs><marker id="arr-mh" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="240.0" y="14" width="120" height="30" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="240.0" y="14" width="120" height="30" rx="2" fill="#3b82f6" opacity="0.30000000000000004"/>
-  <text x="300.0" y="33.2" text-anchor="middle" font-size="12" fill="currentColor">Registers</text>
-  <rect x="210.0" y="48" width="180" height="30" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="210.0" y="48" width="180" height="30" rx="2" fill="#3b82f6" opacity="0.26"/>
-  <text x="300.0" y="67.2" text-anchor="middle" font-size="12" fill="currentColor">L1 cache (I + D)</text>
-  <rect x="180.0" y="82" width="240" height="30" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180.0" y="82" width="240" height="30" rx="2" fill="#3b82f6" opacity="0.22"/>
-  <text x="300.0" y="101.2" text-anchor="middle" font-size="12" fill="currentColor">L2 cache</text>
-  <rect x="150.0" y="116" width="300" height="30" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="150.0" y="116" width="300" height="30" rx="2" fill="#3b82f6" opacity="0.18"/>
-  <text x="300.0" y="135.2" text-anchor="middle" font-size="12" fill="currentColor">L3 cache</text>
-  <rect x="120.0" y="150" width="360" height="30" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="120.0" y="150" width="360" height="30" rx="2" fill="#f59e0b" opacity="0.14"/>
-  <text x="300.0" y="169.2" text-anchor="middle" font-size="12" fill="currentColor">Main memory</text>
-  <rect x="90.0" y="184" width="420" height="30" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="90.0" y="184" width="420" height="30" rx="2" fill="#f59e0b" opacity="0.1"/>
-  <text x="300.0" y="203.2" text-anchor="middle" font-size="12" fill="currentColor">Disk / flash</text>
-  <line x1="540" y1="30" x2="540" y2="200" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mh)"/>
-  <text x="550.0" y="112.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">larger, cheaper,</text>
-  <text x="550.0" y="127.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">slower</text>
-  <line x1="66" y1="200" x2="66" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-mh)"/>
-  <text x="58.0" y="120.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">faster</text>
-</svg>
-<figcaption>The memory hierarchy.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/memory_hierarchy_registers_disk.svg" alt="Memory hierarchy from registers to disk" width="660px" class="fig" caption="The memory hierarchy." >}}
 
 <figure class="table">
 <figcaption>Typical access times and capacities.</figcaption>
@@ -3379,41 +1703,7 @@ The **hit ratio** $H$ is the probability that an address generated by the CPU re
 
 $$t_A = H\,t_{A1} + (1 - H)\,t_{\text{miss}}$$
 
-<figure class="fig">
-<svg viewBox="0 0 600 214" width="600" role="img" aria-label="Hit and miss paths of a two-level memory hierarchy and their access times">
-  <defs><marker id="arr-hp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="30" width="90" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="65.0" y="66.2" text-anchor="middle" font-size="12" fill="currentColor">CPU</text>
-  <rect x="250" y="30" width="110" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="250" y="30" width="110" height="64" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="305.0" y="56.0" text-anchor="middle" font-size="12" fill="currentColor">M<tspan baseline-shift="sub" font-size="9">1</tspan> (cache)</text>
-  <text x="305.0" y="78.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">t<tspan baseline-shift="sub" font-size="8">A1</tspan></text>
-  <rect x="480" y="30" width="110" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="480" y="30" width="110" height="64" rx="3" fill="#f59e0b" opacity=".14"/>
-  <text x="535.0" y="56.0" text-anchor="middle" font-size="12" fill="currentColor">M<tspan baseline-shift="sub" font-size="9">2</tspan> (main)</text>
-  <text x="535.0" y="78.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">t<tspan baseline-shift="sub" font-size="8">A2</tspan></text>
-  <line x1="110" y1="48" x2="248" y2="48" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
-  <text x="180.0" y="40.0" text-anchor="middle" font-size="11" fill="currentColor">address</text>
-  <line x1="250" y1="76" x2="112" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
-  <text x="180.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">hit (H): word</text>
-  <line x1="360" y1="48" x2="478" y2="48" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
-  <text x="420.0" y="40.0" text-anchor="middle" font-size="11" fill="currentColor">miss (1 − H)</text>
-  <line x1="480" y1="76" x2="362" y2="76" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-hp)"/>
-  <text x="420.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">word / block</text>
-  <text x="100.0" y="144.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">hit, prob. H</text>
-  <rect x="110" y="126" width="50" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="110" y="126" width="50" height="28" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="135.0" y="144.0" text-anchor="middle" font-size="11" fill="currentColor">t<tspan baseline-shift="sub" font-size="8">A1</tspan></text>
-  <text x="100.0" y="182.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">miss, prob. 1 − H</text>
-  <rect x="110" y="164" width="350" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="110" y="164" width="350" height="28" rx="3" fill="#ef4444" opacity=".18"/>
-  <text x="285.0" y="182.0" text-anchor="middle" font-size="11" fill="currentColor">t<tspan baseline-shift="sub" font-size="8">miss</tspan> (e.g. t<tspan baseline-shift="sub" font-size="8">A2</tspan>)</text>
-  <text x="480.0" y="158.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">t<tspan baseline-shift="sub" font-size="8">A</tspan> is the average</text>
-  <text x="480.0" y="176.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">of the two times,</text>
-  <text x="480.0" y="192.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">weighted by H, 1 − H</text>
-</svg>
-<figcaption>A reference is served by $M_1$ in time $t_{A1}$ with probability $H$; otherwise it costs $t_{\text{miss}}$.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/hit_miss_paths_level_memory_hierarchy.svg" alt="Hit and miss paths of a two-level memory hierarchy and their access times" width="600px" class="fig" caption="A reference is served by $M_1$ in time $t_{A1}$ with probability $H$; otherwise it costs $t_{\text{miss}}$." >}}
 
 The miss penalty can be estimated in different ways:
 
@@ -3479,32 +1769,7 @@ where $H_{L2}$ is the hit ratio of L2 for the accesses that reach it, and $t_{\t
 
 The cache is divided into **blocks** (lines) of typically 8 to 256 bytes. When the CPU accesses a word, the hardware first checks whether it is in the cache. On a **hit** the word is read from the cache; on a **miss** the block containing the word is brought from main memory into the cache.
 
-<figure class="fig">
-<svg viewBox="0 0 590 260" width="590" role="img" aria-label="A cache: lookup logic with the cache directory, and the cache RAM">
-  <defs><marker id="arr-cd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <ellipse cx="70" cy="110" rx="50" ry="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="70.0" y="114.2" text-anchor="middle" font-size="12" fill="currentColor">CPU</text>
-  <rect x="170" y="20" width="380" height="180" rx="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="360.0" y="190.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">cache controller</text>
-  <rect x="190" y="40" width="170" height="130" rx="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="190" y="40" width="170" height="130" rx="10" fill="#3b82f6" opacity=".18"/>
-  <text x="275.0" y="62.0" text-anchor="middle" font-size="12" fill="currentColor">lookup logic</text>
-  <rect x="210" y="80" width="130" height="70" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="275.0" y="110.0" text-anchor="middle" font-size="12" fill="currentColor">cache</text>
-  <text x="275.0" y="126.0" text-anchor="middle" font-size="12" fill="currentColor">directory</text>
-  <rect x="400" y="50" width="120" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="400" y="50" width="120" height="110" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="460.0" y="100.0" text-anchor="middle" font-size="12" fill="currentColor">cache</text>
-  <text x="460.0" y="116.0" text-anchor="middle" font-size="12" fill="currentColor">RAM</text>
-  <line x1="120" y1="100" x2="187" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-cd)"/>
-  <text x="152.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">addr</text>
-  <polyline points="460,160 460,214 70,214 70,143" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cd)"/>
-  <text x="265.0" y="228.0" text-anchor="middle" font-size="11" fill="currentColor">data</text>
-  <text x="275.0" y="250.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">directory: table of “addresses I have”</text>
-  <text x="470.0" y="250.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">RAM: fast memory holding the blocks</text>
-</svg>
-<figcaption>Cache design: the cache RAM holds the blocks, and the lookup logic uses the cache directory (the table of addresses present) to decide whether an address is in the cache.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/cache_lookup_logic_cache_directory_cache.svg" alt="A cache: lookup logic with the cache directory, and the cache RAM" width="590px" class="fig" caption="Cache design: the cache RAM holds the blocks, and the lookup logic uses the cache directory (the table of addresses present) to decide whether an address is in the cache." >}}
 
 #### Fast Lookup
 
@@ -3515,49 +1780,11 @@ The lookup logic has to find an address $A$ among thousands of addresses in the 
 
 A simple hash function selects some bits of $A$:
 
-<figure class="fig">
-<svg viewBox="0 0 640 120" width="640" role="img" aria-label="Which address bits to use for indexing the cache">
-  <defs><marker id="arr-wb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="60" y="20" width="480" height="34" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="60" y="20" width="200" height="34" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="60" y="20" width="200" height="34" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="160.0" y="41.2" text-anchor="middle" font-size="12" fill="currentColor">high-order bits</text>
-  <rect x="260" y="20" width="180" height="34" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="260" y="20" width="180" height="34" rx="2" fill="#22c55e" opacity=".18"/>
-  <text x="350.0" y="41.2" text-anchor="middle" font-size="12" fill="currentColor">middle bits</text>
-  <rect x="440" y="20" width="100" height="34" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="440" y="20" width="100" height="34" rx="2" fill="#ef4444" opacity=".18"/>
-  <text x="490.0" y="41.2" text-anchor="middle" font-size="12" fill="currentColor">low-order bits</text>
-  <text x="160.0" y="80.0" text-anchor="middle" font-size="11" fill="#ef4444">small programs: all the same</text>
-  <text x="160.0" y="95.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">→ many collisions</text>
-  <text x="350.0" y="80.0" text-anchor="middle" font-size="11" fill="#22c55e">good choice: the index</text>
-  <text x="490.0" y="80.0" text-anchor="middle" font-size="11" fill="#ef4444">differ between neighbours:</text>
-  <text x="490.0" y="95.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">breaks up a block (no spatial locality)</text>
-  <text x="490.0" y="110.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">→ used as the offset</text>
-</svg>
-<figcaption>For a small program the high-order bits are the same for most addresses, giving many collisions. The low-order bits differ between neighbouring addresses and would put them apart, losing spatial locality. So the middle bits are used.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/which_address_bits_use_indexing_cache.svg" alt="Which address bits to use for indexing the cache" width="640px" class="fig" caption="For a small program the high-order bits are the same for most addresses, giving many collisions. The low-order bits differ between neighbouring addresses and would put them apart, losing spatial locality. So the middle bits are used." >}}
 
 The low-order bits select the byte within the block (the **offset**), the middle bits select the entry in the directory (the **index**), and the high-order bits are stored in the directory as the **tag**, which is compared to check that the entry holds the requested block.
 
-<figure class="fig">
-<svg viewBox="0 0 610 72" width="610" role="img" aria-label="Address fields seen by the cache: tag, index and block offset">
-  <defs><marker id="arr-af" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="60" y="14" width="230" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="175.0" y="33.5" text-anchor="middle" font-size="13" fill="currentColor">tag</text>
-  <text x="175.0" y="62.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">stored in the directory</text>
-  <rect x="290" y="14" width="150" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="290" y="14" width="150" height="30" rx="0" fill="#3b82f6" opacity=".18"/>
-  <text x="365.0" y="33.5" text-anchor="middle" font-size="13" fill="currentColor">index</text>
-  <text x="365.0" y="62.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">selects the entry</text>
-  <rect x="440" y="14" width="110" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="495.0" y="33.5" text-anchor="middle" font-size="13" fill="currentColor">block offset</text>
-  <text x="495.0" y="62.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">byte within the block</text>
-  <text x="60.0" y="9.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">high-order</text>
-  <text x="550.0" y="9.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">low-order</text>
-</svg>
-<figcaption>The cache hardware's view of an address.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/address_fields_seen_cache_tag_index.svg" alt="Address fields seen by the cache: tag, index and block offset" width="610px" class="fig" caption="The cache hardware's view of an address." >}}
 
 A block serves the same purpose in cache memory as a page in virtual memory: it reduces the size of the translation table, and it exploits spatial locality. The cache directory has one entry for each block, as the page table has one entry for each virtual page. Main memory is also organized in blocks.
 
@@ -3578,74 +1805,7 @@ In a *direct-mapped* cache of $N$ blocks, memory block $M$ is placed in cache bl
 
 </div>
 
-<figure class="fig">
-<svg viewBox="0 0 600 324" width="600" role="img" aria-label="Direct mapping of 16 memory blocks onto 8 cache blocks">
-  <defs><marker id="arr-dm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="40" y="60" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="40" y="60" width="120" height="18" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="34.0" y="73.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">0</text>
-  <rect x="40" y="78" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="34.0" y="91.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">1</text>
-  <rect x="40" y="96" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="34.0" y="109.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">2</text>
-  <rect x="40" y="114" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="34.0" y="127.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">3</text>
-  <rect x="40" y="132" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="34.0" y="145.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">4</text>
-  <rect x="40" y="150" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="34.0" y="163.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">5</text>
-  <rect x="40" y="168" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="40" y="168" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="34.0" y="181.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">6</text>
-  <rect x="40" y="186" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="34.0" y="199.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">7</text>
-  <text x="100.0" y="52.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">cache (8 blocks)</text>
-  <rect x="360" y="14" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="14" width="120" height="18" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="486.0" y="27.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">0</text>
-  <rect x="360" y="32" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="45.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">1</text>
-  <rect x="360" y="50" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="63.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">2</text>
-  <rect x="360" y="68" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="81.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">3</text>
-  <rect x="360" y="86" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="99.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">4</text>
-  <rect x="360" y="104" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="117.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">5</text>
-  <rect x="360" y="122" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="122" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="486.0" y="135.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">6</text>
-  <rect x="360" y="140" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="153.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">7</text>
-  <rect x="360" y="158" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="158" width="120" height="18" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="486.0" y="171.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">8</text>
-  <rect x="360" y="176" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="189.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">9</text>
-  <rect x="360" y="194" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="207.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">10</text>
-  <rect x="360" y="212" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="225.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">11</text>
-  <rect x="360" y="230" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="243.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">12</text>
-  <rect x="360" y="248" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="261.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">13</text>
-  <rect x="360" y="266" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="266" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="486.0" y="279.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">14</text>
-  <rect x="360" y="284" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="486.0" y="297.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">15</text>
-  <text x="420.0" y="318.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">main memory (16 blocks)</text>
-  <line x1="360" y1="23" x2="163" y2="65" stroke="#3b82f6" stroke-width="1.3" marker-end="url(#arr-dm)"/>
-  <line x1="360" y1="167" x2="163" y2="73" stroke="#3b82f6" stroke-width="1.3" marker-end="url(#arr-dm)"/>
-  <line x1="360" y1="131" x2="163" y2="173" stroke="#ef4444" stroke-width="1.3" marker-end="url(#arr-dm)"/>
-  <line x1="360" y1="275" x2="163" y2="181" stroke="#ef4444" stroke-width="1.3" marker-end="url(#arr-dm)"/>
-  <text x="510.0" y="135.0" text-anchor="start" font-size="10" fill="#ef4444">6 mod 8 = 6</text>
-  <text x="510.0" y="279.0" text-anchor="start" font-size="10" fill="#ef4444">14 mod 8 = 6</text>
-</svg>
-<figcaption>Direct mapping of 16 memory blocks onto an 8-block cache. Blocks 6 and 14 map to cache block 6, and blocks 0 and 8 to cache block 0.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/direct_mapping_16_memory_blocks_onto.svg" alt="Direct mapping of 16 memory blocks onto 8 cache blocks" width="600px" class="fig" caption="Direct mapping of 16 memory blocks onto an 8-block cache. Blocks 6 and 14 map to cache block 6, and blocks 0 and 8 to cache block 0." >}}
 
 <div class="example">
 
@@ -3657,84 +1817,7 @@ A 32-bit address, a 16 KB cache and 32 B blocks. Find the widths of the tag, ind
 - The offset (which byte in the block) is $\log_2 32 = 5$ bits.
 - The tag (which memory block is in this cache block) is $32 - 9 - 5 = 18$ bits.
 
-<figure class="fig">
-<svg viewBox="0 0 510 276" width="510" role="img" aria-label="Lookup in a direct-mapped cache: index selects the entry, the tag is compared and ANDed with the valid bit">
-  <defs><marker id="arr-dmh" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="14" width="150" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="95.0" y="30.9" text-anchor="middle" font-size="11" fill="currentColor">tag (18)</text>
-  <rect x="170" y="14" width="90" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="215.0" y="30.9" text-anchor="middle" font-size="11" fill="currentColor">index (9)</text>
-  <rect x="260" y="14" width="60" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="290.0" y="30.9" text-anchor="middle" font-size="11" fill="currentColor">offset (5)</text>
-  <rect x="160" y="70" width="60" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="220" y="70" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="242" y="70" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="160" y="84" width="60" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="220" y="84" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="242" y="84" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="160" y="98" width="60" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="220" y="98" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="242" y="98" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="160" y="112" width="60" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="220" y="112" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="242" y="112" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="160" y="126" width="60" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="220" y="126" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="242" y="126" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="160" y="140" width="60" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="220" y="140" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="242" y="140" width="22" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="160" y="140" width="104" height="14" fill="#ef4444" opacity=".25"/>
-  <text x="190.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor">tag</text>
-  <text x="231.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor">V</text>
-  <text x="253.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <text x="212.0" y="64.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">directory</text>
-  <rect x="330" y="70" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="370" y="70" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="410" y="70" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="450" y="70" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="330" y="84" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="370" y="84" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="410" y="84" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="450" y="84" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="330" y="98" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="370" y="98" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="410" y="98" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="450" y="98" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="330" y="112" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="370" y="112" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="410" y="112" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="450" y="112" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="330" y="126" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="370" y="126" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="410" y="126" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="450" y="126" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="330" y="140" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="370" y="140" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="410" y="140" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="450" y="140" width="40" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="330" y="140" width="160" height="14" fill="#ef4444" opacity=".25"/>
-  <text x="410.0" y="64.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">data</text>
-  <polyline points="215,40 215,52 145,52 145,147 157,147" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-dmh)"/>
-  <text x="140.0" y="100.0" text-anchor="end" font-size="10" fill="#ef4444">index</text>
-  <line x1="264" y1="147" x2="327" y2="147" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-dmh)"/>
-  <circle cx="190" cy="200" r="15" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="190.0" y="204.0" text-anchor="middle" font-size="13" fill="currentColor">=</text>
-  <line x1="190" y1="154" x2="190" y2="182" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dmh)"/>
-  <polyline points="60,40 60,200 172,200" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmh)"/>
-  <text x="66.0" y="192.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">tag</text>
-  <rect x="250" y="238" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="275.0" y="254.8" text-anchor="middle" font-size="11" fill="currentColor">AND</text>
-  <polyline points="231,154 231,245 247,245" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmh)"/>
-  <text x="237.0" y="200.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">valid</text>
-  <polyline points="190,215 190,257 247,257" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmh)"/>
-  <line x1="300" y1="251" x2="350" y2="251" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dmh)"/>
-  <text x="356.0" y="255.0" text-anchor="start" font-size="12" fill="currentColor">hit</text>
-  <line x1="410" y1="154" x2="410" y2="200" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dmh)"/>
-  <text x="410.0" y="214.0" text-anchor="middle" font-size="11" fill="currentColor">data</text>
-</svg>
-<figcaption>Accessing a block in a direct-mapped cache. The index selects an entry, and there is a hit if its tag equals the address tag and the valid bit is set.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/lookup_direct_mapped_cache_index_selects.svg" alt="Lookup in a direct-mapped cache: index selects the entry, the tag is compared and ANDed with the valid bit" width="510px" class="fig" caption="Accessing a block in a direct-mapped cache. The index selects an entry, and there is a hit if its tag equals the address tag and the valid bit is set." >}}
 
 The index is the low-order bits of the block number $M$ (that is, $M \bmod N$), and the tag is the remaining high-order bits. So consecutive memory blocks go to consecutive cache blocks, and two memory blocks compete for the same cache block only if they are a multiple of $N$ blocks (the cache size) apart, like blocks 6 and 14 above. The tag tells such blocks apart.
 
@@ -3748,219 +1831,11 @@ In a *set-associative* cache the blocks are divided into $S$ sets. Memory block 
 
 </div>
 
-<figure class="fig">
-<svg viewBox="0 0 600 324" width="600" role="img" aria-label="2-way set-associative placement: memory blocks 3, 7, 11 and 15 can go in either way of set 3">
-  <defs><marker id="arr-sa" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="90" y="60" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="84.0" y="73.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">0</text>
-  <text x="68.0" y="82.0" text-anchor="end" font-size="10" fill="currentColor">set 0</text>
-  <line x1="72" y1="60" x2="210" y2="60" stroke="currentColor" stroke-width="2.2"/>
-  <rect x="90" y="78" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="84.0" y="91.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">1</text>
-  <rect x="90" y="96" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="84.0" y="109.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">2</text>
-  <text x="68.0" y="118.0" text-anchor="end" font-size="10" fill="currentColor">set 1</text>
-  <line x1="72" y1="96" x2="210" y2="96" stroke="currentColor" stroke-width="2.2"/>
-  <rect x="90" y="114" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="84.0" y="127.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">3</text>
-  <rect x="90" y="132" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="84.0" y="145.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">4</text>
-  <text x="68.0" y="154.0" text-anchor="end" font-size="10" fill="currentColor">set 2</text>
-  <line x1="72" y1="132" x2="210" y2="132" stroke="currentColor" stroke-width="2.2"/>
-  <rect x="90" y="150" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="84.0" y="163.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">5</text>
-  <rect x="90" y="168" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="90" y="168" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="84.0" y="181.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">6</text>
-  <text x="68.0" y="190.0" text-anchor="end" font-size="10" fill="currentColor">set 3</text>
-  <line x1="72" y1="168" x2="210" y2="168" stroke="currentColor" stroke-width="2.2"/>
-  <rect x="90" y="186" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="90" y="186" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="84.0" y="199.0" text-anchor="end" font-size="9" fill="currentColor" class="dim">7</text>
-  <line x1="72" y1="204" x2="210" y2="204" stroke="currentColor" stroke-width="2.2"/>
-  <text x="150.0" y="52.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">cache: 4 sets × 2 ways</text>
-  <rect x="400" y="14" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="27.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">0</text>
-  <rect x="400" y="32" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="45.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">1</text>
-  <rect x="400" y="50" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="63.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">2</text>
-  <rect x="400" y="68" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="400" y="68" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="526.0" y="81.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">3</text>
-  <rect x="400" y="86" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="99.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">4</text>
-  <rect x="400" y="104" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="117.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">5</text>
-  <rect x="400" y="122" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="135.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">6</text>
-  <rect x="400" y="140" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="400" y="140" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="526.0" y="153.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">7</text>
-  <rect x="400" y="158" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="171.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">8</text>
-  <rect x="400" y="176" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="189.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">9</text>
-  <rect x="400" y="194" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="207.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">10</text>
-  <rect x="400" y="212" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="400" y="212" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="526.0" y="225.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">11</text>
-  <rect x="400" y="230" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="243.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">12</text>
-  <rect x="400" y="248" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="261.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">13</text>
-  <rect x="400" y="266" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="526.0" y="279.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">14</text>
-  <rect x="400" y="284" width="120" height="18" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="400" y="284" width="120" height="18" rx="0" fill="#ef4444" opacity=".3"/>
-  <text x="526.0" y="297.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">15</text>
-  <text x="460.0" y="318.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">main memory (16 blocks)</text>
-  <line x1="400" y1="77" x2="213" y2="174" stroke="#ef4444" stroke-width="1.3" marker-end="url(#arr-sa)"/>
-  <line x1="400" y1="149" x2="213" y2="182" stroke="#ef4444" stroke-width="1.3" marker-end="url(#arr-sa)"/>
-  <line x1="400" y1="221" x2="213" y2="190" stroke="#ef4444" stroke-width="1.3" marker-end="url(#arr-sa)"/>
-  <line x1="400" y1="293" x2="213" y2="198" stroke="#ef4444" stroke-width="1.3" marker-end="url(#arr-sa)"/>
-  <text x="150.0" y="226.0" text-anchor="middle" font-size="10" fill="#ef4444">blocks 3, 7, 11, 15: each mod 4 = 3</text>
-</svg>
-<figcaption>A 2-way set-associative cache with 8 blocks in 4 sets.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/2_way_set_associative_placement_memory.svg" alt="2-way set-associative placement: memory blocks 3, 7, 11 and 15 can go in either way of set 3" width="600px" class="fig" caption="A 2-way set-associative cache with 8 blocks in 4 sets." >}}
 
 The index field selects a set ($\log_2 S$ bits), and all the blocks in the set are checked in parallel:
 
-<figure class="fig">
-<svg viewBox="0 0 630 391" width="630" role="img" aria-label="Lookup in a 2-way set-associative cache: both tags of the set are compared in parallel">
-  <defs><marker id="arr-2w" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="14" width="130" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="85.0" y="30.9" text-anchor="middle" font-size="11" fill="currentColor">tag</text>
-  <rect x="150" y="14" width="80" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="190.0" y="30.9" text-anchor="middle" font-size="11" fill="currentColor">index</text>
-  <rect x="230" y="14" width="60" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="260.0" y="30.9" text-anchor="middle" font-size="11" fill="currentColor">offset</text>
-  <rect x="200" y="70" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="70" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="70" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="84" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="84" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="84" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="98" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="98" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="98" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="112" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="112" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="112" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="126" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="126" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="126" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="140" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="140" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="140" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="140" width="90" height="14" fill="#ef4444" opacity=".25"/>
-  <text x="225.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor">tag</text>
-  <text x="260.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor">V</text>
-  <text x="280.0" y="151.0" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="340" y="70" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="70" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="70" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="70" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="84" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="84" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="84" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="84" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="98" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="98" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="98" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="98" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="112" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="112" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="112" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="112" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="126" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="126" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="126" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="126" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="140" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="140" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="140" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="140" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="140" width="144" height="14" fill="#ef4444" opacity=".25"/>
-  <text x="245.0" y="64.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">way 0: tags</text>
-  <text x="412.0" y="64.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">way 0: data</text>
-  <rect x="200" y="245" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="245" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="245" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="259" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="259" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="259" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="273" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="273" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="273" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="287" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="287" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="287" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="301" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="301" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="301" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="315" width="50" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="250" y="315" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="270" y="315" width="20" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="200" y="315" width="90" height="14" fill="#ef4444" opacity=".25"/>
-  <text x="225.0" y="326.0" text-anchor="middle" font-size="9" fill="currentColor">tag</text>
-  <text x="260.0" y="326.0" text-anchor="middle" font-size="9" fill="currentColor">V</text>
-  <text x="280.0" y="326.0" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="340" y="245" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="245" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="245" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="245" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="259" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="259" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="259" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="259" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="273" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="273" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="273" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="273" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="287" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="287" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="287" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="287" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="301" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="301" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="301" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="301" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="315" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="376" y="315" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="412" y="315" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="448" y="315" width="36" height="14" stroke="currentColor" stroke-width="1" fill="none"/>
-  <rect x="340" y="315" width="144" height="14" fill="#ef4444" opacity=".25"/>
-  <text x="245.0" y="239.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">way 1: tags</text>
-  <text x="412.0" y="239.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">way 1: data</text>
-  <polyline points="190,40 190,52 180,52 180,322 197,322" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-2w)"/>
-  <line x1="180" y1="147" x2="197" y2="147" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <text x="174.0" y="110.0" text-anchor="end" font-size="10" fill="#ef4444">index</text>
-  <circle cx="225" cy="186" r="15" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="225.0" y="190.0" text-anchor="middle" font-size="13" fill="currentColor">=</text>
-  <line x1="225" y1="154" x2="225" y2="168" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <circle cx="225" cy="361" r="15" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="225.0" y="365.0" text-anchor="middle" font-size="13" fill="currentColor">=</text>
-  <line x1="225" y1="329" x2="225" y2="343" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <polyline points="60,40 60,361 207,361" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2w)"/>
-  <line x1="60" y1="186" x2="207" y2="186" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <text x="66.0" y="180.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">tag</text>
-  <circle cx="315" cy="361" r="16" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="315.0" y="365.0" text-anchor="middle" font-size="10" fill="currentColor">OR</text>
-  <polyline points="240,186 315,186 315,342" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2w)"/>
-  <line x1="240" y1="361" x2="296" y2="361" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <line x1="331" y1="361" x2="370" y2="361" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <text x="376.0" y="365.0" text-anchor="start" font-size="12" fill="currentColor">hit</text>
-  <rect x="520" y="137" width="24" height="195" rx="6" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="532.0" y="237.5" text-anchor="middle" font-size="7" fill="currentColor">MUX</text>
-  <line x1="484" y1="147" x2="517" y2="147" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <line x1="484" y1="322" x2="517" y2="322" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <line x1="544" y1="234.5" x2="580" y2="234.5" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-2w)"/>
-  <text x="584.0" y="238.5" text-anchor="start" font-size="11" fill="currentColor">data</text>
-</svg>
-<figcaption>Lookup in a 2-way set-associative cache. The index selects a set, both tags are compared in parallel, the results are ORed to give the hit signal, and the multiplexer selects the data of the matching way.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/lookup_2_way_set_associative_cache.svg" alt="Lookup in a 2-way set-associative cache: both tags of the set are compared in parallel" width="630px" class="fig" caption="Lookup in a 2-way set-associative cache. The index selects a set, both tags are compared in parallel, the results are ORed to give the hit signal, and the multiplexer selects the data of the matching way." >}}
 
 - A direct-mapped cache is 1-way set associative ($S = N$).
 - A fully associative cache has a single set ($S = 1$), so a block can be placed anywhere and there are no index bits. The tag is compared with all the tags in the cache, which needs a large associative memory (high cost, not scalable), but any replacement policy can be used.
@@ -4169,7 +2044,7 @@ The techniques reduce one of these three terms.
 
 Reducing the miss rate:
 
-1. **Larger block size.** Reduces compulsory misses. But the miss penalty increases, and since there are fewer blocks, conflict and capacity misses may increase. High latency and high bandwidth of the lower level favour large blocks; low latency and low bandwidth favour small ones. For example, the ARM Cortex-A8 and A9 described in H&P and the Ryzen 7 5800H all use 64 B blocks.
+1. **Larger block size.** Reduces compulsory misses. But the miss penalty increases, and since there are fewer blocks, conflict and capacity misses may increase. High latency and high bandwidth of the lower level favour large blocks; low latency and low bandwidth favour small ones. For example, H&P's Cortex-A8 uses 64 B blocks and its Cortex-A9 32 B blocks; the Ryzen 7 5800H uses 64 B blocks.
 2. **Larger cache.** Reduces capacity misses, but increases the hit time, the cost and the power.
 3. **Higher associativity.** Reduces conflict misses, but increases the hit time and the power. As a rule of thumb, an 8-way cache is as effective as a fully associative one, and a direct-mapped cache of size $N$ has about the same miss rate as a 2-way cache of size $N/2$.
 
@@ -4216,47 +2091,7 @@ Other optimizations (Hennessy & Patterson):
 
 Every memory access needs a translation from virtual to physical address (by the memory management unit, MMU, and its translation lookaside buffer, TLB; see Part II), and the cache can be accessed before or after it.
 
-<figure class="fig">
-<svg viewBox="0 0 640 368" width="640" role="img" aria-label="Physically addressed, virtually addressed and virtually indexed physically tagged caches">
-  <defs><marker id="arr-vt" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="20.0" y="22.0" text-anchor="start" font-size="12" fill="currentColor">(a) physically addressed (PIPT)</text>
-  <line x1="20" y1="55" x2="77" y2="55" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vt)"/>
-  <text x="48.0" y="48.0" text-anchor="middle" font-size="11" fill="currentColor">VA</text>
-  <ellipse cx="130" cy="55" rx="50" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="130.0" y="59.2" text-anchor="middle" font-size="12" fill="currentColor">MMU</text>
-  <line x1="180" y1="55" x2="257" y2="55" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vt)"/>
-  <text x="218.0" y="48.0" text-anchor="middle" font-size="11" fill="currentColor">PA</text>
-  <ellipse cx="310" cy="55" rx="50" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="310.0" y="59.2" text-anchor="middle" font-size="12" fill="currentColor">Cache</text>
-  <text x="380.0" y="59.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">translate first: hit time includes the MMU</text>
-  <text x="20.0" y="122.0" text-anchor="start" font-size="12" fill="currentColor">(b) virtually addressed (VIVT)</text>
-  <line x1="20" y1="155" x2="77" y2="155" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vt)"/>
-  <text x="48.0" y="148.0" text-anchor="middle" font-size="11" fill="currentColor">VA</text>
-  <ellipse cx="130" cy="155" rx="50" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="130.0" y="159.2" text-anchor="middle" font-size="12" fill="currentColor">Cache</text>
-  <line x1="180" y1="155" x2="257" y2="155" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-vt)"/>
-  <text x="218.0" y="148.0" text-anchor="middle" font-size="11" fill="currentColor">VA</text>
-  <text x="218.0" y="174.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">only on a miss</text>
-  <ellipse cx="310" cy="155" rx="50" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="310.0" y="159.2" text-anchor="middle" font-size="12" fill="currentColor">MMU</text>
-  <text x="380.0" y="159.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">no translation on a hit</text>
-  <text x="20.0" y="220.0" text-anchor="start" font-size="12" fill="currentColor">(c) virtually indexed, physically tagged (VIPT)</text>
-  <line x1="20" y1="281" x2="60" y2="281" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="60" y1="250" x2="60" y2="312" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="60" y1="250" x2="97" y2="250" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vt)"/>
-  <line x1="60" y1="312" x2="97" y2="312" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-vt)"/>
-  <text x="36.0" y="274.0" text-anchor="middle" font-size="11" fill="currentColor">VA</text>
-  <ellipse cx="150" cy="250" rx="50" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="150.0" y="254.2" text-anchor="middle" font-size="12" fill="currentColor">MMU</text>
-  <ellipse cx="150" cy="312" rx="50" ry="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="150.0" y="316.2" text-anchor="middle" font-size="12" fill="currentColor">Cache</text>
-  <polyline points="200,250 230,250 230,312 203,312" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-vt)"/>
-  <text x="238.0" y="280.0" text-anchor="start" font-size="11" fill="currentColor">PA: tag compare</text>
-  <text x="120.0" y="352.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">index with VA bits while the MMU translates</text>
-  <text x="380.0" y="284.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">overlapped: typical for L1 caches</text>
-</svg>
-<figcaption>Cache and address translation.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/physically_addressed_virtually_addressed_virtually_indexed.svg" alt="Physically addressed, virtually addressed and virtually indexed physically tagged caches" width="640px" class="fig" caption="Cache and address translation." >}}
 
 **Physically addressed cache (PIPT).** The address is translated first, and the cache is indexed and tagged with the physical address. The hit time is higher, since every access goes through the MMU.
 
@@ -4279,100 +2114,9 @@ $$\text{index bits} + \text{offset bits} \le \text{page-offset bits} \quad\Longl
 - PIPT: the virtual page number (18 bits) is translated, and the physical address is split into tag 16, index 11 ($64\text{ KB}/32\text{ B} = 2048$ blocks) and offset 5 bits.
 - VIPT: the page offset is $\log_2 16\text{K} = 14$ bits, but the index and offset need $11 + 5 = 16$ bits, so 2 index bits come from the virtual page number. Two virtual addresses for the same physical page that differ in these bits are placed in different sets (synonyms). A 4-way cache (16 KB per way) would avoid this.
 
-<figure class="fig">
-<svg viewBox="0 0 700 154" width="700" role="img" aria-label="In a 64 KB direct-mapped cache with 16 KB pages, two index bits lie above the page offset">
-  <defs><marker id="arr-vb" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="80.0" y="38.0" text-anchor="end" font-size="12" fill="currentColor">VA</text>
-  <rect x="90" y="20" width="324" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="252.0" y="36.9" text-anchor="middle" font-size="11" fill="currentColor">virtual page number (18)</text>
-  <rect x="414" y="20" width="252" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="414" y="20" width="252" height="26" rx="0" fill="#22c55e" opacity=".25"/>
-  <text x="540.0" y="36.9" text-anchor="middle" font-size="11" fill="currentColor">page offset (14)</text>
-  <text x="80.0" y="98.0" text-anchor="end" font-size="12" fill="currentColor">cache</text>
-  <rect x="90" y="80" width="288" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="234.0" y="96.8" text-anchor="middle" font-size="11" fill="currentColor">tag (16)</text>
-  <rect x="378" y="80" width="198" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="378" y="80" width="198" height="26" rx="0" fill="#3b82f6" opacity=".25"/>
-  <text x="477.0" y="96.8" text-anchor="middle" font-size="11" fill="currentColor">index (11)</text>
-  <rect x="576" y="80" width="90" height="26" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="621.0" y="96.8" text-anchor="middle" font-size="11" fill="currentColor">offset (5)</text>
-  <rect x="378" y="80" width="36" height="26" fill="#ef4444" opacity=".45"/>
-  <rect x="378" y="20" width="36" height="26" fill="#ef4444" opacity=".45"/>
-  <line x1="378" y1="46" x2="378" y2="80" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
-  <line x1="414" y1="46" x2="414" y2="80" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="396.0" y="128.0" text-anchor="middle" font-size="11" fill="#ef4444">2 index bits come from the VPN</text>
-  <text x="396.0" y="143.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">→ synonyms can sit in different sets</text>
-</svg>
-<figcaption>VIPT example: two index bits (red) are above the page offset.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/64_kb_direct_mapped_cache_16.svg" alt="In a 64 KB direct-mapped cache with 16 KB pages, two index bits lie above the page offset" width="700px" class="fig" caption="VIPT example: two index bits (red) are above the page offset." >}}
 
-<figure class="fig">
-<svg viewBox="0 0 660 652" width="660" role="img" aria-label="Flow of an address through the TLB, page table and cache">
-  <defs><marker id="arr-flow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="210.0" y="12.0" width="220" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="320.0" y="29.0" text-anchor="middle" font-size="12" fill="currentColor">CPU generates virtual address</text>
-  <text x="320.0" y="43.0" text-anchor="middle" font-size="12" fill="currentColor">(page p, offset d)</text>
-  <polygon points="320,74 420,112 320,150 220,112" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="320.0" y="109.0" text-anchor="middle" font-size="11" fill="currentColor">entry for p</text>
-  <text x="320.0" y="123.0" text-anchor="middle" font-size="11" fill="currentColor">in TLB?</text>
-  <rect x="50.0" y="168.0" width="180" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="183.0" text-anchor="middle" font-size="12" fill="currentColor">use p to index</text>
-  <text x="140.0" y="197.0" text-anchor="middle" font-size="12" fill="currentColor">the page table</text>
-  <polygon points="140,224 235,262 140,300 45,262" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="259.0" text-anchor="middle" font-size="11" fill="currentColor">p valid in</text>
-  <text x="140.0" y="273.0" text-anchor="middle" font-size="11" fill="currentColor">page table?</text>
-  <rect x="270.0" y="246.0" width="110" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="325.0" y="266.0" text-anchor="middle" font-size="12" fill="currentColor">update TLB</text>
-  <polygon points="505,224 590,262 505,300 420,262" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="505.0" y="259.0" text-anchor="middle" font-size="11" fill="currentColor">block in</text>
-  <text x="505.0" y="273.0" text-anchor="middle" font-size="11" fill="currentColor">cache?</text>
-  <rect x="430.0" y="324.0" width="150" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="505.0" y="344.0" text-anchor="middle" font-size="12" fill="currentColor">load block into cache</text>
-  <rect x="430.0" y="393.0" width="150" height="34" rx="3" stroke="#22c55e" stroke-width="1.5" fill="none"/>
-  <text x="505.0" y="414.0" text-anchor="middle" font-size="12" fill="currentColor">access data</text>
-  <polygon points="140,333 225,369 140,405 55,369" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="366.0" text-anchor="middle" font-size="11" fill="currentColor">memory</text>
-  <text x="140.0" y="380.0" text-anchor="middle" font-size="11" fill="currentColor">full?</text>
-  <rect x="40.0" y="430.0" width="200" height="38" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="446.0" text-anchor="middle" font-size="12" fill="currentColor">choose victim page;</text>
-  <text x="140.0" y="460.0" text-anchor="middle" font-size="12" fill="currentColor">write back if dirty</text>
-  <rect x="40.0" y="498.0" width="200" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="513.0" text-anchor="middle" font-size="12" fill="currentColor">read page p from disk</text>
-  <text x="140.0" y="527.0" text-anchor="middle" font-size="12" fill="currentColor">into the frame</text>
-  <rect x="50.0" y="561.0" width="180" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="580.0" text-anchor="middle" font-size="12" fill="currentColor">update page table</text>
-  <rect x="50.0" y="615.0" width="180" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="634.0" text-anchor="middle" font-size="12" fill="currentColor">update TLB</text>
-  <polyline points="320,52 320,71" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="420,112 505,112 505,221" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="428.0" y="104.0" text-anchor="start" font-size="11" fill="#22c55e">yes (TLB hit): frame known</text>
-  <polyline points="220,112 140,112 140,165" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="212.0" y="104.0" text-anchor="end" font-size="11" fill="#ef4444">no (TLB miss)</text>
-  <polyline points="140,204 140,221" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="235,262 267,262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="250.0" y="254.0" text-anchor="middle" font-size="11" fill="currentColor">yes</text>
-  <polyline points="380,262 417,262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="590,262 612,262 612,410 583,410" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="616.0" y="254.0" text-anchor="start" font-size="11" fill="currentColor">yes</text>
-  <polyline points="505,303 505,321" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="512.0" y="316.0" text-anchor="start" font-size="11" fill="currentColor">no</text>
-  <polyline points="505,356 505,390" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="505,427 505,446 640,446 640,32 433,32" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="636.0" y="440.0" text-anchor="end" font-size="11" fill="currentColor" class="dim">next access</text>
-  <polyline points="140,300 140,330" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="148.0" y="316.0" text-anchor="start" font-size="11" fill="#ef4444">no: page fault</text>
-  <polyline points="140,405 140,427" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="148.0" y="420.0" text-anchor="start" font-size="11" fill="currentColor">yes</text>
-  <polyline points="225,369 262,369 262,516 243,516" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="232.0" y="361.0" text-anchor="start" font-size="11" fill="currentColor">no</text>
-  <polyline points="140,468 140,495" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="140,534 140,558" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="140,591 140,612" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <polyline points="50,630 18,630 18,32 207,32" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-flow)"/>
-  <text x="26.0" y="26.0" text-anchor="start" font-size="11" fill="currentColor" class="dim">restart</text>
-</svg>
-<figcaption>Flow of a memory reference through the TLB, page table and cache (also in Part II).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/memory_hierarchy_cache_memory/flow_address_through_tlb_page_table.svg" alt="Flow of an address through the TLB, page table and cache" width="660px" class="fig" caption="Flow of a memory reference through the TLB, page table and cache (also in Part II)." >}}
 
 ## Input/Output Organization
 
@@ -4401,117 +2145,13 @@ Interfacing I/O devices is more complex than interfacing memory:
 
 So a programmable **I/O interface** or **I/O module** is used. It interfaces to the processor and memory on one side, and to one or more I/O devices on the other.
 
-<figure class="fig">
-<svg viewBox="0 0 560 232" width="560" role="img" aria-label="Processor, memory and an I/O module on the system bus, with I/O devices attached to the module">
-  <defs><marker id="arr-iosys" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="90" y="15" width="130" height="45" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="90" y="15" width="130" height="45" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="155.0" y="41.82" text-anchor="middle" font-size="12" fill="currentColor">processor</text>
-  <rect x="340" y="15" width="130" height="45" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="340" y="15" width="130" height="45" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="405.0" y="41.82" text-anchor="middle" font-size="12" fill="currentColor">memory</text>
-  <polygon points="155,60 163,68 159,68 159,81 163,81 155,89 147,81 151,81 151,68 147,68" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polygon points="405,60 413,68 409,68 409,81 413,81 405,89 397,81 401,81 401,68 397,68" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polygon points="30,95 42,85 42,90 518,90 518,85 530,95 518,105 518,100 42,100 42,105" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polygon points="280,101 288,109 284,109 284,122 288,122 280,130 272,122 276,122 276,109 272,109" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="215" y="130" width="130" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="280.0" y="150.96" text-anchor="middle" font-size="11" fill="currentColor">I/O module</text>
-  <rect x="80" y="192" width="100" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="80" y="192" width="100" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="130.0" y="212.6" text-anchor="middle" font-size="10" fill="currentColor">I/O device</text>
-  <rect x="230" y="192" width="100" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="230" y="192" width="100" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="280.0" y="212.6" text-anchor="middle" font-size="10" fill="currentColor">I/O device</text>
-  <rect x="380" y="192" width="100" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="380" y="192" width="100" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="430.0" y="212.6" text-anchor="middle" font-size="10" fill="currentColor">I/O device</text>
-  <polyline points="280,164 280,191" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iosys)" marker-start="url(#arr-iosys)"/>
-  <polyline points="240,164 240,178 130,178 130,191" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iosys)" marker-start="url(#arr-iosys)"/>
-  <polyline points="320,164 320,178 430,178 430,191" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iosys)" marker-start="url(#arr-iosys)"/>
-</svg>
-<figcaption>An I/O module connects to the processor and memory on one side and to the devices on the other.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/processor_memory_i_o_module_system.svg" alt="Processor, memory and an I/O module on the system bus, with I/O devices attached to the module" width="560px" class="fig" caption="An I/O module connects to the processor and memory on one side and to the devices on the other." >}}
 
 In a typical device interface, the control logic operates the device according to the control signals from the I/O module and returns status signals to it, and a buffer holds the data being transferred [[3]](#ref-3).
 
-<figure class="fig">
-<svg viewBox="0 0 500 240" width="500" role="img" aria-label="Typical I/O device interface: control logic, buffer and the device">
-  <defs><marker id="arr-dev" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="40" y="55" width="420" height="175" rx="14" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
-  <text x="85" y="14" text-anchor="middle" font-size="10" fill="currentColor">control signals</text>
-  <text x="85" y="27" text-anchor="middle" font-size="10" fill="currentColor">from I/O module</text>
-  <text x="195" y="14" text-anchor="middle" font-size="10" fill="currentColor">status signals</text>
-  <text x="195" y="27" text-anchor="middle" font-size="10" fill="currentColor">to I/O module</text>
-  <text x="365" y="27" text-anchor="middle" font-size="10" fill="currentColor">data transfer</text>
-  <rect x="60" y="80" width="160" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="108.96" text-anchor="middle" font-size="11" fill="currentColor">control logic</text>
-  <rect x="310" y="80" width="110" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="310" y="80" width="110" height="50" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="365.0" y="108.96" text-anchor="middle" font-size="11" fill="currentColor">buffer</text>
-  <rect x="280" y="170" width="170" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="280" y="170" width="170" height="44" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="365.0" y="195.96" text-anchor="middle" font-size="11" fill="currentColor">I/O device</text>
-  <polyline points="85,33 85,79" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dev)"/>
-  <polyline points="195,79 195,33" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dev)"/>
-  <polyline points="365,33 365,79" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dev)" marker-start="url(#arr-dev)"/>
-  <polyline points="220,105 309,105" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dev)"/>
-  <polyline points="365,130 365,169" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dev)" marker-start="url(#arr-dev)"/>
-</svg>
-<figcaption>Typical I/O device interface (after Stallings, Fig. 7.2 <a href="#ref-3">[3]</a>).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/typical_i_o_device_interface_control.svg" alt="Typical I/O device interface: control logic, buffer and the device" width="500px" class="fig" caption=`Typical I/O device interface (after Stallings, Fig. 7.2 <a href="#ref-3">[3]</a>).` >}}
 
-<figure class="fig">
-<svg viewBox="0 0 610 240" width="610" role="img" aria-label="I/O module schematic: registers and I/O logic between the system bus and the device interfaces">
-  <defs><marker id="arr-iom" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-iom-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <polyline points="12,45 12,205" stroke="#ef4444" stroke-width="1.5" fill="none"/>
-  <polyline points="12,45 20,45" stroke="#ef4444" stroke-width="1.5" fill="none"/>
-  <polyline points="12,205 20,205" stroke="#ef4444" stroke-width="1.5" fill="none"/>
-  <text x="12" y="224" text-anchor="start" font-size="10" fill="#ef4444">system bus</text>
-  <text x="24" y="79" text-anchor="start" font-size="10" fill="currentColor" class="dim">data lines</text>
-  <text x="24" y="159" text-anchor="start" font-size="10" fill="currentColor" class="dim">address lines</text>
-  <text x="24" y="189" text-anchor="start" font-size="10" fill="currentColor" class="dim">control lines</text>
-  <rect x="130" y="45" width="130" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="130" y="45" width="130" height="34" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="195.0" y="65.96" text-anchor="middle" font-size="11" fill="currentColor">data registers</text>
-  <rect x="130" y="92" width="130" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="130" y="92" width="130" height="34" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="195.0" y="112.96" text-anchor="middle" font-size="11" fill="currentColor">status / control</text>
-  <rect x="130" y="145" width="130" height="70" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="195.0" y="178.0" text-anchor="middle" font-size="11" fill="currentColor">input/output</text>
-  <text x="195.0" y="192.0" text-anchor="middle" font-size="11" fill="currentColor">logic</text>
-  <polyline points="100,85 24,85" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <circle cx="100" cy="85" r="2.6" fill="currentColor"/>
-  <polyline points="100,85 100,62 129,62" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <polyline points="100,85 100,109 129,109" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <polyline points="24,165 129,165" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <polyline points="24,195 129,195" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <polyline points="261,62 296,62 296,170 261,170" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-iom-r)" marker-start="url(#arr-iom-r)"/>
-  <polyline points="261,109 280,109 280,158 261,158" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-iom-r)" marker-start="url(#arr-iom-r)"/>
-  <rect x="370" y="45" width="120" height="70" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="370" y="45" width="120" height="70" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="430.0" y="78.0" text-anchor="middle" font-size="10" fill="currentColor">I/O device</text>
-  <text x="430.0" y="91.0" text-anchor="middle" font-size="10" fill="currentColor">interface</text>
-  <polyline points="490,59 545,59" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)" marker-start="url(#arr-iom)"/>
-  <text x="550" y="63" text-anchor="start" font-size="10" fill="currentColor" class="dim">data</text>
-  <polyline points="545,80 491,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <text x="550" y="84" text-anchor="start" font-size="10" fill="currentColor" class="dim">status</text>
-  <polyline points="490,101 544,101" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <text x="550" y="105" text-anchor="start" font-size="10" fill="currentColor" class="dim">control</text>
-  <rect x="370" y="145" width="120" height="70" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="370" y="145" width="120" height="70" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="430.0" y="178.0" text-anchor="middle" font-size="10" fill="currentColor">I/O device</text>
-  <text x="430.0" y="191.0" text-anchor="middle" font-size="10" fill="currentColor">interface</text>
-  <polyline points="490,159 545,159" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)" marker-start="url(#arr-iom)"/>
-  <text x="550" y="163" text-anchor="start" font-size="10" fill="currentColor" class="dim">data</text>
-  <polyline points="545,180 491,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <text x="550" y="184" text-anchor="start" font-size="10" fill="currentColor" class="dim">status</text>
-  <polyline points="490,201 544,201" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)"/>
-  <text x="550" y="205" text-anchor="start" font-size="10" fill="currentColor" class="dim">control</text>
-  <polyline points="261,190 369,190" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)" marker-start="url(#arr-iom)"/>
-  <polyline points="261,180 330,180 330,80 369,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iom)" marker-start="url(#arr-iom)"/>
-</svg>
-<figcaption>I/O module schematic (after the NPTEL course <a href="#ref-1">[1]</a> and Stallings, Fig. 7.3 <a href="#ref-3">[3]</a>).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/i_o_module_schematic_registers_i.svg" alt="I/O module schematic: registers and I/O logic between the system bus and the device interfaces" width="610px" class="fig" caption=`I/O module schematic (after the NPTEL course <a href="#ref-1">[1]</a> and Stallings, Fig. 7.3 <a href="#ref-3">[3]</a>).` >}}
 
 Typical steps of an input operation:
 
@@ -4527,50 +2167,7 @@ Devices are connected through input and output ports:
 - An **output port** is a PIPO (parallel-in parallel-out) register that is enabled when a particular output device address is given. Its inputs are connected to the data bus and its outputs to the device.
 - An **input port** is a parallel tristate bus driver that is enabled when a particular input device address is given. Its outputs are connected to the data bus and its inputs to the device.
 
-<figure class="fig">
-<svg viewBox="0 0 640 186" width="640" role="img" aria-label="Input and output ports selected by an address decoder and connected to the data bus">
-  <defs><marker id="arr-pt" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-pt-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="120" y="26" text-anchor="end" font-size="10" fill="#ef4444">data bus</text>
-  <polyline points="128,22 630,22" stroke="#ef4444" stroke-width="2" fill="none"/>
-  <rect x="55" y="118" width="95" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="102.5" y="146.0" text-anchor="middle" font-size="11" fill="currentColor">address</text>
-  <text x="102.5" y="160.0" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
-  <text x="4" y="142" text-anchor="start" font-size="10" fill="currentColor">I/O</text>
-  <text x="4" y="170" text-anchor="start" font-size="10" fill="currentColor">addr.</text>
-  <polyline points="4,150 54,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)"/>
-  <rect x="130" y="62" width="56" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="158.0" y="83.6" text-anchor="middle" font-size="10" fill="currentColor">port</text>
-  <polyline points="158,22 158,61" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-pt-r)" marker-start="url(#arr-pt-r)"/>
-  <polyline points="150,133 158,133 158,99" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)"/>
-  <text x="164" y="113" text-anchor="start" font-size="10" fill="currentColor" class="dim">En</text>
-  <polyline points="186,80 209,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)" marker-start="url(#arr-pt)"/>
-  <rect x="210" y="62" width="74" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="210" y="62" width="74" height="36" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="247.0" y="78.0" text-anchor="middle" font-size="9" fill="currentColor">I/O device</text>
-  <text x="247.0" y="90.0" text-anchor="middle" font-size="9" fill="currentColor">1</text>
-  <rect x="300" y="62" width="56" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="328.0" y="83.6" text-anchor="middle" font-size="10" fill="currentColor">port</text>
-  <polyline points="328,22 328,61" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-pt-r)" marker-start="url(#arr-pt-r)"/>
-  <polyline points="150,150 328,150 328,99" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)"/>
-  <text x="334" y="113" text-anchor="start" font-size="10" fill="currentColor" class="dim">En</text>
-  <polyline points="356,80 379,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)" marker-start="url(#arr-pt)"/>
-  <rect x="380" y="62" width="74" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="380" y="62" width="74" height="36" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="417.0" y="78.0" text-anchor="middle" font-size="9" fill="currentColor">I/O device</text>
-  <text x="417.0" y="90.0" text-anchor="middle" font-size="9" fill="currentColor">2</text>
-  <rect x="470" y="62" width="56" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="498.0" y="83.6" text-anchor="middle" font-size="10" fill="currentColor">port</text>
-  <polyline points="498,22 498,61" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-pt-r)" marker-start="url(#arr-pt-r)"/>
-  <polyline points="150,167 498,167 498,99" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)"/>
-  <text x="504" y="113" text-anchor="start" font-size="10" fill="currentColor" class="dim">En</text>
-  <polyline points="526,80 549,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pt)" marker-start="url(#arr-pt)"/>
-  <rect x="550" y="62" width="74" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="550" y="62" width="74" height="36" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="587.0" y="78.0" text-anchor="middle" font-size="9" fill="currentColor">I/O device</text>
-  <text x="587.0" y="90.0" text-anchor="middle" font-size="9" fill="currentColor">3</text>
-</svg>
-<figcaption>Ports connected to the data bus and enabled by the address decoder.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/input_output_ports_selected_address_decoder.svg" alt="Input and output ports selected by an address decoder and connected to the data bus" width="640px" class="fig" caption="Ports connected to the data bus and enabled by the address decoder." >}}
 
 #### Memory-Mapped and I/O-Mapped Interfacing
 
@@ -4578,223 +2175,15 @@ Devices are connected through input and output ports:
 
 As an example, take a 16-bit address. A decoder on $A_{15} A_{14}$ selects three 16 KB memory modules with outputs 0 to 2, 48 KB in all. Output 3 enables a second decoder on $A_{13} A_{12}$, which selects ports A to D. The lower 12 bits are not decoded, so each port responds to a range of 4 K addresses.
 
-<figure class="fig">
-<svg viewBox="0 0 660 338" width="660" role="img" aria-label="Memory-mapped I/O: one 2-to-4 decoder selects three 16 KB memory modules and, through its last output, a second decoder for four ports">
-  <defs><marker id="arr-mmd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="10" y="15" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="10" y="15" width="70" height="40" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="45.0" y="39.32" text-anchor="middle" font-size="12" fill="currentColor">CPU</text>
-  <polygon points="41,55 49,55 49,80 53,80 45,88 37,80 41,80" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="60" y="80" text-anchor="start" font-size="10" fill="currentColor">A<tspan dy="3" font-size="8">15</tspan> – A<tspan dy="3" font-size="8">0</tspan></text>
-  <text x="46" y="128" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">15</tspan></text>
-  <text x="46" y="168" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">14</tspan></text>
-  <polyline points="50,124 99,124" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <polyline points="50,164 99,164" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <rect x="100" y="98" width="80" height="100" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="140.0" y="151.96" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
-  <text x="176" y="113" text-anchor="end" font-size="9" fill="currentColor" class="dim">0</text>
-  <text x="176" y="138" text-anchor="end" font-size="9" fill="currentColor" class="dim">1</text>
-  <text x="176" y="163" text-anchor="end" font-size="9" fill="currentColor" class="dim">2</text>
-  <text x="176" y="188" text-anchor="end" font-size="9" fill="currentColor" class="dim">3</text>
-  <polyline points="180,110 215,110 215,38 334,38" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="33" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="18" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="18" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="41.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
-  <text x="413" y="42" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="180,135 235,135 235,93 334,93" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="88" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="73" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="73" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="96.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
-  <text x="413" y="97" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="180,160 255,160 255,148 334,148" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="143" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="128" width="70" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="128" width="70" height="40" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="151.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
-  <text x="413" y="152" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="452,18 460,18 460,168 452,168" stroke="#ef4444" stroke-width="1.5" fill="none"/>
-  <text x="468" y="97" text-anchor="start" font-size="10" fill="#ef4444">48 KB</text>
-  <polyline points="180,185 215,185 215,219" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="221" y="208" text-anchor="start" font-size="10" fill="#ef4444">I/O</text>
-  <text x="209" y="212" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="170" y="220" width="90" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="215.0" y="278.96" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
-  <text x="116" y="259" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">13</tspan></text>
-  <text x="116" y="299" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">12</tspan></text>
-  <polyline points="120,255 169,255" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <polyline points="120,295 169,295" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <polyline points="260,237 334,237" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="233" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="227" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="227" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="352.0" y="240.6" text-anchor="middle" font-size="10" fill="currentColor">A</text>
-  <polyline points="260,262 334,262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="258" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="252" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="252" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="352.0" y="265.6" text-anchor="middle" font-size="10" fill="currentColor">B</text>
-  <polyline points="260,287 334,287" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="283" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="277" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="277" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="352.0" y="290.6" text-anchor="middle" font-size="10" fill="currentColor">C</text>
-  <polyline points="260,312 334,312" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-mmd)"/>
-  <text x="322" y="308" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="302" width="34" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="302" width="34" height="20" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="352.0" y="315.6" text-anchor="middle" font-size="10" fill="currentColor">D</text>
-  <polyline points="377,227 385,227 385,322 377,322" stroke="#ef4444" stroke-width="1.5" fill="none"/>
-  <text x="392" y="278" text-anchor="start" font-size="10" fill="#ef4444">ports</text>
-  <text x="450" y="232" text-anchor="start" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">15</tspan> A<tspan dy="3" font-size="8">14</tspan> A<tspan dy="3" font-size="8">13</tspan> A<tspan dy="3" font-size="8">12</tspan></text>
-  <text x="453" y="254" text-anchor="start" font-size="10" fill="currentColor">1 1 0 0</text>
-  <text x="508" y="254" text-anchor="start" font-size="10" fill="currentColor">⇒ A</text>
-  <text x="545" y="254" text-anchor="start" font-size="10" fill="currentColor" class="dim">C000–CFFF</text>
-  <text x="453" y="276" text-anchor="start" font-size="10" fill="currentColor">1 1 0 1</text>
-  <text x="508" y="276" text-anchor="start" font-size="10" fill="currentColor">⇒ B</text>
-  <text x="545" y="276" text-anchor="start" font-size="10" fill="currentColor" class="dim">D000–DFFF</text>
-  <text x="453" y="298" text-anchor="start" font-size="10" fill="currentColor">1 1 1 0</text>
-  <text x="508" y="298" text-anchor="start" font-size="10" fill="currentColor">⇒ C</text>
-  <text x="545" y="298" text-anchor="start" font-size="10" fill="currentColor" class="dim">E000–EFFF</text>
-  <text x="453" y="320" text-anchor="start" font-size="10" fill="currentColor">1 1 1 1</text>
-  <text x="508" y="320" text-anchor="start" font-size="10" fill="currentColor">⇒ D</text>
-  <text x="545" y="320" text-anchor="start" font-size="10" fill="currentColor" class="dim">F000–FFFF</text>
-</svg>
-<figcaption>Memory-mapped I/O: the same decoder selects memory and the I/O ports.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/memory_mapped_i_o_2_4.svg" alt="Memory-mapped I/O: one 2-to-4 decoder selects three 16 KB memory modules and, through its last output, a second decoder for four ports" width="660px" class="fig" caption="Memory-mapped I/O: the same decoder selects memory and the I/O ports." >}}
 
 **I/O-mapped I/O:** there are separate instructions for I/O data transfer (IN and OUT), and a processor signal identifies whether an address refers to a memory location or an I/O device. Separate address decoders select memory and I/O ports, and the complete memory address space can be used.
 
 In the example below, $\text{IO}/\overline{\text{M}} = 0$ enables the memory decoder (for LD and SD), and $\text{IO}/\overline{\text{M}} = 1$ enables the I/O decoder through the inverter (for IN and OUT). All four 16 KB modules can now be used, 64 KB in all.
 
-<figure class="fig">
-<svg viewBox="0 0 560 352" width="560" role="img" aria-label="I/O-mapped interfacing: the IO/M signal enables either the memory decoder or, through an inverter, the I/O decoder">
-  <defs><marker id="arr-iod" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="50" y="49" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">15</tspan></text>
-  <text x="50" y="89" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">14</tspan></text>
-  <polyline points="54,45 99,45" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <polyline points="54,85 99,85" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <rect x="100" y="25" width="100" height="90" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="150.0" y="68.0" text-anchor="middle" font-size="11" fill="currentColor">memory</text>
-  <text x="150.0" y="82.0" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
-  <polyline points="200,38 334,38" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="33" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="20" width="70" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="20" width="70" height="36" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="41.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
-  <text x="413" y="42" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="200,58 290,58 290,83 334,83" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="78" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="65" width="70" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="65" width="70" height="36" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="86.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
-  <text x="413" y="87" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="200,78 270,78 270,128 334,128" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="123" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="110" width="70" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="110" width="70" height="36" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="131.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
-  <text x="413" y="132" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="200,98 250,98 250,173 334,173" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="168" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="155" width="70" height="36" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="155" width="70" height="36" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="370.0" y="176.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">3</tspan></text>
-  <text x="413" y="177" text-anchor="start" font-size="10" fill="currentColor" class="dim">16 KB</text>
-  <polyline points="452,20 460,20 460,191 452,191" stroke="#ef4444" stroke-width="1.5" fill="none"/>
-  <text x="468" y="96" text-anchor="start" font-size="10" fill="#ef4444">64 KB</text>
-  <text x="468" y="112" text-anchor="start" font-size="10" fill="currentColor" class="dim">LD, SD</text>
-  <circle cx="150" cy="119" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="150,123 150,180" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <circle cx="150" cy="150" r="2.6" fill="currentColor"/>
-  <polyline points="60,150 150,150" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="56" y="154" text-anchor="end" font-size="11" fill="#ef4444">IO/M̄</text>
-  <polygon points="138,180 162,180 150,196" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <circle cx="150" cy="200" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="150,204 150,220" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <circle cx="150" cy="224" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="50" y="257" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">15</tspan></text>
-  <text x="50" y="297" text-anchor="end" font-size="10" fill="#ef4444">A<tspan dy="3" font-size="8">14</tspan></text>
-  <polyline points="54,253 99,253" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <polyline points="54,293 99,293" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <rect x="100" y="228" width="100" height="90" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="150.0" y="271.0" text-anchor="middle" font-size="11" fill="currentColor">I/O</text>
-  <text x="150.0" y="285.0" text-anchor="middle" font-size="11" fill="currentColor">decoder</text>
-  <polyline points="200,241 334,241" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="237" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="230" width="40" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="230" width="40" height="22" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="355.0" y="244.6" text-anchor="middle" font-size="10" fill="currentColor">A</text>
-  <polyline points="200,261 290,261 290,272 334,272" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="268" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="261" width="40" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="261" width="40" height="22" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="355.0" y="275.6" text-anchor="middle" font-size="10" fill="currentColor">B</text>
-  <polyline points="200,281 270,281 270,303 334,303" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="299" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="292" width="40" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="292" width="40" height="22" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="355.0" y="306.6" text-anchor="middle" font-size="10" fill="currentColor">C</text>
-  <polyline points="200,301 250,301 250,334 334,334" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-iod)"/>
-  <text x="322" y="330" text-anchor="end" font-size="9" fill="currentColor" class="dim">En</text>
-  <rect x="335" y="323" width="40" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="323" width="40" height="22" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="355.0" y="337.6" text-anchor="middle" font-size="10" fill="currentColor">D</text>
-  <text x="390" y="291" text-anchor="start" font-size="10" fill="currentColor" class="dim">IN, OUT</text>
-</svg>
-<figcaption>I/O-mapped interfacing: separate decoders, and the IO/M̄ signal enables one of them.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/i_o_mapped_interfacing_io_m.svg" alt="I/O-mapped interfacing: the IO/M signal enables either the memory decoder or, through an inverter, the I/O decoder" width="560px" class="fig" caption="I/O-mapped interfacing: separate decoders, and the IO/M̄ signal enables one of them." >}}
 
-<figure class="fig">
-<svg viewBox="0 0 540 216" width="540" role="img" aria-label="Address spaces in memory-mapped and I/O-mapped interfacing">
-  <defs></defs>
-  <text x="135" y="16" text-anchor="middle" font-size="11" fill="currentColor">(a) memory-mapped I/O</text>
-  <rect x="85" y="28" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="85" y="28" width="100" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="135.0" y="49.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
-  <text x="79" y="38" text-anchor="end" font-size="9" fill="currentColor" class="dim">0000</text>
-  <rect x="85" y="64" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="85" y="64" width="100" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="135.0" y="85.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
-  <text x="79" y="74" text-anchor="end" font-size="9" fill="currentColor" class="dim">4000</text>
-  <rect x="85" y="100" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="85" y="100" width="100" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="135.0" y="121.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
-  <text x="79" y="110" text-anchor="end" font-size="9" fill="currentColor" class="dim">8000</text>
-  <rect x="85" y="136" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="85" y="136" width="100" height="36" rx="0" fill="#f59e0b" opacity=".18"/>
-  <text x="135.0" y="157.96" text-anchor="middle" font-size="11" fill="currentColor">I/O</text>
-  <text x="79" y="146" text-anchor="end" font-size="9" fill="currentColor" class="dim">C000</text>
-  <text x="79" y="172" text-anchor="end" font-size="9" fill="currentColor" class="dim">FFFF</text>
-  <text x="135" y="190" text-anchor="middle" font-size="10" fill="currentColor" class="dim">one address space,</text>
-  <text x="135" y="204" text-anchor="middle" font-size="10" fill="currentColor" class="dim">I/O as an extension of the memory space</text>
-  <text x="400" y="16" text-anchor="middle" font-size="11" fill="currentColor">(b) I/O-mapped I/O</text>
-  <rect x="310" y="28" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="310" y="28" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="355.0" y="49.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
-  <text x="304" y="38" text-anchor="end" font-size="9" fill="currentColor" class="dim">0000</text>
-  <rect x="310" y="64" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="310" y="64" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="355.0" y="85.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
-  <text x="304" y="74" text-anchor="end" font-size="9" fill="currentColor" class="dim">4000</text>
-  <rect x="310" y="100" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="310" y="100" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="355.0" y="121.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
-  <text x="304" y="110" text-anchor="end" font-size="9" fill="currentColor" class="dim">8000</text>
-  <rect x="310" y="136" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="310" y="136" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
-  <text x="355.0" y="157.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">3</tspan></text>
-  <text x="304" y="146" text-anchor="end" font-size="9" fill="currentColor" class="dim">C000</text>
-  <text x="304" y="172" text-anchor="end" font-size="9" fill="currentColor" class="dim">FFFF</text>
-  <rect x="430" y="28" width="80" height="72" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="430" y="28" width="80" height="72" rx="0" fill="#f59e0b" opacity=".18"/>
-  <text x="470.0" y="67.96" text-anchor="middle" font-size="11" fill="currentColor">I/O ports</text>
-  <text x="400" y="190" text-anchor="middle" font-size="10" fill="currentColor" class="dim">separate spaces, IN / OUT</text>
-  <text x="400" y="204" text-anchor="middle" font-size="10" fill="currentColor" class="dim">and an IO/M̄ signal</text>
-</svg>
-<figcaption>Address spaces of the two examples above.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/address_spaces_memory_mapped_i_o.svg" alt="Address spaces in memory-mapped and I/O-mapped interfacing" width="540px" class="fig" caption="Address spaces of the two examples above." >}}
 
 ### Data Transfer Techniques
 
@@ -4805,33 +2194,7 @@ In the example below, $\text{IO}/\overline{\text{M}} = 0$ enables the memory dec
 
 The device transfers data at a fixed rate known to the CPU. The CPU initiates the I/O operation and transfers successive bytes or words after giving fixed time delays.
 
-<figure class="fig">
-<svg viewBox="0 0 470 274" width="470" role="img" aria-label="Flowchart of synchronous data transfer">
-  <defs><marker id="arr-syn" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="110" y="10" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="28.6" text-anchor="middle" font-size="10" fill="currentColor">initiate data transfer</text>
-  <rect x="110" y="62" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="110" y="62" width="190" height="30" rx="3" fill="#ef4444" opacity=".18"/>
-  <text x="205.0" y="80.6" text-anchor="middle" font-size="10" fill="currentColor">time delay</text>
-  <rect x="110" y="114" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="132.6" text-anchor="middle" font-size="10" fill="currentColor">read word from I/O module</text>
-  <rect x="110" y="166" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="184.6" text-anchor="middle" font-size="10" fill="currentColor">write word into memory</text>
-  <polyline points="205,40 205,61" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-syn)"/>
-  <polyline points="205,92 205,113" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-syn)"/>
-  <polyline points="205,144 205,165" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-syn)"/>
-  <polyline points="205,196 205,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-syn)"/>
-  <polygon points="205,216 260,240 205,264 150,240" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205" y="244" text-anchor="middle" font-size="10" fill="currentColor">done?</text>
-  <polyline points="150,240 60,240 60,77 109,77" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-syn)"/>
-  <text x="70" y="234" text-anchor="start" font-size="9" fill="currentColor">no</text>
-  <polyline points="260,240 312,240" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-syn)"/>
-  <text x="270" y="234" text-anchor="start" font-size="9" fill="currentColor">yes</text>
-  <text x="316" y="244" text-anchor="start" font-size="10" fill="currentColor" class="dim">data transfer complete</text>
-  <text x="308" y="81" text-anchor="start" font-size="10" fill="#ef4444">← CPU lies idle</text>
-</svg>
-<figcaption>Synchronous data transfer from an input device.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/flowchart_synchronous_data_transfer.svg" alt="Flowchart of synchronous data transfer" width="470px" class="fig" caption="Synchronous data transfer from an input device." >}}
 
 - The CPU lies idle during the delays.
 - Not many devices have strictly synchronous characteristics.
@@ -4843,40 +2206,7 @@ The device transfers data at a fixed rate known to the CPU. The CPU initiates th
 
 The CPU does not know when the I/O module will be ready to transfer the next word, so it checks the status of the module to find out. This is called **handshaking**.
 
-<figure class="fig">
-<svg viewBox="0 0 490 340" width="490" role="img" aria-label="Flowchart of asynchronous data transfer, with the status-checking loop">
-  <defs><marker id="arr-asy" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-asy-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="110" y="10" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="28.6" text-anchor="middle" font-size="10" fill="currentColor">initiate data transfer</text>
-  <rect x="110" y="62" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="80.6" text-anchor="middle" font-size="10" fill="currentColor">read status of I/O module</text>
-  <polygon points="205,114 260,138 205,162 150,138" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205" y="142" text-anchor="middle" font-size="10" fill="currentColor">ready?</text>
-  <rect x="110" y="184" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="202.6" text-anchor="middle" font-size="10" fill="currentColor">read word from I/O module</text>
-  <rect x="110" y="236" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="254.6" text-anchor="middle" font-size="10" fill="currentColor">write word into memory</text>
-  <polygon points="205,282 260,306 205,330 150,306" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205" y="310" text-anchor="middle" font-size="10" fill="currentColor">done?</text>
-  <polyline points="205,40 205,61" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <polyline points="205,92 205,113" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <polyline points="205,162 205,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <text x="213" y="172" text-anchor="start" font-size="9" fill="currentColor">yes</text>
-  <polyline points="205,214 205,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <polyline points="205,266 205,281" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <polyline points="260,138 330,138 330,77 301,77" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-asy-r)"/>
-  <text x="270" y="132" text-anchor="start" font-size="9" fill="currentColor">no</text>
-  <polyline points="150,306 60,306 60,77 109,77" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <text x="70" y="300" text-anchor="start" font-size="9" fill="currentColor">no</text>
-  <polyline points="260,306 312,306" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
-  <text x="270" y="300" text-anchor="start" font-size="9" fill="currentColor">yes</text>
-  <text x="316" y="310" text-anchor="start" font-size="10" fill="currentColor" class="dim">data transfer complete</text>
-  <text x="338" y="96" text-anchor="start" font-size="10" fill="#ef4444">lot of CPU time</text>
-  <text x="338" y="109" text-anchor="start" font-size="10" fill="#ef4444">is wasted in</text>
-  <text x="338" y="122" text-anchor="start" font-size="10" fill="#ef4444">this loop</text>
-</svg>
-<figcaption>Asynchronous data transfer (handshaking).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/flowchart_asynchronous_data_transfer_status_checking.svg" alt="Flowchart of asynchronous data transfer, with the status-checking loop" width="490px" class="fig" caption="Asynchronous data transfer (handshaking)." >}}
 
 - While checking, the CPU cannot do anything else, which wastes CPU time for slow devices such as a keyboard or mouse.
 - It is not suitable for high-speed devices with large blocks, since the CPU is tied up for the whole transfer.
@@ -4884,91 +2214,13 @@ The CPU does not know when the I/O module will be ready to transfer the next wor
 
 An example is **serial data transfer** using start and stop bits. The devices are asynchronous at the level of bytes, but synchronous at the level of bits within a byte. The line is at 1 when idle. The receiver waits for a start bit (0), then reads the 8 data bits after known bit delays, least significant bit first, and the stop bit (1) separates the bytes [[2]](#ref-2).
 
-<figure class="fig">
-<svg viewBox="0 0 570 196" width="570" role="img" aria-label="Asynchronous serial transfer: one frame with start and stop bits, and successive frames with gaps between them">
-  <defs></defs>
-  <rect x="4" y="22" width="56" height="56" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="32.0" y="53.24" text-anchor="middle" font-size="9" fill="currentColor">sender</text>
-  <rect x="508" y="22" width="60" height="56" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="538.0" y="53.24" text-anchor="middle" font-size="9" fill="currentColor">receiver</text>
-  <text x="82.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">idle</text>
-  <text x="119.5" y="92" text-anchor="middle" font-size="9" fill="#ef4444">start</text>
-  <polyline points="101,22 101,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="156.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b0</text>
-  <polyline points="138,22 138,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="193.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b1</text>
-  <polyline points="175,22 175,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="230.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b2</text>
-  <polyline points="212,22 212,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="267.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b3</text>
-  <polyline points="249,22 249,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="304.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b4</text>
-  <polyline points="286,22 286,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="341.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b5</text>
-  <polyline points="323,22 323,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="378.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b6</text>
-  <polyline points="360,22 360,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="415.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">b7</text>
-  <polyline points="397,22 397,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="452.5" y="92" text-anchor="middle" font-size="9" fill="#ef4444">stop</text>
-  <polyline points="434,22 434,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <text x="489.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" class="dim">idle</text>
-  <polyline points="471,22 471,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
-  <polyline points="64,30 101,30 101,70 138,70 138,30 175,30 175,30 212,30 212,70 249,70 249,30 286,30 286,70 323,70 323,70 360,70 360,30 397,30 397,70 434,70 434,30 471,30 471,30 508,30" stroke="currentColor" stroke-width="2" fill="none"/>
-  <polyline points="20,122 90,122 90,160 234,160 234,122 262,122 262,160 406,160 406,122 450,122 450,160 568,160 568,122" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="116" y="122" width="118" height="38" fill="#ef4444" opacity=".18"/>
-  <text x="175.0" y="145" text-anchor="middle" font-size="9" fill="currentColor">data</text>
-  <text x="103" y="172" text-anchor="middle" font-size="8" fill="#ef4444">start</text>
-  <polyline points="116,122 116,160" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <rect x="288" y="122" width="118" height="38" fill="#ef4444" opacity=".18"/>
-  <text x="347.0" y="145" text-anchor="middle" font-size="9" fill="currentColor">data</text>
-  <text x="275" y="172" text-anchor="middle" font-size="8" fill="#ef4444">start</text>
-  <polyline points="288,122 288,160" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <rect x="476" y="122" width="92" height="38" fill="#ef4444" opacity=".18"/>
-  <text x="522.0" y="145" text-anchor="middle" font-size="9" fill="currentColor">data</text>
-  <text x="463" y="172" text-anchor="middle" font-size="8" fill="#ef4444">start</text>
-  <polyline points="476,122 476,160" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <text x="248" y="117" text-anchor="middle" font-size="8" fill="#ef4444">stop</text>
-  <text x="428" y="117" text-anchor="middle" font-size="8" fill="#ef4444">stop</text>
-  <text x="285" y="190" text-anchor="middle" font-size="10" fill="currentColor" class="dim">successive bytes: the gap between frames can have any length</text>
-</svg>
-<figcaption>Asynchronous serial transfer: one frame, and a stream of frames.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/asynchronous_serial_transfer_frame_start_stop.svg" alt="Asynchronous serial transfer: one frame with start and stop bits, and successive frames with gaps between them" width="570px" class="fig" caption="Asynchronous serial transfer: one frame, and a stream of frames." >}}
 
 #### Interrupt-Driven Transfer
 
 The CPU initiates the transfer and proceeds to perform some other task. When the I/O module is ready, it informs the CPU by activating a signal called the **interrupt request (INTR)**. The CPU suspends its task, services the request (carries out the transfer), and returns to the task. The part of the program that is activated by the request is the **interrupt handler** or **interrupt service routine (ISR)**.
 
-<figure class="fig">
-<svg viewBox="0 0 540 304" width="540" role="img" aria-label="Flowchart of interrupt-driven data transfer, with the part that forms the interrupt service routine">
-  <defs><marker id="arr-int" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-int-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="110" y="10" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="28.6" text-anchor="middle" font-size="10" fill="currentColor">initiate data transfer</text>
-  <rect x="110" y="62" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="110" y="62" width="190" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="205.0" y="80.6" text-anchor="middle" font-size="10" fill="currentColor">perform some other task</text>
-  <polyline points="205,40 205,61" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-int)"/>
-  <rect x="60" y="116" width="330" height="178" rx="8" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="5 4"/>
-  <text x="382" y="134" text-anchor="end" font-size="11" fill="currentColor" class="dim">ISR</text>
-  <polyline points="205,92 205,133" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-int-r)"/>
-  <text x="213" y="110" text-anchor="start" font-size="10" fill="#ef4444">interrupt request</text>
-  <rect x="110" y="134" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="152.6" text-anchor="middle" font-size="10" fill="currentColor">read word from I/O module</text>
-  <rect x="110" y="186" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="204.6" text-anchor="middle" font-size="10" fill="currentColor">write word into memory</text>
-  <polyline points="205,164 205,185" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-int)"/>
-  <polyline points="205,216 205,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-int)"/>
-  <polygon points="205,236 260,260 205,284 150,260" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205" y="264" text-anchor="middle" font-size="10" fill="currentColor">done?</text>
-  <polyline points="150,260 30,260 30,77 109,77" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-int-r)" stroke-dasharray="5 4"/>
-  <text x="70" y="254" text-anchor="start" font-size="9" fill="#ef4444">no: resume</text>
-  <polyline points="260,260 412,260" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-int)"/>
-  <text x="270" y="254" text-anchor="start" font-size="9" fill="currentColor">yes</text>
-  <text x="416" y="257" text-anchor="start" font-size="10" fill="currentColor" class="dim">data transfer</text>
-  <text x="416" y="270" text-anchor="start" font-size="10" fill="currentColor" class="dim">complete</text>
-</svg>
-<figcaption>Interrupt-driven data transfer.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/flowchart_interrupt_driven_data_transfer_part.svg" alt="Flowchart of interrupt-driven data transfer, with the part that forms the interrupt service routine" width="540px" class="fig" caption="Interrupt-driven data transfer." >}}
 
 CPU time is not wasted in checking the status of the I/O module. It is needed only for the transfer itself, plus some overhead for transferring and returning control.
 
@@ -4987,106 +2239,11 @@ When an interrupt request arrives:
 
 An instruction cycle has several machine cycles, five in MIPS32. The interrupt is acknowledged only at the end of the last one.
 
-<figure class="fig">
-<svg viewBox="0 0 560 116" width="560" role="img" aria-label="An interrupt is acknowledged only after the last machine cycle of an instruction">
-  <defs><marker id="arr-ack-g" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#22c55e"/></marker><marker id="arr-ack-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="60" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="100.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">IF</text>
-  <rect x="140" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="180.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">ID</text>
-  <rect x="220" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="260.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">EX</text>
-  <rect x="300" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="340.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">MEM</text>
-  <rect x="380" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="420.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">WB</text>
-  <text x="460" y="14" text-anchor="middle" font-size="10" fill="#22c55e">interrupt acknowledged here</text>
-  <polyline points="460,20 460,41" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-g)"/>
-  <polyline points="140,92 140,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
-  <polyline points="220,92 220,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
-  <polyline points="300,92 300,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
-  <polyline points="380,92 380,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
-  <text x="260" y="108" text-anchor="middle" font-size="10" fill="#ef4444">interrupt not acknowledged here</text>
-</svg>
-<figcaption>Where an interrupt is acknowledged in an instruction cycle.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/interrupt_acknowledged_last_machine_cycle_instruction.svg" alt="An interrupt is acknowledged only after the last machine cycle of an instruction" width="560px" class="fig" caption="Where an interrupt is acknowledged in an instruction cycle." >}}
 
-<figure class="fig">
-<svg viewBox="0 0 600 266" width="600" role="img" aria-label="General interrupt processing: the hardware steps followed by the software steps">
-  <defs><marker id="arr-gip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="150" y="16" text-anchor="middle" font-size="11" fill="#3b82f6">by hardware</text>
-  <text x="450" y="16" text-anchor="middle" font-size="11" fill="#22c55e">by software</text>
-  <rect x="20" y="28" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="28" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="150.0" y="47.6" text-anchor="middle" font-size="10" fill="currentColor">device controller issues an interrupt</text>
-  <polyline points="150,60 150,75" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="20" y="76" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="76" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="150.0" y="95.6" text-anchor="middle" font-size="10" fill="currentColor">CPU finishes execution of current instruction</text>
-  <polyline points="150,108 150,123" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="20" y="124" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="124" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="150.0" y="143.6" text-anchor="middle" font-size="10" fill="currentColor">CPU acknowledges the interrupt</text>
-  <polyline points="150,156 150,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="20" y="172" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="172" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="150.0" y="191.6" text-anchor="middle" font-size="10" fill="currentColor">CPU pushes PSW and PC on the stack</text>
-  <polyline points="150,204 150,219" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="20" y="220" width="260" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="220" width="260" height="32" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="150.0" y="239.6" text-anchor="middle" font-size="10" fill="currentColor">CPU loads new PC value based on the interrupt</text>
-  <rect x="330" y="28" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="28" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="455.0" y="47.6" text-anchor="middle" font-size="10" fill="currentColor">save remainder of process state information</text>
-  <polyline points="455,60 455,75" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="330" y="76" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="76" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="455.0" y="95.6" text-anchor="middle" font-size="10" fill="currentColor">process interrupt request</text>
-  <polyline points="455,108 455,123" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="330" y="124" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="124" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="455.0" y="143.6" text-anchor="middle" font-size="10" fill="currentColor">restore process state information</text>
-  <polyline points="455,156 455,171" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-  <rect x="330" y="172" width="250" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="172" width="250" height="32" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="455.0" y="191.6" text-anchor="middle" font-size="10" fill="currentColor">restore old PSW and PC</text>
-  <polyline points="280,236 305,236 305,44 329,44" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-gip)"/>
-</svg>
-<figcaption>General interrupt processing (after Stallings, Fig. 7.6 <a href="#ref-3">[3]</a>).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/general_interrupt_processing_hardware_steps_followed.svg" alt="General interrupt processing: the hardware steps followed by the software steps" width="600px" class="fig" caption=`General interrupt processing (after Stallings, Fig. 7.6 <a href="#ref-3">[3]</a>).` >}}
 
-<figure class="fig">
-<svg viewBox="0 0 440 170" width="440" role="img" aria-label="The ISR can be entered from any point of the program, depending on when the interrupt arrives">
-  <defs><marker id="arr-isr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-isr-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <text x="150" y="14" text-anchor="middle" font-size="11" fill="currentColor">program</text>
-  <rect x="100" y="22" width="100" height="136" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="114,34 186,34" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,46 186,46" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,58 186,58" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,70 186,70" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,82 186,82" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,94 186,94" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,106 186,106" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,118 186,118" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,130 186,130" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="114,142 186,142" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <text x="330" y="50" text-anchor="middle" font-size="11" fill="currentColor">ISR</text>
-  <rect x="280" y="58" width="100" height="64" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="294,70 366,70" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="294,82 366,82" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="294,94 366,94" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="294,106 366,106" stroke="currentColor" stroke-width="0.8" fill="none"/>
-  <polyline points="70,52 99,52" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-isr-r)"/>
-  <text x="66" y="56" text-anchor="end" font-size="9" fill="#ef4444">interrupt</text>
-  <polyline points="70,118 99,118" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-isr-r)"/>
-  <text x="66" y="122" text-anchor="end" font-size="9" fill="#ef4444">interrupt</text>
-  <polyline points="200,52 279,66" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
-  <polyline points="280,114 201,64" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
-  <polyline points="200,118 279,76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
-  <polyline points="280,118 201,130" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-isr)" stroke-dasharray="5 4"/>
-</svg>
-<figcaption>An interrupt can arrive anywhere in the program; the ISR returns to the point of interruption.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/isr_can_be_entered_any_point.svg" alt="The ISR can be entered from any point of the program, depending on when the interrupt arrives" width="440px" class="fig" caption="An interrupt can arrive anywhere in the program; the ISR returns to the point of interruption." >}}
 
 The signals between the device controller and the CPU work as follows:
 
@@ -5095,46 +2252,11 @@ The signals between the device controller and the CPU work as follows:
 3. The device controller sends the **interrupt vector** (or number) over the data bus.
 4. The CPU reads the vector and identifies the device, and so the correct ISR.
 
-<figure class="fig">
-<svg viewBox="0 0 470 196" width="470" role="img" aria-label="Device controller and CPU with interrupt request, interrupt acknowledge and the interrupt vector on the data bus">
-  <defs><marker id="arr-ia" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="25" y="25" width="120" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="25" y="25" width="120" height="64" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="85.0" y="55.0" text-anchor="middle" font-size="11" fill="currentColor">device</text>
-  <text x="85.0" y="69.0" text-anchor="middle" font-size="11" fill="currentColor">controller</text>
-  <rect x="335" y="25" width="100" height="64" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="335" y="25" width="100" height="64" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="385.0" y="61.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <text x="240" y="37" text-anchor="middle" font-size="10" fill="#ef4444">interrupt request (INTR)</text>
-  <polyline points="145,43 334,43" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ia)"/>
-  <text x="240" y="69" text-anchor="middle" font-size="10" fill="#22c55e">interrupt acknowledge (INTA)</text>
-  <polyline points="335,75 146,75" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ia)"/>
-  <polygon points="81,89 89,89 89,139 93,139 85,147 77,139 81,139" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="97" y="120" text-anchor="start" font-size="10" fill="currentColor">interrupt vector</text>
-  <polygon points="385,89 393,97 389,97 389,139 393,139 385,147 377,139 381,139 381,97 377,97" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polygon points="15,153 27,143 27,148 443,148 443,143 455,153 443,163 443,158 27,158 27,163" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="235" y="186" text-anchor="middle" font-size="10" fill="currentColor" class="dim">data bus</text>
-</svg>
-<figcaption>Interrupt request, acknowledge and vector.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/device_controller_cpu_interrupt_request_interrupt.svg" alt="Device controller and CPU with interrupt request, interrupt acknowledge and the interrupt vector on the data bus" width="470px" class="fig" caption="Interrupt request, acknowledge and vector." >}}
 
 The vector is put on the data bus through a tristate buffer enabled by INTA.
 
-<figure class="fig">
-<svg viewBox="0 0 420 136" width="420" role="img" aria-label="The interrupt vector reaches the data bus through a tristate buffer enabled by INTA">
-  <defs><marker id="arr-tri" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-tri-g" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#22c55e"/></marker></defs>
-  <text x="150" y="14" text-anchor="middle" font-size="10" fill="currentColor">interrupt vector</text>
-  <polyline points="150,20 150,41" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-tri)"/>
-  <rect x="90" y="42" width="120" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="150.0" y="62.6" text-anchor="middle" font-size="10" fill="currentColor">tristate buffer</text>
-  <polyline points="310,59 211,59" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#arr-tri-g)"/>
-  <text x="260" y="52" text-anchor="middle" font-size="10" fill="#22c55e">INTA</text>
-  <polyline points="150,76 150,111" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-tri)"/>
-  <polygon points="30,117 42,107 42,112 378,112 378,107 390,117 378,127 378,122 42,122 42,127" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="390" y="98" text-anchor="end" font-size="10" fill="currentColor" class="dim">data bus</text>
-</svg>
-<figcaption>The tristate buffer is enabled when INTA is active.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/interrupt_vector_reaches_data_bus_through.svg" alt="The interrupt vector reaches the data bus through a tristate buffer enabled by INTA" width="420px" class="fig" caption="The tristate buffer is enabled when INTA is active." >}}
 
 #### Handling Multiple Devices
 
@@ -5144,41 +2266,7 @@ With several devices capable of generating interrupts, four questions arise: how
 
 Suppose the devices share a common request line, $\text{INTR} = \text{INTR}_1 + \text{INTR}_2 + \dots + \text{INTR}_n$. Each device can have a status bit showing whether it has interrupted, and the CPU can **poll** the status bits to find out which one did.
 
-<figure class="fig">
-<svg viewBox="0 0 470 176" width="470" role="img" aria-label="Polling the status bits of the devices to find out which one has interrupted">
-  <defs><marker id="arr-pol" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="52" width="90" height="84" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="52" width="90" height="84" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="65.0" y="98.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <text x="225" y="14" text-anchor="middle" font-size="10" fill="currentColor" class="dim">whether interrupted</text>
-  <rect x="205" y="24" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="225.0" y="42.96" text-anchor="middle" font-size="11" fill="currentColor">0</text>
-  <rect x="320" y="27" width="100" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="320" y="27" width="100" height="24" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="370.0" y="42.6" text-anchor="middle" font-size="10" fill="currentColor">device 1</text>
-  <polyline points="320,39 246,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
-  <polyline points="110,94 204,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
-  <rect x="205" y="54" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="225.0" y="72.96" text-anchor="middle" font-size="11" fill="currentColor">1</text>
-  <rect x="320" y="57" width="100" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="320" y="57" width="100" height="24" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="370.0" y="72.6" text-anchor="middle" font-size="10" fill="currentColor">device 2</text>
-  <polyline points="320,69 246,69" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
-  <polyline points="110,94 204,69" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
-  <rect x="205" y="84" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="225.0" y="102.96" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
-  <text x="370" y="103" text-anchor="middle" font-size="10" fill="currentColor">⋮</text>
-  <rect x="205" y="114" width="40" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="225.0" y="132.96" text-anchor="middle" font-size="11" fill="currentColor">0</text>
-  <rect x="320" y="117" width="100" height="24" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="320" y="117" width="100" height="24" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="370.0" y="132.6" text-anchor="middle" font-size="10" fill="currentColor">device N</text>
-  <polyline points="320,129 246,129" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
-  <polyline points="110,94 204,129" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pol)"/>
-  <text x="150" y="160" text-anchor="middle" font-size="10" fill="#ef4444">polling</text>
-</svg>
-<figcaption>Polling the status bits.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/polling_status_bits_devices_find_out.svg" alt="Polling the status bits of the devices to find out which one has interrupted" width="470px" class="fig" caption="Polling the status bits." >}}
 
 A better alternative is the interrupt vector: the interrupting device sends a special identifying code on the data bus on receiving INTA.
 
@@ -5193,27 +2281,7 @@ Suppose device D0 has interrupted and the CPU is executing its ISR, and in the m
 1. D1 interrupts the ISR for D0 and gets processed first, and then the ISR for D0 is resumed. This creates a problem for multi-level nesting.
 2. The interrupt system is disabled automatically whenever an interrupt is acknowledged, so that handling of nested interrupts is not required.
 
-<figure class="fig">
-<svg viewBox="0 0 500 216" width="500" role="img" aria-label="Nested interrupts: the ISR for D1 runs inside the ISR for D0">
-  <defs><marker id="arr-nest" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="110" y="14" text-anchor="middle" font-size="11" fill="currentColor">program</text>
-  <text x="250" y="30" text-anchor="middle" font-size="11" fill="currentColor">ISR D0</text>
-  <text x="390" y="62" text-anchor="middle" font-size="11" fill="currentColor">ISR D1</text>
-  <polyline points="110,22 110,56" stroke="currentColor" stroke-width="2" fill="none"/>
-  <polyline points="110,176 110,208" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#arr-nest)"/>
-  <polyline points="110,56 110,176" stroke="currentColor" stroke-width="2" fill="none"/>
-  <polyline points="250,38 250,88" stroke="currentColor" stroke-width="2" fill="none"/>
-  <polyline points="250,112 250,152" stroke="currentColor" stroke-width="2" fill="none"/>
-  <polyline points="390,70 390,128" stroke="currentColor" stroke-width="2" fill="none"/>
-  <text x="102" y="60" text-anchor="end" font-size="10" fill="#ef4444">D0 interrupts</text>
-  <text x="242" y="92" text-anchor="end" font-size="10" fill="#ef4444">D1 interrupts</text>
-  <polyline points="112,56 248,38" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-nest)" stroke-dasharray="5 4"/>
-  <polyline points="252,88 388,70" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-nest)" stroke-dasharray="5 4"/>
-  <polyline points="388,128 252,112" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-nest)" stroke-dasharray="5 4"/>
-  <polyline points="248,152 112,176" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-nest)" stroke-dasharray="5 4"/>
-</svg>
-<figcaption>Nested interrupts: D1 interrupts the ISR for D0.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/nested_interrupts_isr_d1_runs_inside.svg" alt="Nested interrupts: the ISR for D1 runs inside the ISR for D0" width="500px" class="fig" caption="Nested interrupts: D1 interrupts the ISR for D0." >}}
 
 Typical instruction sets have **EI** (enable interrupt) and **DI** (disable interrupt) instructions. In the second case the ISR executes EI just before RTI, and some ISAs combine the two into one instruction. DI is also used by the operating system to run code atomically, such as the semaphore wait and signal operations.
 
@@ -5223,182 +2291,29 @@ ISRs are typically short, so with the second approach the delay to a second requ
 
 The CPU needs a mechanism by which only one request is serviced, while the others are delayed or ignored. If it has several request lines, it can use a priority scheme and accept the request with the highest priority.
 
-<figure class="fig">
-<svg viewBox="0 0 520 162" width="520" role="img" aria-label="CPU with a separate pair of INTR and INTA lines for each device">
-  <defs><marker id="arr-ml" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="25" y="12" width="470" height="38" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="25" y="12" width="470" height="38" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="260.0" y="35.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <rect x="40" y="118" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="40" y="118" width="110" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="95.0" y="138.6" text-anchor="middle" font-size="10" fill="currentColor">device 1</text>
-  <polyline points="73,118 73,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
-  <polyline points="117,50 117,117" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
-  <text x="68" y="88" text-anchor="end" font-size="10" fill="#ef4444">INTR<tspan dy="3" font-size="8">1</tspan></text>
-  <text x="122" y="88" text-anchor="start" font-size="10" fill="#22c55e">INTA<tspan dy="3" font-size="8">1</tspan></text>
-  <rect x="185" y="118" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="185" y="118" width="110" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="240.0" y="138.6" text-anchor="middle" font-size="10" fill="currentColor">device 2</text>
-  <polyline points="218,118 218,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
-  <polyline points="262,50 262,117" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
-  <text x="213" y="88" text-anchor="end" font-size="10" fill="#ef4444">INTR<tspan dy="3" font-size="8">2</tspan></text>
-  <text x="267" y="88" text-anchor="start" font-size="10" fill="#22c55e">INTA<tspan dy="3" font-size="8">2</tspan></text>
-  <rect x="370" y="118" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="370" y="118" width="110" height="34" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="425.0" y="138.6" text-anchor="middle" font-size="10" fill="currentColor">device n</text>
-  <polyline points="403,118 403,51" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
-  <polyline points="447,50 447,117" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ml)"/>
-  <text x="398" y="88" text-anchor="end" font-size="10" fill="#ef4444">INTR<tspan dy="3" font-size="8">n</tspan></text>
-  <text x="452" y="88" text-anchor="start" font-size="10" fill="#22c55e">INTA<tspan dy="3" font-size="8">n</tspan></text>
-  <text x="335" y="139" text-anchor="middle" font-size="13" fill="currentColor">· · ·</text>
-</svg>
-<figcaption>Multiple interrupt request lines: line <em>i</em> has higher priority than line <em>j</em> if <em>i</em> &lt; <em>j</em>.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/cpu_separate_pair_intr_inta_lines.svg" alt="CPU with a separate pair of INTR and INTA lines for each device" width="520px" class="fig" caption="Multiple interrupt request lines: line <em>i</em> has higher priority than line <em>j</em> if <em>i</em> &lt; <em>j</em>." >}}
 
 With polling, priority is assigned automatically by the order in which the devices are polled.
 
 Priority can also be set by **daisy chaining**: the INTR line is common to all devices, but INTA propagates serially through them. A device that receives INTA passes it on only if it has not interrupted. Otherwise it stops the propagation and puts its identifying code on the data bus. So the device electrically closest to the CPU has the highest priority.
 
-<figure class="fig">
-<svg viewBox="0 0 560 136" width="560" role="img" aria-label="Daisy chain: INTR is shared and INTA is passed from device to device">
-  <defs><marker id="arr-dc2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="40" width="70" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="40" width="70" height="60" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="55.0" y="74.5" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <rect x="160" y="40" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="205.0" y="73.8" text-anchor="middle" font-size="11" fill="currentColor">device 1</text>
-  <rect x="300" y="40" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="345.0" y="73.8" text-anchor="middle" font-size="11" fill="currentColor">device 2</text>
-  <rect x="440" y="40" width="90" height="60" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="485.0" y="73.8" text-anchor="middle" font-size="11" fill="currentColor">device n</text>
-  <polyline points="205.0,37.0 205.0,20.0 55.0,20.0 55.0,37.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dc2)"/>
-  <text x="130.0" y="14.0" text-anchor="middle" font-size="10" fill="#ef4444">INTR (shared)</text>
-  <line x1="345.0" y1="37.0" x2="345.0" y2="20.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="485.0" y1="37.0" x2="485.0" y2="20.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="205.0" y1="20.0" x2="485.0" y2="20.0" stroke="currentColor" stroke-width="1.5"/>
-  <line x1="90.0" y1="85.0" x2="157.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc2)"/>
-  <text x="124.0" y="79.0" text-anchor="middle" font-size="10" fill="#22c55e">INTA</text>
-  <line x1="250.0" y1="85.0" x2="297.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc2)"/>
-  <line x1="390.0" y1="85.0" x2="437.0" y2="85.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dc2)"/>
-  <text x="300.0" y="126.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">INTA passes through each device that has not interrupted</text>
-</svg>
-<figcaption>Daisy chain.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/daisy_chain_intr_shared_inta_passed.svg" alt="Daisy chain: INTR is shared and INTA is passed from device to device" width="560px" class="fig" caption="Daisy chain." >}}
 
 #### Priority Interrupt Controller
 
 When several devices can interrupt the CPU, a common solution is a **priority interrupt controller**, which interacts with the CPU on one side and the devices on the other.
 
-<figure class="fig">
-<svg viewBox="0 0 460 156" width="460" role="img" aria-label="Priority interrupt controller between the CPU and several devices">
-  <defs><marker id="arr-pc" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="40" width="70" height="80" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="40" width="70" height="80" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="55.0" y="84.5" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <rect x="170" y="30" width="110" height="100" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="170" y="30" width="110" height="100" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="225.0" y="71.5" text-anchor="middle" font-size="10" fill="currentColor">priority</text>
-  <text x="225.0" y="83.5" text-anchor="middle" font-size="10" fill="currentColor">interrupt</text>
-  <text x="225.0" y="95.5" text-anchor="middle" font-size="10" fill="currentColor">controller</text>
-  <line x1="167.0" y1="60.0" x2="93.0" y2="60.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pc)"/>
-  <text x="130.0" y="54.0" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
-  <line x1="93.0" y1="90.0" x2="167.0" y2="90.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pc)"/>
-  <text x="130.0" y="84.0" text-anchor="middle" font-size="10" fill="currentColor">INTA</text>
-  <rect x="360" y="30" width="80" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="400.0" y="44.5" text-anchor="middle" font-size="10" fill="currentColor">device 0</text>
-  <line x1="357.0" y1="38.0" x2="283.0" y2="38.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <line x1="283.0" y1="45.0" x2="357.0" y2="45.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <rect x="360" y="57" width="80" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="400.0" y="71.5" text-anchor="middle" font-size="10" fill="currentColor">device 1</text>
-  <line x1="357.0" y1="65.0" x2="283.0" y2="65.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <line x1="283.0" y1="72.0" x2="357.0" y2="72.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <rect x="360" y="84" width="80" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="400.0" y="98.5" text-anchor="middle" font-size="10" fill="currentColor">device 2</text>
-  <line x1="357.0" y1="92.0" x2="283.0" y2="92.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <line x1="283.0" y1="99.0" x2="357.0" y2="99.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <rect x="360" y="111" width="80" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="400.0" y="125.5" text-anchor="middle" font-size="10" fill="currentColor">device 3</text>
-  <line x1="357.0" y1="119.0" x2="283.0" y2="119.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <line x1="283.0" y1="126.0" x2="357.0" y2="126.0" stroke="currentColor" stroke-width="1" marker-end="url(#arr-pc)"/>
-  <text x="320.0" y="146.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">INTRᵢ / INTAᵢ (device 0 highest)</text>
-</svg>
-<figcaption>Priority interrupt controller.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/priority_interrupt_controller_between_cpu_several.svg" alt="Priority interrupt controller between the CPU and several devices" width="460px" class="fig" caption="Priority interrupt controller." >}}
 
 The INTR line to the CPU is active when any device activates its request line, $\text{INTR} = \text{INTR}_0 + \text{INTR}_1 + \dots + \text{INTR}_n$. When the CPU sends back INTA, the controller sends the corresponding acknowledge to the interrupting device and puts its vector on the data bus.
 
-<figure class="fig">
-<svg viewBox="0 0 640 196" width="640" role="img" aria-label="The interrupt controller ORs the request lines; on INTA it acknowledges the requesting device and puts its vector on the data bus">
-  <defs><marker id="arr-pd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="66" y="56" text-anchor="end" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">0</tspan></text>
-  <polyline points="70,52 118,52" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="66" y="72" text-anchor="end" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">1</tspan></text>
-  <polyline points="70,68 122,68" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="66" y="112" text-anchor="end" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">n</tspan></text>
-  <polyline points="70,108 118,108" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="52" y="92" text-anchor="middle" font-size="10" fill="currentColor">⋮</text>
-  <path d="M110,40 Q136,80 110,120 Q170,120 200,80 Q170,40 110,40 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polyline points="200,80 258,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
-  <text x="228" y="73" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
-  <text x="135" y="150" text-anchor="middle" font-size="10" fill="currentColor" class="dim">(a) common request line</text>
-  <rect x="380" y="25" width="130" height="96" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="380" y="25" width="130" height="96" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="445" y="48" text-anchor="middle" font-size="10" fill="currentColor">interrupt</text>
-  <text x="445" y="60" text-anchor="middle" font-size="10" fill="currentColor">controller</text>
-  <circle cx="415" cy="90" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
-  <text x="415" y="93.5" text-anchor="middle" font-size="9" fill="currentColor">IV</text>
-  <circle cx="445" cy="90" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
-  <text x="445" y="93.5" text-anchor="middle" font-size="9" fill="currentColor">IV</text>
-  <circle cx="475" cy="90" r="12" stroke="currentColor" stroke-width="1" fill="none"/>
-  <text x="475" y="93.5" text-anchor="middle" font-size="9" fill="currentColor">IV</text>
-  <polyline points="380,50 321,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
-  <text x="350" y="44" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
-  <polyline points="320,90 379,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
-  <text x="350" y="84" text-anchor="middle" font-size="10" fill="currentColor">INTA</text>
-  <polyline points="570,50 511,50" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
-  <text x="540" y="44" text-anchor="middle" font-size="10" fill="currentColor">INTR<tspan dy="3" font-size="8">2</tspan></text>
-  <polyline points="510,90 569,90" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-pd)"/>
-  <text x="540" y="84" text-anchor="middle" font-size="10" fill="currentColor">INTA<tspan dy="3" font-size="8">2</tspan></text>
-  <polygon points="441,121 449,121 449,146 453,146 445,154 437,146 441,146" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <polygon points="320,160 332,150 332,155 558,155 558,150 570,160 558,170 558,165 332,165 332,170" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="576" y="164" text-anchor="start" font-size="10" fill="currentColor" class="dim">data bus</text>
-  <text x="445" y="190" text-anchor="middle" font-size="10" fill="currentColor" class="dim">(b) device 2 requests</text>
-</svg>
-<figcaption>(a) INTR is the OR of the device requests. (b) The controller answers INTA with the matching acknowledge and interrupt vector (IV).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/interrupt_controller_ors_request_lines_inta.svg" alt="The interrupt controller ORs the request lines; on INTA it acknowledges the requesting device and puts its vector on the data bus" width="640px" class="fig" caption="(a) INTR is the OR of the device requests. (b) The controller answers INTA with the matching acknowledge and interrupt vector (IV)." >}}
 
 The controller is programmable: the vectors of the various interrupts can be specified. When more than one request is active at a time, a priority mechanism is used (e.g. $\text{INTR}_0$ is the highest, followed by $\text{INTR}_1$).
 
 #### Types of Interrupts
 
-<figure class="fig">
-<svg viewBox="0 0 560 170" width="560" role="img" aria-label="Types of interrupts">
-  <defs><marker id="arr-ti" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="220" y="10" width="100" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="270.0" y="28.9" text-anchor="middle" font-size="11" fill="currentColor">interrupt</text>
-  <rect x="90" y="70" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="90" y="70" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="150.0" y="88.8" text-anchor="middle" font-size="11" fill="currentColor">hardware</text>
-  <rect x="330" y="70" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="70" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="390.0" y="88.8" text-anchor="middle" font-size="11" fill="currentColor">software</text>
-  <polyline points="270.0,40.0 270.0,55.0 150.0,55.0 150.0,67.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ti)"/>
-  <polyline points="270.0,55.0 390.0,55.0 390.0,67.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ti)"/>
-  <rect x="20" y="130" width="115" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="77.5" y="148.5" text-anchor="middle" font-size="10" fill="currentColor">maskable</text>
-  <polyline points="150.0,100.0 150.0,115.0 77.0,115.0 77.0,127.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ti)"/>
-  <rect x="150" y="130" width="115" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="207.5" y="148.5" text-anchor="middle" font-size="10" fill="currentColor">non-maskable</text>
-  <polyline points="150.0,100.0 150.0,115.0 207.0,115.0 207.0,127.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ti)"/>
-  <rect x="290" y="130" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="350.0" y="148.5" text-anchor="middle" font-size="10" fill="currentColor">trap (system call)</text>
-  <polyline points="390.0,100.0 390.0,115.0 350.0,115.0 350.0,127.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ti)"/>
-  <rect x="420" y="130" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="480.0" y="148.5" text-anchor="middle" font-size="10" fill="currentColor">exception</text>
-  <polyline points="390.0,100.0 390.0,115.0 480.0,115.0 480.0,127.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ti)"/>
-</svg>
-<figcaption>Types of interrupts.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/types_interrupts.svg" alt="Types of interrupts" width="560px" class="fig" caption="Types of interrupts." >}}
 
 - **Hardware interrupt:** the signal comes from a device external to the CPU (keyboard, mouse, timer).
   - **Maskable:** can be masked or delayed when a higher-priority request arrives. Processor instructions can selectively mask and unmask the request lines.
@@ -5453,45 +2368,7 @@ With **direct memory access (DMA)**, a block is transferred directly between a d
 
 A hardwired **DMA controller** carries out the transfer, so no instructions are executed for it. The maximum speed is determined by the rate of the memory read and write operations, which is much faster than programmed I/O.
 
-<figure class="fig">
-<svg viewBox="0 0 640 260" width="640" role="img" aria-label="DMA controller sharing the system bus with the CPU">
-  <defs><marker id="arr-dm2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="20.0" y1="30.0" x2="560.0" y2="30.0" stroke="currentColor" stroke-width="2"/>
-  <text x="566.0" y="34.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">address bus</text>
-  <line x1="20.0" y1="55.0" x2="560.0" y2="55.0" stroke="currentColor" stroke-width="2"/>
-  <text x="566.0" y="59.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">data bus</text>
-  <line x1="20.0" y1="80.0" x2="560.0" y2="80.0" stroke="currentColor" stroke-width="2"/>
-  <text x="566.0" y="84.0" text-anchor="start" font-size="9" fill="currentColor" class="dim">control bus</text>
-  <rect x="30" y="110" width="90" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="30" y="110" width="90" height="50" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="75.0" y="139.6" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <rect x="190" y="110" width="100" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="190" y="110" width="100" height="50" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="240.0" y="139.2" text-anchor="middle" font-size="12" fill="currentColor">memory</text>
-  <rect x="360" y="110" width="120" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="110" width="120" height="50" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="420.0" y="132.3" text-anchor="middle" font-size="11" fill="currentColor">DMA</text>
-  <text x="420.0" y="145.3" text-anchor="middle" font-size="11" fill="currentColor">controller</text>
-  <rect x="380" y="210" width="80" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="420.0" y="233.8" text-anchor="middle" font-size="11" fill="currentColor">disk</text>
-  <line x1="55.0" y1="30.0" x2="55.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="65.0" y1="55.0" x2="65.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="75.0" y1="80.0" x2="75.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="220.0" y1="30.0" x2="220.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="230.0" y1="55.0" x2="230.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="240.0" y1="80.0" x2="240.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="400.0" y1="30.0" x2="400.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="410.0" y1="55.0" x2="410.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="420.0" y1="80.0" x2="420.0" y2="108.0" stroke="currentColor" stroke-width="1"/>
-  <line x1="420.0" y1="160.0" x2="420.0" y2="207.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dm2)"/>
-  <line x1="440.0" y1="207.0" x2="440.0" y2="162.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-dm2)"/>
-  <polyline points="360.0,125.0 330.0,125.0 330.0,190.0 100.0,190.0 100.0,163.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dm2)"/>
-  <text x="215.0" y="184.0" text-anchor="middle" font-size="10" fill="#ef4444">DMA-RQ (bus request)</text>
-  <polyline points="60.0,163.0 60.0,205.0 340.0,205.0 340.0,150.0 357.0,150.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dm2)"/>
-  <text x="215.0" y="220.0" text-anchor="middle" font-size="10" fill="#22c55e">DMA-ACK (bus grant)</text>
-</svg>
-<figcaption>DMA controller on the system bus.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/dma_controller_sharing_system_bus_cpu.svg" alt="DMA controller sharing the system bus with the CPU" width="640px" class="fig" caption="DMA controller on the system bus." >}}
 
 1. The CPU initializes the DMA controller.
 2. When the device is ready, the DMA controller sends **DMA-RQ** to the CPU.
@@ -5501,59 +2378,9 @@ A hardwired **DMA controller** carries out the transfer, so no instructions are 
 
 For every DMA channel, the controller has three registers, which the CPU initializes before each transfer: the memory address, the word count, and the address of the data on the disk.
 
-<figure class="fig">
-<svg viewBox="0 0 540 152" width="540" role="img" aria-label="A DMA controller with several channels, each with its own request and acknowledge lines">
-  <defs><marker id="arr-ch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="20" y="25" width="90" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="20" y="25" width="90" height="110" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="65.0" y="84.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
-  <rect x="270" y="25" width="120" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="25" width="120" height="110" rx="3" fill="#f59e0b" opacity=".18"/>
-  <text x="330.0" y="78.0" text-anchor="middle" font-size="11" fill="currentColor">DMA</text>
-  <text x="330.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">controller</text>
-  <text x="190" y="42" text-anchor="middle" font-size="10" fill="currentColor">DMA-RQ</text>
-  <polyline points="270,48 111,48" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <text x="190" y="74" text-anchor="middle" font-size="10" fill="currentColor">DMA-ACK</text>
-  <polyline points="110,80 269,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <text x="190" y="106" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
-  <polyline points="270,112 111,112" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <polyline points="460,40 391,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <text x="466" y="44" text-anchor="start" font-size="10" fill="currentColor">DMA-RQ<tspan dy="3" font-size="8">1</tspan></text>
-  <polyline points="390,58 459,58" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <text x="466" y="62" text-anchor="start" font-size="10" fill="currentColor">DMA-ACK<tspan dy="3" font-size="8">1</tspan></text>
-  <polyline points="460,102 391,102" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <text x="466" y="106" text-anchor="start" font-size="10" fill="currentColor">DMA-RQ<tspan dy="3" font-size="8">4</tspan></text>
-  <polyline points="390,120 459,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
-  <text x="466" y="124" text-anchor="start" font-size="10" fill="currentColor">DMA-ACK<tspan dy="3" font-size="8">4</tspan></text>
-  <text x="425" y="85" text-anchor="middle" font-size="10" fill="currentColor">⋮</text>
-</svg>
-<figcaption>A DMA controller with several channels, here four.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/dma_controller_several_channels_own_request.svg" alt="A DMA controller with several channels, each with its own request and acknowledge lines" width="540px" class="fig" caption="A DMA controller with several channels, here four." >}}
 
-<figure class="fig">
-<svg viewBox="0 0 500 116" width="500" role="img" aria-label="DMA breakpoints after every machine cycle; interrupt only at the end of the instruction">
-  <defs><marker id="arr-bp" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="40" y="40" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="80.0" y="60.2" text-anchor="middle" font-size="12" fill="currentColor">IF</text>
-  <circle cx="120" cy="86" r="5" fill="#22c55e"/>
-  <rect x="120" y="40" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="160.0" y="60.2" text-anchor="middle" font-size="12" fill="currentColor">ID</text>
-  <circle cx="200" cy="86" r="5" fill="#22c55e"/>
-  <rect x="200" y="40" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="240.0" y="60.2" text-anchor="middle" font-size="12" fill="currentColor">EX</text>
-  <circle cx="280" cy="86" r="5" fill="#22c55e"/>
-  <rect x="280" y="40" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="320.0" y="60.2" text-anchor="middle" font-size="12" fill="currentColor">MEM</text>
-  <circle cx="360" cy="86" r="5" fill="#22c55e"/>
-  <rect x="360" y="40" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="400.0" y="60.2" text-anchor="middle" font-size="12" fill="currentColor">WB</text>
-  <circle cx="440" cy="86" r="5" fill="#22c55e"/>
-  <circle cx="440" cy="26" r="6" fill="#ef4444"/>
-  <text x="440.0" y="14.0" text-anchor="middle" font-size="10" fill="#ef4444">interrupt acknowledged</text>
-  <text x="240.0" y="106.0" text-anchor="middle" font-size="10" fill="#22c55e">DMA request can be acknowledged at the end of any machine cycle</text>
-</svg>
-<figcaption>DMA breakpoints and the interrupt breakpoint in an instruction cycle.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/dma_breakpoints_every_machine_cycle_interrupt.svg" alt="DMA breakpoints after every machine cycle; interrupt only at the end of the instruction" width="500px" class="fig" caption="DMA breakpoints and the interrupt breakpoint in an instruction cycle." >}}
 
 A DMA request can be acknowledged at the end of any machine cycle, since the CPU only gives up the bus and its state is not changed. An interrupt is acknowledged only at the end of an instruction, since the ISR changes the processor state.
 
@@ -5562,127 +2389,16 @@ A DMA request can be acknowledged at the end of any machine cycle, since the CPU
 - **Cycle stealing:** the DMA controller requests the bus for a few cycles (1 or 2), preferably when the CPU is not using memory, and returns it after each word. It is said to steal cycles from the CPU without the CPU knowing it.
 - **Block (burst) transfer:** the DMA controller transfers the whole block without interruption. This gives the maximum possible data rate, but the CPU lies idle during the transfer, as it cannot fetch instructions from memory.
 
-<figure class="fig">
-<svg viewBox="0 0 590 206" width="590" role="img" aria-label="Flowcharts of the DMA cycle stealing and block transfer modes">
-  <defs><marker id="arr-dmf" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="165" y="13" text-anchor="middle" font-size="11" fill="#ef4444">cycle stealing mode</text>
-  <polyline points="165,19 165,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <rect x="70" y="40" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="165.0" y="58.6" text-anchor="middle" font-size="10" fill="currentColor">DMA controller takes over bus</text>
-  <rect x="70" y="90" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="165.0" y="108.6" text-anchor="middle" font-size="10" fill="currentColor">DMA controller transfers one word</text>
-  <rect x="70" y="140" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="165.0" y="158.6" text-anchor="middle" font-size="10" fill="currentColor">DMA controller returns bus control</text>
-  <polyline points="165,70 165,89" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <polyline points="165,120 165,139" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <polyline points="165,170 165,197" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <text x="455" y="13" text-anchor="middle" font-size="11" fill="#ef4444">block transfer mode</text>
-  <polyline points="455,19 455,39" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <rect x="360" y="40" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="455.0" y="58.6" text-anchor="middle" font-size="10" fill="currentColor">DMA controller takes over bus</text>
-  <rect x="360" y="90" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="455.0" y="108.6" text-anchor="middle" font-size="10" fill="currentColor">DMA controller transfers one word</text>
-  <rect x="360" y="140" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="455.0" y="158.6" text-anchor="middle" font-size="10" fill="currentColor">DMA controller returns bus control</text>
-  <polyline points="455,70 455,89" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <polyline points="455,120 455,139" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <polyline points="455,170 455,197" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <circle cx="165" cy="184" r="2.6" fill="currentColor"/>
-  <polyline points="165,184 30,184 30,30 163,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-  <circle cx="455" cy="130" r="2.6" fill="currentColor"/>
-  <polyline points="455,130 330,130 330,80 453,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-dmf)"/>
-</svg>
-<figcaption>DMA transfer modes: cycle stealing gives up the bus after every word; block transfer keeps it until the whole block is done.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/flowcharts_dma_cycle_stealing_block_transfer.svg" alt="Flowcharts of the DMA cycle stealing and block transfer modes" width="590px" class="fig" caption="DMA transfer modes: cycle stealing gives up the bus after every word; block transfer keeps it until the whole block is done." >}}
 
-<figure class="fig">
-<svg viewBox="0 0 500 118" width="500" role="img" aria-label="DMA cycle stealing and block transfer modes">
-  <defs><marker id="arr-cs" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="110.0" y="34.0" text-anchor="end" font-size="10" fill="currentColor">cycle stealing</text>
-  <text x="110.0" y="74.0" text-anchor="end" font-size="10" fill="currentColor">block (burst)</text>
-  <rect x="120" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="120" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="135.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="150" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="150" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="165.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="180" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180" y="18" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="195.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="210" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="210" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="225.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="240" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="240" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="255.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="270" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="18" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="285.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="300" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="300" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="315.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="330" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="345.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="360" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="18" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="375.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="390" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="390" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="405.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="420" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="420" y="18" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="435.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="450" y="18" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="450" y="18" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="465.0" y="33.1" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="120" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="120" y="58" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="135.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="150" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="150" y="58" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="165.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="180" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180" y="58" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="195.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="210" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="210" y="58" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="225.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="240" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="240" y="58" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="255.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="270" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="270" y="58" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="285.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="300" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="300" y="58" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="315.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="330" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="58" width="30" height="24" rx="0" fill="#f59e0b" opacity=".3"/>
-  <text x="345.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">D</text>
-  <rect x="360" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="360" y="58" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="375.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="390" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="390" y="58" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="405.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="420" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="420" y="58" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="435.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <rect x="450" y="58" width="30" height="24" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="450" y="58" width="30" height="24" rx="0" fill="#3b82f6" opacity=".3"/>
-  <text x="465.0" y="73.2" text-anchor="middle" font-size="9" fill="currentColor">C</text>
-  <text x="120.0" y="110.0" text-anchor="start" font-size="10" fill="currentColor" class="dim">C: memory cycle used by the CPU; D: memory cycle used by DMA</text>
-</svg>
-<figcaption>Memory cycles in cycle-stealing and block transfer modes.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/dma_cycle_stealing_block_transfer_modes.svg" alt="DMA cycle stealing and block transfer modes" width="500px" class="fig" caption="Memory cycles in cycle-stealing and block transfer modes." >}}
 
 #### Other Applications of DMA
 
 Other than transfers to and from high-speed peripherals, DMA can be used for:
 
 - High-speed memory-to-memory block moves.
-- Refreshing dynamic memory, by periodically generating dummy read requests to the columns.
+- Refreshing dynamic memory, by periodically generating dummy read requests to the rows (reading a row refreshes all its cells).
 
 ### Exercises on I/O Transfer
 
@@ -5764,29 +2480,7 @@ In a **synchronous bus** a common clock controls the operations. For a memory re
 
 In an **asynchronous bus** there is no common clock, and the master and slave handshake:
 
-<figure class="fig">
-<svg viewBox="0 0 526 248" width="526" role="img" aria-label="Asynchronous bus read with MSYN and SSYN handshake">
-  <defs><marker id="arr-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="80.0" y="34.0" text-anchor="end" font-size="10" fill="currentColor">address</text>
-  <polyline points="90.0,38.0 142.0,22.0 454.0,22.0 506.0,38.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
-  <text x="80.0" y="72.0" text-anchor="end" font-size="10" fill="currentColor">MREQ, RD</text>
-  <polyline points="90.0,76.0 168.0,76.0 168.0,60.0 428.0,60.0 428.0,76.0 506.0,76.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
-  <text x="80.0" y="110.0" text-anchor="end" font-size="10" fill="currentColor">MSYN</text>
-  <polyline points="90.0,114.0 194.0,114.0 194.0,98.0 376.0,98.0 376.0,114.0 506.0,114.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
-  <text x="80.0" y="148.0" text-anchor="end" font-size="10" fill="currentColor">data</text>
-  <polyline points="90.0,152.0 272.0,152.0 272.0,136.0 402.0,136.0 402.0,152.0 506.0,152.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
-  <text x="80.0" y="186.0" text-anchor="end" font-size="10" fill="currentColor">SSYN</text>
-  <polyline points="90.0,190.0 298.0,190.0 298.0,174.0 443.6,174.0 443.6,190.0 506.0,190.0" stroke="currentColor" stroke-width="1.6" fill="none"/>
-  <line x1="194.0" y1="16.0" x2="194.0" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
-  <line x1="298.0" y1="16.0" x2="298.0" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
-  <line x1="376.0" y1="16.0" x2="376.0" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
-  <line x1="443.6" y1="16.0" x2="443.6" y2="214.0" stroke="currentColor" stroke-width="0.7" stroke-dasharray="4 3"/>
-  <text x="194.0" y="228.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">MSYN: master ready</text>
-  <text x="298.0" y="240.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">SSYN: data on bus</text>
-  <text x="412.4" y="228.0" text-anchor="middle" font-size="9" fill="currentColor" class="dim">master took data</text>
-</svg>
-<figcaption>Asynchronous memory read.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/asynchronous_bus_read_msyn_ssyn_handshake.svg" alt="Asynchronous bus read with MSYN and SSYN handshake" width="526px" class="fig" caption="Asynchronous memory read." >}}
 
 1. The CPU places the address, and asserts MREQ and RD when the address is stable.
 2. The CPU asserts MSYN, and the memory controller accesses the memory.
@@ -5813,46 +2507,7 @@ Data is sent serially with differential NRZI (non-return-to-zero inverted) encod
 
 USB uses a **tiered star topology**: all devices are connected to a root hub, through hubs, up to 127 devices. The cable has 4 wires (power, ground and two differential signal lines). USB is a **polled bus**: all transactions are initiated by the host.
 
-<figure class="fig">
-<svg viewBox="0 0 560 214" width="560" role="img" aria-label="USB tiered star topology">
-  <defs><marker id="arr-us" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <rect x="220" y="10" width="110" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="220" y="10" width="110" height="34" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="275.0" y="30.5" text-anchor="middle" font-size="10" fill="currentColor">host / root hub</text>
-  <rect x="45" y="90" width="70" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="45" y="90" width="70" height="28" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="80.0" y="107.5" text-anchor="middle" font-size="10" fill="currentColor">hub</text>
-  <line x1="275.0" y1="44.0" x2="80.0" y2="88.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="240" y="90" width="70" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="240" y="90" width="70" height="28" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="275.0" y="107.5" text-anchor="middle" font-size="10" fill="currentColor">hub</text>
-  <line x1="275.0" y1="44.0" x2="275.0" y2="88.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="435" y="90" width="70" height="28" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="435" y="90" width="70" height="28" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="470.0" y="107.5" text-anchor="middle" font-size="10" fill="currentColor">hub</text>
-  <line x1="275.0" y1="44.0" x2="470.0" y2="88.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="5" y="160" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="30.0" y="176.2" text-anchor="middle" font-size="9" fill="currentColor">device</text>
-  <line x1="80.0" y1="118.0" x2="30.0" y2="158.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="75" y="160" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="100.0" y="176.2" text-anchor="middle" font-size="9" fill="currentColor">device</text>
-  <line x1="80.0" y1="118.0" x2="100.0" y2="158.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="215" y="160" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="240.0" y="176.2" text-anchor="middle" font-size="9" fill="currentColor">device</text>
-  <line x1="275.0" y1="118.0" x2="240.0" y2="158.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="285" y="160" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="310.0" y="176.2" text-anchor="middle" font-size="9" fill="currentColor">device</text>
-  <line x1="275.0" y1="118.0" x2="310.0" y2="158.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="425" y="160" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="450.0" y="176.2" text-anchor="middle" font-size="9" fill="currentColor">device</text>
-  <line x1="470.0" y1="118.0" x2="450.0" y2="158.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <rect x="495" y="160" width="50" height="26" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="520.0" y="176.2" text-anchor="middle" font-size="9" fill="currentColor">device</text>
-  <line x1="470.0" y1="118.0" x2="520.0" y2="158.0" stroke="currentColor" stroke-width="1.2" marker-end="url(#arr-us)"/>
-  <text x="275.0" y="206.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">tiered star: up to 127 devices; the host initiates every transaction</text>
-</svg>
-<figcaption>USB tiered star topology.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/input_output_organization/usb_tiered_star_topology.svg" alt="USB tiered star topology" width="560px" class="fig" caption="USB tiered star topology." >}}
 
 - **Host:** controls the system (usually the computer) and contains the software drivers that schedule transactions and read the device configurations. Its physical interface to the root hub is the host controller.
 - **Hub:** detects new devices and keeps their status, acts as a repeater for the signals, and isolates the devices electrically, so malfunctioning devices can be removed and slower devices put on a separate branch.
@@ -5891,221 +2546,7 @@ There are three main approaches, which differ in how the threads share the proce
 - **Coarse-grained multithreading** switches only on costly stalls such as L2 or L3 misses. A single thread runs at nearly full speed, but short stalls are not hidden, and the pipeline must be refilled after each switch.
 - **Simultaneous multithreading (SMT)** issues instructions from several threads in the same cycle, on a dynamically scheduled multiple-issue processor. Register renaming keeps the registers of the threads apart, and the issue slots one thread leaves empty are filled by the others. Example: the AMD Ryzen 7 5800H runs two threads per core (8 cores, 16 threads).
 
-<figure class="fig">
-<svg viewBox="0 0 640 250" width="640" role="img" aria-label="Use of issue slots by a superscalar processor without multithreading, with coarse-grained and fine-grained multithreading, and with simultaneous multithreading">
-  <defs><marker id="arr-smt" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="66.0" y="18.0" text-anchor="middle" font-size="12" fill="currentColor">Superscalar</text>
-  <rect x="30" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="66" y="30" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="30" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="46" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="48" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="78" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="78" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="66" y="78" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="84" y="78" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="94" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="48" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="48" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="142" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="142" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="66" y="142" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="142" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="66" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="84" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="30" y="174" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="48" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="66" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="30" y="206" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="48" y="206" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="66" y="206" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="84" y="206" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <text x="216.0" y="18.0" text-anchor="middle" font-size="12" fill="currentColor">Coarse MT</text>
-  <rect x="180" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="30" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="30" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="46" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="216" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="62" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="62" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="62" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="234" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="78" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="198" y="78" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="216" y="78" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="78" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="94" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="94" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="94" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="234" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="110" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="216" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="126" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="126" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="142" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="142" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="142" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="234" y="142" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="180" y="158" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="198" y="158" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="216" y="158" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="158" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="174" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="174" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="216" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="234" y="190" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="180" y="206" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="198" y="206" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="216" y="206" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="234" y="206" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <text x="366.0" y="18.0" text-anchor="middle" font-size="12" fill="currentColor">Fine MT</text>
-  <rect x="330" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="30" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="30" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="46" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="366" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="46" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="62" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="62" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="62" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="78" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="78" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="78" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="384" y="78" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="94" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="366" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="94" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="110" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="110" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="110" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="126" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="366" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="126" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="142" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="142" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="142" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="142" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="158" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="384" y="158" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="174" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="366" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="174" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="330" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="366" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="384" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="330" y="206" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="348" y="206" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="366" y="206" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <rect x="384" y="206" width="18" height="16" fill="none" stroke="currentColor" stroke-width=".6" opacity=".35"/>
-  <text x="516.0" y="18.0" text-anchor="middle" font-size="12" fill="currentColor">SMT</text>
-  <rect x="480" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="30" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="30" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="30" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="46" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="46" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="46" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="46" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="62" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="62" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="62" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="62" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="78" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="78" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="78" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="78" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="94" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="94" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="94" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="94" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="110" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="110" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="110" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="110" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="126" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="126" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="126" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="126" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="142" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="142" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="142" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="142" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="158" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="158" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="158" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="158" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="174" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="174" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="174" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="174" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="190" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="190" width="18" height="16" fill="#22c55e" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="190" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="480" y="206" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="498" y="206" width="18" height="16" fill="#f59e0b" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="516" y="206" width="18" height="16" fill="#3b82f6" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <rect x="534" y="206" width="18" height="16" fill="#ef4444" opacity=".8" stroke="currentColor" stroke-width=".6"/>
-  <line x1="14.0" y1="30.0" x2="14.0" y2="222.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-smt)"/>
-  <text x="8" y="126" text-anchor="middle" font-size="10" fill="currentColor" class="dim" transform="rotate(-90 8 126)">time (clock cycles)</text>
-  <text x="66.0" y="238.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">issue slots</text>
-  <rect x="200" y="228" width="12" height="12" fill="#3b82f6" opacity=".8"/>
-  <text x="218.0" y="238.0" text-anchor="start" font-size="10" fill="currentColor">thread A</text>
-  <rect x="280" y="228" width="12" height="12" fill="#ef4444" opacity=".8"/>
-  <text x="298.0" y="238.0" text-anchor="start" font-size="10" fill="currentColor">thread B</text>
-  <rect x="360" y="228" width="12" height="12" fill="#22c55e" opacity=".8"/>
-  <text x="378.0" y="238.0" text-anchor="start" font-size="10" fill="currentColor">thread C</text>
-  <rect x="440" y="228" width="12" height="12" fill="#f59e0b" opacity=".8"/>
-  <text x="458.0" y="238.0" text-anchor="start" font-size="10" fill="currentColor">thread D</text>
-  <rect x="520" y="228" width="12" height="12" fill="none" stroke="currentColor" stroke-width=".6" opacity=".5"/>
-  <text x="538.0" y="238.0" text-anchor="start" font-size="10" fill="currentColor">idle slot</text>
-</svg>
-<figcaption>Use of the issue slots of a 4-issue processor by four threads A–D (after Hennessy & Patterson). Without multithreading, slots are lost to lack of ILP (empty slots in a row) and to stalls (empty rows). Coarse-grained multithreading hides only the long stalls, fine-grained multithreading hides the stalls but uses only the ILP of one thread per cycle, and SMT fills the slots in each cycle from several threads.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/parallel_architectures/use_issue_slots_superscalar_processor_without.svg" alt="Use of issue slots by a superscalar processor without multithreading, with coarse-grained and fine-grained multithreading, and with simultaneous multithreading" width="640px" class="fig" caption="Use of the issue slots of a 4-issue processor by four threads A–D (after Hennessy & Patterson). Without multithreading, slots are lost to lack of ILP (empty slots in a row) and to stalls (empty rows). Coarse-grained multithreading hides only the long stalls, fine-grained multithreading hides the stalls but uses only the ILP of one thread per cycle, and SMT fills the slots in each cycle from several threads." >}}
 
 ### Vector Processors
 
@@ -6154,74 +2595,7 @@ There are 3 convoys, so 3 chimes: about $3 \times 64 = 192$ cycles, or 3 cycles 
 
 A vector unit can have several **lanes**. Each lane has a part of the vector register file and one pipeline of each functional unit. With $m$ lanes, element $i$ of every vector register is in lane $i \bmod m$, so the lanes operate on different elements in parallel without communicating. With 4 lanes, one vector instruction completes 4 elements per cycle and a chime is reduced from 64 to 16 cycles.
 
-<figure class="fig">
-<svg viewBox="0 0 630 236" width="630" role="img" aria-label="A vector unit with four lanes; lane k holds elements k, k+4, k+8 and so on">
-  <defs><marker id="arr-lane" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <text x="90.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 0</text>
-  <rect x="30" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="30" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="90.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">vector registers:</text>
-  <text x="90.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 0, 4, 8, …</text>
-  <rect x="22" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
-  <rect x="30" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="30" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="90.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
-  <rect x="30" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="30" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="90.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
-  <rect x="30" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="30" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="90.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
-  <text x="240.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 1</text>
-  <rect x="180" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="240.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">vector registers:</text>
-  <text x="240.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 1, 5, 9, …</text>
-  <rect x="172" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
-  <rect x="180" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="240.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
-  <rect x="180" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="240.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
-  <rect x="180" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="180" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="240.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
-  <text x="390.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 2</text>
-  <rect x="330" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="390.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">vector registers:</text>
-  <text x="390.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 2, 6, 10, …</text>
-  <rect x="322" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
-  <rect x="330" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="390.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
-  <rect x="330" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="390.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
-  <rect x="330" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="330" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="390.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
-  <text x="540.0" y="14.0" text-anchor="middle" font-size="12" fill="currentColor">lane 3</text>
-  <rect x="480" y="30" width="120" height="46" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="480" y="30" width="120" height="46" rx="3" fill="#a855f7" opacity=".18"/>
-  <text x="540.0" y="48.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">vector registers:</text>
-  <text x="540.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">elements 3, 7, 11, …</text>
-  <rect x="472" y="22" width="136" height="188" rx="4" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".6"/>
-  <rect x="480" y="98" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="480" y="98" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="540.0" y="116.8" text-anchor="middle" font-size="11" fill="currentColor">FP add pipe</text>
-  <rect x="480" y="136" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="480" y="136" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
-  <text x="540.0" y="154.8" text-anchor="middle" font-size="11" fill="currentColor">FP mul pipe</text>
-  <rect x="480" y="174" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="480" y="174" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
-  <text x="540.0" y="192.8" text-anchor="middle" font-size="11" fill="currentColor">load/store</text>
-  <text x="315.0" y="226.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">vector load/store unit and memory banks</text>
-  <line x1="30.0" y1="214.0" x2="600.0" y2="214.0" stroke="currentColor" stroke-width="2"/>
-</svg>
-<figcaption>A vector unit with four lanes. Lane $k$ holds elements $k, k+4, k+8, \ldots$ of each vector register.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/parallel_architectures/vector_unit_four_lanes_lane_k.svg" alt="A vector unit with four lanes; lane k holds elements k, k+4, k+8 and so on" width="630px" class="fig" caption="A vector unit with four lanes. Lane $k$ holds elements $k, k+4, k+8, \ldots$ of each vector register." >}}
 
 #### Vector Mask Registers
 
@@ -6304,69 +2678,7 @@ $$\text{Attainable GFLOP/s} = \min(\text{peak memory bandwidth} \times \text{ari
 
 On a log–log plot this is a sloped line (memory-bound) joined to a horizontal line (compute-bound). The **ridge point**, where they meet, is the minimum arithmetic intensity needed to reach the peak floating-point performance.
 
-<figure class="fig">
-<svg viewBox="0 0 540 294" width="540" role="img" aria-label="Roofline model of the AMD Ryzen 7 5800H">
-  <defs><marker id="arr-roof" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
-  <line x1="70.0" y1="250.0" x2="525.0" y2="250.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-roof)"/>
-  <line x1="70.0" y1="250.0" x2="70.0" y2="10.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-roof)"/>
-  <line x1="70.0" y1="250.0" x2="70.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="70.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/16</text>
-  <line x1="114.0" y1="250.0" x2="114.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="114.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/8</text>
-  <line x1="158.0" y1="250.0" x2="158.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="158.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/4</text>
-  <line x1="202.0" y1="250.0" x2="202.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="202.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1/2</text>
-  <line x1="246.0" y1="250.0" x2="246.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="246.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">1</text>
-  <line x1="290.0" y1="250.0" x2="290.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="290.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">2</text>
-  <line x1="334.0" y1="250.0" x2="334.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="334.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">4</text>
-  <line x1="378.0" y1="250.0" x2="378.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="378.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">8</text>
-  <line x1="422.0" y1="250.0" x2="422.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="422.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">16</text>
-  <line x1="466.0" y1="250.0" x2="466.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="466.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">32</text>
-  <line x1="510.0" y1="250.0" x2="510.0" y2="254.0" stroke="currentColor" stroke-width="1"/>
-  <text x="510.0" y="266.0" text-anchor="middle" font-size="10" fill="currentColor">64</text>
-  <line x1="66.0" y1="250.0" x2="70.0" y2="250.0" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="253.0" text-anchor="end" font-size="10" fill="currentColor">2</text>
-  <line x1="66.0" y1="224.4" x2="70.0" y2="224.4" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="227.4" text-anchor="end" font-size="10" fill="currentColor">4</text>
-  <line x1="66.0" y1="198.9" x2="70.0" y2="198.9" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="201.9" text-anchor="end" font-size="10" fill="currentColor">8</text>
-  <line x1="66.0" y1="173.3" x2="70.0" y2="173.3" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="176.3" text-anchor="end" font-size="10" fill="currentColor">16</text>
-  <line x1="66.0" y1="147.8" x2="70.0" y2="147.8" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="150.8" text-anchor="end" font-size="10" fill="currentColor">32</text>
-  <line x1="66.0" y1="122.2" x2="70.0" y2="122.2" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="125.2" text-anchor="end" font-size="10" fill="currentColor">64</text>
-  <line x1="66.0" y1="96.7" x2="70.0" y2="96.7" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="99.7" text-anchor="end" font-size="10" fill="currentColor">128</text>
-  <line x1="66.0" y1="71.1" x2="70.0" y2="71.1" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="74.1" text-anchor="end" font-size="10" fill="currentColor">256</text>
-  <line x1="66.0" y1="45.6" x2="70.0" y2="45.6" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="48.6" text-anchor="end" font-size="10" fill="currentColor">512</text>
-  <line x1="66.0" y1="20.0" x2="70.0" y2="20.0" stroke="currentColor" stroke-width="1"/>
-  <text x="62.0" y="23.0" text-anchor="end" font-size="10" fill="currentColor">1024</text>
-  <text x="290.0" y="284.0" text-anchor="middle" font-size="11" fill="currentColor">arithmetic intensity (FLOP/byte)</text>
-  <text x="18" y="135.0" text-anchor="middle" font-size="11" fill="currentColor" transform="rotate(-90 18 135.0)">attainable GFLOP/s</text>
-  <path d="M70.0,232.7 L378.0,53.8 L510.0,53.8" stroke="#ef4444" stroke-width="2.5" fill="none"/>
-  <text x="165.0" y="130.0" text-anchor="middle" font-size="10" fill="#ef4444">51.2 GB/s × intensity</text>
-  <text x="450.0" y="45.8" text-anchor="middle" font-size="10" fill="#ef4444">peak 409.6 GFLOP/s</text>
-  <line x1="378.0" y1="53.8" x2="378.0" y2="250.0" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3"/>
-  <text x="374.0" y="242.0" text-anchor="end" font-size="10" fill="currentColor" class="dim">ridge point = 8</text>
-  <circle cx="158.0" cy="181.6" r="4" fill="#3b82f6"/>
-  <circle cx="422.0" cy="53.8" r="4" fill="#3b82f6"/>
-  <text x="166.0" y="197.6" text-anchor="start" font-size="10" fill="currentColor">0.25 FLOP/byte: 12.8 GFLOP/s</text>
-  <text x="430.0" y="69.8" text-anchor="start" font-size="10" fill="currentColor">16 FLOP/byte: peak</text>
-  <text x="118.9" y="40.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">memory-bound</text>
-  <text x="461.1" y="112.0" text-anchor="middle" font-size="11" fill="currentColor" class="dim">compute-bound</text>
-</svg>
-<figcaption>Roofline of the AMD Ryzen 7 5800H for double precision, from theoretical peaks: memory bandwidth 51.2 GB/s (dual-channel DDR4-3200) and 409.6 GFLOP/s (after Hennessy &amp; Patterson, Fig. 4.11 <a href="#ref-4">[4]</a>).</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/parallel_architectures/roofline_model_amd_ryzen_7_5800h.svg" alt="Roofline model of the AMD Ryzen 7 5800H" width="540px" class="fig" caption=`Roofline of the AMD Ryzen 7 5800H for double precision, from theoretical peaks: memory bandwidth 51.2 GB/s (dual-channel DDR4-3200) and 409.6 GFLOP/s (after Hennessy &amp; Patterson, Fig. 4.11 <a href="#ref-4">[4]</a>).` >}}
 
 Each Zen 3 core has two 256-bit FMA (fused multiply–add, $a \times b + c$ in one instruction) units (16 double-precision FLOP per cycle), so 8 cores at 3.2 GHz peak at $8 \times 3.2 \times 16 = 409.6$ GFLOP/s; two 64-bit DDR4-3200 channels give $2 \times 8 \times 3.2 = 51.2$ GB/s. The ridge point is at $409.6 / 51.2 = 8$ FLOP/byte. A kernel with an arithmetic intensity of 0.25 hits the slanted roof and is limited by memory bandwidth to $51.2 \times 0.25 = 12.8$ GFLOP/s; a kernel with an intensity of 16 hits the flat roof and runs at the peak 409.6 GFLOP/s. Measured (Stream) bandwidth is lower than the theoretical peak, which moves the ridge point to the right.
 
@@ -6405,37 +2717,7 @@ In the MSI write-invalidate protocol with write-back caches, each cache block is
 
 Each cache controller acts on requests from its own processor (read and write hits and misses) and on requests it snoops from the bus (read misses, write misses and invalidates for the block from other processors).
 
-<figure class="fig">
-<svg viewBox="0 0 740 350" width="740" role="img" aria-label="MSI write-invalidate protocol: transitions caused by the processor in black and by bus requests in red">
-  <defs><marker id="arr-msi" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-msir" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <ellipse cx="110" cy="290" rx="58" ry="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="110.0" y="294.0" text-anchor="middle" font-size="13" fill="currentColor">Invalid</text>
-  <ellipse cx="570" cy="290" rx="58" ry="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="570.0" y="294.0" text-anchor="middle" font-size="13" fill="currentColor">Shared</text>
-  <ellipse cx="340" cy="70" rx="58" ry="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="340.0" y="74.0" text-anchor="middle" font-size="13" fill="currentColor">Modified</text>
-  <path d="M172.0,299.0 Q340.0,326.0 506.0,299.0" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-msi)"/>
-  <text x="340.0" y="336.0" text-anchor="middle" font-size="10" fill="currentColor">CPU read miss</text>
-  <path d="M508.0,281.0 Q340.0,254.0 174.0,281.0" stroke="#ef4444" stroke-width="1.6" fill="none" marker-end="url(#arr-msir)"/>
-  <text x="340.0" y="246.0" text-anchor="middle" font-size="10" fill="#ef4444">bus: write miss or invalidate</text>
-  <path d="M148.6,262.8 Q200.1,154.0 287.5,85.6" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-msi)"/>
-  <text x="170.0" y="160.0" text-anchor="end" font-size="10" fill="currentColor">CPU write miss</text>
-  <path d="M301.4,97.2 Q249.9,206.0 162.5,274.4" stroke="#ef4444" stroke-width="1.6" fill="none" marker-end="url(#arr-msir)"/>
-  <text x="292.0" y="190.0" text-anchor="middle" font-size="10" fill="#ef4444">bus: write miss</text>
-  <text x="292.0" y="203.0" text-anchor="middle" font-size="10" fill="#ef4444">(write back)</text>
-  <path d="M531.4,262.8 Q479.9,154.0 392.5,85.6" stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#arr-msi)"/>
-  <text x="510.0" y="160.0" text-anchor="start" font-size="10" fill="currentColor">CPU write hit</text>
-  <text x="510.0" y="173.0" text-anchor="start" font-size="10" fill="currentColor">(invalidate)</text>
-  <path d="M378.6,97.2 Q430.1,206.0 517.5,274.4" stroke="#ef4444" stroke-width="1.6" fill="none" marker-end="url(#arr-msir)"/>
-  <text x="388.0" y="190.0" text-anchor="middle" font-size="10" fill="#ef4444">bus: read miss</text>
-  <text x="388.0" y="203.0" text-anchor="middle" font-size="10" fill="#ef4444">(write back)</text>
-  <path d="M370,48 C390,8 310,8 310,48" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-msi)"/>
-  <text x="396.0" y="24.0" text-anchor="start" font-size="10" fill="currentColor">CPU read or write hit</text>
-  <path d="M620,276 C670,256 670,324 620,304" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-msi)"/>
-  <text x="666.0" y="294.0" text-anchor="start" font-size="10" fill="currentColor">CPU read hit</text>
-</svg>
-<figcaption>MSI protocol for one cache block. Plain arrows: transitions caused by the processor of this cache. Red arrows: transitions caused by bus requests from other processors.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/parallel_architectures/msi_write_invalidate_protocol_transitions_caused.svg" alt="MSI write-invalidate protocol: transitions caused by the processor in black and by bus requests in red" width="740px" class="fig" caption="MSI protocol for one cache block. Plain arrows: transitions caused by the processor of this cache. Red arrows: transitions caused by bus requests from other processors." >}}
 
 <figure class="table">
 <figcaption>MSI transitions (Hennessy & Patterson).</figcaption>
@@ -6467,32 +2749,7 @@ Communication between processors also causes a fourth type of cache miss, the **
 - **True sharing miss:** a processor reads a word that another processor wrote. The data is actually communicated. Such a miss would occur even with a block size of one word.
 - **False sharing miss:** the block is invalidated because a word in it other than the one being read is written. The block is shared, but no word in it is actually shared, and the miss would not occur with a block size of one word.
 
-<figure class="fig">
-<svg viewBox="0 0 600 164" width="600" role="img" aria-label="False sharing: two cores use different words of the same cache block">
-  <defs><marker id="arr-fs" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-fsr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
-  <rect x="20" y="20" width="250" height="110" rx="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="145.0" y="40.0" text-anchor="middle" font-size="11" fill="currentColor">core P₁: private cache</text>
-  <rect x="45" y="60" width="100" height="34" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="45" y="60" width="100" height="34" rx="0" fill="#ef4444" opacity=".25"/>
-  <text x="95.0" y="81.2" text-anchor="middle" font-size="12" fill="currentColor">x1</text>
-  <rect x="145" y="60" width="100" height="34" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="195.0" y="81.2" text-anchor="middle" font-size="12" fill="currentColor">x2</text>
-  <text x="145.0" y="116.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">one cache block</text>
-  <rect x="330" y="20" width="250" height="110" rx="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="455.0" y="40.0" text-anchor="middle" font-size="11" fill="currentColor">core P₂: private cache</text>
-  <rect x="355" y="60" width="100" height="34" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <text x="405.0" y="81.2" text-anchor="middle" font-size="12" fill="currentColor">x1</text>
-  <rect x="455" y="60" width="100" height="34" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
-  <rect x="455" y="60" width="100" height="34" rx="0" fill="#3b82f6" opacity=".25"/>
-  <text x="505.0" y="81.2" text-anchor="middle" font-size="12" fill="currentColor">x2</text>
-  <text x="455.0" y="116.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">one cache block</text>
-  <text x="145.0" y="152.0" text-anchor="middle" font-size="11" fill="#ef4444">P₁ writes only x1</text>
-  <text x="455.0" y="152.0" text-anchor="middle" font-size="11" fill="#3b82f6">P₂ reads only x2</text>
-  <polyline points="270.0,77.0 300.0,77.0 330.0,77.0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arr-fs)"/>
-  <text x="300.0" y="70.0" text-anchor="middle" font-size="10" fill="currentColor" class="dim">invalidate</text>
-</svg>
-<figcaption>False sharing: P₁ writes x1 and P₂ reads x2, which are in the same block, so each write by P₁ invalidates the copy of P₂.</figcaption>
-</figure>
+{{< figure src="/images/computer-systems/computer-architecture/parallel_architectures/false_sharing_cores_use_different_words.svg" alt="False sharing: two cores use different words of the same cache block" width="600px" class="fig" caption="False sharing: P₁ writes x1 and P₂ reads x2, which are in the same block, so each write by P₁ invalidates the copy of P₂." >}}
 
 <div class="example">
 

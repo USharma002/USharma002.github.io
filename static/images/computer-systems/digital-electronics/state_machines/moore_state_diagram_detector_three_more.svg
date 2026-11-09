@@ -1,0 +1,27 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 275" width="440" role="img" aria-label="Moore state diagram of a detector for three or more consecutive 1s">
+  <defs><marker id="arr-fsm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <ellipse cx="110" cy="60" rx="34" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="110" y="65" text-anchor="middle" font-size="13" fill="currentColor">S₀/0</text>
+  <ellipse cx="330" cy="60" rx="34" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="330" y="65" text-anchor="middle" font-size="13" fill="currentColor">S₁/0</text>
+  <ellipse cx="330" cy="200" rx="34" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="330" y="205" text-anchor="middle" font-size="13" fill="currentColor">S₂/0</text>
+  <ellipse cx="110" cy="200" rx="34" ry="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="110" y="205" text-anchor="middle" font-size="13" fill="currentColor">S₃/1</text>
+  <path d="M144,53 L296,53" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="220" y="46" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">1</text>
+  <path d="M296,67 L144,67" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="220" y="84" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">0</text>
+  <path d="M330,80 L330,180" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="340" y="134" text-anchor="start" font-size="12" fill="currentColor" font-style="italic">1</text>
+  <path d="M307,185 L134,75" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="236" y="124" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">0</text>
+  <path d="M296,200 L144,200" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="220" y="193" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">1</text>
+  <path d="M110,180 L110,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="100" y="134" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">0</text>
+  <path d="M98,41 C80,4 140,4 122,41" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="110" y="12" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">0</text>
+  <path d="M98,219 C80,256 140,256 122,219" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-fsm)"/>
+  <text x="110" y="266" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">1</text>
+</svg>

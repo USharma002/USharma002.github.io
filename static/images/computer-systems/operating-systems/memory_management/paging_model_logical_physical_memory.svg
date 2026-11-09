@@ -1,0 +1,62 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 344" width="600" role="img" aria-label="Paging model of logical and physical memory">
+  <defs><marker id="arr-2x44" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="30" y="40" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="75.0" y="67.0" text-anchor="middle" font-size="12" fill="currentColor">page 0</text>
+  <text x="18" y="67" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">0</text>
+  <rect x="30" y="84" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="75.0" y="111.0" text-anchor="middle" font-size="12" fill="currentColor">page 1</text>
+  <text x="18" y="111" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">1</text>
+  <rect x="30" y="128" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="75.0" y="155.0" text-anchor="middle" font-size="12" fill="currentColor">page 2</text>
+  <text x="18" y="155" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">2</text>
+  <rect x="30" y="172" width="90" height="44" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="75.0" y="199.0" text-anchor="middle" font-size="12" fill="currentColor">page 3</text>
+  <text x="18" y="199" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">3</text>
+  <text x="75" y="28" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">logical memory</text>
+  <rect x="210" y="62" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235" y="84" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+  <text x="200" y="84" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">0</text>
+  <polyline points="120,62 206,79" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <rect x="210" y="96" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235" y="118" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+  <text x="200" y="118" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">1</text>
+  <polyline points="120,106 206,113" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <rect x="210" y="130" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235" y="152" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+  <text x="200" y="152" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">2</text>
+  <polyline points="120,150 206,147" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <rect x="210" y="164" width="50" height="34" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="235" y="186" text-anchor="middle" font-size="13" fill="currentColor">7</text>
+  <text x="200" y="186" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">3</text>
+  <polyline points="120,194 206,181" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <text x="235" y="50" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">page table</text>
+  <rect x="420" y="20" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540" y="43" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">0</text>
+  <rect x="420" y="56" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="420" y="56" width="110" height="36" fill="currentColor" opacity=".12"/>
+  <text x="475" y="79" text-anchor="middle" font-size="12" fill="currentColor">page 0</text>
+  <text x="540" y="79" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">1</text>
+  <rect x="420" y="92" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540" y="115" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">2</text>
+  <rect x="420" y="128" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="420" y="128" width="110" height="36" fill="currentColor" opacity=".12"/>
+  <text x="475" y="151" text-anchor="middle" font-size="12" fill="currentColor">page 2</text>
+  <text x="540" y="151" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">3</text>
+  <rect x="420" y="164" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="420" y="164" width="110" height="36" fill="currentColor" opacity=".12"/>
+  <text x="475" y="187" text-anchor="middle" font-size="12" fill="currentColor">page 1</text>
+  <text x="540" y="187" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">4</text>
+  <rect x="420" y="200" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540" y="223" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">5</text>
+  <rect x="420" y="236" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540" y="259" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">6</text>
+  <rect x="420" y="272" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="420" y="272" width="110" height="36" fill="currentColor" opacity=".12"/>
+  <text x="475" y="295" text-anchor="middle" font-size="12" fill="currentColor">page 3</text>
+  <text x="540" y="295" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">7</text>
+  <polyline points="260,79 416,74" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <polyline points="260,113 416,182" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <polyline points="260,147 416,146" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <polyline points="260,181 416,290" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x44)"/>
+  <text x="475" y="334" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory (frames)</text>
+</svg>

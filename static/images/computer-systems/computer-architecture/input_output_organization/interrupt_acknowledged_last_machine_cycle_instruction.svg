@@ -1,0 +1,20 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 116" width="560" role="img" aria-label="An interrupt is acknowledged only after the last machine cycle of an instruction">
+  <defs><marker id="arr-ack-g" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#22c55e"/></marker><marker id="arr-ack-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <rect x="60" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="100.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">IF</text>
+  <rect x="140" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="180.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">ID</text>
+  <rect x="220" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="260.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">EX</text>
+  <rect x="300" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="340.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">MEM</text>
+  <rect x="380" y="42" width="80" height="30" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="420.0" y="60.96" text-anchor="middle" font-size="11" fill="currentColor">WB</text>
+  <text x="460" y="14" text-anchor="middle" font-size="10" fill="#22c55e">interrupt acknowledged here</text>
+  <polyline points="460,20 460,41" stroke="#22c55e" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-g)"/>
+  <polyline points="140,92 140,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
+  <polyline points="220,92 220,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
+  <polyline points="300,92 300,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
+  <polyline points="380,92 380,73" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-ack-r)"/>
+  <text x="260" y="108" text-anchor="middle" font-size="10" fill="#ef4444">interrupt not acknowledged here</text>
+</svg>

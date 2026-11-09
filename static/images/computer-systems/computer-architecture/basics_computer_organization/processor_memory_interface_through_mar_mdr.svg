@@ -1,0 +1,28 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 166" width="580" role="img" aria-label="Processor-memory interface through MAR and MDR">
+  <defs><marker id="arr-pm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="20" width="200" height="130" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="120.0" y="40.0" text-anchor="middle" font-size="12" fill="currentColor">Processor</text>
+  <rect x="60" y="55" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="60" y="55" width="120" height="30" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="120.0" y="74.2" text-anchor="middle" font-size="12" fill="currentColor">MAR</text>
+  <rect x="60" y="100" width="120" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="60" y="100" width="120" height="30" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="120.0" y="119.2" text-anchor="middle" font-size="12" fill="currentColor">MDR</text>
+  <rect x="400" y="20" width="160" height="130" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="480.0" y="40.0" text-anchor="middle" font-size="12" fill="currentColor">Primary memory</text>
+  <rect x="430" y="50" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="422.0" y="65.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <rect x="430" y="72" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="422.0" y="87.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <rect x="430" y="94" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="422.0" y="109.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">2</text>
+  <rect x="430" y="116" width="100" height="22" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="422.0" y="131.0" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">⋮</text>
+  <line x1="180" y1="70" x2="397" y2="70" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
+  <text x="290.0" y="64.0" text-anchor="middle" font-size="11" fill="currentColor">address</text>
+  <line x1="180" y1="112" x2="397" y2="112" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
+  <line x1="397" y1="120" x2="180" y2="120" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
+  <text x="290.0" y="106.0" text-anchor="middle" font-size="11" fill="currentColor">data</text>
+  <line x1="220" y1="140" x2="397" y2="140" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-pm)"/>
+  <text x="290.0" y="134.0" text-anchor="middle" font-size="11" fill="currentColor">control: READ / WRITE</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 315" width="620" role="img" aria-label="Segmentation hardware">
+  <defs><marker id="arr-2x42" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="300" y="14" width="100" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="34" width="100" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="54" width="100" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="54" width="100" height="22" fill="currentColor" opacity=".12"/>
+  <rect x="300" y="76" width="100" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="96" width="100" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="350" y1="14" x2="350" y2="116" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="325" y="70" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">limit</text>
+  <text x="375" y="70" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">base</text>
+  <text x="350" y="134" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">segment table</text>
+  <path d="M296,14 q-6,0 -6,8 V40 q0,5 -5,5 q5,0 5,5 V68 q0,8 6,8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="277" y="50" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">s</text>
+  <rect x="80" y="145" width="70" height="50" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="115.0" y="175.0" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
+  <polyline points="150,170 178,170" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <rect x="180" y="159" width="60" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="210" y1="159" x2="210" y2="181" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="180" y="159" width="30" height="22" fill="currentColor" opacity=".18"/>
+  <rect x="210" y="159" width="30" height="22" fill="#3b82f6" opacity=".28"/>
+  <text x="195" y="175" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">s</text>
+  <text x="225" y="175" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">d</text>
+  <polyline points="195,159 195,45 270,45" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polyline points="225,181 225,235 301,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polygon points="303,235 325,217 347,235 325,253" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="325" y="240" text-anchor="middle" font-size="14" fill="currentColor">&lt;</text>
+  <polyline points="325,76 325,215" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polyline points="347,235 414,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <text x="372" y="227" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">yes</text>
+  <circle cx="430" cy="235" r="15" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="430" y="241" text-anchor="middle" font-size="16" fill="currentColor">+</text>
+  <polyline points="400,65 430,65 430,218" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <polyline points="445,235 498,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <rect x="500" y="100" width="100" height="190" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="550" y="306" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory</text>
+  <polyline points="325,253 325,288" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x42)"/>
+  <text x="333" y="272" text-anchor="start" font-size="11" fill="currentColor" font-style="italic">no</text>
+  <text x="325" y="306" text-anchor="middle" font-size="12" fill="currentColor">trap: addressing error</text>
+</svg>

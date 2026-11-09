@@ -1,0 +1,22 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" width="420" role="img" aria-label="Layout of a process in memory">
+  <defs><marker id="arr-2x2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="120" y="20" width="150" height="260" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="120" y1="70" x2="270" y2="70" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="120" y1="210" x2="270" y2="210" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="120" y1="245" x2="270" y2="245" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="195.0" y="50" text-anchor="middle" font-size="13" fill="currentColor">stack</text>
+  <polyline points="195.0,72 195.0,105" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x2)"/>
+  <text x="195.0" y="200" text-anchor="middle" font-size="13" fill="currentColor">heap</text>
+  <polyline points="195.0,186 195.0,152" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x2)"/>
+  <text x="195.0" y="233" text-anchor="middle" font-size="13" fill="currentColor">data</text>
+  <text x="195.0" y="267" text-anchor="middle" font-size="13" fill="currentColor">text</text>
+  <text x="110" y="26" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">max</text>
+  <text x="110" y="282" text-anchor="end" font-size="11" fill="currentColor" opacity=".65">0</text>
+  <text x="282" y="45" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">function parameters,</text>
+  <text x="282" y="59" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">return addresses, locals</text>
+  <text x="282" y="195" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">dynamically allocated</text>
+  <text x="282" y="209" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">memory (malloc)</text>
+  <text x="282" y="232" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">global variables</text>
+  <text x="282" y="266" text-anchor="start" font-size="11" fill="currentColor" opacity=".65">program code</text>
+  <text x="195.0" y="135" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic" opacity=".65">free</text>
+</svg>

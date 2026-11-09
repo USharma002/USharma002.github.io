@@ -1,0 +1,69 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 330" width="640" role="img" aria-label="Logical view of segmentation, the segment table and physical memory">
+  <defs><marker id="arr-2x43" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="10" y="30" width="210" height="200" rx="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="25" y="48" width="85" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="67.5" y="69.0" text-anchor="middle" font-size="11" fill="currentColor">subroutine</text>
+  <text x="113" y="82" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">0</text>
+  <rect x="125" y="48" width="80" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="165.0" y="69.0" text-anchor="middle" font-size="11" fill="currentColor">stack</text>
+  <text x="208" y="82" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">3</text>
+  <rect x="25" y="110" width="70" height="32" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="60.0" y="131.0" text-anchor="middle" font-size="11" fill="currentColor">sqrt</text>
+  <text x="98" y="144" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">1</text>
+  <rect x="118" y="104" width="88" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="162.0" y="129.0" text-anchor="middle" font-size="11" fill="currentColor">symbol table</text>
+  <text x="209" y="146" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">4</text>
+  <rect x="65" y="172" width="100" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="115.0" y="197.0" text-anchor="middle" font-size="11" fill="currentColor">main program</text>
+  <text x="168" y="214" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">2</text>
+  <text x="115" y="252" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">logical address space</text>
+  <text x="260" y="52" text-anchor="middle" font-size="1" fill="currentColor"></text>
+  <rect x="270" y="40" width="120" height="22" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <line x1="330" y1="40" x2="330" y2="182" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="300" y="56" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">limit</text>
+  <text x="360" y="56" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">base</text>
+  <rect x="270" y="62" width="120" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="260" y="78" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">0</text>
+  <text x="300" y="78" text-anchor="middle" font-size="12" fill="currentColor">1000</text>
+  <text x="360" y="78" text-anchor="middle" font-size="12" fill="currentColor">1400</text>
+  <rect x="270" y="86" width="120" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="260" y="102" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">1</text>
+  <text x="300" y="102" text-anchor="middle" font-size="12" fill="currentColor">400</text>
+  <text x="360" y="102" text-anchor="middle" font-size="12" fill="currentColor">6300</text>
+  <rect x="270" y="110" width="120" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="260" y="126" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">2</text>
+  <text x="300" y="126" text-anchor="middle" font-size="12" fill="currentColor">400</text>
+  <text x="360" y="126" text-anchor="middle" font-size="12" fill="currentColor">4300</text>
+  <rect x="270" y="134" width="120" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="260" y="150" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">3</text>
+  <text x="300" y="150" text-anchor="middle" font-size="12" fill="currentColor">1100</text>
+  <text x="360" y="150" text-anchor="middle" font-size="12" fill="currentColor">3200</text>
+  <rect x="270" y="158" width="120" height="24" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="260" y="174" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">4</text>
+  <text x="300" y="174" text-anchor="middle" font-size="12" fill="currentColor">1000</text>
+  <text x="360" y="174" text-anchor="middle" font-size="12" fill="currentColor">4700</text>
+  <text x="330" y="204" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">segment table</text>
+  <rect x="480" y="30" width="120" height="50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540.0" y="59" text-anchor="middle" font-size="11" fill="currentColor">segment 0</text>
+  <rect x="480" y="80" width="120" height="40" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="80" width="120" height="40" fill="currentColor" opacity=".12"/>
+  <rect x="480" y="120" width="120" height="55" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540.0" y="152" text-anchor="middle" font-size="11" fill="currentColor">segment 3</text>
+  <rect x="480" y="175" width="120" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540.0" y="189" text-anchor="middle" font-size="11" fill="currentColor">segment 2</text>
+  <rect x="480" y="195" width="120" height="50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540.0" y="224" text-anchor="middle" font-size="11" fill="currentColor">segment 4</text>
+  <rect x="480" y="245" width="120" height="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="480" y="245" width="120" height="30" fill="currentColor" opacity=".12"/>
+  <rect x="480" y="275" width="120" height="20" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="540.0" y="289" text-anchor="middle" font-size="11" fill="currentColor">segment 1</text>
+  <text x="472" y="34" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">1400</text>
+  <text x="472" y="84" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">2400</text>
+  <text x="472" y="124" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">3200</text>
+  <text x="472" y="179" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">4300</text>
+  <text x="472" y="199" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">4700</text>
+  <text x="472" y="249" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">5700</text>
+  <text x="472" y="279" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">6300</text>
+  <text x="472" y="299" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">6700</text>
+  <text x="540.0" y="318" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory</text>
+</svg>

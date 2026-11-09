@@ -1,0 +1,23 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 590 260" width="590" role="img" aria-label="A cache: lookup logic with the cache directory, and the cache RAM">
+  <defs><marker id="arr-cd" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <ellipse cx="70" cy="110" rx="50" ry="30" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="70.0" y="114.2" text-anchor="middle" font-size="12" fill="currentColor">CPU</text>
+  <rect x="170" y="20" width="380" height="180" rx="14" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="360.0" y="190.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">cache controller</text>
+  <rect x="190" y="40" width="170" height="130" rx="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="190" y="40" width="170" height="130" rx="10" fill="#3b82f6" opacity=".18"/>
+  <text x="275.0" y="62.0" text-anchor="middle" font-size="12" fill="currentColor">lookup logic</text>
+  <rect x="210" y="80" width="130" height="70" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="275.0" y="110.0" text-anchor="middle" font-size="12" fill="currentColor">cache</text>
+  <text x="275.0" y="126.0" text-anchor="middle" font-size="12" fill="currentColor">directory</text>
+  <rect x="400" y="50" width="120" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="400" y="50" width="120" height="110" rx="3" fill="#22c55e" opacity=".18"/>
+  <text x="460.0" y="100.0" text-anchor="middle" font-size="12" fill="currentColor">cache</text>
+  <text x="460.0" y="116.0" text-anchor="middle" font-size="12" fill="currentColor">RAM</text>
+  <line x1="120" y1="100" x2="187" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#arr-cd)"/>
+  <text x="152.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">addr</text>
+  <polyline points="460,160 460,214 70,214 70,143" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-cd)"/>
+  <text x="265.0" y="228.0" text-anchor="middle" font-size="11" fill="currentColor">data</text>
+  <text x="275.0" y="250.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">directory: table of “addresses I have”</text>
+  <text x="470.0" y="250.0" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">RAM: fast memory holding the blocks</text>
+</svg>

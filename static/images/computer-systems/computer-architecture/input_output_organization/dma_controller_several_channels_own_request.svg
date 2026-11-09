@@ -1,0 +1,25 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 152" width="540" role="img" aria-label="A DMA controller with several channels, each with its own request and acknowledge lines">
+  <defs><marker id="arr-ch" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="20" y="25" width="90" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="20" y="25" width="90" height="110" rx="3" fill="#3b82f6" opacity=".18"/>
+  <text x="65.0" y="84.68" text-anchor="middle" font-size="13" fill="currentColor">CPU</text>
+  <rect x="270" y="25" width="120" height="110" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="270" y="25" width="120" height="110" rx="3" fill="#f59e0b" opacity=".18"/>
+  <text x="330.0" y="78.0" text-anchor="middle" font-size="11" fill="currentColor">DMA</text>
+  <text x="330.0" y="92.0" text-anchor="middle" font-size="11" fill="currentColor">controller</text>
+  <text x="190" y="42" text-anchor="middle" font-size="10" fill="currentColor">DMA-RQ</text>
+  <polyline points="270,48 111,48" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <text x="190" y="74" text-anchor="middle" font-size="10" fill="currentColor">DMA-ACK</text>
+  <polyline points="110,80 269,80" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <text x="190" y="106" text-anchor="middle" font-size="10" fill="currentColor">INTR</text>
+  <polyline points="270,112 111,112" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <polyline points="460,40 391,40" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <text x="466" y="44" text-anchor="start" font-size="10" fill="currentColor">DMA-RQ<tspan dy="3" font-size="8">1</tspan></text>
+  <polyline points="390,58 459,58" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <text x="466" y="62" text-anchor="start" font-size="10" fill="currentColor">DMA-ACK<tspan dy="3" font-size="8">1</tspan></text>
+  <polyline points="460,102 391,102" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <text x="466" y="106" text-anchor="start" font-size="10" fill="currentColor">DMA-RQ<tspan dy="3" font-size="8">4</tspan></text>
+  <polyline points="390,120 459,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-ch)"/>
+  <text x="466" y="124" text-anchor="start" font-size="10" fill="currentColor">DMA-ACK<tspan dy="3" font-size="8">4</tspan></text>
+  <text x="425" y="85" text-anchor="middle" font-size="10" fill="currentColor">⋮</text>
+</svg>

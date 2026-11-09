@@ -1,0 +1,31 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 340" width="490" role="img" aria-label="Flowchart of asynchronous data transfer, with the status-checking loop">
+  <defs><marker id="arr-asy" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker><marker id="arr-asy-r" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" fill="#ef4444"/></marker></defs>
+  <rect x="110" y="10" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="205.0" y="28.6" text-anchor="middle" font-size="10" fill="currentColor">initiate data transfer</text>
+  <rect x="110" y="62" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="205.0" y="80.6" text-anchor="middle" font-size="10" fill="currentColor">read status of I/O module</text>
+  <polygon points="205,114 260,138 205,162 150,138" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="205" y="142" text-anchor="middle" font-size="10" fill="currentColor">ready?</text>
+  <rect x="110" y="184" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="205.0" y="202.6" text-anchor="middle" font-size="10" fill="currentColor">read word from I/O module</text>
+  <rect x="110" y="236" width="190" height="30" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="205.0" y="254.6" text-anchor="middle" font-size="10" fill="currentColor">write word into memory</text>
+  <polygon points="205,282 260,306 205,330 150,306" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="205" y="310" text-anchor="middle" font-size="10" fill="currentColor">done?</text>
+  <polyline points="205,40 205,61" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <polyline points="205,92 205,113" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <polyline points="205,162 205,183" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <text x="213" y="172" text-anchor="start" font-size="9" fill="currentColor">yes</text>
+  <polyline points="205,214 205,235" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <polyline points="205,266 205,281" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <polyline points="260,138 330,138 330,77 301,77" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr-asy-r)"/>
+  <text x="270" y="132" text-anchor="start" font-size="9" fill="currentColor">no</text>
+  <polyline points="150,306 60,306 60,77 109,77" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <text x="70" y="300" text-anchor="start" font-size="9" fill="currentColor">no</text>
+  <polyline points="260,306 312,306" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-asy)"/>
+  <text x="270" y="300" text-anchor="start" font-size="9" fill="currentColor">yes</text>
+  <text x="316" y="310" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">data transfer complete</text>
+  <text x="338" y="96" text-anchor="start" font-size="10" fill="#ef4444">lot of CPU time</text>
+  <text x="338" y="109" text-anchor="start" font-size="10" fill="#ef4444">is wasted in</text>
+  <text x="338" y="122" text-anchor="start" font-size="10" fill="#ef4444">this loop</text>
+</svg>

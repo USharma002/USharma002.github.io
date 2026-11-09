@@ -1,0 +1,56 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 360" width="660" role="img" aria-label="A 4 GB virtual address space of 256 B pages mapped onto 16 MB of physical memory">
+  <defs><marker id="arr-2x47" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="215.0" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">virtual address space (4 GB)</text>
+  <rect x="150" y="28" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215.0" y="62" text-anchor="middle" font-size="12" fill="currentColor">virtual page 0</text>
+  <text x="142" y="40" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0x00000000</text>
+  <text x="142" y="86" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0x000000FF</text>
+  <rect x="150" y="88" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215.0" y="114" text-anchor="middle" font-size="12" fill="currentColor">virtual page 1</text>
+  <text x="142" y="100" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0x00000100</text>
+  <text x="142" y="146" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0x000001FF</text>
+  <rect x="150" y="148" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215.0" y="182" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
+  <rect x="150" y="208" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="215.0" y="242" text-anchor="middle" font-size="12" fill="currentColor">virtual page 2²⁴ − 1</text>
+  <text x="142" y="220" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0xFFFFFF00</text>
+  <text x="142" y="266" text-anchor="end" font-size="10" fill="currentColor" opacity=".65">0xFFFFFFFF</text>
+  <rect x="150" y="124" width="130" height="12" fill="#3b82f6" opacity=".25"/>
+  <text x="215.0" y="134" text-anchor="middle" font-size="9" fill="currentColor">0x00000124</text>
+  <text x="535.0" y="16" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">physical memory (16 MB)</text>
+  <rect x="470" y="28" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="535.0" y="52" text-anchor="middle" font-size="12" fill="currentColor">physical page 0</text>
+  <text x="608" y="40" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">0x000000</text>
+  <text x="608" y="86" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">0x0000FF</text>
+  <rect x="470" y="88" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="535.0" y="122" text-anchor="middle" font-size="12" fill="currentColor">⋮</text>
+  <rect x="470" y="148" width="130" height="60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="535.0" y="182" text-anchor="middle" font-size="12" fill="currentColor">physical page 2¹⁶ − 1</text>
+  <text x="608" y="160" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">0xFFFF00</text>
+  <text x="608" y="206" text-anchor="start" font-size="10" fill="currentColor" opacity=".65">0xFFFFFF</text>
+  <rect x="470" y="68" width="130" height="12" fill="#3b82f6" opacity=".25"/>
+  <text x="535.0" y="78" text-anchor="middle" font-size="9" fill="currentColor">0x000024</text>
+  <path d="M280,130 C370,130 380,74 466,74" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x47)"/>
+  <text x="375" y="152" text-anchor="middle" font-size="11" fill="currentColor" font-style="italic">page table:</text>
+  <text x="375" y="167" text-anchor="middle" font-size="11" fill="currentColor">virtual page 1 → physical page 0</text>
+  <text x="140" y="303" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">VA</text>
+  <rect x="150" y="284" width="100" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="150" y="284" width="100" height="28" fill="#ef4444" opacity=".22"/>
+  <text x="200.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">0x000001</text>
+  <rect x="250" y="284" width="64" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="282.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">24</text>
+  <path d="M150,316 q0,6 6,6 H194.0 q6,0 6,6 q0,-6 6,-6 H244 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="200.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">page number (24 b)</text>
+  <path d="M250,316 q0,6 6,6 H276.0 q6,0 6,6 q0,-6 6,-6 H308 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="282.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">offset (8 b)</text>
+  <text x="460" y="303" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">PA</text>
+  <rect x="470" y="284" width="100" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="470" y="284" width="100" height="28" fill="#3b82f6" opacity=".25"/>
+  <text x="520.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">0x0000</text>
+  <rect x="570" y="284" width="64" height="28" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="602.0" y="303" text-anchor="middle" font-size="12" fill="currentColor">24</text>
+  <path d="M470,316 q0,6 6,6 H514.0 q6,0 6,6 q0,-6 6,-6 H564 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="520.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">page number (16 b)</text>
+  <path d="M570,316 q0,6 6,6 H596.0 q6,0 6,6 q0,-6 6,-6 H628 q6,0 6,-6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="602.0" y="342" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">offset (8 b)</text>
+</svg>

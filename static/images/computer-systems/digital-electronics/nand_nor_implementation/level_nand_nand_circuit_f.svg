@@ -1,0 +1,24 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 190" width="340" role="img" aria-label="Two-level NAND-NAND circuit for F">
+  <defs>
+    <path id="g-and" d="M0,0 h20 a20,20 0 0 1 0,40 h-20 z" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+    <path id="g-or" d="M0,0 q15,20 0,40 q40,0 55,-20 q-15,-20 -55,-20 z" fill="none" stroke="currentColor" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+  </defs>
+  <g stroke="currentColor" stroke-width="1.5" fill="none">
+    <line x1="30" y1="30" x2="60" y2="30"/><line x1="30" y1="50" x2="60" y2="50"/>
+    <use href="#g-and" x="60" y="20"/><circle cx="104" cy="40" r="4"/>
+    <line x1="30" y1="100" x2="60" y2="100"/><line x1="30" y1="120" x2="60" y2="120"/>
+    <use href="#g-and" x="60" y="90"/><circle cx="104" cy="110" r="4"/>
+    <polyline points="108,40 160,40 160,95 210,95"/>
+    <line x1="108" y1="110" x2="210" y2="110"/>
+    <polyline points="30,165 170,165 170,125 210,125"/>
+    <use href="#g-and" x="210" y="80" transform="translate(210 80) scale(1.25 1.5) translate(-210 -80)"/>
+    <circle cx="264" cy="110" r="4"/>
+    <line x1="268" y1="110" x2="305" y2="110"/>
+  </g>
+  <g fill="currentColor" font-size="15" font-style="italic">
+    <text x="12" y="35">x</text><text x="12" y="55">ȳ</text>
+    <text x="12" y="105">x̄</text><text x="12" y="125">y</text>
+    <text x="12" y="170">z̄</text>
+    <text x="310" y="115">F</text>
+  </g>
+</svg>

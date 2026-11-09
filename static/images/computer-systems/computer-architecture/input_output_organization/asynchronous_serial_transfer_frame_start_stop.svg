@@ -1,0 +1,47 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 570 196" width="570" role="img" aria-label="Asynchronous serial transfer: one frame with start and stop bits, and successive frames with gaps between them">
+  <defs></defs>
+  <rect x="4" y="22" width="56" height="56" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="32.0" y="53.24" text-anchor="middle" font-size="9" fill="currentColor">sender</text>
+  <rect x="508" y="22" width="60" height="56" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="538.0" y="53.24" text-anchor="middle" font-size="9" fill="currentColor">receiver</text>
+  <text x="82.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">idle</text>
+  <text x="119.5" y="92" text-anchor="middle" font-size="9" fill="#ef4444">start</text>
+  <polyline points="101,22 101,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="156.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b0</text>
+  <polyline points="138,22 138,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="193.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b1</text>
+  <polyline points="175,22 175,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="230.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b2</text>
+  <polyline points="212,22 212,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="267.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b3</text>
+  <polyline points="249,22 249,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="304.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b4</text>
+  <polyline points="286,22 286,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="341.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b5</text>
+  <polyline points="323,22 323,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="378.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b6</text>
+  <polyline points="360,22 360,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="415.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">b7</text>
+  <polyline points="397,22 397,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="452.5" y="92" text-anchor="middle" font-size="9" fill="#ef4444">stop</text>
+  <polyline points="434,22 434,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <text x="489.5" y="92" text-anchor="middle" font-size="9" fill="currentColor" opacity=".65">idle</text>
+  <polyline points="471,22 471,78" stroke="currentColor" stroke-width="0.6" fill="none" stroke-dasharray="5 4"/>
+  <polyline points="64,30 101,30 101,70 138,70 138,30 175,30 175,30 212,30 212,70 249,70 249,30 286,30 286,70 323,70 323,70 360,70 360,30 397,30 397,70 434,70 434,30 471,30 471,30 508,30" stroke="currentColor" stroke-width="2" fill="none"/>
+  <polyline points="20,122 90,122 90,160 234,160 234,122 262,122 262,160 406,160 406,122 450,122 450,160 568,160 568,122" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="116" y="122" width="118" height="38" fill="#ef4444" opacity=".18"/>
+  <text x="175.0" y="145" text-anchor="middle" font-size="9" fill="currentColor">data</text>
+  <text x="103" y="172" text-anchor="middle" font-size="8" fill="#ef4444">start</text>
+  <polyline points="116,122 116,160" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="288" y="122" width="118" height="38" fill="#ef4444" opacity=".18"/>
+  <text x="347.0" y="145" text-anchor="middle" font-size="9" fill="currentColor">data</text>
+  <text x="275" y="172" text-anchor="middle" font-size="8" fill="#ef4444">start</text>
+  <polyline points="288,122 288,160" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <rect x="476" y="122" width="92" height="38" fill="#ef4444" opacity=".18"/>
+  <text x="522.0" y="145" text-anchor="middle" font-size="9" fill="currentColor">data</text>
+  <text x="463" y="172" text-anchor="middle" font-size="8" fill="#ef4444">start</text>
+  <polyline points="476,122 476,160" stroke="currentColor" stroke-width="0.8" fill="none"/>
+  <text x="248" y="117" text-anchor="middle" font-size="8" fill="#ef4444">stop</text>
+  <text x="428" y="117" text-anchor="middle" font-size="8" fill="#ef4444">stop</text>
+  <text x="285" y="190" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">successive bytes: the gap between frames can have any length</text>
+</svg>

@@ -1,0 +1,69 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 400" width="680" role="img" aria-label="The ready queue and I/O device queues as linked lists of PCBs">
+  <defs><marker id="arr-2x5" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <text x="158" y="14" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">queue header</text>
+  <text x="108" y="55" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">ready queue</text>
+  <rect x="120" y="30" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="45.0" text-anchor="middle" font-size="11" fill="currentColor">head</text>
+  <rect x="120" y="50" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="65.0" text-anchor="middle" font-size="11" fill="currentColor">tail</text>
+  <text x="342.0" y="28" text-anchor="middle" font-size="12" fill="currentColor">PCB₇</text>
+  <rect x="300" y="34" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="52" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="342.0" y="67" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
+  <text x="342.0" y="87" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <text x="492.0" y="28" text-anchor="middle" font-size="12" fill="currentColor">PCB₂</text>
+  <rect x="450" y="34" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="450" y="52" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="492.0" y="67" text-anchor="middle" font-size="11" fill="currentColor">registers</text>
+  <text x="492.0" y="87" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <polyline points="196,40.0 278,40.0 278,43.0 300,43.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="384,43.0 450,43.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="534,43.0 546,43.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M546,36.0 v14 M550,38.5 v9 M554,41.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="196,60.0 266,60.0 266,106 436,106 436,72 450,72" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <text x="108" y="147" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">mag tape unit 0</text>
+  <rect x="120" y="122" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="137.0" text-anchor="middle" font-size="11" fill="currentColor">head</text>
+  <rect x="120" y="142" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="157.0" text-anchor="middle" font-size="11" fill="currentColor">tail</text>
+  <polyline points="196,132.0 208,132.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M208,125.0 v14 M212,127.5 v9 M216,130.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="196,152.0 208,152.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M208,145.0 v14 M212,147.5 v9 M216,150.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="108" y="215" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">disk unit 0</text>
+  <rect x="120" y="190" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="205.0" text-anchor="middle" font-size="11" fill="currentColor">head</text>
+  <rect x="120" y="210" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="225.0" text-anchor="middle" font-size="11" fill="currentColor">tail</text>
+  <text x="342.0" y="188" text-anchor="middle" font-size="12" fill="currentColor">PCB₃</text>
+  <rect x="300" y="194" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="212" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="342.0" y="247" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <text x="462.0" y="188" text-anchor="middle" font-size="12" fill="currentColor">PCB₁₄</text>
+  <rect x="420" y="194" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="420" y="212" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="462.0" y="247" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <text x="582.0" y="188" text-anchor="middle" font-size="12" fill="currentColor">PCB₆</text>
+  <rect x="540" y="194" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="540" y="212" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="582.0" y="247" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <polyline points="196,200.0 278,200.0 278,203.0 300,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="384,203.0 420,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="504,203.0 540,203.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="624,203.0 636,203.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M636,196.0 v14 M640,198.5 v9 M644,201.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="196,220.0 266,220.0 266,266 526,266 526,232 540,232" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <text x="108" y="325" text-anchor="end" font-size="12" fill="currentColor" font-style="italic">terminal unit 0</text>
+  <rect x="120" y="300" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="315.0" text-anchor="middle" font-size="11" fill="currentColor">head</text>
+  <rect x="120" y="320" width="76" height="20" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="158.0" y="335.0" text-anchor="middle" font-size="11" fill="currentColor">tail</text>
+  <text x="342.0" y="298" text-anchor="middle" font-size="12" fill="currentColor">PCB₅</text>
+  <rect x="300" y="304" width="84" height="18" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="300" y="322" width="84" height="40" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="342.0" y="357" text-anchor="middle" font-size="11" fill="currentColor">⋮</text>
+  <polyline points="196,310.0 278,310.0 278,313.0 300,313.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+  <polyline points="384,313.0 396,313.0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <path d="M396,306.0 v14 M400,308.5 v9 M404,311.0 v4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="196,330.0 288,330.0 288,342 300,342" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x5)"/>
+</svg>

@@ -1,0 +1,46 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 216" width="540" role="img" aria-label="Address spaces in memory-mapped and I/O-mapped interfacing">
+  <defs></defs>
+  <text x="135" y="16" text-anchor="middle" font-size="11" fill="currentColor">(a) memory-mapped I/O</text>
+  <rect x="85" y="28" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="85" y="28" width="100" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="135.0" y="49.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
+  <text x="79" y="38" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">0000</text>
+  <rect x="85" y="64" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="85" y="64" width="100" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="135.0" y="85.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
+  <text x="79" y="74" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">4000</text>
+  <rect x="85" y="100" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="85" y="100" width="100" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="135.0" y="121.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
+  <text x="79" y="110" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">8000</text>
+  <rect x="85" y="136" width="100" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="85" y="136" width="100" height="36" rx="0" fill="#f59e0b" opacity=".18"/>
+  <text x="135.0" y="157.96" text-anchor="middle" font-size="11" fill="currentColor">I/O</text>
+  <text x="79" y="146" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">C000</text>
+  <text x="79" y="172" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">FFFF</text>
+  <text x="135" y="190" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">one address space,</text>
+  <text x="135" y="204" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">I/O as an extension of the memory space</text>
+  <text x="400" y="16" text-anchor="middle" font-size="11" fill="currentColor">(b) I/O-mapped I/O</text>
+  <rect x="310" y="28" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="310" y="28" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="355.0" y="49.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">0</tspan></text>
+  <text x="304" y="38" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">0000</text>
+  <rect x="310" y="64" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="310" y="64" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="355.0" y="85.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">1</tspan></text>
+  <text x="304" y="74" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">4000</text>
+  <rect x="310" y="100" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="310" y="100" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="355.0" y="121.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">2</tspan></text>
+  <text x="304" y="110" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">8000</text>
+  <rect x="310" y="136" width="90" height="36" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="310" y="136" width="90" height="36" rx="0" fill="#22c55e" opacity=".18"/>
+  <text x="355.0" y="157.96" text-anchor="middle" font-size="11" fill="currentColor">M<tspan dy="3" font-size="8">3</tspan></text>
+  <text x="304" y="146" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">C000</text>
+  <text x="304" y="172" text-anchor="end" font-size="9" fill="currentColor" opacity=".65">FFFF</text>
+  <rect x="430" y="28" width="80" height="72" rx="0" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="430" y="28" width="80" height="72" rx="0" fill="#f59e0b" opacity=".18"/>
+  <text x="470.0" y="67.96" text-anchor="middle" font-size="11" fill="currentColor">I/O ports</text>
+  <text x="400" y="190" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">separate spaces, IN / OUT</text>
+  <text x="400" y="204" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">and an IO/M̄ signal</text>
+</svg>

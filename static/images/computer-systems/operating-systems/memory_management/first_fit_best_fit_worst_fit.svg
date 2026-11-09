@@ -1,0 +1,33 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" role="img" aria-label="First fit, best fit and worst fit for a request of 212 K">
+  <defs><marker id="arr-2x40" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="15" y="46" width="34" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="15" y="46" width="34" height="36" fill="currentColor" opacity=".12"/>
+  <rect x="49" y="46" width="50" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="74.0" y="69" text-anchor="middle" font-size="12" fill="currentColor">100 K</text>
+  <rect x="99" y="46" width="34" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="99" y="46" width="34" height="36" fill="currentColor" opacity=".12"/>
+  <rect x="133" y="46" width="110" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="188.0" y="69" text-anchor="middle" font-size="12" fill="currentColor">500 K</text>
+  <rect x="243" y="46" width="34" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="243" y="46" width="34" height="36" fill="currentColor" opacity=".12"/>
+  <rect x="277" y="46" width="65" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="309.5" y="69" text-anchor="middle" font-size="12" fill="currentColor">200 K</text>
+  <rect x="342" y="46" width="34" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="342" y="46" width="34" height="36" fill="currentColor" opacity=".12"/>
+  <rect x="376" y="46" width="85" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="418.5" y="69" text-anchor="middle" font-size="12" fill="currentColor">300 K</text>
+  <rect x="461" y="46" width="34" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <rect x="461" y="46" width="34" height="36" fill="currentColor" opacity=".12"/>
+  <rect x="495" y="46" width="125" height="36" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="557.5" y="69" text-anchor="middle" font-size="12" fill="currentColor">600 K</text>
+  <text x="320" y="26" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">request: 212 K (shaded blocks are in use)</text>
+  <polyline points="188.0,122 188.0,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x40)"/>
+  <text x="188.0" y="138" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">first fit</text>
+  <text x="188.0" y="153" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">leaves 288 K</text>
+  <polyline points="418.5,122 418.5,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x40)"/>
+  <text x="418.5" y="138" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">best fit</text>
+  <text x="418.5" y="153" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">leaves 88 K</text>
+  <polyline points="557.5,122 557.5,86" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x40)"/>
+  <text x="557.5" y="138" text-anchor="middle" font-size="12" fill="currentColor" font-weight="700">worst fit</text>
+  <text x="557.5" y="153" text-anchor="middle" font-size="10" fill="currentColor" opacity=".65">leaves 388 K</text>
+</svg>

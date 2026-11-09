@@ -1,0 +1,31 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 210" width="470" role="img" aria-label="4-bit counter with Clear driven by A1 and A3">
+  <defs><marker id="arr-1x32" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="150" y="90" width="180" height="60" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="240.0" y="125.0" text-anchor="middle" font-size="14" fill="currentColor">4-bit counter</text>
+  <polyline points="170,90 170,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="170" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₄</text>
+  <polyline points="210,90 210,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="210" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₃</text>
+  <polyline points="250,90 250,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="250" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₂</text>
+  <polyline points="290,90 290,30" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="290" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">A₁</text>
+  <path d="M60,20 h20 a30.0,30.0 0 0 1 0,60 h-20 z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="210" cy="40" r="2.6" fill="currentColor"/>
+  <polyline points="210,40 60,40" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="290" cy="60" r="2.6" fill="currentColor"/>
+  <polyline points="290,60 60,60" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <polyline points="110.0,50.0 115,50.0 115,120 150,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="122" y="136" text-anchor="start" font-size="11" fill="currentColor">Clear</text>
+  <polyline points="390,100 330,100" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="398" y="104" text-anchor="start" font-size="11" fill="currentColor">Count = 1</text>
+  <polyline points="390,120 330,120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="398" y="124" text-anchor="start" font-size="11" fill="currentColor">Load = 0</text>
+  <polyline points="390,140 330,140" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="398" y="144" text-anchor="start" font-size="11" fill="currentColor">CLK</text>
+  <polyline points="175,185 175,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <polyline points="215,185 215,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <polyline points="255,185 255,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <polyline points="295,185 295,150" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-1x32)"/>
+  <text x="235" y="202" text-anchor="middle" font-size="11" fill="currentColor" opacity=".65">parallel inputs (unused, Load = 0)</text>
+</svg>

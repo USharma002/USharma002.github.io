@@ -1,0 +1,30 @@
+<svg font-family="Merriweather, Georgia, serif" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 240" width="500" role="img" aria-label="Resource-allocation graph without a cycle">
+  <defs><marker id="arr-2x31" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="currentColor"/></marker></defs>
+  <rect x="147.0" y="23.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170" y="17.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₁</text>
+  <circle cx="170.0" cy="40" r="3" fill="currentColor"/>
+  <rect x="307.0" y="23.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="330" y="17.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₃</text>
+  <circle cx="330.0" cy="40" r="3" fill="currentColor"/>
+  <rect x="147.0" y="193.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="170" y="187.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₂</text>
+  <circle cx="164.0" cy="210" r="3" fill="currentColor"/>
+  <circle cx="176.0" cy="210" r="3" fill="currentColor"/>
+  <rect x="307.0" y="193.0" width="46" height="34" rx="3" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="330" y="187.0" text-anchor="middle" font-size="12" fill="currentColor" font-style="italic">R₄</text>
+  <circle cx="318.0" cy="210" r="3" fill="currentColor"/>
+  <circle cx="330.0" cy="210" r="3" fill="currentColor"/>
+  <circle cx="342.0" cy="210" r="3" fill="currentColor"/>
+  <circle cx="90" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="90" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₁</text>
+  <circle cx="250" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="250" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₂</text>
+  <circle cx="410" cy="125" r="17" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <text x="410" y="130" text-anchor="middle" font-size="13" fill="currentColor">P₃</text>
+  <polyline points="101.7,112.6 151.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="261.7,112.6 311.2,60.0" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="170.0,40 236.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="164.0,210 103.1,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="176.0,210 236.9,140.1" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+  <polyline points="330.0,40 396.3,110.4" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#arr-2x31)"/>
+</svg>
