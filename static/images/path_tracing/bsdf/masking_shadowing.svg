@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 160" width="700" height="160" font-family="Cambria, Georgia, 'Times New Roman', serif" font-size="15" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#000" stroke="none"/></marker><marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1f77b4" stroke="none"/></marker><marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e07b00" stroke="none"/></marker></defs>
+<path d="M10,120 L45,70 L80,120 L115,70 L150,120 L185,70 L210,104" stroke-width="2"/>
+<path d="M45,70 L80,120" stroke="#e07b00" stroke-width="4"/>
+<path d="M62,95 L115,72" stroke="#888" stroke-width="1.2" stroke-dasharray="5 4"/>
+<path d="M115,72 L205,33" stroke="#888" stroke-width="1" stroke-dasharray="2 4" marker-end="url(#a)"/>
+<path d="M110,64 l10,10 m0,-10 l-10,10" stroke="#e07b00" stroke-width="2"/>
+<text x="196.0" y="26.0" text-anchor="middle" font-size="13" fill="#888" stroke="none">to viewer</text>
+<text x="110.0" y="150.0" text-anchor="middle" font-size="15" fill="#000" stroke="none">masking</text>
+<path d="M250,120 L285,70 L320,120 L355,70 L390,120 L425,70 L450,104" stroke-width="2"/>
+<path d="M285,70 L320,120" stroke="#e07b00" stroke-width="4"/>
+<path d="M445,33 L358,71" stroke="#e07b00" stroke-width="1.4"/>
+<path d="M353,73 L302,95" stroke="#e07b00" stroke-width="1" stroke-dasharray="2 4"/>
+<path d="M350,64 l10,10 m0,-10 l-10,10" stroke="#e07b00" stroke-width="2"/>
+<text x="436.0" y="26.0" text-anchor="middle" font-size="13" fill="#e07b00" stroke="none">from light</text>
+<text x="350.0" y="150.0" text-anchor="middle" font-size="15" fill="#000" stroke="none">shadowing</text>
+<path d="M490,120 L525,70 L560,120 L595,70 L630,120 L665,70 L690,104" stroke-width="2"/>
+<path d="M610.0,30.0 L577.0,95.0" stroke="#e07b00" stroke-width="1.4" marker-end="url(#ao)"/>
+<path d="M577.0,95.0 L544.0,95.0" stroke="#e07b00" stroke-width="1.4" marker-end="url(#ao)"/>
+<path d="M544.0,95.0 L520.0,30.0" stroke="#e07b00" stroke-width="1.4" marker-end="url(#ao)"/>
+<text x="590.0" y="150.0" text-anchor="middle" font-size="15" fill="#000" stroke="none">interreflection</text>
+</svg>

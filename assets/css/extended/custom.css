@@ -90,8 +90,8 @@ a[href^="#fig-"]:hover {
 .post-content {
     font-family: 'Merriweather', Georgia, serif !important;
     font-weight: 300 !important;
-    font-size: 16px !important;
-    line-height: 1.65 !important;
+    font-size: 15px !important;
+    line-height: 1.7 !important;
     color: var(--content);
 }
 
@@ -109,37 +109,37 @@ a[href^="#fig-"]:hover {
 }
 
 .post-content h1 {
-    font-size: 28px !important;
+    font-size: 26px !important;
     line-height: 34px !important;
     margin: 40px 0 16px !important;
 }
 
 .post-content h2 {
-    font-size: 24px !important;
+    font-size: 22px !important;
     line-height: 30px !important;
     margin: 36px 0 14px !important;
 }
 
 .post-content h3 {
-    font-size: 21px !important;
+    font-size: 18px !important;
     line-height: 26px !important;
     margin: 30px 0 12px !important;
 }
 
 .post-content h4 {
-    font-size: 19px !important;
+    font-size: 16.5px !important;
     line-height: 24px !important;
     margin: 26px 0 10px !important;
 }
 
 .post-content h5 {
-    font-size: 17px !important;
+    font-size: 16px !important;
     line-height: 22px !important;
     margin: 22px 0 8px !important;
 }
 
 .post-content h6 {
-    font-size: 16px !important;
+    font-size: 15px !important;
     line-height: 20px !important;
     margin: 20px 0 8px !important;
 }
@@ -151,27 +151,27 @@ a[href^="#fig-"]:hover {
     }
 
     .post-content h2 {
-        font-size: 22px !important;
+        font-size: 20px !important;
         line-height: 28px !important;
     }
 
     .post-content h3 {
-        font-size: 20px !important;
+        font-size: 17px !important;
         line-height: 24px !important;
     }
 
     .post-content h4 {
-        font-size: 18px !important;
+        font-size: 16px !important;
         line-height: 22px !important;
     }
 
     .post-content h5 {
-        font-size: 16px !important;
+        font-size: 15px !important;
         line-height: 20px !important;
     }
 
     .post-content h6 {
-        font-size: 15px !important;
+        font-size: 14px !important;
         line-height: 18px !important;
     }
 }
@@ -215,9 +215,7 @@ a[href^="#fig-"]:hover {
 
 /* ─── Paragraphs — tighter research-paper margins ─── */
 .post-content p {
-    text-align: justify !important;
-    text-justify: auto !important;
-    hyphens: auto !important;
+    text-align: left !important;
     margin: 12px 0 !important;
 }
 
@@ -246,7 +244,7 @@ a[href^="#fig-"]:hover {
 .post-content figcaption p {
     text-align: center !important;
     font-style: italic !important;
-    font-size: 14px !important;
+    font-size: 13.5px !important;
     font-weight: normal !important;
     margin: 6px 0 0 !important;
     color: var(--secondary);
@@ -255,14 +253,14 @@ a[href^="#fig-"]:hover {
 /* ─── Code — Source Code Pro ─── */
 .post-content code {
     font-family: 'Source Code Pro', 'Lucida Console', monospace !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     font-weight: 400 !important;
 }
 
 .post-content pre {
     display: block !important;
     font-family: 'Source Code Pro', 'Lucida Console', monospace !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     font-weight: 400 !important;
     line-height: 1.6 !important;
     overflow-x: auto !important;
@@ -750,6 +748,9 @@ mjx-container[display="true"] {
     overflow-x: auto;
     overflow-y: hidden;
     max-width: 100%;
+    /* MathJax puts an inline min-width on numbered equations, which would
+       otherwise override max-width and push them out of the column. */
+    min-width: 0 !important;
     padding-block: 2px;          /* room for the scrollbar without clipping glyphs */
     scrollbar-width: thin;
 }

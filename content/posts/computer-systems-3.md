@@ -752,7 +752,7 @@ Other instructions differ only after step 3:
 - `STORE LOCA, R1`: address field of $\text{IR}_\text{out}$, $\text{MAR}_\text{in}$; $R1_\text{out}$, $\text{MDR}_\text{in}$, Write; $\text{MDR}_\text{outE}$, WMFC, End.
 - `MOVE R1, #10`: immediate field of $\text{IR}_\text{out}$, $R1_\text{in}$, End.
 - `BZ Label`: like `BR`, but step 4 also has "if $Z = 0$ then End".
-- `INC R1`: $R1_\text{out}$, Select4, Add, $Z_\text{in}$; $Z_\text{out}$, $R1_\text{in}$, End.
+- `INC R1` (in the course, $R1 \leftarrow R1 + 4$): $R1_\text{out}$, Select4, Add, $Z_\text{in}$; $Z_\text{out}$, $R1_\text{in}$, End.
 - `CMP R1, R2`: $R1_\text{out}$, $Y_\text{in}$; $R2_\text{out}$, SelectY, Sub, $Z_\text{in}$, End.
 - `HALT`: End.
 
@@ -1531,7 +1531,7 @@ SRAM is fast, needs no refresh circuitry, and is volatile. It costs more (6 tran
 
 ### Dynamic RAM
 
-A **DRAM** cell stores a bit as charge on a capacitor, with one transistor. The charge leaks, so the cell must be refreshed periodically, every few milliseconds.
+A **DRAM** cell stores a bit as charge on a capacitor, with one transistor. The charge leaks, and can be maintained for only tens of milliseconds, so the cell must be refreshed periodically [[2]](#ref-2).
 
 {{< figure src="/images/computer-systems/computer-architecture/memory_organization/dram_cell_transistor_capacitor.svg" alt="DRAM cell: one transistor and one capacitor" width="330px" class="fig" caption="One-transistor DRAM cell." >}}
 
@@ -1677,7 +1677,7 @@ A computer has two hierarchies:
 - **Cache / main memory** (2 to 4 levels), managed by hardware, since a block transfer takes tens of cycles. Its objective is a fast average memory access.
 - **Main memory / secondary memory**, managed by the OS, since a transfer takes thousands of cycles. Its objective is a large memory space (virtual memory).
 
-For example, in the AMD Ryzen 7 5800H (8 Zen 3 cores) each core has its own 32 KB 8-way L1 instruction and data caches (4 cycles) and a 512 KB 8-way L2 cache (12 cycles), and the cores share a 16 MB 16-way L3 cache (about 46 cycles). All caches use 64 B blocks.
+For example, in the AMD Ryzen 7 5800H (8 Zen 3 cores) each core has its own 32 KB 8-way L1 instruction and data caches and a 512 KB 8-way L2 cache, and the cores share a 16 MB 16-way L3 cache. All caches use 64 B blocks.
 
 <figure class="fig">
 <img src="/images/computer-systems/cpuz-5800h.png" alt="CPU-Z window for the AMD Ryzen 7 5800H showing its cache sizes and associativity" width="601">

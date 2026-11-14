@@ -2502,7 +2502,7 @@ Neither is common: they are expensive to implement and do not approximate OPT we
 **3. Random.**
 
 - Randomly pick an $i$ between 1 and $n$, and replace the $i$th page.
-- It suffers from Belady's anomaly, since it can simulate FIFO (the random choices may happen to be the FIFO ones).
+- It can show Belady's anomaly: the random choices may happen to be the FIFO ones, and FIFO shows the anomaly on some reference strings.
 
 **4. Optimal page replacement (OPT).**
 
@@ -2526,7 +2526,7 @@ For LRU, the set of pages in memory is the $n$ most recently referenced pages; w
 
 > **Note.**
 > - For a reference string $S$ and its reverse $S^R$, LRU has the **same page-fault rate**. Similarly, OPT has the same page-fault rate for $S$ and $S^R$. (On the string above, LRU gives 12 faults both ways and OPT gives 9; FIFO gives 15 forwards but 14 reversed.)
-> - The second-chance algorithm and random page replacement **suffer** from Belady's anomaly. Second chance degenerates to FIFO replacement if all reference bits are set (Galvin, §9.4.5.2), so FIFO's anomaly carries over.
+> - The second-chance algorithm and random page replacement can also show Belady's anomaly, since each can behave exactly like FIFO. Second chance degenerates to FIFO replacement if all reference bits are set (Galvin, §9.4.5.2), so FIFO's anomaly carries over.
 
 #### Dirty Bit
 

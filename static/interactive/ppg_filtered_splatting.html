@@ -4,28 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SD-tree Splatting</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap">
+<link rel="stylesheet" href="/interactive/pt/embed.css">
 <style>
-  :root {
-    --bg: #ffffff; --card: #ffffff; --text: #212529; --sub: #6c757d; --border: #dee2e6;
-    --grid: #f2a541; --cell-lo: #fffaf0; --cell-hi: #f7b543; --sample: #111111; --foot: #c2185b; --btn: #f1f3f5;
-    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-  [data-theme="dark"] {
-    --bg: #1d1e20; --card: #2d2d2d; --text: #e4e4e4; --sub: #a0a0a0; --border: #404040;
-    --grid: #c98522; --cell-lo: #2b2620; --cell-hi: #f2a541; --sample: #ffffff; --foot: #ff6fa8; --btn: #3a3a3a;
-  }
-  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); }
-  .wrap { display: flex; flex-wrap: wrap; gap: 14px; padding: 6px; box-sizing: border-box; }
+  .wrap { display: flex; flex-wrap: wrap; gap: 16px; padding: 6px 8px; }
   .panel { flex: 1 1 300px; min-width: 260px; }
-  canvas { width: 100%; max-width: 420px; aspect-ratio: 1; display: block; border: 1px solid var(--border); border-radius: 6px; cursor: crosshair; background: var(--card); }
-  .modes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-  button { font: inherit; font-size: 0.85rem; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--btn); color: var(--text); cursor: pointer; }
-  button.on { border-color: var(--grid); box-shadow: inset 0 0 0 1px var(--grid); font-weight: 600; }
-  .info { font-size: 0.85rem; line-height: 1.45; }
-  .info b { font-weight: 600; }
-  .stat { font-variant-numeric: tabular-nums; }
-  .note { font-size: 0.75rem; color: var(--sub); margin-top: 8px; }
-  label { font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; margin-right: 10px; }
+  canvas { width: 100%; max-width: 400px; aspect-ratio: 1; cursor: crosshair; }
+  .modes { display: flex; flex-wrap: wrap; gap: 6px 10px; margin-bottom: 8px; align-items: center; }
+  .info { font-size: 13px; line-height: 1.5; }
+  .info p { margin: 0 0 6px; }
+  .stat { font-family: var(--mono); font-size: 12px; }
+  .note { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  label { font-size: 13px; display: inline-flex; align-items: center; }
 </style>
 </head>
 <body>
@@ -34,15 +24,11 @@
     <canvas id="cv" width="840" height="840" aria-label="Directional quadtree; click to splat a radiance sample"></canvas>
   </div>
   <div class="panel">
+    <div class="modes"><div class="seg">
+      <button data-mode="nn" class="on">nearest neighbour</button><button data-mode="filter">filtered</button><button data-mode="stoch">stochastic filtered</button>
+    </div></div>
     <div class="modes">
-      <button data-mode="nn" class="on">Nearest neighbour</button>
-      <button data-mode="filter">Filtered (box overlap)</button>
-      <button data-mode="stoch">Stochastic filtered</button>
-    </div>
-    <div class="modes">
-      <button id="spray">Splat 300 samples</button>
-      <button id="refine">Refine (next iteration)</button>
-      <button id="reset">Reset</button>
+      <div class="seg"><button id="spray">splat 300</button><button id="refine">refine (next iteration)</button><button id="reset">reset</button></div>
       <label><input type="checkbox" id="showTarget"> show target</label>
     </div>
     <div class="info" id="info">Click inside the quadtree to splat one radiance sample.</div>
@@ -52,6 +38,7 @@
     </div>
   </div>
 </div>
+<script src="/interactive/pt/embed.js"></script>
 <script>
 (function () {
   const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
@@ -118,7 +105,7 @@
     for (;;) { const x = Math.random(), y = Math.random(); if (Math.random() * 6.2 < target(x, y)) return [x, y]; }
   }
 
-  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const css = n => ({ '--cell-lo': PT.c.faint, '--cell-hi': PT.c.accent, '--grid': PT.alpha(PT.c.muted, 0.7), '--foot': PT.c.accent2, '--sample': PT.c.text })[n];
   function mix(a, b, t) {
     const pa = a.match(/\w\w/g).map(h => parseInt(h, 16)), pb = b.match(/\w\w/g).map(h => parseInt(h, 16));
     return 'rgb(' + pa.map((v, i) => Math.round(v + (pb[i] - v) * t)).join(',') + ')';
@@ -140,7 +127,7 @@
       const dens = leaves.map(l => l.e / (l.s * l.s)), mx = Math.max(1e-9, ...dens);
       leaves.forEach((l, i) => { ctx.fillStyle = mix(lo, hi, Math.log1p(dens[i]) / Math.log1p(mx)); ctx.fillRect(X(l.x0), Y(l.y0 + l.s), l.s * S, l.s * S); });
     }
-    ctx.strokeStyle = css('--grid'); ctx.lineWidth = 2;
+    ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1.5;
     leaves.forEach(l => ctx.strokeRect(X(l.x0), Y(l.y0 + l.s), l.s * S, l.s * S));
     if (last && !showTarget) {
       ctx.strokeStyle = css('--foot'); ctx.lineWidth = 3;
@@ -186,33 +173,8 @@
   document.getElementById('reset').addEventListener('click', () => { rebuild(null); iteration = 1; last = null; history = []; describe(); draw(); });
   document.getElementById('showTarget').addEventListener('change', e => { showTarget = e.target.checked; draw(); });
 
-  // ---- theme sync with the parent page (same approach as the site's other widgets) ----
-  function detect() {
-    let dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    try {
-      const pd = window.parent.document;
-      if (pd.documentElement.dataset.theme) dark = pd.documentElement.dataset.theme === 'dark';
-      else if (pd.body.classList.contains('dark')) dark = true;
-      else { const m = getComputedStyle(pd.body).backgroundColor.match(/\d+/g); if (m) dark = (m[0] * 299 + m[1] * 587 + m[2] * 114) / 1000 < 128; }
-    } catch (e) {}
-    return dark;
-  }
-  function apply() {
-    const root = document.documentElement, dark = detect();
-    if (dark !== (root.getAttribute('data-theme') === 'dark')) {   // only touch the attribute on change
-      if (dark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
-    }
-    draw();
-  }
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
-  try {
-    if (window.parent !== window) {                                  // embedded: follow the host page's theme toggle
-      const pd = window.parent.document, opts = { attributes: true, attributeFilter: ['class', 'data-theme'] };
-      new MutationObserver(apply).observe(pd.body, opts);
-      new MutationObserver(apply).observe(pd.documentElement, opts);
-    }
-  } catch (e) {}
-  apply(); describe();
+  PT.onTheme(draw);
+  draw(); describe();
 })();
 </script>
 </body>

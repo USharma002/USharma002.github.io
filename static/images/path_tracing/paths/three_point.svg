@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 240" width="520" height="240" font-family="Cambria, Georgia, 'Times New Roman', serif" font-size="15" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round">
+<defs><marker id="tp-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#000" stroke="none"/></marker></defs>
+<path d="M180 180L320 180" stroke-width="3"/>
+<path d="M398 28L462 92" stroke-width="3"/>
+<path d="M40 100L100 40" stroke-width="3"/>
+<path d="M430 60L346 111.3" marker-end="url(#tp-arr)"/>
+<path d="M346 111.3L250 180"/>
+<path d="M250 180L152 120.1" marker-end="url(#tp-arr)"/>
+<path d="M152 120.1L70 70"/>
+<path d="M250 180L250 110" stroke-dasharray="5 4" marker-end="url(#tp-arr)"/>
+<path d="M430 60L380 110" stroke-dasharray="5 4" marker-end="url(#tp-arr)"/>
+<path d="M250 150A30 30 0 0 1 274.4 162.5" stroke-width="1"/>
+<path d="M398.2 91.8A45 45 0 0 1 393.1 85.8" stroke-width="1"/>
+<circle cx="430" cy="60" r="3" fill="#000"/>
+<circle cx="250" cy="180" r="3" fill="#000"/>
+<circle cx="70" cy="70" r="3" fill="#000"/>
+<g fill="#000" stroke="none" font-style="italic">
+<text x="440" y="52">x</text>
+<text x="244" y="202">x′</text>
+<text x="46" y="62">x″</text>
+<text x="200" y="106">N(x′)</text>
+<text x="350" y="132">N(x)</text>
+<text x="258" y="142">θ′<tspan dy="4" font-size="11">i</tspan></text>
+<text x="366" y="88">θ<tspan dy="4" font-size="11">o</tspan></text>
+<text x="300" y="66">L(x → x′)</text>
+<text x="60" y="140">L(x′ → x″)</text>
+<text x="318" y="160">G(x ↔ x′)</text>
+<text x="196" y="226">f<tspan dy="4" font-size="11">s</tspan><tspan dy="-4">(x → x′ → x″)</tspan></text>
+</g>
+</svg>

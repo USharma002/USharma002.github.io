@@ -2,65 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Ultimate Path Tracer: Combined Features</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path tracer workbench</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap">
+    <link rel="stylesheet" href="/interactive/pt/embed.css">
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #1e1e1e; color: white; }
-        
+        html, body { height: 100%; overflow: hidden; }
+        body { font-size: 13px; }
         #ui {
-            position: absolute; top: 20px; left: 20px; width: 300px;
-            background: rgba(20, 20, 20, 0.95); padding: 15px;
-            border-radius: 8px; border: 1px solid #444;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            z-index: 10; user-select: none;
+            position: absolute; top: 8px; left: 8px; width: 270px; z-index: 10; user-select: none;
+            background: color-mix(in srgb, var(--bg) 88%, transparent); padding: 10px 12px;
+            border: 1px solid var(--border);
         }
-        
-        #previewContainer {
-            position: absolute; top: 20px; right: 20px;
-            background: #000; border: 2px solid #444;
-            border-radius: 4px; overflow: hidden;
-        }
+        #previewContainer { position: absolute; top: 8px; right: 8px; border: 1px solid var(--border); background: var(--bg); }
         #previewCanvas { display: block; width: 192px; height: 192px; image-rendering: pixelated; }
-        .preview-label { 
-            background: rgba(0,0,0,0.8); 
-            color: #aaa; 
-            font-size: 10px; 
-            text-align: center; 
-            padding: 4px 0; 
-        }
-        
-        #pixelHighlight {
-            position: absolute;
-            border: 2px solid yellow;
-            pointer-events: none;
-            display: none;
-            box-sizing: border-box;
-        }
-
-        h3 { margin: 0 0 12px 0; font-size: 16px; color: #eee; border-bottom: 1px solid #444; padding-bottom: 8px; }
-        
-        .btn-group { display: flex; gap: 5px; margin-bottom: 10px; }
-        button {
-            flex: 1; background: #3a3a3a; color: #ccc; border: 1px solid #555;
-            padding: 10px; cursor: pointer; border-radius: 4px; font-size: 12px; font-weight: 600;
-            transition: 0.2s;
-        }
-        button:hover { background: #555; color: white; }
-        button.active { background: #2980b9; color: white; border-color: #3498db; }
-        
-        .controls { margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; }
-        .control-row { display: flex; gap: 5px; margin-top: 8px; }
-        .step-btn { font-weight: bold; background: #2c3e50; }
-        
-        .status { font-size: 12px; color: #aaa; margin-top: 10px; line-height: 1.4; }
-        .status strong { color: #f39c12; }
-        
-        label { display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; margin-top: 8px; }
-        
-        .timeline-info { 
-            background: #222; padding: 8px; border-radius: 4px; margin-top: 10px;
-            font-size: 11px; text-align: center; color: #aaa;
-        }
-        .timeline-info span { color: #f39c12; font-weight: bold; }
+        .preview-label { color: var(--muted); font-size: 11px; text-align: center; padding: 3px 0; }
+        #pixelHighlight { position: absolute; border: 2px solid var(--accent); pointer-events: none; display: none; }
+        h3 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
+        .btn-group { display: flex; margin-bottom: 8px; }
+        .btn-group button { flex: 1; }
+        .btn-group button + button { margin-left: -1px; }
+        button { padding: 4px 8px; }
+        button.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+        .controls { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+        .controls > button { width: 100%; margin-bottom: 6px; }
+        .control-row { display: flex; gap: 0; margin-top: 6px; }
+        .control-row button { flex: 1; }
+        .control-row button + button { margin-left: -1px; }
+        .status { font-size: 12px; color: var(--muted); line-height: 1.5; }
+        .status span { color: var(--text); font-family: var(--mono); }
+        label { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; margin-top: 6px; }
+        .timeline-info { margin-top: 8px; font-size: 12px; text-align: center; color: var(--muted); }
+        .timeline-info span { color: var(--accent); font-family: var(--mono); }
+        .sub { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+        .pair { display: flex; gap: 4px; margin-bottom: 6px; }
+        .pair input { flex: 1; min-width: 0; }
+        #colorPreview { width: 100%; height: 22px; border: 1px solid var(--border); background: #000; }
     </style>
     
     <script type="importmap">
@@ -91,7 +68,7 @@
         </div>
 
         <div class="controls" id="visControls">
-            <button onclick="stepOnePixel()" style="width:100%;">▶ Trace Next Pixel</button>
+            <button onclick="stepOnePixel()">▶ Trace Next Pixel</button>
             <label>
                 <input type="checkbox" id="chkAuto" onchange="toggleAuto()"> Auto-Scan (Fast)
             </label>
@@ -101,26 +78,26 @@
         </div>
 
         <div class="controls" id="debugControls" style="display:none;">
-            <div style="background: #2a2a2a; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
-                <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Select Pixel to Trace:</div>
-                <div style="display: flex; gap: 5px; margin-bottom: 6px;">
-                    <input type="number" id="pixelX" min="0" max="63" value="32" style="width: 50%; padding: 6px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 12px;">
-                    <input type="number" id="pixelY" min="0" max="63" value="32" style="width: 50%; padding: 6px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 12px;">
+            <div style="margin-bottom: 8px;">
+                <div class="sub">Select Pixel to Trace:</div>
+                <div class="pair">
+                    <input type="number" id="pixelX" min="0" max="63" value="32">
+                    <input type="number" id="pixelY" min="0" max="63" value="32">
                 </div>
-                <div style="font-size: 10px; color: #666; margin-bottom: 6px;">Click preview canvas or frustum to select</div>
+                <div class="sub">Click preview canvas or frustum to select</div>
             </div>
             
-            <button onclick="generateNewPath()" style="width:100%; margin-bottom:8px; background:#444;">Generate Ray for Selected Pixel</button>
+            <button onclick="generateNewPath()">Generate Ray for Selected Pixel</button>
             
-            <div style="background: #2a2a2a; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
-                <div style="font-size: 11px; color: #aaa; margin-bottom: 4px;">Final Color Preview:</div>
-                <div id="colorPreview" style="width: 100%; height: 30px; border-radius: 4px; border: 1px solid #555; background: #000;"></div>
-                <div id="colorText" style="font-size: 10px; color: #aaa; text-align: center; margin-top: 4px;">RGB(0.00, 0.00, 0.00)</div>
+            <div style="margin-bottom: 8px;">
+                <div class="sub">Final Color Preview:</div>
+                <div id="colorPreview"></div>
+                <div id="colorText" class="sub" style="text-align:center;margin-top:3px">RGB(0.00, 0.00, 0.00)</div>
             </div>
             
             <div class="control-row">
-                <button class="step-btn" onclick="stepTimeline(-1)">◀ Prev</button>
-                <button class="step-btn" onclick="stepTimeline(1)">Next ▶</button>
+                <button  onclick="stepTimeline(-1)">◀ Prev</button>
+                <button  onclick="stepTimeline(1)">Next ▶</button>
             </div>
             
             <div class="timeline-info">
@@ -131,23 +108,23 @@
                 <input type="checkbox" id="chkCullingDebug" onchange="toggleCulling()" checked> Enable Backface Culling
             </label>
             
-            <button onclick="toggleCameraEdit()" id="btnCamEdit" style="width:100%; margin-top:8px; background:#2c3e50;">Edit Camera Transform</button>
+            <button onclick="toggleCameraEdit()" id="btnCamEdit">Edit Camera Transform</button>
             
-            <div id="camEditPanel" style="display:none; background: #222; padding: 8px; border-radius: 4px; margin-top: 8px;">
-                <div style="font-size: 11px; color: #aaa; margin-bottom: 6px;">Position:</div>
-                <div style="display: flex; gap: 4px; margin-bottom: 6px;">
-                    <input type="number" id="camPosX" step="0.5" style="width: 33%; padding: 4px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 11px;" placeholder="X">
-                    <input type="number" id="camPosY" step="0.5" style="width: 33%; padding: 4px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 11px;" placeholder="Y">
-                    <input type="number" id="camPosZ" step="0.5" style="width: 33%; padding: 4px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 11px;" placeholder="Z">
+            <div id="camEditPanel" style="display:none; margin-top: 8px;">
+                <div class="sub">Position:</div>
+                <div class="pair">
+                    <input type="number" id="camPosX" step="0.5" placeholder="X">
+                    <input type="number" id="camPosY" step="0.5" placeholder="Y">
+                    <input type="number" id="camPosZ" step="0.5" placeholder="Z">
                 </div>
-                <div style="font-size: 11px; color: #aaa; margin-bottom: 6px;">Rotation (degrees):</div>
-                <div style="display: flex; gap: 4px; margin-bottom: 6px;">
-                    <input type="number" id="camRotX" step="5" style="width: 33%; padding: 4px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 11px;" placeholder="X">
-                    <input type="number" id="camRotY" step="5" style="width: 33%; padding: 4px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 11px;" placeholder="Y">
-                    <input type="number" id="camRotZ" step="5" style="width: 33%; padding: 4px; background: #1a1a1a; border: 1px solid #555; color: white; border-radius: 3px; font-size: 11px;" placeholder="Z">
+                <div class="sub">Rotation (degrees):</div>
+                <div class="pair">
+                    <input type="number" id="camRotX" step="5" placeholder="X">
+                    <input type="number" id="camRotY" step="5" placeholder="Y">
+                    <input type="number" id="camRotZ" step="5" placeholder="Z">
                 </div>
-                <button onclick="applyCameraTransform()" style="width:100%; padding: 6px; background: #27ae60; margin-bottom: 4px;">✓ Apply</button>
-                <button onclick="resetCamera()" style="width:100%; padding: 6px; background: #c0392b;">↺ Reset</button>
+                <button onclick="applyCameraTransform()">✓ Apply</button>
+                <button onclick="resetCamera()">↺ Reset</button>
             </div>
         </div>
     </div>
@@ -158,6 +135,7 @@
         <div class="preview-label">64×64 Output (Click to select pixel)</div>
     </div>
 
+<script src="/interactive/pt/embed.js"></script>
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -171,7 +149,8 @@ viewerCam.position.set(10, 8, 25);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setClearColor(0x111111);
+renderer.setClearColor(new THREE.Color(PT.c.bg));
+PT.onTheme(c => { renderer.setClearColor(new THREE.Color(c.bg)); });
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
@@ -667,9 +646,9 @@ window.generateNewPath = () => {
     // Show if path hit light or is in shadow
     if(finalColor.r === 0 && finalColor.g === 0 && finalColor.b === 0) {
         colorText.innerText += ' - Shadow/Miss';
-        colorText.style.color = '#ff6b6b';
+        colorText.style.color = PT.c.bad;
     } else {
-        colorText.style.color = '#4cd137';
+        colorText.style.color = PT.c.c3;
     }
 
     document.getElementById('maxSteps').innerText = timeline.length;
@@ -886,7 +865,7 @@ window.toggleCameraEdit = () => {
     const isVisible = panel.style.display !== 'none';
     
     panel.style.display = isVisible ? 'none' : 'block';
-    btn.style.background = isVisible ? '#2c3e50' : '#27ae60';
+    btn.classList.toggle('on', !isVisible);
     
     if(!isVisible) {
         // Populate current values
@@ -988,8 +967,11 @@ function loopAccumulate() {
     
     syncPreviewCanvas();
 
-    requestAnimationFrame(loopAccumulate);
+    if (PT.visible) requestAnimationFrame(loopAccumulate);
+    else accPaused = true;
 }
+let accPaused = false;
+PT.onVisible(v => { if (v && accPaused) { accPaused = false; if (mode === 'ACCUMULATE') requestAnimationFrame(loopAccumulate); } });
 
 /* ==========================================
    UI & MODE SWITCHING
@@ -1058,11 +1040,16 @@ setTimeout(() => {
     }
 }, 100);
 
+// render only while the frame is on screen
+let rafId = 0;
 function animate() {
-    requestAnimationFrame(animate);
+    rafId = 0;
+    if (!PT.visible) return;
+    rafId = requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, viewerCam);
 }
+PT.onVisible(v => { if (v && !rafId) animate(); });
 animate();
 
 </script>

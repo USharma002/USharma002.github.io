@@ -68,7 +68,7 @@ Performance is not the only factor in choosing a processor:
 
 - **Installation base.** The cost of software development is justified only by a very large customer population. Traditional parallel computers had negligible market presence. GPUs are in almost every PC, so massively parallel computing became a mass-market product for the first time.
 - **Form factor and accessibility.** Until 2006, parallel software ran on data-centre servers and clusters. A medical device such as an MRI scanner cannot ship with a rack of cluster nodes, but it can ship with a PC and a GPU.
-- **IEEE floating-point support**, so that results are predictable across vendors. Early GPUs were weak here; GPU support for the IEEE standard is now comparable to that of CPUs (see [Floating-Point Considerations](#floating-point-considerations)). Double precision on GeForce parts like the RTX 3060 runs at 1/64 of the single-precision rate; HPC data-centre GPUs such as the A100 and H100 run it at half rate.
+- **IEEE floating-point support**, so that results are predictable across vendors. Early GPUs were weak here; GPU support for the IEEE standard is now comparable to that of CPUs (see [Floating-Point Considerations](#floating-point-considerations)). Double precision on GeForce Ampere GPUs like the RTX 3060 runs at 1/64 of the single-precision rate: each SM has only two FP64 units [[3]](#ref-3).
 - **Programmability.** Until 2006, a GPU could only be programmed through a graphics API such as OpenGL or Direct3D, a technique called **GPGPU** (general-purpose programming using a GPU). With CUDA, NVIDIA added hardware to the chip for general-purpose parallel programming, and CUDA programs no longer go through the graphics interface; programmers use the familiar C/C++ tools.
 
 ### Architecture of a Modern GPU
@@ -1341,8 +1341,8 @@ const int NS = 3;
 cudaStream_t st[NS];
 for (int i = 0; i < NS; ++i) cudaStreamCreate(&st[i]);
 float *h_in, *h_out;                                  // must be pinned
-cudaMallocHost(&h_in, N * sizeof(float));
-cudaMallocHost(&h_out, N * sizeof(float));
+cudaMallocHost((void**)&h_in, N * sizeof(float));
+cudaMallocHost((void**)&h_out, N * sizeof(float));
 int chunk = N / NS;
 for (int i = 0; i < NS; ++i) {
     int off = i * chunk;
@@ -1798,7 +1798,10 @@ A **stencil** updates each point of a regular grid from a fixed pattern of neigh
 For example, the heat equation discretized on a 3D grid gives the 7-point stencil
 
 $$
-\text{out}[i][j][k] = c_0\, \text{in}[i][j][k] + c_1 \big(\text{in}[i][j][k-1] + \text{in}[i][j][k+1] + \text{in}[i][j-1][k] + \text{in}[i][j+1][k] + \text{in}[i-1][j][k] + \text{in}[i+1][j][k]\big),
+\begin{aligned}
+\text{out}[i][j][k] = c_0\, \text{in}[i][j][k] + c_1 \big(&\text{in}[i][j][k-1] + \text{in}[i][j][k+1] + \text{in}[i][j-1][k] \\
+{}+{} &\text{in}[i][j+1][k] + \text{in}[i-1][j][k] + \text{in}[i+1][j][k]\big),
+\end{aligned}
 $$
 
 applied repeatedly, one sweep per time step. A stencil looks like a convolution, but differs in ways that change the optimization:
@@ -2668,7 +2671,7 @@ The straightforward conversion maps each iteration of the **outer** loop to a th
 
 Such a kernel has a major problem: **all threads write to all voxel elements**. It would need atomic operations in the inner loop to keep threads from overwriting each other's contributions, which would be very slow; as written, it is incorrect.
 
-The listings in this chapter keep the book's shorthand: the parameter lists are abbreviated (a real kernel also receives `rD`, `iD`, `rFhD` and `iFhD`, all `float*`), and the bounds check `if (m < M)` or `if (n < N)` is omitted. `PI` must be a `float` constant such as `3.14159265f`; a double literal would make `2*PI*(...)` a double-precision computation, which runs at 1/64 of the single-precision rate on GeForce GPUs.
+The listings in this chapter keep the book's shorthand: the parameter lists are abbreviated (a real kernel also receives `rD`, `iD`, `rFhD` and `iFhD`, all `float*`), and the bounds check `if (m < M)` or `if (n < N)` is omitted. `PI` must be a `float` constant such as `3.14159265f`; a double literal would make `2*PI*(...)` a double-precision computation, which runs at 1/64 of the single-precision rate on the RTX 3060.
 
 The other option is for each thread to compute **one** $F^H d$ element from all samples. That requires swapping the loops, **loop interchange**, so that each outer iteration processes one voxel. Interchange needs a **perfectly nested** loop, with no statements between the two `for` statements, and the computation of `rMu` and `iMu` is in the way. It can be moved out with **loop fission** (loop splitting): the body of the outer loop is split into two loops, one for the statements before the inner loop and one for the inner loop.
 

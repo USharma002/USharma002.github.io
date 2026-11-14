@@ -2,360 +2,109 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-    <title>Monte Carlo Simulation</title>
-    <style>
-        :root {
-            /* Defaults (Light Mode) */
-            --bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text: #374151;
-            --text-sub: #6b7280;
-            --border: #e5e7eb;
-            --canvas-bg: #f3f4f6;
-            
-            /* UI Colors */
-            --primary: #b45309;      /* matches the post's light-mode accent */
-            --primary-fg: #ffffff;
-            --btn-bg: rgba(0,0,0,0.05);
-            --btn-text: #374151;
-            --danger: #b91c1c;
-            
-            /* Viz Colors */
-            --circle-stroke: #d1d5db;
-            --dot-in: rgba(180, 83, 9, 0.55);
-            --dot-out: rgba(156, 163, 175, 0.30);
-            --graph-target: #6b7280;   /* reference value: neutral */
-            --graph-est: #b45309;      /* the estimate: accent */
-        }
-
-        html, body { 
-            margin: 0; 
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: transparent;
-            color: var(--text);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .wrapper { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 22px; 
-            background: transparent; 
-            padding: 4px; 
-            max-width: 620px; 
-            justify-content: center; 
-        }
-        
-        .panel { display: flex; flex-direction: column; align-items: center; }
-        
-        canvas { 
-            background: var(--canvas-bg); 
-            border-radius: 8px; 
-            border: 1px solid var(--border); 
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        .panel-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
-                       color: var(--text-sub); margin-bottom: 7px; font-weight: 600; }
-        
-        .stats-container { 
-            margin-top: 10px; 
-            width: 100%; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
-            font-size: 13px; 
-            color: var(--text-sub); 
-        }
-        
-        .stat-item { display: flex; flex-direction: column; align-items: center; }
-        .stat-val { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; font-size: 15px; }
-        
-        .controls { display: flex; gap: 10px; margin-top: 15px; width: 100%; }
-        
-        button { 
-            flex: 1; 
-            padding: 10px 16px; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 13px; 
-            transition: opacity 0.2s, background-color 0.3s, color 0.3s; 
-        }
-        button:hover { opacity: 0.9; }
-        
-        .btn-primary { background: var(--primary); color: var(--primary-fg); }
-        .btn-secondary { background: var(--btn-bg); color: var(--btn-text); border: 1px solid var(--border); }
-        .btn-stop { background: var(--danger); color: white; } 
-
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monte Carlo estimate of pi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap">
+<link rel="stylesheet" href="/interactive/pt/embed.css">
+<style>
+  body { padding: 6px 8px; }
+  .panes { display: grid; grid-template-columns: 1fr 1.35fr; gap: 18px; margin-top: 6px; }
+  .cap { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  canvas { width: 100%; }
+  #sq { aspect-ratio: 1; }
+  #gr { aspect-ratio: 1.35; }
+</style>
 </head>
 <body>
-    <div class="wrapper">
-        <!-- Left: Visual Simulation -->
-        <div class="panel">
-            <div class="panel-label">Sampling the unit square</div>
-            <canvas id="simCanvas" width="260" height="260"></canvas>
-            <div class="stats-container">
-                <div class="stat-item">
-                    <span>Samples</span>
-                    <span class="stat-val" id="sCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Inside</span>
-                    <span class="stat-val" id="iCount">0</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right: Convergence Graph -->
-        <div class="panel">
-            <div class="panel-label">Convergence of the estimate</div>
-            <canvas id="graphCanvas" width="280" height="260"></canvas>
-            <div class="stats-container">
-                <div class="stat-item">
-                    <span>Estimate (4 * In/N)</span>
-                    <span class="stat-val" id="est" style="color: var(--graph-est)">0.0000</span>
-                </div>
-                <div class="stat-item">
-                    <span>Target (&pi;)</span>
-                    <span class="stat-val" style="color: var(--graph-target)">3.14159</span>
-                </div>
-            </div>
-            
-            <div class="controls">
-                <!-- Changed default text to Start -->
-                <button id="toggleBtn" class="btn-primary" onclick="toggleSim()">Start</button>
-                <button class="btn-secondary" onclick="resetSim()">Reset</button>
-            </div>
-        </div>
-    </div>
-
+<div class="row">
+  <div class="seg"><button id="run" class="on">run</button><button id="reset">reset</button></div>
+  <span class="readout" id="readout"></span>
+</div>
+<div class="panes">
+  <div><div class="cap">uniform samples in the unit square</div><canvas id="sq"></canvas></div>
+  <div><div class="cap">estimate 4 · (inside / N) against N (log scale), with π ± 2σ/√N</div><canvas id="gr"></canvas></div>
+</div>
+<script src="/interactive/pt/embed.js"></script>
 <script>
-    // --- Theme Detection ---
-    function detectTheme() {
-        try {
-            const parentBody = window.parent.document.body;
-            const style = window.getComputedStyle(parentBody);
-            const bgColor = style.backgroundColor;
-            const rgb = bgColor.match(/\d+/g);
-            
-            if (rgb) {
-                const brightness = (parseInt(rgb[0])*299 + parseInt(rgb[1])*587 + parseInt(rgb[2])*114) / 1000;
-                const isDark = brightness < 128;
-                
-                if (isDark) {
-                    // Dark Mode
-                    document.documentElement.style.setProperty('--bg', 'transparent');
-                    document.documentElement.style.setProperty('--card-bg', 'transparent');
-                    document.documentElement.style.setProperty('--text', '#e5e7eb');
-                    document.documentElement.style.setProperty('--text-sub', '#9ca3af');
-                    document.documentElement.style.setProperty('--border', 'rgba(255,255,255,0.13)');
-                    document.documentElement.style.setProperty('--canvas-bg', 'rgba(255,255,255,0.03)');
-                    
-                    document.documentElement.style.setProperty('--primary', '#e69138');
-                    document.documentElement.style.setProperty('--btn-bg', 'rgba(255,255,255,0.09)');
-                    document.documentElement.style.setProperty('--btn-text', '#e5e7eb');
-                    
-                    document.documentElement.style.setProperty('--circle-stroke', 'rgba(255,255,255,0.22)');
-                    document.documentElement.style.setProperty('--dot-in', 'rgba(240, 163, 85, 0.65)'); 
-                    document.documentElement.style.setProperty('--dot-out', 'rgba(255, 255, 255, 0.15)');
-                    document.documentElement.style.setProperty('--graph-target', '#9ca3af');
-                    document.documentElement.style.setProperty('--graph-est', '#e69138');
-                } else {
-                    // Light Mode
-                    document.documentElement.style.setProperty('--bg', 'transparent');
-                    document.documentElement.style.setProperty('--card-bg', 'transparent');
-                    document.documentElement.style.setProperty('--text', '#374151');
-                    document.documentElement.style.setProperty('--text-sub', '#6b7280');
-                    document.documentElement.style.setProperty('--border', 'rgba(0,0,0,0.12)');
-                    document.documentElement.style.setProperty('--canvas-bg', 'rgba(0,0,0,0.025)');
-                    
-                    document.documentElement.style.setProperty('--primary', '#b45309');
-                    document.documentElement.style.setProperty('--btn-bg', 'rgba(0,0,0,0.06)');
-                    document.documentElement.style.setProperty('--btn-text', '#374151');
-                    
-                    document.documentElement.style.setProperty('--circle-stroke', '#d1d5db');
-                    document.documentElement.style.setProperty('--dot-in', 'rgba(180, 83, 9, 0.55)');
-                    document.documentElement.style.setProperty('--dot-out', 'rgba(156, 163, 175, 0.3)');
-                    document.documentElement.style.setProperty('--graph-target', '#6b7280');
-                    document.documentElement.style.setProperty('--graph-est', '#b45309');
-                }
-                
-                drawCircleOutline();
-                if (!isRunning && history.length > 0) drawGraph();
-            }
-        } catch(e) {}
-    }
-    setInterval(detectTheme, 1000);
-    detectTheme();
+// Estimate pi = 4 * P(point in quarter disc). Each sample is a Bernoulli trial with p = pi/4,
+// so one sample of 4*[inside] has standard deviation sigma = 4 sqrt(p(1-p)) and the mean of N
+// samples has standard error sigma / sqrt(N).
+const sq = document.getElementById('sq'), gr = document.getElementById('gr'), out = document.getElementById('readout');
+const MAXPTS = 20000, MAXN = 200000;
+const pts = new Float32Array(MAXPTS * 2);
+let N = 0, inside = 0, hist = [], running = true, raf = 0;
+const P = Math.PI / 4, SIG = 4 * Math.sqrt(P * (1 - P));
+let sctx, gctx, SW, GW, GH;
 
-    function getVar(name) {
-        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    }
-
-    // --- Main Logic ---
-
-    const simCtx = document.getElementById('simCanvas').getContext('2d');
-    const graphCtx = document.getElementById('graphCanvas').getContext('2d');
-    const toggleBtn = document.getElementById('toggleBtn');
-    
-    // State
-    let samples = 0;
-    let inside = 0;
-    let history = [];
-    let isRunning = false; // Start Paused
-    let animationId;
-    
-    const BATCH_SIZE = 30; 
-    const MAX_HISTORY = 300; 
-
-    simCtx.scale(1, 1); 
-    
-    function drawCircleOutline() {
-        simCtx.beginPath();
-        simCtx.arc(130, 130, 130, 0, Math.PI*2);
-        simCtx.strokeStyle = getVar('--circle-stroke');
-        simCtx.lineWidth = 2;
-        simCtx.stroke();
-    }
-
-    function drawGraph() {
-        const w = 280;
-        const h = 260;
-        const targetY = h/2;
-
-        const colTarget = getVar('--graph-target');
-        const colEst = getVar('--graph-est');
-
-        graphCtx.clearRect(0, 0, w, h);
-        
-        // 1. Target Line (PI)
-        graphCtx.beginPath();
-        graphCtx.moveTo(0, targetY);
-        graphCtx.lineTo(w, targetY);
-        graphCtx.strokeStyle = colTarget;
-        graphCtx.setLineDash([5, 3]);
-        graphCtx.lineWidth = 1;
-        graphCtx.stroke();
-        graphCtx.setLineDash([]);
-
-        // Label for PI
-        graphCtx.fillStyle = colTarget;
-        graphCtx.font = "bold 12px sans-serif";
-        graphCtx.textAlign = "right";
-        graphCtx.fillText("π", w - 5, targetY - 6);
-
-        // 2. Error History
-        if (history.length < 2) return;
-
-        graphCtx.beginPath();
-        const scaleY = 100; 
-
-        for (let i = 0; i < history.length; i++) {
-            const x = (i / (MAX_HISTORY-1)) * w;
-            const diff = history[i] - Math.PI;
-            
-            let y = targetY - (diff * scaleY);
-            if(y < 0) y = 0; 
-            if(y > h) y = h;
-
-            if (i===0) graphCtx.moveTo(x, y);
-            else graphCtx.lineTo(x, y);
-        }
-        
-        graphCtx.strokeStyle = colEst;
-        graphCtx.lineWidth = 1.5;
-        graphCtx.stroke();
-    }
-
-    function loop() {
-        if (!isRunning) return;
-
-        const colIn = getVar('--dot-in');
-        const colOut = getVar('--dot-out');
-
-        for (let i = 0; i < BATCH_SIZE; i++) {
-            const x = Math.random();
-            const y = Math.random();
-            
-            const px = x * 260;
-            const py = y * 260;
-            const dx = px - 130;
-            const dy = py - 130;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            const isIn = dist <= 130;
-
-            simCtx.fillStyle = isIn ? colIn : colOut;
-            simCtx.fillRect(px, py, 2, 2);
-
-            if (isIn) inside++;
-            samples++;
-        }
-
-        const estimate = 4 * (inside / samples);
-        history.push(estimate);
-        if (history.length > MAX_HISTORY) history.shift();
-
-        document.getElementById('sCount').textContent = samples.toLocaleString();
-        document.getElementById('iCount').textContent = inside.toLocaleString();
-        document.getElementById('est').textContent = estimate.toFixed(5);
-
-        if (samples % (BATCH_SIZE * 10) === 0) drawCircleOutline();
-
-        drawGraph();
-        animationId = requestAnimationFrame(loop);
-    }
-
-    function toggleSim() {
-        isRunning = !isRunning;
-        if (isRunning) {
-            toggleBtn.textContent = "Pause";
-            toggleBtn.classList.remove('btn-stop');
-            loop();
-        } else {
-            toggleBtn.textContent = "Resume";
-            toggleBtn.classList.add('btn-stop'); 
-            cancelAnimationFrame(animationId);
-        }
-    }
-
-    function resetSim() {
-        isRunning = false;
-        cancelAnimationFrame(animationId);
-        
-        samples = 0;
-        inside = 0;
-        history = [];
-        
-        document.getElementById('sCount').textContent = "0";
-        document.getElementById('iCount').textContent = "0";
-        document.getElementById('est').textContent = "0.0000";
-        
-        // Clear Canvases
-        simCtx.clearRect(0, 0, 260, 260);
-        graphCtx.clearRect(0, 0, 280, 260);
-        
-        drawCircleOutline();
-        
-        // Auto-start on reset
-        isRunning = true;
-        toggleBtn.textContent = "Pause";
-        toggleBtn.classList.remove('btn-stop');
-        loop();
-    }
-
-    // Initialize (Start Paused)
-    drawCircleOutline();
-    // No loop() call here
-
+function layout() {
+  SW = sq.getBoundingClientRect().width; GW = gr.getBoundingClientRect().width; GH = GW / 1.35;
+  sctx = PT.fit(sq, SW, SW); gctx = PT.fit(gr, GW, GH);
+  redrawSquare(); drawGraph();
+}
+function redrawSquare() {
+  const c = PT.c;
+  sctx.clearRect(0, 0, SW, SW);
+  sctx.strokeStyle = c.muted; sctx.lineWidth = 1; sctx.strokeRect(0.5, 0.5, SW - 1, SW - 1);
+  for (let i = 0; i < Math.min(N, MAXPTS); i++) dot(pts[2 * i], pts[2 * i + 1]);
+  arc();
+}
+function arc() {
+  sctx.strokeStyle = PT.c.text; sctx.lineWidth = 1.5;
+  sctx.beginPath(); sctx.arc(0, SW, SW, -Math.PI / 2, 0); sctx.stroke();
+}
+function dot(x, y) {
+  const inq = x * x + y * y <= 1;
+  sctx.fillStyle = inq ? PT.c.accent : PT.alpha(PT.c.muted, 0.6);
+  sctx.fillRect(x * SW - 1, (1 - y) * SW - 1, 2, 2);
+}
+function drawGraph() {
+  const c = PT.c, L = 46, R = 8, T = 8, B = 26, w = GW - L - R, h = GH - T - B;
+  const lo = 2.6, hi = 3.7, X = n => L + w * Math.log10(n) / Math.log10(MAXN), Y = v => T + h * (hi - Math.min(hi, Math.max(lo, v))) / (hi - lo);
+  gctx.clearRect(0, 0, GW, GH);
+  gctx.font = '11px "Source Code Pro", monospace'; gctx.fillStyle = c.muted; gctx.strokeStyle = c.border; gctx.lineWidth = 1;
+  for (let e = 0; e <= 5; e++) { const x = X(10 ** e); gctx.beginPath(); gctx.moveTo(x, T); gctx.lineTo(x, T + h); gctx.stroke(); gctx.textAlign = 'center'; gctx.fillText('10' + '⁰¹²³⁴⁵'[e], x, GH - 8); }
+  for (const v of [2.8, 3.0, 3.2, 3.4, 3.6]) { gctx.textAlign = 'right'; gctx.fillText(v.toFixed(1), L - 6, Y(v) + 4); }
+  // standard-error band
+  gctx.fillStyle = PT.alpha(c.accent2, 0.15); gctx.beginPath();
+  for (let i = 0; i <= 100; i++) { const n = 10 ** (5.3 * i / 100); gctx.lineTo(X(n), Y(Math.PI + 2 * SIG / Math.sqrt(n))); }
+  for (let i = 100; i >= 0; i--) { const n = 10 ** (5.3 * i / 100); gctx.lineTo(X(n), Y(Math.PI - 2 * SIG / Math.sqrt(n))); }
+  gctx.fill();
+  gctx.strokeStyle = c.accent2; gctx.setLineDash([5, 4]); gctx.beginPath(); gctx.moveTo(L, Y(Math.PI)); gctx.lineTo(L + w, Y(Math.PI)); gctx.stroke(); gctx.setLineDash([]);
+  gctx.fillStyle = c.accent2; gctx.textAlign = 'left'; gctx.fillText('π', L + w - 12, Y(Math.PI) - 5);
+  if (hist.length > 1) {
+    gctx.strokeStyle = c.accent; gctx.lineWidth = 1.6; gctx.beginPath();
+    hist.forEach(([n, v], i) => i ? gctx.lineTo(X(n), Y(v)) : gctx.moveTo(X(n), Y(v)));
+    gctx.stroke();
+  }
+  gctx.strokeStyle = c.muted; gctx.lineWidth = 1; gctx.strokeRect(L + 0.5, T + 0.5, w, h);
+}
+function step() {
+  raf = 0;
+  if (!running || !PT.visible) return;
+  const batch = Math.max(1, Math.ceil(N / 40));       // grow the batch so the log-axis advances evenly
+  for (let k = 0; k < batch && N < MAXN; k++) {
+    const x = Math.random(), y = Math.random();
+    if (x * x + y * y <= 1) inside++;
+    if (N < MAXPTS) { pts[2 * N] = x; pts[2 * N + 1] = y; dot(x, y); }
+    N++;
+  }
+  hist.push([N, 4 * inside / N]);
+  arc(); drawGraph(); readout();
+  if (N >= MAXN) { setRun(false); return; }
+  raf = requestAnimationFrame(step);
+}
+function readout() {
+  const est = N ? 4 * inside / N : 0;
+  out.innerHTML = `<span class="k">N =</span> ${N.toLocaleString()}&ensp;<span class="k">estimate =</span> <span class="acc">${est.toFixed(5)}</span>&ensp;<span class="k">error =</span> ${N ? (est - Math.PI).toFixed(5) : '–'}&ensp;<span class="k">σ/√N =</span> ${N ? (SIG / Math.sqrt(N)).toFixed(5) : '–'}`;
+}
+function setRun(v) { running = v; document.getElementById('run').classList.toggle('on', v); document.getElementById('run').textContent = v ? 'pause' : 'run'; if (v && !raf) raf = requestAnimationFrame(step); }
+document.getElementById('run').onclick = () => setRun(!running || N >= MAXN ? (N >= MAXN ? (reset(), true) : true) : false);
+document.getElementById('reset').onclick = () => { reset(); setRun(true); };
+function reset() { N = 0; inside = 0; hist = []; redrawSquare(); drawGraph(); readout(); }
+PT.onTheme(() => { redrawSquare(); drawGraph(); });
+PT.onVisible(v => { if (v && running && !raf) raf = requestAnimationFrame(step); });
+new ResizeObserver(layout).observe(document.body);
+layout(); readout(); setRun(true);
 </script>
 </body>
 </html>

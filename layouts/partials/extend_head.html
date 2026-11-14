@@ -19,6 +19,12 @@
       inlineMath: [['$', '$'], ['\\(', '\\)']],
       displayMath: [['$$','$$'], ['\\[', '\\]']],
       tags: 'ams' /* <--- THIS ENABLES \label and \eqref */
+    },
+    chtml: {
+      // Merriweather's tall x-height makes MathJax's automatic font matching
+      // scale math to ~126% of the text; a fixed 113% keeps it in proportion.
+      matchFontHeight: false,
+      scale: 1.13
     }
   };
 </script>

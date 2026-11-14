@@ -1,337 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>vMF Mix</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>von Mises–Fisher mixture</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap">
+<link rel="stylesheet" href="/interactive/pt/embed.css">
 <style>
-:root{
-  --bg:#f8f9fa; --panel:#fff; --text:#374151; --sub:#6b7280; --b:#d1d5db; --acc:#e67e22;
-  --ov:rgba(255,255,255,.92); --sh:0 10px 28px rgba(0,0,0,.14);
-  --card:rgba(0,0,0,.03); --cardb:rgba(0,0,0,.10);
-
-  /* FIX: cell size depends on viewport, not sidebar width */
-  --cell: clamp(120px, 16vw, 170px);
-  --gap: 10px;
-  --gridw: calc(var(--cell) * 2 + var(--gap));
-}
-[data-theme="dark"]{
-  --bg:#15181d; --panel:#1f242b; --text:#f3f4f6; --sub:#a3adb9; --b:#3a434f;
-  --ov:rgba(38,38,38,.92); --sh:0 14px 40px rgba(0,0,0,.45);
-  --card:rgba(255,255,255,.04); --cardb:rgba(255,255,255,.12);
-}
-html,body{padding:0; margin:0;height:100%;background:transparent;color:var(--text);font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden}
-#app{height:100%;display:flex;justify-content:center;align-items:center;padding:4px;box-sizing:border-box}
-#widget{width:min(980px,100%);height:min(560px,100%);display:flex;background:transparent;border:none;border-radius:0;box-shadow:none;overflow:hidden}
-
-/* Sidebar */
-#side{width:270px;flex:0 0 auto;border-right:1px solid var(--b);position:relative;transition:width .25s cubic-bezier(.4,0,.2,1)}
-#side.closed{width:0;border-right:none}
-#toggle{position:absolute;right:-30px;top:12px;width:30px;height:30px;border:1px solid var(--b);border-left:none;border-radius:0 10px 10px 0;background:var(--panel);color:var(--sub);cursor:pointer;z-index:5}
-#side .in{width:270px;box-sizing:border-box;padding:14px;display:flex;flex-direction:column;gap:10px;transition:opacity .15s}
-#side.closed .in{opacity:0;pointer-events:none}
-h2{margin:0;color:var(--acc);font-size:15px}
-p{margin:0;color:var(--sub);line-height:1.35}
-.box{background:var(--ov);border:1px solid var(--b);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
-.row{display:grid;grid-template-columns:1fr 46px;gap:10px;align-items:center}
-label{display:flex;justify-content:space-between;gap:8px;color:var(--sub);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
-.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
-.btns{margin-top:auto;display:flex;gap:8px}
-button.action{flex:1;padding:10px;border-radius:10px;border:1px solid var(--b);background:var(--bg);color:var(--text);cursor:pointer;font-weight:800}
-button.primary{background:var(--acc);border-color:var(--acc);color:#111}
-
-/* Viz */
-#viz{
-  flex:1;
-  min-width:0;
-  min-height:0;
-  display:flex;
-  gap:var(--gap);
-  padding:10px;
-  box-sizing:border-box;
-  overflow:hidden;
-}
-.panel{position:relative;background:var(--card);border:1px solid var(--cardb);border-radius:12px;overflow:hidden;cursor:grab;min-width:0}
-.panel:active{cursor:grabbing}
-
-/* FIX: main expands when sidebar collapses */
-#main{flex:1 1 auto; min-width:0; min-height:0}
-
-/* Component previews below the main mixture view */
-#grid{
-  flex:0 0 var(--gridw);
-  width:var(--gridw);
-  min-width:var(--gridw);
-  min-height:0;
-  display:grid;
-  grid-template-columns:repeat(2, var(--cell));
-  grid-auto-rows:var(--cell);
-  gap:var(--gap);
-  align-content:start;
-  justify-content:center;
-  overflow-y:auto;
-  overflow-x:hidden;
-  padding-right:2px;
-  box-sizing:border-box;
-}
-
-/* each component box uses the fixed grid tracks */
-.badge{position:absolute;top:10px;left:10px;background:var(--ov);border:1px solid var(--b);border-radius:999px;padding:6px 10px;color:var(--acc);font-weight:900;font-size:11px;letter-spacing:.6px;text-transform:uppercase;pointer-events:none}
-.tag{position:absolute;bottom:8px;left:8px;background:var(--ov);border:1px solid var(--b);border-radius:999px;padding:2px 8px;color:var(--text);font-size:11px;pointer-events:none}
-canvas{display:block;width:100%;height:100%}
-
+  body { padding: 6px 8px; }
+  .wrap { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; margin-top: 6px; }
+  #main { width: 300px; height: 300px; cursor: grab; touch-action: none; }
+  .cap { font-size: 13px; color: var(--muted); }
+  table { border-collapse: collapse; font-size: 13px; }
+  td { padding: 3px 10px 3px 0; vertical-align: middle; }
+  td canvas { width: 54px; height: 54px; cursor: grab; touch-action: none; }
+  input[type=range] { width: 110px; }
+  @media (max-width: 620px) { .wrap { grid-template-columns: 1fr; } }
 </style>
-
-<script type="importmap">
-{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
-</script>
 </head>
-
 <body>
-<div id="app">
-  <div id="widget">
-    <aside id="side" class="closed">
-      <button id="toggle" title="Toggle">☰</button>
-      <div class="in">
-        <p>Drag any sphere to rotate all views. Sliders update weights (auto-normalized).</p>
-
-        <div class="box">
-          <label>Weights <span class="mono" id="sum">sum=1.00</span></label>
-          <div id="sliders" style="display:flex;flex-direction:column;gap:10px"></div>
-        </div>
-
-        <div class="btns">
-          <button class="action" id="rand">Randomize</button>
-          <button class="action primary" id="reset">Reset</button>
-        </div>
-      </div>
-    </aside>
-
-    <main id="viz">
-      <div class="panel" id="main"><div class="badge">Mixture</div></div>
-      <div id="grid"></div>
-    </main>
-  </div>
+<div class="row">
+  <div class="seg"><button id="rand">random directions</button><button id="reset">equal weights</button></div>
+  <span class="hint">drag any sphere to rotate all of them</span>
 </div>
-
-<script type="module">
-import * as THREE from "three";
-
-const N=6, $=s=>document.querySelector(s);
-const side=$("#side");
-$("#toggle").onclick=()=>side.classList.toggle("closed");
-
-let viewsReady = false;
-let renderQueued = false;
-
-// theme inherit
-const theme=()=>{try{
-  const b=window.getComputedStyle(window.parent.document.body).backgroundColor.match(/\d+/g);
-  if(!b) return;
-  const y=(+b[0]*299 + +b[1]*587 + +b[2]*114)/1000;
-  document.documentElement.setAttribute("data-theme", y<128 ? "dark":"light");
-  scheduleRender();
-}catch(e){}};
-
-(function installThemeSync(){
-  const sync = () => requestAnimationFrame(theme);
-  sync();
-
-  if (typeof MutationObserver !== 'undefined') {
-    try {
-      const parentDoc = window.parent.document;
-      const observer = new MutationObserver(sync);
-      const options = { attributes: true, attributeFilter: ['class', 'style', 'data-theme'] };
-
-      if (parentDoc.documentElement) observer.observe(parentDoc.documentElement, options);
-      if (parentDoc.body) observer.observe(parentDoc.body, options);
-
-      window.addEventListener('beforeunload', () => observer.disconnect(), { once: true });
-    } catch (e) {}
-  }
-
-  if (window.matchMedia) {
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    if (media.addEventListener) media.addEventListener('change', sync);
-    else if (media.addListener) media.addListener(sync);
-  }
-})();
-
-// data
-const randComp=()=> {
-  const th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1);
-  return {mu:new THREE.Vector3(Math.sin(ph)*Math.cos(th),Math.sin(ph)*Math.sin(th),Math.cos(ph)),
-          kappa:5+Math.random()*45, weight:Math.random()};
-};
-const normalize=w=>{const s=w.reduce((a,b)=>a+b,0)||1; return w.map(v=>v/s);};
-let data=Array.from({length:N},randComp); data.forEach((c,i)=>c.idx=i);
-let baseW=normalize(data.map(c=>c.weight)); baseW.forEach((v,i)=>data[i].weight=v);
-
-// shader
-const vs=`varying vec3 n; void main(){n=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
-const fs=`
-precision mediump float; varying vec3 n;
-#define MAX 6
-uniform vec3 mu[MAX]; uniform float k[MAX]; uniform float w[MAX];
-uniform int count; uniform int single;
-vec3 magma(float t){
-  t=clamp(t,0.,1.);
-  vec3 c0=vec3(.001,.001,.014), c1=vec3(.188,.043,.357), c2=vec3(.549,.094,.424),
-       c3=vec3(.988,.553,.255), c4=vec3(.996,.878,.545);
-  if(t<.25) return mix(c0,c1,t/.25);
-  if(t<.5)  return mix(c1,c2,(t-.25)/.25);
-  if(t<.75) return mix(c2,c3,(t-.5)/.25);
-  return mix(c3,c4,(t-.75)/.25);
+<div class="wrap">
+  <div><canvas id="main"></canvas><div class="cap" id="sum"></div></div>
+  <table id="tab"></table>
+</div>
+<script src="/interactive/pt/embed.js"></script>
+<script>
+// Mixture V(ω) = Σ λ_k v(ω | μ_k, κ_k),  v = κ / (4π sinh κ) · exp(κ μ·ω).
+// Each sphere is rendered per pixel on a 2D canvas (orthographic view of the unit sphere).
+const K = 4;
+let comps = [], rot = { a: 0.4, b: -0.3 };
+const mainC = document.getElementById('main'), tab = document.getElementById('tab');
+function randDir() { const z = 2 * Math.random() - 1, p = 2 * Math.PI * Math.random(), s = Math.sqrt(1 - z * z); return [s * Math.cos(p), s * Math.sin(p), z]; }
+function init(randomOnly) {
+  if (!randomOnly) comps = Array.from({ length: K }, (_, i) => ({ mu: randDir(), kappa: [6, 15, 40, 100][i], w: 1 }));
+  else comps.forEach(c => c.mu = randDir());
 }
-void main(){
-  vec3 nn=normalize(n); float v=0.;
-  for(int i=0;i<MAX;i++){ if(i>=count) break;
-    float dp=dot(nn,mu[i]);
-    float inf=exp(k[i]*(dp-1.));
-    v += (single==1) ? inf : w[i]*inf;
-  }
-  float t=clamp(pow(v*0.6,0.45),0.,1.);
-  vec3 col=magma(t);
-  vec3 L=normalize(vec3(.5,1.,1.));
-  float diff=.4+.6*max(dot(nn,L),0.);
-  gl_FragColor=vec4(col*diff,1.);
-}`;
+// log-domain evaluation keeps large κ stable: v = κ/(2π(1−e^{−2κ})) · exp(κ(μ·ω − 1))
+const vmf = (c, w) => c.kappa / (2 * Math.PI * (1 - Math.exp(-2 * c.kappa))) * Math.exp(c.kappa * (c.mu[0] * w[0] + c.mu[1] * w[1] + c.mu[2] * w[2] - 1));
+function lambdas() { const s = comps.reduce((a, c) => a + c.w, 0) || 1; return comps.map(c => c.w / s); }
 
-class View {
-  constructor(el, isMain, idx){
-    this.el=el; this.isMain=isMain; this.idx=idx;
-    this.scene=new THREE.Scene();
-    this.cam=new THREE.PerspectiveCamera(40,1,.1,100);
-    this.cam.position.z=isMain?3.25:2.9;
-    this.r=new THREE.WebGLRenderer({antialias:true,alpha:true});
-    this.r.setPixelRatio(Math.min(devicePixelRatio,2));
-    el.appendChild(this.r.domElement);
-
-    const uni=this.makeUniforms();
-    this.mat=new THREE.ShaderMaterial({uniforms:uni,vertexShader:vs,fragmentShader:fs});
-    this.mesh=new THREE.Mesh(new THREE.SphereGeometry(1,40,40), this.mat);
-    if(isMain) this.mesh.scale.setScalar(.92);
-    this.scene.add(this.mesh);
-
-    this.drag();
-    new ResizeObserver(()=>{ this.resize(); scheduleRender(); }).observe(el);
-    this.resize();
+function hexRGB(h) { if (h.startsWith('rgb')) return h.match(/\d+/g).map(Number); const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+function render(canvas, size, list, lam) {
+  const ctx = PT.fit(canvas, size, size), dpr = canvas.width / size, S = canvas.width;
+  const img = ctx.createImageData(S, S), D = img.data;
+  const lo = hexRGB(PT.c.faint), mid = hexRGB(PT.c.accent2), hi = hexRGB(PT.c.accent), bg = hexRGB(PT.c.bg);
+  const ca = Math.cos(rot.a), sa = Math.sin(rot.a), cb = Math.cos(rot.b), sb = Math.sin(rot.b);
+  // peak value for colour scaling: the largest density over the sphere is attained near a lobe centre
+  let peak = 0;
+  for (const [i, c] of list.entries()) peak = Math.max(peak, lam[i] * vmf(c, c.mu) + list.reduce((s, d, j) => j === i ? s : s + lam[j] * vmf(d, c.mu), 0));
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const u = (2 * (x + 0.5) / S - 1) * 1.04, v = (1 - 2 * (y + 0.5) / S) * 1.04, r2 = u * u + v * v, o = 4 * (y * S + x);
+    if (r2 > 1) { D[o + 3] = 0; continue; }
+    const z = Math.sqrt(1 - r2);
+    // view-space normal (u, v, z) -> world: rotate by b about x, then by a about y
+    const y1 = v * cb - z * sb, z1 = v * sb + z * cb;
+    const w = [u * ca + z1 * sa, y1, -u * sa + z1 * ca];
+    let val = 0; for (let i = 0; i < list.length; i++) val += lam[i] * vmf(list[i], w);
+    const t = Math.pow(Math.min(1, val / peak), 0.3), sh = 0.55 + 0.45 * Math.max(0, 0.35 * u + 0.45 * v + 0.82 * z);
+    let col;
+    if (t < 0.5) { const s = t / 0.5; col = lo.map((l, k) => l + (mid[k] - l) * s); }
+    else { const s = (t - 0.5) / 0.5; col = mid.map((m, k) => m + (hi[k] - m) * s); }
+    const edge = Math.min(1, (1 - Math.sqrt(r2)) * S / 2);       // antialias the rim
+    for (let k = 0; k < 3; k++) D[o + k] = col[k] * sh * edge + bg[k] * (1 - edge);
+    D[o + 3] = 255;
   }
-  makeUniforms(){
-    const mu=[], k=[], w=[];
-    if(this.isMain){
-      data.forEach(c=>{mu.push(c.mu); k.push(c.kappa); w.push(c.weight);});
-    }else{
-      const c=data[this.idx];
-      mu.push(c.mu); k.push(c.kappa); w.push(c.weight);
-      for(let i=1;i<N;i++){mu.push(new THREE.Vector3(0,1,0)); k.push(1); w.push(0);}
-    }
-    return {mu:{value:mu}, k:{value:k}, w:{value:w}, count:{value:this.isMain?N:1}, single:{value:this.isMain?0:1}};
-  }
-  resize(){
-    const w=Math.max(10,this.el.clientWidth), h=Math.max(10,this.el.clientHeight);
-    this.cam.aspect=w/h; this.cam.updateProjectionMatrix();
-    this.r.setSize(w,h,false);
-  }
-  render(){ this.r.render(this.scene,this.cam); }
-  setRot(rot){ this.mesh.rotation.copy(rot); }
-  drag(){
-    let d=false, p={x:0,y:0};
-    const down=e=>{d=true;p={x:e.clientX,y:e.clientY};this.el.style.cursor="grabbing";};
-    const move=e=>{
-      if(!d) return;
-      const dx=e.clientX-p.x, dy=e.clientY-p.y;
-      this.mesh.rotation.y+=dx*0.015; this.mesh.rotation.x+=dy*0.015;
-      views.forEach(v=>v.setRot(this.mesh.rotation));
-      scheduleRender();
-      p={x:e.clientX,y:e.clientY};
-    };
-    const up=()=>{d=false;this.el.style.cursor="grab";};
-    this.r.domElement.addEventListener("mousedown",down);
-    window.addEventListener("mousemove",move);
-    window.addEventListener("mouseup",up);
-  }
+  ctx.putImageData(img, 0, 0);
 }
-
-const main=$("#main"), grid=$("#grid"), sliders=$("#sliders"), sum=$("#sum");
-const mk=(t,c)=>Object.assign(document.createElement(t),c||{});
-
-function renderAll(){ views.forEach(v=>v.render()); }
-
-function scheduleRender(){
-  if (!viewsReady || renderQueued) return;
-  renderQueued = true;
+let queued = false;
+function drawAll() {
+  if (queued) return; queued = true;
   requestAnimationFrame(() => {
-    renderQueued = false;
-    renderAll();
+    queued = false;
+    const lam = lambdas();
+    render(mainC, 300, comps, lam);
+    comps.forEach((c, i) => render(document.getElementById('c' + i), 54, [c], [1]));
+    comps.forEach((c, i) => { document.getElementById('lv' + i).textContent = lam[i].toFixed(2); });
+    document.getElementById('sum').textContent = `mixture of ${K} lobes, λ normalized to sum to 1`;
   });
 }
-
-// build grid
-grid.innerHTML="";
-const cells=data.map((c,i)=>{
-  const d=mk("div",{className:"panel sub"});
-  const tag=mk("div",{className:"tag mono"});
-  d.appendChild(tag); grid.appendChild(d);
-  return {d,tag,i};
-});
-
-// init views
-const views=[];
-views.push(new View(main,true,-1));
-cells.forEach(x=>views.push(new View(x.d,false,x.i)));
-
-function updateBorders(){
-  const max=Math.max(...data.map(c=>c.weight))||1;
-  cells.forEach(({d,tag,i})=>{
-    const w=data[i].weight, a=.30+(w/max)*.60;
-    d.style.border=`${1+(w/max)*3}px solid rgba(230,126,34,${a})`;
-    tag.textContent=`w:${w.toFixed(2)}`;
+function buildTable() {
+  let h = '<tr><td></td><td class="muted">weight λ</td><td></td><td class="muted">concentration κ</td><td></td></tr>';
+  comps.forEach((c, i) => {
+    h += `<tr><td><canvas id="c${i}"></canvas></td>
+      <td><input type="range" min="0" max="1" step="0.01" value="${c.w}" data-i="${i}" data-k="w"></td><td class="num" id="lv${i}"></td>
+      <td><input type="range" min="0" max="2.3" step="0.01" value="${Math.log10(c.kappa)}" data-i="${i}" data-k="kappa"></td><td class="num" id="kv${i}">${c.kappa.toFixed(0)}</td></tr>`;
   });
-  sum.textContent=`sum=${data.reduce((s,c)=>s+c.weight,0).toFixed(2)}`;
-  views[0].mat.uniforms.w.value = data.map(c=>c.weight);
-  scheduleRender();
+  tab.innerHTML = h;
+  tab.querySelectorAll('input').forEach(r => r.oninput = () => {
+    const c = comps[+r.dataset.i];
+    if (r.dataset.k === 'w') c.w = +r.value; else { c.kappa = 10 ** +r.value; document.getElementById('kv' + r.dataset.i).textContent = c.kappa.toFixed(c.kappa < 10 ? 1 : 0); }
+    drawAll();
+  });
+  tab.querySelectorAll('canvas').forEach(dragTo);
 }
-
-function rebuildSliders(){
-  sliders.innerHTML="";
-  data.forEach((c,i)=>{
-    const wrap=mk("div");
-    wrap.appendChild(mk("label",{innerHTML:`Comp ${i+1}<span class="mono">κ=${c.kappa.toFixed(0)}</span>`}));
-    const row=mk("div",{className:"row"});
-    const r=mk("input"); r.type="range"; r.min=0; r.max=1; r.step=0.001; r.value=c.weight;
-    const v=mk("div",{className:"mono",textContent:(+r.value).toFixed(2),style:"text-align:right"});
-    r.addEventListener("input",()=>{
-      v.textContent=(+r.value).toFixed(2);
-      const norm=normalize(data.map((cc,ii)=> ii===i? +r.value : +cc.__r.value));
-      norm.forEach((w,ii)=>{data[ii].weight=w; data[ii].__r.value=w; data[ii].__v.textContent=w.toFixed(2);});
-      updateBorders();
-    });
-    c.__r=r; c.__v=v;
-    row.append(r,v); wrap.appendChild(row); sliders.appendChild(wrap);
-  });
+function dragTo(el) {
+  let p = null;
+  el.addEventListener('pointerdown', e => { p = [e.clientX, e.clientY]; el.setPointerCapture(e.pointerId); el.style.cursor = 'grabbing'; });
+  el.addEventListener('pointermove', e => { if (!p) return; rot.a += (e.clientX - p[0]) * 0.012; rot.b = Math.max(-1.5, Math.min(1.5, rot.b + (e.clientY - p[1]) * 0.012)); p = [e.clientX, e.clientY]; drawAll(); });
+  el.addEventListener('pointerup', () => { p = null; el.style.cursor = 'grab'; });
 }
-
-rebuildSliders(); updateBorders(); viewsReady = true; scheduleRender();
-
-$("#rand").onclick=()=>{
-  const w=data.map(c=>c.weight);
-  data=Array.from({length:N},(_,i)=>Object.assign(randComp(),{idx:i,weight:w[i]}));
-  views[0].mat.uniforms.mu.value = data.map(c=>c.mu);
-  views[0].mat.uniforms.k.value  = data.map(c=>c.kappa);
-  cells.forEach(({i},j)=>{
-    views[j+1].mat.uniforms.mu.value[0]=data[i].mu;
-    views[j+1].mat.uniforms.k.value[0]=data[i].kappa;
-  });
-  rebuildSliders(); updateBorders();
-};
-
-$("#reset").onclick=()=>{
-  const norm=normalize(baseW.slice());
-  norm.forEach((w,i)=>{data[i].weight=w; data[i].__r.value=w; data[i].__v.textContent=w.toFixed(2);});
-  updateBorders();
-};
+document.getElementById('rand').onclick = () => { init(true); drawAll(); };
+document.getElementById('reset').onclick = () => { comps.forEach(c => c.w = 1); buildTable(); drawAll(); };
+dragTo(mainC);
+PT.onTheme(drawAll);
+init(); buildTable(); drawAll();
 </script>
 </body>
 </html>

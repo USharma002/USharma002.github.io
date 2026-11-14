@@ -1,0 +1,38 @@
+/* Shared look for the path-tracing widgets: no cards or shadows, page fonts,
+   square segmented buttons. Colours come from embed.js, which follows the page theme. */
+:root {
+  --bg: #ffffff; --text: #1f1f1f; --muted: #6c6c6c; --border: #e3e3e3; --faint: #f4f4f4;
+  --accent: #b45309; --accent2: #0e7490; --c3: #2e7d32; --c4: #6d28d9; --bad: #b91c1c;
+  --mono: 'Source Code Pro', ui-monospace, Menlo, Consolas, monospace;
+  --serif: 'Merriweather', Georgia, serif;
+}
+html { background: var(--bg); overflow: hidden; }
+body { margin: 0; color: var(--text); font: 300 14px/1.5 var(--serif); }
+* { box-sizing: border-box; }
+b, strong { font-weight: 700; }
+button {
+  font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 0;
+  border: 1px solid var(--muted); background: transparent; color: var(--text); cursor: pointer;
+}
+button:hover { border-color: var(--text); }
+button.on { background: var(--text); border-color: var(--text); color: var(--bg); }
+button:disabled { opacity: 0.4; cursor: default; }
+.seg { display: inline-flex; flex-wrap: wrap; }
+.seg button + button { margin-left: -1px; }
+select, input[type=number] {
+  font: inherit; font-size: 13px; padding: 2px 6px; border-radius: 0;
+  border: 1px solid var(--muted); background: var(--bg); color: var(--text);
+}
+input[type=range] { accent-color: var(--accent); vertical-align: middle; }
+input[type=checkbox] { accent-color: var(--accent); vertical-align: middle; margin: 0 4px 0 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.grp { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.grp b, .num { font-family: var(--mono); font-weight: 400; color: var(--text); font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); }
+.muted { color: var(--muted); }
+.acc { color: var(--accent); }
+.acc2 { color: var(--accent2); }
+.hint { font-size: 12px; color: var(--muted); font-style: italic; }
+.readout { font-family: var(--mono); font-size: 12px; line-height: 1.6; color: var(--text); }
+.readout .k { color: var(--muted); }
+canvas, svg { display: block; }

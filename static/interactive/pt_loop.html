@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursive and iterative path tracing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:ital,wght@0,300;0,700;1,300&family=Source+Code+Pro:wght@400;700&display=swap">
+<link rel="stylesheet" href="/interactive/pt/embed.css">
+<style>
+  body { padding: 6px 8px; }
+  svg { width: 100%; height: auto; user-select: none; margin-top: 4px; }
+  svg text { font-family: var(--serif); font-size: 14px; }
+  svg .it { font-style: italic; }
+  .cap { font-size: 13.5px; min-height: 3em; margin: 2px 0 4px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th { text-align: left; font-weight: 300; font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--muted); padding: 2px 14px 2px 0; }
+  td { padding: 1px 14px 1px 6px; border-bottom: 1px solid var(--border); height: 23px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td:first-child, th:first-child { padding-left: 6px; }
+  td i, .eq i { font-style: italic; }
+  .e2 { color: var(--accent2); } .e4 { color: var(--accent); } .ret { color: var(--c4); }
+  tr.now td { background: var(--faint); }
+  .eq { font-size: 14px; margin-top: 6px; min-height: 22px; }
+  @media (max-width: 560px) { td { white-space: normal; } }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="seg" id="mode"><button data-m="rec" class="on">recursive</button><button data-m="it">iterative (loop)</button></div>
+  <div class="seg"><button id="prev">◀</button><button id="next">▶</button></div>
+  <span class="readout" id="stepno"></span>
+</div>
+<svg id="svg" viewBox="0 0 760 196"></svg>
+<div class="cap" id="cap"></div>
+<table id="tab"></table>
+<div class="eq" id="eq"></div>
+<script src="/interactive/pt/embed.js"></script>
+<script>
+// One camera path x1..x5 with max_depth = 5. w_k = f_s |cos θ| / p is the weight of the direction sampled at x_k.
+// Recursive: L(x_k) = L_e(x_k) + w_k L(x_{k+1}), evaluated as the calls return.
+// Iterative: L += β L_e(x_k), then β *= w_k, as the path is traced.
+const N = 5;
+const Wt = [null, 0.8, 0.5, 0.5, 0.6, 0.7];          // w_1..w_5
+const LE = [null, 0, 2, 0, 4, 0];                    // L_e(x_1)..L_e(x_5)
+const X = [[56, 62], [170, 158], [290, 46], [410, 158], [530, 46], [650, 158]];   // x_0 (camera), x_1..x_5
+const Lret = new Array(N + 2).fill(0);               // value returned by the call at x_k; the call past x_5 returns 0
+for (let k = N; k >= 1; k--) Lret[k] = LE[k] + Wt[k] * Lret[k + 1];
+const beta = [null, 1], Lacc = [0];                  // β on arrival at x_k, L after visiting x_k
+for (let k = 1; k <= N; k++) { Lacc[k] = Lacc[k - 1] + beta[k] * LE[k]; beta[k + 1] = beta[k] * Wt[k]; }
+
+const svg = document.getElementById('svg'), tab = document.getElementById('tab'), eq = document.getElementById('eq'), cap = document.getElementById('cap');
+let mode = 'rec', step = 0;
+const steps = () => mode === 'rec' ? 2 * N + 1 : N + 1;
+const num = v => String(parseFloat(v.toFixed(4)));
+const ecls = k => k === 2 ? 'e2' : k === 4 ? 'e4' : '';
+const x = k => `<i>x</i><sub>${k}</sub>`, w = k => `<i>w</i><sub>${k}</sub>`, L = k => `<i>L</i>(${x(k)})`;
+const Le = k => `<span class="${ecls(k)}"><i>L</i><sub>e</sub>(${x(k)})</span>`;
+const leNum = k => `<span class="${ecls(k)}">${num(LE[k])}</span>`;
+
+function el(tag, a) { const e = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const k in a) e.setAttribute(k, a[k]); svg.appendChild(e); return e; }
+// text with subscripts written as x_1 or L_e; the part before " = " is set in italics
+function label(px, py, s, fill, anchor) {
+  const t = el('text', { x: px, y: py, fill, 'text-anchor': anchor || 'middle' });
+  let down = false;
+  const add = (str, sub, italic) => {
+    const ts = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    if (sub) { ts.setAttribute('dy', 4); ts.setAttribute('font-size', 10); down = true; }
+    else if (down) { ts.setAttribute('dy', -4); down = false; }
+    if (italic && !sub) ts.setAttribute('class', 'it');
+    ts.textContent = str; t.appendChild(ts);
+  };
+  const [lhs, rhs] = s.split(' = ');
+  lhs.split(/(_.)/).forEach(p => { if (p) p[0] === '_' ? add(p[1], true) : add(p, false, true); });
+  if (rhs != null) add(' = ' + rhs, false, false);
+  return t;
+}
+function edge(a, b, col, wd) {         // segment a -> b with the arrowhead at its midpoint
+  const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy), ux = dx / l, uy = dy / l, h = 9, s = 3.6;
+  el('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: col, 'stroke-width': wd, 'stroke-linecap': 'round' });
+  const mx = (a[0] + b[0]) / 2 + ux * h / 2, my = (a[1] + b[1]) / 2 + uy * h / 2;
+  el('path', { d: `M${mx},${my} L${mx - ux * h - uy * s},${my - uy * h + ux * s} L${mx - ux * h + uy * s},${my - uy * h - ux * s}Z`, fill: col });
+}
+function edgeLabel(k, s, col) {        // beside the edge x_{k-1} x_k, on its right-hand side
+  const a = X[k - 1], b = X[k], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  let nx = -(b[1] - a[1]) / l, ny = (b[0] - a[0]) / l; if (nx < 0) { nx = -nx; ny = -ny; }
+  label((a[0] + b[0]) / 2 + nx * 13, (a[1] + b[1]) / 2 + ny * 13 + 5, s, col, 'start');
+}
+function draw() {
+  const c = PT.c;
+  svg.textContent = '';
+  document.getElementById('stepno').textContent = `step ${step} / ${steps() - 1}`;
+  const reached = Math.min(N, step);                       // vertices found so far
+  const returned = mode === 'rec' ? Math.max(0, step - N) : 0;   // calls that have returned
+  // edges
+  for (let k = 1; k <= reached; k++) {
+    const back = k > N - returned;                         // the call at x_k has returned: the edge carries L(x_k) back
+    if (back) edge(X[k], X[k - 1], Lret[k] > 0 ? c.c4 : c.muted, 2.2);
+    else edge(X[k - 1], X[k], c.text, 1.4);
+    if (mode === 'it') edgeLabel(k, `β = ${num(beta[k])}`, c.muted);
+    else if (back) edgeLabel(k, `L(x_${k}) = ${num(Lret[k])}`, Lret[k] > 0 ? c.c4 : c.muted);
+  }
+  // camera: the sensor segment through x_0, perpendicular to the first edge
+  el('line', { x1: 38, y1: 82, x2: 74, y2: 42, stroke: c.text, 'stroke-width': 3, 'stroke-linecap': 'round' });
+  el('circle', { cx: X[0][0], cy: X[0][1], r: 3, fill: c.text });
+  label(16, 108, 'camera', c.muted, 'start').firstChild.removeAttribute('class');
+  // surfaces, vertices and their labels
+  for (let k = 1; k <= N; k++) {
+    const [px, py] = X[k], up = py < 100, col = k === 2 ? c.accent2 : k === 4 ? c.accent : c.text, on = k <= reached;
+    el('line', { x1: px - 46, y1: py, x2: px + 46, y2: py, stroke: col, 'stroke-width': LE[k] ? 4 : 3, 'stroke-linecap': 'round', opacity: on || LE[k] ? 1 : 0.35 });
+    if (!on) { if (LE[k]) label(px, py - 12, 'light', c.muted).firstChild.removeAttribute('class'); continue; }
+    el('circle', { cx: px, cy: py, r: 3, fill: c.text });
+    const ly = up ? py - 12 : py + 24;
+    label(px - 44, ly, `x_${k}`, c.text, 'start');
+    if (k < N) label(px - 16, ly, `w_${k} = ${num(Wt[k])}`, c.muted, 'start');
+    if (LE[k]) label(px + 50, ly, `L_e = ${num(LE[k])}`, col, 'start');
+  }
+  table();
+}
+const SUB = '₀₁₂₃₄₅';
+function table() {
+  let h = '', e = '';
+  const sum = `${w(1)} ${Le(2)} + ${w(1)} ${w(2)} ${w(3)} ${Le(4)} = ${num(Wt[1])} · ${leNum(2)} + ${num(Wt[1])} · ${num(Wt[2])} · ${num(Wt[3])} · ${leNum(4)} = <b>${num(Lret[1])}</b>`;
+  if (mode === 'rec') {
+    h = '<tr><th>call, on the way out</th><th>return value, on the way back</th></tr>';
+    for (let k = 1; k <= N; k++) {
+      const called = step >= k, ret = step >= 2 * N + 1 - k;
+      const now = (step === k) || step === 2 * N + 1 - k;
+      const r = `<span class="${Lret[k] > 0 ? 'ret' : ''}">${L(k)}</span> = ${leNum(k)} + ${num(Wt[k])} · ${num(Lret[k + 1])} = <b>${num(Lret[k])}</b>`;
+      h += `<tr class="${now ? 'now' : ''}"><td>${called ? `${L(k)} = ${Le(k)} + ${w(k)} ${k < N ? L(k + 1) : '· 0'}` : ''}</td><td>${ret ? r : ''}</td></tr>`;
+    }
+    cap.innerHTML = step === 0 ? 'The camera ray has not been traced yet. Each hit will make a recursive call for the radiance arriving along the next sampled direction.'
+      : step < N ? `The call at x${SUB[step]} cannot finish: it needs the radiance arriving from the next vertex, so it samples a direction (weight w${SUB[step]}) and recurses.`
+      : step === N ? `x${SUB[N]} is the last vertex allowed by the depth limit: the call it makes returns 0 at once. Nothing has been added up yet; now the stack unwinds.`
+      : step < 2 * N ? `x${SUB[2 * N + 1 - step]} returns its own emission plus its weight times the value just returned to it.`
+      : 'The first call returns the pixel estimate. Only the emitters at x₂ and x₄ contribute, each scaled by the weights of the vertices between it and the camera.';
+    if (step === 2 * N) e = `${L(1)} = ${sum}`;
+  } else {
+    h = `<tr><th>vertex</th><th><i>β</i> on arrival</th><th><i>L</i> ← <i>L</i> + <i>β</i> <i>L</i><sub>e</sub></th><th><i>β</i> ← <i>β</i> <i>w</i></th></tr>`;
+    h += `<tr class="${step === 0 ? 'now' : ''}"><td>start</td><td>1</td><td>0</td><td></td></tr>`;
+    for (let k = 1; k <= N; k++) h += step >= k
+      ? `<tr class="${step === k ? 'now' : ''}"><td>${x(k)}</td><td>${num(beta[k])}</td><td>${num(Lacc[k - 1])} + ${num(beta[k])} · ${leNum(k)} = <b>${num(Lacc[k])}</b></td><td>${k < N ? `${num(beta[k])} · ${num(Wt[k])} = ${num(beta[k + 1])}` : ''}</td></tr>`
+      : '<tr><td></td><td></td><td></td><td></td></tr>';
+    cap.innerHTML = step === 0 ? 'The loop keeps two numbers: the throughput β, which starts at 1, and the accumulated radiance L, which starts at 0.'
+      : step < N ? `At x${SUB[step]}: add β times the emission found here to L, then multiply β by w${SUB[step]} for the next bounce. β on each edge is the product of the weights so far.`
+      : 'Depth limit reached: the loop stops. L already holds the sum the recursion assembled on its way back, and no stack was needed.';
+    if (step === N) e = `<i>L</i> = ${sum}`;
+  }
+  tab.innerHTML = h; eq.innerHTML = e;
+}
+document.getElementById('next').onclick = () => { step = Math.min(steps() - 1, step + 1); draw(); };
+document.getElementById('prev').onclick = () => { step = Math.max(0, step - 1); draw(); };
+document.querySelectorAll('#mode button').forEach(b => b.onclick = () => {
+  mode = b.dataset.m; step = 0; document.querySelectorAll('#mode button').forEach(v => v.classList.toggle('on', v === b)); draw();
+});
+// optional deep link: ?mode=it&step=3
+{ const q = new URLSearchParams(location.search); if (q.get('mode') === 'it') document.querySelector('[data-m=it]').click(); if (q.get('step')) step = +q.get('step'); }
+PT.onTheme(draw);
+draw();
+</script>
+</body>
+</html>
